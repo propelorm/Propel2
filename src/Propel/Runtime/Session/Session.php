@@ -89,7 +89,10 @@ class Session
 
         //if new object and has not been persisted yet, we can not delete it.
         if (!($entity instanceof EntityProxyInterface) && !isset($this->persisted[$id])) {
-            throw new \InvalidArgumentException('New entity has not been persisted yet.');
+//            //no proxy and not persisted, make sure its not in persistQueue only.
+//            unset($this->persistQueue[$id]);
+//            return;
+            throw new \InvalidArgumentException('Can not delete. New entity has not been persisted yet.');
         }
 
         $this->removeQueue[$id] = $entity;

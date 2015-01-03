@@ -189,6 +189,8 @@ class Configuration extends GeneratorConfig
 
         if (!static::$globalConfiguration) {
             static::$globalConfiguration = $this;
+        } else {
+            xdebug_break();
         }
     }
 
@@ -487,7 +489,7 @@ class Configuration extends GeneratorConfig
     }
 
     /**
-     * Shortcut for $configuration->getSessionFactory()->build();
+     * Returns the current session, if not exists, we create one and set this to the new current..
      *
      * @return Session
      */
@@ -499,6 +501,10 @@ class Configuration extends GeneratorConfig
     }
 
     /**
+     * Returns always a new session.
+     *
+     * Shortcut for $configuration->getSessionFactory()->build();
+     *
      * @return Session
      */
     public function createSession()

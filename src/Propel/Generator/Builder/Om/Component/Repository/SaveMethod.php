@@ -23,7 +23,7 @@ class SaveMethod extends BuildComponent
         $entityClassName = $this->getObjectClassName();
 
         $body = <<<EOF
-\$session = \$this->getConfiguration()->createSession();
+\$session = \$this->getConfiguration()->getSession();
 \$session->persist(\$entity, true);
 \$session->commit();
 EOF;

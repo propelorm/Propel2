@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\Exception\FieldNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
@@ -28,27 +29,27 @@ use Propel\Runtime\Session\Session;
  */
 abstract class EntityMap
 {
-//    /**
-//     * phpname type
-//     * e.g. 'AuthorId'
-//     */
-//    const TYPE_PHPNAME = 'phpName';
+    /**
+     * phpname type, the actual name of the property in a entity.
+     * e.g. 'authorId'
+     */
+    const TYPE_PHPNAME = 'phpName';
 
     /**
      * camelCase type
-     * e.g. 'authorId'
+     * e.g. 'author_id'
      */
-    const TYPE_CAMELNAME = 'camelName';
+    const TYPE_COLNAME = 'colName';
 
     /**
      * field (entityMap) name type
      * e.g. 'book.author_id'
      */
-    const TYPE_COLNAME = 'colName';
+    const TYPE_FULLCOLNAME = 'fullColName';
 
     /**
      * field fieldname type
-     * e.g. 'author_id'
+     * e.g. 'AuthorId'
      */
     const TYPE_FIELDNAME = 'fieldName';
 
@@ -79,17 +80,13 @@ abstract class EntityMap
      */
     protected $entityName;
 
+    protected $fieldNames = [];
+    protected $fieldKeys = [];
+
     /**
      * @var string
      */
     protected $tableName;
-//
-//    /**
-//     * The PHP name of the entity
-//     *
-//     * @var string
-//     */
-//    protected $phpName;
 
     /**
      * The full class name for this entity with namespace.
@@ -226,11 +223,17 @@ abstract class EntityMap
     }
 
     abstract public function populateDependencyGraph($entity, DependencyGraph $dependencyGraph);
+
     abstract public function populateObject(array $row, &$offset = 0, $indexType = EntityMap::TYPE_NUM, $entity = null);
+
     abstract public function isValidRow(array $row, $offset = 0);
+
     abstract public function getSnapshot($entity);
+
     abstract public function getPropWriter();
+
     abstract public function getPropReader();
+
     abstract public function getPropIsset();
 
     abstract public function persistDependencies(Session $session, $entity, $deep = false);
@@ -595,7 +598,7 @@ abstract class EntityMap
             $name = FieldMap::normalizeName($name);
         }
 
-        return isset($this->fields[$name]) ||  isset($this->fieldsByLowercaseName[strtolower($name)]);
+        return isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)]);
     }
 
     /**
@@ -942,21 +945,6 @@ abstract class EntityMap
         return null;
     }
 
-    public function getFieldnamesForClass($classname, $type = EntityMap::TYPE_CAMELNAME)
-    {
-        $callable = array($classname::TABLE_MAP, 'getFieldnames');
-
-        return call_user_func($callable, $type);
-    }
-
-    public function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
-    {
-        $callable = array($classname::TABLE_MAP, 'translateFieldname');
-        $args = array($fieldname, $fromType, $toType);
-
-        return call_user_func_array($callable, $args);
-    }
-
     /**
      * @return boolean
      */
@@ -1002,5 +990,89 @@ abstract class EntityMap
         }
 
         return $pk;
+    }
+
+    /**
+     * Returns an array of field names.
+     *
+     * @param  string $type          The type of fieldnames to return:
+     *                               One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME
+     *                               TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *
+     * @return array           A list of field names
+     * @throws PropelException
+     */
+    public function getFieldNames($type = EntityMap::TYPE_PHPNAME)
+    {
+        if (!array_key_exists($type, $this->fieldNames)) {
+            throw new PropelException(
+                'Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . $type . ' was given.'
+            );
+        }
+
+        return $this->fieldNames[$type];
+    }
+
+    /**
+     * Translates a fieldname to another type
+     *
+     * @param  string $name              field name
+     * @param  string $fromType          One of the class type constants TableMap::TYPE_PHPNAME,
+     *                                   TableMap::TYPE_COLNAME TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME,
+     *                                   TableMap::TYPE_NUM
+     * @param  string $toType            One of the class type constants
+     *
+     * @return string          translated name of the field.
+     * @throws PropelException - if the specified name could not be found in the fieldname mappings.
+     */
+    public function translateFieldName($name, $fromType, $toType)
+    {
+        $toNames = $this->getFieldNames($toType);
+        $key = isset($this->fieldKeys[$fromType][$name]) ? $this->fieldKeys[$fromType][$name] : null;
+        if (null === $key) {
+            throw new PropelException(
+                "'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(
+                    $this->fieldKeys[$fromType],
+                    true
+                )
+            );
+        }
+
+        return $toNames[$key];
+    }
+
+    public function translateFieldNames($row, $fromType, $toType)
+    {
+        $toNames = $this->getFieldNames($toType);
+        $newRow = array();
+        foreach ($row as $name => $field) {
+            if ($key = $this->fieldKeys[$fromType][$name]) {
+                $newRow[$toNames[$key]] = $field;
+            } else {
+                $newRow[$name] = $field;
+            }
+        }
+
+        return $newRow;
+    }
+
+    /**
+     * Convenience method which changes table.column to alias.column.
+     *
+     * Using this method you can maintain SQL abstraction while using column aliases.
+     * <code>
+     *        $c->addAlias("alias1", TableTableMap::TABLE_NAME);
+     *        $c->addJoin(TableTableMap::alias("alias1", TableTableMap::PRIMARY_KEY_COLUMN),
+     *        TableTableMap::PRIMARY_KEY_COLUMN);
+     * </code>
+     *
+     * @param  string $alias  The alias for the current table.
+     * @param  string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
+     *
+     * @return string
+     */
+    public function alias($alias, $column)
+    {
+        return str_replace(static::TABLE_NAME . '.', $alias . '.', $column);
     }
 }

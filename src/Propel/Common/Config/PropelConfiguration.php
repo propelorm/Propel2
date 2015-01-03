@@ -316,7 +316,7 @@ class PropelConfiguration implements ConfigurationInterface
                                 ->booleanNode('addGenericMutators')->defaultTrue()->end()
                                 ->booleanNode('emulateForeignKeyConstraints')->defaultFalse()->end()
                                 ->booleanNode('addClassLevelComment')->defaultTrue()->end()
-                                ->scalarNode('defaultKeyType')->defaultValue('phpName')->end()
+                                ->scalarNode('defaultKeyType')->defaultValue('fieldName')->end()
                                 ->booleanNode('addSaveMethod')->defaultTrue()->end()
                                 ->scalarNode('namespaceMap')->defaultValue('Map')->end()
                                 ->booleanNode('addTimeStamp')->defaultFalse()->end()

@@ -155,6 +155,30 @@ abstract class AbstractBuilder extends DataModelBuilder
     }
 
     /**
+     * Whether to add the mutator methods.
+     */
+    protected function isAddMutators()
+    {
+        $entity = $this->getEntity();
+
+        return
+            !$entity->isAlias() &&
+            !$entity->isReadOnly();
+    }
+
+    /**
+     * Whether to add the accessor methods.
+     */
+    protected function isAddAccessors()
+    {
+        $entity = $this->getEntity();
+
+        return
+            !$entity->isAlias() &&
+            !$entity->isReadOnly();
+    }
+
+    /**
      * Whether to add the generic accessor methods (getByName(), getByPosition(), toArray()).
      * This is based on the build property propel.addGenericAccessors, and also whether the
      * entity is an alias.
@@ -166,6 +190,22 @@ abstract class AbstractBuilder extends DataModelBuilder
         return
             !$entity->isAlias() &&
             $this->getBuildProperty('generator.objectModel.addGenericAccessors');
+    }
+
+    /**
+     * Returns default key type.
+     *
+     * If not presented in configuration default will be 'TYPE_PHPNAME'
+     *
+     * @return string
+     */
+    public function getDefaultKeyType()
+    {
+        $defaultKeyType = $this->getBuilder()->getBuildProperty('generator.objectModel.defaultKeyType')
+            ? $this->getBuilder()->getBuildProperty('generator.objectModel.defaultKeyType')
+            : 'phpName';
+
+        return "TYPE_".strtoupper($defaultKeyType);
     }
 
     /**

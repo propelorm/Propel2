@@ -12,7 +12,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * Adds DATABASE_NAME constant.
+ * Adds DATABASE_NAME, TABLE_NAME constant.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
@@ -24,9 +24,21 @@ class Constants extends BuildComponent
     public function process()
     {
         $entity = $this->getEntity();
+
         $constant = new PhpConstant('DATABASE_NAME');
         $constant->setDescription("The database and connection name for the {$entity->getName()} entity.");
         $constant->setValue($entity->getDatabase()->getName());
         $this->getDefinition()->setConstant($constant);
+
+        $constant = new PhpConstant('TABLE_NAME');
+        $constant->setDescription("The table name");
+        $constant->setValue($entity->getTableName());
+        $this->getDefinition()->setConstant($constant);
+
+        $constant = new PhpConstant('ENTITY_CLASS');
+        $constant->setDescription("The full entity class name");
+        $constant->setValue($entity->getFullClassName());
+        $this->getDefinition()->setConstant($constant);
+
     }
 }

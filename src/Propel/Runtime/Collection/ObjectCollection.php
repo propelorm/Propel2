@@ -116,10 +116,10 @@ class ObjectCollection extends Collection
      * @param boolean $usePrefix              If true, the returned array prefixes keys
      *                                        with the model class name ('Article_0', 'Article_1', etc).
      * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_PHPNAME,
-     *                                        EntityMap::TYPE_CAMELNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME,
+     *                                        EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME,
      *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadFields (optional) Whether to include lazy loaded fields. Defaults to TRUE.
-     * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
+     * @param object  $alreadyDumpedObjectsWatcher Internal struct to detect recursion.
      *
      * <code>
      * $bookCollection->toArray();
@@ -141,7 +141,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_PHPNAME, $includeLazyLoadFields = true, $alreadyDumpedObjects = array())
+    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_PHPNAME, $includeLazyLoadFields = true, $alreadyDumpedObjectsWatcher = null)
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyField;
@@ -150,7 +150,7 @@ class ObjectCollection extends Collection
         foreach ($this->data as $key => $obj) {
             $key = null === $keyField ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadFields, $alreadyDumpedObjects, true);
+            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadFields, true, $alreadyDumpedObjectsWatcher);
         }
 
         return $ret;

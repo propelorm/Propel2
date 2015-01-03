@@ -19,10 +19,6 @@ use Propel\Tests\TestCaseFixturesDatabase;
 abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 {
     /**
-     * @var Boolean
-     */
-    protected static $isInitialized = false;
-    /**
      * @var \PDO
      */
     protected $con;
@@ -33,10 +29,9 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
     protected function setUp()
     {
 	    parent::setUp();
-        if (true !== self::$isInitialized) {
+        if (!$this->configuration) {
             $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
             $this->configuration = include $file;
-            self::$isInitialized = true;
         }
     }
 }

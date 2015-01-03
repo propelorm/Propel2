@@ -30,7 +30,7 @@ class TestCaseFixtures extends TestCase
      *
      * @var bool
      */
-    protected static $withDatabaseSchema = false;
+    protected $withDatabaseSchema = false;
 
     /**
      * @var Configuration
@@ -45,9 +45,9 @@ class TestCaseFixtures extends TestCase
      */
     protected $con;
 
-    public static $lastBuildDsn;
-    public static $lastBuildMode;
-    public static $lastReadConfigs;
+    public $lastBuildDsn;
+    public $lastBuildMode;
+    public $lastReadConfigs;
 
     /**
      * Setup fixture. Needed here because we want to have a realistic code coverage value.
@@ -63,11 +63,11 @@ class TestCaseFixtures extends TestCase
             '--verbose' => true
         );
 
-        if (!static::$withDatabaseSchema) {
+        if (!$this->withDatabaseSchema) {
             $options['--exclude-database'] = true;
         }
 
-        $mode = static::$withDatabaseSchema ? 'fixtures-database' : 'fixtures-only';
+        $mode = $this->withDatabaseSchema ? 'fixtures-database' : 'fixtures-only';
         $builtMode = $this->getLastBuildMode();
 
         if ($dsn === $this->getBuiltDsn()) {
@@ -76,7 +76,7 @@ class TestCaseFixtures extends TestCase
             // when we need a database update ($withDatabaseSchema == true) then we need to check
             // if the last build was a test:prepare with database or not. When yes then skip.
             $skip = true;
-            if (static::$withDatabaseSchema && 'fixtures-database' !== $builtMode) {
+            if ($this->withDatabaseSchema && 'fixtures-database' !== $builtMode) {
                 //we need new test:prepare call with --exclude-schema disabled
                 $skip = false;
             }
@@ -124,24 +124,24 @@ class TestCaseFixtures extends TestCase
             "$dsn\n$mode\nFixtures has been created. Delete this file to let the test suite regenerate all fixtures."
         );
 
-        static::$lastBuildDsn = $dsn;
-        static::$lastBuildMode = $mode;
-        static::$lastReadConfigs = '';
+        $this->lastBuildDsn = $dsn;
+        $this->lastBuildMode = $mode;
+        $this->lastReadConfigs = '';
 
         $this->readAllRuntimeConfigs();
     }
 
     protected function getLastBuildMode()
     {
-        if (static::$lastBuildMode) {
-            return static::$lastBuildMode;
+        if ($this->lastBuildMode) {
+            return $this->lastBuildMode;
         }
 
         $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
         if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r'))) {
             fgets($h);
             $secondLine = fgets($h);
-            return static::$lastBuildMode = trim($secondLine);
+            return $this->lastBuildMode = trim($secondLine);
         }
     }
 
@@ -150,19 +150,23 @@ class TestCaseFixtures extends TestCase
      */
     protected function readAllRuntimeConfigs()
     {
-        if (static::$lastReadConfigs === static::$lastBuildMode.':'.static::$lastBuildDsn) {
+        if ($this->lastReadConfigs === $this->lastBuildMode.':'.$this->lastBuildDsn) {
             return;
         }
 
         $finder = new Finder();
         $finder->files()->name('*-conf.php')->in(__DIR__.'/../../Fixtures/');
 
-        $configuration = $this->configuration;
+        Configuration::$globalConfiguration = null;
+        $configuration = new Configuration();
+
         foreach ($finder as $file) {
-            include_once($file->getPathname());
+            include($file->getPathname());
         }
 
-        static::$lastReadConfigs = static::$lastBuildMode.':'.static::$lastBuildDsn;
+        $this->configuration = $configuration;
+
+        $this->lastReadConfigs = $this->lastBuildMode.':'.$this->lastBuildDsn;
     }
 
     /**
@@ -172,13 +176,13 @@ class TestCaseFixtures extends TestCase
      */
     protected function getBuiltDsn()
     {
-        if (static::$lastBuildDsn) {
-            return static::$lastBuildDsn;
+        if ($this->lastBuildDsn) {
+            return $this->lastBuildDsn;
         }
 
         $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
         if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r')) && $firstLine = fgets($h)) {
-            return static::$lastBuildDsn = trim($firstLine);
+            return $this->lastBuildDsn = trim($firstLine);
         }
     }
 

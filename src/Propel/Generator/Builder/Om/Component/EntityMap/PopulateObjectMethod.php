@@ -69,7 +69,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         }
 
         $body .= "
-} else if (EntityMap::TYPE_CAMELNAME === \$indexType) {
+} else if (EntityMap::TYPE_COLNAME === \$indexType) {
     //columnName
 ";
         foreach ($camelNames as $idx => $fieldName) {
@@ -97,7 +97,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         }
 
         $body .= "
-} else if (EntityMap::TYPE_COLNAME === \$indexType) {
+} else if (EntityMap::TYPE_FULLCOLNAME === \$indexType) {
     //book.column_name
 ";
         foreach ($fullColumnNames as $idx => $fieldName) {

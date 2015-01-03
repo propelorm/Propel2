@@ -67,24 +67,31 @@ class SqlPersister
 
     public function remove($entities)
     {
+        if (!$entities) {
+            return false;
+        }
+
         $whereClauses = [];
         $params = [];
         foreach ($entities as $entity) {
-            $whereClauses = '(' . $this->entityMap->buildSqlRemoveWhereClause($entity, $params) . ')';
+            $whereClauses[] = '(' . $this->entityMap->buildSqlPrimaryCondition($entity, $params) . ')';
         }
 
-        $query = sprintf('DELETE %s WHERE ', $this->entityMap->getTableName(), implode(' OR ', $whereClauses));
+        $query = sprintf('DELETE FROM %s WHERE %s', $this->entityMap->getTableName(), implode(' OR ', $whereClauses));
 
         $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
 
         $stmt = $connection->prepare($query);
         try {
+            echo "delete-sql: $query (".implode(',', $params).")\n";
             $stmt->execute($params);
+            return $stmt->rowCount();
         } catch (\Exception $e) {
             throw new RuntimeException(sprintf('Could not execute query %s', $query), 0, $e);
         }
     }
+
     public function persist($entities)
     {
         $changeSets = $inserts = $updates = [];

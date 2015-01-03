@@ -347,17 +347,18 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add($cn);
         $c->doDelete();
 
+        var_dump('moepxxxxxx, delete?');
         // Attempting to delete book [id = $td_id]
         $td->delete();
 
         // Attempting to delete authors
-        AuthorEntityMap::doDelete($stephenson_id);
-        AuthorEntityMap::doDelete($byron_id);
+        $stephenson->delete();
+        $byron->delete();
         $grass->delete();
 
         // Attempting to delete publishers
-        PublisherEntityMap::doDelete($morrow_id);
-        PublisherEntityMap::doDelete($penguin_id);
+        $morrow->delete();
+        $penguin->delete();
         $vintage->delete();
 
         // These have to be deleted manually also since we have onDelete
@@ -678,7 +679,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add(AuthorEntityMap::COL_ID, $hp->getAuthor()->getId());
         $c->add(PublisherEntityMap::COL_ID, $hp->getPublisher()->getId());
         $c->setSingleRecord(true);
-        BookEntityMap::doDelete($c);
+        $c->doDelete();
 
         // Checking to make sure correct records were removed.
         $this->assertEquals(3, AuthorQuery::create()->count(), 'Correct records were removed from author table');

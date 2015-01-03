@@ -23,7 +23,7 @@ class RemoveMethod extends BuildComponent
         $entityClassName = $this->getObjectClassName();
 
         $body = <<<EOF
-\$session = \$this->getConfiguration()->createSession();
+\$session = \$this->getConfiguration()->getSession();
 \$session->remove(\$entity);
 \$session->commit();
 EOF;

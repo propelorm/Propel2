@@ -49,6 +49,8 @@ if (!\$this->{$colVarName}->contains(\${$varName})) {
     \$this->{$colVarName}[] = \${$varName};
     \${$varName}->set" . $this->getRelationPhpName($refRelation) . "(\$this);
 }
+
+return \$this;
 ";
         $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
 

@@ -18,15 +18,15 @@ trait EntityMapTrait
      * Returns an array of field names.
      *
      * @param  string          $type The type of fieldnames to return:
-     *                               One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
-     *                               EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
+     *                               One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME
+     *                               EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      * @return array           A list of field names
      * @throws PropelException
      */
     public static function getFieldNames($type = EntityMap::TYPE_PHPNAME)
     {
         if (!array_key_exists($type, static::$fieldNames)) {
-            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.');
+            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.');
         }
 
         return static::$fieldNames[$type];
@@ -36,8 +36,8 @@ trait EntityMapTrait
      * Translates a fieldname to another type
      *
      * @param  string          $name     field name
-     * @param  string          $fromType One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
-     *                                   EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
+     * @param  string          $fromType One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME
+     *                                   EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      * @param  string          $toType   One of the class type constants
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.

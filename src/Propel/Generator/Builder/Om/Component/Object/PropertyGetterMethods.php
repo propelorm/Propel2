@@ -47,7 +47,7 @@ class PropertyGetterMethods extends BuildComponent
 if (\$format && \$this->{$varName}) {
     return \$this->{$varName}->format(\$format);
 }";
-            $method->addSimpleParameter('format', 'string');
+            $method->addSimpleParameter('format', 'string', null);
         }
 
 

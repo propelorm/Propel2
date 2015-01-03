@@ -1041,7 +1041,7 @@ class ModelCriteria extends BaseModelCriteria
             $class = $this->getEntityName();
             $obj = new $class();
             foreach ($this->keys() as $key) {
-                $obj->setByName($key, $this->getValue($key), EntityMap::TYPE_COLNAME);
+                $obj->setByName($key, $this->getValue($key), EntityMap::TYPE_FULLCOLNAME);
             }
             $ret = $this->getFormatter()->formatRecord($obj);
         }
