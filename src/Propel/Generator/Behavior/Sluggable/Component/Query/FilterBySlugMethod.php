@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Propel\Generator\Behavior\Sluggable\Component;
+namespace Propel\Generator\Behavior\Sluggable\Component\Query;
 
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;

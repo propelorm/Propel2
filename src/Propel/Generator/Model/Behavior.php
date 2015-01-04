@@ -10,6 +10,11 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
 
@@ -388,6 +393,56 @@ class Behavior extends MappingModel
     }
 
     /**
+     * Hook to change ObjectBuilder instance. Overwrite it and modify $builder if you want.
+     *
+     * @param ObjectBuilder $builder
+     */
+    public function objectBuilderModification(ObjectBuilder $builder)
+    {
+
+    }
+
+    /**
+     * Hook to change QueryBuilder instance. Overwrite it and modify $builder if you want.
+     *
+     * @param QueryBuilder $builder
+     */
+    public function queryBuilderModification(QueryBuilder $builder)
+    {
+
+    }
+
+    /**
+     * Hook to change RepositoryBuilder instance. Overwrite it and modify $builder if you want.
+     *
+     * @param RepositoryBuilder $builder
+     */
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
+    {
+
+    }
+
+    /**
+     * Hook to change EntityMapBuilder instance. Overwrite it and modify $builder if you want.
+     *
+     * @param EntityMapBuilder $builder
+     */
+    public function entityMapBuilderModification(EntityMapBuilder $builder)
+    {
+
+    }
+
+    /**
+     * Hook to change ActiveRecordTraitBuilder instance. Overwrite it and modify $builder if you want.
+     *
+     * @param ActiveRecordTraitBuilder $builder
+     */
+    public function activeRecordTraitBuilderModification(ActiveRecordTraitBuilder $builder)
+    {
+
+    }
+
+    /**
      * Returns the entity modifier object.
      *
      * The current object is returned by default.
@@ -436,6 +491,14 @@ class Behavior extends MappingModel
     }
 
     /**
+     * @return $this
+     */
+    public function getActiveRecordTraitBuilderModifier()
+    {
+        return $this;
+    }
+
+    /**
      * Returns whether or not this behavior has additional builders.
      *
      * @return boolean
@@ -454,4 +517,6 @@ class Behavior extends MappingModel
     {
         return $this->additionalBuilders;
     }
+
+
 }

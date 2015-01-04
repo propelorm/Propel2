@@ -22,7 +22,7 @@ abstract class Repository
     protected $entityMap;
 
     /**
-     * All committed object IDs get a new key of this array.
+     * All committed object IDs get a new key in this array.
      *
      *     $committedIds[spl_object_hash($entity)] = true;
      *
@@ -32,6 +32,9 @@ abstract class Repository
     protected $deletedIds = [];
 
     /**
+     * Last known values which are as far as we know the latest values in the database.
+     * ->snapshot() refreshes this values.
+     *
      * @var array[]
      */
     protected $lastKnownValues = [];
@@ -63,7 +66,7 @@ abstract class Repository
     }
 
     /**
-     * Maps all event dispatcher events to local event dispatcher, if we have a child class.
+     * Maps all event dispatcher events to local event dispatcher, if we have a child class (custom repository class).
      */
     protected function mapEvents()
     {
@@ -72,9 +75,11 @@ abstract class Repository
             Events::PRE_SAVE => 'preSave',
             Events::PRE_UPDATE => 'preUpdate',
             Events::PRE_INSERT => 'preInsert',
+            Events::PRE_DELETE => 'preDelete',
             Events::SAVE => 'postSave',
             Events::UPDATE => 'postUpdate',
-            Events::INSERT => 'postInsert'
+            Events::INSERT => 'postInsert',
+            Events::DELETE => 'postDelete'
         ];
 
         foreach ($mapEvents as $eventName => $method) {
@@ -90,15 +95,19 @@ abstract class Repository
         }
     }
 
-    protected function preSave($event)
+    protected function preSave(SaveEvent $event)
     {
     }
 
-    protected function preUpdate($event)
+    protected function preUpdate(UpdateEvent $event)
     {
     }
 
     protected function preInsert(InsertEvent $event)
+    {
+    }
+
+    protected function preDelete(DeleteEvent $event)
     {
     }
 
@@ -130,7 +139,7 @@ abstract class Repository
             $id = spl_object_hash($entity);
             unset($this->committedIds[$id]);
             $this->deletedIds[$id] = true;
-            unset($this->originalValues[$id]);
+            unset($this->lastKnownValues[$id]);
         }
     }
 
@@ -251,6 +260,33 @@ abstract class Repository
             $id = spl_object_hash($id);
         }
         $this->lastKnownValues[$id] = $values;
+    }
+
+    public function getOriginPKs(array $entities)
+    {
+        $pks = [];
+        $reader = $this->getEntityMap()->getPropReader();
+        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        foreach ($entities as $entity) {
+            $id = spl_object_hash($entity);
+            if (isset($this->lastKnownValues[$id])) {
+                $pk = [];
+
+                if ($singlePk) {
+                    $pk = $reader($this->lastKnownValues[$id], $primaryKeyFields[0]->getName());
+                } else {
+                    foreach ($primaryKeyFields as $primaryKeyField) {
+                        $pks[] = $reader($this->lastKnownValues[$id], $primaryKeyField->getName());
+                    }
+                }
+
+                $pks[] = $pk;
+            }
+        }
+
+        return $pks;
     }
 
     /**

@@ -4,7 +4,7 @@
     <entity name="AggregatePost">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <behavior name="aggregate_field">
-            <parameter name="field" value="commentsCount" />
+            <parameter name="name" value="commentsCount" />
             <parameter name="expression" value="COUNT(id)" />
             <parameter name="foreign_entity" value="AggregateComment" />
         </behavior>

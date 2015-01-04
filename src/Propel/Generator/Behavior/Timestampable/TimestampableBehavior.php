@@ -11,6 +11,7 @@
 namespace Propel\Generator\Behavior\Timestampable;
 
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -112,7 +113,7 @@ foreach (\$event->getEntities() as \$entity) {
         return $script;
     }
 
-    public function queryBuilderModification($builder)
+    public function queryBuilderModification(QueryBuilder $builder)
     {
         $this->applyComponent('Query\\FilterMethods', $builder);
     }

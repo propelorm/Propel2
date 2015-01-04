@@ -92,6 +92,8 @@ abstract class AbstractBuilder extends DataModelBuilder
             return null;
         }
 
+//        $this->applyBehaviorModifier();
+
         $generator = new CodeGenerator();
 
         $code = "<?php\n\n" . $generator->generate($this->getDefinition());
@@ -246,7 +248,11 @@ abstract class AbstractBuilder extends DataModelBuilder
         $hookName = lcfirst($className) . 'Modification';
 
         foreach ($this->getEntity()->getBehaviors() as $behavior) {
-            $modifier = $behavior->$modifierGetter();
+            if (method_exists($behavior, $modifierGetter)) {
+                $modifier = $behavior->$modifierGetter();
+            } else {
+                $modifier = $behavior;
+            }
             if (method_exists($modifier, $hookName)) {
                 $modifier->$hookName($this);
             }

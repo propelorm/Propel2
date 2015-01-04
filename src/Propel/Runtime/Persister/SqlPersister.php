@@ -77,7 +77,7 @@ class SqlPersister
             $whereClauses[] = '(' . $this->entityMap->buildSqlPrimaryCondition($entity, $params) . ')';
         }
 
-        $query = sprintf('DELETE FROM %s WHERE %s', $this->entityMap->getTableName(), implode(' OR ', $whereClauses));
+        $query = sprintf('DELETE FROM %s WHERE %s', $this->getFQTableName(), implode(' OR ', $whereClauses));
 
         $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
@@ -189,7 +189,7 @@ EOF;
             $fields[] = $field->getColumnName();
         }
 
-        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->entityMap->getTableName(), implode(', ', $fields));
+        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->getFQTableName(), implode(', ', $fields));
 
         $params = [];
         $firstRound = true;
@@ -236,8 +236,7 @@ EOF;
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);
 
         //todo, use CASE WHEN THEN to improve performance
-
-        $sqlStart = 'UPDATE ' . $this->entityMap->getTableName();
+        $sqlStart = 'UPDATE ' . $this->getFQTableName();
         $where = [];
         foreach ($this->entityMap->getPrimaryKeys() as $pk) {
             $where[] = $pk->getColumnName() . ' = ?';
@@ -283,5 +282,13 @@ EOF;
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::UPDATE, $event);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFQTableName()
+    {
+        return $this->entityMap->getFQTableName();
     }
 }

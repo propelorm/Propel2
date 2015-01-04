@@ -296,6 +296,28 @@ abstract class EntityMap
     }
 
     /**
+     * @return string|null
+     */
+    public function getSchemaName()
+    {
+        if (defined('static::SCHEMA_NAME')) {
+            return static::SCHEMA_NAME;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the full qualified table name (with schema).
+     *
+     * @return string
+     */
+    public function getFQTableName()
+    {
+        return static::FQ_TABLE_NAME;
+    }
+
+    /**
      * Set the full class of the Entity with namespace.
      *
      * @param string $className The ClassName

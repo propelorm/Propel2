@@ -14,11 +14,11 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 
 /**
- * Adds filterByPrimaryKey method.
+ * Adds filterByPrimaryKeys method.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class FilterByPrimaryKeyMethod extends BuildComponent
+class FilterByPrimaryKeysMethod extends BuildComponent
 {
     use NamingTrait;
     use RelationTrait;
@@ -40,29 +40,44 @@ class FilterByPrimaryKeyMethod extends BuildComponent
         }
 
         $body = '';
+
         $pks = $this->getEntity()->getPrimaryKey();
         if (1 === count($pks)) {
             // simple primary key
             $field = $pks[0];
             $const = $field->getFQConstantName();
-            $body = "
-return \$this->addUsingAlias($const, \$key, Criteria::EQUAL);";
+            $body .= "
+
+    return \$this->addUsingAlias($const, \$keys, Criteria::IN);";
         } else {
             // composite primary key
+            $body .= "
+    if (empty(\$keys)) {
+        return \$this->add(null, '1<>1', Criteria::CUSTOM);
+    }
+    foreach (\$keys as \$key) {";
             $i = 0;
             foreach ($pks as $field) {
                 $const = $field->getFQConstantName();
-                $body = "
-\$this->addUsingAlias($const, \$key[$i], Criteria::EQUAL);";
+                $body .= "
+    \$cton$i = \$this->getNewCriterion($const, \$key[$i], Criteria::EQUAL);";
+                if ($i > 0) {
+                    $body .= "
+    \$cton0->addAnd(\$cton$i);";
+                }
                 $i++;
             }
             $body .= "
-
-return \$this;";
+    \$this->addOr(\$cton0);
+}";
         }
 
-        $this->addMethod('filterByPrimaryKey')
-            ->addSimpleDescParameter('key', 'mixed', 'Primary key to use for the query')
+        $body .= "
+
+return \$this;";
+
+        $this->addMethod('filterByPrimaryKeys')
+            ->addSimpleDescParameter('keys', 'array', 'Primary keys to use for the query')
             ->setBody($body)
             ->setType("\$this|{$this->getQueryClassName()}")
             ->setTypeDescription('The current query, for fluid interface')

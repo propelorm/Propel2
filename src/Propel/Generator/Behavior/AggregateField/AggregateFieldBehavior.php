@@ -11,26 +11,31 @@
 namespace Propel\Generator\Behavior\AggregateField;
 
 use Propel\Generator\Builder\Om\AbstractBuilder;
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
- * Keeps an aggregate column updated with related table
+ * Keeps an aggregate field updated with related entity
  *
  * @author François Zaninotto
  */
 class AggregateFieldBehavior extends Behavior
 {
+    use ComponentTrait;
+
     // default parameters value
     protected $parameters = array(
-        'name'           => null,
-        'expression'     => null,
-        'condition'      => null,
-        'foreign_entity'  => null,
+        'name' => null,
+        'expression' => null,
+        'condition' => null,
+        'foreign_entity' => null,
         'foreign_schema' => null,
     );
 
     /**
-     * Multiple aggregates on the same table is OK.
+     * Multiple aggregates on the same entity is OK.
      *
      * @return bool
      */
@@ -40,117 +45,94 @@ class AggregateFieldBehavior extends Behavior
     }
 
     /**
-     * Add the aggregate key to the current table
+     * Add the aggregate key to the current entity
      */
-    public function modifyTable()
+    public function modifyEntity()
     {
-        $table = $this->getTable();
-        if (!$columnName = $this->getParameter('name')) {
-            throw new \InvalidArgumentException(sprintf('You must define a \'name\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
+        $entity = $this->getEntity();
+        if (!$fieldName = $this->getParameter('name')) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'You must define a \'name\' parameter for the \'aggregate_field\' behavior in the \'%s\' entity',
+                    $entity->getName()
+                )
+            );
         }
 
-        // add the aggregate column if not present
-        if (!$table->hasColumn($columnName)) {
-            $table->addColumn(array(
-                'name'    => $columnName,
-                'type'    => 'INTEGER',
-            ));
+        // add the aggregate field if not present
+        if (!$entity->hasField($fieldName)) {
+            $entity->addField(
+                array(
+                    'name' => $fieldName,
+                    'type' => 'INTEGER',
+                )
+            );
         }
 
-        // add a behavior in the foreign table to autoupdate the aggregate column
-        $foreignTable = $this->getForeignTable();
-        if (!$foreignTable->hasBehavior('concrete_inheritance_parent')) {
-            $relationBehavior = new AggregateColumnRelationBehavior();
-            $relationBehavior->setName('aggregate_column_relation');
-            $relationBehavior->setId('aggregate_column_relation_'.$this->getId());
-            $relationBehavior->addParameter(array('name' => 'foreign_table', 'value' => $table->getName()));
-            $relationBehavior->addParameter(array('name' => 'aggregate_name', 'value' => $this->getColumn()->getName()));
-            $relationBehavior->addParameter(array('name' => 'update_method', 'value' => 'update' . $this->getColumn()->getName()));
-            $foreignTable->addBehavior($relationBehavior);
+        // add a behavior in the foreign entity to autoupdate the aggregate field
+        $foreignEntity = $this->getForeignEntity();
+        if (!$foreignEntity->hasBehavior('concrete_inheritance_parent')) {
+            $relationBehavior = new AggregateFieldRelationBehavior();
+            $relationBehavior->setName('aggregate_field_relation');
+            $relationBehavior->setId('aggregate_field_relation_' . $this->getId());
+            $relationBehavior->addParameter(array('name' => 'foreign_entity', 'value' => $entity->getName()));
+            $relationBehavior->addParameter(array('name' => 'aggregate_name', 'value' => $this->getField()->getName()));
+            $relationBehavior->addParameter(
+                array('name' => 'update_method', 'value' => 'update' . $this->getField()->getName())
+            );
+            $foreignEntity->addBehavior($relationBehavior);
         }
     }
 
-    public function objectMethods(AbstractBuilder $builder)
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-        if (!$this->getParameter('foreign_table')) {
-            throw new \InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
+        if (!$this->getParameter('foreign_entity')) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'You must define a \'foreign_entity\' parameter for the \'aggregate_field\' behavior in the \'%s\' entity',
+                    $this->getEntity()->getName()
+                )
+            );
         }
-        $script = '';
-        $script .= $this->addObjectCompute($builder);
-        $script .= $this->addObjectUpdate($builder);
 
-        return $script;
+        $this->applyComponent('Repository\\ComputeMethod', $builder);
+        $this->applyComponent('Repository\\UpdateMethod', $builder);
     }
 
-    /**
-     * @param ObjectBuilder $builder
-     * @return string
-     */
-    protected function addObjectCompute(AbstractBuilder $builder)
+    public function getForeignEntity()
     {
-        $conditions = array();
-        if ($this->getParameter('condition')) {
-            $conditions[] = $this->getParameter('condition');
-        }
-
-        $bindings = array();
-        $database = $this->getTable()->getDatabase();
-        foreach ($this->getForeignKey()->getColumnObjectsMapping() as $index => $columnReference) {
-            $conditions[] = $columnReference['local']->getFullyQualifiedName() . ' = :p' . ($index + 1);
-            $bindings[$index + 1]   = $columnReference['foreign']->getName();
-        }
-        $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
+        $database = $this->getEntity()->getDatabase();
+        $entityName = $database->getEntityPrefix() . $this->getParameter('foreign_entity');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
-            $tableName = $this->getParameter('foreign_schema')
-                .$database->getPlatform()->getSchemaDelimiter()
-                .$tableName;
+            $entityName = $this->getParameter('foreign_schema')
+                . $database->getPlatform()->getSchemaDelimiter()
+                . $entityName;
         }
 
-        $sql = sprintf('SELECT %s FROM %s WHERE %s',
-            $this->getParameter('expression'),
-            $builder->getTable()->quoteIdentifier($tableName),
-            implode(' AND ', $conditions)
-        );
-
-        return $this->renderTemplate('objectCompute', array(
-            'column'   => $this->getColumn(),
-            'sql'      => $sql,
-            'bindings' => $bindings,
-        ));
+        return $database->getEntity($entityName);
     }
 
-    protected function addObjectUpdate()
+    public function getRelation()
     {
-        return $this->renderTemplate('objectUpdate', array(
-            'column'  => $this->getColumn(),
-        ));
-    }
-
-    protected function getForeignTable()
-    {
-        $database = $this->getTable()->getDatabase();
-        $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
-        if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
-            $tableName = $this->getParameter('foreign_schema'). $database->getPlatform()->getSchemaDelimiter() . $tableName;
-        }
-
-        return $database->getTable($tableName);
-    }
-
-    protected function getForeignKey()
-    {
-        $foreignTable = $this->getForeignTable();
-        // let's infer the relation from the foreign table
-        $fks = $foreignTable->getForeignKeysReferencingTable($this->getTable()->getName());
+        $foreignEntity = $this->getForeignEntity();
+        // let's infer the relation from the foreign entity
+        $fks = $foreignEntity->getRelationsReferencingEntity($this->getEntity()->getName());
         if (!$fks) {
-            throw new \InvalidArgumentException(sprintf('You must define a foreign key to the \'%s\' table in the \'%s\' table to enable the \'aggregate_column\' behavior', $this->getTable()->getName(), $foreignTable->getName()));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'You must define a foreign key to the \'%s\' entity in the \'%s\' entity to enable the \'aggregate_field\' behavior',
+                    $this->getEntity()->getName(),
+                    $foreignEntity->getName()
+                )
+            );
         }
-        // FIXME doesn't work when more than one fk to the same table
+
+        // FIXME doesn't work when more than one fk to the same entity
         return array_shift($fks);
     }
 
-    protected function getColumn()
+    public function getField()
     {
-        return $this->getTable()->getColumn($this->getParameter('name'));
+        return $this->getEntity()->getField($this->getParameter('name'));
     }
 }

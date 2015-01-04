@@ -13,7 +13,10 @@ namespace Propel\Generator\Behavior\ConcreteInheritance;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Relation;
@@ -145,19 +148,19 @@ EOF;
         }
     }
 
-    public function objectBuilderModification(AbstractBuilder $builder)
+    public function objectBuilderModification(Objectbuilder $builder)
     {
         $builder->getDefinition()->setParentClassName($this->getParentEntity()->getFullClassName());
     }
 
-    public function queryBuilderModification(AbstractBuilder $builder)
+    public function queryBuilderModification(QueryBuilder $builder)
     {
         $builder->getDefinition()->setParentClassName(
             $builder->getNewStubQueryBuilder($this->getParentEntity())->getFullClassName()
         );
     }
 
-    public function repositoryBuilderModification(AbstractBuilder $builder)
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
         $builder->getDefinition()->setParentClassName(
             $builder->getNewStubRepositoryBuilder($this->getParentEntity())->getFullClassName()
@@ -168,7 +171,7 @@ EOF;
         }
     }
 
-    public function entityMapBuilderModification(AbstractBuilder $builder)
+    public function entityMapBuilderModification(EntityMapBuilder $builder)
     {
         $builder->getDefinition()->setParentClassName(
             $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName()

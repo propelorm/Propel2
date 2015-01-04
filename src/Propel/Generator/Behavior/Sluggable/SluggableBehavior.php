@@ -13,6 +13,8 @@ namespace Propel\Generator\Behavior\Sluggable;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Unique;
 
@@ -25,7 +27,6 @@ use Propel\Generator\Model\Unique;
 class SluggableBehavior extends Behavior
 {
     use ComponentTrait;
-    use SimpleTemplateTrait;
 
     protected $parameters = [
         'slug_field' => 'slug',
@@ -72,13 +73,13 @@ $this->preSaveSluggable($event);
 EOF;
     }
 
-    public function repositoryBuilderModification($builder)
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
         $this->applyComponent('Repository\\CleanupSlugPartMethod', $builder);
         $this->applyComponent('Repository\\PreSaveSluggableMethod', $builder);
     }
 
-    public function queryBuilderModification($builder)
+    public function queryBuilderModification(QueryBuilder $builder)
     {
         $script = '';
 

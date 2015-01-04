@@ -10,7 +10,14 @@
 
 namespace Propel\Generator\Behavior\AggregateField;
 
+use gossi\codegen\model\PhpProperty;
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Entity;
+use Propel\Generator\Model\Relation;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -19,12 +26,22 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateFieldRelationBehavior extends Behavior
 {
+    use RelationTrait;
+    use ComponentTrait;
+
     // default parameters value
     protected $parameters = array(
-        'foreign_entity'     => '',
-        'update_method'     => '',
-        'aggregate_name'    => '',
+        'foreign_entity' => '',
+        'update_method' => '',
+        'aggregate_name' => '',
     );
+
+    protected $builder;
+
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
 
     public function allowMultiple()
     {
@@ -33,155 +50,100 @@ class AggregateFieldRelationBehavior extends Behavior
 
     public function postSave($builder)
     {
-        $relationName = $this->getRelationName($builder);
+        $this->builder = $builder;
+
+        $relationName = $this->getRelationName();
         $aggregateName = $this->getParameter('aggregate_name');
 
         return "\$this->updateRelated{$relationName}{$aggregateName}(\$con);";
     }
 
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
+    {
+//        $this->applyComponent('RelationObject\\Attribute', $builder);
+        $this->applyComponent('RelatedRepository\\FindRelatedMethod', $builder);
+        $this->applyComponent('RelatedRepository\\UpdateRelatedMethod', $builder);
+    }
+
     // no need for a postDelete() hook, since delete() uses Query::delete(),
     // which already has a hook
 
-    public function objectAttributes($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
-        $aggregateName = $this->getParameter('aggregate_name');
+//    public function objectFilter(&$script, $builder)
+//    {
+//        $relationName = $this->getRelationName($builder);
+//        $aggregateName = $this->getParameter('aggregate_name');
+//        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
+//        $search = "    public function set{$relationName}({$relatedClass} \$v = null)
+//    {";
+//        $replace = $search . "
+//        // aggregate_column_relation behavior
+//        if (null !== \$this->a{$relationName} && \$v !== \$this->a{$relationName}) {
+//            \$this->old{$relationName}{$aggregateName} = \$this->a{$relationName};
+//        }";
+//        $script = str_replace($search, $replace, $script);
+//    }
 
-        return "/**
- * @var $relatedClass
- */
-protected \$old{$relationName}{$aggregateName};
-";
-    }
-
-    public function objectMethods($builder)
-    {
-        return $this->addObjectUpdateRelated($builder);
-    }
-
-    protected function addObjectUpdateRelated($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-
-        return $this->renderTemplate('objectUpdateRelated', array(
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName),
-            'updateMethodName' => $this->getParameter('update_method'),
-        ));
-    }
-
-    public function objectFilter(&$script, $builder)
-    {
-        $relationName = $this->getRelationName($builder);
-        $aggregateName = $this->getParameter('aggregate_name');
-        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
-        $search = "    public function set{$relationName}({$relatedClass} \$v = null)
-    {";
-        $replace = $search . "
-        // aggregate_column_relation behavior
-        if (null !== \$this->a{$relationName} && \$v !== \$this->a{$relationName}) {
-            \$this->old{$relationName}{$aggregateName} = \$this->a{$relationName};
-        }";
-        $script = str_replace($search, $replace, $script);
-    }
-
-    public function preUpdateQuery($builder)
+    public function preUpdate($builder)
     {
         return $this->getFindRelated($builder);
     }
 
-    public function preDeleteQuery($builder)
+    public function preDelete($builder)
     {
         return $this->getFindRelated($builder);
     }
 
     protected function getFindRelated($builder)
     {
-        $relationName = $this->getRelationName($builder);
+        $this->builder = $builder;
+        $relationName = $this->getRelationName();
         $aggregateName = $this->getParameter('aggregate_name');
 
-        return "\$this->findRelated{$relationName}{$aggregateName}s(\$con);";
+        return "\$this->findRelated{$relationName}{$aggregateName}s();";
     }
 
-    public function postUpdateQuery($builder)
+    public function postUpdate($builder)
     {
         return $this->getUpdateRelated($builder);
     }
 
-    public function postDeleteQuery($builder)
+    public function postDelete($builder)
     {
         return $this->getUpdateRelated($builder);
     }
 
     protected function getUpdateRelated($builder)
     {
-        $relationName = $this->getRelationName($builder);
+        $this->builder = $builder;
+        $relationName = $this->getRelationName();
         $aggregateName = $this->getParameter('aggregate_name');
 
         return "\$this->updateRelated{$relationName}{$aggregateName}s(\$con);";
     }
 
-    public function queryMethods($builder)
-    {
-        $script = '';
-
-        $script .= $this->addQueryFindRelated($builder);
-        $script .= $this->addQueryUpdateRelated($builder);
-
-        return $script;
-    }
-
-    protected function addQueryFindRelated($builder)
-    {
-        $foreignKey = $this->getForeignKey();
-        $foreignQueryBuilder = $builder->getNewStubQueryBuilder($foreignKey->getForeignTable());
-        $relationName = $this->getRelationName($builder);
-
-        $builder->declareClassNamespace(
-            $foreignKey->getForeignTable()->getName() . 'Query',
-            $foreignKey->getForeignTable()->getNamespace()
-        );
-
-        return $this->renderTemplate('queryFindRelated', array(
-            'foreignTable'     => $this->getForeignTable(),
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
-            'foreignQueryName' => $foreignQueryBuilder->getClassName(),
-            'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
-        ));
-    }
-
-    protected function addQueryUpdateRelated($builder)
-    {
-        $relationName = $this->getRelationName($builder);
-
-        return $this->renderTemplate('queryUpdateRelated', array(
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
-            'updateMethodName' => $this->getParameter('update_method'),
-        ));
-    }
-
-    protected function getForeignTable()
+    /**
+     * @return Entity
+     */
+    public function getForeignEntity()
     {
         return $this->getEntity()->getDatabase()->getEntity($this->getParameter('foreign_entity'));
     }
 
-    protected function getForeignKey()
+    /**
+     * @return Relation
+     */
+    public function getRelation()
     {
-        $foreignTable = $this->getForeignTable();
+        $foreignEntity = $this->getForeignEntity();
         // let's infer the relation from the foreign table
-        $fks = $this->getTable()->getForeignKeysReferencingTable($foreignTable->getName());
+        $fks = $this->getEntity()->getRelationsReferencingEntity($foreignEntity->getName());
+
         // FIXME doesn't work when more than one fk to the same table
         return array_shift($fks);
     }
 
-    protected function getRelationName($builder)
+    public function getRelationName()
     {
-        return $builder->getFKPhpNameAffix($this->getForeignKey());
+        return $this->getRelationPhpName($this->getRelation());
     }
 }

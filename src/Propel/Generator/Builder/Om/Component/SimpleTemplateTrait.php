@@ -34,12 +34,13 @@ trait SimpleTemplateTrait
         $m = new \Mustache_Engine;
         $classReflection = new \ReflectionClass(get_called_class());
         $currentDir = dirname($classReflection->getFileName());
+
         if (!$template) {
-            $template = $classReflection->getName();
+            $template = $classReflection->getShortName();
         }
 
         $filePath = $currentDir . '/templates/' . $template . '.mustache';
-        if (!$filePath) {
+        if (!file_exists($filePath)) {
             throw new BuildException(sprintf('Can not find template `%s`.', $filePath));
         }
 

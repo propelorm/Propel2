@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Propel\Generator\Behavior\Sluggable\Component;
+namespace Propel\Generator\Behavior\Sluggable\Component\Repository;
 
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
@@ -21,7 +21,6 @@ class CleanupSlugPartMethod extends BuildComponent
 
     public function process()
     {
-
         $body = $this->renderTemplate();
 
         $this->addMethod('cleanupSlugPart')

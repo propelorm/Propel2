@@ -10,13 +10,14 @@
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
+use Propel\Tests\BookstoreSchemas\Base\BaseBookstoreRepository;
 use Propel\Tests\BookstoreSchemas\Bookstore;
 use Propel\Tests\BookstoreSchemas\BookstoreContest;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntry;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
-use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreEntityMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
 
@@ -34,24 +35,25 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
     public function testParametersWithSchema()
     {
-        $storeTable = BookstoreTableMap::getTableMap();
-        $this->assertEquals(count($storeTable->getColumns()), 8, 'AggregateColumn adds one column by default');
+        $storeTable = $this->configuration->getEntityMap(BookstoreEntityMap::ENTITY_CLASS);
+        $this->assertEquals(count($storeTable->getFields()), 8, 'AggregateColumn adds one column by default');
         $this->assertTrue(method_exists('Propel\Tests\BookstoreSchemas\Bookstore', 'getTotalContestEntries'));
     }
 
     public function testComputeWithSchema()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);
-
         BookstoreContestEntryQuery::create()->deleteAll();
         BookstoreQuery::create()->deleteAll();
         CustomerQuery::create()->deleteAll();
         BookstoreContestQuery::create()->deleteAll();
 
+        /** @var BaseBookstoreRepository $repository */
+        $bookstoreRepository = $this->configuration->getRepository(BookstoreEntityMap::ENTITY_CLASS);
+
         $store = new Bookstore();
         $store->setStoreName('FreeAgent Bookstore');
         $store->save();
-        $this->assertEquals(0, $store->computeTotalContestEntries($con), 'The compute method returns 0 for objects with no related objects');
+        $this->assertEquals(0, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method returns 0 for objects with no related objects');
 
         $contest = new BookstoreContest();
         $contest->setBookstore($store);
@@ -65,7 +67,7 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry1->setCustomer($customer1);
         $entry1->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(1, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
 
         $customer2 = new Customer();
         $customer2->save();
@@ -76,8 +78,8 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry2->setCustomer($customer2);
         $entry2->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(2, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(2, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
         $entry1->delete();
-        $this->assertEquals(1, $store->computeTotalContestEntries($con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
     }
 }

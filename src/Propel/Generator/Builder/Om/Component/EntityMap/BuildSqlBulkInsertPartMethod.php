@@ -55,7 +55,9 @@ $entityReader = $this->getPropReader();
 if (!(\$value instanceof $dateTimeClass)) {
     \$value = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$value, null, '$dateTimeClass');
 }
-\$value = \$value->format('Y-m-d H:i:s');";
+if (null !== \$value) {
+    \$value = \$value->format('Y-m-d H:i:s');
+}";
                     break;
                 default:
             }

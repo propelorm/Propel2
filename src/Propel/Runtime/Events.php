@@ -18,4 +18,7 @@ class Events
 
     CONST PRE_INSERT = 'propel.pre_insert';
     CONST INSERT = 'propel.insert';
+
+    CONST PRE_DELETE = 'propel.pre_delete';
+    CONST DELETE = 'propel.delete';
 }

@@ -962,7 +962,7 @@ class Entity extends ScopedMappingModel implements IdMethod
      *
      * @return boolean
      */
-    private function hasSchema()
+    public function hasSchema()
     {
         return $this->database
         && ($this->schema ?: $this->database->getSchema())

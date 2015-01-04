@@ -8,15 +8,15 @@
  * @license MIT License
  */
 
-namespace Propel\Tests\Generator\Behavior\AggregateColumn;
+namespace Propel\Tests\Generator\Behavior\AggregateField;
 
 use Propel\Runtime\Propel;
-use Propel\Tests\Bookstore\Behavior\AggregateColumn;
+use Propel\Tests\Bookstore\Behavior\AggregateField;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
-use Propel\Tests\Bookstore\Behavior\Map\AggregatePostTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\AggregatePostEntityMap;
 use Propel\Tests\Bookstore\Behavior\AggregateItem;
 use Propel\Tests\Bookstore\Behavior\AggregateItemQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePoll;
@@ -25,24 +25,24 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 
 /**
- * Tests for AggregateColumnBehavior class
+ * Tests for AggregateFieldBehavior class
  *
  * @author François Zaninotto
  *
  * @group database
  */
-class AggregateColumnBehaviorTest extends BookstoreTestBase
+class AggregateFieldBehaviorTest extends BookstoreTestBase
 {
     protected function setUp()
     {
         parent::setUp();
-        include_once(__DIR__.'/AggregateColumnsBehaviorTestClasses.php');
+        include_once(__DIR__.'/AggregateFieldsBehaviorTestClasses.php');
     }
 
     public function testParameters()
     {
-        $postTable = AggregatePostTableMap::getTableMap();
-        $this->assertEquals(count($postTable->getColumns()), 2, 'AggregateColumn adds one column by default');
+        $postTable = $this->configuration->getEntityMap(AggregatePostEntityMap::ENTITY_CLASS);
+        $this->assertEquals(count($postTable->getFields()), 2, 'AggregateField adds one column by default');
         $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\AggregatePost', 'getNbComments'));
     }
 
