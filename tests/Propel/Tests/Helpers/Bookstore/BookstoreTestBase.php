@@ -29,9 +29,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
     protected function setUp()
     {
 	    parent::setUp();
-        if (!$this->configuration) {
-            $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
-            $this->configuration = include $file;
-        }
+        $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
+        $this->configuration = include $file;
     }
 }

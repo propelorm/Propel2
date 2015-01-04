@@ -433,7 +433,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
                         'ReviewDate' => null,
                         'Recommended' => true,
                         'Status' => null,
-                        'BookId' => null,
                         'Book' => '*RECURSION*'
                     ]
                 ]
@@ -441,7 +440,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
             EntityMap::TYPE_COLNAME => array (
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',
-                'iSBN' => '043935806X',
+                'isbn' => '043935806X',
                 'price' => 10.0,
                 'reviews' => [
                     [
@@ -459,31 +458,29 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 'book.title' => 'Harry Potter and the Order of the Phoenix',
                 'book.isbn' => '043935806X',
                 'book.price' => 10.0,
-                'Reviews' => [
+                'reviews' => [
                     [
                         'review.id' => null,
                         'review.reviewed_by' => 'Someone',
                         'review.review_date' => null,
                         'review.recommended' => true,
                         'review.status' => null,
-                        'review.book_id' => null,
-                        'Book' => '*RECURSION*'
+                        'book' => '*RECURSION*'
                     ]
                 ]
             ),
             EntityMap::TYPE_FIELDNAME => array (
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',
-                'isbn' => '043935806X',
+                'ISBN' => '043935806X',
                 'price' => 10.0,
                 'reviews' => [
                     [
                         'id' => null,
-                        'reviewed_by' => 'Someone',
-                        'review_date' => null,
+                        'reviewedBy' => 'Someone',
+                        'reviewDate' => null,
                         'recommended' => true,
                         'status' => null,
-                        'book_id' => null,
                         'book' => '*RECURSION*'
                     ]
                 ]
@@ -493,17 +490,14 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X',
                 '3' => 10.0,
-                '4' => null,
-                '5' => null,
-                'Reviews' => [
+                'reviews' => [
                     [
                         '0' => null,
                         '1' => 'Someone',
                         '2' => null,
-                        '3' => 1,
+                        '3' => true,
                         '4' => null,
-                        '5' => null,
-                        'Book' => '*RECURSION*',
+                        'book' => '*RECURSION*',
                     ]
                 ]
             )
@@ -516,7 +510,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 $expected,
                 $result,
                 'expected was: ' . print_r($expected, 1) .
-                'but toArray() returned ' . print_r($result, 1)
+                'but toArray() with type '.$type.' returned ' . print_r($result, 1)
             );
         }
     }

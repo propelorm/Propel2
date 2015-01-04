@@ -22,7 +22,6 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
  */
 class ObjectBuilder extends AbstractBuilder
 {
-
     use NamingTrait;
 
     public function buildClass()

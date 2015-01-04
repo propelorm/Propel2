@@ -55,15 +55,15 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
     }
 
     // overrides the parent basePreDelete() to bypass behavior hooks
-    protected function basePreDelete(ConnectionInterface $con)
+    protected function basePreDelete()
     {
-        return $this->preDelete($con);
+        return $this->preDelete();
     }
 
     // overrides the parent basePostDelete() to bypass behavior hooks
-    protected function basePostDelete($affectedRows, ConnectionInterface $con)
+    protected function basePostDelete($affectedRows)
     {
-        return $this->postDelete($affectedRows, $con);
+        return $this->postDelete($affectedRows);
     }
 
 }

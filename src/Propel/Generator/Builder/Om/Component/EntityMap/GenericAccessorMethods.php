@@ -6,6 +6,7 @@ use gossi\codegen\model\PhpConstant;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\PropelTypes;
 
 /**
@@ -86,6 +87,7 @@ if (\$foreignEntity) {
     \$value = \$foreignEntityMap->toArray(\$foreignEntity, \$keyType, \$includeLazyLoadColumns, \$includeForeignObjects, \$alreadyDumpedObjectsWatcher);
 }
 if (\$value) {
+    {$this->addRelationNameModifier()}
     \$array[\$relationName] = \$value;
 }
 ";
@@ -97,11 +99,13 @@ if (\$value) {
                 $toArrayCall = "\$foreignEntityMap->toArray(\$foreignEntity, \$keyType, \$includeLazyLoadColumns, \$includeForeignObjects, \$alreadyDumpedObjectsWatcher)";
                 $defaultValue = 'null';
                 $typeHint = 'object';
+                $relationSetter = $this->addRelationNameModifier();
             } else {
                 $propertyName = $this->getRefRelationCollVarName($refRelation);
                 $toArrayCall = "\$foreignEntity->toArray(null, false, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjectsWatcher)";
                 $defaultValue = '[]';
                 $typeHint = 'array|\Propel\Runtime\Collection\ObjectCollection';
+                $relationSetter = $this->addRelationNameModifier();
             }
 
             $body .= "
@@ -115,6 +119,7 @@ if (\$foreignEntity) {
     \$value = {$toArrayCall};
 }
 if (\$value) {
+    $relationSetter
     \$array[\$relationName] = \$value;
 }
 ";
@@ -140,6 +145,20 @@ Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
         $method->addSimpleDescParameter('includeLazyLoadColumns', 'boolean', 'Whether to include lazy loaded columns', true);
         $method->addSimpleDescParameter('includeForeignObjects', 'boolean', 'Whether to include hydrated related objects', false);
         $method->addSimpleParameter('alreadyDumpedObjectsWatcher', 'object', null);
+    }
+
+
+    /**
+     * Adds the switch-statement for looking up the array-key name for toArray
+     * @see toArray
+     */
+    protected function addRelationNameModifier()
+    {
+        return "
+    if (EntityMap::TYPE_PHPNAME === \$keyType) {
+        \$relationName = ucfirst(\$relationName);
+    }
+        ";
     }
 
     protected function addGetByName()

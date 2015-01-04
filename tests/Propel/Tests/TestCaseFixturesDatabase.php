@@ -24,5 +24,5 @@ use Symfony\Component\Finder\Finder;
  */
 class TestCaseFixturesDatabase extends TestCaseFixtures
 {
-    protected static $withDatabaseSchema = true;
+    protected $withDatabaseSchema = true;
 }

@@ -64,6 +64,10 @@ if (!is_resource(\$$varName) && \$$varName !== null) {
     rewind(\$stream);
     \$$varName = \$stream;
 }";
+        } else if ($field->isFloatingPointNumber()) {
+            $body = "
+\$$varName = (double)\$$varName;
+";
         } else {
         }
 

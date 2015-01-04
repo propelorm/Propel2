@@ -1201,6 +1201,11 @@ class Field extends MappingModel
         return $this->getType() === PropelTypes::ENUM;
     }
 
+    public function isFloatingPointNumber()
+    {
+        return in_array($this->getType(), [PropelTypes::FLOAT, PropelTypes::DOUBLE, PropelTypes::REAL]);
+    }
+
     /**
      * Sets the list of possible values for an ENUM column.
      *

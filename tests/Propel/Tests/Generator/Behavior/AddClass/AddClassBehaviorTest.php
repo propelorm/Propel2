@@ -10,7 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\AddClass;
 
-use Propel\Tests\Bookstore\Behavior\AddClassTableFooClass;
+use Propel\Tests\Bookstore\Behavior\AddClassEntityFooClass;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -22,7 +22,7 @@ class AddClassBehaviorTest extends TestCaseFixtures
 {
     public function testClassExists()
     {
-        $t = new AddClassTableFooClass();
-        $this->assertTrue($t instanceof AddClassTableFooClass, 'behaviors can generate classes that are autoloaded');
+        $t = new AddClassEntityFooClass();
+        $this->assertTrue($t instanceof AddClassEntityFooClass, 'behaviors can generate classes that are autoloaded');
     }
 }
