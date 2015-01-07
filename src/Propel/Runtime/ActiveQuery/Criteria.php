@@ -1025,6 +1025,28 @@ class Criteria
     }
 
     /**
+     * This method returns an already defined join clause from the query
+     *
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function getJoin($name)
+    {
+        return $this->joins[$name];
+    }
+
+    /**
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function hasJoin($name)
+    {
+        return isset($this->joins[$name]);
+    }
+
+    /**
      * Adds a Criteria as subQuery in the From Clause.
      *
      * @param Criteria $subQueryCriteria Criteria to build the subquery from
