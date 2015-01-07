@@ -159,6 +159,15 @@ class QueryBuilder extends AbstractOMBuilder
             $script .= "
  * @method     $modelClass findOneBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column";
         }
+
+        $script .= " * \n";
+
+        // magic requireOneBy() methods, for IDE completion
+        foreach ($this->getTable()->getColumns() as $column) {
+            $script .= "
+ * @method     $modelClass requireOneBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column and throws {$this->getEntityNotFoundExceptionClass()} when not found";
+        }
+
         $script .= "
  *
  * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
@@ -202,6 +211,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
         // apply behaviors
         $this->applyBehaviorModifier('queryAttributes', $script, "    ");
+        $this->addEntityNotFoundExceptionClass($script);
         $this->addConstructor($script);
         $this->addFactory($script);
         $this->addFindPk($script);
@@ -246,6 +256,20 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->applyBehaviorModifier('staticAttributes', $script, "    ");
         $this->applyBehaviorModifier('staticMethods', $script, "    ");
         $this->applyBehaviorModifier('queryMethods', $script, "    ");
+    }
+
+    /**
+     * Adds the entityNotFoundExceptionClass property which is necessary for the `requireOne` method
+     * of the `ModelCriteria`
+     */
+    protected function addEntityNotFoundExceptionClass(&$script)
+    {
+        $script .= "protected \$entityNotFoundExceptionClass = '" . addslashes($this->getEntityNotFoundExceptionClass()) . "';\n";
+    }
+
+    private function getEntityNotFoundExceptionClass()
+    {
+        return $this->getBuildProperty('generator.objectModel.entityNotFoundExceptionClass');
     }
 
     /**
