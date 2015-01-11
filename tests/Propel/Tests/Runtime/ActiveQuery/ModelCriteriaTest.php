@@ -2719,6 +2719,23 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX, YYY), $value)');
     }
 
+    public function testRequirePkReturnsModel()
+    {
+        // retrieve the test data
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $testBook = $c->findOne();
+
+        $book = BookQuery::create()->requirePk($testBook->getId());
+        $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
+    }
+
+    public function testRequirePkThrowsException()
+    {
+        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+
+        BookQuery::create()->requirePk(-1337);
+    }
+
     public function testRequireOneReturnsModel()
     {
         $book = BookQuery::create()->orderByTitle()->requireOne();

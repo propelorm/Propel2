@@ -162,6 +162,12 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= " * \n";
 
+        // override the signature of ModelCriteria::require*() to specify the class of the returned object, for IDE completion
+        $script .= "
+ * @method     $modelClass requirePk(\$key, ConnectionInterface \$con = null) Return the $modelClass by primary key and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ * @method     $modelClass requireOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ *";
+
         // magic requireOneBy() methods, for IDE completion
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
