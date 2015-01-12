@@ -998,6 +998,35 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
+     * Find object by primary key
+     * Behaves differently if the model has simple or composite primary key
+     * <code>
+     * // simple primary key
+     * $book  = $c->requirePk(12, $con);
+     * // composite primary key
+     * $bookOpinion = $c->requirePk(array(34, 634), $con);
+     * </code>
+     *
+     * Throws an exception when nothing was found.
+     *
+     * @param mixed               $key Primary key to use for the query
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requirePk($key, ConnectionInterface $con = null)
+    {
+        $result = $this->findPk($key, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
      * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
      * and format the result with the current formatter
      * By default, returns a model object.
