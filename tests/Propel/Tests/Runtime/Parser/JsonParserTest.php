@@ -104,24 +104,4 @@ EOF;
         $parser = new JsonParser();
         $this->assertEquals($list, $parser->fromJSON($json));
     }
-
-    public function testDateTimeToJSONUsesISO8601()
-    {
-        $parser = new JsonParser();
-
-        $datetime = new \DateTime('2014-12-31T17:11:27+0000');
-        $data = ['created_at' => $datetime];
-
-        $this->assertEquals('{"created_at":"2014-12-31T17:11:27Z"}', $parser->toJSON($data));
-    }
-
-    public function testDateTimeToJSONOutputsUTC()
-    {
-        $parser = new JsonParser();
-
-        $datetime = new \DateTime('2014-12-31T20:30:00+0100');
-        $data = ['created_at' => $datetime];
-
-        $this->assertEquals('{"created_at":"2014-12-31T19:30:00Z"}', $parser->toJSON($data));
-    }
 }

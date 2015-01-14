@@ -738,6 +738,16 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
     }
 
+    public function testToArrayDateTimeAsString()
+    {
+        $date = new \DateTime('2015-01-04T16:00:02Z');
+
+        $review = new Review();
+        $review->setReviewDate($date);
+
+        $this->assertEquals('2015-01-04T16:00:02Z', $review->toArray()['ReviewDate'], 'toArray() format temporal colums as ISO8601');
+    }
+
     public function testWithColumn()
     {
         $book = BookQuery::create()->withColumn('Title', 'TitleCopy')->findOne();
