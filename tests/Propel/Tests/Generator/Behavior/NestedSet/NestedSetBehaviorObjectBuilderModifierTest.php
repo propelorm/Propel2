@@ -534,6 +534,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
             t4  t6 t7
         */
         $this->assertEquals($t2, $t1->getFirstChild(), 'getFirstChild() returns the first child');
+        $this->assertNull($t2->getFirstChild(), 'getFirstChild() returns null for leaf');
     }
 
     public function testGetLastChild()
@@ -548,6 +549,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
             t4  t6 t7
         */
         $this->assertEquals($t5, $t1->getLastChild(), 'getLastChild() returns the last child');
+        $this->assertNull($t2->getLastChild(), 'getLastChild() returns null for leaf');
     }
 
     public function testGetSiblings()
