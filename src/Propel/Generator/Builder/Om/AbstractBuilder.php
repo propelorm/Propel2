@@ -92,7 +92,7 @@ abstract class AbstractBuilder extends DataModelBuilder
             return null;
         }
 
-//        $this->applyBehaviorModifier();
+        $this->applyBehaviorModifier();
 
         $generator = new CodeGenerator();
 

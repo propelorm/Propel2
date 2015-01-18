@@ -19,9 +19,10 @@ use Propel\Generator\Model\Column;
  */
 class SortableBehaviorQueryBuilderModifier
 {
+    /** @var  SortableBehavior */
     protected $behavior;
 
-    protected $table;
+    protected $entity;
 
     protected $builder;
 
@@ -34,7 +35,7 @@ class SortableBehaviorQueryBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->entity = $this->behavior->getEntity();
     }
 
     protected function getParameter($key)
@@ -52,7 +53,7 @@ class SortableBehaviorQueryBuilderModifier
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
         $this->queryClassName = $builder->getQueryClassName();
-        $this->tableMapClassName = $builder->getTableMapClassName();
+        $this->tableMapClassName = $builder->getEntityMapClassName();
     }
 
     public function queryMethods($builder)
@@ -75,8 +76,7 @@ class SortableBehaviorQueryBuilderModifier
         }
 
         // select termination methods
-        if ('rank' !== $this->getParameter('rank_column')
-            || $this->behavior->useScope()) {
+        if ('rank' !== $this->getParameter('rank_column') || $this->behavior->useScope()) {
             $this->addFindOneByRank($script);
         }
         $this->addFindList($script);

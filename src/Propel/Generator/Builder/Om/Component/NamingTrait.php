@@ -2,6 +2,7 @@
 namespace Propel\Generator\Builder\Om\Component;
 
 
+use gossi\codegen\model\PhpParameter;
 use gossi\codegen\model\PhpProperty;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\PhpModel\ClassDefinition;
@@ -45,6 +46,23 @@ trait NamingTrait
         $script .= $spaces . "$varName = {$this->getRepositoryGetter($entity)};";
 
         return $script;
+    }
+
+    /**
+     * @param PhpParameter[] $params
+     * @param string         $glue
+     *
+     * @return string
+     */
+    protected function parameterToString(array $params, $glue = ', ')
+    {
+        $names = [];
+        /** @var PhpParameter $param */
+        foreach ($params as $param) {
+            $names[] = '$' . $param->getName();
+        }
+
+        return implode($glue, $names);
     }
 
     /**

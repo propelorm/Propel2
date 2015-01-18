@@ -16,7 +16,7 @@ use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Entity;
 
 /**
- * Behavior to add sorentity columns and abilities
+ * Behavior to add Sortable columns and abilities
  *
  * @author François Zaninotto
  * @author heltem <heltem@o2php.com>
@@ -117,7 +117,7 @@ class SortableBehaviorObjectBuilderModifier
 
     public function preSave($builder)
     {
-        return "\$this->processSorentityQueries(\$con);";
+        return "\$this->processSortableQueries(\$con);";
     }
 
     public function preInsert($builder)
@@ -146,7 +146,7 @@ class SortableBehaviorObjectBuilderModifier
 
             $script = "// if scope has changed and rank was not modified (if yes, assuming superior action)
 // insert object to the end of new scope and cleanup old one
-if (($condition) && !\$this->isFieldModified({$this->entityMapClassName}::RANK_COL)) { {$this->queryClassName}::sorentityShiftRank(-1, \$this->{$this->getFieldGetter()}() + 1, null, \$this->oldScope, \$con);
+if (($condition) && !\$this->isFieldModified({$this->entityMapClassName}::RANK_COL)) { {$this->queryClassName}::SortableShiftRank(-1, \$this->{$this->getFieldGetter()}() + 1, null, \$this->oldScope, \$con);
     \$this->insertAtBottom(\$con);
 }
 ";
@@ -161,7 +161,7 @@ if (($condition) && !\$this->isFieldModified({$this->entityMapClassName}::RANK_C
         $this->setBuilder($builder);
 
         return "
-{$this->queryClassName}::sorentityShiftRank(-1, \$this->{$this->getFieldGetter()}() + 1, null, ". ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+{$this->queryClassName}::SortableShiftRank(-1, \$this->{$this->getFieldGetter()}() + 1, null, ". ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
 {$this->entityMapClassName}::clearInstancePool();
 ";
     }
@@ -173,7 +173,7 @@ if (($condition) && !\$this->isFieldModified({$this->entityMapClassName}::RANK_C
  * Queries to be executed in the save transaction
  * @var        array
  */
-protected \$sorentityQueries = array();
+protected \$SortableQueries = array();
 ";
         if ($this->behavior->useScope()) {
             $script .= "
@@ -213,7 +213,7 @@ protected \$oldScope;
         $this->addMoveToTop($script);
         $this->addMoveToBottom($script);
         $this->addRemoveFromList($script);
-        $this->addProcessSorentityQueries($script);
+        $this->addProcessSortableQueries($script);
 
         return $script;
     }
@@ -228,7 +228,7 @@ protected \$oldScope;
 
                     $search = "if (\$this->$name !== \$v) {";
                     $replace = $search . "
-            // sorentity behavior
+            // Sortable behavior
             \$this->oldScope[$idx] = \$this->$name;
 ";
                     $script = str_replace($search, $replace, $script);
@@ -240,7 +240,7 @@ protected \$oldScope;
 
                 $search = "if (\$this->$name !== \$v) {";
                 $replace = $search . "
-            // sorentity behavior
+            // Sortable behavior
             \$this->oldScope = \$this->$name;
 ";
                 $script = str_replace($search, $replace, $script);
@@ -504,8 +504,8 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     \$this->{$this->getFieldSetter()}(\$rank);
     if (\$rank != \$maxRank + 1) {
         // Keep the list modification query for the save() transaction
-        \$this->sorentityQueries []= array(
-            'callable'  => array('{$queryClassName}', 'sorentityShiftRank'),
+        \$this->SortableQueries []= array(
+            'callable'  => array('{$queryClassName}', 'SortableShiftRank'),
             'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->getScopeValue()" : '') . ")
         );
     }
@@ -590,7 +590,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     \$con->transaction(function () use (\$con, \$oldRank, \$newRank) {
         // shift the objects between the old and the new rank
         \$delta = (\$oldRank < \$newRank) ? -1 : 1;
-        {$this->queryClassName}::sorentityShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+        {$this->queryClassName}::SortableShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
 
         // move the object to its new rank
         \$this->{$this->getFieldSetter()}(\$newRank);
@@ -778,8 +778,8 @@ public function removeFromList()
         } else {
             $script .= "
     // Keep the list modification query for the save() transaction
-    \$this->sorentityQueries[] = array(
-        'callable'  => array('{$this->queryFullClassName}', 'sorentityShiftRank'),
+    \$this->SortableQueries[] = array(
+        'callable'  => array('{$this->queryFullClassName}', 'SortableShiftRank'),
         'arguments' => array(-1, \$this->{$this->getFieldGetter()}() + 1, null" . ($useScope ? ", \$this->getScopeValue()" : '') . ")
     );
     // remove the object from the list
@@ -793,19 +793,19 @@ public function removeFromList()
 ";
     }
 
-    protected function addProcessSorentityQueries(&$script)
+    protected function addProcessSortableQueries(&$script)
     {
         $script .= "
 /**
  * Execute queries that were saved to be run inside the save transaction
  */
-protected function processSorentityQueries(\$con)
+protected function processSortableQueries(\$con)
 {
-    foreach (\$this->sorentityQueries as \$query) {
+    foreach (\$this->SortableQueries as \$query) {
         \$query['arguments'][]= \$con;
         call_user_func_array(\$query['callable'], \$query['arguments']);
     }
-    \$this->sorentityQueries = array();
+    \$this->SortableQueries = array();
 }
 ";
     }

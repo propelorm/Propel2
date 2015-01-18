@@ -100,7 +100,7 @@ class ObjectFormatter extends AbstractFormatter
      *
      * @return ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row)
+    public function getAllObjectsFromRow(array $row)
     {
         // main object
         $columnIndex = 0;

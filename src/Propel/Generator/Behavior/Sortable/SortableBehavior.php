@@ -10,22 +10,29 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
+use gossi\codegen\model\PhpParameter;
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
  * Gives a model class the ability to be ordered
- * Uses one additional column storing the rank
+ * Uses one additional Field storing the rank
  *
  * @author Massimiliano Arione
  * @version     $Revision$
  */
 class SortableBehavior extends Behavior
 {
+    use ComponentTrait;
+
     // default parameters value
     protected $parameters = array(
-        'rank_column'  => 'sortable_rank',
+        'rank_Field'  => 'sortable_rank',
         'use_scope'    => 'false',
-        'scope_column' => '',
+        'scope_field' => '',
     );
 
     protected $objectBuilderModifier;
@@ -33,23 +40,23 @@ class SortableBehavior extends Behavior
     protected $tableMapBuilderModifier;
 
     /**
-     * Add the rank_column to the current table
+     * Add the rank_Field to the current table
      */
-    public function modifyTable()
+    public function modifyEntity()
     {
-        $table = $this->getTable();
+        $table = $this->getEntity();
 
-        if (!$table->hasColumn($this->getParameter('rank_column'))) {
-            $table->addColumn(array(
-                'name' => $this->getParameter('rank_column'),
+        if (!$table->hasField($this->getParameter('rank_Field'))) {
+            $table->addField(array(
+                'name' => $this->getParameter('rank_Field'),
                 'type' => 'INTEGER'
             ));
         }
 
         if ($this->useScope()) {
-            if (!$this->hasMultipleScopes() && !$table->hasColumn($this->getParameter('scope_column'))) {
-                $table->addColumn(array(
-                    'name' => $this->getParameter('scope_column'),
+            if (!$this->hasMultipleScopes() && !$table->hasField($this->getParameter('scope_field'))) {
+                $table->addField(array(
+                    'name' => $this->getParameter('scope_field'),
                     'type' => 'INTEGER'
                 ));
             }
@@ -57,38 +64,77 @@ class SortableBehavior extends Behavior
             $scopes = $this->getScopes();
             if (0 === count($scopes)) {
                 throw new \InvalidArgumentException(sprintf(
-                    'The sortable behavior in `%s` needs a `scope_column` parameter.',
-                    $this->getTable()->getName()
+                    'The sortable behavior in `%s` needs a `scope_field` parameter.',
+                    $this->getEntity()->getName()
                 ));
             }
         }
     }
 
-    public function getObjectBuilderModifier()
+    public function queryBuilderModification(QueryBuilder $builder)
     {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new SortableBehaviorObjectBuilderModifier($this);
+        if ('rank' !== $this->getParameter('rank_column')) {
+            $this->applyComponent('Query\\FilterByRankMethod', $builder);
+            $this->applyComponent('Query\\OrderByRankMethod', $builder);
         }
 
-        return $this->objectBuilderModifier;
+        if ('rank' !== $this->getParameter('rank_column') || $this->useScope()) {
+            $this->applyComponent('Query\\FindOneByRankMethod', $builder);
+        }
+
+        $this->applyComponent('Query\\FindListMethod', $builder);
+
+        // utilities
+        $this->applyComponent('Query\\GetMaxRankMethod', $builder);
+        $this->applyComponent('Query\\GetMaxRankArrayMethod', $builder);
+//        $this->addRetrieveByRank($script); redundant to findOneByRank
+//        $this->addReorder($script); not in use
+//        $this->addDoSelectOrderByRank($script); redundant to orderByRank()->find()
+
+        if ($this->useScope()) {
+//            $this->addRetrieveList($script); not in use, redundant to findList()
+//            $this->addCountList($script); redundant to inList()->count
+//            $this->addDeleteList($script);  redundant to inList()->delete, move to repository
+            $this->applyComponent('Query\\InListMethod', $builder);
+            $this->applyComponent('Query\\FilterByNormalizedListScopeMethod', $builder);
+        }
     }
 
-    public function getQueryBuilderModifier()
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-        if (null === $this->queryBuilderModifier) {
-            $this->queryBuilderModifier = new SortableBehaviorQueryBuilderModifier($this);
-        }
+        $this->applyComponent('Repository\\SortableShiftRankMethod', $builder);
 
-        return $this->queryBuilderModifier;
+        $this->applyComponent('Repository\\IsFirstMethod', $builder);
+
+        $this->addIsFirst($script);
+        $this->addIsLast($script);
+        $this->addGetNext($script);
+        $this->addGetPrevious($script);
+        $this->addInsertAtRank($script);
+        $this->addInsertAtBottom($script);
+        $this->addInsertAtTop($script);
+        $this->addMoveToRank($script);
+        $this->addSwapWith($script);
+        $this->addMoveUp($script);
+        $this->addMoveDown($script);
+        $this->addMoveToTop($script);
+        $this->addMoveToBottom($script);
+        $this->addRemoveFromList($script);
+        $this->addProcessSortableQueries($script);
     }
 
-    public function getTableMapBuilderModifier()
+    public function objectBuilderModification(ObjectBuilder $builder)
     {
-        if (null === $this->tableMapBuilderModifier) {
-            $this->tableMapBuilderModifier = new SortableBehaviorTableMapBuilderModifier($this);
+
+        if ('rank' !== $this->getParameter('rank_field')) {
+            $this->applyComponent('Repository\\RankAccessorMethod', $builder);
+//            $this->addRankAccessors($script);
         }
 
-        return $this->tableMapBuilderModifier;
+        if ($this->useScope() && 'scope_value' !== $this->getParameter('rank_field')) {
+            $this->applyComponent('Repository\\ScopeAccessorMethod', $builder);
+//            $this->addScopeAccessors($script);
+        }
     }
 
     public function useScope()
@@ -100,13 +146,11 @@ class SortableBehavior extends Behavior
      * Generates the method argument signature, the appropriate phpDoc for @params,
      * the scope builder php code and the scope variable builder php code/
      *
-     * @return array ($methodSignature, $paramsDoc, $scopeBuilder, $buildScopeVars)
+     * @return array ($methodSignature, $scopeBuilder, $buildScopeVars)
      */
     public function generateScopePhp()
     {
-
-        $methodSignature = '';
-        $paramsDoc       = '';
+        $methodSignature = array();
         $buildScope      = '';
         $buildScopeVars  = '';
 
@@ -114,39 +158,42 @@ class SortableBehavior extends Behavior
 
             $methodSignature = array();
             $buildScope      = array();
-            $paramsDoc       = array();
 
             foreach ($this->getScopes() as $idx => $scope) {
 
-                $column = $this->table->getColumn($scope);
-                $param  = '$scope'.$column->getName();
+                $field = $this->getEntity()->getField($scope);
+                $paramName  = 'scope' . $field->getName();
 
-                $buildScope[]     = "    \$scope[] = $param;\n";
-                $buildScopeVars[] = "    $param = \$scope[$idx];\n";
-                $paramsDoc[]      = " * @param     ".$column->getPhpType()." $param Scope value for column `".$column->getName()."`";
+                $buildScope[]     = "    \$scope[] = \$$paramName;\n";
+                $buildScopeVars[] = "    \$$paramName = \$scope[$idx];\n";
+                $param = PhpParameter::create($paramName)
+                    ->setType($field->getPhpType())
+                    ->setDescription("Scope value for Field `{$field->getName()}`");
 
-                if (!$column->isNotNull()) {
-                    $param .= ' = null';
+                if (!$field->isNotNull()) {
+                    $param->setDefaultValue(null);
                 }
+
                 $methodSignature[] = $param;
             }
 
-            $methodSignature = implode(', ', $methodSignature);
-            $paramsDoc       = implode("\n", $paramsDoc);
             $buildScope      = "\n".implode('', $buildScope)."\n";
             $buildScopeVars  = "\n".implode('', $buildScopeVars)."\n";
 
         } elseif ($this->useScope()) {
-            $methodSignature = '$scope';
-            if ($column = $this->table->getColumn($this->getParameter('scope_column'))) {
-                if (!$column->isNotNull()) {
-                    $methodSignature .= ' = null';
-                }
-                $paramsDoc .= ' * @param '.$column->getPhpType().' $scope Scope to determine which objects node to return';
+            $field = $this->getEntity()->getField($this->getParameter('scope_field'));
+
+            $paramName = PhpParameter::create('scope')
+                ->setType($field->getPhpType())
+                ->setDescription("Scope to determine which objects node to return");
+
+            if (!$field->isNotNull()) {
+                $paramName->setDefaultValue(null);
             }
+            $methodSignature[] = $paramName;
         }
 
-        return array($methodSignature, $paramsDoc, $buildScope, $buildScopeVars);
+        return array($methodSignature, $buildScope, $buildScopeVars);
     }
 
     /**
@@ -155,9 +202,9 @@ class SortableBehavior extends Behavior
      * @param  string $name
      * @return string
      */
-    public function getColumnGetter($name)
+    public function getFieldGetter($name)
     {
-        return 'get' . $this->getTable()->getColumn($name)->getName();
+        return 'get' . $this->getEntity()->getField($name)->getName();
     }
 
     /**
@@ -166,9 +213,9 @@ class SortableBehavior extends Behavior
      * @param  string $name
      * @return string
      */
-    public function getColumnSetter($name)
+    public function getFieldSetter($name)
     {
-        return 'set' . $this->getTable()->getColumn($name)->getName();
+        return 'set' . $this->getEntity()->getField($name)->getName();
     }
 
     /**
@@ -176,27 +223,27 @@ class SortableBehavior extends Behavior
      */
     public function addParameter(array $parameter)
     {
-        if ('scope_column' === $parameter['name']) {
-            $this->parameters['scope_column'] .= ($this->parameters['scope_column'] ? ',' : '') . $parameter['value'];
+        if ('scope_field' === $parameter['name']) {
+            $this->parameters['scope_field'] .= ($this->parameters['scope_field'] ? ',' : '') . $parameter['value'];
         } else {
             parent::addParameter($parameter);
         }
     }
 
     /**
-     * Returns all scope columns as array.
+     * Returns all scope Fields as array.
      *
      * @return string[]
      */
     public function getScopes()
     {
-        return $this->getParameter('scope_column')
-            ? explode(',', str_replace(' ', '', trim($this->getParameter('scope_column'))))
+        return $this->getParameter('scope_field')
+            ? explode(',', str_replace(' ', '', trim($this->getParameter('scope_field'))))
             : array();
     }
 
     /**
-     * Returns true if the behavior has multiple scope columns.
+     * Returns true if the behavior has multiple scope Fields.
      *
      * @return bool
      */

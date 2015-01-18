@@ -43,7 +43,7 @@ class PDODataFetcher extends AbstractDataFetcher
     public function next()
     {
         if (null !== $this->dataObject) {
-            $this->current = $this->dataObject->fetch(\PDO::FETCH_ASSOC);
+            $this->current = $this->dataObject->fetch(\PDO::FETCH_NUM);
             if ($this->current) {
                 $this->index++;
             }
