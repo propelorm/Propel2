@@ -19,6 +19,7 @@ use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Country;
+use Propel\Runtime\Propel;
 /**
  * Test class for ObjectCollection.
  *
@@ -156,6 +157,18 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertEquals($count, $this->con->getQueryCount());
     }
 
+    /**
+     * @expectedException \Propel\Runtime\Exception\RuntimeException
+     * @expectedExceptionMessage Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection
+     */
+    public function testPopulateRelationWhenInstancePoolingIsDisabled()
+    {
+        $coll = new ObjectCollection();
+
+        Propel::disableInstancePooling();
+        $coll->populateRelation('Book');
+    }
+
     public function testContainsWithClassicBehavior()
     {
         $col = new ObjectCollection();
@@ -251,5 +264,13 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection(array($b1));
         $this->assertTrue(0 === $col->search($b1));
         $this->assertFalse(0 === $col->search($b2));
+    }
+
+    /**
+     * @afterClass
+     */
+    public static function enableInstancePooling()
+    {
+        Propel::enableInstancePooling(); //Enable it for the other tests
     }
 }
