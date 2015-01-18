@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Manager;
 
-use Propel\Generator\Exception\BuildException;
-
 /**
  * Manager for Graphviz representation.
  *
