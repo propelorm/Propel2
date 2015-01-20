@@ -10,6 +10,9 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+
 /**
  * RelationMap is used to model a database relationship.
  *
@@ -48,10 +51,19 @@ class RelationMap
 
     protected $foreignTable;
 
+    protected $polymorphic = false;
+
     /**
      * @var ColumnMap[]
      */
     protected $localColumns = array();
+
+    /**
+     * Values used for polymorphic associations.
+     *
+     * @var array
+     */
+    protected $localValues = array();
 
     /**
      * @var ColumnMap[]
@@ -70,6 +82,22 @@ class RelationMap
     public function __construct($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPolymorphic()
+    {
+        return $this->polymorphic;
+    }
+
+    /**
+     * @param boolean $polymorphic
+     */
+    public function setPolymorphic($polymorphic)
+    {
+        $this->polymorphic = $polymorphic;
     }
 
     /**
@@ -180,13 +208,20 @@ class RelationMap
     /**
      * Add a column mapping
      *
-     * @param \Propel\Runtime\Map\ColumnMap $local   The local column
-     * @param \Propel\Runtime\Map\ColumnMap $foreign The foreign column
+     * @param ColumnMap       $local   The local column
+     * @param ColumnMap|mixed $foreign The foreign column or value
      */
-    public function addColumnMapping(ColumnMap $local, ColumnMap $foreign)
+    public function addColumnMapping(ColumnMap $local, $foreign)
     {
         $this->localColumns[] = $local;
-        $this->foreignColumns[] = $foreign;
+
+        if ($foreign instanceof ColumnMap) {
+            $this->foreignColumns[] = $foreign;
+            $this->localValues[] = null;
+        } else {
+            $this->localValues[] = $foreign;
+            $this->foreignColumns[] = null;
+        }
     }
 
     /**
@@ -275,6 +310,14 @@ class RelationMap
     public function getRightColumns()
     {
         return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignColumns() : $this->getLocalColumns();
+    }
+
+    /**
+     * @return array
+     */
+    public function getLocalValues()
+    {
+        return $this->localValues;
     }
 
     /**

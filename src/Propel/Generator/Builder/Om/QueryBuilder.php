@@ -1126,12 +1126,19 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         if ($objectName instanceof $fkPhpName) {
             return \$this";
-        foreach ($fk->getLocalForeignMapping() as $localColumn => $foreignColumn) {
-            $localColumnObject = $table->getColumn($localColumn);
-            $foreignColumnObject = $fkTable->getColumn($foreignColumn);
-            $script .= "
-                ->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+
+        foreach ($fk->getMapping() as $mapping) {
+            list($localColumn, $rightValueOrColumn) = $mapping;
+            if ($rightValueOrColumn instanceof Column) {
+                $script .= "
+                ->addUsingAlias(" . $this->getColumnConstant($localColumn) . ", " . $objectName . "->get" . $rightValueOrColumn->getPhpName() . "(), \$comparison)";
+            } else {
+                $value = var_export($rightValueOrColumn, true);
+                $script .= "
+                ->addUsingAlias(" . $this->getColumnConstant($localColumn) . ", $value, \$comparison)";
+            }
         }
+
         $script .= ";";
         if (!$fk->isComposite()) {
             $localColumnConstant = $this->getColumnConstant($fk->getLocalColumn());
@@ -1173,7 +1180,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException'
         );
-        $table = $this->getTable();
         $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
@@ -1185,7 +1191,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Filter the query by a related $fkPhpName object
      *
-     * @param $fkPhpName|ObjectCollection $objectName  the related object to use as filter
+     * @param $fkPhpName|ObjectCollection $objectName the related object to use as filter
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $queryClass The current query, for fluid interface
@@ -1194,11 +1200,21 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         if ($objectName instanceof $fkPhpName) {
             return \$this";
-        foreach ($fk->getForeignLocalMapping() as $localColumn => $foreignColumn) {
-            $localColumnObject = $table->getColumn($localColumn);
-            $foreignColumnObject = $fkTable->getColumn($foreignColumn);
-            $script .= "
-                ->addUsingAlias(" . $this->getColumnConstant($localColumnObject) . ", " . $objectName . "->get" . $foreignColumnObject->getPhpName() . "(), \$comparison)";
+        foreach ($fk->getInverseMapping() as $mapping) {
+            /** @var Column $foreignColumn */
+            list($localValueOrColumn, $foreignColumn) = $mapping;
+            $rightValue = "{$objectName}->get" . $foreignColumn->getPhpName() . "()";
+
+            if ($localValueOrColumn instanceof Column) {
+                $script .= "
+                ->addUsingAlias(" . $this->getColumnConstant($localValueOrColumn) . ", $rightValue, \$comparison)";
+            } else {
+                $leftValue = var_export($localValueOrColumn, true);
+                $bindingType = $foreignColumn->getPDOType();
+                $script .= "
+                ->where(\"$leftValue = ?\", $rightValue, $bindingType)";
+            }
+
         }
         $script .= ";";
         if (!$fk->isComposite()) {

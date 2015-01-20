@@ -736,7 +736,7 @@ class Table extends ScopedMappingModel implements IdMethod
                     if (!$foreignColumn->hasReferrer($foreignKey)) {
                         $foreignColumn->addReferrer($foreignKey);
                     }
-                } elseif ($throwErrors) {
+                } elseif ($throwErrors && !$foreignKey->isPolymorphic()) {
                     // if the foreign column does not exist, we may have an
                     // external reference or a misspelling
                     throw new BuildException(sprintf(

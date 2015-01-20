@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\AggregateColumn;
 
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\ForeignKey;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -95,9 +96,15 @@ class AggregateColumnBehavior extends Behavior
 
         $bindings = array();
         $database = $this->getTable()->getDatabase();
-        foreach ($this->getForeignKey()->getColumnObjectsMapping() as $index => $columnReference) {
-            $conditions[] = $columnReference['local']->getFullyQualifiedName() . ' = :p' . ($index + 1);
-            $bindings[$index + 1]   = $columnReference['foreign']->getPhpName();
+
+        if ($this->getForeignKey()->isPolymorphic()) {
+            throw new \InvalidArgumentException('AggregateColumnBehavior does not work with polymorphic relations.');
+        }
+
+        foreach ($this->getForeignKey()->getMapping() as $index => $mapping) {
+            list($localColumn, $foreignColumn) = $mapping;
+            $conditions[] = $localColumn->getFullyQualifiedName() . ' = :p' . ($index + 1);
+            $bindings[$index + 1]   = $foreignColumn->getPhpName();
         }
         $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
@@ -137,6 +144,9 @@ class AggregateColumnBehavior extends Behavior
         return $database->getTable($tableName);
     }
 
+    /**
+     * @return ForeignKey
+     */
     protected function getForeignKey()
     {
         $foreignTable = $this->getForeignTable();
