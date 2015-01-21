@@ -1475,6 +1475,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
                 $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
+                if (!$colFK) {
+                    continue;
+                }
+
                 $varName = $this->getFKVarName($fk);
 
                 $script .= "
@@ -3318,18 +3322,28 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
     {";
-        foreach ($fk->getLocalColumns() as $columnName) {
-            $column = $table->getColumn($columnName);
-            $lfmap = $fk->getLocalForeignMapping();
-            $colFKName = $lfmap[$columnName];
-            $colFK = $fkTable->getColumn($colFKName);
-            $script .= "
+
+        foreach ($fk->getMapping() as $map) {
+            list($column, $rightValueOrColumn) = $map;
+
+            if ($rightValueOrColumn instanceof Column) {
+                $script .= "
         if (\$v === null) {
-            \$this->set".$column->getPhpName()."(".$this->getDefaultValueString($column).");
+            \$this->set" . $column->getPhpName() . "(" . $this->getDefaultValueString($column) . ");
         } else {
-            \$this->set".$column->getPhpName()."(\$v->get".$colFK->getPhpName()."());
+            \$this->set" . $column->getPhpName() . "(\$v->get" . $rightValueOrColumn->getPhpName() . "());
         }
 ";
+            } else {
+                $val = var_export($rightValueOrColumn, true);
+                $script .= "
+        if (\$v === null) {
+            \$this->set" . $column->getPhpName() . "(null);
+        } else {
+            \$this->set" . $column->getPhpName() . "($val);
+        }
+                ";
+            }
 
         } /* foreach local col */
 
@@ -3389,24 +3403,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // of instance pooling
         $findPk = $fk->isForeignPrimaryKey();
 
-        foreach ($fk->getLocalColumns() as $columnName) {
+        foreach ($fk->getMapping() as $mapping) {
+            list($column, $rightValueOrColumn) = $mapping;
 
-            $lfmap = $fk->getLocalForeignMapping();
-
-            $foreignColumn = $fk->getForeignTable()->getColumn($lfmap[$columnName]);
-
-            $column = $table->getColumn($columnName);
             $cptype = $column->getPhpType();
             $clo = $column->getLowercasedName();
-            $localColumns[$foreignColumn->getPosition()] = '$this->'.$clo;
 
-            if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
-                $conditional .= $and . "\$this->". $clo ." != 0";
-            } elseif ($cptype == "string") {
-                $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+            if ($rightValueOrColumn instanceof Column) {
+                $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
+
+                if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
+                    $conditional .= $and . "\$this->". $clo ." != 0";
+                } elseif ($cptype == "string") {
+                    $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+                } else {
+                    $conditional .= $and . "\$this->" . $clo ." !== null";
+                }
             } else {
-                $conditional .= $and . "\$this->" . $clo ." !== null";
+                $val = var_export($rightValueOrColumn, true);
+                $conditional .= $and . "\$this->" . $clo ." === " . $val;
             }
+
 
             $and = " && ";
         }
@@ -5924,6 +5941,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
                     $varName = $this->getFKVarName($fk);
+
+                    if (!$colFK) {
+                        continue;
+                    }
 
                     $script .= "
         if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {

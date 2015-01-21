@@ -222,7 +222,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
         if ($this->supportsForeignKeys($table)) {
             foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+                if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
                 $lines[] = str_replace("
@@ -542,7 +542,7 @@ DROP INDEX %s ON %s;
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
         if (!$this->supportsForeignKeys($fk->getTable())) return '';
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "

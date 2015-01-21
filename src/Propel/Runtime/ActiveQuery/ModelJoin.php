@@ -31,12 +31,29 @@ class ModelJoin extends Join
     {
         $leftCols = $relationMap->getLeftColumns();
         $rightCols = $relationMap->getRightColumns();
+        $leftValues = $relationMap->getLocalValues();
         $nbColumns = $relationMap->countColumnMappings();
+
         for ($i=0; $i < $nbColumns; $i++) {
-            $this->addExplicitCondition(
-                $leftCols[$i]->getTableName(), $leftCols[$i]->getName(), $leftTableAlias,
-                $rightCols[$i]->getTableName(), $rightCols[$i]->getName(), $relationAlias,
-                Criteria::EQUAL);
+            if (null !== $leftValues[$i]) {
+                $this->addLocalValueCondition(
+                    $leftCols[$i]->getTableName(),
+                    $leftCols[$i]->getName(),
+                    $leftTableAlias,
+                    $leftValues[$i],
+                    Criteria::EQUAL
+                );
+            } else {
+                $this->addExplicitCondition(
+                    $leftCols[$i]->getTableName(),
+                    $leftCols[$i]->getName(),
+                    $leftTableAlias,
+                    $rightCols[$i]->getTableName(),
+                    $rightCols[$i]->getName(),
+                    $relationAlias,
+                    Criteria::EQUAL
+                );
+            }
         }
         $this->relationMap = $relationMap;
 

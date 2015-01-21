@@ -469,7 +469,7 @@ PRAGMA foreign_keys = ON;
 
         if ($this->foreignKeySupport) {
             foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+                if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
                 $lines[] = str_replace("
@@ -497,7 +497,7 @@ PRAGMA foreign_keys = ON;
 
     public function getForeignKeyDDL(ForeignKey $fk)
     {
-        if ($fk->isSkipSql() || !$this->foreignKeySupport) {
+        if ($fk->isSkipSql() || !$this->foreignKeySupport || $fk->isPolymorphic()) {
             return;
         }
 

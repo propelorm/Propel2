@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Manager;
 
-use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Model\Column;
 
 /**
  * Manager for Graphviz representation.
@@ -56,8 +56,16 @@ class GraphvizManager extends AbstractManager
                     $dotSyntax .= 'node'.$tbl->getName();
                     $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
                     $label = [];
-                    foreach ($fk->getColumnObjectsMapping() as $map) {
-                        $label[] = $map['local']->getName().'='.$map['foreign']->getName();
+                    foreach ($fk->getMapping() as $map) {
+                        list ($localColumn, $foreignValueOrColumn) = $map;
+                        $labelString = $localColumn->getName().'=';
+                        if ($foreignValueOrColumn instanceof Column) {
+                            $labelString .= $foreignValueOrColumn->getName();
+                        } else {
+                            $labelString .= var_export($foreignValueOrColumn, true);
+                        }
+
+                        $label[] = $labelString;
                     }
                     $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
                     $dotSyntax .= "\n";

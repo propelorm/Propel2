@@ -64,7 +64,7 @@ class TableMapBuilderTest extends BookstoreTestBase
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
         $this->assertEquals(
-            12,
+            13,
             count($bookTable->getRelations()),
             'The map builder creates relations for both incoming and outgoing keys'
         );

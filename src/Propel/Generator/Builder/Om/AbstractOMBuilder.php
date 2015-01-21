@@ -834,9 +834,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     protected static function getRelatedBySuffix(ForeignKey $fk)
     {
         $relCol = '';
-        foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {
+
+        foreach ($fk->getMapping() as $mapping) {
+            list($localColumn, $foreignValueOrColumn) = $mapping;
+            $localColumnName = $localColumn->getPhpName();
             $localTable  = $fk->getTable();
-            $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
                 throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
@@ -884,16 +886,18 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     protected static function getRefRelatedBySuffix(ForeignKey $fk)
     {
         $relCol = '';
-        foreach ($fk->getLocalForeignMapping() as $localColumnName => $foreignColumnName) {
+        foreach ($fk->getMapping() as $mapping) {
+            list($localColumn, $foreignValueOrColumn) = $mapping;
+            $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
-            $localColumn = $localTable->getColumn($localColumnName);
             if (!$localColumn) {
                 throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
             $foreignKeysToForeignTable = $localTable->getForeignKeysReferencingTable($fk->getForeignTableName());
-            if ($fk->getForeignTableName() == $fk->getTableName()) {
+            if ($foreignValueOrColumn instanceof Column && $fk->getForeignTableName() == $fk->getTableName()) {
+                $foreignColumnName = $foreignValueOrColumn->getPhpName();
                 // self referential foreign key
-                $relCol .= $fk->getForeignTable()->getColumn($foreignColumnName)->getPhpName();
+                $relCol .= $foreignColumnName;
                 if (count($foreignKeysToForeignTable) > 1) {
                     // several self-referential foreign keys
                     $relCol .= array_search($fk, $foreignKeysToForeignTable);
