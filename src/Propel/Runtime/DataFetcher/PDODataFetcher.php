@@ -90,6 +90,7 @@ class PDODataFetcher extends AbstractDataFetcher
     public function close()
     {
         $this->getDataObject()->closeCursor();
+        $this->setDataObject(null); //so the connection can be garbage collected
         $this->current = null;
         $this->index   = -1;
     }
