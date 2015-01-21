@@ -20,6 +20,35 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class TypeTest extends BookstoreTestBase
 {
+    public function testTypeHintClass()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setDummyObject');
+        $param = $method->getParameters()[0];
+
+        $this->assertEquals('Propel\Tests\Runtime\TypeTests\DummyObjectClass', $param->getClass()->name);
+        $this->assertTrue($param->allowsNull());
+    }
+
+    public function testTypeHintArray()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setSomeArray');
+        $param = $method->getParameters()[0];
+
+        $this->assertTrue($param->isArray());
+        $this->assertTrue($param->allowsNull());
+    }
+
+    public function testInterface()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setTypeObject');
+        $param = $method->getParameters()[0];
+
+        $this->assertEquals('Propel\Tests\Runtime\TypeTests\TypeObjectInterface', $param->getClass()->name);
+        $this->assertTrue($param->allowsNull());
+    }
 
     public function testObjectType()
     {

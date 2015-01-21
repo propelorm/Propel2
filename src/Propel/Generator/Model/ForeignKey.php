@@ -96,6 +96,11 @@ class ForeignKey extends MappingModel
     private $skipSql;
 
     /**
+     * @var string
+     */
+    private $interface;
+
+    /**
      * @var bool
      */
     private $autoNaming = false;
@@ -129,6 +134,7 @@ class ForeignKey extends MappingModel
         $this->phpName     = $this->getAttribute('phpName');
         $this->refPhpName  = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
+        $this->interface   = $this->getAttribute('interface');
         $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
         $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
         $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
@@ -272,6 +278,22 @@ class ForeignKey extends MappingModel
     {
         $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInterface()
+    {
+        return $this->interface;
+    }
+
+    /**
+     * @param string $interface
+     */
+    public function setInterface($interface)
+    {
+        $this->interface = $interface;
     }
 
     /**
