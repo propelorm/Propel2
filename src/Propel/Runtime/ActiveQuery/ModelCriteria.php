@@ -270,6 +270,26 @@ class ModelCriteria extends BaseModelCriteria
 
         return $this;
     }
+    
+    /**
+     * Adds a GROUP BY clause for certain columns to the query
+     * Examples:
+     *   $c->groupByArray(array('Book.AuthorId', 'Book.AuthorName'))
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_NAME)  
+     *
+     * @param array $columns The column to group by
+     *
+     * @return $this|ModelCriteria The current object, for fluid interface
+     */
+    public function groupByArray(array $columns)
+    {
+        foreach ($columns as $column) {
+            $this->groupBy($column);
+        }
+        
+        return $this;
+    }
 
     /**
      * Adds a GROUP BY clause for all columns of a model to the query
