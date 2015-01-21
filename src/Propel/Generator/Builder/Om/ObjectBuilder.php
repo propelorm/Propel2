@@ -1189,7 +1189,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".$column->getPhpType()."
+     * @return ".($column->getTypeHint() ?: $column->getPhpType())."
      */";
     }
 
@@ -1420,8 +1420,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $this->getTable()->isReadOnly() ? 'protected' : $column->getMutatorVisibility();
 
+        $typeHint = '';
+        $null = '';
+
+        if ($column->getTypeHint()) {
+            $typeHint = $column->getTypeHint();
+            if ('array' !== $typeHint) {
+                $typeHint = $this->declareClass($typeHint);
+            }
+
+            $typeHint .= ' ';
+
+            if (!$column->isNotNull()) {
+                $null = ' = null';
+            }
+        }
+
         $script .= "
-    ".$visibility." function set$cfc(\$v)
+    ".$visibility." function set$cfc($typeHint\$v$null)
     {";
     }
 
@@ -3308,7 +3324,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
 
-        $className = $this->getClassNameFromTable($fkTable);
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromTable($fkTable);
+        }
 
         $varName = $this->getFKVarName($fk);
 
@@ -3392,7 +3412,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
-        $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+        $returnDesc = '';
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+            $returnDesc = "The associated $className object.";
+        }
 
         $and = '';
         $conditional = '';
@@ -3438,7 +3464,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className The associated $className object.
+     * @return $className $returnDesc
      * @throws PropelException
      */
     public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)

@@ -103,6 +103,7 @@ PHP class or method name.
   inheritance (single|false) "false"
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
+  typeHint CDATA #IMPLIED
   lazyLoad (true|false) "false"
   primaryString (true|false) "false"
   valueSet CDATA #IMPLIED
@@ -123,6 +124,7 @@ PHP class or method name.
   name CDATA #IMPLIED
   phpName CDATA #IMPLIED
   refPhpName CDATA #IMPLIED
+  interface CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
   skipSql (true|false) "false"

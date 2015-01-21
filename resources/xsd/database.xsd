@@ -437,6 +437,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="typeHint" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    "array" or a php class or interface name which will be used as typeHint for its setter, and @return phpDoc of its getter method.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="lazyLoad" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
@@ -515,6 +522,7 @@
         </xs:attribute>
         <xs:attribute name="onDelete" type="delete" default="none"/>
         <xs:attribute name="onUpdate" type="update" default="none"/>
+        <xs:attribute name="interface" type="php_namespace" use="optional"/>
         <xs:attribute name="skipSql" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
