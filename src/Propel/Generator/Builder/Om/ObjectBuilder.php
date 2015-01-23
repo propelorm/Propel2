@@ -1610,7 +1610,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-                \$this->$clo = \$dt;
+                \$this->$clo = \$dt === null ? null : clone \$dt;
                 \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
             }
         } // if either are not null
