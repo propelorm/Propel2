@@ -24,7 +24,6 @@ class Issue768Test extends TestCase
         if (!class_exists('\Timing')) {
             $schema = '
             <database name="issue_768" defaultIdMethod="native">
-            <adapter>mysql</adapter>
                 <table name="timing">
                     <column name="id" primaryKey="true" type="INTEGER" />
                     <column name="date" type="DATE" />
