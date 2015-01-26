@@ -10,12 +10,12 @@ namespace Propel\Tests\Issues;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
+
 /**
- * This test proves the bug described in https://github.com/propelorm/Propel2/issues/768.
+ * Regression test for https://github.com/propelorm/Propel2/issues/768
  *
  * @group database
  */
-
 class Issue768Test extends TestCase
 {
     protected function setUp()
@@ -24,6 +24,7 @@ class Issue768Test extends TestCase
         if (!class_exists('\Timing')) {
             $schema = '
             <database name="issue_768" defaultIdMethod="native">
+            <adapter>mysql</adapter>
                 <table name="timing">
                     <column name="id" primaryKey="true" type="INTEGER" />
                     <column name="date" type="DATE" />
@@ -36,9 +37,9 @@ class Issue768Test extends TestCase
         }
     }
 
-	/*
-	 * Test if the time was set correctly and in which case it will be modified
-	 */
+    /*
+     * Test if the time was set correctly and in which case it will be modified
+     */
     public function testTimeModified()
     {
         $time = "17:37:19";
@@ -89,9 +90,9 @@ class Issue768Test extends TestCase
         $test->save();
     }
 
-	/*
-	 * Test if the date was set correctly and in which case it will be modified
-	 */
+    /*
+     * Test if the date was set correctly and in which case it will be modified
+     */
     public function testDateModified()
     {
         $date = "2015-03-28";
@@ -142,9 +143,9 @@ class Issue768Test extends TestCase
         $test->save();
     }
 
-	/*
-	 * Test if the time and date was set correctly and in which case it will be modified
-	 */
+    /*
+     * Test if the time and date was set correctly and in which case it will be modified
+     */
     public function testDateTimeModified()
     {
         $dateTime = "2015-09-27 17:37:19";
@@ -165,8 +166,6 @@ class Issue768Test extends TestCase
         $test->setDateTime($dateTime);
 
         $this->assertfalse($test->isModified(), "The datetime has been marked as modified, although it was provided with the same datetime string as before!");
-
-        $test->save();
 
         $dateTimeObject->modify('+4 hours');
 
@@ -190,7 +189,7 @@ class Issue768Test extends TestCase
 
         $test->save();
 
-        $this->assertnull($test->getDate(), "The datetime was not set to null!");
+        $this->assertnull($test->getDateTime(), "The datetime was not set to null!");
 
         $test->setDateTime($dateTimeObject);
 
