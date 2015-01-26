@@ -223,7 +223,7 @@ class CrossForeignKeys
     }
 
     /**
-     * The target table.
+     * The middle table (which has crossRef=true).
      *
      * @return Table
      */
@@ -241,7 +241,7 @@ class CrossForeignKeys
     }
 
     /**
-     * The target table (which has crossRef=true).
+     * The source table.
      *
      * @return Table
      */

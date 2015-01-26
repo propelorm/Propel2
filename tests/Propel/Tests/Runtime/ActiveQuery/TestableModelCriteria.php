@@ -8,9 +8,9 @@ class TestableModelCriteria extends ModelCriteria
 {
     public $joins = array();
 
-    public function replaceNames(&$clause)
+    public function replaceNames(&$sql)
     {
-        return parent::replaceNames($clause);
+        return parent::replaceNames($sql);
     }
 
 }

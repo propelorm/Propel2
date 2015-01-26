@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE database SYSTEM "../dtd/database.dtd">
+
+<database name="quoting" identifierQuoting="true" defaultIdMethod="native" namespace="Propel\Tests\Quoting">
+    <table name="group">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" primaryString="true"/>
+        <column name="by" type="VARCHAR" size="64"/>
+        <column name="as" type="INTEGER" />
+        <column name="author_id" type="INTEGER"/>
+        <foreign-key foreignTable="quoting_author">
+            <reference local="author_id" foreign="id"/>
+        </foreign-key>
+    </table>
+    <table name="quoting_author" phpName="Author" identifierQuoting="false">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name" type="VARCHAR" primaryString="true"/>
+        <column name="type_id" type="INTEGER" />
+        <foreign-key foreignTable="quoting_author_type">
+            <reference local="type_id" foreign="id"/>
+        </foreign-key>
+    </table>
+    <table name="quoting_author_type" phpName="AuthorType">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" primaryString="true"/>
+    </table>
+</database>

@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
@@ -26,7 +27,7 @@ abstract class PlatformTestProvider extends PlatformTestBase
     public function providerForTestGetAddTablesDDL()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="book">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="title" type="VARCHAR" size="255" required="true" />
@@ -52,7 +53,7 @@ EOF;
     public function providerForTestGetAddTablesDDLSchema()
     {
         $schema = <<<EOF
-<database name="test" schema="x">
+<database name="test" schema="x" identifierQuoting="true">
     <table name="book">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="title" type="VARCHAR" size="255" required="true" />
@@ -86,7 +87,7 @@ EOF;
     public function providerForTestGetAddTablesSkipSQLDDL()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="book" skipSql="true">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="title" type="VARCHAR" size="255" required="true" />
@@ -112,7 +113,7 @@ EOF;
     public function providerForTestGetAddTableDDLSimplePK()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo" description="This is foo table">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="VARCHAR" size="255" required="true" />
@@ -126,7 +127,7 @@ EOF;
     public function providerForTestGetAddTableDDLNonIntegerPK()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo" description="This is foo table">
         <column name="foo" primaryKey="true" type="VARCHAR" />
         <column name="bar" type="VARCHAR" size="255" required="true" />
@@ -140,7 +141,7 @@ EOF;
     public function providerForTestGetAddTableDDLCompositePK()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="foo" primaryKey="true" type="INTEGER" />
         <column name="bar" primaryKey="true" type="INTEGER" />
@@ -155,7 +156,7 @@ EOF;
     public function providerForTestGetAddTableDDLUniqueIndex()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -172,7 +173,7 @@ EOF;
     public function providerForTestGetAddTableDDLSchema()
     {
         $schema = <<<EOF
-<database name="test">
+<database name="test" identifierQuoting="true">
     <table name="foo" schema="Woopah">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
@@ -186,6 +187,7 @@ EOF;
     public function providerForTestGetUniqueDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->getDomain()->copy(new Domain('FOOTYPE'));
         $table->addColumn($column1);
@@ -205,6 +207,7 @@ EOF;
     public function providerForTestGetIndicesDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->getDomain()->copy(new Domain('FOOTYPE'));
         $table->addColumn($column1);
@@ -227,6 +230,7 @@ EOF;
     public function providerForTestGetIndexDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column1 = new Column('bar1');
         $column1->getDomain()->copy(new Domain('FOOTYPE'));
         $table->addColumn($column1);
@@ -246,6 +250,7 @@ EOF;
     public function providerForTestPrimaryKeyDDL()
     {
         $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
         $column = new Column('bar');
         $column->setPrimaryKey(true);
         $table->addColumn($column);
@@ -257,14 +262,21 @@ EOF;
 
     public function providerForTestGetForeignKeyDDL()
     {
+        $db = new Database();
+        $db->setIdentifierQuoting(true);
         $table1 = new Table('foo');
+        $db->addTable($table1);
         $column1 = new Column('bar_id');
         $column1->getDomain()->copy(new Domain('FOOTYPE'));
         $table1->addColumn($column1);
+
         $table2 = new Table('bar');
+        $db->addTable($table2);
         $column2 = new Column('id');
         $column2->getDomain()->copy(new Domain('BARTYPE'));
+
         $table2->addColumn($column2);
+
         $fk = new ForeignKey('foo_bar_fk');
         $fk->setForeignTableCommonName('bar');
         $fk->addReference($column1, $column2);
@@ -289,12 +301,17 @@ EOF;
 
     public function providerForTestGetForeignKeysDDL()
     {
+        $db = new Database();
+        $db->setIdentifierQuoting(true);
         $table1 = new Table('foo');
+        $db->addTable($table1);
 
         $column1 = new Column('bar_id');
         $column1->getDomain()->copy(new Domain('FOOTYPE'));
         $table1->addColumn($column1);
+
         $table2 = new Table('bar');
+        $db->addTable($table2);
         $column2 = new Column('id');
         $column2->getDomain()->copy(new Domain('BARTYPE'));
         $table2->addColumn($column2);
@@ -309,6 +326,7 @@ EOF;
         $column3->getDomain()->copy(new Domain('BAZTYPE'));
         $table1->addColumn($column3);
         $table3 = new Table('baz');
+        $db->addTable($table3);
         $column4 = new Column('id');
         $column4->getDomain()->copy(new Domain('BAZTYPE'));
         $table3->addColumn($column4);

@@ -55,6 +55,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
 
             $this->parser->setGeneratorConfig(new QuickGeneratorConfig());
             $this->parser->setPlatform($this->platform);
+            $this->database->setPlatform($this->platform);
         }
     }
 
@@ -68,6 +69,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         $this->readDatabase();
 
         $builder = new QuickBuilder();
+        $builder->setIdentifierQuoting(true);
         $builder->setPlatform($this->database->getPlatform());
         $builder->setSchema($xml);
 

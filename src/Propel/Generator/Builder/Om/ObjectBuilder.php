@@ -814,7 +814,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $defaultfmt = null;
         $visibility = $column->getAccessorVisibility();
 
-        // Default date/time formatter strings are specified in build.properties
+        // Default date/time formatter strings are specified in propel config
         if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultDateFormat');
         } elseif ($column->getType() === PropelTypes::TIME) {
@@ -879,7 +879,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClasses($dateTimeClass);
         $defaultfmt = null;
 
-        // Default date/time formatter strings are specified in build.properties
+        // Default date/time formatter strings are specified in propel config
         if ($column->getType() === PropelTypes::DATE) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultDateFormat');
         } elseif ($column->getType() === PropelTypes::TIME) {
@@ -1189,7 +1189,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".$column->getPhpType()."
+     * @return ".($column->getTypeHint() ?: $column->getPhpType())."
      */";
     }
 
@@ -1420,8 +1420,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $this->getTable()->isReadOnly() ? 'protected' : $column->getMutatorVisibility();
 
+        $typeHint = '';
+        $null = '';
+
+        if ($column->getTypeHint()) {
+            $typeHint = $column->getTypeHint();
+            if ('array' !== $typeHint) {
+                $typeHint = $this->declareClass($typeHint);
+            }
+
+            $typeHint .= ' ';
+
+            if (!$column->isNotNull()) {
+                $null = ' = null';
+            }
+        }
+
         $script .= "
-    ".$visibility." function set$cfc(\$v)
+    ".$visibility." function set$cfc($typeHint\$v$null)
     {";
     }
 
@@ -1474,6 +1490,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
                 $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
                 $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
+
+                if (!$colFK) {
+                    continue;
+                }
 
                 $varName = $this->getFKVarName($fk);
 
@@ -2132,7 +2152,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$rehydrate) {
                 \$this->ensureConsistency();
             }
+";
 
+        $this->applyBehaviorModifier('postHydrate', $script, "            ");
+
+        $script .= "
             return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
@@ -2213,7 +2237,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);";
+        \$criteria = ".$this->getQueryClassName()."::create();";
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
@@ -2359,6 +2383,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
         );";
+
+        $timezoneDefined = false;
+        foreach ($this->getTable()->getColumns() as $num => $col) {
+            if ($col->isTemporalType()) {
+                if (!$timezoneDefined) {
+                    $script .= "
+
+        \$utc = new \DateTimeZone('utc');";
+                    $timezoneDefined = true;
+                }
+        $script .= "
+        if (\$result[\$keys[$num]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            \$dateTime = clone \$result[\$keys[$num]];
+            \$result[\$keys[$num]] = \$dateTime->setTimezone(\$utc)->format('Y-m-d\TH:i:s\Z');
+        }
+        ";
+            }
+        }
         $script .= "
         \$virtualColumns = \$this->virtualColumns;
         foreach (\$virtualColumns as \$key => \$virtualColumn) {
@@ -2694,6 +2737,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addImportFrom(&$script)
     {
+        $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
      /**
      * Populate the current object from a string, using a given parser format
@@ -2702,19 +2746,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * \$book->importFrom('JSON', '{\"Id\":9012,\"Title\":\"Don Juan\",\"ISBN\":\"0140422161\",\"Price\":12.99,\"PublisherId\":1234,\"AuthorId\":5678}');
      * </code>
      *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::$defaultKeyType.
+     *
      * @param mixed \$parser A AbstractParser instance,
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string \$data The source data to import from
+     * @param string \$keyType The type of keys the array uses.
      *
      * @return \$this|".$this->getObjectClassName(true)." The current object, for fluid interface
      */
-    public function importFrom(\$parser, \$data)
+    public function importFrom(\$parser, \$data, \$keyType = TableMap::$defaultKeyType)
     {
         if (!\$parser instanceof AbstractParser) {
             \$parser = AbstractParser::getParser(\$parser);
         }
 
-        \$this->fromArray(\$parser->toArray(\$data), TableMap::TYPE_PHPNAME);
+        \$this->fromArray(\$parser->toArray(\$data), \$keyType);
 
         return \$this;
     }
@@ -3284,7 +3334,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
 
-        $className = $this->getClassNameFromTable($fkTable);
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromTable($fkTable);
+        }
 
         $varName = $this->getFKVarName($fk);
 
@@ -3298,18 +3352,28 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
     {";
-        foreach ($fk->getLocalColumns() as $columnName) {
-            $column = $table->getColumn($columnName);
-            $lfmap = $fk->getLocalForeignMapping();
-            $colFKName = $lfmap[$columnName];
-            $colFK = $fkTable->getColumn($colFKName);
-            $script .= "
+
+        foreach ($fk->getMapping() as $map) {
+            list($column, $rightValueOrColumn) = $map;
+
+            if ($rightValueOrColumn instanceof Column) {
+                $script .= "
         if (\$v === null) {
-            \$this->set".$column->getPhpName()."(".$this->getDefaultValueString($column).");
+            \$this->set" . $column->getPhpName() . "(" . $this->getDefaultValueString($column) . ");
         } else {
-            \$this->set".$column->getPhpName()."(\$v->get".$colFK->getPhpName()."());
+            \$this->set" . $column->getPhpName() . "(\$v->get" . $rightValueOrColumn->getPhpName() . "());
         }
 ";
+            } else {
+                $val = var_export($rightValueOrColumn, true);
+                $script .= "
+        if (\$v === null) {
+            \$this->set" . $column->getPhpName() . "(null);
+        } else {
+            \$this->set" . $column->getPhpName() . "($val);
+        }
+                ";
+            }
 
         } /* foreach local col */
 
@@ -3358,7 +3422,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
-        $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+        $returnDesc = '';
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+            $returnDesc = "The associated $className object.";
+        }
 
         $and = '';
         $conditional = '';
@@ -3369,24 +3439,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // of instance pooling
         $findPk = $fk->isForeignPrimaryKey();
 
-        foreach ($fk->getLocalColumns() as $columnName) {
+        foreach ($fk->getMapping() as $mapping) {
+            list($column, $rightValueOrColumn) = $mapping;
 
-            $lfmap = $fk->getLocalForeignMapping();
-
-            $foreignColumn = $fk->getForeignTable()->getColumn($lfmap[$columnName]);
-
-            $column = $table->getColumn($columnName);
             $cptype = $column->getPhpType();
             $clo = $column->getLowercasedName();
-            $localColumns[$foreignColumn->getPosition()] = '$this->'.$clo;
 
-            if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
-                $conditional .= $and . "\$this->". $clo ." != 0";
-            } elseif ($cptype == "string") {
-                $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+            if ($rightValueOrColumn instanceof Column) {
+                $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
+
+                if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
+                    $conditional .= $and . "\$this->". $clo ." != 0";
+                } elseif ($cptype == "string") {
+                    $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+                } else {
+                    $conditional .= $and . "\$this->" . $clo ." !== null";
+                }
             } else {
-                $conditional .= $and . "\$this->" . $clo ." !== null";
+                $val = var_export($rightValueOrColumn, true);
+                $conditional .= $and . "\$this->" . $clo ." === " . $val;
             }
+
 
             $and = " && ";
         }
@@ -3401,7 +3474,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className The associated $className object.
+     * @return $className $returnDesc
      * @throws PropelException
      */
     public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)
@@ -4347,6 +4420,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->addCrossFKClear($script, $crossFKs);
             $this->addCrossFKInit($script, $crossFKs);
             $this->addCrossFKisLoaded($script, $crossFKs);
+            $this->addCrossFKCreateQuery($script, $crossFKs);
             $this->addCrossFKGet($script, $crossFKs);
             $this->addCrossFKSet($script, $crossFKs);
             $this->addCrossFKCount($script, $crossFKs);
@@ -4422,20 +4496,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 'collectionClass' => 'ObjectCombinationCollection',
                 'relatedObjectClassName' => false
             ];
-        }
+        } else {
+            foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
+                $relCol = $this->getFKPhpNameAffix($crossFK, true);
+                $collName = $this->getCrossFKVarName($crossFK);
+                $relatedObjectClassName = $this->getClassNameFromBuilder(
+                    $this->getNewStubObjectBuilder($crossFK->getForeignTable()),
+                    true
+                );
+                $collectionClass = 'ObjectCollection';
 
-        foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-            $relCol = $this->getFKPhpNameAffix($crossFK, true);
-            $collName = $this->getCrossFKVarName($crossFK);
-            $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($crossFK->getForeignTable()), true);
-            $collectionClass = 'ObjectCollection';
-
-            $inits[] = [
-                'relCol'   => $relCol,
-                'collName' => $collName,
-                'collectionClass' => $collectionClass,
-                'relatedObjectClassName' => $relatedObjectClassName
-            ];
+                $inits[] = [
+                    'relCol' => $relCol,
+                    'collName' => $collName,
+                    'collectionClass' => $collectionClass,
+                    'relatedObjectClassName' => $relatedObjectClassName
+                ];
+            }
         }
 
         foreach ($inits as $init) {
@@ -4446,7 +4523,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $script .= "
     /**
-     * Initializes the $collName collection.
+     * Initializes the $collName crossRef collection.
      *
      * By default this just sets the $collName collection to an empty collection (like clear$relCol());
      * however, you may wish to override this method in your stub class to provide setting appropriate
@@ -4484,17 +4561,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 'relCol'   => $this->getCrossFKsPhpNameAffix($crossFKs, true),
                 'collName' => 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)),
             ];
-        }
+        } else {
 
-        foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-            $relCol = $this->getFKPhpNameAffix($crossFK, true);
-            $collName = $this->getCrossFKVarName($crossFK);
-            $collectionClass = 'ObjectCollection';
+            foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
+                $relCol = $this->getFKPhpNameAffix($crossFK, true);
+                $collName = $this->getCrossFKVarName($crossFK);
 
-            $inits[] = [
-                'relCol'   => $relCol,
-                'collName' => $collName,
-            ];
+                $inits[] = [
+                    'relCol' => $relCol,
+                    'collName' => $collName,
+                ];
+            }
         }
 
         foreach ($inits as $init) {
@@ -4515,6 +4592,81 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    protected function addCrossFKCreateQuery(&$script, CrossForeignKeys $crossFKs)
+    {
+        if (1 <= count($crossFKs->getCrossForeignKeys()) && !$crossFKs->getUnclassifiedPrimaryKeys()) {
+            return;
+        }
+
+        $refFK = $crossFKs->getIncomingForeignKey();
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $firstFK = $crossFKs->getCrossForeignKeys()[0];
+        $firstFkName = $this->getFKPhpNameAffix($firstFK, true);
+
+        $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($firstFK->getForeignTable()));
+        $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
+        $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
+
+        $signature = array_map(function($item) {
+                return $item . ' = null';
+            }, $signature);
+        $signature = implode(', ', $signature);
+        $phpDoc = implode(', ', $phpDoc);
+
+        $relatedUseQueryClassName = $this->getNewStubQueryBuilder($crossFKs->getMiddleTable())->getUnqualifiedClassName();
+        $relatedUseQueryGetter = 'use' . ucfirst($relatedUseQueryClassName);
+        $relatedUseQueryVariableName = lcfirst($relatedUseQueryClassName);
+
+        $script .= "
+    /**
+     * Returns a new query object pre configured with filters from current object and given arguments to query the database.
+     * $phpDoc
+     * @param Criteria \$criteria
+     *
+     * @return $relatedQueryClassName
+     */
+    public function create{$firstFkName}Query($signature, Criteria \$criteria = null)
+    {
+        \$criteria = $relatedQueryClassName::create(\$criteria)
+            ->filterBy{$selfRelationName}(\$this);
+
+        \$$relatedUseQueryVariableName = \$criteria->{$relatedUseQueryGetter}();
+";
+
+        foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+            if ($crossFKs->getIncomingForeignKey() === $fk || $firstFK === $fk) {
+                continue;
+            }
+
+            $filterName = $fk->getPhpName();
+            $name = lcfirst($fk->getPhpName());
+
+            $script .= "
+        if (null !== \$$name) {
+            \${$relatedUseQueryVariableName}->filterBy{$filterName}(\$$name);
+        }
+            ";
+        }
+        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
+            $filterName = $pk->getPhpName();
+            $name = lcfirst($pk->getPhpName());
+
+            $script .= "
+        if (null !== \$$name) {
+            \${$relatedUseQueryVariableName}->filterBy{$filterName}(\$$name);
+        }
+            ";
+        }
+
+        $script .= "
+        \${$relatedUseQueryVariableName}->endUse();
+
+        return \$criteria;
+    }
+";
+
+    }
+
     /**
      * @param string           $script
      * @param CrossForeignKeys $crossFKs
@@ -4527,10 +4679,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
-            $collName = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
             $collVarName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
-
-            //list($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
 
             $classNames = [];
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
@@ -4621,6 +4770,37 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
 
+            $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
+            $firstFK = $crossFKs->getCrossForeignKeys()[0];
+            $firstFkName = $this->getFKPhpNameAffix($firstFK, true);
+
+            $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($firstFK->getForeignTable()));
+            $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
+            $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
+
+            $signature = array_map(function($item) {
+                    return $item . ' = null';
+                }, $signature);
+            $signature = implode(', ', $signature);
+            $phpDoc = implode(', ', $phpDoc);
+            $shortSignature = implode(', ', $shortSignature);
+
+            $script .= "
+    /**
+     * Returns a not cached ObjectCollection of $relatedObjectClassName objects. This will hit always the databases.
+     * If you have attached new $relatedObjectClassName object to this object you need to call `save` first to get
+     * the correct return value. Use get$relatedName() to get the current internal state.
+     * $phpDoc
+     * @param Criteria \$criteria
+     * @param ConnectionInterface \$con
+     *
+     * @return {$relatedObjectClassName}[]|ObjectCollection
+     */
+    public function get{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
+    {
+        return \$this->create{$firstFkName}Query($shortSignature, \$criteria)->find(\$con);
+    }
+";
             return;
         }
 
@@ -4824,85 +5004,44 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 ";
-    }
 
+
+        if ($multi) {
+            $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
+            $firstFK = $crossFKs->getCrossForeignKeys()[0];
+            $firstFkName = $this->getFKPhpNameAffix($firstFK, true);
+
+            $relatedObjectClassName = $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($firstFK->getForeignTable()));
+            $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
+            $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
+
+            $signature = array_map(function($item) {
+                    return $item . ' = null';
+                }, $signature);
+            $signature = implode(', ', $signature);
+            $phpDoc = implode(', ', $phpDoc);
+            $shortSignature = implode(', ', $shortSignature);
+
+            $script .= "
     /**
-     * Extracts some useful information from a CrossForeignKeys object.
+     * Returns the not cached count of $relatedObjectClassName objects. This will hit always the databases.
+     * If you have attached new $relatedObjectClassName object to this object you need to call `save` first to get
+     * the correct return value. Use get$relatedName() to get the current internal state.
+     * $phpDoc
+     * @param Criteria \$criteria
+     * @param ConnectionInterface \$con
      *
-     * @param CrossForeignKeys $crossFKs
-     * @param ForeignKey       $crossFKToIgnore
-     * @param array            $signature
-     * @param array            $shortSignature
-     * @param array            $normalizedShortSignature
-     * @param array            $phpDoc
+     * @return integer
      */
-    protected function extractCrossInformation(
-        CrossForeignKeys $crossFKs,
-        ForeignKey $crossFKToIgnore = null,
-        &$signature,
-        &$shortSignature,
-        &$normalizedShortSignature,
-        &$phpDoc
-    ) {
-        foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-
-            $phpType = $typeHint = $this->getClassNameFromTable($fk->getForeignTable());
-            $name = '$' . lcfirst($this->getFKPhpNameAffix($fk));
-
-            $normalizedShortSignature[] = $name;
-            if ($fk === $crossFKToIgnore) continue;
-
-            $signature[] = ($typeHint ? "$typeHint " : '') . $name;
-            $shortSignature[] = $name;
-            $phpDoc[] = "
-     * @param $phpType $name";
-        }
-
-        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $primaryKey) {
-            //we need to add all those $primaryKey s as additional parameter as they are needed
-            //to create the entry in the middle-table.
-            $defaultValue = $primaryKey->getDefaultValueString();
-
-            $phpType = $primaryKey->getPhpType();
-            $typeHint = $primaryKey->isPhpArrayType() ? 'array' : '';
-            $name = '$' . lcfirst($primaryKey->getPhpName());
-
-            $normalizedShortSignature[] = $name;
-            $signature[] = ($typeHint ? "$typeHint " : '') . $name . ('null' !== $defaultValue ? " = $defaultValue" : '');
-            $shortSignature[] = $name;
-            $phpDoc[] = "
-     * @param $phpType $name";
-        }
-
-    }
-
-    /**
-     * @param  CrossForeignKeys $crossFKs
-     * @param  ForeignKey       $crossFK  will be the first variable defined
-     * @return array
-     */
-    protected function getCrossFKAddMethodInformation(CrossForeignKeys $crossFKs, ForeignKey $crossFK = null)
+    public function count{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
-        if ($crossFK) {
-            $crossObjectName = '$' . lcfirst($this->getFKPhpNameAffix($crossFK));
-            $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
-            $signature[] = "$crossObjectClassName $crossObjectName" . ($crossFK->isAtLeastOneLocalColumnRequired() ? '' : ' = null');
-            $shortSignature[] = $crossObjectName;
-            $phpDoc[] = "
-     * @param $crossObjectClassName $crossObjectName";
+        return \$this->create{$firstFkName}Query($shortSignature, \$criteria)->count(\$con);
+    }
+";
         }
 
-        $normalizedShortSignature = [];
-
-        $this->extractCrossInformation($crossFKs, $crossFK, $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
-
-        $signature = implode(', ', $signature);
-        $shortSignature = implode(', ', $shortSignature);
-        $normalizedShortSignature = implode(', ', $normalizedShortSignature);
-        $phpDoc = implode(', ', $phpDoc);
-
-        return [$signature, $shortSignature, $normalizedShortSignature, $phpDoc];
     }
+
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
@@ -5068,32 +5207,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     }
 ";
-    }
-
-    /**
-     * @param  CrossForeignKeys $crossFKs
-     * @param  ForeignKey       $excludeFK
-     * @return string
-     */
-    protected function getCrossRefFKGetterName(CrossForeignKeys $crossFKs, ForeignKey $excludeFK)
-    {
-        $names = [];
-
-        $fks = $crossFKs->getCrossForeignKeys();
-
-        foreach ($crossFKs->getMiddleTable()->getForeignKeys() as $fk) {
-            if ($fk !== $excludeFK && ($fk === $crossFKs->getIncomingForeignKey() || in_array($fk, $fks))) {
-                $names[] = $this->getFKPhpNameAffix($fk, false);
-            }
-        }
-
-        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
-            $names[] = $pk->getPhpName();
-        }
-
-        $name = implode($names);
-
-        return $this->getPluralizer()->getPluralForm($name);
     }
 
     /**
@@ -5279,7 +5392,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->isNew() || \$this->isModified()) {
                 // persist changes
                 if (\$this->isNew()) {
-                    \$this->doInsert(\$con);";
+                    \$this->doInsert(\$con);
+                    \$affectedRows += 1;";
         if ($reloadOnInsert) {
             $script .= "
                     if (!\$skipReload) {
@@ -5288,7 +5402,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
                 } else {
-                    \$this->doUpdate(\$con);";
+                    \$affectedRows += \$this->doUpdate(\$con);";
         if ($reloadOnUpdate) {
             $script .= "
                     if (!\$skipReload) {
@@ -5296,8 +5410,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }";
         }
         $script .= "
-                }
-                \$affectedRows += 1;";
+                }";
 
         // We need to rewind any LOB columns
         foreach ($table->getColumns() as $col) {
@@ -5483,7 +5596,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $primaryKeyMethodInfo = $platform->getSequenceName($table);
         }
-        $query = 'INSERT INTO ' . $platform->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
+        $query = 'INSERT INTO ' . $this->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
         $script = "
         \$modifiedColumns = array();
         \$index = 0;
@@ -5534,7 +5647,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
          // check the columns in natural order for more readable SQL queries";
         foreach ($table->getColumns() as $column) {
             $constantName = $this->getColumnConstant($column);
-            $identifier = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
+            $identifier = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
         if (\$this->isColumnModified($constantName)) {
             \$modifiedColumns[':p' . \$index++]  = $identifier;
@@ -5554,7 +5667,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             foreach (\$modifiedColumns as \$identifier => \$columnName) {
                 switch (\$columnName) {";
         foreach ($table->getColumns() as $column) {
-            $columnNameCase = var_export($platform->quoteIdentifier(strtoupper($column->getName())), true);
+            $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
                     case $columnNameCase:";
             $script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . $column->getLowercasedName(), '                        ');
@@ -5864,6 +5977,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
                     $varName = $this->getFKVarName($fk);
+
+                    if (!$colFK) {
+                        continue;
+                    }
 
                     $script .= "
         if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {

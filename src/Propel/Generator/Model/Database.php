@@ -72,6 +72,11 @@ class Database extends ScopedMappingModel
     private $domainMap;
     private $heavyIndexing;
 
+    /**
+     * @var boolean
+     */
+    private $identifierQuoting;
+
     /** @var Schema */
     private $parentSchema;
 
@@ -117,6 +122,7 @@ class Database extends ScopedMappingModel
         }
 
         $this->heavyIndexing             = false;
+        $this->identifierQuoting         = false;
         $this->defaultPhpNamingMethod    = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
         $this->defaultIdMethod           = IdMethod::NATIVE;
         $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
@@ -139,6 +145,7 @@ class Database extends ScopedMappingModel
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
+        $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('generator.tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
     }
@@ -796,15 +803,14 @@ class Database extends ScopedMappingModel
         foreach ($this->getTables() as $table) {
             $columns = [];
             foreach ($table->getColumns() as $column) {
-                $columns[] = sprintf("      %s %s %s %s %s %s (%s)",
+                $columns[] = sprintf("      %s %s %s %s %s %s",
                     $column->getName(),
                     $column->getType(),
                     $column->getSize() ? '(' . $column->getSize() . ')' : '',
                     $column->isPrimaryKey() ? 'PK' : '',
                     $column->isNotNull() ? 'NOT NULL' : '',
                     $column->getDefaultValueString() ? "'".$column->getDefaultValueString()."'" : '',
-                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '',
-                    $column->getDomain()->getOriginSqlType()
+                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : ''
                 );
             }
 
@@ -918,4 +924,21 @@ class Database extends ScopedMappingModel
         }
         $this->tables = $tables;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
 }

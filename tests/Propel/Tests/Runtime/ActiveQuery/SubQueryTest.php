@@ -53,9 +53,9 @@ class SubQueryTest extends BookstoreTestBase
         $c->groupBy('subCriteriaAlias.AuthorId');
 
         if ($this->isDb('pgsql')) {
-            $sql = $this->getSql("SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book ORDER BY book.TITLE ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.AUTHOR_ID,subCriteriaAlias.ID,subCriteriaAlias.TITLE,subCriteriaAlias.ISBN,subCriteriaAlias.PRICE,subCriteriaAlias.PUBLISHER_ID");
+            $sql = $this->getSql("SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.author_id,subCriteriaAlias.id,subCriteriaAlias.title,subCriteriaAlias.isbn,subCriteriaAlias.price,subCriteriaAlias.publisher_id");
         } else {
-            $sql = $this->getSql("SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` ORDER BY book.TITLE ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.AUTHOR_ID");
+            $sql = $this->getSql("SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.author_id");
         }
 
         $params = array();
@@ -71,10 +71,10 @@ class SubQueryTest extends BookstoreTestBase
         $c->addSelectQuery($subCriteria, 'subCriteriaAlias');
         $c->filterByPrice(20, Criteria::LESS_THAN);
 
-        $sql = $this->getSql("SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1");
+        $sql = $this->getSql("SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.price<:p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() adds select columns if none given');
     }
@@ -88,10 +88,10 @@ class SubQueryTest extends BookstoreTestBase
         $c->addSelectQuery($subCriteria); // no alias
         $c->filterByPrice(20, Criteria::LESS_THAN);
 
-        $sql = $this->getSql("SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1");
+        $sql = $this->getSql("SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias_1 WHERE alias_1.price<:p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() forges a unique alias if none is given');
     }
@@ -105,10 +105,10 @@ class SubQueryTest extends BookstoreTestBase
         $c->addSelectQuery($subCriteria); // no alias
         $c->filterByPrice(20, Criteria::LESS_THAN);
 
-        $sql = $this->getSql("SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p1");
+        $sql = $this->getSql("SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias_1 WHERE alias_1.price<:p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() forges a unique alias and adds select columns by default');
     }
@@ -126,12 +126,12 @@ class SubQueryTest extends BookstoreTestBase
         $c3->addSelectQuery($c2); // no alias
         $c3->filterByTitle('War%');
 
-        $sql = $this->getSql("SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID, alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE>:p2) AS alias_1, (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.PRICE<:p3) AS alias_2 WHERE alias_2.TITLE LIKE :p1");
+        $sql = $this->getSql("SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id, alias_2.id, alias_2.title, alias_2.isbn, alias_2.price, alias_2.publisher_id, alias_2.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.price>:p2) AS alias_1, (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.price<:p3) AS alias_2 WHERE alias_2.title LIKE :p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'TITLE', 'value' => 'War%'),
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 10),
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
+            array('table' => 'book', 'column' => 'title', 'value' => 'War%'),
+            array('table' => 'book', 'column' => 'price', 'value' => 10),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
         $this->assertCriteriaTranslation($c3, $sql, $params, 'addSelectQuery() forges a unique alias if none is given');
     }
@@ -148,11 +148,11 @@ class SubQueryTest extends BookstoreTestBase
         $c3->addSelectQuery($c2); // no alias
         $c3->filterByTitle('War%');
 
-        $sql = $this->getSql("SELECT alias_2.ID, alias_2.TITLE, alias_2.ISBN, alias_2.PRICE, alias_2.PUBLISHER_ID, alias_2.AUTHOR_ID FROM (SELECT alias_1.ID, alias_1.TITLE, alias_1.ISBN, alias_1.PRICE, alias_1.PUBLISHER_ID, alias_1.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias_1 WHERE alias_1.PRICE<:p2) AS alias_2 WHERE alias_2.TITLE LIKE :p1");
+        $sql = $this->getSql("SELECT alias_2.id, alias_2.title, alias_2.isbn, alias_2.price, alias_2.publisher_id, alias_2.author_id FROM (SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias_1 WHERE alias_1.price<:p2) AS alias_2 WHERE alias_2.title LIKE :p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'TITLE', 'value' => 'War%'),
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
+            array('table' => 'book', 'column' => 'title', 'value' => 'War%'),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
         $this->assertCriteriaTranslation($c3, $sql, $params, 'addSelectQuery() forges a unique alias if none is given');
     }
@@ -168,11 +168,11 @@ class SubQueryTest extends BookstoreTestBase
         $c2->addSelectQuery($c1, 'subQuery');
         $c2->filterByPrice(20, Criteria::LESS_THAN);
 
-        $sql = $this->getSql("SELECT subQuery.ID, subQuery.TITLE, subQuery.ISBN, subQuery.PRICE, subQuery.PUBLISHER_ID, subQuery.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` LEFT JOIN `author` ON (book.AUTHOR_ID=author.ID) WHERE author.LAST_NAME=:p2) AS subQuery WHERE subQuery.PRICE<:p1");
+        $sql = $this->getSql("SELECT subQuery.id, subQuery.title, subQuery.isbn, subQuery.price, subQuery.publisher_id, subQuery.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author ON (book.author_id=author.id) WHERE author.last_name=:p2) AS subQuery WHERE subQuery.price<:p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
-            array('table' => 'author', 'column' => 'LAST_NAME', 'value' => 'Rowling'),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
+            array('table' => 'author', 'column' => 'last_name', 'value' => 'Rowling'),
         );
         $this->assertCriteriaTranslation($c2, $sql, $params, 'addSelectQuery() can add a select query with a join');
     }
@@ -187,11 +187,11 @@ class SubQueryTest extends BookstoreTestBase
         // and use filterByPrice method!
         $c->filterByPrice(20, Criteria::LESS_THAN);
 
-        $sql = $this->getSql("SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book` WHERE book.AUTHOR_ID=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<:p1");
+        $sql = $this->getSql("SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=:p2) AS subCriteriaAlias WHERE subCriteriaAlias.price<:p1");
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 20),
-            array('table' => 'book', 'column' => 'AUTHOR_ID', 'value' => 123),
+            array('table' => 'book', 'column' => 'price', 'value' => 20),
+            array('table' => 'book', 'column' => 'author_id', 'value' => 123),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries successfully');
     }
@@ -216,24 +216,24 @@ class SubQueryTest extends BookstoreTestBase
         $c->filterByPrice(12, Criteria::LESS_THAN);
 
         if ($this->isDb('pgsql')) {
-            $sql = $this->getSql("SELECT latestBookQuery.ID, latestBookQuery.TITLE, latestBookQuery.ISBN, latestBookQuery.PRICE, latestBookQuery.PUBLISHER_ID, latestBookQuery.AUTHOR_ID ".
-            "FROM (SELECT sortedBookQuery.ID, sortedBookQuery.TITLE, sortedBookQuery.ISBN, sortedBookQuery.PRICE, sortedBookQuery.PUBLISHER_ID, sortedBookQuery.AUTHOR_ID FROM ".
-            "(SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book WHERE book.PUBLISHER_ID=:p2 ORDER BY book.TITLE DESC,book.ID DESC) AS sortedBookQuery ".
-            "GROUP BY sortedBookQuery.AUTHOR_ID,sortedBookQuery.ID,sortedBookQuery.TITLE,sortedBookQuery.ISBN,sortedBookQuery.PRICE,sortedBookQuery.PUBLISHER_ID) AS latestBookQuery WHERE latestBookQuery.PRICE<:p1");
+            $sql = $this->getSql("SELECT latestBookQuery.id, latestBookQuery.title, latestBookQuery.isbn, latestBookQuery.price, latestBookQuery.publisher_id, latestBookQuery.author_id ".
+            "FROM (SELECT sortedBookQuery.id, sortedBookQuery.title, sortedBookQuery.isbn, sortedBookQuery.price, sortedBookQuery.publisher_id, sortedBookQuery.author_id FROM ".
+            "(SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.publisher_id=:p2 ORDER BY book.title DESC,book.id DESC) AS sortedBookQuery ".
+            "GROUP BY sortedBookQuery.author_id,sortedBookQuery.id,sortedBookQuery.title,sortedBookQuery.isbn,sortedBookQuery.price,sortedBookQuery.publisher_id) AS latestBookQuery WHERE latestBookQuery.price<:p1");
         } else {
-            $sql = $this->getSql("SELECT latestBookQuery.ID, latestBookQuery.TITLE, latestBookQuery.ISBN, latestBookQuery.PRICE, latestBookQuery.PUBLISHER_ID, latestBookQuery.AUTHOR_ID ".
-            "FROM (SELECT sortedBookQuery.ID, sortedBookQuery.TITLE, sortedBookQuery.ISBN, sortedBookQuery.PRICE, sortedBookQuery.PUBLISHER_ID, sortedBookQuery.AUTHOR_ID ".
-            "FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID ".
-            "FROM `book` ".
-            "WHERE book.PUBLISHER_ID=:p2 ".
-            "ORDER BY book.TITLE DESC,book.ID DESC) AS sortedBookQuery ".
-            "GROUP BY sortedBookQuery.AUTHOR_ID) AS latestBookQuery ".
-            "WHERE latestBookQuery.PRICE<:p1");
+            $sql = $this->getSql("SELECT latestBookQuery.id, latestBookQuery.title, latestBookQuery.isbn, latestBookQuery.price, latestBookQuery.publisher_id, latestBookQuery.author_id ".
+            "FROM (SELECT sortedBookQuery.id, sortedBookQuery.title, sortedBookQuery.isbn, sortedBookQuery.price, sortedBookQuery.publisher_id, sortedBookQuery.author_id ".
+            "FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id ".
+            "FROM book ".
+            "WHERE book.publisher_id=:p2 ".
+            "ORDER BY book.title DESC,book.id DESC) AS sortedBookQuery ".
+            "GROUP BY sortedBookQuery.author_id) AS latestBookQuery ".
+            "WHERE latestBookQuery.price<:p1");
         }
 
         $params = array(
-            array('table' => 'book', 'column' => 'PRICE', 'value' => 12),
-            array('table' => 'book', 'column' => 'PUBLISHER_ID', 'value' => 123),
+            array('table' => 'book', 'column' => 'price', 'value' => 12),
+            array('table' => 'book', 'column' => 'publisher_id', 'value' => 123),
         );
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSubQueryCriteriaInFrom() combines two queries successfully');
     }
@@ -247,7 +247,7 @@ class SubQueryTest extends BookstoreTestBase
         $c->select(array('alias1.Id'));
         $c->configureSelectColumns();
 
-        $sql = $this->getSql("SELECT alias1.ID AS \"alias1.Id\" FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS alias1");
+        $sql = $this->getSql("SELECT alias1.id AS \"alias1.Id\" FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias1");
 
         $params = array();
         $this->assertCriteriaTranslation($c, $sql, $params, 'addSelectQuery() forges a unique alias and adds select columns by default');
@@ -264,7 +264,7 @@ class SubQueryTest extends BookstoreTestBase
 
         $query = Propel::getConnection()->getLastExecutedQuery();
 
-        $sql = $this->getSql("SELECT COUNT(*) FROM (SELECT subCriteriaAlias.ID, subCriteriaAlias.TITLE, subCriteriaAlias.ISBN, subCriteriaAlias.PRICE, subCriteriaAlias.PUBLISHER_ID, subCriteriaAlias.AUTHOR_ID FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM `book`) AS subCriteriaAlias WHERE subCriteriaAlias.PRICE<20) propelmatch4cnt");
+        $sql = $this->getSql("SELECT COUNT(*) FROM (SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.price<20) propelmatch4cnt");
 
         $this->assertEquals($sql, $query, 'addSelectQuery() doCount is defined as complexQuery');
     }

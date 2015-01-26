@@ -147,8 +147,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params[] = $filterTable->getCommonName();
 
         } else if (!$database->getSchema()) {
-            $stmt = $this->dbh->query('SHOW search_path');
-            $searchPathString = $stmt->fetchColumn();
+            $stmt = $this->dbh->query('SELECT current_schemas(false)');
+            $searchPathString = substr($stmt->fetchColumn(), 1, -1);
 
             $params = [];
             $searchPath = explode(',', $searchPathString);
@@ -296,7 +296,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $column = new Column($name);
             $column->setTable($table);
             $column->setDomainForType($propelType);
-            $column->getDomain()->setOriginSqlType($type);
             $column->getDomain()->replaceSize($size);
             if ($scale) {
                 $column->getDomain()->replaceScale($scale);
@@ -474,7 +473,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
                 $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
-                $indexes[$name]->addColumn($table->getColumn($row2['attname']));
+                $indexes[$name]->setTable($table);
+                $indexes[$name]->addColumn([
+                    "name" => $row2['attname']
+                ]);
 
             }
         }

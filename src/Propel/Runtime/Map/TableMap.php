@@ -13,9 +13,7 @@ namespace Propel\Runtime\Map;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Exception\RuntimeException;
 
 /**
  * TableMap is used to model a table in a database.
@@ -44,12 +42,6 @@ class TableMap
      * e.g. 'book.AUTHOR_ID'
      */
     const TYPE_COLNAME = 'colName';
-
-    /**
-     * column part of the column tableMap name
-     * e.g. 'AUTHOR_ID'
-     */
-    const TYPE_RAW_COLNAME = 'rawColName';
 
     /**
      * column fieldname type
@@ -167,6 +159,11 @@ class TableMap
      * @var mixed
      */
     protected $pkInfo;
+
+    /**
+     * @var boolean
+     */
+    protected $identifierQuoting = null;
 
     /**
      * Construct a new TableMap.
@@ -414,7 +411,7 @@ class TableMap
             $this->foreignKeys[$name] = $col;
         }
 
-        $this->columns[$name] = $col;
+        $this->columns[ColumnMap::normalizeName($name)] = $col;
         $this->columnsByPhpName[$phpName] = $col;
 
         return $col;
@@ -466,7 +463,7 @@ class TableMap
             $name = ColumnMap::normalizeName($name);
         }
         if (!$this->hasColumn($name, false)) {
-            throw new ColumnNotFoundException(sprintf('Cannot fetch ColumnMap for undefined column: %s.', $name));
+            throw new ColumnNotFoundException(sprintf('Cannot fetch ColumnMap for undefined column: %s in table %s.', $name, $this->getName()));
         }
 
         return $this->columns[$name];
@@ -614,13 +611,15 @@ class TableMap
      * @param  string                          $name          The relation name
      * @param  string                          $tablePhpName  The related table name
      * @param  integer                         $type          The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY, or RelationMAp::ONE_TO_ONE)
-     * @param  array                           $columnMapping An associative array mapping column names (local => foreign)
+     * @param  array                           $joinConditionMapping Arrays in array defining a normalize join condition [[':foreign_id', ':id', '='], [':foreign_type', 'value', '=']]
      * @param  string                          $onDelete      SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
      * @param  string                          $onUpdate      SQL behavior upon update ('SET NULL', 'CASCADE', ...)
      * @param  string                          $pluralName    Optional plural name for *_TO_MANY relationships
-     * @return \Propel\Runtime\Map\RelationMap the built RelationMap object
+     * @param  boolean                         $polymorphic    Optional plural name for *_TO_MANY relationships
+     *
+     * @return RelationMap the built RelationMap object
      */
-    public function addRelation($name, $tablePhpName, $type, $columnMapping = array(), $onDelete = null, $onUpdate = null, $pluralName = null)
+    public function addRelation($name, $tablePhpName, $type, $joinConditionMapping = array(), $onDelete = null, $onUpdate = null, $pluralName = null, $polymorphic = false)
     {
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
@@ -628,6 +627,8 @@ class TableMap
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
         $relation->setOnDelete($onDelete);
+        $relation->setPolymorphic($polymorphic);
+
         if (null !== $pluralName) {
             $relation->setPluralName($pluralName);
         }
@@ -638,18 +639,33 @@ class TableMap
         } else {
             $relation->setLocalTable($this->dbMap->getTableByPhpName($tablePhpName));
             $relation->setForeignTable($this);
-            $columnMapping  = array_flip($columnMapping);
         }
         // set columns
-        foreach ($columnMapping as $local => $foreign) {
+        foreach ($joinConditionMapping as $map) {
+            list($local, $foreign) = $map;
             $relation->addColumnMapping(
-                $relation->getLocalTable()->getColumn($local),
-                $relation->getForeignTable()->getColumn($foreign)
+                $this->getColumnOrValue($local, $relation->getLocalTable()),
+                $this->getColumnOrValue($foreign, $relation->getForeignTable())
             );
         }
         $this->relations[$name] = $relation;
 
         return $relation;
+    }
+
+    /**
+     * @param string   $value values with starting ':' mean a column name, otherwise a regular value.
+     * @param TableMap $table
+     *
+     * @return ColumnMap|mixed
+     */
+    protected function getColumnOrValue($value, TableMap $table)
+    {
+        if (':' === substr($value, 0, 1)) {
+            return $table->getColumn(substr($value, 1));
+        } else {
+            return $value;
+        }
     }
 
     /**
@@ -748,4 +764,50 @@ class TableMap
 
         return call_user_func_array($callable, $args);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * @return array|null null if not covered by only pk
+     */
+    public function extractPrimaryKey(Criteria $criteria)
+    {
+        $pkCols = $this->getPrimaryKeys();
+        if (count($pkCols) !== count($criteria->getMap())) {
+            return null;
+        }
+
+        $pk = [];
+        foreach ($pkCols as $pkCol) {
+            $fqName = $pkCol->getFullyQualifiedName();
+            $name = $pkCol->getName();
+
+            if ($criteria->containsKey($fqName)) {
+                $value = $criteria->getValue($fqName);
+            } else if ($criteria->containsKey($name)) {
+                $value = $criteria->getValue($name);
+            } else {
+                return null;
+            }
+
+            $pk[$name] = $value;
+        }
+
+        return $pk;
+    }
+
 }

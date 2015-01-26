@@ -23,7 +23,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 abstract class AbstractCommand extends Command
 {
-    const DEFAULT_INPUT_DIRECTORY   = '.';
+    const DEFAULT_CONFIG_DIRECTORY   = '.';
 
     protected $filesystem;
 
@@ -33,15 +33,15 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform')
-            ->addOption('input-dir', null, InputOption::VALUE_REQUIRED,  'The input directory', self::DEFAULT_INPUT_DIRECTORY)
-            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search for schema.xml inside the input directory')
+            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.')
+            ->addOption('config-dir', null, InputOption::VALUE_REQUIRED,  'The directory where the configuration file is placed.', self::DEFAULT_CONFIG_DIRECTORY)
+            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory')
         ;
     }
 
     /**
      * Returns a new `GeneratorConfig` object with your `$properties` merged with
-     * the configuration properties in the `input-dir` folder.
+     * the configuration properties in the `config-dir` folder.
      *
      * @param array $properties Properties to add to the configuration. They usually come from command line.
      * @param       $input
@@ -54,11 +54,11 @@ abstract class AbstractCommand extends Command
             return new GeneratorConfig(null, $properties);
         }
 
-        if ($input->hasOption('platform') && (null !== $input->getOption('platform'))) {
-            $properties['propel']['generator']['platformClass'] = '\\Propel\\Generator\\Platform\\' . $input->getOption('platform');
+        if ($this->hasInputOption('platform', $input)) {
+            $properties['propel']['generator']['platformClass'] = $input->getOption('platform');
         }
 
-        return new GeneratorConfig($input->getOption('input-dir'), $properties);
+        return new GeneratorConfig($input->getOption('config-dir'), $properties);
     }
 
     /**
@@ -74,6 +74,7 @@ abstract class AbstractCommand extends Command
         $finder = new Finder();
         $finder
             ->name('*schema.xml')
+            ->sortByName()
             ->in($directory);
         if (!$recursive) {
             $finder->depth(0);
@@ -168,7 +169,7 @@ abstract class AbstractCommand extends Command
 
         return $config;
     }
-    
+
     /**
      * Check if a given input option exists and it isn't null.
      *

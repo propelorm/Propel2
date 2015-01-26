@@ -57,8 +57,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'timestamp'  => PropelTypes::TIMESTAMP,
         'tinyblob'   => PropelTypes::BINARY,
         'blob'       => PropelTypes::BLOB,
-        'mediumblob' => PropelTypes::BLOB,
-        'longblob'   => PropelTypes::BLOB,
+        'mediumblob' => PropelTypes::VARBINARY,
+        'longblob'   => PropelTypes::LONGVARBINARY,
         'longtext'   => PropelTypes::CLOB,
         'tinytext'   => PropelTypes::VARCHAR,
         'mediumtext' => PropelTypes::LONGVARCHAR,
@@ -125,11 +125,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         if ($filterTable) {
             if ($schema = $filterTable->getSchema()) {
-                $sql .= ' FROM ' . $database->getPlatform()->quoteIdentifier($schema);
+                $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
             }
             $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
         } else if ($schema = $database->getSchema()) {
-            $sql .= ' FROM ' . $database->getPlatform()->quoteIdentifier($schema);
+            $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
         }
 
         $dataFetcher = $this->dbh->query($sql);
@@ -161,7 +161,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $column = $this->getColumnFromRow($row, $table);
@@ -237,7 +237,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $column = new Column($name);
         $column->setTable($table);
         $column->setDomainForType($propelType);
-        $column->getDomain()->setOriginSqlType($nativeType ?: $sqlType);
         if ($sqlType) {
             $column->getDomain()->replaceSqlType($sqlType);
         }
@@ -277,7 +276,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
-        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
         $row = $dataFetcher->fetch();
 
         $foreignKeys = array(); // local store to avoid duplicates
@@ -371,7 +370,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -398,6 +397,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $vi = $this->getNewVendorInfoObject($row);
                     $indexes[$name]->addVendorInfo($vi);
                 }
+                $indexes[$name]->setTable($table);
             }
 
             $indexes[$name]->addColumn([
@@ -420,7 +420,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->quoteIdentifier($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.

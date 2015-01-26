@@ -49,126 +49,110 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Add publisher records
         // ---------------------
 
-        try {
-            $scholastic = new Publisher();
-            $scholastic->setName("Scholastic");
-            // do not save, will do later to test cascade
+        $scholastic = new Publisher();
+        $scholastic->setName("Scholastic");
+        // do not save, will do later to test cascade
 
-            $morrow = new Publisher();
-            $morrow->setName("William Morrow");
-            $morrow->save();
-            $morrow_id = $morrow->getId();
+        $morrow = new Publisher();
+        $morrow->setName("William Morrow");
+        $morrow->save();
+        $morrow_id = $morrow->getId();
 
-            $penguin = new Publisher();
-            $penguin->setName("Penguin");
-            $penguin->save();
-            $penguin_id = $penguin->getId();
+        $penguin = new Publisher();
+        $penguin->setName("Penguin");
+        $penguin->save();
+        $penguin_id = $penguin->getId();
 
-            $vintage = new Publisher();
-            $vintage->setName("Vintage");
-            $vintage->save();
-            $vintage_id = $vintage->getId();
-            $this->assertTrue(true, 'Save Publisher records');
-        } catch (Exception $e) {
-            $this->fail('Save publisher records');
-        }
+        $vintage = new Publisher();
+        $vintage->setName("Vintage");
+        $vintage->save();
+        $vintage_id = $vintage->getId();
+        $this->assertTrue(true, 'Save Publisher records');
 
         // Add author records
         // ------------------
 
-        try {
-            $rowling = new Author();
-            $rowling->setFirstName("J.K.");
-            $rowling->setLastName("Rowling");
-            // do not save, will do later to test cascade
+        $rowling = new Author();
+        $rowling->setFirstName("J.K.");
+        $rowling->setLastName("Rowling");
+        // do not save, will do later to test cascade
 
-            $stephenson = new Author();
-            $stephenson->setFirstName("Neal");
-            $stephenson->setLastName("Stephenson");
-            $stephenson->save();
-            $stephenson_id = $stephenson->getId();
+        $stephenson = new Author();
+        $stephenson->setFirstName("Neal");
+        $stephenson->setLastName("Stephenson");
+        $stephenson->save();
+        $stephenson_id = $stephenson->getId();
 
-            $byron = new Author();
-            $byron->setFirstName("George");
-            $byron->setLastName("Byron");
-            $byron->save();
-            $byron_id = $byron->getId();
+        $byron = new Author();
+        $byron->setFirstName("George");
+        $byron->setLastName("Byron");
+        $byron->save();
+        $byron_id = $byron->getId();
 
-            $grass = new Author();
-            $grass->setFirstName("Gunter");
-            $grass->setLastName("Grass");
-            $grass->save();
-            $grass_id = $grass->getId();
-            $this->assertTrue(true, 'Save Author records');
-        } catch (Exception $e) {
-            $this->fail('Save Author records');
-        }
+        $grass = new Author();
+        $grass->setFirstName("Gunter");
+        $grass->setLastName("Grass");
+        $grass->save();
+        $grass_id = $grass->getId();
+        $this->assertTrue(true, 'Save Author records');
 
         // Add book records
         // ----------------
 
-        try {
-            $phoenix = new Book();
-            $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
-            $phoenix->setISBN("043935806X");
-            $phoenix->setAuthor($rowling);
-            $phoenix->setPublisher($scholastic);
-            $phoenix->save();
-            $phoenix_id = $phoenix->getId();
-            $this->assertFalse($rowling->isNew(), 'saving book also saves related author');
-            $this->assertFalse($scholastic->isNew(), 'saving book also saves related publisher');
+        $phoenix = new Book();
+        $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
+        $phoenix->setISBN("043935806X");
+        $phoenix->setAuthor($rowling);
+        $phoenix->setPublisher($scholastic);
+        $phoenix->save();
+        $phoenix_id = $phoenix->getId();
+        $this->assertFalse($rowling->isNew(), 'saving book also saves related author');
+        $this->assertFalse($scholastic->isNew(), 'saving book also saves related publisher');
 
-            $qs = new Book();
-            $qs->setISBN("0380977427");
-            $qs->setTitle("Quicksilver");
-            $qs->setAuthor($stephenson);
-            $qs->setPublisher($morrow);
-            $qs->save();
-            $qs_id = $qs->getId();
+        $qs = new Book();
+        $qs->setISBN("0380977427");
+        $qs->setTitle("Quicksilver");
+        $qs->setAuthor($stephenson);
+        $qs->setPublisher($morrow);
+        $qs->save();
+        $qs_id = $qs->getId();
 
-            $dj = new Book();
-            $dj->setISBN("0140422161");
-            $dj->setTitle("Don Juan");
-            $dj->setAuthor($byron);
-            $dj->setPublisher($penguin);
-            $dj->save();
-            $dj_id = $qs->getId();
+        $dj = new Book();
+        $dj->setISBN("0140422161");
+        $dj->setTitle("Don Juan");
+        $dj->setAuthor($byron);
+        $dj->setPublisher($penguin);
+        $dj->save();
+        $dj_id = $qs->getId();
 
-            $td = new Book();
-            $td->setISBN("067972575X");
-            $td->setTitle("The Tin Drum");
-            $td->setAuthor($grass);
-            $td->setPublisher($vintage);
-            $td->save();
-            $td_id = $td->getId();
-            $this->assertTrue(true, 'Save Book records');
-        } catch (Exception $e) {
-            $this->fail('Save Author records');
-        }
+        $td = new Book();
+        $td->setISBN("067972575X");
+        $td->setTitle("The Tin Drum");
+        $td->setAuthor($grass);
+        $td->setPublisher($vintage);
+        $td->save();
+        $td_id = $td->getId();
+        $this->assertTrue(true, 'Save Book records');
 
         // Add review records
         // ------------------
 
-        try {
-            $r1 = new Review();
-            $r1->setBook($phoenix);
-            $r1->setReviewedBy("Washington Post");
-            $r1->setRecommended(true);
-            $r1->setReviewDate(time());
-            $r1->save();
-            $r1_id = $r1->getId();
+        $r1 = new Review();
+        $r1->setBook($phoenix);
+        $r1->setReviewedBy("Washington Post");
+        $r1->setRecommended(true);
+        $r1->setReviewDate(time());
+        $r1->save();
+        $r1_id = $r1->getId();
 
-            $r2 = new Review();
-            $r2->setBook($phoenix);
-            $r2->setReviewedBy("New York Times");
-            $r2->setRecommended(false);
-            $r2->setReviewDate(time());
-            $r2->save();
-            $r2_id = $r2->getId();
-            $this->assertTrue(true, 'Save Review records');
-        } catch (Exception $e) {
-            $this->fail('Save Review records');
-        }
+        $r2 = new Review();
+        $r2->setBook($phoenix);
+        $r2->setReviewedBy("New York Times");
+        $r2->setRecommended(false);
+        $r2->setReviewDate(time());
+        $r2->save();
+        $r2_id = $r2->getId();
+        $this->assertTrue(true, 'Save Review records');
 
         // Perform a "complex" search
         // --------------------------
@@ -410,7 +394,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $vintage->save();
             $vintage_id = $vintage->getId();
             $this->assertTrue(true, 'Save Publisher records');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail('Save publisher records');
         }
 
@@ -441,7 +425,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $grass->save();
             $grass_id = $grass->getId();
             $this->assertTrue(true, 'Save Author records');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail('Save Author records');
         }
 
@@ -483,7 +467,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $td->save();
             $td_id = $td->getId();
             $this->assertTrue(true, 'Save Book records');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail('Save Author records');
         }
 
@@ -507,7 +491,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $r2->save();
             $r2_id = $r2->getId();
             $this->assertTrue(true, 'Save Review records');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail('Save Review records');
         }
 

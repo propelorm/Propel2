@@ -35,7 +35,7 @@ class OracleAdapterTest extends TestCaseFixtures
         $c->setLimit(1);
         $params = array();
         $sql = $c->createSelectSql($params);
-        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.PUBLISHER_ID, book.AUTHOR_ID FROM book) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with the original column names by default');
+        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with the original column names by default');
     }
 
     public function testApplyLimitDuplicateColumnName()
@@ -48,7 +48,7 @@ class OracleAdapterTest extends TestCaseFixtures
         $c->setLimit(1);
         $params = array();
         $sql = $c->createSelectSql($params);
-        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS ORA_COL_ALIAS_0, book.TITLE AS ORA_COL_ALIAS_1, book.ISBN AS ORA_COL_ALIAS_2, book.PRICE AS ORA_COL_ALIAS_3, book.PUBLISHER_ID AS ORA_COL_ALIAS_4, book.AUTHOR_ID AS ORA_COL_ALIAS_5, author.ID AS ORA_COL_ALIAS_6, author.FIRST_NAME AS ORA_COL_ALIAS_7, author.LAST_NAME AS ORA_COL_ALIAS_8, author.EMAIL AS ORA_COL_ALIAS_9, author.AGE AS ORA_COL_ALIAS_10 FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
+        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.id AS ORA_COL_ALIAS_0, book.title AS ORA_COL_ALIAS_1, book.isbn AS ORA_COL_ALIAS_2, book.price AS ORA_COL_ALIAS_3, book.publisher_id AS ORA_COL_ALIAS_4, book.author_id AS ORA_COL_ALIAS_5, author.id AS ORA_COL_ALIAS_6, author.first_name AS ORA_COL_ALIAS_7, author.last_name AS ORA_COL_ALIAS_8, author.email AS ORA_COL_ALIAS_9, author.age AS ORA_COL_ALIAS_10 FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
     }
 
     public function testApplyLimitDuplicateColumnNameWithColumn()
@@ -63,7 +63,7 @@ class OracleAdapterTest extends TestCaseFixtures
         $params = array();
         $asColumns = $c->getAsColumns();
         $sql = $c->createSelectSql($params);
-        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.ID AS ORA_COL_ALIAS_0, book.TITLE AS ORA_COL_ALIAS_1, book.ISBN AS ORA_COL_ALIAS_2, book.PRICE AS ORA_COL_ALIAS_3, book.PUBLISHER_ID AS ORA_COL_ALIAS_4, book.AUTHOR_ID AS ORA_COL_ALIAS_5, author.ID AS ORA_COL_ALIAS_6, author.FIRST_NAME AS ORA_COL_ALIAS_7, author.LAST_NAME AS ORA_COL_ALIAS_8, author.EMAIL AS ORA_COL_ALIAS_9, author.AGE AS ORA_COL_ALIAS_10, book.PRICE AS BOOK_PRICE FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
+        $this->assertEquals('SELECT B.* FROM (SELECT A.*, rownum AS PROPEL_ROWNUM FROM (SELECT book.id AS ORA_COL_ALIAS_0, book.title AS ORA_COL_ALIAS_1, book.isbn AS ORA_COL_ALIAS_2, book.price AS ORA_COL_ALIAS_3, book.publisher_id AS ORA_COL_ALIAS_4, book.author_id AS ORA_COL_ALIAS_5, author.id AS ORA_COL_ALIAS_6, author.first_name AS ORA_COL_ALIAS_7, author.last_name AS ORA_COL_ALIAS_8, author.email AS ORA_COL_ALIAS_9, author.age AS ORA_COL_ALIAS_10, book.price AS BOOK_PRICE FROM book, author) A ) B WHERE  B.PROPEL_ROWNUM <= 1', $sql, 'applyLimit() creates a subselect with aliased column names when a duplicate column name is found');
         $this->assertEquals($asColumns, $c->getAsColumns(), 'createSelectSql supplementary add alias column');
     }
 
@@ -76,7 +76,7 @@ class OracleAdapterTest extends TestCaseFixtures
         $c->addAsColumn('book_ID', BookTableMap::COL_ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT book.ID, book.ID AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+        $this->assertEquals('SELECT book.id, book.id AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
         $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 

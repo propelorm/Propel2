@@ -383,4 +383,21 @@
         </foreign-key>
     </table>
 
+    <table name="polymorphic_relation_log">
+        <column name="id" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="message" type="VARCHAR" required="true" />
+        <column name="target_id" required="false" type="INTEGER" />
+        <column name="target_type" required="false" type="VARCHAR" size="55" />
+
+        <foreign-key foreignTable="author" onDelete="setnull" onUpdate="cascade">
+            <reference local="target_type" value="author" />
+            <reference local="target_id" foreign="id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="book" onDelete="setnull" onUpdate="cascade">
+            <reference local="target_type" value="book" />
+            <reference local="target_id" foreign="id" />
+        </foreign-key>
+    </table>
+
 </database>

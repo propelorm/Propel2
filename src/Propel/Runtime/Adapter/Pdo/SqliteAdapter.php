@@ -46,17 +46,6 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
         });
     }
 
-
-    /**
-     * @see AdapterInterface::useQuoteIdentifier()
-     *
-     * @return boolean
-     */
-    public function useQuoteIdentifier()
-    {
-        return true;
-    }
-
     /**
      * Returns SQL which concatenates the second string to the first.
      *

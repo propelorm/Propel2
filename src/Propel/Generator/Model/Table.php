@@ -16,6 +16,7 @@ use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
+use Propel\Runtime\Exception\RuntimeException;
 
 /**
  * Data about a table used in an application.
@@ -86,7 +87,16 @@ class Table extends ScopedMappingModel implements IdMethod
     private $columnsByLowercaseName;
     private $columnsByPhpName;
     private $needsTransactionInPostgres;
+
+    /**
+     * @var boolean
+     */
     private $heavyIndexing;
+
+    /**
+     * @var boolean
+     */
+    private $identifierQuoting;
     private $forReferenceOnly;
     private $reloadOnInsert;
     private $reloadOnUpdate;
@@ -197,6 +207,10 @@ class Table extends ScopedMappingModel implements IdMethod
                 && $this->database->isHeavyIndexing()
             )
         );
+
+        if ($this->getAttribute('identifierQuoting')) {
+            $this->identifierQuoting = $this->booleanValue($this->getAttribute('identifierQuoting'));
+        }
 
         $this->description = $this->getAttribute('description');
         $this->interface = $this->getAttribute('interface'); // sic ('interface' is reserved word)
@@ -722,7 +736,7 @@ class Table extends ScopedMappingModel implements IdMethod
                     if (!$foreignColumn->hasReferrer($foreignKey)) {
                         $foreignColumn->addReferrer($foreignKey);
                     }
-                } elseif ($throwErrors) {
+                } elseif ($throwErrors && !$foreignKey->isPolymorphic()) {
                     // if the foreign column does not exist, we may have an
                     // external reference or a misspelling
                     throw new BuildException(sprintf(
@@ -939,7 +953,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Retrieves the configuration object, filled by build.properties
+     * Retrieves the configuration object.
      *
      * @return GeneratorConfig
      */
@@ -1689,6 +1703,27 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Quotes a identifier depending on identifierQuotingEnabled.
+     *
+     * Needs a platform assigned to its database.
+     *
+     * @param string $text
+     * @return string
+     */
+    public function quoteIdentifier($text)
+    {
+        if (!$this->getPlatform()) {
+            throw new RuntimeException('No platform specified. Can not quote without knowing which platform this table\'s database is using.');
+        }
+
+        if ($this->isIdentifierQuotingEnabled()) {
+            return $this->getPlatform()->doQuoting($text);
+        }
+
+        return $text;
+    }
+
+    /**
      * Returns whether or not code and SQL must be created for this table.
      *
      * Table will be skipped, if return true.
@@ -1924,4 +1959,34 @@ class Table extends ScopedMappingModel implements IdMethod
     {
         return $this->defaultMutatorVisibility;
     }
+
+    /**
+     * Checks if identifierQuoting is enabled. Looks up to its database->isIdentifierQuotingEnabled
+     * if identifierQuoting is null hence undefined.
+     *
+     * Use getIdentifierQuoting() if you need the raw value.
+     *
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return (null !== $this->identifierQuoting || !$this->database) ? $this->identifierQuoting : $this->database->isIdentifierQuotingEnabled();
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIdentifierQuoting()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
 }

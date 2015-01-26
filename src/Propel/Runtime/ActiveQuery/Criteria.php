@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Runtime\Adapter\Pdo\PdoAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
@@ -253,6 +254,18 @@ class Criteria
      * @var PropelConditionalProxy
      */
     protected $conditionalProxy = null;
+
+    /**
+     * Whether identifier should be quoted.
+     *
+     * @var boolean
+     */
+    protected $identifierQuoting = null;
+
+    /**
+     * @var array
+     */
+    public $replacedColumns = [];
 
     /**
      * Creates a new instance with the default capacity which corresponds to
@@ -888,6 +901,7 @@ class Criteria
         }
 
         $join = new Join();
+        $join->setIdentifierQuoting($this->isIdentifierQuotingEnabled());
 
         // is the left table an alias ?
         $dotpos = strrpos($left, '.');
@@ -935,6 +949,7 @@ class Criteria
     public function addMultipleJoin($conditions, $joinType = null)
     {
         $join = new Join();
+        $join->setIdentifierQuoting($this->isIdentifierQuotingEnabled());
         $joinCondition = null;
         foreach ($conditions as $condition) {
             $left = $condition[0];
@@ -1007,6 +1022,28 @@ class Criteria
     public function getJoins()
     {
         return $this->joins;
+    }
+
+    /**
+     * This method returns an already defined join clause from the query
+     *
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function getJoin($name)
+    {
+        return $this->joins[$name];
+    }
+
+    /**
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function hasJoin($name)
+    {
+        return isset($this->joins[$name]);
     }
 
     /**
@@ -1791,7 +1828,7 @@ class Criteria
      */
     public function createSelectSql(&$params)
     {
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
         $fromClause = array();
@@ -1803,20 +1840,23 @@ class Criteria
         $orderBy = $this->getOrderByColumns();
 
         // get the first part of the SQL statement, the SELECT part
-        $selectSql = $db->createSelectSqlPart($this, $fromClause);
+        $selectSql = $adapter->createSelectSqlPart($this, $fromClause);
+        $this->replaceNames($selectSql);
 
         // Handle joins
         // joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
         // joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
         foreach ($this->getJoins() as $join) {
-            $join->setAdapter($db);
+            $join->setAdapter($adapter);
 
             // add 'em to the queues..
             if (!$fromClause) {
                 $fromClause[] = $join->getLeftTableWithAlias();
             }
             $joinTables[] = $join->getRightTableWithAlias();
-            $joinClause[] = $join->getClause($params);
+            $joinClauseString = $join->getClause($params);
+            $this->replaceNames($joinClauseString);
+            $joinClause[] = $joinClauseString;
         }
 
         // add the criteria to WHERE clause
@@ -1842,10 +1882,11 @@ class Criteria
                 }
             }
 
-            $criterion->setAdapter($db);
+            $criterion->setAdapter($adapter);
 
             $sb = '';
             $criterion->appendPsTo($sb, $params);
+            $this->replaceNames($sb);
             $whereClause[] = $sb;
         }
 
@@ -1867,6 +1908,7 @@ class Criteria
         if (null !== $having) {
             $sb = '';
             $having->appendPsTo($sb, $params);
+            $this->replaceNames($sb);
             $havingString = $sb;
         }
 
@@ -1913,10 +1955,12 @@ class Criteria
                 $column = $tableName ? $dbMap->getTable($tableName)->getColumn($columnName) : null;
 
                 if ($this->isIgnoreCase() && $column && $column->isText()) {
-                    $ignoreCaseColumn = $db->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
+                    $ignoreCaseColumn = $adapter->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
+                    $this->replaceNames($ignoreCaseColumn);
                     $orderByClause[] =  $ignoreCaseColumn . $direction;
                     $selectSql .= ', ' . $ignoreCaseColumn;
                 } else {
+                    $this->replaceNames($orderByColumn);
                     $orderByClause[] = $orderByColumn;
                 }
             }
@@ -1941,10 +1985,8 @@ class Criteria
         }
 
         // from / join tables quoted if it is necessary
-        if ($db->useQuoteIdentifier()) {
-            $fromClause = array_map(array($db, 'quoteIdentifierTable'), $fromClause);
-            $joinClause = $joinClause ? $joinClause : array_map(array($db, 'quoteIdentifierTable'), $joinClause);
-        }
+        $fromClause = array_map(array($this, 'quoteIdentifierTable'), $fromClause);
+        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteIdentifierTable'), $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -1966,16 +2008,161 @@ class Criteria
             .' FROM '  . $from
             .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '');
 
-        $db->applyGroupBy($sql, $this);
+        if ($groupBy = $adapter->getGroupBy($this)) {
+            $this->replaceNames($groupBy);
+            $sql .= $groupBy;
+        }
 
         $sql .= ($havingString ? ' HAVING '.$havingString : '')
              .($orderByClause ? ' ORDER BY '.implode(',', $orderByClause) : '');
 
         if ($this->getLimit() >= 0 || $this->getOffset()) {
-            $db->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
+            $adapter->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
         }
 
         return $sql;
+    }
+
+    /**
+     * This method does only quote identifier, the method doReplaceNameInExpression of child ModelCriteria class does more.
+     *
+     * @param array $matches Matches found by preg_replace_callback
+     *
+     * @return string the column name replacement
+     */
+    protected function doReplaceNameInExpression($matches)
+    {
+        return $this->quoteIdentifier($matches[0]);
+    }
+
+    /**
+     * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $tableMap->isIdentifierQuotingEnabled.
+     *
+     * @param string $string
+     * @return string
+     */
+    public function quoteIdentifier($string, $tableName = '')
+    {
+        if ($this->isIdentifierQuotingEnabled()) {
+            $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+            return $adapter->quote($string);
+        }
+
+        //find table name and ask tableMap if quoting is enabled
+        if (!$tableName && false !== ($pos = strrpos($string, '.'))) {
+            $tableName = substr($string, 0, $pos);
+        }
+
+        $tableMapName = $this->getTableForAlias($tableName) ?: $tableName;
+
+        if ($tableMapName) {
+            $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+            if ($dbMap->hasTable($tableMapName)) {
+                $tableMap = $dbMap->getTable($tableMapName);
+                if ($tableMap->isIdentifierQuotingEnabled()) {
+                    $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+                    return $adapter->quote($string);
+                }
+            }
+        }
+
+        return $string;
+    }
+
+    public function quoteIdentifierTable($string)
+    {
+        $realTableName = $string;
+        if (false !== ($pos = strrpos($string, ' '))) {
+            $realTableName = substr($string, 0, $pos);
+        }
+
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+
+        if ($this->isIdentifierQuotingEnabled()) {
+            $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+            return $adapter->quoteIdentifierTable($string);
+        }
+
+        if ($dbMap->hasTable($realTableName)) {
+            $tableMap = $dbMap->getTable($realTableName);
+            if ($tableMap->isIdentifierQuotingEnabled()) {
+                $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+                return $adapter->quoteIdentifierTable($string);
+            }
+        }
+
+        return $string;
+    }
+
+    /**
+     * Replaces complete column names (like Article.AuthorId) in an SQL clause
+     * by their exact Propel column fully qualified name (e.g. article.author_id)
+     * but ignores the column names inside quotes
+     * e.g. 'CONCAT(Book.AuthorID, "Book.AuthorID") = ?'
+     *   => 'CONCAT(book.author_id, "Book.AuthorID") = ?'
+     *
+     * @param string $sql SQL clause to inspect (modified by the method)
+     *
+     * @return boolean Whether the method managed to find and replace at least one column name
+     */
+    public function replaceNames(&$sql)
+    {
+        $this->replacedColumns = array();
+        $this->currentAlias = '';
+        $this->foundMatch = false;
+        $isAfterBackslash = false;
+        $isInString = false;
+        $stringQuotes = '';
+        $parsedString = '';
+        $stringToTransform = '';
+        $len = strlen($sql);
+        $pos = 0;
+        while ($pos < $len) {
+            $char = $sql[$pos];
+            // check flags for strings or escaper
+            switch ($char) {
+                case '\\':
+                    $isAfterBackslash = true;
+                    break;
+                case "'":
+                case '"':
+                    if ($isInString && $stringQuotes == $char) {
+                        if (!$isAfterBackslash) {
+                            $isInString = false;
+                        }
+                    } elseif (!$isInString) {
+                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+                        $stringToTransform = '';
+                        $stringQuotes = $char;
+                        $isInString = true;
+                    }
+                    break;
+            }
+
+            if ('\\' !== $char) {
+                $isAfterBackslash = false;
+            }
+
+            if ($isInString) {
+                $parsedString .= $char;
+            } else {
+                $stringToTransform .= $char;
+            }
+
+            $pos++;
+        }
+
+        if ($stringToTransform) {
+            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+        }
+
+        $sql = $parsedString;
+
+        return $this->foundMatch;
     }
 
     /**
@@ -2045,8 +2232,6 @@ class Criteria
         }
 
         try {
-            $adapter = Propel::getServiceContainer()->getAdapter($this->getDBName());
-
             $qualifiedCols = $this->keys(); // we need table.column cols when populating values
             $columns = array(); // but just 'column' cols for the SQL
             foreach ($qualifiedCols as $qualifiedCol) {
@@ -2054,10 +2239,8 @@ class Criteria
             }
 
             // add identifiers
-            if ($adapter->useQuoteIdentifier()) {
-                $columns = array_map(array($adapter, 'quoteIdentifier'), $columns);
-                $tableName = $adapter->quoteIdentifierTable($tableName);
-            }
+            $columns = array_map(array($this, 'quoteIdentifier'), $columns);
+            $tableName = $this->quoteIdentifierTable($tableName);
 
             $sql = 'INSERT INTO ' . $tableName
                 . ' (' . implode(',', $columns) . ')'
@@ -2142,6 +2325,7 @@ class Criteria
      */
     public function doUpdate($updateValues, ConnectionInterface $con)
     {
+        /** @var PdoAdapter $db */
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
@@ -2177,25 +2361,19 @@ class Criteria
                     $sql .= '/* ' . $queryComment . ' */ ';
                 }
                 // is it a table alias?
-                if ($tableName2 = $this->getTableForAlias($tableName)) {
-                    $updateTable = $tableName2 . ' ' . $tableName;
-                    $tableName = $tableName2;
+                if ($realTableName = $this->getTableForAlias($tableName)) {
+                    $updateTable = $realTableName . ' ' . $tableName;
+                    $tableName = $realTableName;
                 } else {
                     $updateTable = $tableName;
                 }
-                if ($db->useQuoteIdentifier()) {
-                    $sql .= $db->quoteIdentifierTable($updateTable);
-                } else {
-                    $sql .= $updateTable;
-                }
+                $sql .= $this->quoteIdentifierTable($updateTable);
                 $sql .= " SET ";
                 $p = 1;
                 foreach ($updateTablesColumns[$tableName] as $col) {
                     $updateColumnName = substr($col, strrpos($col, '.') + 1);
                     // add identifiers for the actual database?
-                    if ($db->useQuoteIdentifier()) {
-                        $updateColumnName = $db->quoteIdentifier($updateColumnName);
-                    }
+                    $updateColumnName = $this->quoteIdentifier($updateColumnName, $tableName);
                     if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL) {
                         $sql .= $updateColumnName . '=:p'.$p++.', ';
                     } else {
@@ -2234,6 +2412,7 @@ class Criteria
                     foreach ($columns as $colName) {
                         $sb = '';
                         $this->getCriterion($colName)->appendPsTo($sb, $params);
+                        $this->replaceNames($sb);
                         $whereClause[] = $sb;
                     }
                     $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
@@ -2366,7 +2545,7 @@ class Criteria
             $con = Propel::getServiceContainer()->getWriteConnection($this->getDbName());
         }
 
-        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+        $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
         // join are not supported with DELETE statement
@@ -2389,23 +2568,24 @@ class Criteria
             $params = array();
             $stmt = null;
             try {
-                $sql = $db->getDeleteFromClause($this, $tableName);
+                $sql = $adapter->getDeleteFromClause($this, $tableName);
 
                 foreach ($columns as $colName) {
                     $sb = '';
                     $this->getCriterion($colName)->appendPsTo($sb, $params);
+                    $this->replaceNames($sb);
                     $whereClause[] = $sb;
                 }
                 $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
 
                 $stmt = $con->prepare($sql);
 
-                $db->bindValues($stmt, $params, $dbMap);
+                $adapter->bindValues($stmt, $params, $dbMap);
                 $stmt->execute();
                 $affectedRows = $stmt->rowCount();
             } catch (\Exception $e) {
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
-                throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql));
+                throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
 
         } // for each table
@@ -2552,4 +2732,21 @@ class Criteria
             $this->having = clone $this->having;
         }
     }
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled()
+    {
+        return $this->identifierQuoting;
+    }
+
+    /**
+     * @param boolean $identifierQuoting
+     */
+    public function setIdentifierQuoting($identifierQuoting)
+    {
+        $this->identifierQuoting = $identifierQuoting;
+    }
+
 }

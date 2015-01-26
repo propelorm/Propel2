@@ -91,9 +91,19 @@ class ForeignKey extends MappingModel
     private $foreignColumns;
 
     /**
+     * @var string[]
+     */
+    private $localValues;
+
+    /**
      * @var bool
      */
     private $skipSql;
+
+    /**
+     * @var string
+     */
+    private $interface;
 
     /**
      * @var bool
@@ -129,6 +139,7 @@ class ForeignKey extends MappingModel
         $this->phpName     = $this->getAttribute('phpName');
         $this->refPhpName  = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
+        $this->interface   = $this->getAttribute('interface');
         $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
         $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
         $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
@@ -272,6 +283,22 @@ class ForeignKey extends MappingModel
     {
         $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInterface()
+    {
+        return $this->interface;
+    }
+
+    /**
+     * @param string $interface
+     */
+    public function setInterface($interface)
+    {
+        $this->interface = $interface;
     }
 
     /**
@@ -435,7 +462,7 @@ class ForeignKey extends MappingModel
     /**
      * Sets the parent Table of the foreign key.
      *
-     * @param Table $table
+     * @param Table $parent
      */
     public function setTable(Table $parent)
     {
@@ -481,8 +508,9 @@ class ForeignKey extends MappingModel
     public function addReference($ref1, $ref2 = null)
     {
         if (is_array($ref1)) {
-            $this->localColumns[] = $ref1['local'] ? $ref1['local'] : null;
-            $this->foreignColumns[] = $ref1['foreign'] ? $ref1['foreign'] : null;
+            $this->localColumns[] = isset($ref1['local']) ? $ref1['local'] : null;
+            $this->foreignColumns[] = isset($ref1['foreign']) ? $ref1['foreign'] : null;
+            $this->localValues[] = isset($ref1['value']) ? $ref1['value'] : null;
 
             return;
         }
@@ -490,6 +518,7 @@ class ForeignKey extends MappingModel
         if (is_string($ref1)) {
             $this->localColumns[] = $ref1;
             $this->foreignColumns[] = is_string($ref2) ? $ref2 : null;
+            $this->localValues[] = null;
 
             return;
         }
@@ -498,14 +527,19 @@ class ForeignKey extends MappingModel
         $foreign = null;
         if ($ref1 instanceof Column) {
             $local = $ref1->getName();
+            $this->localColumns[] = $local;
+        } else {
+            $this->localValues[] = $local;
         }
 
         if ($ref2 instanceof Column) {
             $foreign = $ref2->getName();
+            $this->foreignColumns[] = $foreign;
+            $this->localValues[] = null;
+        } else if ($ref1 instanceof Column) {
+            $this->foreignColumns[] = null;
+            $this->localValues[] = $ref2;
         }
-
-        $this->localColumns[] = $local;
-        $this->foreignColumns[] = $foreign;
     }
 
     /**
@@ -516,6 +550,7 @@ class ForeignKey extends MappingModel
     {
         $this->localColumns   = [];
         $this->foreignColumns = [];
+        $this->localValues = [];
     }
 
     /**
@@ -566,35 +601,36 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns an array of local column to foreign column
-     * mapping for this foreign key.
-     *
-     * @return array
+     * @return array [[Column $leftColumn, $rightValueOrColumn], ..., ...]
      */
-    public function getLocalForeignMapping()
+    public function getMapping()
     {
-        $h = [];
+        $mapping = [];
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            $h[$this->localColumns[$i]] = $this->foreignColumns[$i];
+            if ($right = $this->foreignColumns[$i]) {
+                $right = $this->getForeignTable()->getColumn($right);
+            } else {
+                $right = $this->localValues[$i];
+            }
+            $mapping[] = [$this->parentTable->getColumn($this->localColumns[$i]), $right];
         }
 
-        return $h;
+        return $mapping;
     }
 
     /**
-     * Returns an array of local column to foreign column
-     * mapping for this foreign key.
-     *
-     * @return array
+     * @return array [[$leftValueOrColumn, Column $rightColumn], ..., ...]
      */
-    public function getForeignLocalMapping()
+    public function getInverseMapping()
     {
-        $h = [];
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            $h[$this->foreignColumns[$i]] = $this->localColumns[$i];
+        $mapping = $this->getMapping();
+        foreach ($mapping as &$map) {
+            $left = $map[0];
+            $map[0] = $map[1];
+            $map[1] = $left;
         }
 
-        return $h;
+        return $mapping;
     }
 
     /**
@@ -611,6 +647,7 @@ class ForeignKey extends MappingModel
             $mapping[] = [
                 'local'   => $this->parentTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
+                'value' => $this->localValues[$i],
             ];
         }
 
@@ -625,9 +662,8 @@ class ForeignKey extends MappingModel
      */
     public function getMappedForeignColumn($local)
     {
-        $m = $this->getLocalForeignMapping();
-
-        return isset($m[$local]) ? $m[$local] : null;
+        $index = array_search($local, $this->localColumns);
+        return $this->foreignColumns[$index];
     }
 
     /**
@@ -638,9 +674,8 @@ class ForeignKey extends MappingModel
      */
     public function getMappedLocalColumn($foreign)
     {
-        $mapping = $this->getForeignLocalMapping();
-
-        return isset($mapping[$foreign]) ? $mapping[$foreign] : null;
+        $index = array_search($foreign, $this->foreignColumns);
+        return $this->localColumns[$index];
     }
 
     /**
@@ -749,7 +784,6 @@ class ForeignKey extends MappingModel
      */
     public function isForeignPrimaryKey()
     {
-        $lfmap = $this->getLocalForeignMapping();
         $foreignTable = $this->getForeignTable();
 
         $foreignPKCols = [];
@@ -758,8 +792,10 @@ class ForeignKey extends MappingModel
         }
 
         $foreignCols = array ();
-        foreach ($this->localColumns as $colName) {
-            $foreignCols[] = $foreignTable->getColumn($lfmap[$colName])->getName();
+        foreach ($this->localColumns as $idx => $colName) {
+            if ($this->foreignColumns[$idx]) {
+                $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();
+            }
         }
 
         return ((count($foreignPKCols) === count($foreignCols))
@@ -775,6 +811,60 @@ class ForeignKey extends MappingModel
     public function isComposite()
     {
         return count($this->localColumns) > 1;
+    }
+
+    /**
+     * @param array $mapping
+     *
+     * @return array [[$localColumnName, $right, $compare], ...]
+     */
+    public function getNormalizedMap($mapping)
+    {
+        $result = [];
+
+        foreach ($mapping as $map) {
+            list ($left, $right) = $map;
+            $item = [];
+            $item[0] = $left instanceof Column ? ':' . $left->getName() : $left;
+            $item[1] = $right instanceof Column ? ':' . $right->getName() : $right;
+            $result[] = $item;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Whether this relation is a polymorphic association.
+     *
+     * At least one reference with a expression attribute set.
+     *
+     * @return boolean
+     */
+    public function isPolymorphic()
+    {
+        foreach ($this->localValues as $value) {
+            if (null !== $value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array [[$localColumnName, $localValue], [.., ..], ...]
+     */
+    public function getLocalValues()
+    {
+        $map = [];
+
+        foreach ($this->localColumns as $idx => $columnName) {
+            if ($this->localValues[$idx]) {
+                $map[] = [$columnName, $this->localValues[$idx]];
+            }
+        }
+
+        return $map;
     }
 
     /**
@@ -801,7 +891,7 @@ class ForeignKey extends MappingModel
      */
     public function setSkipSql($skip)
     {
-        $this->skipSql = (Boolean) $skip;
+        $this->skipSql = (boolean) $skip;
     }
 
     /**
@@ -827,16 +917,16 @@ class ForeignKey extends MappingModel
      */
     public function isMatchedByInverseFK()
     {
-        return (Boolean) $this->getInverseFK();
+        return (boolean) $this->getInverseFK();
     }
 
     public function getInverseFK()
     {
         $foreignTable = $this->getForeignTable();
-        $map = $this->getForeignLocalMapping();
+        $map = $this->getInverseMapping();
 
         foreach ($foreignTable->getForeignKeys() as $refFK) {
-            $fkMap = $refFK->getLocalForeignMapping();
+            $fkMap = $refFK->getMapping();
             // compares keys and values, but doesn't care about order, included check to make sure it's the same table (fixes #679)
             if (($refFK->getTableName() === $this->getTableName()) && ($map === $fkMap)) {
                 return $refFK;

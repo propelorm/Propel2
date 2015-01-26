@@ -1,0 +1,24 @@
+machine:
+  environment:
+    DB_USER: ubuntu
+    DB_NAME: circle_test
+  php:
+    version: 5.4.9
+dependencies:
+  pre:
+    - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+    - echo "memory_limit=520M" > ~/.phpenv/versions/$(phpenv global)/etc/conf.d/memlimit.ini
+    - if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
+    - if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
+    - if [ "$CIRCLE_NODE_INDEX" = "3" ]; then ./tests/bin/setup.sqlite.sh; fi
+
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    - url: http://propel.jarves.io/build.php
+    - url: https://webhooks.gitter.im/e/206efe76e183f9ade489
+
+test:
+  override:
+    - ./tests/bin/phpunit.circleci.sh:
+        parallel: true

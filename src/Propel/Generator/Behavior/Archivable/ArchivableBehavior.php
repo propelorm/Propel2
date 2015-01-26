@@ -108,6 +108,7 @@ class ArchivableBehavior extends Behavior
             // see https://github.com/propelorm/Propel/issues/175 for details
             foreach ($table->getUnices() as $unique) {
                 $index = new Index();
+                $index->setTable($table);
                 foreach ($unique->getColumns() as $columnName) {
                     if ($size = $unique->getColumnSize($columnName)) {
                         $index->addColumn(array('name' => $columnName, 'size' => $size));

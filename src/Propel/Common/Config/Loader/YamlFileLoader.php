@@ -26,9 +26,11 @@ class YamlFileLoader extends FileLoader
      * @param mixed  $file The resource
      * @param string $type The resource type
      *
-     * @throws \InvalidArgumentException                           if configuration file not found
-     * @throws Symfony\Component\Yaml\Exception\ParseException     if something goes wrong in parsing file
-     * @throws Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
+     * @return array
+     *
+     * @throws \InvalidArgumentException                            if configuration file not found
+     * @throws \Symfony\Component\Yaml\Exception\ParseException     if something goes wrong in parsing file
+     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
      */
     public function load($file, $type = null)
     {
@@ -61,13 +63,6 @@ class YamlFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        $info = pathinfo($resource);
-        $extension = $info['extension'];
-
-        if ('dist' === $extension) {
-            $extension = pathinfo($info['filename'], PATHINFO_EXTENSION);
-        }
-
-        return is_string($resource) && ('yml' === $extension || 'yaml' === $extension);
+        return $this->checkSupports(array('yaml', 'yml'), $resource);
     }
 }

@@ -24,8 +24,6 @@ propel:
     connections:
       - migration
     targetPackage: migration
-    objectModel:
-      disableIdentifierQuoting: true
 
   runtime:
     defaultConnection: migration

@@ -7,10 +7,10 @@
  * @param  <?= $objectClassName ?> $parent Propel object for parent node
  * @return $this|<?= $objectClassName ?> The current Propel object
  */
-public function insertAsLastChildOf($parent)
+public function insertAsLastChildOf(<?= $objectClassName ?> $parent)
 {
     if ($this->isInTree()) {
-       throw new PropelException(
+        throw new PropelException(
             'A <?= $objectClassName ?> object must not already be in the tree to be inserted. Use the moveToLastChildOf() instead.'
         );
     }

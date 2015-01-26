@@ -35,7 +35,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $pks = $table6->getPrimaryKeys();
         $this->assertEquals(count($pks), 1, 'auto_add_pk adds a simple primary key by default');
         $pk = array_pop($pks);
-        $this->assertEquals($pk->getName(), 'ID', 'auto_add_pk adds an id column by default');
+        $this->assertEquals($pk->getName(), 'id', 'auto_add_pk adds an id column by default');
         $this->assertEquals($pk->getType(), 'INTEGER', 'auto_add_pk adds an integer column by default');
         $this->assertTrue($pk->isPrimaryKey(), 'auto_add_pk adds a primary key column by default');
         $this->assertTrue($table6->isUseIdGenerator(), 'auto_add_pk adds an autoIncrement column by default');
@@ -48,7 +48,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $this->assertFalse(method_exists('Table7', 'getId'), 'auto_add_pk does not add an id column when the table already has a primary key');
         $pks = $table7->getPrimaryKeys();
         $pk = array_pop($pks);
-        $this->assertEquals($pk->getName(), 'FOO', 'auto_add_pk does not change an existing primary key');
+        $this->assertEquals($pk->getName(), 'foo', 'auto_add_pk does not change an existing primary key');
     }
 
     public function testParameters()
@@ -57,7 +57,7 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $this->assertEquals(count($table8->getColumns()), 3, 'auto_add_pk adds one column with custom parameters');
         $pks = $table8->getPrimaryKeys();
         $pk = array_pop($pks);
-        $this->assertEquals($pk->getName(), 'IDENTIFIER', 'auto_add_pk accepts customization of pk column name');
+        $this->assertEquals($pk->getName(), 'identifier', 'auto_add_pk accepts customization of pk column name');
         $this->assertEquals($pk->getType(), 'BIGINT', 'auto_add_pk accepts customization of pk column type');
         $this->assertTrue($pk->isPrimaryKey(), 'auto_add_pk adds a primary key column with custom parameters');
         $this->assertFalse($table8->isUseIdGenerator(), 'auto_add_pk accepts customization of pk column autoIncrement');

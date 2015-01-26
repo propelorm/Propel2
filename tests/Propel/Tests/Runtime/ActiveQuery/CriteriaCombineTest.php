@@ -158,7 +158,7 @@ class CriteriaCombineTest extends BaseTestCase
         $cn2 = $this->c->getNewCriterion("INVOICE.COST", 5000, Criteria::LESS_EQUAL);
         $this->c->add($cn1->addAnd($cn2));
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => 1000),
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => 5000),
@@ -187,7 +187,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->add($cn1->addAnd($cn2));
         $this->c->addOr($cn3->addAnd($cn4));
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE ((INVOICE.COST>=:p1 AND INVOICE.COST<=:p2) OR (INVOICE.COST>=:p3 AND INVOICE.COST<=:p4))");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST>=:p1 AND INVOICE.COST<=:p2) OR (INVOICE.COST>=:p3 AND INVOICE.COST<=:p4))");
 
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
@@ -213,7 +213,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->addCond('cond2', "INVOICE.COST", "2000", Criteria::LESS_EQUAL);
         $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
@@ -234,7 +234,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_AND);
         $this->c->add("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE INVOICE.COST3>=:p1 AND (INVOICE.COST1>=:p2 AND INVOICE.COST2<=:p3) AND INVOICE.COST4<=:p4");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND (INVOICE.COST1>=:p2 AND INVOICE.COST2<=:p3) AND INVOICE.COST4<=:p4");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
@@ -257,7 +257,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
         $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_AND);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE (((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) AND INVOICE.COST3>=:p3) AND INVOICE.COST4<=:p4)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) AND INVOICE.COST3>=:p3) AND INVOICE.COST4<=:p4)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
@@ -278,7 +278,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->addCond('cond2', "INVOICE.COST", "2000", Criteria::LESS_EQUAL);
         $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE (INVOICE.COST>=:p1 OR INVOICE.COST<=:p2)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 OR INVOICE.COST<=:p2)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
@@ -299,7 +299,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->combine(array('cond1', 'cond2'), Criteria::LOGICAL_OR);
         $this->c->addOr("INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE INVOICE.COST3>=:p1 AND ((INVOICE.COST1>=:p2 OR INVOICE.COST2<=:p3) OR INVOICE.COST4<=:p4)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND ((INVOICE.COST1>=:p2 OR INVOICE.COST2<=:p3) OR INVOICE.COST4<=:p4)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
@@ -322,7 +322,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
         $this->c->combine(array('cond1', 'cond2', 'cond3', 'cond4'), Criteria::LOGICAL_OR);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE (((INVOICE.COST1>=:p1 OR INVOICE.COST2<=:p2) OR INVOICE.COST3>=:p3) OR INVOICE.COST4<=:p4)");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 OR INVOICE.COST2<=:p2) OR INVOICE.COST3>=:p3) OR INVOICE.COST4<=:p4)");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
@@ -347,7 +347,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->combine(array('cond3', 'cond4'), Criteria::LOGICAL_AND, 'cond34');
         $this->c->combine(array('cond12', 'cond34'), Criteria::LOGICAL_OR);
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
@@ -372,7 +372,7 @@ class CriteriaCombineTest extends BaseTestCase
         $this->c->combine(array('cond3', 'cond4'), 'aNd', 'cond34');
         $this->c->combine(array('cond12', 'cond34'), 'oR');
 
-        $expect = $this->getSql("SELECT  FROM `INVOICE` WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
+        $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
         $expect_params = array(
             array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
             array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),

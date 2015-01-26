@@ -53,6 +53,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $types = array(
             TableMap::TYPE_PHPNAME,
+            TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
@@ -75,12 +76,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 5 => 'authorId'
             ),
             TableMap::TYPE_COLNAME => array(
-                0 => 'book.ID',
-                1 => 'book.TITLE',
-                2 => 'book.ISBN',
-                3 => 'book.PRICE',
-                4 => 'book.PUBLISHER_ID',
-                5 => 'book.AUTHOR_ID'
+                0 => 'book.id',
+                1 => 'book.title',
+                2 => 'book.isbn',
+                3 => 'book.price',
+                4 => 'book.publisher_id',
+                5 => 'book.author_id'
             ),
             TableMap::TYPE_FIELDNAME => array(
                 0 => 'id',
@@ -126,7 +127,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
         $expecteds = array (
             TableMap::TYPE_PHPNAME => 'AuthorId',
             TableMap::TYPE_CAMELNAME => 'authorId',
-            TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
+            TableMap::TYPE_COLNAME => 'book.author_id',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
         );
@@ -170,12 +171,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 5 => 'authorId'
             ),
             TableMap::TYPE_COLNAME => array(
-                0 => 'book.ID',
-                1 => 'book.TITLE',
-                2 => 'book.ISBN',
-                3 => 'book.PRICE',
-                4 => 'book.PUBLISHER_ID',
-                5 => 'book.AUTHOR_ID'
+                0 => 'book.id',
+                1 => 'book.title',
+                2 => 'book.isbn',
+                3 => 'book.price',
+                4 => 'book.publisher_id',
+                5 => 'book.author_id'
             ),
             TableMap::TYPE_FIELDNAME => array(
                 0 => 'id',
@@ -221,7 +222,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
         $expecteds = array (
             TableMap::TYPE_PHPNAME => 'AuthorId',
             TableMap::TYPE_CAMELNAME => 'authorId',
-            TableMap::TYPE_COLNAME => 'book.AUTHOR_ID',
+            TableMap::TYPE_COLNAME => 'book.author_id',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
         );
@@ -243,7 +244,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
         $types = array(
             TableMap::TYPE_PHPNAME => 'Title',
             TableMap::TYPE_CAMELNAME => 'title',
-            TableMap::TYPE_COLNAME => 'book.TITLE',
+            TableMap::TYPE_COLNAME => 'book.title',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
         );
@@ -267,7 +268,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
         $types = array(
             TableMap::TYPE_PHPNAME => 'Title',
             TableMap::TYPE_CAMELNAME => 'title',
-            TableMap::TYPE_COLNAME => 'book.TITLE',
+            TableMap::TYPE_COLNAME => 'book.title',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
         );
@@ -304,8 +305,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 'iSBN' => '043935806X'
             ),
             TableMap::TYPE_COLNAME => array (
-                'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
-                'book.ISBN' => '043935806X'
+                'book.title' => 'Harry Potter and the Order of the Phoenix',
+                'book.isbn' => '043935806X'
             ),
             TableMap::TYPE_FIELDNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
@@ -364,8 +365,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 'iSBN' => '043935806X'
             ),
             TableMap::TYPE_COLNAME => array (
-                'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
-                'book.ISBN' => '043935806X'
+                'book.title' => 'Harry Potter and the Order of the Phoenix',
+                'book.isbn' => '043935806X'
             ),
             TableMap::TYPE_FIELDNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
@@ -465,20 +466,20 @@ class FieldnameRelatedTest extends TestCaseFixtures
                 ]
             ),
             TableMap::TYPE_COLNAME => array (
-                'book.ID' => null,
-                'book.TITLE' => 'Harry Potter and the Order of the Phoenix',
-                'book.ISBN' => '043935806X',
-                'book.PRICE' => 10.0,
-                'book.PUBLISHER_ID' => null,
-                'book.AUTHOR_ID' => null,
+                'book.id' => null,
+                'book.title' => 'Harry Potter and the Order of the Phoenix',
+                'book.isbn' => '043935806X',
+                'book.price' => 10.0,
+                'book.publisher_id' => null,
+                'book.author_id' => null,
                 'Reviews' => [
                     [
-                        'review.ID' => null,
-                        'review.REVIEWED_BY' => 'Someone',
-                        'review.REVIEW_DATE' => null,
-                        'review.RECOMMENDED' => true,
-                        'review.STATUS' => null,
-                        'review.BOOK_ID' => null,
+                        'review.id' => null,
+                        'review.reviewed_by' => 'Someone',
+                        'review.review_date' => null,
+                        'review.recommended' => true,
+                        'review.status' => null,
+                        'review.book_id' => null,
                         'Book' => '*RECURSION*'
                     ]
                 ]

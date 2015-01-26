@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DIR=`dirname $0`;
-. $DIR/setup.base.sh;
+. $DIR/base.sh;
 
 rm -f ./test.sq3;
 

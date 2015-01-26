@@ -35,6 +35,8 @@ class MigrationUpCommand extends AbstractCommand
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
+            ->addOption('fake',             null, InputOption::VALUE_NONE,  'Does not touch the actual schema, but marks next migration as executed.')
+            ->addOption('force',            null, InputOption::VALUE_NONE,  'Continues with the migration even when errors occur.')
             ->setName('migration:up')
             ->setAliases(array('up'))
             ->setDescription('Execute migrations up')
@@ -79,16 +81,34 @@ class MigrationUpCommand extends AbstractCommand
 
             return false;
         }
-        $output->writeln(sprintf(
-            'Executing migration %s up',
-            $manager->getMigrationClassName($nextMigrationTimestamp)
-        ));
+
+        if ($input->getOption('fake')) {
+            $output->writeln(
+                sprintf(
+                    'Faking migration %s up',
+                    $manager->getMigrationClassName($nextMigrationTimestamp)
+                )
+            );
+        } else {
+            $output->writeln(
+                sprintf(
+                    'Executing migration %s up',
+                    $manager->getMigrationClassName($nextMigrationTimestamp)
+                )
+            );
+        }
 
         $migration = $manager->getMigrationObject($nextMigrationTimestamp);
-        if (false === $migration->preUp($manager)) {
-            $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
-            return false;
+        if (!$input->getOption('fake')) {
+            if (false === $migration->preUp($manager)) {
+                if ($input->getOption('force')) {
+                    $output->writeln('<error>preUp() returned false. Continue migration.</error>');
+                } else {
+                    $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
+                    return false;
+                }
+            }
         }
 
         foreach ($migration->getUpSQL() as $datasource => $sql) {
@@ -105,36 +125,46 @@ class MigrationUpCommand extends AbstractCommand
             $conn = $manager->getAdapterConnection($datasource);
             $res = 0;
             $statements = SqlParser::parseString($sql);
-            foreach ($statements as $statement) {
-                try {
-                    if ($input->getOption('verbose')) {
-                        $output->writeln(sprintf('Executing statement "%s"', $statement));
+
+            if (!$input->getOption('fake')) {
+                foreach ($statements as $statement) {
+                    try {
+                        if ($input->getOption('verbose')) {
+                            $output->writeln(sprintf('Executing statement "%s"', $statement));
+                        }
+
+                        $conn->exec($statement);
+                        $res++;
+                    } catch (\Exception $e) {
+                        if ($input->getOption('force')) {
+                            //continue, but print error message
+                            $output->writeln(
+                                sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement)
+                            );
+                        } else {
+                            throw new RuntimeException(
+                                sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement),
+                                0,
+                                $e
+                            );
+                        }
                     }
-
-                    $stmt = $conn->prepare($statement);
-                    $stmt->execute();
-                    $res++;
-                } catch (\PDOException $e) {
-                    throw new RuntimeException(sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement), 0, $e);
                 }
-            }
-            if (!$res) {
-                $output->writeln('No statement was executed. The version was not updated.');
-                $output->writeln(sprintf(
-                    'Please review the code in "%s"',
-                    $manager->getMigrationDir() . DIRECTORY_SEPARATOR . $manager->getMigrationClassName($nextMigrationTimestamp)
-                ));
-                $output->writeln('<error>Migration aborted</error>', Project::MSG_ERR);
 
-                return false;
+                //make sure foreign_keys are activated again in mysql
+
+                $output->writeln(
+                    sprintf(
+                        '%d of %d SQL statements executed successfully on datasource "%s"',
+                        $res,
+                        count($statements),
+                        $datasource
+                    )
+                );
             }
-            $output->writeln(sprintf(
-                '%d of %d SQL statements executed successfully on datasource "%s"',
-                $res,
-                count($statements),
-                $datasource
-            ));
+
             $manager->updateLatestMigrationTimestamp($datasource, $nextMigrationTimestamp);
+
             if ($input->getOption('verbose')) {
                 $output->writeln(sprintf(
                     'Updated latest migration date to %d for datasource "%s"',
@@ -144,7 +174,9 @@ class MigrationUpCommand extends AbstractCommand
             }
         }
 
-        $migration->postUp($manager);
+        if (!$input->getOption('fake')) {
+            $migration->postUp($manager);
+        }
 
         if ($timestamps = $manager->getValidMigrationTimestamps()) {
             $output->writeln(sprintf(

@@ -44,16 +44,16 @@ class GeneratedRelationMapTest extends TestCaseFixtures
     public function testColumnMappings()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
-        $this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $bookTable->getRelation('Author')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
-        $this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $bookTable->getRelation('Author')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns local to foreign when asked left to right for a many to one relationship');
+        $this->assertEquals(array('book.author_id' => 'author.id'), $bookTable->getRelation('Author')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+        $this->assertEquals(array('book.author_id' => 'author.id'), $bookTable->getRelation('Author')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns local to foreign when asked left to right for a many to one relationship');
 
         $authorTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Author');
-        $this->assertEquals(array('book.AUTHOR_ID' => 'author.ID'), $authorTable->getRelation('Book')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
-        $this->assertEquals(array('author.ID' => 'book.AUTHOR_ID'), $authorTable->getRelation('Book')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to many relationship');
+        $this->assertEquals(array('book.author_id' => 'author.id'), $authorTable->getRelation('Book')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+        $this->assertEquals(array('author.id' => 'book.author_id'), $authorTable->getRelation('Book')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to many relationship');
 
         $bookEmpTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployee');
-        $this->assertEquals(array('bookstore_employee_account.EMPLOYEE_ID' => 'bookstore_employee.ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
-        $this->assertEquals(array('bookstore_employee.ID' => 'bookstore_employee_account.EMPLOYEE_ID'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to one relationship');
+        $this->assertEquals(array('bookstore_employee_account.employee_id' => 'bookstore_employee.id'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(), 'getColumnMappings returns local to foreign by default');
+        $this->assertEquals(array('bookstore_employee.id' => 'bookstore_employee_account.employee_id'), $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to one relationship');
     }
 
     public function testCountColumnMappings()

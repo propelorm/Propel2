@@ -18,7 +18,8 @@ class MigrationTest extends TestCaseFixturesDatabase
     protected static $output = '/../../../../migrationdiff';
 
     protected $connectionOption;
-    protected $inputDir;
+    protected $configDir;
+    protected $schemaDir;
     protected $outputDir;
 
     public function setUp()
@@ -26,7 +27,8 @@ class MigrationTest extends TestCaseFixturesDatabase
         parent::setUp();
         $this->connectionOption =  ['migration_command=' . $this->getConnectionDsn('bookstore', true)];
         $this->connectionOption = str_replace('dbname=test', 'dbname=migration', $this->connectionOption);
-        $this->inputDir = __DIR__ . '/../../../../Fixtures/migration-command';
+        $this->configDir = __DIR__ . '/../../../../Fixtures/migration-command';
+        $this->schemaDir = __DIR__ . '/../../../../Fixtures/migration-command';
         $this->outputDir = __DIR__ . self::$output;
     }
 
@@ -43,7 +45,8 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'migration:diff',
-            '--input-dir' => $this->inputDir,
+            '--schema-dir' => $this->schemaDir,
+            '--config-dir' => $this->configDir,
             '--output-dir' => $this->outputDir,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--connection' => $this->connectionOption,
@@ -78,7 +81,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'migration:up',
-            '--input-dir' => $this->inputDir,
+            '--config-dir' => $this->configDir,
             '--output-dir' => $this->outputDir,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--connection' => $this->connectionOption,
@@ -107,7 +110,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'migration:down',
-            '--input-dir' => $this->inputDir,
+            '--config-dir' => $this->configDir,
             '--output-dir' => $this->outputDir,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--connection' => $this->connectionOption,
@@ -136,7 +139,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $input = new \Symfony\Component\Console\Input\ArrayInput(array(
             'command' => 'migration:migrate',
-            '--input-dir' => $this->inputDir,
+            '--config-dir' => $this->configDir,
             '--output-dir' => $this->outputDir,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--connection' => $this->connectionOption,

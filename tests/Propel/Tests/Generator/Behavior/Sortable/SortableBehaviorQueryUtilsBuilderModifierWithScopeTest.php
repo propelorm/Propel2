@@ -33,8 +33,8 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
 
     public function testStaticAttributes()
     {
-        $this->assertEquals('sortable_table12.POSITION', SortableTable12TableMap::RANK_COL);
-        $this->assertEquals('sortable_table12.MY_SCOPE_COLUMN', SortableTable12TableMap::SCOPE_COL);
+        $this->assertEquals('sortable_table12.position', SortableTable12TableMap::RANK_COL);
+        $this->assertEquals('sortable_table12.my_scope_column', SortableTable12TableMap::SCOPE_COL);
     }
 
     public function testGetMaxRank()

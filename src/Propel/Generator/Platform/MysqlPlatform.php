@@ -31,14 +31,8 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
  */
 class MysqlPlatform extends DefaultPlatform
 {
-
-    /**
-     * @var boolean whether the identifier quoting is enabled
-     */
-    protected $isIdentifierQuotingEnabled = true;
-
-    protected $tableEngineKeyword = 'ENGINE';  // overwritten in build.properties
-    protected $defaultTableEngine = 'MyISAM';  // overwritten in build.properties
+    protected $tableEngineKeyword = 'ENGINE';  // overwritten in propel config
+    protected $defaultTableEngine = 'InnoDB';  // overwritten in propel config
 
     /**
      * Initializes db specific domain mapping.
@@ -62,6 +56,7 @@ class MysqlPlatform extends DefaultPlatform
 
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
+        parent::setGeneratorConfig($generatorConfig);
         if ($defaultTableEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
@@ -227,7 +222,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
         if ($this->supportsForeignKeys($table)) {
             foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+                if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
                 $lines[] = str_replace("
@@ -547,7 +542,7 @@ DROP INDEX %s ON %s;
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
         if (!$this->supportsForeignKeys($fk->getTable())) return '';
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "
@@ -730,6 +725,8 @@ ALTER TABLE %s CHANGE %s %s;
     }
 
     /**
+     * {@inheritdoc}
+     *
      * MySQL documentation says that identifiers cannot contain '.'. Thus it
      * should be safe to split the string by '.' and quote each part individually
      * to allow for a <schema>.<table> or <table>.<column> syntax.
@@ -737,9 +734,9 @@ ALTER TABLE %s CHANGE %s %s;
      * @param  string $text the identifier
      * @return string the quoted identifier
      */
-    public function quoteIdentifier($text)
+    public function doQuoting($text)
     {
-        return $this->isIdentifierQuotingEnabled ? '`' . strtr($text, array('.' => '`.`')) . '`' : $text;
+        return '`' . strtr($text, array('.' => '`.`')) . '`';
     }
 
     public function getTimestampFormatter()

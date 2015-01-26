@@ -108,7 +108,7 @@ trait BehaviorableTrait
      */
     public function hasBehavior($id)
     {
-        return array_key_exists($id, $this->behaviors);
+        return isset($this->behaviors[$id]);
     }
 
     /**

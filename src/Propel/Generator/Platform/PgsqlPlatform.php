@@ -59,6 +59,7 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'BYTEA'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
     }
 
     public function getNativeIdMethod()
@@ -380,7 +381,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumns())
+            $this->getColumnListDDL($unique->getColumnObjects())
         );
     }
 
@@ -502,19 +503,23 @@ DROP SEQUENCE %s CASCADE;
 
             $sqlType = $toColumn->getDomain()->getSqlType();
 
-            if ($this->hasSize($sqlType)) {
+            if ($this->hasSize($sqlType) && $toColumn->isDefaultSqlType($this)) {
                 if ($this->isNumber($sqlType)) {
-                    if ('NUMBER' === strtoupper($sqlType)) {
+                    if ('NUMERIC' === strtoupper($sqlType)) {
                         $sqlType .= $toColumn->getSizeDefinition();
                     }
                 } else {
                     $sqlType .= $toColumn->getSizeDefinition();
                 }
             }
+
             if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
                 $sqlType .= $using;
             }
-            $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()), $colName . ' TYPE ' . $sqlType);
+            $ret .= sprintf($pattern,
+                $this->quoteIdentifier($table->getName()),
+                $colName . ' TYPE ' . $sqlType
+            );
         }
 
         if (isset($changedProperties['defaultValueValue'])) {
@@ -554,8 +559,8 @@ DROP SEQUENCE %s CASCADE;
 
     public function getUsingCast(Column $fromColumn, Column $toColumn)
     {
-        $fromSqlType = strtoupper($fromColumn->getDomain()->getOriginSqlType() ?: $fromColumn->getDomain()->getSqlType());
-        $toSqlType = strtoupper($toColumn->getDomain()->getOriginSqlType() ?: $toColumn->getDomain()->getSqlType());
+        $fromSqlType = strtoupper($fromColumn->getDomain()->getSqlType());
+        $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
         $name = $fromColumn->getName();
 
         if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
@@ -661,7 +666,7 @@ DROP SEQUENCE %s CASCADE;
 %s = \$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
-            $this->quoteIdentifier($sequenceName),
+            $sequenceName,
             $columnValueMutator
         );
 

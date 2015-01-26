@@ -172,7 +172,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
-        return $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
+        $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
     }
 
     /**

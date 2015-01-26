@@ -364,6 +364,10 @@ abstract class AbstractManager
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
+            if (!is_readable($include)) {
+                throw new BuildException("External schema '$include' does not exist");
+            }
+
             $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
             $externalSchemaDom->load(realpath($include));
 

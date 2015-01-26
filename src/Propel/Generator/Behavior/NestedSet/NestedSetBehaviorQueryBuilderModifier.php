@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Behavior\NestedSet;
 
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Model\Table;
+
 /**
  * Behavior to adds nested set tree structure columns and abilities
  *
@@ -17,10 +20,13 @@ namespace Propel\Generator\Behavior\NestedSet;
  */
 class NestedSetBehaviorQueryBuilderModifier
 {
+    /** @var NestedSetBehavior */
     protected $behavior;
 
+    /** @var Table */
     protected $table;
 
+    /** @var QueryBuilder */
     protected $builder;
 
     protected $objectClassName;
@@ -29,7 +35,7 @@ class NestedSetBehaviorQueryBuilderModifier
 
     protected $tableMapClassName;
 
-    public function __construct($behavior)
+    public function __construct(NestedSetBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -45,7 +51,7 @@ class NestedSetBehaviorQueryBuilderModifier
         return $this->behavior->getColumnForParameter($name);
     }
 
-    protected function setBuilder($builder)
+    protected function setBuilder(QueryBuilder $builder)
     {
         $this->builder           = $builder;
         $this->objectClassName   = $builder->getObjectClassName();
@@ -53,7 +59,7 @@ class NestedSetBehaviorQueryBuilderModifier
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
-    public function queryMethods($builder)
+    public function queryMethods(QueryBuilder $builder)
     {
         $this->setBuilder($builder);
         $script = '';
@@ -93,7 +99,10 @@ class NestedSetBehaviorQueryBuilderModifier
         $this->addUpdateLoadedNodes($script);
         $this->addMakeRoomForLeaf($script);
         $this->addFixLevels($script);
-        $this->addSetNegativeScope($script);
+
+        if ($this->behavior->useScope()) {
+            $this->addSetNegativeScope($script);
+        }
 
         return $script;
     }
@@ -139,9 +148,9 @@ public function inTree(\$scope = null)
  *
  * @param     {$this->objectClassName} $objectName The object to use for descendant search
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function descendantsOf($objectName)
+public function descendantsOf($this->objectClassName $objectName)
 {
     return \$this";
         if ($this->behavior->useScope()) {
@@ -165,9 +174,9 @@ public function descendantsOf($objectName)
  *
  * @param     {$this->objectClassName} $objectName The object to use for branch search
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function branchOf($objectName)
+public function branchOf($this->objectClassName $objectName)
 {
     return \$this";
         if ($this->behavior->useScope()) {
@@ -192,7 +201,7 @@ public function branchOf($objectName)
  *
  * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function childrenOf($objectName)
+public function childrenOf($this->objectClassName $objectName)
 {
     return \$this
         ->descendantsOf($objectName)
@@ -214,7 +223,7 @@ public function childrenOf($objectName)
  *
  * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function siblingsOf($objectName, ConnectionInterface \$con = null)
+public function siblingsOf($this->objectClassName $objectName, ConnectionInterface \$con = null)
 {
     if ({$objectName}->isRoot()) {
         return \$this->
@@ -237,9 +246,9 @@ public function siblingsOf($objectName, ConnectionInterface \$con = null)
  *
  * @param     {$this->objectClassName} $objectName The object to use for ancestors search
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function ancestorsOf($objectName)
+public function ancestorsOf($this->objectClassName $objectName)
 {
     return \$this";
         if ($this->behavior->useScope()) {
@@ -263,9 +272,9 @@ public function ancestorsOf($objectName)
  *
  * @param     {$this->objectClassName} $objectName The object to use for roots search
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
-public function rootsOf($objectName)
+public function rootsOf($this->objectClassName $objectName)
 {
     return \$this";
         if ($this->behavior->useScope()) {
@@ -287,7 +296,7 @@ public function rootsOf($objectName)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function orderByBranch(\$reverse = false)
 {
@@ -310,7 +319,7 @@ public function orderByBranch(\$reverse = false)
  *
  * @param     bool \$reverse if true, reverses the order
  *
- * @return    {$this->queryClassName} The current query, for fluid interface
+ * @return    \$this|{$this->queryClassName} The current query, for fluid interface
  */
 public function orderByLevel(\$reverse = false)
 {
@@ -344,7 +353,7 @@ public function orderByLevel(\$reverse = false)
  *
  * @return     {$this->objectClassName} The tree root object
  */
-public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
+public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     return \$this
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
@@ -366,9 +375,9 @@ public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
  *
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return    mixed the list of results, formatted by the current formatter
+ * @return    {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findRoots(\$con = null)
+public function findRoots(ConnectionInterface \$con = null)
 {
     return \$this
         ->treeRoots()
@@ -392,9 +401,9 @@ public function findRoots(\$con = null)
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     mixed the list of results, formatted by the current formatter
+ * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = null)
+public function findTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
 {
     return \$this";
         if ($useScope) {
@@ -418,8 +427,9 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
 /**
  * Returns the root nodes for the tree
  *
+ * @param      Criteria \$criteria    Optional Criteria to filter the query
  * @param      ConnectionInterface \$con    Connection to use.
- * @return     {$this->objectClassName}            Propel object for root node
+ * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
 static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
@@ -485,7 +495,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
         $script .= "
  * @param      Criteria \$criteria    Optional Criteria to filter the query
  * @param      ConnectionInterface \$con    Connection to use.
- * @return     {$this->objectClassName}            Propel object for root node
+ * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
 static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
@@ -694,6 +704,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
 {
     if (Propel::isInstancePoolingEnabled()) {
         \$keys = array();
+        /** @var \$obj $objectClassName */
         foreach ($tableMapClassName::\$instances as \$obj) {
             if (!\$prune || !\$prune->equals(\$obj)) {
                 \$keys[] = \$obj->getPrimaryKey();
@@ -740,6 +751,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             \$dataFetcher = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             while (\$row = \$dataFetcher->fetch()) {
                 \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
+                /** @var \$object $objectClassName */
                 if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
         $n = 0;
         foreach ($this->table->getColumns() as $col) {
@@ -843,6 +855,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
 
         // hydrate object
         \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
+        /** @var \$obj $objectClassName */
         if (null === (\$obj = $tableMapClassName::getInstanceFromPool(\$key))) {";
         if ($this->table->getChildrenColumn()) {
             $script .= "

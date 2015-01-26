@@ -55,9 +55,9 @@ interface PlatformInterface
     /**
      * Sets the GeneratorConfigInterface which contains any generator build properties.
      *
-     * @param GeneratorConfigInterface $config
+     * @param GeneratorConfigInterface $generatorConfig
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config);
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig);
 
     /**
      * Returns the short name of the database type that this platform represents.
@@ -155,21 +155,12 @@ interface PlatformInterface
     public function quote($text);
 
     /**
-     * Quotes identifiers used in database SQL.
-     * @param  string $text
-     * @return string Quoted identifier.
+     * Quotes a identifier.
+     *
+     * @param string $text
+     * @return mixed
      */
-    public function quoteIdentifier($text);
-
-    /**
-     * @param bool $enabled
-     */
-    public function setIdentifierQuoting($enabled = true);
-
-    /**
-     * @return boolean
-     */
-    public function getIdentifierQuoting();
+    public function doQuoting($text);
 
     /**
      * Whether RDBMS supports native index sizes.
@@ -267,4 +258,14 @@ interface PlatformInterface
      * Any code modification here must be ported there.
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ");
+
+    /**
+     * @return boolean
+     */
+    public function isIdentifierQuotingEnabled();
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setIdentifierQuoting($enabled);
 }

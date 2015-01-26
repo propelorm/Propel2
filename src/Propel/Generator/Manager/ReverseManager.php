@@ -166,8 +166,7 @@ class ReverseManager extends AbstractManager
             file_put_contents($file, $schema);
         } catch (\Exception $e) {
             $this->log(sprintf('<error>There was an error building XML from metadata: %s</error>', $e->getMessage()));
-
-            return false;
+            throw $e;
         }
 
         return true;
@@ -182,14 +181,18 @@ class ReverseManager extends AbstractManager
     {
         $config     = $this->getGeneratorConfig();
         $connection = $this->getConnection();
+        $databaseName = $config->getConfigProperty('reverse.connection');
 
-        $this->log('Reading database structure...');
 
         $database = new Database($this->getDatabaseName());
-        $database->setPlatform($config->getConfiguredPlatform($connection));
+        $database->setPlatform($config->getConfiguredPlatform($connection), $databaseName);
         $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-        $parser   = $config->getConfiguredSchemaParser($connection);
+        $buildConnection = $config->getBuildConnection($databaseName);
+        $this->log(sprintf('Reading database structure of database `%s` using dsn `%s`', $this->getDatabaseName(), $buildConnection['dsn']));
+
+        $parser   = $config->getConfiguredSchemaParser($connection, $databaseName);
+        $this->log(sprintf('SchemaParser `%s` chosen', get_class($parser)));
         $nbTables = $parser->parse($database);
 
         $this->log(sprintf('Successfully reverse engineered %d tables', $nbTables));
@@ -200,7 +203,7 @@ class ReverseManager extends AbstractManager
     /**
      * @return ConnectionInterface
      *
-     * @throws Propel\Generator\Exception\BuildException if there isn't a configured connection for reverse
+     * @throws BuildException if there isn't a configured connection for reverse
      */
     protected function getConnection()
     {
@@ -209,7 +212,7 @@ class ReverseManager extends AbstractManager
 
         if (null === $database) {
             throw new BuildException('No configured connection. Please add a connection to your configuration file
-            or pass a `--connection` option to your command line.');
+            or pass a `connection` option to your command line.');
         }
 
         return $generatorConfig->getConnection($database);

@@ -14,6 +14,8 @@ use Propel\Common\Config\ConfigurationManager;
 
 class ConfigurationManagerTest extends ConfigTestCase
 {
+    use DataProviderTrait;
+
     /**
      * Current working directory
      */
@@ -94,6 +96,37 @@ EOF;
         $this->getFilesystem()->dumpFile('doctrine.yaml', $yamlConf);
 
         $manager = new TestableConfigurationManager();
+    }
+
+    public function testBackupConfigFilesAreIgnored()
+    {
+        $yamlConf = <<<EOF
+foo: bar
+bar: baz
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml.bak', $yamlConf);
+        $this->getFilesystem()->dumpFile('propel.yaml~', $yamlConf);
+
+        $manager = new TestableConfigurationManager();
+        $actual = $manager->get();
+
+        $this->assertArrayNotHasKey('bar', $actual);
+        $this->assertArrayNotHasKey('baz', $actual);
+    }
+
+    public function testUnsupportedExtensionsAreIgnored()
+    {
+        $yamlConf = <<<EOF
+foo: bar
+bar: baz
+EOF;
+        $this->getFilesystem()->dumpFile('propel.log', $yamlConf);
+
+        $manager = new TestableConfigurationManager();
+        $actual = $manager->get();
+
+        $this->assertArrayNotHasKey('bar', $actual);
+        $this->assertArrayNotHasKey('baz', $actual);
     }
 
     /**
@@ -391,6 +424,30 @@ propel:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
+        $manager = new ConfigurationManager();
+    }
+
+    /**
+     * @dataProvider providerForInvalidConnections
+     */
+    public function testRuntimeOrGeneratorConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
+    {
+        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
+            "`wrongsource` isn't a valid configured connection (Section: propel.$section.connections).");
+
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager();
+    }
+
+    /**
+     * @dataProvider providerForInvalidDefaultConnection
+     */
+    public function testRuntimeOrGeneratorDefaultConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
+    {
+        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
+            "`wrongsource` isn't a valid configured connection (Section: propel.$section.defaultConnection).");
+
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         $manager = new ConfigurationManager();
     }
 
@@ -698,11 +755,39 @@ EOF;
         $this->assertEquals($expectedGenerator, $manager->getConnectionParametersArray('generator'));
         $this->assertNull($manager->getConnectionParametersArray('bad_section'));
     }
+
+    public function testSetConnectionsIfNotDefined()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+          yoursource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=yourdb
+              user: root
+              password:
+EOF;
+        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager();
+
+        $this->assertEquals('mysource', $manager->getSection('generator')['defaultConnection']);
+        $this->assertEquals('mysource', $manager->getSection('runtime')['defaultConnection']);
+        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('generator')['connections']);
+        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('runtime')['connections']);
+    }
 }
 
 class TestableConfigurationManager extends ConfigurationManager
 {
-    public function __construct($filename = 'propel', $extraConf = array())
+    public function __construct($filename = 'propel', $extraConf = null)
     {
         $this->load($filename, $extraConf);
     }

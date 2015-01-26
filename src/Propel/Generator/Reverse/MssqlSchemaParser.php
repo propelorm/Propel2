@@ -141,7 +141,6 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $column = new Column($name);
             $column->setTable($table);
             $column->setDomainForType($propelType);
-            $column->getDomain()->setOriginSqlType($type);
             // We may want to provide an option to include this:
             // $column->getDomain()->replaceSqlType($type);
             $column->getDomain()->replaceSize($size);

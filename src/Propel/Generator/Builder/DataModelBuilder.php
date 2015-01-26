@@ -408,6 +408,10 @@ abstract class DataModelBuilder
             }
         }
 
+        if (!$this->table->isIdentifierQuotingEnabled()) {
+            $this->platform->setIdentifierQuoting(false);
+        }
+
         return $this->platform;
     }
 
@@ -419,6 +423,21 @@ abstract class DataModelBuilder
     public function setPlatform(PlatformInterface $platform)
     {
         $this->platform = $platform;
+    }
+
+    /**
+     * Quotes identifier based on $this->getTable()->isIdentifierQuotingEnabled.
+     *
+     * @param string $text
+     * @return string
+     */
+    public function quoteIdentifier($text)
+    {
+        if ($this->getTable()->isIdentifierQuotingEnabled()) {
+            return $this->getPlatform()->doQuoting($text);
+        }
+
+        return $text;
     }
 
     /**
@@ -448,25 +467,6 @@ abstract class DataModelBuilder
     public function getWarnings()
     {
         return $this->warnings;
-    }
-
-    /**
-     * Wraps call to Platform->quoteIdentifier() with a check to see whether quoting is enabled.
-     *
-     * All subclasses should call this quoteIdentifier() method rather than calling the Platform
-     * method directly.  This method is used by DDLBuilder, and potentially
-     * in the OM builders also, which is why it is defined in this class.
-     *
-     * @param  string $text The text to quote.
-     * @return string Quoted text.
-     */
-    public function quoteIdentifier($text)
-    {
-        if (!$this->getBuildProperty('generator.objectModel.disableIdentifierQuoting')) {
-            return $this->getPlatform()->quoteIdentifier($text);
-        }
-
-        return $text;
     }
 
     /**

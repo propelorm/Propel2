@@ -171,7 +171,7 @@ CREATE SEQUENCE %s
     public function getDropTableDDL(Table $table)
     {
         $ret = "
-DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS;
+DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
 ";
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $ret .= "
@@ -208,22 +208,22 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumns())
+            $this->getColumnListDDL($unique->getColumnObjects())
         );
     }
 
     public function getForeignKeyDDL(ForeignKey $fk)
     {
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s) REFERENCES %s (%s)";
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
-            $this->getColumnListDDL($fk->getLocalColumns()),
+            $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumns())
+            $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
         if ($fk->hasOnDelete()) {
             $script .= "
@@ -242,7 +242,10 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return true;
     }
 
-    public function quoteIdentifier($text)
+    /**
+     * {@inheritdoc}
+     */
+    public function doQuoting($text)
     {
         return $text;
     }
@@ -343,7 +346,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
             $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getColumnListDDL($index->getColumns()),
+            $this->getColumnListDDL($index->getColumnObjects()),
             $this->generateBlockStorage($index)
         );
     }
