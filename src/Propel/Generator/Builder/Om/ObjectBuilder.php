@@ -1655,13 +1655,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorOpen($script, $col);
 
         $script .= "
-        if (\$this->$clo !== serialize(\$v)) {
+        if (null === \$this->$clo || stream_get_contents(\$this->$clo) !== serialize(\$v)) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, serialize(\$v));
-            rewind(\$this->$clo);
             \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
+        rewind(\$this->$clo);
 ";
         $this->addMutatorClose($script, $col);
     }
