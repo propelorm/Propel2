@@ -156,26 +156,6 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertEquals($count, $this->con->getQueryCount());
     }
 
-    public function testContainsWithNoPersistentElements()
-    {
-        $col = new ObjectCollection();
-        $this->assertFalse($col->contains('foo_1'), 'contains() returns false on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
-        $col = new ObjectCollection($data);
-        $this->assertTrue($col->contains('bar1'), 'contains() returns true when the key exists');
-        $this->assertFalse($col->contains('bar4'), 'contains() returns false when the key does not exist');
-    }
-
-    public function testSearchWithNoPersistentElements()
-    {
-        $col = new ObjectCollection();
-        $this->assertFalse($col->search('bar1'), 'search() returns false on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
-        $col = new ObjectCollection($data);
-        $this->assertEquals(1, $col->search('bar2'), 'search() returns the key when the element exists');
-        $this->assertFalse($col->search('bar4'), 'search() returns false when the element does not exist');
-    }
-
     public function testContainsWithClassicBehavior()
     {
         $col = new ObjectCollection();
