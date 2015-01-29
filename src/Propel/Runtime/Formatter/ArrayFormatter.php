@@ -69,6 +69,11 @@ class ArrayFormatter extends AbstractFormatter
     {
         $this->checkInit();
         $result = null;
+
+        if ($this->isWithOneToMany() && $this->hasLimit) {
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+        }
+
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
         } else {

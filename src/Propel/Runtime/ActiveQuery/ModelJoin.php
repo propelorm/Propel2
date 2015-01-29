@@ -36,13 +36,25 @@ class ModelJoin extends Join
 
         for ($i=0; $i < $nbColumns; $i++) {
             if (null !== $leftValues[$i]) {
-                $this->addLocalValueCondition(
-                    $leftCols[$i]->getTableName(),
-                    $leftCols[$i]->getName(),
-                    $leftTableAlias,
-                    $leftValues[$i],
-                    Criteria::EQUAL
-                );
+                if ($relationMap->getType() === RelationMap::ONE_TO_MANY) {
+                    //one-to-many
+                    $this->addForeignValueCondition(
+                        $rightCols[$i]->getTableName(),
+                        $rightCols[$i]->getName(),
+                        $relationAlias,
+                        $leftValues[$i],
+                        Criteria::EQUAL
+                    );
+                } else {
+                    //many-to-one
+                    $this->addLocalValueCondition(
+                        $leftCols[$i]->getTableName(),
+                        $leftCols[$i]->getName(),
+                        $leftTableAlias,
+                        $leftValues[$i],
+                        Criteria::EQUAL
+                    );
+                }
             } else {
                 $this->addExplicitCondition(
                     $leftCols[$i]->getTableName(),
