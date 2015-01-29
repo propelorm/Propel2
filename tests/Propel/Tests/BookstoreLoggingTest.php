@@ -11,15 +11,16 @@
 namespace Propel\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PolymorphicRelationLogTableMap;
 use Propel\Tests\Bookstore\PolymorphicRelationLog;
 use Propel\Tests\Bookstore\PolymorphicRelationLogQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
@@ -167,7 +168,7 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $log->save();
 
         $log = new PolymorphicRelationLog();
-        $log->setMessage('book added');
+        $log->setMessage('book added 1');
         $log->setBook($book);
         $log->save();
 
@@ -176,11 +177,13 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $logs = PolymorphicRelationLogQuery::create()
             ->rightJoinAuthor()
             ->with('Author')
+            ->orderById()
             ->find();
 
         $this->assertCount(3, $logs);
         $this->assertEquals($author, $logs[0]->getAuthor());
-        $this->assertEquals($author, $logs[1]->getAuthor());
+        $this->assertEquals($author2, $logs[1]->getAuthor());
+        $this->assertEquals($author, $logs[2]->getAuthor());
         $this->assertNull($logs[0]->getBook());
         $this->assertNull($logs[1]->getBook());
 
@@ -210,6 +213,23 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
             ->find();
 
         $this->assertCount(1, $logs);
-    }
 
+        $this->assertEquals(2, PolymorphicRelationLogQuery::create()
+                ->filterByTargetId($author->getId())
+                ->filterByTargetType('author')
+                ->count());
+
+        $this->assertEquals(4, PolymorphicRelationLogQuery::create()->count());
+
+        AuthorTableMap::clearInstancePool();
+
+        $author3 = AuthorQuery::create()
+            ->leftJoinPolymorphicRelationLog()
+            ->with('PolymorphicRelationLog')
+            ->filterById($author->getId())
+            ->find()
+            ->get(0);
+
+        $this->assertCount(2, $author3->getPolymorphicRelationLogs());
+    }
 }

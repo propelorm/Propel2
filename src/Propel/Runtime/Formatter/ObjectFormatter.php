@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Object formatter for Propel query
@@ -78,6 +78,10 @@ class ObjectFormatter extends AbstractFormatter
         $this->checkInit();
         $result = null;
 
+        if ($this->isWithOneToMany() && $this->hasLimit) {
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+        }
+
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
         } else {
@@ -112,6 +116,7 @@ class ObjectFormatter extends AbstractFormatter
         list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
 
         $pk = $obj->getPrimaryKey();
+
         if (isset($this->objects[serialize($pk)])) {
             //if instance pooling is disabled, we need to make sure we're working on the correct (already fetched) object
             //so one-to-many relations are correctly loaded.

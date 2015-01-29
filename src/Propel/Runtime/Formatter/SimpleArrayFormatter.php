@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Array formatter for Propel select query
@@ -36,7 +36,7 @@ class SimpleArrayFormatter extends AbstractFormatter
         $collection = $this->getCollection();
 
         if ($this->isWithOneToMany() && $this->hasLimit) {
-            throw new PropelException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
         }
 
         foreach ($dataFetcher as $row) {
@@ -58,6 +58,11 @@ class SimpleArrayFormatter extends AbstractFormatter
     {
         $this->checkInit();
         $result = null;
+
+        if ($this->isWithOneToMany() && $this->hasLimit) {
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+        }
+
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
         } else {
