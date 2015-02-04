@@ -77,6 +77,13 @@ class ModelCriteria extends BaseModelCriteria
     protected $currentAlias;
 
     /**
+     * Used to memorize whether we added self-select columns before.
+     *
+     * @var bool
+     */
+    protected $isSelfSelected = false;
+
+    /**
      * Adds a condition on a column based on a pseudo SQL clause
      * but keeps it for later use with combine()
      * Until combine() is called, the condition is not added to the query
@@ -825,21 +832,27 @@ class ModelCriteria extends BaseModelCriteria
             }
             $this->setModelAlias($alias, true);
             // so we can add selfSelectColumns
-            $this->addSelfSelectColumns();
+            $this->addSelfSelectColumns(true);
         }
 
         return $this;
     }
 
     /**
-     * Adds the select columns for a the current table
+     * Adds the select columns for the current table
      *
+     * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      * @return $this|ModelCriteria The current object, for fluid interface
      */
-    public function addSelfSelectColumns()
+    public function addSelfSelectColumns($force = false)
     {
+        if ($this->isSelfSelected && !$force) {
+            return $this;
+        }
+
         $tableMap = $this->modelTableMapName;
         $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        $this->isSelfSelected = true;
 
         return $this;
     }
@@ -1883,11 +1896,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function doSelect(ConnectionInterface $con = null)
     {
-
-        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
-        if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
-            $this->addSelfSelectColumns();
-        }
+        $this->addSelfSelectColumns();
 
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
@@ -2154,5 +2163,17 @@ class ModelCriteria extends BaseModelCriteria
         if (null !== $this->formatter) {
             $this->formatter = clone $this->formatter;
         }
+    }
+
+    /**
+     * Override method to prevent an addition of self columns.
+     *
+     * @param string $name
+     * @return $this|Criteria
+     */
+    public function addSelectColumn($name)
+    {
+        $this->isSelfSelected = true;
+        return parent::addSelectColumn($name);
     }
 }
