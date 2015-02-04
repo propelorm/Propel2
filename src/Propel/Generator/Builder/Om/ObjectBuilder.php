@@ -1189,7 +1189,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".($column->getTypeHint() ?: $column->getPhpType())."
+     * @return ".($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed'))."
      */";
     }
 
@@ -1404,7 +1404,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param  ".$column->getPhpType()." \$v new value
+     * @param ".($column->getPhpType() ?: 'mixed')." \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
