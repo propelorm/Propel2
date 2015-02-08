@@ -310,7 +310,7 @@ class Criteria
         $this->selectQueries = array();
         $this->dbName = $this->originalDbName;
         $this->offset = 0;
-        $this->limit = 0;
+        $this->limit = -1;
         $this->aliases = array();
         $this->useTransaction = false;
         $this->ifLvlCount = false;

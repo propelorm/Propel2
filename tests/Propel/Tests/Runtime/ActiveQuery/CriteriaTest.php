@@ -1056,7 +1056,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $this->assertEquals(0, $c->getOffset(), 'offset is 0 by default');
 
-        $this->assertEquals(0, $c->getLimit(), 'limit is 0 by default');
+        $this->assertEquals(-1, $c->getLimit(), 'limit is -1 by default');
 
         $this->assertTrue(is_array($c->getAliases()), 'aliases is an array');
         $this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
