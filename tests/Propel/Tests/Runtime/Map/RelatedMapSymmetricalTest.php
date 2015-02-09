@@ -51,9 +51,9 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
     public function testSeveralRelationsOnSameTable()
     {
         $authorTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Author');
-        $authorToEssay = $authorTable->getRelation('EssayRelatedByFirstAuthor');
+        $authorToEssay = $authorTable->getRelation('EssayRelatedByFirstAuthorId');
         $essayTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Essay');
-        $essayToAuthor = $essayTable->getRelation('AuthorRelatedByFirstAuthor');
+        $essayToAuthor = $essayTable->getRelation('FirstAuthor');
         $this->assertEquals($authorToEssay, $essayToAuthor->getSymmetricalRelation());
         $this->assertEquals($essayToAuthor, $authorToEssay->getSymmetricalRelation());
     }

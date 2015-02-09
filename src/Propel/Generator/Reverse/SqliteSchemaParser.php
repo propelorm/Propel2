@@ -280,15 +280,19 @@ class SqliteSchemaParser extends AbstractSchemaParser
                     continue;
                 }
 
+                // we need the reference earlier to build the FK name in Table class to prevent adding FK twice
+                $fk->addReference($row['from'], $row['to']);
+                $fk->setForeignTableCommonName($foreignTable->getCommonName());
                 $table->addForeignKey($fk);
+
                 $fk->setForeignTableCommonName($foreignTable->getCommonName());
                 if ($table->guessSchemaName() != $foreignTable->guessSchemaName()) {
                     $fk->setForeignSchemaName($foreignTable->guessSchemaName());
                 }
                 $lastId = $row['id'];
+            } else {
+                $fk->addReference($row['from'], $row['to']);
             }
-
-            $fk->addReference($row['from'], $row['to']);
         }
     }
 
