@@ -720,7 +720,7 @@ class TableTest extends ModelTestCase
     {
         $fk1 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
         $fk2 = $this->getForeignKeyMock('fk2', array('foreign_table_name' => 'categories'));
-        $fk3 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
+        $fk3 = $this->getForeignKeyMock('fk3', array('foreign_table_name' => 'authors'));
 
         $table = new Table();
         $table->addForeignKey($fk1);
@@ -728,6 +728,21 @@ class TableTest extends ModelTestCase
         $table->addForeignKey($fk3);
 
         $this->assertCount(2, $table->getForeignKeysReferencingTable('authors'));
+    }
+
+    public function testGetForeignKeysReferencingTableMoreThenOnce()
+    {
+        $fk1 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
+        $fk2 = $this->getForeignKeyMock('fk2', array('foreign_table_name' => 'categories'));
+        $fk3 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
+
+        $table = new Table();
+        $table->addForeignKey($fk1);
+        $table->addForeignKey($fk2);
+
+        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $table->addForeignKey($fk3);
+        $this->fail('Expected to throw an EngineException due to duplicate foreign key.');
     }
 
     public function testGetColumnForeignKeys()

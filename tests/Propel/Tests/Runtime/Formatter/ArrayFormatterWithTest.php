@@ -191,22 +191,22 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $auth2->save();
         $essay = new Essay();
         $essay->setTitle('Foo');
-        $essay->setFirstAuthor($auth1->getId());
-        $essay->setSecondAuthor($auth2->getId());
+        $essay->setFirstAuthorId($auth1->getId());
+        $essay->setSecondAuthorId($auth2->getId());
         $essay->save();
         AuthorTableMap::clearInstancePool();
         EssayTableMap::clearInstancePool();
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Essay');
         $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
-        $c->join('Propel\Tests\Bookstore\Essay.AuthorRelatedByFirstAuthor');
-        $c->with('AuthorRelatedByFirstAuthor');
+        $c->join('Propel\Tests\Bookstore\Essay.FirstAuthor');
+        $c->with('FirstAuthor');
         $c->where('Propel\Tests\Bookstore\Essay.Title = ?', 'Foo');
         $essay = $c->findOne();
         $this->assertEquals($essay['Title'], 'Foo', 'Main object is correctly hydrated');
-        $firstAuthor = $essay['AuthorRelatedByFirstAuthor'];
+        $firstAuthor = $essay['FirstAuthor'];
         $this->assertEquals($firstAuthor['FirstName'], 'John', 'Related object is correctly hydrated');
-        $this->assertFalse(array_key_exists('AuthorRelatedBySecondAuthor', $essay), 'Only related object specified in with() is hydrated');
+        $this->assertFalse(array_key_exists('SecondAuthor', $essay), 'Only related object specified in with() is hydrated');
     }
 
     public function testFindOneWithDistantClass()

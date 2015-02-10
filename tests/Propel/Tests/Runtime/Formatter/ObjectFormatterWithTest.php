@@ -233,24 +233,24 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         $auth2->save();
         $essay = new Essay();
         $essay->setTitle('Foo');
-        $essay->setFirstAuthor($auth1->getId());
-        $essay->setSecondAuthor($auth2->getId());
+        $essay->setFirstAuthorId($auth1->getId());
+        $essay->setSecondAuthorId($auth2->getId());
         $essay->save();
         AuthorTableMap::clearInstancePool();
         EssayTableMap::clearInstancePool();
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Essay');
-        $c->join('Propel\Tests\Bookstore\Essay.AuthorRelatedByFirstAuthor');
-        $c->with('AuthorRelatedByFirstAuthor');
+        $c->join('Propel\Tests\Bookstore\Essay.FirstAuthor');
+        $c->with('FirstAuthor');
         $c->where('Propel\Tests\Bookstore\Essay.Title = ?', 'Foo');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $essay = $c->findOne($con);
         $count = $con->getQueryCount();
         $this->assertEquals($essay->getTitle(), 'Foo', 'Main object is correctly hydrated');
-        $firstAuthor = $essay->getAuthorRelatedByFirstAuthor();
+        $firstAuthor = $essay->getFirstAuthor();
         $this->assertEquals($count, $con->getQueryCount(), 'with() hydrates the related objects to save a query');
         $this->assertEquals($firstAuthor->getFirstName(), 'John', 'Related object is correctly hydrated');
-        $secondAuthor = $essay->getAuthorRelatedBySecondAuthor();
+        $secondAuthor = $essay->getSecondAuthor();
         $this->assertEquals($count + 1, $con->getQueryCount(), 'with() does not hydrate objects not in with');
     }
 
@@ -267,10 +267,10 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         EssayTableMap::clearInstancePool();
 
         $query = AuthorQuery::create()
-            ->useEssayRelatedByFirstAuthorQuery()
+            ->useEssayRelatedByFirstAuthorIdQuery()
             ->orderByTitle()
             ->endUse()
-            ->with('EssayRelatedByFirstAuthor');
+            ->with('EssayRelatedByFirstAuthorId');
 
         $author = $query->find()->get(0); // should not throw a notice
         $this->assertTrue(true);

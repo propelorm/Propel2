@@ -624,8 +624,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByAuthor'), 'QueryBuilder adds filterByFk() methods');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByPublisher'), 'QueryBuilder adds filterByFk() methods for all fkeys');
 
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterByAuthorRelatedByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterByAuthorRelatedBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterByFirstAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\EssayQuery', 'filterBySecondAuthor'), 'QueryBuilder adds filterByFk() methods for several fkeys on the same table');
     }
 
     public function testFilterByFkSimpleKey()
@@ -699,8 +699,8 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByReview'), 'QueryBuilder adds filterByRefFk() methods');
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\BookQuery', 'filterByMedia'), 'QueryBuilder adds filterByRefFk() methods for all fkeys');
 
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedByFirstAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedBySecondAuthor'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedByFirstAuthorId'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\AuthorQuery', 'filterByEssayRelatedBySecondAuthorId'), 'QueryBuilder adds filterByRefFk() methods for several fkeys on the same table');
     }
 
     public function testFilterByRefFkSimpleKey()
@@ -835,9 +835,9 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue($q->equals($q1), 'joinFk() accepts a join type as second parameter');
 
         $q = EssayQuery::create()
-            ->joinAuthorRelatedBySecondAuthor();
+            ->innerJoinSecondAuthor();
         $q1 = EssayQuery::create()
-            ->join('Essay.AuthorRelatedBySecondAuthor', "INNER JOIN");
+            ->join('Essay.SecondAuthor', "INNER JOIN");
         $this->assertTrue($q->equals($q1), 'joinFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
     }
 
@@ -885,9 +885,9 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertTrue($q->equals($q1), 'joinRefFk() accepts a join type as second parameter');
 
         $q = AuthorQuery::create()
-            ->joinEssayRelatedBySecondAuthor();
+            ->joinEssayRelatedBySecondAuthorId();
         $q1 = AuthorQuery::create()
-            ->join('Author.EssayRelatedBySecondAuthor', Criteria::INNER_JOIN);
+            ->join('Author.EssayRelatedBySecondAuthorId', Criteria::INNER_JOIN);
         $this->assertTrue($q->equals($q1), 'joinRefFk() translates to a "INNER JOIN" when this is defined as defaultJoin in the schema');
     }
 
