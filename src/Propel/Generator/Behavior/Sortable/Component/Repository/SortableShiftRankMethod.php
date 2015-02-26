@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Behavior\SortableBehavior\Component\Repository;
+namespace Propel\Generator\Behavior\Sortable\Component\Repository;
 
 use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;

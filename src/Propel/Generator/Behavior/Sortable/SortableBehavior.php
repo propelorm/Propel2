@@ -16,6 +16,7 @@ use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Gives a model class the ability to be ordered
@@ -30,7 +31,7 @@ class SortableBehavior extends Behavior
 
     // default parameters value
     protected $parameters = array(
-        'rank_Field'  => 'sortable_rank',
+        'rank_field'  => 'sortable_rank',
         'use_scope'    => 'false',
         'scope_field' => '',
     );
@@ -40,15 +41,15 @@ class SortableBehavior extends Behavior
     protected $tableMapBuilderModifier;
 
     /**
-     * Add the rank_Field to the current table
+     * Add the rank_field to the current table
      */
     public function modifyEntity()
     {
         $table = $this->getEntity();
 
-        if (!$table->hasField($this->getParameter('rank_Field'))) {
+        if (!$table->hasField($this->getParameter('rank_field'))) {
             $table->addField(array(
-                'name' => $this->getParameter('rank_Field'),
+                'name' => $this->getParameter('rank_field'),
                 'type' => 'INTEGER'
             ));
         }
@@ -71,14 +72,22 @@ class SortableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getRankVarName()
+    {
+        return $this->getFieldForParameter('rank_field')->getName();
+    }
+
     public function queryBuilderModification(QueryBuilder $builder)
     {
-        if ('rank' !== $this->getParameter('rank_column')) {
+        if ('rank' !== $this->getParameter('rank_field')) {
             $this->applyComponent('Query\\FilterByRankMethod', $builder);
             $this->applyComponent('Query\\OrderByRankMethod', $builder);
         }
 
-        if ('rank' !== $this->getParameter('rank_column') || $this->useScope()) {
+        if ('rank' !== $this->getParameter('rank_field') || $this->useScope()) {
             $this->applyComponent('Query\\FindOneByRankMethod', $builder);
         }
 
@@ -103,13 +112,11 @@ class SortableBehavior extends Behavior
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
         $this->applyComponent('Repository\\SortableShiftRankMethod', $builder);
-
         $this->applyComponent('Repository\\IsFirstMethod', $builder);
+        $this->applyComponent('Repository\\IsLastMethod', $builder);
+        $this->applyComponent('Repository\\GetNextMethod', $builder);
+        $this->applyComponent('Repository\\GetPreviousMethod', $builder);
 
-        $this->addIsFirst($script);
-        $this->addIsLast($script);
-        $this->addGetNext($script);
-        $this->addGetPrevious($script);
         $this->addInsertAtRank($script);
         $this->addInsertAtBottom($script);
         $this->addInsertAtTop($script);
@@ -125,15 +132,12 @@ class SortableBehavior extends Behavior
 
     public function objectBuilderModification(ObjectBuilder $builder)
     {
-
         if ('rank' !== $this->getParameter('rank_field')) {
-            $this->applyComponent('Repository\\RankAccessorMethod', $builder);
-//            $this->addRankAccessors($script);
+            $this->applyComponent('Object\\RankAccessorMethod', $builder);
         }
 
         if ($this->useScope() && 'scope_value' !== $this->getParameter('rank_field')) {
-            $this->applyComponent('Repository\\ScopeAccessorMethod', $builder);
-//            $this->addScopeAccessors($script);
+            $this->applyComponent('Object\\ScopeAccessorMethod', $builder);
         }
     }
 

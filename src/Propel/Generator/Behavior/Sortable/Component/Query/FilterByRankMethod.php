@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Behavior\SortableBehavior\Component\Query;
+namespace Propel\Generator\Behavior\Sortable\Component\Query;
 
 use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Behavior\Sortable\SortableBehavior;
