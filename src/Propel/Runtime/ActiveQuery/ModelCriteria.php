@@ -779,7 +779,8 @@ class ModelCriteria extends BaseModelCriteria
 
         $this->with = array();
         $this->primaryCriteria = null;
-        $this->formatter=null;
+        $this->formatter = null;
+        $this->select = null;
 
         return $this;
     }
