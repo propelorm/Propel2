@@ -86,10 +86,7 @@ ALTER TABLE `foo2`
 
   CHANGE `baz` `baz` VARCHAR(12),
 
-  ADD
-(
-    `baz3` TEXT
-);
+  ADD `baz3` TEXT AFTER `baz`;
 
 CREATE TABLE `foo5`
 (
@@ -138,10 +135,7 @@ ALTER TABLE `foo`
 
   CHANGE `baz` `baz` VARCHAR(12),
 
-  ADD
-(
-    `baz3` TEXT
-);
+  ADD `baz3` TEXT AFTER `baz`;
 
 CREATE INDEX `bar_fk` ON `foo` (`bar1`);
 
@@ -164,10 +158,7 @@ ALTER TABLE `foo` CHANGE `bar` `bar1` INTEGER;
 
 ALTER TABLE `foo` CHANGE `baz` `baz` VARCHAR(12);
 
-ALTER TABLE `foo` ADD
-(
-    `baz3` TEXT
-);
+ALTER TABLE `foo` ADD `baz3` TEXT AFTER `baz`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
     }
@@ -303,7 +294,7 @@ ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
     public function testGetAddColumnDDL($column)
     {
         $expected = "
-ALTER TABLE `foo` ADD `bar` INTEGER;
+ALTER TABLE `foo` ADD `bar` INTEGER AFTER `id`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
     }
@@ -314,11 +305,9 @@ ALTER TABLE `foo` ADD `bar` INTEGER;
     public function testGetAddColumnsDDL($columns)
     {
         $expected = "
-ALTER TABLE `foo` ADD
-(
-    `bar1` INTEGER,
-    `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL
-);
+ALTER TABLE `foo` ADD `bar1` INTEGER AFTER `id`;
+
+ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
     }
