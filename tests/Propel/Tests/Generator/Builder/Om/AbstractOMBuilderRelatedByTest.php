@@ -47,8 +47,8 @@ class AbstractOMBuilderRelatedByTest extends TestCase
     {
         return array(
             array('book', 0, '', ''),
-            array('essay', 0, 'RelatedByFirstAuthor', 'RelatedByFirstAuthor'),
-            array('essay', 1, 'RelatedBySecondAuthor', 'RelatedBySecondAuthor'),
+            array('essay', 0, 'RelatedByFirstAuthorId', 'RelatedByFirstAuthorId'),
+            array('essay', 1, 'RelatedBySecondAuthorId', 'RelatedBySecondAuthorId'),
             array('essay', 2, 'RelatedById', 'RelatedByNextEssayId'),
             array('bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'),
             array('composite_essay', 0, 'RelatedById0', 'RelatedByFirstEssayId'),

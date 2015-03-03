@@ -24,6 +24,10 @@ use Propel\Runtime\Map\TableMap;
  */
 class OnDemandCollection extends Collection
 {
+    /**
+     * @var \Iterator
+     */
+    private $lastIterator;
 
     /**
      * @param AbstractFormatter    $formatter

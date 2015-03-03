@@ -58,9 +58,9 @@ class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
     public function testSeveralRelationsOnSameTable()
     {
         $contestTable = $this->databaseMap->getTableByPhpName('Propel\Tests\BookstoreSchemas\BookstoreContest');
-        $contestToCustomer = $contestTable->getRelation('CustomerRelatedByFirstContest');
+        $contestToCustomer = $contestTable->getRelation('CustomerRelatedByFirstContestId');
         $customerTable = $this->databaseMap->getTableByPhpName('Propel\Tests\BookstoreSchemas\Customer');
-        $customerToContest = $customerTable->getRelation('BookstoreContestRelatedByFirstContest');
+        $customerToContest = $customerTable->getRelation('FirstContest');
 
         $this->markTestIncomplete('The two following tests don\'t pass');
         $this->assertEquals($contestToCustomer, $customerToContest->getSymmetricalRelation());

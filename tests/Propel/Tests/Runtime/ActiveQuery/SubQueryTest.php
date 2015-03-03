@@ -133,6 +133,7 @@ class SubQueryTest extends BookstoreTestBase
             array('table' => 'book', 'column' => 'price', 'value' => 10),
             array('table' => 'book', 'column' => 'price', 'value' => 20),
         );
+
         $this->assertCriteriaTranslation($c3, $sql, $params, 'addSelectQuery() forges a unique alias if none is given');
     }
 

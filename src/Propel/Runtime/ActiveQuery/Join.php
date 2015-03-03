@@ -40,6 +40,7 @@ class Join
     protected $left = array();
 
     protected $leftValues = array();
+    protected $rightValues = array();
 
     // the right parts of the join condition
     protected $right = array();
@@ -125,6 +126,7 @@ class Join
         }
 
         $this->leftValues[] = null;
+        $this->rightValues[] = null;
         $this->operators[] = $operator;
         $this->count++;
     }
@@ -182,6 +184,7 @@ class Join
         $this->rightTableAlias = $rightTableAlias;
         $this->left[] = $leftColumnName;
         $this->leftValues[] = null;
+        $this->rightValues[] = null;
         $this->right[] = $rightColumnName;
         $this->operators[] = $operator;
         $this->count++;
@@ -200,7 +203,20 @@ class Join
         $this->leftTableAlias  = $leftTableAlias;
         $this->left[] = $leftColumnName;
         $this->leftValues[] = $leftColumnValue;
+        $this->rightValues[] = null;
         $this->right[] = null;
+        $this->operators[] = $operator;
+        $this->count++;
+    }
+
+    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias = null, $rightColumnValue, $operator = self::EQUAL)
+    {
+        $this->rightTableName = $rightTableName;
+        $this->rightTableAlias = $rightTableAlias;
+        $this->right[] = $rightColumnName;
+        $this->rightValues[] = $rightColumnValue;
+        $this->leftValues[] = null;
+        $this->left[] = null;
         $this->operators[] = $operator;
         $this->count++;
     }
@@ -598,6 +614,12 @@ class Join
                     $this->leftValues[$i],
                     self::EQUAL
                 );
+            } else if ($this->rightValues[$i]) {
+                $criterion = $c->getNewCriterion(
+                    $this->getRightColumn($i),
+                    $this->rightValues[$i],
+                    self::EQUAL
+                );
             } else {
                 $criterion = $c->getNewCriterion(
                     $this->getLeftColumn($i),
@@ -638,6 +660,8 @@ class Join
             for ($i = 0; $i < $this->count; $i++) {
                 if ($this->leftValues[$i]) {
                     $conditions[] = $this->getLeftColumn($i) . $this->getOperator($i) . var_export($this->leftValues[$i], true);
+                } else if ($this->rightValues[$i]) {
+                        $conditions[] = $this->getRightColumn($i) . $this->getOperator($i) . var_export($this->rightValues[$i], true);
                 } else {
                     $conditions[] = $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
                 }

@@ -43,6 +43,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * @var ForeignKey[]
      */
     private $foreignKeys;
+    private $foreignKeysByName;
     private $foreignTableNames;
 
     /**
@@ -151,6 +152,7 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->columnsByPhpName          = [];
         $this->columnsByLowercaseName    = [];
         $this->foreignKeys               = [];
+        $this->foreignKeysByName         = [];
         $this->foreignTableNames         = [];
         $this->idMethodParameters        = [];
         $this->indices                   = [];
@@ -597,7 +599,14 @@ class Table extends ScopedMappingModel implements IdMethod
         if ($foreignKey instanceof ForeignKey) {
             $fk = $foreignKey;
             $fk->setTable($this);
+
+            $name = $fk->getPhpName() ?: $fk->getName();
+            if (isset($this->foreignKeysByName[$name])) {
+                throw new EngineException(sprintf('Foreign key "%s" declared twice in table "%s". Please specify a different php name!', $name, $this->getName()));
+            }
+
             $this->foreignKeys[] = $fk;
+            $this->foreignKeysByName[$name] = $fk;
 
             if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
                 $this->foreignTableNames[] = $fk->getForeignTableName();
@@ -606,7 +615,7 @@ class Table extends ScopedMappingModel implements IdMethod
             return $fk;
         }
 
-        $fk = new ForeignKey();
+        $fk = new ForeignKey(isset($foreignKey['name'])? $foreignKey['name'] :null );
         $fk->setTable($this);
         $fk->loadMapping($foreignKey);
 
