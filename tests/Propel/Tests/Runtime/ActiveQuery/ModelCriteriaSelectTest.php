@@ -378,7 +378,6 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         BookstoreDataPopulator::populate($this->con);
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-//        $c->distinct();
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->useQuery('Author')
             ->withColumn('Propel\Tests\Bookstore\Author.LastName', 'authorLastName')

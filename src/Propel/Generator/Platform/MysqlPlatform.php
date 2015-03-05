@@ -684,7 +684,7 @@ ALTER TABLE %s CHANGE %s %s;
     }
 
     /**
-     * Builds the DDL SQL to add a a column
+     * Builds the DDL SQL to add a column
      *
      * @param Column $column
      *
@@ -697,12 +697,12 @@ ALTER TABLE %s ADD %s %s;
 ";
         $tableColumns = $column->getTable()->getColumns();
 
-        //default to add to top if the before-column cannot be found
+        // Default to add first if no column is found before the current one
         $insertPositionDDL = "FIRST";
         foreach ($tableColumns as $i => $tableColumn) {
-            //we found the column, use the column before it, if its not the first
+            // We found the column, use the one before it if it's not the first
             if ($tableColumn->getName() == $column->getName()) {
-                //we have a column that is not the first column
+                // We have a column that is not the first one
                 if ($i > 0) {
                     $insertPositionDDL = "AFTER " . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
                 }
@@ -730,7 +730,7 @@ ALTER TABLE %s ADD %s %s;
         foreach ($columns as $column) {
             $lines .= $this->getAddColumnDDL($column);
         }
-        
+
         return $lines;
     }
 
