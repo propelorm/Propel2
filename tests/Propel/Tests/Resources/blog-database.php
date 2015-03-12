@@ -26,9 +26,9 @@ $column15 = new Column('body', 'clob');
 $column16 = new Column('average_rating', 'float', 2);
 $column16->setScale(2);
 $column16->setDescription('The post rating in percentage');
-$column17 = new Column('price', 'DECIMAL', 10);
+$column17 = new Column('price_without_decimal_places', 'DECIMAL', 10);
 $column17->setScale(0);
-$column17->setDescription('The Price without trailing decimals');
+$column17->setDescription('The Price without decimal places');
 
 $column21 = new Column('id', 'smallint', 3);
 $column21->setAutoIncrement();
