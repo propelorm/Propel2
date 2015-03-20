@@ -792,7 +792,7 @@ ALTER TABLE %s ADD %s %s;
 
     public function getTimestampFormatter()
     {
-        return 'Y-m-d H:i:s';
+        return 'Y-m-d H:i:s.u';
     }
 
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
