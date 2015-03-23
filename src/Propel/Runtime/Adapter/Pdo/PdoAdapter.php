@@ -328,7 +328,7 @@ abstract class PdoAdapter
      */
     public function getTimestampFormatter()
     {
-        return 'Y-m-d H:i:s';
+        return 'Y-m-d H:i:s.u';
     }
 
     /**

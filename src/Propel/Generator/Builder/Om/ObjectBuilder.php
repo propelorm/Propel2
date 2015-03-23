@@ -1611,7 +1611,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
             $defaultValue = $this->getDefaultValueString($col);
             $script .= "
-            if ( (\$dt != \$this->{$clo}) // normalized values don't match
+            if ( (\$dt->format($fmt) != \$this->{$clo}->format($fmt)) // normalized values don't match
                 || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
                  ) {";
         } else {
@@ -1620,10 +1620,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $format = 'Y-m-d';
                     break;
                 case 'TIME':
-                    $format = 'H:i:s';
+                    $format = 'H:i:s.u';
                     break;
                 default:
-                    $format = 'Y-m-d H:i:s';
+                    $format = 'Y-m-d H:i:s.u';
             }
             $script .= "
             if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";

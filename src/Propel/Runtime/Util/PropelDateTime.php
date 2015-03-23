@@ -109,7 +109,7 @@ class PropelDateTime extends \DateTime
     {
         // We need to use a string without a time zone, due to
         // PHP bug: http://bugs.php.net/bug.php?id=40743
-        $this->dateString = $this->format('Y-m-d H:i:s');
+        $this->dateString = $this->format('Y-m-d H:i:s.u');
         $this->tzString = $this->getTimeZone()->getName();
 
         return array('dateString', 'tzString');
