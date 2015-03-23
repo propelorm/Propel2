@@ -1400,7 +1400,7 @@ if (is_resource($columnValueAccessor)) {
 
         foreach ($table->getColumns() as $column) {
             if ($column->getSize() && $defaultSize = $this->getDefaultTypeSize($column->getType())) {
-                if (intval($column->getSize()) === $defaultSize) {
+                if (null === $column->getScale() && intval($column->getSize()) === $defaultSize) {
                     $column->setSize(null);
                 }
             }
