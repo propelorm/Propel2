@@ -86,7 +86,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     public function getMaxColumnNameLength()
     {
-        return 32;
+        return 63;
     }
 
     public function getBooleanString($b)
