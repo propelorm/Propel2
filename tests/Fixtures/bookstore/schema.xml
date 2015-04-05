@@ -400,4 +400,9 @@
         </foreign-key>
     </table>
 
+    <!-- This is used to test issue-900 -->
+    <table name="date_time_microseconds" idMethod="native" phpName="DateTimeMicroseconds">
+        <column name="id" primaryKey="true" type="INTEGER" />
+        <column name="date_time" type="TIMESTAMP" size="6"/>
+    </table>
 </database>
