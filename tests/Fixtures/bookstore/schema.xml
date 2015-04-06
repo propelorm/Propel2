@@ -403,6 +403,7 @@
     <!-- This is used to test issue-900 -->
     <table name="date_time_microseconds" idMethod="native" phpName="DateTimeMicroseconds">
         <column name="id" primaryKey="true" type="INTEGER" />
-        <column name="date_time" type="TIMESTAMP" size="6"/>
+        <column name="date_time_micro" type="TIMESTAMP" size="6"/>
+        <column name="date_time_milli" type="TIMESTAMP" size="3"/>
     </table>
 </database>

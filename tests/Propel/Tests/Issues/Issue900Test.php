@@ -29,11 +29,12 @@ class Issue900Test extends BookstoreEmptyTestBase
         // Insert date/time with microsecond, precision.
         $dtString = '2015-03-04 05:06:07.123456';
         $test->setId(1)
-            ->setDateTime($dtString);
+            ->setDateTimeMicro($dtString)
+            ->setDateTimeMilli($dtString);
         $test->save();
 
         // assert that the date/time is stored correclty in the object.
-        $dt1 = $test->getDateTime();
+        $dt1 = $test->getDateTimeMicro();
         $this->assertEquals($dt1->format('Y-m-d H:i:s.u'), $dtString);
 
         // unset object and clean cache.
@@ -43,13 +44,23 @@ class Issue900Test extends BookstoreEmptyTestBase
         // retrieve previously stored row from the database.
         $test = \Propel\Tests\Bookstore\DateTimeMicrosecondsQuery::create()
             ->findPK(1);
-        $dt2 = $test->getDateTime();
+        $dtMicro = $test->getDateTimeMicro();
+        $dtMilli = $test->getDateTimeMilli();
 
         // assert that the date/time is indeed with microsecond precision.
-        $this->assertEquals($dt2->format('Y-m-d H:i:s.u'), $dtString);
+        $this->assertEquals($dtMicro->format('Y-m-d H:i:s.u'), $dtString);
+
+        // Since dtMilli is a timestamp(3), the 3 latest digits are '0's.
+        $this->assertEquals(
+            $dtMilli->format('Y-m-d H:i:s.u'), substr($dtString, 0, 23) . '000'
+        );
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
 
         // cleanup
-        DateTimeMicrosecondsQuery::create()->filterById(1)->delete();
+        DateTimeMicrosecondsQuery::create()->find()->delete();
     }
 }
-
