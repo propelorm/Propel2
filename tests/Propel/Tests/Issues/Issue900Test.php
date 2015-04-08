@@ -19,6 +19,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  * Regression test for https://github.com/propelorm/Propel2/issues/900
  *
  * @group database
+ * @group mysql
  */
 class Issue900Test extends BookstoreEmptyTestBase
 {
