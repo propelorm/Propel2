@@ -180,7 +180,7 @@ class InitCommand extends AbstractCommand
     private function initPgsql(OutputInterface $output, DialogHelper $dialog)
     {
         $host = $dialog->ask($output, 'Please enter your database host (without port)', 'localhost');
-        $port = $dialog->ask($output, 'Please enter your database port', '3306');
+        $port = $dialog->ask($output, 'Please enter your database port', '5432');
         $database = $dialog->ask($output, 'Please enter your database name');
 
         return sprintf('pgsql:host=%s;port=%s;dbname=%s', $host, $port, $database);
