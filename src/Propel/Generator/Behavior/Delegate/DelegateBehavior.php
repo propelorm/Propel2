@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\Delegate;
 
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Util\PhpParser;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -136,4 +137,36 @@ if (is_callable(array('$ARFQCN', \$name))) {
 
         return $script;
     }
+
+    public function objectFilter(&$script)
+    {
+        $p = new PhpParser($script, true);
+        $text = $p->findMethod('toArray', true);
+        $matches = [];
+        preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
+        $values = rtrim($matches[2]) . "\n";
+        $new_result = '';
+        $indent = '        ';
+
+        foreach ($this->delegates as $key => $value) {
+            $delegateTable = $this->getDelegateTable($key);
+
+            $ns = $delegateTable->getNamespace() ? '\\'.$delegateTable->getNamespace() : '';
+            $new_result .= "\$keys_{$key} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
+            $i = 0;
+            foreach ($delegateTable->getColumns() as $column) {
+                if (!$column->isAutoIncrement()) {
+                    $values .= "{$indent}    \$keys_{$key}[{$i}] => \$this->get{$column->getPhpName()}(),\n";
+                }
+                $i++;
+            }
+        }
+        $new_result .= "{$indent}\$result = array({$values}\n{$indent});";
+        $text = str_replace($matches[1], $new_result , $text);
+        $p->replaceMethod('toArray', $text);
+        $script = $p->getCode();
+
+        return $script;
+    }
+
 }
