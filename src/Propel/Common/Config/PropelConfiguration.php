@@ -138,6 +138,8 @@ class PropelConfiguration implements ConfigurationInterface
                                         ->prototype('array')
                                             ->children()
                                                 ->scalarNode('dsn')->end()
+ 	                                        ->scalarNode('user')->end()
+	                                        ->scalarNode('password')->treatNullLike('')->end()
                                             ->end()
                                         ->end()
                                     ->end()
