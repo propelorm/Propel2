@@ -10,9 +10,12 @@
 
 namespace Propel\Generator\Behavior\Delegate;
 
+use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Util\PhpParser;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -155,12 +158,13 @@ if (is_callable(array('$ARFQCN', \$name))) {
             $new_result .= "\$keys_{$key} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
             $i = 0;
             foreach ($delegateTable->getColumns() as $column) {
-                if (!$column->isAutoIncrement()) {
+                if (!$this->isColumnForeignKeyOrDuplicated($column)) {
                     $values .= "{$indent}    \$keys_{$key}[{$i}] => \$this->get{$column->getPhpName()}(),\n";
                 }
                 $i++;
             }
         }
+
         $new_result .= "{$indent}\$result = array({$values}\n{$indent});";
         $text = str_replace($matches[1], $new_result , $text);
         $p->replaceMethod('toArray', $text);
@@ -169,4 +173,117 @@ if (is_callable(array('$ARFQCN', \$name))) {
         return $script;
     }
 
+    /**
+     * @param Column $column
+     *
+     * @return bool
+     *
+     * @throws PropelException
+     */
+    protected function isColumnForeignKeyOrDuplicated(Column $column)
+    {
+        $delegateTable = $column->getTable();
+        $table = $this->getTable();
+
+        $fks = [];
+        foreach ($delegateTable->getForeignKeysReferencingTable($table->getName()) as $fk) {
+            /** @var \Propel\Generator\Model\ForeignKey $fk */
+            $fks[] = $fk->getForeignColumnName();
+        }
+        foreach ($table->getForeignKeysReferencingTable($delegateTable->getName()) as $fk) {
+            $fks[] = $fk->getForeignColumnName();
+        }
+
+        if (in_array($column->getName(), $fks)) {
+            return true;
+        } else {
+            if ($table->hasColumn($column->getName())) {
+                throw new PropelException('Column with name «'.$column->getName().'» (delegated from table «'.$delegateTable->getName().'») already exists in table «'.$table->getName().'». Probably database design mistake');
+            }
+
+            return false;
+        }
+    }
+
+    public function queryAttributes()
+    {
+        $script = '';
+        $collations = '';
+
+        foreach ($this->delegates as $delegate => $type) {
+            $delegateTable = $this->getDelegateTable($delegate);
+
+            foreach ($delegateTable->getColumns() as $column) {
+                if (!$this->isColumnForeignKeyOrDuplicated($column)) {
+                    $collations .= "    '{$column->getPhpName()}' => '{$delegateTable->getPhpName()}',\n";
+                }
+            }
+        }
+
+        if ($collations) {
+            $collations = substr($collations, 0, -1);
+            $script .= "
+protected \$delegatedFields = [
+{$collations}
+];
+
+";
+        }
+
+        return $script;
+    }
+
+    public function queryMethods(QueryBuilder $builder)
+    {
+        $script = '';
+
+        foreach ($this->delegates as $delegate => $type) {
+            $delegateTable = $this->getDelegateTable($delegate);
+
+            foreach ($delegateTable->getColumns() as $column) {
+                if (!$this->isColumnForeignKeyOrDuplicated($column)) {
+                    $phpName = $column->getPhpName();
+                    $fieldName = $column->getName();
+                    $tablePhpName = $delegateTable->getPhpName();
+                    $childClassName = 'Child' . $builder->getUnprefixedClassName();
+
+                    $script .= $this->renderTemplate('queryMethodsTemplate', compact('tablePhpName', 'phpName', 'childClassName', 'fieldName'));
+                }
+
+            }
+        }
+
+        if ($this->delegates) {
+            $script .= "
+/**
+ * Adds a condition on a column based on a column phpName and a value
+ * Uses introspection to translate the column phpName into a fully qualified name
+ * Warning: recognizes only the phpNames of the main Model (not joined tables)
+ * <code>
+ * \$c->filterBy('Title', 'foo');
+ * </code>
+ *
+ * @see Criteria::add()
+ *
+ * @param string \$column     A string representing thecolumn phpName, e.g. 'AuthorId'
+ * @param mixed  \$value      A value for the condition
+ * @param string \$comparison What to use for the column comparison, defaults to Criteria::EQUAL
+ *
+ * @return \$this|ModelCriteria The current object, for fluid interface
+ */
+public function filterBy(\$column, \$value, \$comparison = Criteria::EQUAL)
+{
+    if (isset(\$this->delegatedFields[\$column])) {
+        \$methodUse = \"use{\$this->delegatedFields[\$column]}Query\";
+
+        return \$this->{\$methodUse}()->filterBy(\$column, \$value, \$comparison)->endUse();
+    } else {
+        return \$this->add(\$this->getRealColumnName(\$column), \$value, \$comparison);
+    }
+}
+";
+        }
+
+       return $script;
+    }
 }
