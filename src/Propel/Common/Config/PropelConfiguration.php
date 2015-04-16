@@ -137,6 +137,7 @@ class PropelConfiguration implements ConfigurationInterface
                                     ->arrayNode('slaves')
                                         ->prototype('array')
                                             ->children()
+                                          ->scalarNode('classname')->defaultValue('\Propel\Runtime\Connection\ConnectionWrapper')->end()
                                                 ->scalarNode('dsn')->end()
                                                 ->scalarNode('user')->isRequired()->end()
                                                 ->scalarNode('password')->isRequired()->treatNullLike('')->end()
