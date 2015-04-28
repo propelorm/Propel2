@@ -29,7 +29,8 @@ class VersionableBehavior extends Behavior
         'log_comment'               => 'false',
         'version_created_at_column' => 'version_created_at',
         'version_created_by_column' => 'version_created_by',
-        'version_comment_column'    => 'version_comment'
+        'version_comment_column'    => 'version_comment',
+        'indices'                   => 'false'
     );
 
     protected $versionTable;
@@ -145,6 +146,13 @@ class VersionableBehavior extends Behavior
                 $fk->addReference($column, $tablePKs[$key]);
             }
             $versionTable->addForeignKey($fk);
+
+            if ('true' === $this->getParameter('indices')) {
+                foreach ($table->getIndices() as $index) {
+                    $index = clone $index;
+                    $versionTable->addIndex($index);
+                }
+            }
 
             // add the version column to the primary key
             $versionColumn = $versionTable->getColumn($this->getParameter('version_column'));
