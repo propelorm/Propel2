@@ -12,6 +12,7 @@
       <column name="title" phpName="Title" type="varchar" size="100" required="true"/>
       <column name="body" phpName="Body" type="clob"/>
       <column name="average_rating" phpName="AverageRating" type="float" size="2" scale="2" description="The post rating in percentage"/>
+      <column name="price_without_decimal_places" phpName="PriceWithoutDecimalPlaces" type="DECIMAL" size="10" scale="0" description="The Price without decimal places"/>
       <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
       <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
       <column name="slug" phpName="Slug" type="VARCHAR" size="255"/>
