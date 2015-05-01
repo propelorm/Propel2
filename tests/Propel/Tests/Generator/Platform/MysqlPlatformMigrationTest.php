@@ -18,7 +18,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 /**
  *
  */
-class MysqlPlatformMigrationTest extends PlatformMigrationTestProvider
+class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
     protected $platform;
 
@@ -295,6 +295,17 @@ ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
     {
         $expected = "
 ALTER TABLE `foo` ADD `bar` INTEGER AFTER `id`;
+";
+        $this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
+    }
+
+    /**
+     * @dataProvider providerForTestGetAddColumnFirstDDL
+     */
+    public function testGetAddColumnFirstDDL($column)
+    {
+        $expected = "
+ALTER TABLE `foo` ADD `bar` INTEGER FIRST;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
     }
