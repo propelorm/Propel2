@@ -184,25 +184,41 @@ if (is_callable(array('$ARFQCN', \$name))) {
     {
         $delegateTable = $column->getTable();
         $table = $this->getTable();
-
         $fks = [];
+
+        if (!isset($this->double_defined)) {
+            $this->double_defined = [];
+
+            foreach ($this->delegates+[$table->getName() => 1] as $key => $value) {
+                $delegateTable = $this->getDelegateTable($key);
+                foreach ($delegateTable->getColumns() as $columnDelegated) {
+                    if (isset($this->double_defined[$columnDelegated->getName()])) {
+                        $this->double_defined[$columnDelegated->getName()]++;
+                    } else {
+                        $this->double_defined[$columnDelegated->getName()] = 1;
+                    }
+                }
+            }
+        }
+
+        if (1<$this->double_defined[$column->getName()]) {
+            return true;
+        }
+
         foreach ($delegateTable->getForeignKeysReferencingTable($table->getName()) as $fk) {
             /** @var \Propel\Generator\Model\ForeignKey $fk */
             $fks[] = $fk->getForeignColumnName();
         }
+
         foreach ($table->getForeignKeysReferencingTable($delegateTable->getName()) as $fk) {
             $fks[] = $fk->getForeignColumnName();
         }
 
-        if (in_array($column->getName(), $fks)) {
+        if (in_array($column->getName(), $fks) || $table->hasColumn($column->getName())) {
             return true;
-        } else {
-            if ($table->hasColumn($column->getName())) {
-                throw new PropelException('Column with name «'.$column->getName().'» (delegated from table «'.$delegateTable->getName().'») already exists in table «'.$table->getName().'». Probably database design mistake');
-            }
-
-            return false;
         }
+
+        return false;
     }
 
     public function queryAttributes()
