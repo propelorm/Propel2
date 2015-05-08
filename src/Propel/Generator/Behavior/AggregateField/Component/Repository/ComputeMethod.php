@@ -6,6 +6,7 @@ use Propel\Generator\Behavior\AggregateField\AggregateFieldBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
+use Propel\Generator\Model\Field;
 
 /**
  *
@@ -29,21 +30,27 @@ class ComputeMethod extends BuildComponent
         $bindings = array();
         $database = $this->getEntity()->getDatabase();
         foreach ($behavior->getRelation()->getFieldObjectsMapping() as $index => $fieldReference) {
-            $conditions[] = $fieldReference['local']->getFullyQualifiedName() . ' = :p' . ($index + 1);
-            $bindings[$index + 1] = $fieldReference['foreign']->getName();
+            /** @var Field $local */
+            $local = $fieldReference['local'];
+            /** @var Field $foreign */
+            $foreign = $fieldReference['foreign'];
+            $conditions[] = $local->getColumnName() . ' = :p' . ($index + 1);
+            $bindings[$index + 1] = ucfirst($foreign->getName());
         }
 
-        $entityName = $database->getEntityPrefix() . $behavior->getParameter('foreign_entity');
+        $foreignEntity = $database->getEntity($behavior->getParameter('foreign_entity'));
+
+        $tableName = $database->getEntityPrefix() . $foreignEntity->getTableName();
         if ($database->getPlatform()->supportsSchemas() && $behavior->getParameter('foreign_schema')) {
-            $entityName = $behavior->getParameter('foreign_schema')
+            $tableName = $behavior->getParameter('foreign_schema')
                 . $database->getPlatform()->getSchemaDelimiter()
-                . $entityName;
+                . $tableName;
         }
 
         $sql = sprintf(
             'SELECT %s FROM %s WHERE %s',
             $behavior->getParameter('expression'),
-            $behavior->getEntity()->quoteIdentifier($entityName),
+            $behavior->getEntity()->quoteIdentifier($tableName),
             implode(' AND ', $conditions)
         );
 

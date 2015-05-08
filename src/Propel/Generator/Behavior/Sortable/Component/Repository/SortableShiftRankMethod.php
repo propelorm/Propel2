@@ -44,9 +44,9 @@ if (null !== \$last) {
             ->addSimpleParameter('delta')
             ->addSimpleParameter('first')
             ->addSimpleParameter('last', 'integer', null)
-            ->setDescription("Returns the objects in a certain list, from the list scope")
-            ->setTypeDescription("The current query, for fluid interface")
-            ->setType('$this|' . $this->getQueryClassName())
+            ->setDescription('Returns the objects in a certain list, from the list scope')
+            ->setTypeDescription('The current query, for fluid interface')
+            ->setType('$this|' . $this->getRepositoryClassName())
             ->setBody($body)
         ;
 

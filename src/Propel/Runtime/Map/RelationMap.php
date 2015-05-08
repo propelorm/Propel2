@@ -108,6 +108,14 @@ class RelationMap
     }
 
     /**
+     * @return bool
+     */
+    public function isOutgoingRelation()
+    {
+        return static::MANY_TO_ONE === $this->type;
+    }
+
+    /**
      * Get the type
      *
      * @return int the relation type

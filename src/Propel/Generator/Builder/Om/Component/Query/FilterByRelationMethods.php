@@ -59,9 +59,8 @@ class FilterByRelationMethods extends BuildComponent
         $body = "
 if ($objectName instanceof $fkPhpName) {
     return \$this";
-        foreach ($relation->getLocalForeignMapping() as $localColumn => $foreignColumn) {
-            $localColumnObject = $entity->getField($localColumn);
-            $foreignColumnObject = $foreignEntity->getField($foreignColumn);
+        foreach ($relation->getFieldObjectsMapArray() as $map) {
+            list ($localColumnObject, $foreignColumnObject) = $map;
             $body .= "
         ->addUsingAlias(" . $localColumnObject->getFQConstantName() . ", " . $objectName . "->get" . $foreignColumnObject->getName() . "(), \$comparison)";
         }

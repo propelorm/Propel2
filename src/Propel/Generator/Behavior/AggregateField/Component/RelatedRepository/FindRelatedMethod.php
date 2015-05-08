@@ -35,7 +35,7 @@ class FindRelatedMethod extends BuildComponent
 
         $body = "
 \$criteria = \$this->createQuery();
-\$this->afCached\${$variableName}s = \$this->getConfiguration->getRepository('$foreignEntityClassName')->createQuery()
+\$this->afCache{$variableName}s = \$this->getConfiguration->getRepository('$foreignEntityClassName')->createQuery()
     ->use{$refRelationName}()
         ->filterByPrimaryKeys(\$this->getOriginPKs(\$event->getEntities()))
     ->endUse()

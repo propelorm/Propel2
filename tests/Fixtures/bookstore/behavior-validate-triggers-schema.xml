@@ -12,9 +12,9 @@
             <parameter name="rule1" value="{field: title, validator: NotNull}" />
             <parameter name="rule2" value="{field: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
         </behavior>
-        <behavior name="i18n">
-             <parameter name="i18n_fields" value="title" />
-        </behavior>
+        <!--<behavior name="i18n">-->
+             <!--<parameter name="i18n_fields" value="title" />-->
+        <!--</behavior>-->
     </entity>
 
     <entity name="ValidateTriggerFiction">

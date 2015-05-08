@@ -229,7 +229,7 @@ class Behavior extends MappingModel
      * Returns a single parameter by its name.
      *
      * @param  string $name
-     * @return array
+     * @return string
      */
     public function getParameter($name)
     {

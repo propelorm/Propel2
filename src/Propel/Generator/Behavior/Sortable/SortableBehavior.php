@@ -45,21 +45,25 @@ class SortableBehavior extends Behavior
      */
     public function modifyEntity()
     {
-        $table = $this->getEntity();
+        $entity = $this->getEntity();
 
-        if (!$table->hasField($this->getParameter('rank_field'))) {
-            $table->addField(array(
+        if (!$entity->hasField($this->getParameter('rank_field'))) {
+            $entity->addField(array(
                 'name' => $this->getParameter('rank_field'),
                 'type' => 'INTEGER'
             ));
         }
 
         if ($this->useScope()) {
-            if (!$this->hasMultipleScopes() && !$table->hasField($this->getParameter('scope_field'))) {
-                $table->addField(array(
-                    'name' => $this->getParameter('scope_field'),
-                    'type' => 'INTEGER'
-                ));
+            foreach ($this->getScopes() as $scopeFieldName) {
+                if (!$entity->hasField($scopeFieldName)) {
+                    $entity->addField(
+                        array(
+                            'name' => $scopeFieldName,
+                            'type' => 'INTEGER'
+                        )
+                    );
+                }
             }
 
             $scopes = $this->getScopes();
@@ -117,17 +121,28 @@ class SortableBehavior extends Behavior
         $this->applyComponent('Repository\\GetNextMethod', $builder);
         $this->applyComponent('Repository\\GetPreviousMethod', $builder);
 
-        $this->addInsertAtRank($script);
-        $this->addInsertAtBottom($script);
-        $this->addInsertAtTop($script);
-        $this->addMoveToRank($script);
-        $this->addSwapWith($script);
-        $this->addMoveUp($script);
-        $this->addMoveDown($script);
-        $this->addMoveToTop($script);
-        $this->addMoveToBottom($script);
-        $this->addRemoveFromList($script);
-        $this->addProcessSortableQueries($script);
+        $this->applyComponent('Repository\\InsertAtRankMethod', $builder);
+        $this->applyComponent('Repository\\InsertAtBottomMethod', $builder);
+        $this->applyComponent('Repository\\InsertAtTopMethod', $builder);
+
+        $this->applyComponent('Repository\\ProcessSortableQueriesMethod', $builder);
+
+//        $this->addInsertAtRank($script);
+//        $this->addInsertAtBottom($script);
+//        $this->addInsertAtTop($script);
+//        $this->addMoveToRank($script);
+//        $this->addSwapWith($script);
+//        $this->addMoveUp($script);
+//        $this->addMoveDown($script);
+//        $this->addMoveToTop($script);
+//        $this->addMoveToBottom($script);
+//        $this->addRemoveFromList($script);
+//        $this->addProcessSortableQueries($script);
+    }
+
+    public function preSave()
+    {
+        return "\$this->processSortableQueries();";
     }
 
     public function objectBuilderModification(ObjectBuilder $builder)
@@ -206,8 +221,12 @@ class SortableBehavior extends Behavior
      * @param  string $name
      * @return string
      */
-    public function getFieldGetter($name)
+    public function getFieldGetter($name = null)
     {
+        if (null === $name) {
+            $name = $this->getParameter('rank_field');
+        }
+
         return 'get' . $this->getEntity()->getField($name)->getName();
     }
 
@@ -217,8 +236,12 @@ class SortableBehavior extends Behavior
      * @param  string $name
      * @return string
      */
-    public function getFieldSetter($name)
+    public function getFieldSetter($name = null)
     {
+        if (null === $name) {
+            $name = $this->getParameter('rank_field');
+        }
+
         return 'set' . $this->getEntity()->getField($name)->getName();
     }
 

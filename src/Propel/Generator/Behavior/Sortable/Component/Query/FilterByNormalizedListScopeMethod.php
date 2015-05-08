@@ -11,7 +11,7 @@ use Propel\Generator\Model\Field;
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class FilterByNormalizedListScope extends BuildComponent
+class FilterByNormalizedListScopeMethod extends BuildComponent
 {
     use NamingTrait;
 

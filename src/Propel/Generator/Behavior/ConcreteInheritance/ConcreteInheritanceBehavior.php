@@ -173,8 +173,8 @@ EOF;
 
     public function entityMapBuilderModification(EntityMapBuilder $builder)
     {
-        $builder->getDefinition()->setParentClassName(
-            $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName()
-        );
+        $fullParentClassName = $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName();
+        $parentClassName = $builder->getDefinition()->declareUse($fullParentClassName);
+        $builder->getDefinition()->setParentClassName($parentClassName);
     }
 }

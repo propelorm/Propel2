@@ -709,7 +709,6 @@ abstract class EntityMap
         $fkEntity,
         $fkField,
         $isNotNull = false,
-        $implementationDetail = false,
         $size = 0,
         $defaultValue = null
     ) {
@@ -720,7 +719,7 @@ abstract class EntityMap
             $size,
             $defaultValue,
             false,
-            $implementationDetail,
+            true,
             $fkEntity,
             $fkField
         );
@@ -746,8 +745,7 @@ abstract class EntityMap
         $fkField,
         $isNotNull = false,
         $size = 0,
-        $defaultValue = null,
-        $implementationDetail = false
+        $defaultValue = null
     ) {
         return $this->addField(
             $fieldName,
@@ -756,7 +754,7 @@ abstract class EntityMap
             $size,
             $defaultValue,
             true,
-            $implementationDetail,
+            true,
             $fkEntity,
             $fkField
         );

@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Util;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\BehaviorNotFoundException;
 use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Field;
@@ -163,6 +164,29 @@ class SchemaReader
     }
 
     public function startElement($parser, $name, $attributes)
+    {
+        try {
+            $this->parseElement($parser, $name, $attributes);
+        } catch (\Exception $e) {
+            if ($this->currEntity) {
+                throw new SchemaException(
+                    sprintf('There was an schema error in entity %s.%s', $this->currDB->getName(), $this->currEntity->getName()),
+                    0,
+                    $e
+                );
+            } else if ($this->currDB) {
+                throw new SchemaException(
+                    sprintf('There was an schema error %s', $this->currDB->getName()),
+                    0,
+                    $e
+                );
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    public function parseElement($parser, $name, $attributes)
     {
         $parentTag = $this->peekCurrentSchemaTag();
 

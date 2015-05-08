@@ -213,7 +213,7 @@ class SqlDefaultPlatform implements PlatformInterface
                 $pks = $relation->getForeignEntity()->getPrimaryKey();
                 if (!$pks) {
                     throw new BuildException(sprintf(
-                        'Can not set up relations references since target entity `%s` has no primary keys.',
+                        'Can not set up relation references since target entity `%s` has no primary keys.',
                         $relation->getForeignEntity()->getName()
                     ));
                 }
@@ -229,6 +229,11 @@ class SqlDefaultPlatform implements PlatformInterface
                     $entity->addField($field);
 
                     $relation->addReference($localFieldName, $pk->getName());
+                }
+            } else {
+                //we have references, make sure all those columns are marked as implementationDetail
+                foreach($relation->getLocalFieldObjects() as $field) {
+                    $field->setImplementationDetail(true);
                 }
             }
         }

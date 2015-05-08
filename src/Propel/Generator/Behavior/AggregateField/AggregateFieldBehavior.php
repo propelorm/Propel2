@@ -15,6 +15,7 @@ use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Relation;
 
 /**
  * Keeps an aggregate field updated with related entity
@@ -112,6 +113,9 @@ class AggregateFieldBehavior extends Behavior
         return $database->getEntity($entityName);
     }
 
+    /**
+     * @return Relation
+     */
     public function getRelation()
     {
         $foreignEntity = $this->getForeignEntity();

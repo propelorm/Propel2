@@ -24,7 +24,8 @@ class UpdateRelatedMethod extends BuildComponent
         $behavior = $this->getBehavior();
 
         $relationName = $behavior->getRelationName();
-        $variableName = lcfirst($relationName);
+//        $variableName = lcfirst($relationName);
+        $variableName = lcfirst($relationName . $behavior->getParameter('aggregate_name'));
         $updateMethodName = $behavior->getParameter('update_method');
         $aggregateName = $behavior->getParameter('aggregate_name');
 

@@ -23,23 +23,17 @@
         <field name="website" type="VARCHAR" size="255"/>
         <behavior name="aggregate_field">
             <parameter name="name" value="totalContestEntries" />
-            <parameter name="expression" value="COUNT(customerId)" />
+            <parameter name="expression" value="COUNT(customer_id)" />
             <parameter name="foreign_entity" value="BookstoreContestEntry" />
         </behavior>
     </entity>
 
     <entity name="Customer" allowPkInsert="true">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <field name="firstContest" type="INTEGER"/>
-        <field name="secondContest" type="INTEGER"/>
         <field name="name" type="VARCHAR" size="255" />
         <field name="joinDate" type="DATE" />
-        <relation target="BookstoreContest" foreignSchema="contest">
-            <reference local="firstContest" foreign="id"/>
-        </relation>
-        <relation target="BookstoreContest" foreignSchema="contest">
-            <reference local="secondContest" foreign="id"/>
-        </relation>
+        <relation field="firstContest" target="BookstoreContest" foreignSchema="contest"></relation>
+        <relation field="secondContest" target="BookstoreContest" foreignSchema="contest"></relation>
     </entity>
 
     <!-- Test one-to-one (1:1) relationship -->
@@ -61,11 +55,8 @@
 
     <entity name="BookstoreContest" schema="contest">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <field name="bookstoreId" type="INTEGER" />
         <field name="prizeBookId" type="INTEGER" />
-        <relation target="Bookstore" onDelete="cascade">
-            <reference local="bookstoreId" foreign="id" />
-        </relation>
+        <relation field="bookstore" target="Bookstore" onDelete="cascade" />
     </entity>
 
     <entity name="SecondHandBook" schema="second_hand_books">
@@ -87,7 +78,7 @@
             <reference local="customerId" foreign="id" />
         </relation>
         <relation target="BookstoreContest" onDelete="cascade">
-            <reference local="bookstoreId" foreign="bookstoreId" />
+            <reference local="bookstoreId" foreign="bookstore.id" />
             <reference local="contestId" foreign="id" />
         </relation>
     </entity>

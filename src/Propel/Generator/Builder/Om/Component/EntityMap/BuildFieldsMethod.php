@@ -49,8 +49,7 @@ class BuildFieldsMethod extends BuildComponent
     '" . $fk->getMappedForeignField($field->getName()) . "',
     " . ($field->isNotNull() ? 'true' : 'false') . ",
     " . $size . ",
-    $default,
-    $implementationDetail
+    $default
 );";
                     }
                 } else {
@@ -75,8 +74,7 @@ class BuildFieldsMethod extends BuildComponent
     '" . $fk->getMappedForeignField($field->getName()) . "',
     " . ($field->isNotNull() ? 'true' : 'false') . ",
     " . $size . ",
-    $default,
-    $implementationDetail
+    $default
 );";
                     }
                 } else {

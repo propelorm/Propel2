@@ -186,7 +186,18 @@ EOF;
             if ($field->isAutoIncrement()) {
                 continue;
             }
-            $fields[] = $field->getColumnName();
+            if ($field->isImplementationDetail()) {
+                continue;
+            }
+            $fields[$field->getColumnName()] = $field->getColumnName();
+        }
+
+        foreach ($this->entityMap->getRelations() as $relation) {
+            if ($relation->isOutgoingRelation()) {
+                foreach ($relation->getLocalFields() as $field) {
+                    $fields[$field->getColumnName()] = $field->getColumnName();
+                }
+            }
         }
 
         $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->getFQTableName(), implode(', ', $fields));

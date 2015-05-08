@@ -8,6 +8,7 @@ use gossi\codegen\model\PhpParameter;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Model\Field;
 
 /**
  * Adds populateObject method.
@@ -133,9 +134,12 @@ if (\$exist) {
     \$relationProxyWriter = \$this->getConfiguration()->getEntityMap('$className')->getPropWriter();
 ";
 
-            foreach ($relation->getFieldObjectsMapping() as $map) {
-                $local = $map['local'];
-                $foreign = $map['foreign'];
+            foreach ($relation->getFieldObjectsMapping() as $mapping) {
+                /** @var Field $local */
+                $local = $mapping['local'];
+                /** @var Field $foreign */
+                $foreign = $mapping['foreign'];
+
                 $pkName = $foreign->getName();
                 $localName = $local->getName();
                 $body .= "

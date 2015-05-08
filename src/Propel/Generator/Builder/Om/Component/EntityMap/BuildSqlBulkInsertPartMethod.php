@@ -40,7 +40,7 @@ $entityReader = $this->getPropReader();
             $propertyName = $field->getName();
 
             $body .= "
-//$fieldName
+//field:$fieldName
 \$value = \$entityReader(\$entity, '$propertyName');";
 
             switch (strtoupper($field->getType())) {
@@ -73,9 +73,10 @@ if (is_resource(\$value)) {
             }
 
             $body .= "
-\$params[] = \$value;";
+\$params[] = \$value;
+//end field:$fieldName
+";
         }
-
 
         foreach ($this->getEntity()->getRelations() as $relation) {
 
@@ -84,7 +85,7 @@ if (is_resource(\$value)) {
             $placeholder[] = '?';
 
             $body .= "
-//$propertyName
+//relation:$propertyName
 \$foreignEntityReader = \$this->getClassPropReader('$className');";
 
             foreach ($relation->getForeignFieldObjects() as $foreignField) {
@@ -100,6 +101,7 @@ if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
     \$value = null;
 }
 \$params[] = \$value;
+//end relation:$propertyName
 ";
             }
         }

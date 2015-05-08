@@ -99,7 +99,7 @@ class AggregateFieldRelationBehavior extends Behavior
         $relationName = $this->getRelationName();
         $aggregateName = $this->getParameter('aggregate_name');
 
-        return "\$this->findRelated{$relationName}{$aggregateName}s();";
+        return "\$this->findRelated{$relationName}{$aggregateName}();";
     }
 
     public function postUpdate($builder)

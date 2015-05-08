@@ -662,16 +662,41 @@ class Relation extends MappingModel
     public function getFieldObjectsMapping()
     {
         $mapping = [];
-        $foreignEntity = $this->getForeignEntity();
+        $foreignFields = $this->getForeignFieldObjects();
         for ($i = 0, $size = count($this->localFields); $i < $size; $i++) {
             $mapping[] = [
                 'local' => $this->parentEntity->getField($this->localFields[$i]),
-                'foreign' => $foreignEntity->getField($this->foreignFields[$i]),
+                'foreign' => $foreignFields[$i],
             ];
         }
 
         return $mapping;
     }
+
+    /**
+     * Returns an array of local and foreign field objects
+     * mapped for this foreign key.
+     *
+     * Easy to iterate using
+     *
+     * foreach ($relation->getFieldObjectsMapArray() as $map) {
+     *      list($local, $foreign) = $map;
+     * }
+     *
+     * @return Field[]
+     */
+    public function getFieldObjectsMapArray()
+    {
+        $mapping = [];
+        $foreignFields = $this->getForeignFieldObjects();
+        for ($i = 0, $size = count($this->localFields); $i < $size; $i++) {
+            $mapping[] = [$this->parentEntity->getField($this->localFields[$i]), $foreignFields[$i]];
+        }
+
+        return $mapping;
+    }
+
+
 
     /**
      * Returns the foreign field name mapped to a specified local field.
@@ -721,7 +746,34 @@ class Relation extends MappingModel
         $fields = [];
         $foreignEntity = $this->getForeignEntity();
         foreach ($this->foreignFields as $fieldName) {
-            $field = $foreignEntity->getField($fieldName);
+            $field = null;
+            if (false !== strpos($fieldName, '.')) {
+                list($relationName, $foreignFieldName) = explode('.', $fieldName);
+                $foreignRelation = $this->getForeignEntity()->getRelation($relationName);
+                if (!$foreignRelation) {
+                    throw new BuildException(sprintf(
+                            'Relation `%s` in Entity %s (%s) in foreign reference of relation `%s` from `%s` to `%s` not found.',
+                            $relationName,
+                            $this->getForeignEntity()->getName(),
+                            $fieldName,
+                            $this->getName(),
+                            $this->getEntity()->getName(),
+                            $this->getForeignEntity()->getName()
+                        ));
+                }
+                foreach ($foreignRelation->getFieldObjectsMapping() as $mapping) {
+                    /** @var Field $local */
+                    $local = $mapping['local'];
+                    /** @var Field $foreign */
+                    $foreign = $mapping['foreign'];
+                    if ($foreign->getName() === $foreignFieldName) {
+                        $field = $local;
+                    }
+                }
+            } else {
+                $field = $foreignEntity->getField($fieldName);
+            }
+
             if (null === $field) {
                 throw new BuildException(sprintf(
                     'Field `%s` in foreign reference of relation `%s` from `%s` to `%s` not found.',

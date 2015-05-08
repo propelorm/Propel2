@@ -308,12 +308,11 @@ class Entity extends ScopedMappingModel implements IdMethod
         }
 
         // foreign field references
-        $foreignFieldNames = $relation->getForeignFields();
-        foreach ($foreignFieldNames as $foreignFieldName) {
+        $foreignFields = $relation->getForeignFieldObjects();
+        foreach ($foreignFields as $foreignField) {
             if (null === $foreignEntity) {
                 continue;
             }
-            $foreignField = $foreignEntity->getField($foreignFieldName);
             if (null !== $foreignField) {
                 if (!$foreignField->hasReferrer($relation)) {
                     $foreignField->addReferrer($relation);
@@ -326,7 +325,7 @@ class Entity extends ScopedMappingModel implements IdMethod
                         'Entity "%s" contains a foreign key to entity "%s" with nonexistent field "%s"',
                         $entity->getName(),
                         $foreignEntity->getName(),
-                        $foreignFieldName
+                        $foreignField->getName()
                     )
                 );
             }
@@ -1322,6 +1321,20 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * @param string $fieldName
+     *
+     * @return Relation
+     */
+    public function getRelation($fieldName)
+    {
+        foreach ($this->relations as $relation) {
+            if ($relation->getField() == $fieldName) {
+                return $relation;
+            }
+        }
+    }
+
+    /**
      * Returns a Collection of parameters relevant for the chosen
      * id generation method.
      *
@@ -1482,7 +1495,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function getField($name, $caseInsensitive = false)
     {
         if (!$this->hasField($name, $caseInsensitive)) {
-            return null; // just to be explicit
+            throw new \InvalidArgumentException(sprintf('Field `%s` not found in Entity `%s`', $name, $this->getName()));
         }
 
         if ($caseInsensitive) {
