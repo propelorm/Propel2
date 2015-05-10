@@ -767,7 +767,9 @@ class Relation extends MappingModel
                     /** @var Field $foreign */
                     $foreign = $mapping['foreign'];
                     if ($foreign->getName() === $foreignFieldName) {
-                        $field = $local;
+                        $field = clone $local;
+                        $field->foreignRelation = $foreignRelation;
+                        $field->foreignRelationFieldName = $foreignFieldName;
                     }
                 }
             } else {

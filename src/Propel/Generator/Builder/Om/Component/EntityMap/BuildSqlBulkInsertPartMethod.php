@@ -10,6 +10,7 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Relation;
 
 /**
  * Adds buildSqlBulkInsertPart method.
@@ -24,6 +25,7 @@ class BuildSqlBulkInsertPartMethod extends BuildComponent
     public function process()
     {
         $body = '
+$params = [];
 $entityReader = $this->getPropReader();
         ';
         $placeholder = [];
@@ -73,7 +75,8 @@ if (is_resource(\$value)) {
             }
 
             $body .= "
-\$params[] = \$value;
+\$params['{$fieldName}'] = \$value;
+\$outgoingParams[] = \$value;
 //end field:$fieldName
 ";
         }
@@ -88,22 +91,46 @@ if (is_resource(\$value)) {
 //relation:$propertyName
 \$foreignEntityReader = \$this->getClassPropReader('$className');";
 
-            foreach ($relation->getForeignFieldObjects() as $foreignField) {
+            foreach ($relation->getFieldObjectsMapArray() as $map) {
+                /** @var Field $localField */
+                /** @var Field $foreignField */
+                list ($localField, $foreignField) = $map;
                 $foreignFieldName = $foreignField->getName();
 
                 $typeCasting = $this->getTypeCasting($foreignField);
 
                 $body .= "
 if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
-    \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');
+";
+
+                if (isset($foreignField->foreignRelation)) {
+                    /** @var Relation $foreignRelation */
+                    $foreignRelation = $foreignField->foreignRelation;
+                    $relationFieldName = $foreignRelation->getField();
+                    $relationEntityName = $foreignRelation->getForeignEntity()->getFullClassName();
+                    $body .= "
+    \$foreignForeignEntityReader = \$this->getClassPropReader('$relationEntityName');
+    \$foreignForeignEntity = \$foreignEntityReader(\$foreignEntity, '{$relationFieldName}');
+    \$value = \$foreignForeignEntityReader(\$foreignForeignEntity, '{$foreignField->foreignRelationFieldName}');
+                    ";
+                } else {
+                    $body .= "
+                \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
+                }
+
+                $body .= "
     $typeCasting
 } else {
     \$value = null;
 }
-\$params[] = \$value;
-//end relation:$propertyName
+if (!isset(\$params['{$localField->getName()}'])) {
+    \$params['{$localField->getName()}'] = \$value; //{$localField->getName()}
+    \$outgoingParams[] = \$value;
+}
 ";
             }
+            $body .= "
+//end relation:$propertyName";
         }
 
         $placeholder = var_export('(' . implode(', ', $placeholder). ')', true);
@@ -111,7 +138,7 @@ if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
 return $placeholder;
         ";
 
-        $paramsParam = new PhpParameter('params');
+        $paramsParam = new PhpParameter('outgoingParams');
         $paramsParam->setPassedByReference(true);
         $paramsParam->setType('array');
 
