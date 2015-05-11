@@ -44,6 +44,11 @@ class Session
         return $this->configuration;
     }
 
+    protected function debug($message)
+    {
+        var_dump($message);
+    }
+
     /**
      * @param string $splId
      *
@@ -61,6 +66,7 @@ class Session
     public function persist($entity, $deep = false)
     {
         $id = spl_object_hash($entity);
+        $this->debug('persist(' . get_class($entity) . ', '. var_export($deep, true) . ')');
 
         $event = new PersistEvent($this, $entity);
         $this->configuration->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
@@ -153,6 +159,7 @@ class Session
 
         $list = $dependencyGraph->getList();
         $sortedGroups = $dependencyGraph->getGroups();
+        $this->debug(sprintf('doPersist(): %d groups, with %d items', count($sortedGroups), count($list)));
 
         foreach ($sortedGroups as $group) {
             $entityIds = array_slice($list, $group->position, $group->length);
@@ -167,6 +174,7 @@ class Session
                 $this->persisted[$entityId] = true;
             }
 
+            $this->debug(sprintf('Persister::persist() with %d items of %s', $group->length, $group->type));
             $persister->persist($entities);
         }
 

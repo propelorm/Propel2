@@ -881,9 +881,9 @@ abstract class EntityMap
      */
     public function hasRelation($name)
     {
-        $name = strtolower($name);
         if (!$this->relationsBuilt) {
             $this->buildRelations();
+            $this->relationsBuilt = true;
         }
 
         return isset($this->relations[$name]);
@@ -900,9 +900,9 @@ abstract class EntityMap
      */
     public function getRelation($name)
     {
-        $name = strtolower($name);
         if (!$this->relationsBuilt) {
             $this->buildRelations();
+            $this->relationsBuilt = true;
         }
 
         if (!isset($this->relations[$name])) {

@@ -35,8 +35,8 @@ class FindRelatedMethod extends BuildComponent
 
         $body = "
 \$criteria = \$this->createQuery();
-\$this->afCache{$variableName}s = \$this->getConfiguration->getRepository('$foreignEntityClassName')->createQuery()
-    ->use{$refRelationName}()
+\$this->afCache{$variableName}s = \$this->getConfiguration()->getRepository('$foreignEntityClassName')->createQuery()
+    ->use{$refRelationName}Query()
         ->filterByPrimaryKeys(\$this->getOriginPKs(\$event->getEntities()))
     ->endUse()
     ->find();
@@ -45,6 +45,7 @@ class FindRelatedMethod extends BuildComponent
 
         $this->addMethod($name)
             ->setDescription("[AggregateField-related] Finds the related {$foreignEntity->getName()} objects and keep them for later.")
+            ->addSimpleDescParameter('event', '\Propel\Runtime\Event\UpdateEvent', 'update event')
             ->setBody($body);
     }
 }

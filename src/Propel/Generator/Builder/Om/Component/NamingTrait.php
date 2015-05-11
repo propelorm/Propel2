@@ -198,6 +198,20 @@ trait NamingTrait
     }
 
     /**
+     * @param Entity $entity
+     * @param bool   $fqcn
+     *
+     * @return string
+     */
+    public function getQueryClassNameForEntity(Entity $entity, $fqcn = false)
+    {
+        return $this->getClassNameFromBuilder(
+            $this->getBuilder()->getNewStubQueryBuilder($entity),
+            $fqcn
+        );
+    }
+
+    /**
      * Returns the object class name for current entity.
      * This is the class name that is used whenever object or entitymap classes want
      * to invoke methods of the object classes.

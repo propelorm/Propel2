@@ -30,14 +30,25 @@ class JoinMethods extends BuildComponent
             $queryClass = $this->getQueryClassName();
             $foreignEntry = $relation->getForeignEntity();
             $joinType = $this->getJoinType($relation);
-            $this->addJoin($foreignEntry, $queryClass, $relation, $joinType);
+
+            $relationName = $this->getRelationPhpName($relation);
+
+            $this->addJoin($relationName, $queryClass, $joinType);
+        }
+
+        foreach ($this->getEntity()->getReferrers() as $relation) {
+            $queryClass = $this->getQueryClassName();
+            $foreignEntry = $relation->getEntity();
+            $joinType = $this->getJoinType($relation);
+
+            $relationName = $this->getRefRelationPhpName($relation);
+
+            $this->addJoin($relationName, $queryClass, $joinType);
         }
     }
 
-    public function addJoin($foreignEntry, $queryClass, $relation, $joinType)
+    public function addJoin($relationName, $queryClass, $joinType)
     {
-        $relationName = $this->getRelationVarName($relation);
-        $methodName = $this->getRelationPhpName($relation);
 
         $body = <<<EOF
 \$entityMap = \$this->getEntityMap();
@@ -62,9 +73,9 @@ if (\$relationAlias) {
 return \$this;
 EOF;
 
-        $this->addMethod('join' . $methodName)
+        $this->addMethod('join' . $relationName)
             ->addSimpleDescParameter('relationAlias', 'string', 'optional alias for the relation', null)
-            ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'", PhpConstant::create($joinType))
+            ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'", $joinType)
             ->setDescription("Adds a JOIN clause to the query using the $relationName relation.")
             ->setType("\$this|$queryClass")
             ->setTypeDescription("The current query, for fluid interface")

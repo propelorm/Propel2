@@ -606,7 +606,6 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function addJoinObject(Join $join, $name = null)
     {
-        $name = strtolower($name);
         if (!in_array($join, $this->joins)) { // compare equality, NOT identity
             if (null === $name) {
                 $this->joins[] = $join;
@@ -730,26 +729,30 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see ModelCriteria::endUse()
      * @param string $relationName           Relation name or alias
-     * @param string $secondaryCriteriaClass ClassName for the ModelCriteria to be used
+     * @param string $secondaryEntityClass   Full entity name of the secondary entity to be used to retrieve the query
      *
      * @return ModelCriteria The secondary criteria object
      */
-    public function useQuery($relationName, $secondaryCriteriaClass = null)
+    public function useQuery($relationName, $secondaryEntityClass = null)
     {
         if (!isset($this->joins[$relationName])) {
             throw new PropelException('Unknown class or alias ' . $relationName);
         }
 
-        $className = $this->joins[$relationName]->getEntityMap()->getClassName();
-        /** @var self $secondaryCriteriaClass */
-        if (null === $secondaryCriteriaClass) {
-            $secondaryCriteria = PropelQuery::from($className);
+        /** @var ModelJoin $join */
+        $join = $this->joins[$relationName];
+        $className = $join->getEntityMap()->getName();
+
+        if (null === $secondaryEntityClass) {
+            /** @var ModelCriteria $secondaryCriteria */
+            $secondaryCriteria = $join->getEntityMap()->getRepository()->createQuery();
         } else {
-            $secondaryCriteria = new $secondaryCriteriaClass();
+            /** @var ModelCriteria $secondaryCriteria */
+            $secondaryCriteria = $this->getConfiguration()->getRepository($secondaryEntityClass)->createQuery();
         }
 
         if ($className !== $relationName) {
-            $secondaryCriteria->setEntityAlias($relationName, $relationName == $this->joins[$relationName]->getRelationMap()->getName() ? false : true);
+            $secondaryCriteria->setEntityAlias($relationName, $relationName == $join->getRelationMap()->getName() ? false : true);
         }
 
         $secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);

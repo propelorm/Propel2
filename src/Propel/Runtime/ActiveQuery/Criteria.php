@@ -196,6 +196,7 @@ class Criteria
 
     /**
      * Storage of join data. collection of Join objects.
+     *
      * @var Join[]
      */
     protected $joins = array();
@@ -425,6 +426,9 @@ class Criteria
 
     public function getTableName($entityName)
     {
+        if (!$entityName) {
+            throw new \InvalidArgumentException('entityName can not be empty.');
+        }
         $entityMap = $this->getConfiguration()->getDatabase($this->getDbName())->getEntity($entityName);
         return $entityMap->getTableName();
     }

@@ -9,6 +9,8 @@
 namespace Propel\Generator\Builder\Om\Component;
 
 
+use gossi\codegen\model\PhpConstant;
+use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Relation;
@@ -44,6 +46,27 @@ trait RelationTrait
         }
 
         return ucfirst($className . $this->getRelatedBySuffix($relation));
+    }
+
+    /**
+     * Convenience method to get the default Join Type for a relation.
+     * If the key is required, an INNER JOIN will be returned, else a LEFT JOIN will be suggested,
+     * unless the schema is provided with the DefaultJoin attribute, which overrules the default Join Type
+     *
+     * @param  Relation $relation
+     * @return string|PhpConstant
+     */
+    protected function getJoinType(Relation $relation)
+    {
+        if ($defaultJoin = $relation->getDefaultJoin()) {
+            return "'" . $defaultJoin . "'";
+        }
+
+        if ($relation->isLocalFieldsRequired()) {
+            return PhpConstant::create('Criteria::INNER_JOIN');
+        }
+
+        return PhpConstant::create('Criteria::LEFT_JOIN');
     }
 
     /**
@@ -84,28 +107,6 @@ trait RelationTrait
         }
 
         return $relField;
-    }
-
-    /**
-     * Convenience method to get the default Join Type for a relation.
-     * If the key is required, an INNER JOIN will be returned, else a LEFT JOIN will be suggested,
-     * unless the schema is provided with the DefaultJoin attribute, which overrules the default Join Type
-     *
-     * @param  Relation $relation
-     *
-     * @return string
-     */
-    protected function getJoinType(Relation $relation)
-    {
-        if ($defaultJoin = $relation->getDefaultJoin()) {
-            return "'" . $defaultJoin . "'";
-        }
-
-        if ($relation->isLocalFieldsRequired()) {
-            return 'Criteria::INNER_JOIN';
-        }
-
-        return 'Criteria::LEFT_JOIN';
     }
 
     /**

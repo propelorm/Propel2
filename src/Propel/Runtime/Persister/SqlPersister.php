@@ -14,7 +14,7 @@ use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Session\Session;
 
-class SqlPersister
+class SqlPersister implements PersisterInterface
 {
 
     /**
@@ -116,6 +116,8 @@ class SqlPersister
 //            count($updates)
 //        );
 
+        var_dump(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
+        var_dump(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
         $this->doInsert($inserts);
         $this->doUpdates($updates, $changeSets);
 
@@ -140,8 +142,15 @@ class SqlPersister
     AND   TABLE_NAME   = ?
 EOF;
 
+        $params = [];
+        if ($this->entityMap->getSchemaName()) {
+            $sql = str_replace('DATABASE()', '?', $sql);
+            $params[] = $this->entityMap->getSchemaName();
+        }
+        $params[] = $this->entityMap->getTableName();
+
         $stmt = $connection->prepare($sql);
-        $stmt->execute([$this->entityMap->getTableName()]);
+        $stmt->execute($params);
 
         return $stmt->fetchColumn();
     }
@@ -234,6 +243,7 @@ EOF;
 
         if ($this->entityMap->hasAutoIncrement()) {
             foreach ($inserts as $entity) {
+                var_dump(sprintf('set auto-increment value %s for %s', json_encode($this->autoIncrementValues), get_class($entity)));
                 $this->entityMap->populateAutoIncrementFields($entity, $this->autoIncrementValues);
             }
         }

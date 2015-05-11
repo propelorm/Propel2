@@ -144,7 +144,7 @@ class DatabaseMap
         if (!isset($this->entities[$name])) {
             throw new EntityNotFoundException(
                 sprintf(
-                    'Cannot fetch EntityMap for undefined entity: %s. [%s]',
+                    'Cannot fetch EntityMap for undefined entity `%s` [%s]',
                     $name,
                     implode(',', array_keys($this->entities))
                 )
