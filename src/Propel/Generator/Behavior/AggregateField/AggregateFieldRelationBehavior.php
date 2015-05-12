@@ -53,15 +53,18 @@ class AggregateFieldRelationBehavior extends Behavior
         $this->builder = $builder;
 
         $relationName = $this->getRelationName();
-        $aggregateName = $this->getParameter('aggregate_name');
+        $aggregateName = ucfirst($this->getParameter('aggregate_name'));
 
-        return "\$this->updateRelated{$relationName}{$aggregateName}(\$con);";
+        return "
+\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntitiesToInsert());
+\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntitiesToUpdate());
+";
     }
 
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
 //        $this->applyComponent('RelationObject\\Attribute', $builder);
-        $this->applyComponent('RelatedRepository\\FindRelatedMethod', $builder);
+//        $this->applyComponent('RelatedRepository\\FindRelatedMethod', $builder);
         $this->applyComponent('RelatedRepository\\UpdateRelatedMethod', $builder);
     }
 
@@ -83,43 +86,43 @@ class AggregateFieldRelationBehavior extends Behavior
 //        $script = str_replace($search, $replace, $script);
 //    }
 
-    public function preUpdate($builder)
-    {
-        return $this->getFindRelated($builder);
-    }
+//    public function preUpdate($builder)
+//    {
+//        return $this->getFindRelated($builder);
+//    }
+//
+//    public function preDelete($builder)
+//    {
+//        return $this->getFindRelated($builder);
+//    }
 
-    public function preDelete($builder)
-    {
-        return $this->getFindRelated($builder);
-    }
+//    protected function getFindRelated($builder)
+//    {
+//        $this->builder = $builder;
+//        $relationName = $this->getRelationName();
+//        $aggregateName = $this->getParameter('aggregate_name');
+//
+//        return "\$this->findRelated{$relationName}{$aggregateName}(\$event);";
+//    }
 
-    protected function getFindRelated($builder)
-    {
-        $this->builder = $builder;
-        $relationName = $this->getRelationName();
-        $aggregateName = $this->getParameter('aggregate_name');
+//    public function postUpdate($builder)
+//    {
+//        return $this->getUpdateRelated($builder);
+//    }
 
-        return "\$this->findRelated{$relationName}{$aggregateName}(\$event);";
-    }
+//    public function postDelete($builder)
+//    {
+//        return $this->getUpdateRelated($builder);
+//    }
 
-    public function postUpdate($builder)
-    {
-        return $this->getUpdateRelated($builder);
-    }
-
-    public function postDelete($builder)
-    {
-        return $this->getUpdateRelated($builder);
-    }
-
-    protected function getUpdateRelated($builder)
-    {
-        $this->builder = $builder;
-        $relationName = $this->getRelationName();
-        $aggregateName = $this->getParameter('aggregate_name');
-
-        return "\$this->updateRelated{$relationName}{$aggregateName}s(\$event);";
-    }
+//    protected function getUpdateRelated($builder)
+//    {
+//        $this->builder = $builder;
+//        $relationName = $this->getRelationName();
+//        $aggregateName = ucfirst($this->getParameter('aggregate_name'));
+//
+//        return "\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntities());";
+//    }
 
     /**
      * @return Entity

@@ -82,7 +82,6 @@ if (is_resource(\$value)) {
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-
             $className = $this->getClassNameFromEntity($relation->getForeignEntity(), true);
             $propertyName = $this->getRelationVarName($relation);
             $placeholder[] = '?';

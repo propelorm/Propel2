@@ -271,5 +271,13 @@ trait NamingTrait
     {
         return $this->getClassNameFromBuilder($this->getBuilder()->getStubRepositoryBuilder(), $fqcn);
     }
+
+    /**
+     * @return string
+     */
+    public function getRepositoryClassNameForEntity(Entity $entity, $fqcn = false)
+    {
+        return $this->getClassNameFromBuilder($this->getBuilder()->getNewStubRepositoryBuilder($entity), $fqcn);
+    }
 }
 

@@ -277,6 +277,10 @@ abstract class AbstractBuilder extends DataModelBuilder
             }
         }
 
+        if ($body) {
+            $body = "parent::{$hookName}(\$event);\n" . $body;
+        }
+
         return $body;
     }
 

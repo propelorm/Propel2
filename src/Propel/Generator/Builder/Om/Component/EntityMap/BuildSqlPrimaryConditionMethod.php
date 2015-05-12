@@ -29,14 +29,42 @@ $entityReader = $this->getPropReader();
         $placeholder = [];
 
         foreach ($this->getEntity()->getPrimaryKey() as $field) {
+
             $fieldName = $field->getName();
             $propertyName = $field->getName();
             $placeholder[] = sprintf('%s = ?', $field->getColumnName());
 
             $body .= "
 //$fieldName
+\$value = null;";
+            if ($field->isImplementationDetail()) {
+                $body .= "
+\$foreignEntity = null;";
+
+                foreach ($field->getRelations() as $relation) {
+                    /** @var Field $foreignField */
+                    $foreignField = null;
+                    foreach ($relation->getFieldObjectsMapArray() as $mapping) {
+                        list($local, $foreign) = $mapping;
+                        if ($local === $field) {
+                            $foreignField = $foreign;
+                        }
+                    }
+
+                    $relationEntityName = $relation->getForeignEntity()->getFullClassName();
+                    $body .= "
+if (null === \$foreignEntity) {
+    \$foreignEntity = \$entityReader(\$entity, '{$relation->getField()}');
+    \$foreignEntityReader = \$this->getClassPropReader('$relationEntityName');
+    \$value = \$foreignEntityReader(\$foreignEntity, '{$foreignField->getName()}');
+}
+";
+                }
+            } else {
+                $body .= "
 \$value = \$entityReader(\$entity, '$propertyName');
 ";
+            }
 
             switch (strtoupper($field->getType())) {
                 case PropelTypes::DATE:
@@ -66,7 +94,8 @@ if (is_resource(\$value)) {
             }
 
             $body .= "
-\$params[] = \$value;";
+\$params[] = \$value;
+";
         }
 
 

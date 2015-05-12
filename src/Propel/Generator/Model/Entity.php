@@ -919,6 +919,19 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * @return string
+     */
+    public function getFQTableName()
+    {
+        $fqTableName = $this->getTableName();
+        if ($this->hasSchema()) {
+            $fqTableName = $this->guessSchemaName() . $this->getPlatform()->getSchemaDelimiter() . $fqTableName;
+        }
+
+        return $fqTableName;
+    }
+
+    /**
      * @param mixed $tableName
      */
     public function setTableName($tableName)

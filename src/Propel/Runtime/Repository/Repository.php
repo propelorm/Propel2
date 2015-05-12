@@ -116,11 +116,13 @@ abstract class Repository
         foreach ($event->getEntitiesToInsert() as $entity) {
             var_dump('inserted ' . spl_object_hash($entity) . ' => ' . get_class($entity));
             $this->committedIds[spl_object_hash($entity)] = true;
+            $this->addToFirstLevelCache($entity);
             $this->snapshot($entity);
         }
         foreach ($event->getEntitiesToUpdate() as $entity) {
             var_dump('updated ' . spl_object_hash($entity) . ' => ' . get_class($entity));
             $this->committedIds[spl_object_hash($entity)] = true;
+            $this->addToFirstLevelCache($entity);
             $this->snapshot($entity);
         }
     }
@@ -236,6 +238,19 @@ abstract class Repository
         }
     }
 
+    public function addToFirstLevelCache($entity)
+    {
+        $originPk = json_encode($this->getOriginPK($entity));
+        $currentPk = json_encode($this->getPK($entity));
+        if ($originPk !== $currentPk) {
+            if (isset($this->firstLevelCache[$originPk]) && $this->firstLevelCache[$originPk] === $entity) {
+                unset($this->firstLevelCache[$originPk]);
+            }
+        }
+
+        $this->firstLevelCache[$currentPk] = $entity;
+    }
+
     public function clearFirstLevelCache()
     {
         $this->firstLevelCache = [];
@@ -262,10 +277,16 @@ abstract class Repository
         $this->lastKnownValues[$id] = $values;
     }
 
+    /**
+     * @todo, to improve performance precompile this stuff
+     *
+     * @param array $entities
+     *
+     * @return array
+     */
     public function getOriginPKs(array $entities)
     {
         $pks = [];
-        $reader = $this->getEntityMap()->getPropReader();
         $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
         $singlePk = 1 === count($primaryKeyFields);
 
@@ -273,12 +294,14 @@ abstract class Repository
             $id = spl_object_hash($entity);
             if (isset($this->lastKnownValues[$id])) {
                 $pk = [];
+                $lastKnownValues = $this->lastKnownValues[$id];
 
                 if ($singlePk) {
-                    $pk = $reader($this->lastKnownValues[$id], $primaryKeyFields[0]->getName());
+                    $primaryKeyField = current($primaryKeyFields);
+                    $pk = $lastKnownValues[$primaryKeyField->getName()];
                 } else {
                     foreach ($primaryKeyFields as $primaryKeyField) {
-                        $pks[] = $reader($this->lastKnownValues[$id], $primaryKeyField->getName());
+                        $pks[] = $lastKnownValues[$primaryKeyField->getName()];
                     }
                 }
 
@@ -287,6 +310,65 @@ abstract class Repository
         }
 
         return $pks;
+    }
+
+    /**
+     * @todo, to improve performance precompile this stuff
+     *
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function getOriginPK($entity)
+    {
+        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $id = spl_object_hash($entity);
+        $pk = null;
+
+        if (isset($this->lastKnownValues[$id])) {
+            $lastKnownValues = $this->lastKnownValues[$id];
+            if ($singlePk) {
+                $primaryKeyField = current($primaryKeyFields);
+                $pk = $lastKnownValues[$primaryKeyField->getName()];
+            } else {
+                $pk = [];
+                foreach ($primaryKeyFields as $primaryKeyField) {
+                    $pks[] = $lastKnownValues[$primaryKeyField->getName()];
+                }
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * @todo, to improve performance precompile this stuff
+     *
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function getPK($entity)
+    {
+        $reader = $this->getEntityMap()->getPropReader();
+        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $pk = null;
+
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $reader($entity, $primaryKeyField->getName());
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pks[] = $reader($entity, $primaryKeyField->getName());
+            }
+        }
+
+        return $pk;
     }
 
     /**

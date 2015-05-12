@@ -430,7 +430,7 @@ class Criteria
             throw new \InvalidArgumentException('entityName can not be empty.');
         }
         $entityMap = $this->getConfiguration()->getDatabase($this->getDbName())->getEntity($entityName);
-        return $entityMap->getTableName();
+        return $entityMap->getFQTableName();
     }
 
     /**
@@ -1861,16 +1861,17 @@ class Criteria
             $criterion = $this->getCriterion($key);
             $entity = null;
             foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
-                $entityName = $attachedCriterion->getEntityName();
+                if ($entityName = $attachedCriterion->getEntityName()) {
 
-                $entity = $this->getEntityForAlias($entityName);
-                if ($entity !== null) {
-                    $table = $this->getTableName($entity);
-                    $fromClause[] = $table . ' ' . $entityName;
-                } else {
-                    $table = $this->getTableName($entityName);
-                    $fromClause[] = $table;
-                    $entity = $entityName;
+                    $entity = $this->getEntityForAlias($entityName);
+                    if ($entity !== null) {
+                        $table = $this->getTableName($entity);
+                        $fromClause[] = $table . ' ' . $entityName;
+                    } else {
+                        $table = $this->getTableName($entityName);
+                        $fromClause[] = $table;
+                        $entity = $entityName;
+                    }
                 }
 
                 if ($this->isIgnoreCase() && method_exists($attachedCriterion, 'setIgnoreCase')
@@ -2643,7 +2644,11 @@ class Criteria
         $sql = $this->createSelectSql($params);
         try {
             $stmt = $con->prepare($sql);
-            echo "sql: $sql\n";
+            $p = [];
+            foreach ($params as $param) {
+                $p[] = $param['value'];
+            }
+            echo "sql: $sql [" . implode(',', $p). "]\n";
             $adapter->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {

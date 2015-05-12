@@ -31,7 +31,7 @@ use Propel\Tests\TestCaseFixturesDatabase;
  *
  * @group database
  */
-class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
+class AggregateFieldBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
     public function testParametersWithSchema()
     {
@@ -47,7 +47,7 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         CustomerQuery::create()->deleteAll();
         BookstoreContestQuery::create()->deleteAll();
 
-        /** @var BaseBookstoreRepository $repository */
+        /** @var BaseBookstoreRepository $bookstoreRepository */
         $bookstoreRepository = $this->configuration->getRepository(BookstoreEntityMap::ENTITY_CLASS);
 
         $store = new Bookstore();
@@ -67,7 +67,7 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry1->setCustomer($customer1);
         $entry1->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(1, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method computes the aggregate function on related objects');
 
         $customer2 = new Customer();
         $customer2->save();
@@ -78,8 +78,8 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry2->setCustomer($customer2);
         $entry2->save(null, true); // skip reload to avoid #1151 for now
 
-        $this->assertEquals(2, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(2, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method computes the aggregate function on related objects');
         $entry1->delete();
-        $this->assertEquals(1, $store->computeTotalContestEntries(), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method computes the aggregate function on related objects');
     }
 }

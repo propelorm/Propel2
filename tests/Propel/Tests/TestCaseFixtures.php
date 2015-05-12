@@ -131,6 +131,14 @@ class TestCaseFixtures extends TestCase
         $this->readAllRuntimeConfigs();
     }
 
+    /**
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
     protected function getLastBuildMode()
     {
         if ($this->lastBuildMode) {

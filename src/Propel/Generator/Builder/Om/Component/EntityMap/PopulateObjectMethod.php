@@ -22,8 +22,99 @@ class PopulateObjectMethod extends BuildComponent
     public function process()
     {
         $this->getDefinition()->declareUse('Propel\Runtime\Map\EntityMap');
+        $body = "";
 
-        $body = "
+        //first check primary key and first level cache
+        $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
+        $implementationDetail = [];
+        $fieldCount = 0;
+        $singlePk = 1 === count($this->getEntity()->getPrimaryKey());
+        foreach ($this->getEntity()->getPrimaryKey() as $field) {
+            if ($field->isLazyLoad()) {
+                continue;
+            }
+
+            $fieldCount++;
+
+            if ($field->isImplementationDetail()) {
+                $implementationDetail[$field->getName()] = true;
+            }
+
+            $fieldNames[] = $field->getName();
+            $fieldTypes[] = $field->getType();
+            $camelNames[] = $field->getCamelCaseName();
+            $columnNames[] = $field->getColumnName();
+            $fullColumnNames[] = $field->getEntity()->getName(). '.' .$field->getColumnName();
+        }
+
+
+
+        $body .= "
+if (EntityMap::TYPE_NUM === \$indexType) {
+    //0
+";
+        foreach ($fieldNames as $idx => $fieldName) {
+            $propName = $fieldNames[$idx];
+            $body .= "
+    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+        }
+
+        $body .= "
+} else if (EntityMap::TYPE_COLNAME === \$indexType) {
+    //columnName
+";
+        foreach ($camelNames as $idx => $fieldName) {
+            $propName = $fieldNames[$idx];
+            $body .= "
+    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+        }
+
+        $body .= "
+} else if (EntityMap::TYPE_FIELDNAME === \$indexType) {
+    //column_name
+";
+        foreach ($columnNames as $idx => $fieldName) {
+            $propName = $fieldNames[$idx];
+            $body .= "
+    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+        }
+
+        $body .= "
+} else if (EntityMap::TYPE_FULLCOLNAME === \$indexType) {
+    //book.column_name
+";
+        foreach ($fullColumnNames as $idx => $fieldName) {
+            $propName = $fieldNames[$idx];
+            $body .= "
+    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+        }
+
+        $body .= "
+}";
+
+        if ($singlePk) {
+            $body .= "
+        \$pk = \$pk[0];
+";
+            }
+
+        $body .= "
+\$hashcode = json_encode(\$pk);
+if (\$object = \$this->getRepository()->getInstanceFromFirstLevelCache(\$hashcode)) {
+    return \$object;
+}
+";
+
+
+
+
+
+
+
+
+
+
+        $body .= "
 \$writer = \$this->getPropWriter();
 if (\$entity) {
     \$obj = \$entity;

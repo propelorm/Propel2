@@ -39,18 +39,18 @@ class ComputeMethod extends BuildComponent
         }
 
         $foreignEntity = $database->getEntity($behavior->getParameter('foreign_entity'));
-
-        $tableName = $database->getEntityPrefix() . $foreignEntity->getTableName();
-        if ($database->getPlatform()->supportsSchemas() && $behavior->getParameter('foreign_schema')) {
-            $tableName = $behavior->getParameter('foreign_schema')
-                . $database->getPlatform()->getSchemaDelimiter()
-                . $tableName;
-        }
+//
+//        $tableName = $database->getEntityPrefix() . $foreignEntity->getTableName();
+//        if ($database->getPlatform()->supportsSchemas() && $behavior->getParameter('foreign_schema')) {
+//            $tableName = $behavior->getParameter('foreign_schema')
+//                . $database->getPlatform()->getSchemaDelimiter()
+//                . $tableName;
+//        }
 
         $sql = sprintf(
             'SELECT %s FROM %s WHERE %s',
             $behavior->getParameter('expression'),
-            $behavior->getEntity()->quoteIdentifier($tableName),
+            $behavior->getEntity()->quoteIdentifier($foreignEntity->getFQTableName()),
             implode(' AND ', $conditions)
         );
 

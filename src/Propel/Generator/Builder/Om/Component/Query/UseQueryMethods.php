@@ -46,7 +46,7 @@ class UseQueryMethods extends BuildComponent
      */
     protected function addUseRefRelationMethod(Relation $relation)
     {
-        $foreignEntity = $relation->getForeignEntity();
+        $foreignEntity = $relation->getEntity();
         $relationName = $this->getRefRelationPhpName($relation);
         $queryClass = $this->getQueryClassNameForEntity($foreignEntity);
         $this->addUseQueryMethod($relationName, $queryClass, $relation);
@@ -59,7 +59,7 @@ class UseQueryMethods extends BuildComponent
      */
     protected function addUseRelationMethod(Relation $relation)
     {
-        $foreignEntity = $relation->getEntity();
+        $foreignEntity = $relation->getForeignEntity();
         $relationName = $this->getRelationPhpName($relation);
         $queryClass = $this->getQueryClassNameForEntity($foreignEntity);
 

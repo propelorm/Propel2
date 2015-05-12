@@ -448,7 +448,7 @@ abstract class PdoAdapter
                     // is it a entity alias?
                     $entityForAlias = $criteria->getEntityForAlias($entityName);
                     if ($criteria->getConfiguration()->hasEntityMap($entityName)) {
-                        $entityTableName = $criteria->getConfiguration()->getEntityMap($entityName)->getTableName();
+                        $entityTableName = $criteria->getConfiguration()->getEntityMap($entityName)->getFQTableName();
                     } else {
                         $entityTableName = $entityName;
                     }

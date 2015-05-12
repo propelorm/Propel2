@@ -30,7 +30,7 @@ class UpdateMethod extends BuildComponent
         $setter = 'set' . $name;
 
         $body = "
-\$entity->{$setter}(\$entity->compute{$name}(\$entity));
+\$entity->{$setter}(\$this->compute{$name}(\$entity));
 if (\$save) {
     \$this->save(\$entity);
 }

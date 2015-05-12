@@ -16,6 +16,7 @@ use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
+use Propel\Tests\Bookstore\Behavior\Base\BaseAggregatePostRepository;
 use Propel\Tests\Bookstore\Behavior\Map\AggregatePostEntityMap;
 use Propel\Tests\Bookstore\Behavior\AggregateItem;
 use Propel\Tests\Bookstore\Behavior\AggregateItemQuery;
@@ -33,36 +34,27 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class AggregateFieldBehaviorTest extends BookstoreTestBase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        include_once(__DIR__.'/AggregateFieldsBehaviorTestClasses.php');
-    }
-
-    public function testParameters()
-    {
-        $postTable = $this->configuration->getEntityMap(AggregatePostEntityMap::ENTITY_CLASS);
-        $this->assertEquals(count($postTable->getFields()), 2, 'AggregateField adds one column by default');
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\AggregatePost', 'getNbComments'));
-    }
-
     public function testCompute()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
         AggregatePostQuery::create()->deleteAll($this->con);
+
+        /** @var BaseAggregatePostRepository $aggregatePostRepository */
+        $aggregatePostRepository = $this->getConfiguration()->getRepository(AggregatePostEntityMap::ENTITY_CLASS);
+
         $post = new AggregatePost();
         $post->save($this->con);
-        $this->assertEquals(0, $post->computeNbComments($this->con), 'The compute method returns 0 for objects with no related objects');
+        $this->assertEquals(0, $aggregatePostRepository->computeCommentsCount($post), 'The compute method returns 0 for objects with no related objects');
         $comment1 = new AggregateComment();
         $comment1->setAggregatePost($post);
         $comment1->save($this->con);
-        $this->assertEquals(1, $post->computeNbComments($this->con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $aggregatePostRepository->computeCommentsCount($post), 'The compute method computes the aggregate function on related objects');
         $comment2 = new AggregateComment();
         $comment2->setAggregatePost($post);
         $comment2->save($this->con);
-        $this->assertEquals(2, $post->computeNbComments($this->con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(2, $aggregatePostRepository->computeCommentsCount($post), 'The compute method computes the aggregate function on related objects');
         $comment1->delete($this->con);
-        $this->assertEquals(1, $post->computeNbComments($this->con), 'The compute method computes the aggregate function on related objects');
+        $this->assertEquals(1, $aggregatePostRepository->computeCommentsCount($post), 'The compute method computes the aggregate function on related objects');
     }
 
     public function testUpdate()
@@ -70,101 +62,113 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         AggregateCommentQuery::create()->deleteAll($this->con);
         AggregatePostQuery::create()->deleteAll($this->con);
         $post = new AggregatePost();
-        $post->save($this->con);
-        $comment = new TestableComment();
+        $post->save();
+
+        /** @var BaseAggregatePostRepository $aggregatePostRepository */
+        $aggregatePostRepository = $this->getConfiguration()->getRepository(AggregatePostEntityMap::ENTITY_CLASS);
+
+        $comment = new AggregateComment();
         $comment->setAggregatePost($post);
-        $comment->save($this->con);
-        $this->assertNull($post->getNbComments());
-        $post->updateNbComments($this->con);
-        $this->assertEquals(1, $post->getNbComments(), 'The update method updates the aggregate column');
+        $comment->save();
+
+        $aggregatePostRepository->updateCommentsCount($post);
+        $this->assertEquals(1, $post->getCommentsCount(), 'The update method updates the aggregate column');
         $comment->delete($this->con);
-        $this->assertEquals(1, $post->getNbComments());
-        $post->updateNbComments($this->con);
-        $this->assertEquals(0, $post->getNbComments(), 'The update method updates the aggregate column');
+        $this->assertEquals(1, $post->getCommentsCount());
+        $aggregatePostRepository->updateCommentsCount($post);
+        $this->assertEquals(0, $post->getCommentsCount(), 'The update method updates the aggregate column');
     }
 
     public function testCreateRelated()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
         AggregatePostQuery::create()->deleteAll($this->con);
+        /** @var BaseAggregatePostRepository $aggregatePostRepository */
+        $aggregatePostRepository = $this->getConfiguration()->getRepository(AggregatePostEntityMap::ENTITY_CLASS);
+
         $post = new AggregatePost();
-        $post->save($this->con);
+        $post->save();
         $comment1 = new AggregateComment();
         $comment1->save($this->con);
-        $this->assertNull($post->getNbComments(), 'Adding a new foreign object does not update the aggregate column');
+        $this->assertNull($post->getCommentsCount(), 'Adding a new foreign object does not update the aggregate column');
+
         $comment2 = new AggregateComment();
         $comment2->setAggregatePost($post);
         $comment2->save($this->con);
-        $this->assertEquals(1, $post->getNbComments(), 'Adding a new related object updates the aggregate column');
+
+        $this->assertEquals(1, $post->getCommentsCount(), 'Adding a new related object updates the aggregate column');
         $comment3 = new AggregateComment();
         $comment3->setAggregatePost($post);
         $comment3->save($this->con);
-        $this->assertEquals(2, $post->getNbComments(), 'Adding a new related object updates the aggregate column');
+        $this->assertEquals(2, $post->getCommentsCount(), 'Adding a new related object updates the aggregate column');
     }
 
     public function testUpdateRelated()
     {
+        /** @var AggregatePoll $poll */
+        /** @var AggregateItem $item1 */
+        /** @var AggregateItem $item2 */
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
         $item1->setScore(10);
         $item1->save($this->con);
         $this->assertEquals(17, $poll->getTotalScore(), 'Updating a related object updates the aggregate column');
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
     }
 
     public function testDeleteRelated()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
         $item1->delete($this->con);
         $this->assertEquals(7, $poll->getTotalScore(), 'Deleting a related object updates the aggregate column');
-        $this->assertEquals(1, $poll->getNbVotes());
+        $this->assertEquals(1, $poll->getVotesCount());
         $item2->delete($this->con);
         $this->assertNull($poll->getTotalScore(), 'Deleting a related object updates the aggregate column');
-        $this->assertEquals(0, $poll->getNbVotes());
+        $this->assertEquals(0, $poll->getVotesCount());
     }
 
     public function testUpdateRelatedWithQuery()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
         AggregateItemQuery::create()
             ->update(array('Score' => 4), $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query updates the aggregate column');
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
     }
 
     public function testUpdateRelatedWithQueryUsingAlias()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
         AggregateItemQuery::create()
             ->setEntityAlias('foo', true)
             ->update(array('Score' => 4), $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query using alias updates the aggregate column');
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
     }
 
     public function testDeleteRelatedWithQuery()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
         AggregateItemQuery::create()
             ->deleteAll($this->con);
         $this->assertNull($poll->getTotalScore(), 'Deleting related objects with a query updates the aggregate column');
-        $this->assertEquals(0, $poll->getNbVotes());
+        $this->assertEquals(0, $poll->getVotesCount());
     }
 
     public function testDeleteRelatedWithQueryUsingAlias()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
-        $this->assertEquals(2, $poll->getNbVotes());
+        $this->assertEquals(2, $poll->getVotesCount());
 
         if ($this->runningOnSQLite()) {
             $this->markTestSkipped('Not executed on sqlite');
@@ -175,7 +179,7 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
             ->filterById($item1->getId())
             ->delete($this->con);
         $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
-        $this->assertEquals(1, $poll->getNbVotes());
+        $this->assertEquals(1, $poll->getVotesCount());
     }
 
     public function testRemoveRelation()

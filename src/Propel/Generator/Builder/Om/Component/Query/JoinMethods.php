@@ -5,9 +5,11 @@ namespace Propel\Generator\Builder\Om\Component\Query;
 
 
 use gossi\codegen\model\PhpConstant;
+use gossi\codegen\model\PhpMethod;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
+use Propel\Generator\Model\Relation;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 
 /**
@@ -28,7 +30,6 @@ class JoinMethods extends BuildComponent
 
         foreach ($this->getEntity()->getRelations() as $relation) {
             $queryClass = $this->getQueryClassName();
-            $foreignEntry = $relation->getForeignEntity();
             $joinType = $this->getJoinType($relation);
 
             $relationName = $this->getRelationPhpName($relation);
@@ -38,17 +39,25 @@ class JoinMethods extends BuildComponent
 
         foreach ($this->getEntity()->getReferrers() as $relation) {
             $queryClass = $this->getQueryClassName();
-            $foreignEntry = $relation->getEntity();
             $joinType = $this->getJoinType($relation);
 
             $relationName = $this->getRefRelationPhpName($relation);
 
-            $this->addJoin($relationName, $queryClass, $joinType);
+            $this->addJoin($relationName, $queryClass, $joinType, true);
         }
     }
 
-    public function addJoin($relationName, $queryClass, $joinType)
+    /**
+     * @param string $relationName
+     * @param string $queryClass
+     * @param PhpConstant|string $joinType
+     * @param boolean $referrer
+     *
+     * @return PhpMethod
+     */
+    public function addJoin($relationName, $queryClass, $joinType, $referrer = false)
     {
+
 
         $body = <<<EOF
 \$entityMap = \$this->getEntityMap();
@@ -73,10 +82,12 @@ if (\$relationAlias) {
 return \$this;
 EOF;
 
-        $this->addMethod('join' . $relationName)
+        $relationType = $referrer ? 'Referrer relation' : '';
+
+        return $this->addMethod('join' . $relationName)
             ->addSimpleDescParameter('relationAlias', 'string', 'optional alias for the relation', null)
             ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'", $joinType)
-            ->setDescription("Adds a JOIN clause to the query using the $relationName relation.")
+            ->setDescription("Adds a JOIN clause to the query using the $relationName relation. $relationType")
             ->setType("\$this|$queryClass")
             ->setTypeDescription("The current query, for fluid interface")
             ->setBody($body);

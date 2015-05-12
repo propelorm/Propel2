@@ -19,14 +19,14 @@ trait RepositoryTrait
         $pkphp = (array)$pkphp; // make it an array if it is not.
         $script = '';
         if (count($pkphp) > 1) {
-            $script .= "serialize(array(";
+            $script .= "json_encode(array(";
             $i = 0;
             foreach ($pkphp as $pkvar) {
-                $script .= ($i++ ? ', ' : '') . "(string) $pkvar";
+                $script .= ($i++ ? ', ' : '') . "$pkvar";
             }
             $script .= "))";
         } else {
-            $script .= "(string) " . $pkphp[0];
+            $script .= $pkphp[0];
         }
 
         return $script;

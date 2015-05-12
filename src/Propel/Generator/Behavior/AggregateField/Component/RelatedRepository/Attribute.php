@@ -24,13 +24,13 @@ class Attribute extends BuildComponent
         $behavior = $this->getBehavior();
 
         $relationName = $behavior->getRelationName();
-        $variableName = lcfirst($relationName);
+        $variableName = $relationName . ucfirst($behavior->getParameter('aggregate_name'));
 
 //        $relationName = $behavior->getRelationName();
         $relatedClass = $behavior->getForeignEntity()->getFullClassName();
 //        $aggregateName = $behavior->getParameter('aggregate_name');
 
-        $property = new PhpProperty("afCache{$variableName}s");
+        $property = new PhpProperty("afCache{$variableName}");
         $property->setType($relatedClass . '[]');
         $property->setDescription('[AggregateField-related]');
         $property->setVisibility('protected');

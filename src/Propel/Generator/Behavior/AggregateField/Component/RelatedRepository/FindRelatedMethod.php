@@ -17,6 +17,7 @@ use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
  */
 class FindRelatedMethod extends BuildComponent
 {
+    use NamingTrait;
     use RelationTrait;
 
     public function process()
@@ -30,18 +31,22 @@ class FindRelatedMethod extends BuildComponent
         $aggregateName = $behavior->getParameter('aggregate_name');
         $foreignEntity = $behavior->getForeignEntity();
 
-        $variableName = lcfirst($relationName . $behavior->getParameter('aggregate_name'));
+        $variableName = $relationName . ucfirst($behavior->getParameter('aggregate_name'));
         $foreignEntityClassName = $foreignEntity->getFullClassName();
+        $foreignClass = $this->getQueryClassNameForEntity($foreignEntity, true);
 
         $body = "
 \$criteria = \$this->createQuery();
-\$this->afCache{$variableName}s = \$this->getConfiguration()->getRepository('$foreignEntityClassName')->createQuery()
+\$repository = \$this->getConfiguration()->getRepository('$foreignEntityClassName');
+/** @var \\$foreignClass \$query */
+\$query = \$repository->createQuery();
+\$this->afCache{$variableName} = \$query
     ->use{$refRelationName}Query()
         ->filterByPrimaryKeys(\$this->getOriginPKs(\$event->getEntities()))
     ->endUse()
     ->find();
 ";
-        $name = 'findRelated' . $relationName . $aggregateName;
+        $name = 'findRelated' . $relationName . ucfirst($aggregateName);
 
         $this->addMethod($name)
             ->setDescription("[AggregateField-related] Finds the related {$foreignEntity->getName()} objects and keep them for later.")

@@ -7,6 +7,7 @@ use Propel\Generator\Behavior\AggregateField\AggregateFieldBehavior;
 use Propel\Generator\Behavior\AggregateField\AggregateFieldRelationBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
 
 /**
@@ -17,29 +18,71 @@ use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
 class UpdateRelatedMethod extends BuildComponent
 {
     use NamingTrait;
+    use RelationTrait;
 
     public function process()
     {
         /** @var AggregateFieldRelationBehavior $behavior */
         $behavior = $this->getBehavior();
 
-        $relationName = $behavior->getRelationName();
-//        $variableName = lcfirst($relationName);
-        $variableName = lcfirst($relationName . $behavior->getParameter('aggregate_name'));
-        $updateMethodName = $behavior->getParameter('update_method');
-        $aggregateName = $behavior->getParameter('aggregate_name');
 
+        $relation = $behavior->getRelation();
+//        $relationName = $behavior->getRelationName();
+        $refRelationName = $this->getRefRelationPhpName($relation);
+
+        $relationName = $behavior->getRelationName();
+//        $variableName = $relationName . ucfirst($behavior->getParameter('aggregate_name'));
+        $updateMethodName = $behavior->getParameter('update_method');
+        $aggregateName = ucfirst($behavior->getParameter('aggregate_name'));
+
+        $repositoryClass = $this->getRepositoryClassNameForEntity($relation->getForeignEntity(), true);
+
+        $objectGetter = 'get' . ucfirst($relation->getField());
         $body = "
-foreach (\$this->afCache{$variableName}s as \${$variableName}) {
-    \${$variableName}->{$updateMethodName}();
+if (!\$entities) {
+    return;
 }
-\$this->{$variableName}s = array();
+
+\$pks = [];
+/** @var \\{$relation->getEntity()->getFullClassName()}[] \$entities */
+foreach (\$entities as \$entity) {
+    \$pk = [];
+    if (\$object = \$entity->{$objectGetter}()) {";
+
+
+        foreach ($relation->getForeignFieldObjects() as $field) {
+            $fieldGetter = 'get' . ucfirst($field->getName());
+            $body .= "
+        \$pk[] = \$object->{$fieldGetter}();";
+        }
+
+        if ($relation->isComposite()) {
+            $body .= "
+            \$pks[] = \$pk;";
+        } else {
+            $body .= "
+            \$pks[] = \$pk[0];";
+        }
+
+        $body .= "
+    }
+}
+
+/** @var \\$repositoryClass \$relatedRepo */
+\$relatedRepo = \$this->getConfiguration()->getRepository('{$relation->getForeignEntity()->getFullClassName()}');
+\$relatedQuery = \$relatedRepo->createQuery();
+\$relatedObjects = \$relatedQuery
+    ->filterByPrimaryKeys(\$pks)
+    ->find();
+foreach (\$relatedObjects as \$relatedObject) {
+    \$relatedRepo->$updateMethodName(\$relatedObject, true);
+}
 ";
-        $name = 'updateRelated' . $relationName . $aggregateName . 's';
+        $name = 'updateRelated' . $relationName . $aggregateName;
 
         $this->addMethod($name)
             ->setDescription("[AggregateField-related] Update the aggregate column in the related $relationName object.")
-            ->addSimpleParameter('entity', 'object')
+            ->addSimpleParameter('entities', 'array')
             ->setBody($body);
     }
 }

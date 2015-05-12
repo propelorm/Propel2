@@ -34,8 +34,8 @@ class ModelJoin extends Join
         $nbFields = $relationMap->countFieldMappings();
         for ($i=0; $i < $nbFields; $i++) {
             $this->addExplicitCondition(
-                $leftCols[$i]->getEntityName(), $leftCols[$i]->getName(), $leftEntityAlias,
-                $rightCols[$i]->getEntityName(), $rightCols[$i]->getName(), $relationAlias,
+                $leftCols[$i]->getEntityName(), $leftCols[$i]->getColumnName(), $leftEntityAlias,
+                $rightCols[$i]->getEntityName(), $rightCols[$i]->getColumnName(), $relationAlias,
                 Criteria::EQUAL);
         }
         $this->relationMap = $relationMap;
