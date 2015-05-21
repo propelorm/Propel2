@@ -50,7 +50,7 @@ class TimestampableBehavior extends Behavior
                 'name' => $this->getParameter('create_column'),
                 'type' => 'TIMESTAMP'
             );
-            if ($this->getDatabase() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql"){
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql"){
                 //http://jasonbos.co/two-timestamp-columns-in-mysql/
                 $column_def['required'] = true;
                 $column_def['defaultExpr'] = "'0000-00-00 00:00:00'";
@@ -62,7 +62,7 @@ class TimestampableBehavior extends Behavior
                 'name' => $this->getParameter('update_column'),
                 'type' => 'TIMESTAMP'
             );
-            if ($this->getDatabase() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql") {
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql") {
                 //http://jasonbos.co/two-timestamp-columns-in-mysql/
                 $column_def['required'] = true;
                 $column_def['defaultExpr'] = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
