@@ -47,7 +47,7 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'MEDIUMBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONGBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'TIMESTAMP'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'MEDIUMBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
@@ -373,6 +373,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($colinfo->hasParameter('Collate')) {
             $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
         }
+
         if ($sqlType == 'TIMESTAMP') {
             if ($notNullString == '') {
                 $notNullString = 'NULL';

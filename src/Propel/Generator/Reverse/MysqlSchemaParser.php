@@ -256,7 +256,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
             } else {
                 $type = ColumnDefaultValue::TYPE_VALUE;
             }
-            $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
+            $default = new ColumnDefaultValue($default, $type);
+            if ($type == ColumnDefaultValue::TYPE_EXPR && isset($row["Extra"]) && $row["Extra"] != "")
+                $default->setValue($default->getValue()." ".strtoupper($row["Extra"]));
+            $column->getDomain()->setDefaultValue($default);
         }
         $column->setAutoIncrement($autoincrement);
         $column->setNotNull(!$isNullable);

@@ -50,10 +50,10 @@ class TimestampableBehavior extends Behavior
                 'name' => $this->getParameter('create_column'),
                 'type' => 'TIMESTAMP'
             );
-            if ($this->getDatabase()->getPlatform()->getDatabaseType() == "mysql"){
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql"){
                 //http://jasonbos.co/two-timestamp-columns-in-mysql/
                 $column_def['required'] = true;
-                $column_def['defaultExpr'] = '0';
+                $column_def['defaultExpr'] = "'0000-00-00 00:00:00'";
             }
             $table->addColumn($column_def);
         }
@@ -62,7 +62,7 @@ class TimestampableBehavior extends Behavior
                 'name' => $this->getParameter('update_column'),
                 'type' => 'TIMESTAMP'
             );
-            if ($this->getDatabase()->getPlatform()->getDatabaseType() == "mysql") {
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql") {
                 //http://jasonbos.co/two-timestamp-columns-in-mysql/
                 $column_def['required'] = true;
                 $column_def['defaultExpr'] = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
@@ -94,7 +94,7 @@ class TimestampableBehavior extends Behavior
      */
     public function preUpdate($builder)
     {
-        if ($this->withUpdatedAt() && $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql") {
+        if ($this->withUpdatedAt() && (!$this->getDatabase() || $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
             return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(time());
 }";
@@ -112,7 +112,7 @@ class TimestampableBehavior extends Behavior
     {
         $script = '';
 
-        if ($this->withCreatedAt() && $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql") {
+        if ($this->withCreatedAt() && (!$this->getDatabase() || $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('create_column') . "(time());
