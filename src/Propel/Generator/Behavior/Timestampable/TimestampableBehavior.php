@@ -119,7 +119,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
 }";
         }
 
-        if ($this->withUpdatedAt() && $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql") {
+        if ($this->withUpdatedAt() && (!$this->getDatabase() ||$this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(time());
