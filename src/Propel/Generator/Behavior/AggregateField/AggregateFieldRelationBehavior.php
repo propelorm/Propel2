@@ -61,6 +61,18 @@ class AggregateFieldRelationBehavior extends Behavior
 ";
     }
 
+    public function postDelete($builder)
+    {
+        $this->builder = $builder;
+
+        $relationName = $this->getRelationName();
+        $aggregateName = ucfirst($this->getParameter('aggregate_name'));
+
+        return "
+\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntities());
+";
+    }
+
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
 //        $this->applyComponent('RelationObject\\Attribute', $builder);

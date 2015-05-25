@@ -3,11 +3,6 @@
 namespace Propel\Runtime\Session;
 
 use Propel\Runtime\Configuration;
-use Propel\Runtime\EntityProxyInterface;
-use Propel\Runtime\Event\CommitEvent;
-use Propel\Runtime\Event\PersistEvent;
-use Propel\Runtime\Events;
-use Propel\Runtime\UnitOfWork;
 
 /**
  *
@@ -17,20 +12,53 @@ use Propel\Runtime\UnitOfWork;
 class Session
 {
     /**
+     * @var SessionRound[]
+     */
+    protected $rounds;
+
+    /**
+     * @var int
+     */
+    protected $currentRound = -1;
+
+    /**
+     * @var array
+     */
+    protected $knownEntities = [];
+
+    /**
+     * @var array[]
+     */
+    protected $lastKnownValues = [];
+
+    /**
+     * @var boolean
+     */
+    protected $inCommit = false;
+
+    /**
+     * @var array
+     */
+    protected $persisted = [];
+
+    /**
+     * @var array
+     */
+    protected $removed = [];
+
+    /**
+     * @var object[]
+     */
+    protected $firstLevelCache = [];
+
+    /**
      * @var Configuration
      */
     protected $configuration;
 
     /**
-     * @var object[]
+     * @param Configuration $configuration
      */
-    protected $persistQueue = [];
-
-    protected $removeQueue = [];
-
-    protected $persisted = [];
-    protected $removed = [];
-
     function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
@@ -44,11 +72,6 @@ class Session
         return $this->configuration;
     }
 
-    protected function debug($message)
-    {
-        var_dump($message);
-    }
-
     /**
      * @param string $splId
      *
@@ -56,129 +79,279 @@ class Session
      */
     public function getEntityById($splId)
     {
-        return $this->persistQueue[$splId];
+        if (!isset($this->knownEntities[$splId])) {
+            return null;
+        }
+
+        return $this->knownEntities[$splId];
     }
 
     /**
-     * @param object $entity
+     * @param object  $entity
      * @param boolean $deep Whether all attached entities(relations) should be persisted too.
      */
     public function persist($entity, $deep = false)
     {
-        $id = spl_object_hash($entity);
-        $this->debug('persist(' . get_class($entity) . ', '. var_export($deep, true) . ')');
-
-        $event = new PersistEvent($this, $entity);
-        $this->configuration->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
-
-        if (!isset($this->persistQueue[$id])) {
-            $this->persistQueue[$id] = $entity;
-
-            if ($deep) {
-                $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
-                $entityMap->persistDependencies($this, $entity, true);
-            }
+        if ($this->getCurrentRound()->inCommit()) {
+            $this->enterNewRound();
         }
 
-        unset($this->removeQueue[$id]);
-
-        $this->configuration->getEventDispatcher()->dispatch(Events::PERSIST, $event);
+        $this->knownEntities[spl_object_hash($entity)] = $entity;
+        $this->getCurrentRound()->persist($entity, $deep);
     }
 
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function isRemoved($id)
+    {
+        return isset($this->removed[$id]);
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isNew($entity)
+    {
+        $id = spl_object_hash($entity);
+        if ($entity instanceof \Propel\Runtime\EntityProxyInterface) {
+            if (isset($this->removed[$id])) {
+                //it has been deleted after receiving from the database,
+                return true;
+            }
+
+            return false;
+        } else {
+            if (isset($this->persisted[$id])) {
+                //it has been committed
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isChanged($entity)
+    {
+        if ($this->hasKnownValues($entity)) {
+            return !!$this->getConfiguration()->getRepositoryForEntity($entity)->buildChangeSet($entity);
+        }
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function isPersisted($id)
+    {
+        return isset($this->persisted[$id]);
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setPersisted($id)
+    {
+        $this->persisted[$id] = true;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function removePersisted($id)
+    {
+        unset($this->persisted[$id]);
+    }
+
+    /**
+     * @return SessionRound
+     */
+    public function getCurrentRound()
+    {
+        if (-1 === $this->currentRound) {
+            $this->enterNewRound();
+        }
+
+        return $this->rounds[$this->currentRound];
+    }
+
+    /**
+     * @param $entity
+     */
     public function remove($entity)
     {
-        $id = spl_object_hash($entity);
-
-        if (isset($this->removed[$id])) {
-            throw new \InvalidArgumentException('Entity has already been removed.');
+        if ($this->getCurrentRound()->inCommit()) {
+            $this->enterNewRound();
         }
 
-        //if new object and has not been persisted yet, we can not delete it.
-        if (!($entity instanceof EntityProxyInterface) && !isset($this->persisted[$id])) {
-//            //no proxy and not persisted, make sure its not in persistQueue only.
-//            unset($this->persistQueue[$id]);
-//            return;
-            throw new \InvalidArgumentException('Can not delete. New entity has not been persisted yet.');
-        }
-
-        $this->removeQueue[$id] = $entity;
-        unset($this->persistQueue[$id]);
+        $this->getCurrentRound()->remove($entity);
     }
 
+    /**
+     * @return SessionRound
+     */
+    public function enterNewRound()
+    {
+        $this->currentRound++;
+        $this->getConfiguration()->debug('enter new round (' . $this->currentRound . ')');
+
+        return $this->rounds[$this->currentRound] = new SessionRound($this);
+    }
+
+    /**
+     *
+     */
+    public function closeRound()
+    {
+        if ($this->currentRound >= 0) {
+            $this->getConfiguration()->debug('close round (' . $this->currentRound . ')');
+            unset($this->rounds[$this->currentRound]);
+            $this->currentRound--;
+        }
+    }
+
+    public function getRoundIndex()
+    {
+        return $this->currentRound;
+//        return array_search($round, $this->rounds, true);
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function commit()
     {
-        $event = new CommitEvent($this);
-        $this->configuration->getEventDispatcher()->dispatch(Events::PRE_COMMIT, $event);
-
-        $this->doDelete();
-        $this->doPersist();
-
-        $this->configuration->getEventDispatcher()->dispatch(Events::COMMIT, $event);
+        $this->getCurrentRound()->commit();
+        $this->closeRound();
     }
 
     /**
-     * Proxies all queued entities to be deleted to its persister class.
+     * Reads all values of $entities and place it in lastKnownValues.
+     *
+     * @param object $entity
+     *
+     * @return array
      */
-    protected function doDelete()
+    public function snapshot($entity)
     {
-        $removeGroups = [];
-        $persisterMap = [];
+        $values = $this->getConfiguration()->getEntityMapForEntity($entity)->getSnapshot($entity);
 
-        foreach ($this->removeQueue as $entity) {
-            $entityClass = get_class($entity);
+        return $this->lastKnownValues[spl_object_hash($entity)] = $values;
+    }
 
-            if (!isset($persisterMap[$entityClass])) {
-                $persister = $this->configuration->getEntityPersisterForEntity($this, $entity);
-                $persisterMap[$entityClass] = $persister;
+    /**
+     * Returns last known values by the database. Those values are currently known by the database and
+     * should be used to query the database. Important for event hooks, since objects in preSave for example
+     * can contain changed primary keys which are not yet stored in the database and thus all queries
+     * using this primary key return invalid results.
+     *
+     * @param object|string $id
+     * @param bool          $orCurrent
+     *
+     * @return array
+     */
+    public function getLastKnownValues($id, $orCurrent = false)
+    {
+        if (is_object($id)) {
+
+            if ($orCurrent && !$this->hasKnownValues($id)) {
+                return $this->getConfiguration()->getEntityMapForEntity($id)->getSnapshot($id);
             }
 
-            $removeGroups[$entityClass][] = $entity;
+            $id = spl_object_hash($id);
         }
 
-        foreach ($removeGroups as $entities) {
-            $entityClass = get_class($entities[0]);
-            $persisterMap[$entityClass]->remove($entities);
+        return $this->lastKnownValues[$id];
+    }
+
+    /**
+     * @param object|string $id
+     *
+     * @return bool
+     */
+    public function hasKnownValues($id)
+    {
+        if (is_object($id)) {
+            $id = spl_object_hash($id);
+        }
+
+        return isset($this->lastKnownValues[$id]);
+    }
+
+    /**
+     * @param object|string $id
+     * @param array         $values
+     */
+    public function setLastKnownValues($id, $values)
+    {
+        if (is_object($id)) {
+            $id = spl_object_hash($id);
+        }
+
+        $this->lastKnownValues[$id] = $values;
+    }
+
+    /**
+     * @param string $hashCode
+     *
+     * @return object
+     */
+    public function getInstanceFromFirstLevelCache($prefix, $hashCode)
+    {
+        if (isset($this->firstLevelCache[$prefix][$hashCode])) {
+            $this->getConfiguration()->debug('retrieve firstLevelCache ' . $hashCode);
+            return $this->firstLevelCache[$prefix][$hashCode];
+        } else {
+            $this->getConfiguration()->debug('rejected firstLevelCache ' . $hashCode);
         }
     }
 
     /**
-     * Proxies all queued entities to be saved to its persister class.
+     * @param object $entity
      */
-    protected function doPersist()
+    public function addToFirstLevelCache($entity)
     {
-        $dependencyGraph = new DependencyGraph($this);
-        foreach ($this->persistQueue as $entity) {
-            $this
-                ->configuration
-                ->getEntityMapForEntity($entity)
-                ->populateDependencyGraph(
-                    $entity,
-                    $dependencyGraph
-                );
+        $repo = $this->getConfiguration()->getRepositoryForEntity($entity);
+        $prefix = $repo->getEntityMap()->getFullClassName();
+
+        $originPk = json_encode($repo->getOriginPK($entity));
+        $currentPk = json_encode($repo->getPK($entity));
+
+        if (!isset($this->firstLevelCache[$prefix])){
+            $this->firstLevelCache[$prefix] = [];
         }
 
-        $list = $dependencyGraph->getList();
-        $sortedGroups = $dependencyGraph->getGroups();
-        $this->debug(sprintf('doPersist(): %d groups, with %d items', count($sortedGroups), count($list)));
-
-        foreach ($sortedGroups as $group) {
-            $entityIds = array_slice($list, $group->position, $group->length);
-            $firstEntity = $this->persistQueue[$entityIds[0]];
-            $persister = $this->configuration->getEntityPersisterForEntity($this, $firstEntity);
-
-            $entities = [];
-
-            foreach ($entityIds as $entityId) {
-                $entity = $this->persistQueue[$entityId];
-                $entities[] = $entity;
-                $this->persisted[$entityId] = true;
+        if ($originPk !== $currentPk) {
+            if (isset($this->firstLevelCache[$prefix][$originPk]) && $this->firstLevelCache[$prefix][$originPk] === $entity) {
+                unset($this->firstLevelCache[$prefix][$originPk]);
             }
-
-            $this->debug(sprintf('Persister::persist() with %d items of %s', $group->length, $group->type));
-            $persister->persist($entities);
         }
 
-        $this->persistQueue = [];
-        $this->removeQueue = [];
+        $this->getConfiguration()->debug('new firstLevelCache ' . $prefix . '/' . $currentPk);
+        $this->firstLevelCache[$prefix][$currentPk] = $entity;
     }
-}
+
+    /**
+     * Clears the first level cache completely
+     *
+     * @param null $prefix
+     */
+    public function clearFirstLevelCache($prefix = null)
+    {
+        if ($prefix) {
+            unset($this->firstLevelCache[$prefix]);
+        } else {
+            $this->firstLevelCache = [];
+        }
+    }
+} 

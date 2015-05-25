@@ -11,6 +11,8 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Event\SaveEvent;
+use Propel\Runtime\Events;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -1332,7 +1334,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws PropelException
      */
-    public function deleteAll()
+    public function deleteAll($withEvent = false)
     {
         $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
@@ -1391,28 +1393,39 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Code to execute before every UPDATE statement
      *
-     * @param array               $values               The associative array of fields and values for the update
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param array   $values The associative array of fields and values for the update
+     * @param boolean $withEvents
+     *
+     * @return integer
      */
-    protected function basePreUpdate(&$values, $forceIndividualSaves = false)
+    protected function basePreUpdate(&$values, $withEvents = false)
     {
-        return $this->preUpdate($values, $forceIndividualSaves);
+        return $this->preUpdate($values, $withEvents);
     }
 
-    protected function preUpdate(&$values, $forceIndividualSaves = false)
+    /**
+     * @param      $values
+     * @param bool $withEvents
+     *
+     * @return boolean
+     */
+    protected function preUpdate(&$values, $withEvents = false)
     {
     }
 
     /**
      * Code to execute after every UPDATE statement
      *
-     * @param int                 $affectedRows the number of updated rows
+     * @param int $affectedRows the number of updated rows
      */
     protected function basePostUpdate($affectedRows)
     {
-        return $this->postUpdate($affectedRows);
+        $this->postUpdate($affectedRows);
     }
 
+    /**
+     * @param integer $affectedRows
+     */
     protected function postUpdate($affectedRows)
     {
     }
@@ -1423,15 +1436,15 @@ class ModelCriteria extends BaseModelCriteria
      * Beware that behaviors based on hooks in the object's save() method
      * will only be triggered if you force individual saves, i.e. if you pass true as second argument.
      *
-     * @param mixed               $values               Associative array of keys and values to replace
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param mixed   $values     Associative array of keys and values to replace
+     * @param boolean $withEvents Executes the query as SELECT and processed with its results SAVE/UPDATE events. This may be performance intensive.
      *
      * @return integer Number of updated rows
      *
      * @throws \Propel\Runtime\Exception\PropelException
      * @throws \Exception|\Propel\Runtime\Exception\PropelException
      */
-    public function update($values, $forceIndividualSaves = false)
+    public function update($values, $withEvents = false)
     {
         if (!is_array($values) && !($values instanceof Criteria)) {
             throw new PropelException(__METHOD__ .' expects an array or Criteria as first argument');
@@ -1444,64 +1457,64 @@ class ModelCriteria extends BaseModelCriteria
         $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        if ($this->entityMap) {
-            $criteria->setPrimaryEntityName($this->getEntityMap()->getFullClassName());
-        }
 
-        return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
-            if (!$affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
-                $affectedRows = $criteria->doUpdate($values, $con, $forceIndividualSaves);
+        return $con->transaction(function () use ($con, $values, $criteria, $withEvents) {
+
+            $event = null;
+            if ($this->getEntityMap()) {
+                $criteria->setPrimaryEntityName($this->getEntityMap()->getFullClassName());
+
+                if ($withEvents) {
+                    $eventQuery = clone $this;
+                    $updates = $eventQuery
+                        ->setEntityAlias(null)
+                        ->setFormatter(static::FORMAT_OBJECT)
+                        ->find();
+                    $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), [], $updates);
+                    $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
+                }
+            }
+
+            if (!$affectedRows = $criteria->basePreUpdate($values, $con, $withEvents)) {
+                $affectedRows = $criteria->doUpdate($values, $con, $withEvents);
             }
             $criteria->basePostUpdate($affectedRows, $con);
 
+            if ($event) {
+                $this->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
+            }
             return $affectedRows;
         });
     }
 
     /**
-     * Issue an UPDATE query based the current ModelCriteria and a list of changes.
+     * Issue an UPDATE query based on the current ModelCriteria and a list of changes.
      * This method is called by ModelCriteria::update() inside a transaction.
      *
-     * @param array               $values               Associative array of keys and values to replace
-     * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param array   $values     Associative array of keys and values to replace
+     * @param boolean $withEvents
      *
      * @return integer Number of updated rows
      */
-    public function doUpdate($values, $forceIndividualSaves = false)
+    public function doUpdate($values, $withEvents = false)
     {
-        if ($forceIndividualSaves) {
-
-            // Update rows one by one
-            $objects = $this->setFormatter(ModelCriteria::FORMAT_OBJECT)->find();
-            foreach ($objects as $object) {
-                foreach ($values as $key => $value) {
-                    $object->setByName($key, $value);
-                }
-            }
-            $objects->save();
-            $affectedRows = count($objects);
-
+        // update rows in a single query
+        if ($values instanceof Criteria) {
+            $set = $values;
         } else {
-
-            // update rows in a single query
-            if ($values instanceof Criteria) {
-                $set = $values;
-            } else {
-                $set = new Criteria($this->getDbName());
-                foreach ($values as $fieldName => $value) {
-                    $realFieldName = $this->getEntityMap()->getFieldByPhpName($fieldName)->getFullyQualifiedName();
-                    $set->add($realFieldName, $value);
-                }
+            $set = new Criteria($this->getDbName());
+            foreach ($values as $fieldName => $value) {
+                $realFieldName = $this->getEntityMap()->getField($fieldName)->getFullyQualifiedName();
+                $set->add($realFieldName, $value);
             }
+        }
 
-            $affectedRows = parent::doUpdate($set);
-            if ($this->getEntityMap()->extractPrimaryKey($this)) {
-                // this criteria updates only one object defined by a concrete primary key,
-                // therefore there's no need to remove anything from the pool
-            } else {
-                call_user_func(array($this->entityMap, 'clearInstancePool'));
-                call_user_func(array($this->entityMap, 'clearRelatedInstancePool'));
-            }
+        $affectedRows = parent::doUpdate($set);
+        if ($this->getEntityMap()->extractPrimaryKey($this)) {
+            // this criteria updates only one object defined by a concrete primary key,
+            // therefore there's no need to remove anything from the pool
+        } else {
+            $this->getConfiguration()->getSession()->clearFirstLevelCache($this->getEntityMap()->getFullClassName());
         }
 
         return $affectedRows;

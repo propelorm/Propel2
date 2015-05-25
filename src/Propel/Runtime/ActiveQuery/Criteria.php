@@ -2062,8 +2062,8 @@ class Criteria
             if ($dbMap->hasEntity($entityMapName)) {
                 $entityMap = $dbMap->getEntity($entityMapName);
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
-                $string = $entityMap->getTableName();
                 if ($rightSide) {
+                    $string = $entityMap->getTableName();
                     $string .= $rightSide;
                 }
             }
@@ -2429,6 +2429,11 @@ class Criteria
 
                 $db->cleanupSQL($sql, $params, $updateValues, $dbMap);
 
+                $paramsReplace = $params;
+                $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
+                        return var_export(array_shift($paramsReplace), true);
+                    }, $sql);
+                $this->getConfiguration()->debug("sql-update: $readable");
                 $stmt = $con->prepare($sql);
 
                 // Replace ':p?' with the actual values
@@ -2444,7 +2449,7 @@ class Criteria
                 if ($stmt) {
                     $stmt = null; // close
                 }
-                Propel::log($e->getMessage(), Propel::LOG_ERR);
+//                Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
             }
 
@@ -2464,7 +2469,7 @@ class Criteria
                 $crit = $values->getCriterion($key);
                 $params[] = array(
                     'field' => $crit->getField(),
-                    'entity' => $crit->getEntity(),
+                    'entity' => $crit->getEntityName(),
                     'value' => $crit->getValue()
                 );
             }
@@ -2577,7 +2582,7 @@ class Criteria
                 foreach ($fields as $colName) {
                     $sb = '';
                     $this->getCriterion($colName)->appendPsTo($sb, $params);
-                    echo "delete-sb: $sb\n";
+                    $this->getConfiguration()->debug("delete-sb: $sb");
                     $this->replaceNames($sb);
                     $whereClause[] = $sb;
                 }
@@ -2648,7 +2653,7 @@ class Criteria
             foreach ($params as $param) {
                 $p[] = $param['value'];
             }
-            echo "sql: $sql [" . implode(',', $p). "]\n";
+            $this->getConfiguration()->debug("doSelect() sql: $sql [" . implode(',', $p). "]");
             $adapter->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {

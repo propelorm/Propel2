@@ -226,10 +226,14 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1->save();
         $m1_id = $m1->getId();
 
+        /** @var Media $m1_lookup */
         $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertNotNull($m1_lookup->getCoverImage());
+        rewind($m1->getCoverImage());
+        $this->assertEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), 'BLOB was correctly updated');
+        rewind($m1->getCoverImage());
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
         $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
@@ -240,6 +244,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
+        rewind($m2_lookup->getCoverImage());
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
 
         // Testing doCount() functionality
@@ -580,6 +585,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
+        rewind($m1_lookup->getCoverImage());
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
         $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
@@ -590,6 +596,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
+        rewind($m2_lookup->getCoverImage());
         $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
 
         // Testing count() functionality

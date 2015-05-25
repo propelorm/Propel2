@@ -5,6 +5,7 @@ namespace Propel\Runtime\Persister;
 
 use Propel\Runtime\Configuration;
 use Propel\Runtime\EntityProxyInterface;
+use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\InsertEvent;
 use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Event\UpdateEvent;
@@ -50,6 +51,14 @@ class SqlPersister implements PersisterInterface
     }
 
     /**
+     * @return Configuration
+     */
+    protected function getConfiguration()
+    {
+        return $this->getSession()->getConfiguration();
+    }
+
+    /**
      * @return \Propel\Runtime\Repository\Repository
      */
     protected function getRepository()
@@ -65,11 +74,17 @@ class SqlPersister implements PersisterInterface
         return $this->session;
     }
 
+    /**
+     * @param object[] $entities
+     */
     public function remove($entities)
     {
         if (!$entities) {
             return false;
         }
+
+        $event = new DeleteEvent($this->getSession(), $this->entityMap, $entities);
+        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_DELETE, $event);
 
         $whereClauses = [];
         $params = [];
@@ -84,26 +99,37 @@ class SqlPersister implements PersisterInterface
 
         $stmt = $connection->prepare($query);
         try {
-            echo "delete-sql: $query (".implode(',', $params).")\n";
+            $this->getConfiguration()->debug("delete-sql: $query (".implode(',', $params).")");
             $stmt->execute($params);
+
+            $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::DELETE, $event);
             return $stmt->rowCount();
         } catch (\Exception $e) {
             throw new RuntimeException(sprintf('Could not execute query %s', $query), 0, $e);
         }
+
     }
 
+    /**
+     * @param object[] $entities
+     */
     public function persist($entities)
     {
         $changeSets = $inserts = $updates = [];
         foreach ($entities as $entity) {
-            if ($this->repository->isNew($entity)) {
+            if ($this->getSession()->isNew($entity)) {
                 $inserts[] = $entity;
             } else {
-                if ($changeSet = $this->getRepository()->buildChangeSet($entity)) {
+                if ($this->getSession()->hasKnownValues($entity) && $changeSet = $this->getRepository()->buildChangeSet($entity)) {
                     $updates[] = $entity;
                     $changeSets[spl_object_hash($entity)] = $changeSet;
                 }
             }
+        }
+
+        if (!$inserts && !$updates) {
+            $this->getConfiguration()->debug(sprintf('No changes detected'));
+            return;
         }
 
         $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
@@ -116,8 +142,8 @@ class SqlPersister implements PersisterInterface
 //            count($updates)
 //        );
 
-        var_dump(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
-        var_dump(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
+        $this->getConfiguration()->debug(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
+        $this->getConfiguration()->debug(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
         $this->doInsert($inserts);
         $this->doUpdates($updates, $changeSets);
 
@@ -220,6 +246,7 @@ EOF;
                 $sql .= ', ';
             }
 
+            $this->getSession()->setPersisted(spl_object_hash($entity));
             $sql .= $this->entityMap->buildSqlBulkInsertPart($entity, $params);
         }
 
@@ -227,7 +254,7 @@ EOF;
         $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
             return var_export(array_shift($paramsReplace), true);
         }, $sql);
-        echo "sql-insert: $readable\n";
+        $this->getConfiguration()->debug("sql-insert: $readable");
 
         try {
             $stmt = $connection->prepare($sql);
@@ -243,7 +270,7 @@ EOF;
 
         if ($this->entityMap->hasAutoIncrement()) {
             foreach ($inserts as $entity) {
-                var_dump(sprintf('set auto-increment value %s for %s', json_encode($this->autoIncrementValues), get_class($entity)));
+                $this->getConfiguration()->debug(sprintf('set auto-increment value %s for %s', json_encode($this->autoIncrementValues), get_class($entity)));
                 $this->entityMap->populateAutoIncrementFields($entity, $this->autoIncrementValues);
             }
         }
@@ -291,7 +318,7 @@ EOF;
                 $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
                     return var_export(array_shift($paramsReplace), true);
                 }, $query);
-                echo "sql-update: $readable\n";
+                $this->getConfiguration()->debug("sql-update: $readable");
 
                 $stmt = $connection->prepare($query);
                 try {

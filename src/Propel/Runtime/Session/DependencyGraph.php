@@ -3,6 +3,7 @@
 
 namespace Propel\Runtime\Session;
 
+use MJS\TopSort\ElementNotFoundException;
 use MJS\TopSort\Implementations\GroupedStringSort;
 
 class DependencyGraph {
@@ -34,7 +35,6 @@ class DependencyGraph {
             $entities[] = [$className, $pk];
         }
 
-
         var_dump('Circular:', $entities);
         throw new \Exception();
     }
@@ -56,7 +56,13 @@ class DependencyGraph {
     public function getList()
     {
         if (!$this->orderedList) {
-            $this->orderedList = $this->sorter->sort();
+            try {
+                $this->orderedList = $this->sorter->sort();
+            } catch (ElementNotFoundException $e) {
+                $source = $this->session->getEntityById($e->getSource());
+                $target = $this->session->getEntityById($e->getTarget());
+                throw new \Exception(sprintf('Dependency not found. From %s to %s. Did you forget to persist() it?', get_class($source), get_class($target)));
+            }
         }
         return $this->orderedList;
     }

@@ -35,7 +35,7 @@ class ComputeMethod extends BuildComponent
             /** @var Field $foreign */
             $foreign = $fieldReference['foreign'];
             $conditions[] = $local->getColumnName() . ' = :p' . ($index + 1);
-            $bindings[$index + 1] = ucfirst($foreign->getName());
+            $bindings[$index + 1] = $foreign->getName();
         }
 
         $foreignEntity = $database->getEntity($behavior->getParameter('foreign_entity'));
@@ -55,13 +55,14 @@ class ComputeMethod extends BuildComponent
         );
 
         $body = "
-\$connection = \$this->getConfiguration()->getConnectionManager('bookstore')->getWriteConnection();
+\$connection = \$this->getConfiguration()->getConnectionManager('{$foreignEntity->getDatabase()->getName()}')->getWriteConnection();
 \$stmt = \$connection->prepare('$sql');
+\$lastKnownValues = \$this->getLastKnownValues(\$entity, true);
 ";
 
 foreach ($bindings as $key => $binding) {
     $body .= "
-\$stmt->bindValue(':p{$key}', \$entity->get{$binding}());
+\$stmt->bindValue(':p{$key}', \$lastKnownValues['{$binding}']);
 ";
     }
 

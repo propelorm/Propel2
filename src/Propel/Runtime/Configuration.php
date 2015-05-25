@@ -463,6 +463,22 @@ class Configuration extends GeneratorConfig
     /**
      * @param object $entity
      *
+     * @return Repository
+     */
+    public function getRepositoryForEntity($entity)
+    {
+        if ($entity instanceof EntityProxyInterface) {
+            $entityName = get_parent_class($entity);
+        } else {
+            $entityName = get_class($entity);
+        }
+
+        return $this->getRepository($entityName);
+    }
+
+    /**
+     * @param object $entity
+     *
      * @return EntityMap
      */
     public function getEntityMapForEntity($entity)
@@ -633,6 +649,20 @@ class Configuration extends GeneratorConfig
     }
 
     /**
+     * @param string $message
+     */
+    public function debug($message)
+    {
+        list(, $caller) = debug_backtrace(false);
+        $class = $caller['class'];
+        if ('Propel\Runtime\Session\SessionRound' === $class) {
+            $class .= sprintf(', round=%d', $this->getSession()->getRoundIndex()); //$caller['object']));
+        }
+        $this->log(sprintf('[%s] %s', $class, $message));
+        ob_flush();
+    }
+
+    /**
      * Get a logger instance
      *
      * @return LoggerInterface
@@ -655,6 +685,11 @@ class Configuration extends GeneratorConfig
         $this->loggers[$name] = $logger;
     }
 
+    public function isDebug()
+    {
+        return true;
+    }
+
     /**
      * @param string $name
      *
@@ -663,8 +698,18 @@ class Configuration extends GeneratorConfig
      */
     protected function buildLogger($name = 'defaultLogger')
     {
+        if ($this->isDebug()) {
+            $logger = new Logger($name);
+            $handler = new \Monolog\Handler\StreamHandler(
+                'php://output'
+            );
+            $logger->pushHandler($handler);
+            return $logger;
+        }
+
         if (!isset($this->loggerConfigurations[$name])) {
-            return 'defaultLogger' !== $name ? $this->getLogger() : new NullLogger();
+            //no configuration found, return default Logger
+            return new NullLogger();
         }
 
         $logger = new Logger($name);

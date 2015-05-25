@@ -20,8 +20,7 @@ class IsNewMethod extends BuildComponent
     public function process()
     {
         $body = "
-{$this->getRepositoryAssignment()}
-return \$repository->isNew(\$this);";
+return \$this->getPropelConfiguration()->getSession()->isNew(\$this);";
 
         $this->addMethod('isNew')
             ->setDescription('Returns true if this is a new (not yet saved/committed) instance')

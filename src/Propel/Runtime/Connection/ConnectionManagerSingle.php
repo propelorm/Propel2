@@ -71,6 +71,9 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
         return $this->name;
     }
 
+    /**
+     * @return array
+     */
     public function getConfiguration()
     {
         return $this->configuration;
@@ -94,6 +97,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
     public function getWriteConnection()
     {
         if (null === $this->connection) {
+            var_dump('new connection for database ' . $this->getName());
             $this->connection = ConnectionFactory::create($this->configuration, $this->adapter);
             if ($this->connection instanceof LoggerAwareInterface) {
                 $this->connection->setLogger($this->logger);

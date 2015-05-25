@@ -24,10 +24,6 @@ $changed = false;
 $reader = $this->getEntityMap()->getPropReader();
 $isset = $this->getEntityMap()->getPropIsset();
 $id = spl_object_hash($entity);
-if (!$this->hasKnownValues($id)) {
-    return false;
-//    throw new \Propel\Runtime\Exception\RuntimeException("Can not compute a change set from an unknown entity." . $id);
-}
 $originValues = $this->getLastKnownValues($id);
 ';
 

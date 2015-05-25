@@ -13,6 +13,9 @@ use Propel\Runtime\Map\EntityMap;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @author Marc J. Schmidt <marc@marcjschmidt.de>
+ */
 abstract class Repository
 {
 
@@ -21,15 +24,15 @@ abstract class Repository
      */
     protected $entityMap;
 
-    /**
-     * All committed object IDs get a new key in this array.
-     *
-     *     $committedIds[spl_object_hash($entity)] = true;
-     *
-     * @var string[]
-     */
-    protected $committedIds = [];
-    protected $deletedIds = [];
+//    /**
+//     * All committed object IDs get a new key in this array.
+//     *
+//     *     $committedIds[spl_object_hash($entity)] = true;
+//     *
+//     * @var string[]
+//     */
+//    protected $committedIds = [];
+//    protected $deletedIds = [];
 
     /**
      * Last known values which are as far as we know the latest values in the database.
@@ -95,6 +98,13 @@ abstract class Repository
         }
     }
 
+    /**
+     * @param object $entity
+     *
+     * @return array|false Returns false when no changes are detected
+     */
+    abstract public function buildChangeSet($entity);
+
     protected function preSave(SaveEvent $event)
     {
     }
@@ -113,18 +123,18 @@ abstract class Repository
 
     protected function postSave(SaveEvent $event)
     {
-        foreach ($event->getEntitiesToInsert() as $entity) {
-            var_dump('inserted ' . spl_object_hash($entity) . ' => ' . get_class($entity));
-            $this->committedIds[spl_object_hash($entity)] = true;
-            $this->addToFirstLevelCache($entity);
-            $this->snapshot($entity);
-        }
-        foreach ($event->getEntitiesToUpdate() as $entity) {
-            var_dump('updated ' . spl_object_hash($entity) . ' => ' . get_class($entity));
-            $this->committedIds[spl_object_hash($entity)] = true;
-            $this->addToFirstLevelCache($entity);
-            $this->snapshot($entity);
-        }
+//        foreach ($event->getEntitiesToInsert() as $entity) {
+//            $this->getConfiguration()->debug('inserted ' . spl_object_hash($entity) . ' => ' . get_class($entity));
+////            $this->committedIds[spl_object_hash($entity)] = true;
+//            $this->addToFirstLevelCache($entity);
+//            $this->snapshot($entity);
+//        }
+//        foreach ($event->getEntitiesToUpdate() as $entity) {
+//            $this->getConfiguration()->debug('updated ' . spl_object_hash($entity) . ' => ' . get_class($entity));
+////            $this->committedIds[spl_object_hash($entity)] = true;
+//            $this->addToFirstLevelCache($entity);
+//            $this->snapshot($entity);
+//        }
     }
 
     protected function postUpdate(UpdateEvent $event)
@@ -137,12 +147,12 @@ abstract class Repository
 
     protected function postDelete(DeleteEvent $event)
     {
-        foreach ($event->getEntities() as $entity) {
-            $id = spl_object_hash($entity);
-            unset($this->committedIds[$id]);
-            $this->deletedIds[$id] = true;
-            unset($this->lastKnownValues[$id]);
-        }
+//        foreach ($event->getEntities() as $entity) {
+//            $id = spl_object_hash($entity);
+////            unset($this->committedIds[$id]);
+////            $this->deletedIds[$id] = true;
+////            unset($this->lastKnownValues[$id]);
+//        }
     }
 
     /**
@@ -179,7 +189,6 @@ abstract class Repository
      */
     public function deleteAll()
     {
-        $this->clearFirstLevelCache();
         $this->doDeleteAll();
     }
 
@@ -231,54 +240,13 @@ abstract class Repository
         $this->entityMap = $entityMap;
     }
 
-    public function getInstanceFromFirstLevelCache($hashCode)
-    {
-        if (isset($this->firstLevelCache[$hashCode])) {
-            return $this->firstLevelCache[$hashCode];
-        }
-    }
-
-    public function addToFirstLevelCache($entity)
-    {
-        $originPk = json_encode($this->getOriginPK($entity));
-        $currentPk = json_encode($this->getPK($entity));
-        if ($originPk !== $currentPk) {
-            if (isset($this->firstLevelCache[$originPk]) && $this->firstLevelCache[$originPk] === $entity) {
-                unset($this->firstLevelCache[$originPk]);
-            }
-        }
-
-        $this->firstLevelCache[$currentPk] = $entity;
-    }
-
-    public function clearFirstLevelCache()
-    {
-        $this->firstLevelCache = [];
-    }
-
     public function persistDependencies($entity)
     {
         //not implemented here
     }
 
-    public function isDeleted($entity)
-    {
-    }
-
     /**
-     * @param object|string $id
-     * @param array $values
-     */
-    public function setLastKnownValues($id, $values)
-    {
-        if (is_object($id)) {
-            $id = spl_object_hash($id);
-        }
-        $this->lastKnownValues[$id] = $values;
-    }
-
-    /**
-     * @todo, to improve performance precompile this stuff
+     * @todo, to improve performance pre-compile this stuff
      *
      * @param array $entities
      *
@@ -291,29 +259,37 @@ abstract class Repository
         $singlePk = 1 === count($primaryKeyFields);
 
         foreach ($entities as $entity) {
-            $id = spl_object_hash($entity);
-            if (isset($this->lastKnownValues[$id])) {
-                $pk = [];
-                $lastKnownValues = $this->lastKnownValues[$id];
+            $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
+            $pk = [];
 
-                if ($singlePk) {
-                    $primaryKeyField = current($primaryKeyFields);
-                    $pk = $lastKnownValues[$primaryKeyField->getName()];
-                } else {
-                    foreach ($primaryKeyFields as $primaryKeyField) {
-                        $pks[] = $lastKnownValues[$primaryKeyField->getName()];
-                    }
+            if ($singlePk) {
+                $primaryKeyField = current($primaryKeyFields);
+                $pk = $lastKnownValues[$primaryKeyField->getName()];
+            } else {
+                foreach ($primaryKeyFields as $primaryKeyField) {
+                    $pks[] = $lastKnownValues[$primaryKeyField->getName()];
                 }
-
-                $pks[] = $pk;
             }
+
+            $pks[] = $pk;
         }
 
         return $pks;
     }
 
     /**
-     * @todo, to improve performance precompile this stuff
+     * @param object $entity
+     * @param bool   $orCreate
+     *
+     * @return array
+     */
+    public function getLastKnownValues($entity, $orCreate = false)
+    {
+        return $this->getConfiguration()->getSession()->getLastKnownValues($entity, $orCreate);
+    }
+
+    /**
+     * @todo, to improve performance pre-compile this stuff
      *
      * @param object $entity
      *
@@ -324,19 +300,16 @@ abstract class Repository
         $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
         $singlePk = 1 === count($primaryKeyFields);
 
-        $id = spl_object_hash($entity);
         $pk = null;
 
-        if (isset($this->lastKnownValues[$id])) {
-            $lastKnownValues = $this->lastKnownValues[$id];
-            if ($singlePk) {
-                $primaryKeyField = current($primaryKeyFields);
-                $pk = $lastKnownValues[$primaryKeyField->getName()];
-            } else {
-                $pk = [];
-                foreach ($primaryKeyFields as $primaryKeyField) {
-                    $pks[] = $lastKnownValues[$primaryKeyField->getName()];
-                }
+        $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $lastKnownValues[$primaryKeyField->getName()];
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pks[] = $lastKnownValues[$primaryKeyField->getName()];
             }
         }
 
@@ -357,54 +330,18 @@ abstract class Repository
         $singlePk = 1 === count($primaryKeyFields);
 
         $pk = null;
+        $normalizedValues = $this->getEntityMap()->getSnapshot($entity);
 
         if ($singlePk) {
             $primaryKeyField = current($primaryKeyFields);
-            $pk = $reader($entity, $primaryKeyField->getName());
+            $pk = $normalizedValues[$primaryKeyField->getName()];
         } else {
             $pk = [];
             foreach ($primaryKeyFields as $primaryKeyField) {
-                $pks[] = $reader($entity, $primaryKeyField->getName());
+                $pks[] = $normalizedValues[$primaryKeyField->getName()];
             }
         }
 
         return $pk;
-    }
-
-    /**
-     * Reads all values of $entities and place it in lastKnownValues.
-     *
-     * @param object $entity
-     */
-    public function snapshot($entity)
-    {
-        $values = $this->getEntityMap()->getSnapshot($entity);
-        $this->lastKnownValues[spl_object_hash($entity)] = $values;
-    }
-
-    /**
-     * @param object|string $id
-     *
-     * @return array
-     */
-    public function getLastKnownValues($id)
-    {
-        if (is_object($id)) {
-            $id = spl_object_hash($id);
-        }
-        return $this->lastKnownValues[$id];
-    }
-
-    /**
-     * @param object|string $id
-     *
-     * @return bool
-     */
-    public function hasKnownValues($id)
-    {
-        if (is_object($id)) {
-            $id = spl_object_hash($id);
-        }
-        return isset($this->lastKnownValues[$id]);
     }
 }

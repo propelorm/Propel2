@@ -153,7 +153,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
     public function setEntityAlias($modelAlias, $useAliasInSQL = false)
     {
         if ($useAliasInSQL) {
-            $this->addAlias($modelAlias, $this->entityMap->getName());
+            $this->addAlias($modelAlias, $this->getEntityMap()->getFullClassName());
             $this->useAliasInSQL = true;
         }
 

@@ -100,17 +100,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 
         $body .= "
 \$hashcode = json_encode(\$pk);
-if (\$object = \$this->getRepository()->getInstanceFromFirstLevelCache(\$hashcode)) {
+if (\$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLevelCache('{$this->getEntity()->getFullClassName()}', \$hashcode)) {
     return \$object;
 }
 ";
-
-
-
-
-
-
-
 
 
 
@@ -246,7 +239,7 @@ if (\$exist) {
 
 
         $body .= "
-\$this->getRepository()->setLastKnownValues(\$obj, \$originalValues);
+\$this->getConfiguration()->getSession()->setLastKnownValues(\$obj, \$originalValues);
 \$offset = \$offset + $fieldCount;
 unset(\$obj->__duringInitializing__);
 return \$obj;

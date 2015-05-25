@@ -18,7 +18,7 @@ class HookMethods extends BuildComponent
 {
     public function process()
     {
-        $hooks = ['save', 'insert', 'update', 'commit'];
+        $hooks = ['save', 'insert', 'update', 'delete', 'commit'];
 
         foreach ($hooks as $hook) {
             $pre = 'pre' . ucfirst($hook);

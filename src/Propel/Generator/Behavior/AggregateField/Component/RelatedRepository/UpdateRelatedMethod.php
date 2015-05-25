@@ -49,7 +49,6 @@ foreach (\$entities as \$entity) {
     \$pk = [];
     if (\$object = \$entity->{$objectGetter}()) {";
 
-
         foreach ($relation->getForeignFieldObjects() as $field) {
             $fieldGetter = 'get' . ucfirst($field->getName());
             $body .= "

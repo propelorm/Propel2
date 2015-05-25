@@ -47,7 +47,7 @@ class RepositoryBuilder extends AbstractBuilder
             '\Propel\Runtime\Propel'
         );
 
-        $this->applyComponent('Repository\\IsNewMethod');
+//        $this->applyComponent('Repository\\IsNewMethod');
         $this->applyComponent('Repository\\SaveMethod');
         $this->applyComponent('Repository\\RemoveMethod');
         $this->applyComponent('Repository\\FindMethod');
