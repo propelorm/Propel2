@@ -271,6 +271,10 @@ class Session
             $id = spl_object_hash($id);
         }
 
+        if (!isset($this->lastKnownValues[$id])) {
+            throw new \InvalidARgumentException('Given id does not exists in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().');
+        }
+
         return $this->lastKnownValues[$id];
     }
 

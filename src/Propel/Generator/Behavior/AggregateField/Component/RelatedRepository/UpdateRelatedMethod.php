@@ -44,8 +44,31 @@ if (!\$entities) {
 }
 
 \$pks = [];
+\$session = \$this->getConfiguration()->getSession();
 /** @var \\{$relation->getEntity()->getFullClassName()}[] \$entities */
 foreach (\$entities as \$entity) {
+    \$pk = [];
+
+    if (\$session->hasKnownValues(\$entity) && \$lastValues = \$session->getLastKnownValues(\$entity)) {";
+
+        foreach ($relation->getLocalFieldObjects() as $field) {
+            $body .= "
+        \$pk[] = \$lastValues['{$field->getName()}'];";
+        }
+
+        if ($relation->isComposite()) {
+            $body .= "
+        \$pks[] = \$pk;";
+        } else {
+            $body .= "
+        \$pks[] = \$pk[0];";
+        }
+
+
+        $body .= "
+    }
+
+
     \$pk = [];
     if (\$object = \$entity->{$objectGetter}()) {";
 
@@ -57,10 +80,10 @@ foreach (\$entities as \$entity) {
 
         if ($relation->isComposite()) {
             $body .= "
-            \$pks[] = \$pk;";
+        \$pks[] = \$pk;";
         } else {
             $body .= "
-            \$pks[] = \$pk[0];";
+        \$pks[] = \$pk[0];";
         }
 
         $body .= "

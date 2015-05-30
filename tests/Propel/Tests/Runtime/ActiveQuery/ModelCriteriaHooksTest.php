@@ -154,7 +154,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
 
 class ModelCriteriaWithPreDeleteHook extends ModelCriteria
 {
-    public function preDelete()
+    public function preDelete($withEvents = false)
     {
         return 12;
     }
@@ -170,7 +170,7 @@ class ModelCriteriaWithPostDeleteHook extends ModelCriteria
 
 class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteHook
 {
-    public function preDelete()
+    public function preDelete($withEvents = false)
     {
         return 12;
     }

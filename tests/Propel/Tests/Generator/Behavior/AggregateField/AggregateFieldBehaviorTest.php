@@ -142,9 +142,6 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $poll->getVotesCount());
     }
 
-    /**
-     * @group test
-     */
     public function testUpdateRelatedWithQueryUsingAlias()
     {
         list($poll, $item1, $item2) = $this->populatePoll();
@@ -163,7 +160,7 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getVotesCount());
         AggregateItemQuery::create()
-            ->deleteAll();
+            ->deleteAll(true);
         $this->assertNull($poll->getTotalScore(), 'Deleting related objects with a query updates the aggregate column');
         $this->assertEquals(0, $poll->getVotesCount());
     }
@@ -181,11 +178,14 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         AggregateItemQuery::create()
             ->setEntityAlias('foo', true)
             ->filterById($item1->getId())
-            ->delete();
+            ->delete(true);
         $this->assertEquals(7, $poll->getTotalScore(), 'Deleting related objects with a query using alias updates the aggregate column');
         $this->assertEquals(1, $poll->getVotesCount());
     }
 
+    /**
+     * @group test
+     */
     public function testRemoveRelation()
     {
         AggregateCommentQuery::create()->deleteAll();
@@ -198,10 +198,11 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $comment2 = new AggregateComment();
         $comment2->setAggregatePost($post);
         $comment2->save();
-        $this->assertEquals(2, $post->getNbComments());
+        $this->assertEquals(2, $post->getCommentsCount());
+        var_dump('set aggragatePost = null');
         $comment2->setAggregatePost(null);
         $comment2->save();
-        $this->assertEquals(1, $post->getNbComments(), 'Removing a relation changes the related object aggregate column');
+        $this->assertEquals(1, $post->getCommentsCount(), 'Removing a relation changes the related object aggregate column');
     }
 
     public function testReplaceRelation()
@@ -215,18 +216,16 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $comment = new AggregateComment();
         $comment->setAggregatePost($post1);
         $comment->save();
-        $this->assertEquals(1, $post1->getNbComments());
-        $this->assertNull($post2->getNbComments());
+        $this->assertEquals(1, $post1->getCommentsCount());
+        $this->assertNull($post2->getCommentsCount());
         $comment->setAggregatePost($post2);
         $comment->save();
-        $this->assertEquals(0, $post1->getNbComments(), 'Replacing a relation changes the related object aggregate column');
-        $this->assertEquals(1, $post2->getNbComments(), 'Replacing a relation changes the related object aggregate column');
+        $this->assertEquals(0, $post1->getCommentsCount(), 'Replacing a relation changes the related object aggregate column');
+        $this->assertEquals(1, $post2->getCommentsCount(), 'Replacing a relation changes the related object aggregate column');
     }
 
     protected function populatePoll()
     {
-        var_dump("### HERE IT GOES!!!");
-        ob_flush();
         AggregateItemQuery::create()->deleteAll();
         AggregatePollQuery::create()->deleteAll();
         $poll = new AggregatePoll();

@@ -424,6 +424,11 @@ class Criteria
         }
     }
 
+    /**
+     * @param string $entityName
+     *
+     * @return string
+     */
     public function getTableName($entityName)
     {
         if (!$entityName) {
@@ -2062,10 +2067,10 @@ class Criteria
             if ($dbMap->hasEntity($entityMapName)) {
                 $entityMap = $dbMap->getEntity($entityMapName);
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
-                if ($rightSide) {
-                    $string = $entityMap->getTableName();
-                    $string .= $rightSide;
-                }
+//                if ($rightSide) {
+//                    $string = $entityMap->getTableName();
+//                    $string .= $rightSide;
+//                }
             }
         }
 
@@ -2570,7 +2575,6 @@ class Criteria
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
-        var_dump('############ddddeletete');
         foreach ($entities as $entityName => $fields) {
 
             $whereClause = array();
@@ -2588,13 +2592,14 @@ class Criteria
                 }
                 $sql .= ' WHERE ' .  implode(' AND ', $whereClause);
 
+                $this->getConfiguration()->debug("delete-sql: $sql");
                 $stmt = $con->prepare($sql);
 
                 $adapter->bindValues($stmt, $params, $dbMap);
                 $stmt->execute();
                 $affectedRows = $stmt->rowCount();
             } catch (\Exception $e) {
-                $this->getConfiguration()->getLogger()->log($e->getMessage(), Configuration::LOG_ERR);
+                $this->getConfiguration()->log($e->getMessage(), Configuration::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
 

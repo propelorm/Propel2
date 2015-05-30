@@ -22,6 +22,8 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
 
     protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 
+    protected $useAliasInSQL = false;
+
     /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.

@@ -11,6 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Events;
 use Propel\Runtime\Exception\RuntimeException;
@@ -58,8 +59,6 @@ class ModelCriteria extends BaseModelCriteria
     const FORMAT_ARRAY      = '\Propel\Runtime\Formatter\ArrayFormatter';
     const FORMAT_OBJECT     = '\Propel\Runtime\Formatter\ObjectFormatter';
     const FORMAT_ON_DEMAND  = '\Propel\Runtime\Formatter\OnDemandFormatter';
-
-    protected $useAliasInSQL = false;
 
     protected $primaryCriteria;
 
@@ -1269,14 +1268,22 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Code to execute before every DELETE statement
+     *
+     * @param bool $withEvents
      */
-    protected function basePreDelete()
+    protected function basePreDelete($withEvents = false)
     {
-        return $this->preDelete();
+        return $this->preDelete($withEvents);
     }
 
-    protected function preDelete()
+    /**
+     * @param bool $withEvents
+     *
+     * @return boolean
+     */
+    protected function preDelete($withEvents = false)
     {
+        return 0;
     }
 
     /**
@@ -1286,9 +1293,12 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected function basePostDelete($affectedRows)
     {
-        return $this->postDelete($affectedRows);
+        $this->postDelete($affectedRows);
     }
 
+    /**
+     * @param $affectedRows
+     */
     protected function postDelete($affectedRows)
     {
     }
@@ -1297,11 +1307,13 @@ class ModelCriteria extends BaseModelCriteria
      * Issue a DELETE query based on the current ModelCriteria
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @return integer the number of deleted rows
+     * @param bool $withEvents
      *
      * @throws PropelException
+     * @return integer the number of deleted rows
+     *
      */
-    public function delete()
+    public function delete($withEvents = false)
     {
         if (0 === count($this->getMap())) {
             throw new PropelException(__METHOD__ .' expects a Criteria with at least one condition. Use deleteAll() to delete all the rows of a entity');
@@ -1313,11 +1325,28 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->setDbName($this->getDbName());
 
         try {
-            return $con->transaction(function () use ($con, $criteria) {
+            return $con->transaction(function () use ($con, $criteria, $withEvents) {
+
+                $event = null;
+                if ($this->getEntityMap() && $withEvents) {
+                    $eventQuery = clone $this;
+                    $entities = $eventQuery
+                        ->setEntityAlias(null)
+                        ->setFormatter(static::FORMAT_OBJECT)
+                        ->find();
+
+                    $event = new DeleteEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), $entities);
+                    $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_DELETE, $event);
+                }
+
                 if (!$affectedRows = $criteria->basePreDelete($con)) {
                     $affectedRows = $criteria->doDelete($con);
                 }
                 $criteria->basePostDelete($affectedRows, $con);
+
+                if ($event) {
+                    $this->getConfiguration()->getEventDispatcher()->dispatch(Events::DELETE, $event);
+                }
 
                 return $affectedRows;
             });
@@ -1330,20 +1359,38 @@ class ModelCriteria extends BaseModelCriteria
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the entity
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @return integer the number of deleted rows
+     * @param bool $withEvents
      *
      * @throws PropelException
+     * @return integer the number of deleted rows
      */
-    public function deleteAll($withEvent = false)
+    public function deleteAll($withEvents = false)
     {
         $con = $this->getConfiguration()->getConnectionManager($this->getDbName())->getWriteConnection();
 
         try {
-            return $con->transaction(function () use ($con) {
-                if (!$affectedRows = $this->basePreDelete($con)) {
-                    $affectedRows = $this->doDeleteAll($con);
+            return $con->transaction(function () use ($con, $withEvents) {
+
+                $event = null;
+                if ($this->getEntityMap() && $withEvents) {
+                    $eventQuery = clone $this;
+                    $entities = $eventQuery
+                        ->setEntityAlias(null)
+                        ->setFormatter(static::FORMAT_OBJECT)
+                        ->find();
+
+                    $event = new DeleteEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), $entities);
+                    $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_DELETE, $event);
+                }
+
+                if (!$affectedRows = $this->basePreDelete($withEvents)) {
+                    $affectedRows = $this->doDeleteAll();
                 }
                 $this->basePostDelete($affectedRows, $con);
+
+                if ($event) {
+                    $this->getConfiguration()->getEventDispatcher()->dispatch(Events::DELETE, $event);
+                }
 
                 return $affectedRows;
             });
@@ -1377,6 +1424,7 @@ class ModelCriteria extends BaseModelCriteria
         try {
             $entityName = $this->quoteTableIdentifierForEntity($entityName);
             $sql = "DELETE FROM " . $entityName;
+            $this->getConfiguration()->debug("delete-all-sql: $sql");
             $stmt = $con->prepare($sql);
 
             $stmt->execute();

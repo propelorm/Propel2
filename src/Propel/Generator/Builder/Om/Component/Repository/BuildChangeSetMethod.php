@@ -92,7 +92,10 @@ if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
 ";
 
                 $emptyBody .= "
-    \$originValues['$relationFieldName'] = null;
+    if (null !== \$originValues['$relationFieldName']) {
+        \$changed = true;
+        \$changes['$relationFieldName'] = null;
+    }
 ";
 
             }
