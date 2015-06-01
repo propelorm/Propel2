@@ -112,7 +112,7 @@ class TimestampableBehavior extends Behavior
     {
         $script = '';
 
-        if ($this->withCreatedAt() && (!$this->getDatabase() || $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
+        if ($this->withCreatedAt()) {
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('create_column') . "(time());
