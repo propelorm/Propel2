@@ -51,18 +51,11 @@ class ValidateBehavior extends Behavior
         );
 
         //if SF >= 5.3 use new validator classes
-        if(class_exists('Symfony\\Component\\Validator\\Validator\\LegacyValidator')){
-            $this->builder->declareClasses(
-                'Symfony\\Component\\Validator\\Validator\\LegacyValidator',
-                'Symfony\\Component\\Validator\\Context\\ExecutionContextFactory',
-                'Symfony\\Component\\Validator\\Validator\\ValidatorInterface'
-            );
-        }else{
-            $this->builder->declareClasses(
-                'Symfony\\Component\\Validator\\Validator',
-                'Symfony\\Component\\Validator\\ValidatorInterface'
-            );
-        }
+        $this->builder->declareClasses(
+            'Symfony\\Component\\Validator\\Validator',
+            'Symfony\\Component\\Validator\\ValidatorInterface'
+	);
+
 
         $script = $this->addLoadValidatorMetadataMethod();
         $script .= $this->addValidateMethod();
