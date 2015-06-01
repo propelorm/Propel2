@@ -140,7 +140,7 @@ class PropelConfiguration implements ConfigurationInterface
                                           ->scalarNode('classname')->defaultValue('\Propel\Runtime\Connection\ConnectionWrapper')->end()
                                                 ->scalarNode('dsn')->end()
                                                 ->scalarNode('user')->end()
-                                                ->scalarNode('password')->treatNullLike('')->end()
+                                                ->scalarNode('password')->end()
                                                 ->arrayNode('options')
                                                     ->children()
                                                         ->booleanNode('ATTR_PERSISTENT')->defaultFalse()->end()
