@@ -46,16 +46,28 @@ class TimestampableBehavior extends Behavior
         $table = $this->getTable();
 
         if ($this->withCreatedAt() && !$table->hasColumn($this->getParameter('create_column'))) {
-            $table->addColumn(array(
+            $column_def = array(
                 'name' => $this->getParameter('create_column'),
                 'type' => 'TIMESTAMP'
-            ));
+            );
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql"){
+                //http://jasonbos.co/two-timestamp-columns-in-mysql/
+                $column_def['required'] = true;
+                $column_def['defaultExpr'] = "'0000-00-00 00:00:00'";
+            }
+            $table->addColumn($column_def);
         }
         if ($this->withUpdatedAt() && !$table->hasColumn($this->getParameter('update_column'))) {
-            $table->addColumn(array(
+            $column_def = array(
                 'name' => $this->getParameter('update_column'),
                 'type' => 'TIMESTAMP'
-            ));
+            );
+            if ($this->getDatabase() && $this->getDatabase()->getPlatform() && $this->getDatabase()->getPlatform()->getDatabaseType() == "mysql") {
+                //http://jasonbos.co/two-timestamp-columns-in-mysql/
+                $column_def['required'] = true;
+                $column_def['defaultExpr'] = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
+            }
+            $table->addColumn($column_def);
         }
     }
 
@@ -82,7 +94,7 @@ class TimestampableBehavior extends Behavior
      */
     public function preUpdate($builder)
     {
-        if ($this->withUpdatedAt()) {
+        if ($this->withUpdatedAt() && (!$this->getDatabase() || $this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
             return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(time());
 }";
@@ -107,7 +119,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
 }";
         }
 
-        if ($this->withUpdatedAt()) {
+        if ($this->withUpdatedAt() && (!$this->getDatabase() ||$this->getDatabase()->getPlatform()->getDatabaseType() != "mysql")) {
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(time());
