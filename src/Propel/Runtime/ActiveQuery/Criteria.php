@@ -2059,7 +2059,7 @@ class Criteria
             $rightSide = substr($string, $pos);
         }
 
-        $entityMapName = $this->getEntityForAlias($entityName) ?: $entityName;
+        $entityMapName = $entityName;
         $quoteIdentifier = false;
 
         if ($entityMapName) {
@@ -2067,10 +2067,10 @@ class Criteria
             if ($dbMap->hasEntity($entityMapName)) {
                 $entityMap = $dbMap->getEntity($entityMapName);
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
-//                if ($rightSide) {
-//                    $string = $entityMap->getTableName();
-//                    $string .= $rightSide;
-//                }
+                if ($rightSide) {
+                    $string = $entityMap->getTableName();
+                    $string .= $rightSide;
+                }
             }
         }
 

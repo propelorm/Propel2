@@ -227,6 +227,8 @@ class QuickBuilder
             $this->database = $appData->getDatabase(); // does final initialization
         }
 
+        $this->database->setPlatform($this->getPlatform());
+
         return $this->database;
     }
 
@@ -246,6 +248,7 @@ class QuickBuilder
                     $stmt->execute();
                 }
             } catch (\Exception $e) {
+                echo implode("\n", $statements);
                 throw new \Exception('SQL failed: ' . $statement, 0, $e);
             }
         }

@@ -115,9 +115,8 @@ class SqlitePlatform extends SqlDefaultPlatform
 ALTER TABLE %s ADD %s;
 ";
         foreach ($fields as $field) {
-            $entityName = $field->getEntity()->getName();
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($entityName),
+                $this->quoteIdentifier($field->getEntity()->getFQTableName()),
                 $this->getFieldDDL($field)
             );
         }
@@ -201,26 +200,25 @@ DROP TABLE %s;
         $originEntity     = clone $entityDiff->getFromEntity();
         $newEntity        = clone $entityDiff->getToEntity();
 
-        $originEntityName = $originEntity->getName();
-        $tempEntityName   = $newEntity->getCommonName().'__temp__'.uniqid();
+        $tempEntityName   = $newEntity->getTableName().'__temp__'.uniqid();
 
         $originEntityFields = $this->getFieldListDDL($originEntity->getFields());
 
         $fieldMap = []; /** struct: [<oldCol> => <newCol>] */
         //start with modified fields
         foreach ($entityDiff->getModifiedFields() as $diff) {
-            $fieldMap[$diff->getFromField()->getName()] = $diff->getToField()->getName();
+            $fieldMap[$diff->getFromField()->getColumnName()] = $diff->getToField()->getColumnName();
         }
 
-        foreach ($entityDiff->getRenamedFields() as $col) {
-            list ($from, $to) = $col;
-            $fieldMap[$from->getName()] = $to->getName();
+        foreach ($entityDiff->getRenamedFields() as $field) {
+            list ($from, $to) = $field;
+            $fieldMap[$from->getColumnName()] = $to->getColumnName();
         }
 
-        foreach ($newEntity->getFields() as $col) {
-            if ($originEntity->hasField($col)) {
-                if (!isset($fieldMap[$col->getName()])) {
-                    $fieldMap[$col->getName()] = $col->getName();
+        foreach ($newEntity->getFields() as $field) {
+            if ($originEntity->hasField($field)) {
+                if (!isset($fieldMap[$field->getColumnName()])) {
+                    $fieldMap[$field->getColumnName()] = $field->getColumnName();
                 }
             }
 
@@ -232,10 +230,10 @@ DROP TABLE %s;
         $sql = sprintf($pattern,
             $this->quoteIdentifier($tempEntityName), //CREATE TEMPORARY TABLE %s
             $originEntityFields, //select %s
-            $this->quoteIdentifier($originEntityName), //from %s
-            $this->quoteIdentifier($originEntityName), //drop entity %s
+            $this->quoteIdentifier($originEntity->getFQTableName()), //from %s
+            $this->quoteIdentifier($originEntity->getFQTableName()), //drop entity %s
             $createEntity, //[create entity] %s
-            $this->quoteIdentifier($originEntityName), //insert into %s
+            $this->quoteIdentifier($originEntity->getFQTableName()), //insert into %s
             implode(', ', $fieldMap), //(%s)
             implode(', ', array_keys($fieldMap)), //select %s
             $this->quoteIdentifier($tempEntityName), //from %s
@@ -269,7 +267,7 @@ PRAGMA foreign_keys = ON;
             $this->normalizeEntity($entity);
         }
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getFQTableName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -490,7 +488,7 @@ PRAGMA foreign_keys = ON;
 
         return sprintf($pattern,
             $entityDescription,
-            $this->quoteIdentifier($entity->getName()),
+            $this->quoteIdentifier($entity->getFQTableName()),
             implode($sep, $lines)
         );
     }

@@ -186,7 +186,10 @@ class Entity extends ScopedMappingModel implements IdMethod
         parent::setupObject();
 
         $this->setName($this->getAttribute('name'));
-        $this->tableName = $this->getAttribute('tableName') ?: strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $this->name));
+
+        $names = explode('\\', $this->name);
+        $shortName = array_pop($names);
+        $this->tableName = $this->getAttribute('tableName') ?: strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $shortName));
 
         // retrieves the method for converting from specified name to a PHP name.
         // find a better, more abstract way to define and use naming strategies.

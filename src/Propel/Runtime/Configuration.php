@@ -687,7 +687,7 @@ class Configuration extends GeneratorConfig
 
     public function isDebug()
     {
-        return true;
+        return false;
     }
 
     /**

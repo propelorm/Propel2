@@ -8,6 +8,8 @@ use gossi\codegen\model\PhpParameter;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\Relation;
 
 /**
  * Adds getSnapshot method.
@@ -36,18 +38,38 @@ class GetSnapshotMethod extends BuildComponent
             $fieldName = $relation->getField();
             $foreignEntityClass = $relation->getForeignEntity()->getFullClassName();
             $body .= "
-if (\$v = \$reader(\$entity, '$fieldName')) {
+if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
     \$foreignEntityReader = \$this->getConfiguration()->getEntityMap('$foreignEntityClass')->getPropReader();
 ";
             $emptyBody = '';
 
-            foreach ($relation->getFieldObjectsMapping() as $reference) {
-                $relationFieldName = $reference['local']->getName();
-                $foreignFieldName = $reference['foreign']->getName();
+            foreach ($relation->getFieldObjectsMapArray() as $map) {
+                /** @var Field $localField */
+                /** @var Field $foreignField */
+                list ($localField, $foreignField) = $map;
+                $relationFieldName = $localField->getName();
+                $foreignFieldName = $foreignField->getName();
+
+                if (isset($foreignField->foreignRelation)) {
+                    /** @var Relation $foreignRelation */
+                    $foreignRelation = $foreignField->foreignRelation;
+                    $relationFieldName = $foreignRelation->getField();
+                    $relationEntityName = $foreignRelation->getForeignEntity()->getFullClassName();
+                    $body .= "
+    \$foreignForeignEntityReader = \$this->getClassPropReader('$relationEntityName');
+    \$foreignForeignEntity = \$foreignEntityReader(\$foreignEntity, '{$relationFieldName}');
+    \$value = \$foreignForeignEntityReader(\$foreignForeignEntity, '{$foreignField->foreignRelationFieldName}');
+                    ";
+                } else {
+                    $body .= "
+    \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
+                }
+
+
                 $emptyBody .="
     \$snapshot['$relationFieldName'] = null;";
                 $body .= "
-    \$snapshot['$relationFieldName'] = \$foreignEntityReader(\$v, '$foreignFieldName');";
+    \$snapshot['$relationFieldName'] = \$value;";
             }
 
             $body .= "
