@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
 
 /**
- * Allows translation of text columns through transparent one-to-many
+ * Allows translation of text fields through transparent one-to-many
  * relationship.
  *
  * @author Francois Zaninotto
@@ -30,9 +30,9 @@ class I18nBehavior extends Behavior
     protected $parameters = array(
         'i18n_table'        => '%TABLE%_i18n',
         'i18n_phpname'      => '%PHPNAME%I18n',
-        'i18n_columns'      => '',
-        'i18n_pk_column'    => null,
-        'locale_column'     => 'locale',
+        'i18n_fields'      => '',
+        'i18n_pk_field'    => null,
+        'locale_field'     => 'locale',
         'locale_length'     => 5,
         'default_locale'    => null,
         'locale_alias'      => '',
@@ -44,11 +44,11 @@ class I18nBehavior extends Behavior
 
     protected $queryBuilderModifier;
 
-    protected $i18nTable;
+    protected $i18nEntity;
 
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
+        foreach ($this->getDatabase()->getEntities() as $table) {
             if ($table->hasBehavior('i18n') && !$table->getBehavior('i18n')->getParameter('default_locale')) {
                 $table->getBehavior('i18n')->addParameter(array(
                     'name'  => 'default_locale',
@@ -67,51 +67,51 @@ class I18nBehavior extends Behavior
         return $defaultLocale;
     }
 
-    public function getI18nTable()
+    public function getI18nEntity()
     {
-        return $this->i18nTable;
+        return $this->i18nEntity;
     }
 
     public function getI18nForeignKey()
     {
-        foreach ($this->i18nTable->getForeignKeys() as $fk) {
-            if ($fk->getForeignTableName() == $this->table->getName()) {
+        foreach ($this->i18nEntity->getForeignKeys() as $fk) {
+            if ($fk->getForeignEntityName() == $this->table->getName()) {
                 return $fk;
             }
         }
     }
 
-    public function getLocaleColumn()
+    public function getLocaleField()
     {
-        return $this->getI18nTable()->getColumn($this->getLocaleColumnName());
+        return $this->getI18nEntity()->getField($this->getLocaleFieldName());
     }
 
-    public function getI18nColumns()
+    public function getI18nFields()
     {
-        $columns = array();
-        $i18nTable = $this->getI18nTable();
-        if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
-            // Strategy 1: use the i18n_columns parameter
-            foreach ($columnNames as $columnName) {
-                $columns []= $i18nTable->getColumn($columnName);
+        $fields = array();
+        $i18nEntity = $this->getI18nEntity();
+        if ($fieldNames = $this->getI18nFieldNamesFromConfig()) {
+            // Strategy 1: use the i18n_fields parameter
+            foreach ($fieldNames as $fieldName) {
+                $fields []= $i18nEntity->getField($fieldName);
             }
         } else {
-            // strategy 2: use the columns of the i18n table
-            // warning: does not work when database behaviors add columns to all tables
+            // strategy 2: use the fields of the i18n table
+            // warning: does not work when database behaviors add fields to all entities
             // (such as timestampable behavior)
-            foreach ($i18nTable->getColumns() as $column) {
-                if (!$column->isPrimaryKey()) {
-                    $columns []= $column;
+            foreach ($i18nEntity->getFields() as $field) {
+                if (!$field->isPrimaryKey()) {
+                    $fields []= $field;
                 }
             }
         }
 
-        return $columns;
+        return $fields;
     }
 
     public function replaceTokens($string)
     {
-        $table = $this->getTable();
+        $table = $this->getEntity();
 
         return strtr($string, array(
             '%TABLE%'   => $table->getOriginCommonName(),
@@ -144,26 +144,26 @@ class I18nBehavior extends Behavior
         ));
     }
 
-    public function modifyTable()
+    public function modifyEntity()
     {
-        $this->addI18nTable();
-        $this->relateI18nTableToMainTable();
-        $this->addLocaleColumnToI18n();
-        $this->moveI18nColumns();
+        $this->addI18nEntity();
+        $this->relateI18nEntityToMainEntity();
+        $this->addLocaleFieldToI18n();
+        $this->moveI18nFields();
     }
 
-    protected function addI18nTable()
+    protected function addI18nEntity()
     {
-        $table         = $this->getTable();
+        $table         = $this->getEntity();
         $database      = $table->getDatabase();
-        $i18nTableName = $this->getI18nTableName();
+        $i18nEntityName = $this->getI18nEntityName();
 
-        if ($database->hasTable($i18nTableName)) {
-            $this->i18nTable = $database->getTable($i18nTableName);
+        if ($database->hasEntity($i18nEntityName)) {
+            $this->i18nEntity = $database->getEntity($i18nEntityName);
         } else {
-            $this->i18nTable = $database->addTable(array(
-                'name'      => $i18nTableName,
-                'phpName'   => $this->getI18nTablePhpName(),
+            $this->i18nEntity = $database->addEntity(array(
+                'name'      => $i18nEntityName,
+                'phpName'   => $this->getI18nEntityPhpName(),
                 'package'   => $table->getPackage(),
                 'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
@@ -178,50 +178,50 @@ class I18nBehavior extends Behavior
         }
     }
 
-    protected function relateI18nTableToMainTable()
+    protected function relateI18nEntityToMainEntity()
     {
-        $table     = $this->getTable();
-        $i18nTable = $this->i18nTable;
-        $pks       = $this->getTable()->getPrimaryKey();
+        $table     = $this->getEntity();
+        $i18nEntity = $this->i18nEntity;
+        $pks       = $this->getEntity()->getPrimaryKey();
 
         if (count($pks) > 1) {
-            throw new EngineException('The i18n behavior does not support tables with composite primary keys');
+            throw new EngineException('The i18n behavior does not support entities with composite primary keys');
         }
 
-        $column = $pks[0];
-        $i18nColumn = clone $column;
+        $field = $pks[0];
+        $i18nField = clone $field;
 
-        if ($this->getParameter('i18n_pk_column')) {
+        if ($this->getParameter('i18n_pk_field')) {
             // custom i18n table pk name
-            $i18nColumn->setName($this->getParameter('i18n_pk_column'));
-        } else if (in_array($table->getName(), $i18nTable->getForeignTableNames())) {
+            $i18nField->setName($this->getParameter('i18n_pk_field'));
+        } else if (in_array($table->getName(), $i18nEntity->getForeignEntityNames())) {
             // custom i18n table pk name not set, but some fk already exists
             return;
         }
 
-        if (!$i18nTable->hasColumn($i18nColumn->getName())) {
-            $i18nColumn->setAutoIncrement(false);
-            $i18nTable->addColumn($i18nColumn);
+        if (!$i18nEntity->hasField($i18nField->getName())) {
+            $i18nField->setAutoIncrement(false);
+            $i18nEntity->addField($i18nField);
         }
 
         $fk = new ForeignKey();
-        $fk->setForeignTableCommonName($table->getCommonName());
+        $fk->setForeignEntityCommonName($table->getCommonName());
         $fk->setForeignSchemaName($table->getSchema());
         $fk->setDefaultJoin('LEFT JOIN');
         $fk->setOnDelete(ForeignKey::CASCADE);
         $fk->setOnUpdate(ForeignKey::NONE);
-        $fk->addReference($i18nColumn->getName(), $column->getName());
+        $fk->addReference($i18nField->getName(), $field->getName());
 
-        $i18nTable->addForeignKey($fk);
+        $i18nEntity->addForeignKey($fk);
     }
 
-    protected function addLocaleColumnToI18n()
+    protected function addLocaleFieldToI18n()
     {
-        $localeColumnName = $this->getLocaleColumnName();
+        $localeFieldName = $this->getLocaleFieldName();
 
-        if (! $this->i18nTable->hasColumn($localeColumnName)) {
-            $this->i18nTable->addColumn(array(
-                'name'       => $localeColumnName,
+        if (! $this->i18nEntity->hasField($localeFieldName)) {
+            $this->i18nEntity->addField(array(
+                'name'       => $localeFieldName,
                 'type'       => PropelTypes::VARCHAR,
                 'size'       => $this->getParameter('locale_length') ? (int) $this->getParameter('locale_length') : 5,
                 'default'    => $this->getDefaultLocale(),
@@ -231,35 +231,35 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * Moves i18n columns from the main table to the i18n table
+     * Moves i18n fields from the main table to the i18n table
      */
-    protected function moveI18nColumns()
+    protected function moveI18nFields()
     {
-        $table     = $this->getTable();
-        $i18nTable = $this->i18nTable;
+        $table     = $this->getEntity();
+        $i18nEntity = $this->i18nEntity;
 
         $i18nValidateParams = array();
-        foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
-            if (!$i18nTable->hasColumn($columnName)) {
-                if (!$table->hasColumn($columnName)) {
-                    throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
+        foreach ($this->getI18nFieldNamesFromConfig() as $fieldName) {
+            if (!$i18nEntity->hasField($fieldName)) {
+                if (!$table->hasField($fieldName)) {
+                    throw new EngineException(sprintf('No field named %s found in table %s', $fieldName, $table->getName()));
                 }
 
-                $column = $table->getColumn($columnName);
-                $i18nTable->addColumn(clone $column);
+                $field = $table->getField($fieldName);
+                $i18nEntity->addField(clone $field);
 
-                // validate behavior: move rules associated to the column
+                // validate behavior: move rules associated to the field
                 if ($table->hasBehavior('validate')) {
                     $validateBehavior = $table->getBehavior('validate');
-                    $params = $validateBehavior->getParametersFromColumnName($columnName);
+                    $params = $validateBehavior->getParametersFromFieldName($fieldName);
                     $i18nValidateParams = array_merge($i18nValidateParams, $params);
-                    $validateBehavior->removeParametersFromColumnName($columnName);
+                    $validateBehavior->removeParametersFromFieldName($fieldName);
                 }
-                // FIXME: also move FKs, and indices on this column
+                // FIXME: also move FKs, and indices on this field
             }
 
-            if ($table->hasColumn($columnName)) {
-                $table->removeColumn($columnName);
+            if ($table->hasField($fieldName)) {
+                $table->removeField($fieldName);
             }
         }
 
@@ -268,7 +268,7 @@ class I18nBehavior extends Behavior
             $i18nVbehavior = new ValidateBehavior();
             $i18nVbehavior->setName('validate');
             $i18nVbehavior->setParameters($i18nValidateParams);
-            $i18nTable->addBehavior($i18nVbehavior);
+            $i18nEntity->addBehavior($i18nVbehavior);
 
             // current table must have almost 1 validation rule
             $validate = $table->getBehavior('validate');
@@ -276,32 +276,32 @@ class I18nBehavior extends Behavior
         }
     }
 
-    protected function getI18nTableName()
+    protected function getI18nEntityName()
     {
         return $this->replaceTokens($this->getParameter('i18n_table'));
     }
 
-    protected function getI18nTablePhpName()
+    protected function getI18nEntityPhpName()
     {
         return $this->replaceTokens($this->getParameter('i18n_phpname'));
     }
 
-    protected function getLocaleColumnName()
+    protected function getLocaleFieldName()
     {
-        return $this->replaceTokens($this->getParameter('locale_column'));
+        return $this->replaceTokens($this->getParameter('locale_field'));
     }
 
-    protected function getI18nColumnNamesFromConfig()
+    protected function getI18nFieldNamesFromConfig()
     {
-        $columnNames = explode(',', $this->getParameter('i18n_columns'));
-        foreach ($columnNames as $key => $columnName) {
-            if ($columnName = trim($columnName)) {
-                $columnNames[$key] = $columnName;
+        $fieldNames = explode(',', $this->getParameter('i18n_fields'));
+        foreach ($fieldNames as $key => $fieldName) {
+            if ($fieldName = trim($fieldName)) {
+                $fieldNames[$key] = $fieldName;
             } else {
-                unset($columnNames[$key]);
+                unset($fieldNames[$key]);
             }
         }
 
-        return $columnNames;
+        return $fieldNames;
     }
 }

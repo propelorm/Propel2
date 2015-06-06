@@ -110,6 +110,11 @@ class Database extends ScopedMappingModel
     protected $entityPrefix;
 
     /**
+     * @var bool
+     */
+    protected $activeRecord = false;
+
+    /**
      * Constructs a new Database object.
      *
      * @param string            $name     The database's name
@@ -155,6 +160,10 @@ class Database extends ScopedMappingModel
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
         $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
+
+        if ($this->getAttribute('activeRecord')) {
+            $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
+        }
     }
 
     /**
@@ -179,6 +188,22 @@ class Database extends ScopedMappingModel
     public function setPlatform(PlatformInterface $platform = null)
     {
         $this->platform = $platform;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActiveRecord()
+    {
+        return $this->activeRecord;
+    }
+
+    /**
+     * @param boolean $activeRecord
+     */
+    public function setActiveRecord($activeRecord)
+    {
+        $this->activeRecord = $activeRecord;
     }
 
     /**

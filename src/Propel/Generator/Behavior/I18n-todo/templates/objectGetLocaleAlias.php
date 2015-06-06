@@ -7,5 +7,5 @@
  */
 public function get<?php echo $alias ?>()
 {
-    return $this->get<?= $localeColumnName ?>();
+    return $this->get<?= $localeFieldName ?>();
 }

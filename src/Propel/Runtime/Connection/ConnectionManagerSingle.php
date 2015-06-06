@@ -79,12 +79,18 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
         return $this->configuration;
     }
 
+    /**
+     * @param ConnectionInterface $connection
+     */
     public function setConnection(ConnectionInterface $connection)
     {
         $this->setConfiguration(null);
         $this->connection = $connection;
     }
 
+    /**
+     * @param $configuration
+     */
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;

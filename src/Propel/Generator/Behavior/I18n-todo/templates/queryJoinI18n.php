@@ -14,5 +14,5 @@ public function joinI18n($locale = '<?php echo $defaultLocale ?>', $relationAlia
 
     return $this
         ->join<?php echo $i18nRelationName ?>($relationAlias, $joinType)
-        ->addJoinCondition($relationName, $relationName . '.<?php echo $localeColumn ?> = ?', $locale);
+        ->addJoinCondition($relationName, $relationName . '.<?php echo $localeField ?> = ?', $locale);
 }

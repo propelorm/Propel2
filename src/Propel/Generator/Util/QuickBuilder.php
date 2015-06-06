@@ -21,8 +21,10 @@ use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
@@ -68,7 +70,7 @@ class QuickBuilder
     /**
      * @var array
      */
-    protected $classTargets = array('activerecordtrait', 'entitymap', 'proxy', 'object', 'query', 'repository', 'repositorystub', 'querystub');
+    protected $classTargets = array('activerecordtrait', 'object', 'entitymap', 'proxy','query', 'repository', 'repositorystub', 'querystub');
 
     /**
      * Identifier quoting for reversed database.
@@ -85,6 +87,11 @@ class QuickBuilder
      * @var string[]
      */
     protected $knownEntityClassNames = [];
+
+    /**
+     * @var Configuration
+     */
+    public static $configuration;
 
     /**
      * @param string $schema
@@ -192,7 +199,17 @@ class QuickBuilder
         return $builder->build($dsn, $user, $pass, $adapter);
     }
 
-    public function build($dsn = null, $user = null, $pass = null, $adapter = null, array $classTargets = null)
+    /**
+     * @param string           $dsn
+     * @param string           $user
+     * @param string           $pass
+     * @param AdapterInterface $adapter
+     * @param array            $classTargets
+     *
+     * @return Configuration
+     * @throws \Exception
+     */
+    public function build($dsn = null, $user = null, $pass = null, AdapterInterface $adapter = null, array $classTargets = null)
     {
         if (null === $dsn) {
             $dsn = 'sqlite::memory:';
@@ -207,15 +224,19 @@ class QuickBuilder
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $adapter->initConnection($con, []);
+
+        $connectionManager = new ConnectionManagerSingle(new SqliteAdapter());
+        $connectionManager->setConnection($con);
+        static::$configuration = new Configuration();
+        static::$configuration->setConnectionManager($this->getDatabase()->getName(), $connectionManager);
+        static::$configuration->setAdapter($this->getDatabase()->getName(), $adapter);
+
         $this->buildSQL($con);
         $this->buildClasses($classTargets, true);
-//        $this->updateDB($con);
-//        $name = $this->getDatabase()->getName();
-//
-//        Propel::getServiceContainer()->setAdapter($name, $adapter);
-//        Propel::getServiceContainer()->setConnection($name, $con);
 
-        return $con;
+        $this->registerEntities(static::$configuration);
+
+        return static::$configuration;
     }
 
     public function getDatabase()
@@ -242,6 +263,7 @@ class QuickBuilder
 //                continue;
             }
             try {
+                static::$configuration->debug('buildSQL: ' . $statement);
                 $stmt = $con->prepare($statement);
                 if ($stmt instanceof StatementInterface) {
                     // only execute if has no error

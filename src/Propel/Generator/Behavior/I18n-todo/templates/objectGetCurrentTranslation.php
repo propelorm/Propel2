@@ -4,9 +4,9 @@
  *
  * @param     ConnectionInterface $con an optional connection object
  *
- * @return <?= $i18nTablePhpName ?>
+ * @return <?= $i18nEntityPhpName ?>
  */
 public function getCurrentTranslation(ConnectionInterface $con = null)
 {
-    return $this->getTranslation($this->get<?= $localeColumnName ?>(), $con);
+    return $this->getTranslation($this->get<?= $localeFieldName ?>(), $con);
 }

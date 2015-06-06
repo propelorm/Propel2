@@ -16,7 +16,7 @@ use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Entity;
 
 /**
- * Behavior to add Sortable columns and abilities
+ * Behavior to add Sortable fields and abilities
  *
  * @author François Zaninotto
  * @author heltem <heltem@o2php.com>
@@ -92,27 +92,27 @@ class SortableBehaviorObjectBuilderModifier
     }
 
     /**
-     * Get the getter of the column of the behavior
+     * Get the getter of the field of the behavior
      *
-     * @param string $columnName
+     * @param string $fieldName
      *
      * @return string The related getter, e.g. 'getRank'
      */
-    protected function getFieldGetter($columnName = 'rank_column')
+    protected function getFieldGetter($fieldName = 'rank_field')
     {
-        return 'get' . $this->behavior->getFieldForParameter($columnName)->getName();
+        return 'get' . $this->behavior->getFieldForParameter($fieldName)->getName();
     }
 
     /**
-     * Get the setter of the column of the behavior
+     * Get the setter of the field of the behavior
      *
-     * @param string $columnName
+     * @param string $fieldName
      *
      * @return string The related setter, e.g. 'setRank'
      */
-    protected function getFieldSetter($columnName = 'rank_column')
+    protected function getFieldSetter($fieldName = 'rank_field')
     {
-        return 'set' . $this->behavior->getFieldForParameter($columnName)->getName();
+        return 'set' . $this->behavior->getFieldForParameter($fieldName)->getName();
     }
 
     public function preSave($builder)
@@ -192,11 +192,11 @@ protected \$oldScope;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('rank' !== $this->getParameter('rank_column')) {
+        if ('rank' !== $this->getParameter('rank_field')) {
             $this->addRankAccessors($script);
         }
         if ($this->behavior->useScope()
-            && 'scope_value' !== $this->getParameter('scope_column')) {
+            && 'scope_value' !== $this->getParameter('scope_field')) {
             $this->addScopeAccessors($script);
         }
         $this->addIsFirst($script);
@@ -249,7 +249,7 @@ protected \$oldScope;
     }
 
     /**
-     * Get the wraps for getter/setter, if the rank column has not the default name
+     * Get the wraps for getter/setter, if the rank field has not the default name
      *
      * @return string
      */
@@ -263,7 +263,7 @@ protected \$oldScope;
  */
 public function getRank()
 {
-    return \$this->{$this->getFieldAttribute('rank_column')};
+    return \$this->{$this->getFieldAttribute('rank_field')};
 }
 
 /**
@@ -280,7 +280,7 @@ public function setRank(\$v)
     }
 
     /**
-     * Get the wraps for getter/setter, if the scope column has not the default name
+     * Get the wraps for getter/setter, if the scope field has not the default name
      *
      * @return string
      */
@@ -318,7 +318,7 @@ public function getScopeValue(\$returnNulls = true)
 
             $script .= "
 
-    return \$this->{$this->getFieldGetter('scope_column')}();
+    return \$this->{$this->getFieldGetter('scope_field')}();
 ";
         }
 
@@ -346,7 +346,7 @@ public function setScopeValue(\$v)
         } else {
             $script .= "
 
-    return \$this->{$this->getFieldSetter('scope_column')}(\$v);
+    return \$this->{$this->getFieldSetter('scope_field')}(\$v);
 ";
 
         }
@@ -783,7 +783,7 @@ public function removeFromList()
         'arguments' => array(-1, \$this->{$this->getFieldGetter()}() + 1, null" . ($useScope ? ", \$this->getScopeValue()" : '') . ")
     );
     // remove the object from the list
-    \$this->{$this->getFieldSetter('rank_column')}(null);
+    \$this->{$this->getFieldSetter('rank_field')}(null);
     ";
         }
         $script .= "

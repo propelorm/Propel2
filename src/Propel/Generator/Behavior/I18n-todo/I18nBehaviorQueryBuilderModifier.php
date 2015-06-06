@@ -11,7 +11,7 @@
 namespace Propel\Generator\Behavior\I18n;
 
 /**
- * Allows translation of text columns through transparent one-to-many relationship.
+ * Allows translation of text fields through transparent one-to-many relationship.
  * Modifier for the query builder.
  *
  * @author François Zaninotto
@@ -27,7 +27,7 @@ class I18nBehaviorQueryBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table    = $behavior->getEntity();
     }
 
     public function queryMethods($builder)
@@ -49,7 +49,7 @@ class I18nBehaviorQueryBuilderModifier
             'queryClass'       => $this->builder->getQueryClassName(),
             'defaultLocale'    => $this->behavior->getDefaultLocale(),
             'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
-            'localeColumn'     => $this->behavior->getLocaleColumn()->getName(),
+            'localeField'     => $this->behavior->getLocaleField()->getName(),
         ));
     }
 
@@ -66,15 +66,15 @@ class I18nBehaviorQueryBuilderModifier
 
     protected function addUseI18nQuery()
     {
-        $i18nTable = $this->behavior->getI18nTable();
+        $i18nEntity = $this->behavior->getI18nEntity();
         $fk = $this->behavior->getI18nForeignKey();
 
         return $this->behavior->renderTemplate('queryUseI18nQuery', array(
-            'queryClass'           => $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
-            'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nTable)->getFullyQualifiedClassName(),
+            'queryClass'           => $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($i18nEntity)),
+            'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nEntity)->getFullyQualifiedClassName(),
             'defaultLocale'        => $this->behavior->getDefaultLocale(),
             'i18nRelationName'     => $this->builder->getRefFKPhpNameAffix($fk),
-            'localeColumn'         => $this->behavior->getLocaleColumn()->getName(),
+            'localeField'         => $this->behavior->getLocaleField()->getName(),
         ));
     }
 }

@@ -1,6 +1,6 @@
 
 /**
- * Finds the related <?=$foreignTable->getName()?> objects and keep them for later
+ * Finds the related <?=$foreignEntity->getName()?> objects and keep them for later
  *
  * @param ConnectionInterface $con A connection object
  */

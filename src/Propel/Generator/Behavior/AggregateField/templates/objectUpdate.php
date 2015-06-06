@@ -1,11 +1,11 @@
 
 /**
- * Updates the aggregate column <?=$column->getName()?>
+ * Updates the aggregate field <?=$field->getName()?>
  *
  * @param ConnectionInterface $con A connection object
  */
-public function update<?=$column->getName()?>(ConnectionInterface $con)
+public function update<?=$field->getName()?>(ConnectionInterface $con)
 {
-    $this->set<?=$column->getName()?>($this->compute<?=$column->getName()?>($con));
+    $this->set<?=$field->getName()?>($this->compute<?=$field->getName()?>($con));
     $this->save($con);
 }

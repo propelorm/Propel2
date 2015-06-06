@@ -19,6 +19,7 @@ use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Persister\SqlPersister;
 use Propel\Runtime\Util\PropelDateTime;
 use Propel\Generator\Model\PropelTypes;
 
@@ -27,6 +28,10 @@ use Propel\Generator\Model\PropelTypes;
  */
 abstract class PdoAdapter
 {
+    public function getPersister($session, $entityMap)
+    {
+        return new SqlPersister($session, $entityMap);
+    }
 
     /**
      * Build database connection

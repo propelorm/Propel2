@@ -103,7 +103,12 @@ class Entity extends ScopedMappingModel implements IdMethod
      * @var boolean
      */
     private $identifierQuoting;
-    private $activeRecord = true;
+
+    /**
+     * @var bool|null
+     */
+    private $activeRecord;
+
     private $forReferenceOnly;
     private $reloadOnInsert;
     private $reloadOnUpdate;
@@ -190,6 +195,10 @@ class Entity extends ScopedMappingModel implements IdMethod
         $names = explode('\\', $this->name);
         $shortName = array_pop($names);
         $this->tableName = $this->getAttribute('tableName') ?: strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $shortName));
+
+        if ($this->getAttribute('activeRecord')) {
+            $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
+        }
 
         // retrieves the method for converting from specified name to a PHP name.
         // find a better, more abstract way to define and use naming strategies.
@@ -1907,6 +1916,10 @@ class Entity extends ScopedMappingModel implements IdMethod
      */
     public function isActiveRecord()
     {
+        if (null === $this->activeRecord) {
+            return $this->getDatabase()->isActiveRecord();
+        }
+
         return $this->activeRecord;
     }
 

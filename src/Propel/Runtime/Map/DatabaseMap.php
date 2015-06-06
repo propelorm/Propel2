@@ -219,15 +219,15 @@ class DatabaseMap
 //        );
 //    }
 
-    /**
-     * Convenience method to get the AdapterInterface registered with Propel for this database.
-     *
-     * @see Propel::getServiceContainer()->getAdapter(string) .
-     *
-     * @return \Propel\Runtime\Adapter\AdapterInterface
-     */
-    public function getAbstractAdapter()
-    {
-        return Propel::getServiceContainer()->getAdapter($this->name);
-    }
+//    /**
+//     * Convenience method to get the AdapterInterface registered with Propel for this database.
+//     *
+//     * @see Propel::getServiceContainer()->getAdapter(string) .
+//     *
+//     * @return \Propel\Runtime\Adapter\AdapterInterface
+//     */
+//    public function getAbstractAdapter()
+//    {
+//        return Propel::getServiceContainer()->getAdapter($this->name);
+//    }
 }

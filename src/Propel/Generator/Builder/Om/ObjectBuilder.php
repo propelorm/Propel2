@@ -28,7 +28,10 @@ class ObjectBuilder extends AbstractBuilder
     {
         //todo, make it depending on <entity activeRecord="true">
         $this->getDefinition()->declareUse($this->getActiveRecordTraitName(true));
-        $this->getDefinition()->addTrait($this->getActiveRecordTraitName());
+
+        if ($this->getEntity()->isActiveRecord()) {
+            $this->getDefinition()->addTrait($this->getActiveRecordTraitName());
+        }
 
         $this->applyComponent('Object\\Properties');
         $this->applyComponent('Object\\RelationProperties');

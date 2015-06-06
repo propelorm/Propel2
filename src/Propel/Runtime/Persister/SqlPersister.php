@@ -4,6 +4,7 @@ namespace Propel\Runtime\Persister;
 
 
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\EntityProxyInterface;
 use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\InsertEvent;
@@ -159,7 +160,12 @@ class SqlPersister implements PersisterInterface
     {
     }
 
-    protected function readAutoIncrement($connection)
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return string
+     */
+    protected function readAutoIncrement(ConnectionInterface $connection)
     {
         $sql = <<<EOF
     SELECT `AUTO_INCREMENT`
@@ -178,10 +184,13 @@ EOF;
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
 
-        return $stmt->fetchColumn();
+        return $stmt->fetchColumn() ?: 0;
     }
 
-    protected function prepareAutoIncrement($connection)
+    /**
+     * @param ConnectionInterface $connection
+     */
+    protected function prepareAutoIncrement(ConnectionInterface $connection)
     {
         $fieldNames = $this->entityMap->getAutoIncrementFieldNames();
         $object = [];
@@ -251,8 +260,12 @@ EOF;
         }
 
         $paramsReplace = $params;
+        $paramsReplace = array_map(function($v) {
+            return json_encode($v);
+        }, $paramsReplace);
+
         $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
-            return var_export(array_shift($paramsReplace), true);
+            return array_shift($paramsReplace);
         }, $sql);
         $this->getConfiguration()->debug("sql-insert: $readable");
 
@@ -264,7 +277,7 @@ EOF;
                 'Can not execute INSERT query for entity %s: %s [%s]',
                 $this->entityMap->getFullClassName(),
                 $sql,
-                implode(',', $params)
+                implode(',', $paramsReplace)
             ), 0, $e);
         }
 

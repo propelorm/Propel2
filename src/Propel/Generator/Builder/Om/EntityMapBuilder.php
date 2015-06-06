@@ -73,5 +73,7 @@ class EntityMapBuilder extends AbstractBuilder
 
         $this->applyComponent('EntityMap\\GenericAccessorMethods');
         $this->applyComponent('EntityMap\\GenericMutatorMethods');
+
+        $this->applyComponent('EntityMap\\CopyIntoMethod');
     }
 }

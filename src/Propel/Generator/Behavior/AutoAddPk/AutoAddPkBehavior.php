@@ -47,8 +47,8 @@ class AutoAddPkBehavior extends Behavior
     {
         $entity = $this->getEntity();
         if (!$entity->hasPrimaryKey() && !$entity->hasBehavior('concrete_inheritance')) {
-            $columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
-            $this->getEntity()->addField($columnAttributes);
+            $fieldAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
+            $this->getEntity()->addField($fieldAttributes);
         }
     }
 }

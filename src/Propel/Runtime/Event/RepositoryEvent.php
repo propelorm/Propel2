@@ -23,7 +23,7 @@ class RepositoryEvent extends Event
      * @param Session   $session
      * @param EntityMap $entityMap
      */
-    function __construct(Session $session, EntityMap $entityMap)
+    public function __construct(Session $session, EntityMap $entityMap)
     {
         $this->session = $session;
         $this->entityMap = $entityMap;
@@ -35,14 +35,6 @@ class RepositoryEvent extends Event
     public function getSession()
     {
         return $this->session;
-    }
-
-    /**
-     * @return Configuration
-     */
-    public function getEntityManager()
-    {
-        return $this->configuration;
     }
 
     /**

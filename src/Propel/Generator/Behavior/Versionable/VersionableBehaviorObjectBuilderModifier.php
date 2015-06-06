@@ -10,10 +10,10 @@
 
 namespace Propel\Generator\Behavior\Versionable;
 
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 
 /**
- * Behavior to add versionable columns and abilities
+ * Behavior to add versionable fields and abilities
  *
  * @author François Zaninotto
  */
@@ -27,7 +27,7 @@ class VersionableBehaviorObjectBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->table = $behavior->getEntity();
     }
 
     protected function getParameter($key)
@@ -35,19 +35,19 @@ class VersionableBehaviorObjectBuilderModifier
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumnAttribute($name = 'version_column')
+    protected function getFieldAttribute($name = 'version_field')
     {
-        return strtolower($this->behavior->getColumnForParameter($name)->getName());
+        return strtolower($this->behavior->getFieldForParameter($name)->getName());
     }
 
-    protected function getColumnPhpName($name = 'version_column')
+    protected function getFieldPhpName($name = 'version_field')
     {
-        return $this->behavior->getColumnForParameter($name)->getName();
+        return $this->behavior->getFieldForParameter($name)->getName();
     }
 
     protected function getVersionQueryClassName()
     {
-        return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
+        return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionEntity()));
     }
 
     protected function getActiveRecordClassName()
@@ -63,34 +63,34 @@ class VersionableBehaviorObjectBuilderModifier
     }
 
     /**
-     * Get the getter of the column of the behavior
+     * Get the getter of the field of the behavior
      *
      * @return string The related getter, e.g. 'getVersion'
      */
-    protected function getColumnGetter($name = 'version_column')
+    protected function getFieldGetter($name = 'version_field')
     {
-        return 'get' . $this->getColumnPhpName($name);
+        return 'get' . $this->getFieldPhpName($name);
     }
 
     /**
-     * Get the setter of the column of the behavior
+     * Get the setter of the field of the behavior
      *
      * @return string The related setter, e.g. 'setVersion'
      */
-    protected function getColumnSetter($name = 'version_column')
+    protected function getFieldSetter($name = 'version_field')
     {
-        return 'set' . $this->getColumnPhpName($name);
+        return 'set' . $this->getFieldPhpName($name);
     }
 
     public function preSave($builder)
     {
         $script = "if (\$this->isVersioningNecessary()) {
-    \$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
+    \$this->set{$this->getFieldPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
         if ($this->behavior->getParameter('log_created_at') == 'true') {
-            $col = $this->behavior->getTable()->getColumn($this->getParameter('version_created_at_column'));
+            $col = $this->behavior->getEntity()->getField($this->getParameter('version_created_at_field'));
             $script .= "
-    if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
-        \$this->{$this->getColumnSetter('version_created_at_column')}(time());
+    if (!\$this->isFieldModified({$this->builder->getFieldConstant($col)})) {
+        \$this->{$this->getFieldSetter('version_created_at_field')}(time());
     }";
         }
         $script .= "
@@ -144,7 +144,7 @@ protected \$enforceVersion = false;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ('version' !== $this->getParameter('version_field')) {
             $this->addVersionSetter($script);
             $this->addVersionGetter($script);
         }
@@ -176,7 +176,7 @@ protected \$enforceVersion = false;
  */
 public function setVersion(\$v)
 {
-    return \$this->" . $this->getColumnSetter() . "(\$v);
+    return \$this->" . $this->getFieldSetter() . "(\$v);
 }
 ";
     }
@@ -191,7 +191,7 @@ public function setVersion(\$v)
  */
 public function getVersion()
 {
-    return \$this->" . $this->getColumnGetter() . "();
+    return \$this->" . $this->getFieldGetter() . "();
 }
 ";
     }
@@ -271,8 +271,8 @@ public function isVersioningNecessary(\$con = null)
 
     protected function addAddVersion(&$script)
     {
-        $versionTable       = $this->behavior->getVersionTable();
-        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
+        $versionEntity       = $this->behavior->getVersionEntity();
+        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionEntity));
 
         $script .= "
 /**
@@ -287,7 +287,7 @@ public function addVersion(\$con = null)
     \$this->enforceVersion = false;
 
     \$version = new {$versionARClassName}();";
-        foreach ($this->table->getColumns() as $col) {
+        foreach ($this->table->getFields() as $col) {
             $script .= "
     \$version->set" . $col->getName() . "(\$this->get" . $col->getName() . "());";
         }
@@ -296,22 +296,22 @@ public function addVersion(\$con = null)
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural);
-            $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-            $fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getName();
+            $fkVersionFieldName = $fk->getLocalFieldName() . '_version';
+            $fkVersionFieldPhpName = $versionEntity->getField($fkVersionFieldName)->getName();
             $script .= "
     if ((\$related = \$this->get{$fkGetter}(null, \$con)) && \$related->getVersion()) {
-        \$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
+        \$version->set{$fkVersionFieldPhpName}(\$related->getVersion());
     }";
         }
         $plural = true;
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
             $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural);
-            $idsColumn = $this->behavior->getReferrerIdsColumn($fk);
-            $versionsColumn = $this->behavior->getReferrerVersionsColumn($fk);
+            $idsField = $this->behavior->getReferrerIdsField($fk);
+            $versionsField = $this->behavior->getReferrerVersionsField($fk);
             $script .= "
-    if (\$relateds = \$this->get{$fkGetter}(null, \$con)->toKeyValue('{$fk->getForeignColumn()->getName()}', 'Version')) {
-        \$version->set{$idsColumn->getName()}(array_keys(\$relateds));
-        \$version->set{$versionsColumn->getName()}(array_values(\$relateds));
+    if (\$relateds = \$this->get{$fkGetter}(null, \$con)->toKeyValue('{$fk->getForeignField()->getName()}', 'Version')) {
+        \$version->set{$idsField->getName()}(array_keys(\$relateds));
+        \$version->set{$versionsField->getName()}(array_values(\$relateds));
     }";
         }
             $script .= "
@@ -350,9 +350,9 @@ public function toVersion(\$versionNumber, \$con = null)
     protected function addPopulateFromVersion(&$script)
     {
         $ARclassName = $this->getActiveRecordClassName();
-        $versionTable = $this->behavior->getVersionTable();
-        $versionColumnName = $versionTable->getColumn($this->behavior->getParameter('version_column'))->getName();
-        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
+        $versionEntity = $this->behavior->getVersionEntity();
+        $versionFieldName = $versionEntity->getField($this->behavior->getParameter('version_field'))->getName();
+        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionEntity));
         $tablePKs = $this->table->getPrimaryKey();
         $primaryKeyName = $tablePKs[0]->getName();
         $script .= "
@@ -368,32 +368,32 @@ public function toVersion(\$versionNumber, \$con = null)
 public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = array())
 {";
         $script .= "
-    \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionColumnName}()] = \$this;";
+    \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionFieldName}()] = \$this;";
 
-        foreach ($this->table->getColumns() as $col) {
+        foreach ($this->table->getFields() as $col) {
             $script .= "
     \$this->set" . $col->getName() . "(\$version->get" . $col->getName() . "());";
         }
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
-            $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getId())->getVersionTable();
-            $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
-            $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
-            $fkColumnName = $fk->getLocalColumnName();
-            $fkColumnPhpName = $fk->getLocalColumn()->getName();
-            $fkVersionColumnPhpName = $versionTable->getColumn($fkColumnName . '_version')->getName();
+            $foreignEntity = $fk->getForeignEntity();
+            $foreignVersionEntity = $fk->getForeignEntity()->getBehavior($this->behavior->getId())->getVersionEntity();
+            $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignEntity));
+            $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionEntity));
+            $fkFieldName = $fk->getLocalFieldName();
+            $fkFieldPhpName = $fk->getLocalField()->getName();
+            $fkVersionFieldPhpName = $versionEntity->getField($fkFieldName . '_version')->getName();
             $fkPhpname = $this->builder->getFKPhpNameAffix($fk, $plural);
             // FIXME: breaks lazy-loading
             $script .= "
-    if (\$fkValue = \$version->get{$fkColumnPhpName}()) {
-        if (isset(\$loadedObjects['{$relatedClassName}']) && isset(\$loadedObjects['{$relatedClassName}'][\$fkValue]) && isset(\$loadedObjects['{$relatedClassName}'][\$fkValue][\$version->get{$fkVersionColumnPhpName}()])) {
-            \$related = \$loadedObjects['{$relatedClassName}'][\$fkValue][\$version->get{$fkVersionColumnPhpName}()];
+    if (\$fkValue = \$version->get{$fkFieldPhpName}()) {
+        if (isset(\$loadedObjects['{$relatedClassName}']) && isset(\$loadedObjects['{$relatedClassName}'][\$fkValue]) && isset(\$loadedObjects['{$relatedClassName}'][\$fkValue][\$version->get{$fkVersionFieldPhpName}()])) {
+            \$related = \$loadedObjects['{$relatedClassName}'][\$fkValue][\$version->get{$fkVersionFieldPhpName}()];
         } else {
             \$related = new {$relatedClassName}();
             \$relatedVersion = {$relatedVersionQueryClassName}::create()
-                ->filterBy{$fk->getForeignColumn()->getName()}(\$fkValue)
-                ->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
+                ->filterBy{$fk->getForeignField()->getName()}(\$fkValue)
+                ->filterByVersion(\$version->get{$fkVersionFieldPhpName}())
                 ->findOne(\$con);
             \$related->populateFromVersion(\$relatedVersion, \$con, \$loadedObjects);
             \$related->setNew(false);
@@ -406,31 +406,31 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, $plural);
             $plural = false;
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural);
-            $foreignTable = $fk->getTable();
-            $foreignBehavior = $foreignTable->getBehavior($this->behavior->getId());
-            $foreignVersionTable = $foreignBehavior->getVersionTable();
-            $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
-            $fkColumnVersions = $this->behavior->getReferrerVersionsColumn($fk);
-            $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
-            $relatedVersionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($foreignVersionTable));
-            $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
-            $fkColumn = $fk->getForeignColumn();
-            $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
+            $foreignEntity = $fk->getEntity();
+            $foreignBehavior = $foreignEntity->getBehavior($this->behavior->getId());
+            $foreignVersionEntity = $foreignBehavior->getVersionEntity();
+            $fkFieldIds = $this->behavior->getReferrerIdsField($fk);
+            $fkFieldVersions = $this->behavior->getReferrerVersionsField($fk);
+            $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionEntity));
+            $relatedVersionEntityMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewEntityMapBuilder($foreignVersionEntity));
+            $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignEntity));
+            $fkField = $fk->getForeignField();
+            $fkVersionField = $foreignVersionEntity->getField($this->behavior->getParameter('version_field'));
 
             $script .= "
-    if (\$fkValues = \$version->get{$fkColumnIds->getName()}()) {
+    if (\$fkValues = \$version->get{$fkFieldIds->getName()}()) {
         \$this->clear{$fkPhpNames}();
-        \$fkVersions = \$version->get{$fkColumnVersions->getName()}();
+        \$fkVersions = \$version->get{$fkFieldVersions->getName()}();
         \$query = {$relatedVersionQueryClassName}::create();
         foreach (\$fkValues as \$key => \$value) {
-            \$c1 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkColumn, $relatedVersionTableMapClassName)}, \$value);
-            \$c2 = \$query->getNewCriterion({$this->builder->getColumnConstant($fkVersionColumn, $relatedVersionTableMapClassName)}, \$fkVersions[\$key]);
+            \$c1 = \$query->getNewCriterion({$this->builder->getFieldConstant($fkField, $relatedVersionEntityMapClassName)}, \$value);
+            \$c2 = \$query->getNewCriterion({$this->builder->getFieldConstant($fkVersionField, $relatedVersionEntityMapClassName)}, \$fkVersions[\$key]);
             \$c1->addAnd(\$c2);
             \$query->addOr(\$c1);
         }
         foreach (\$query->find(\$con) as \$relatedVersion) {
-            if (isset(\$loadedObjects['{$relatedClassName}']) && isset(\$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkColumn->getName()}()]) && isset(\$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkColumn->getName()}()][\$relatedVersion->get{$fkVersionColumn->getName()}()])) {
-                \$related = \$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkColumn->getName()}()][\$relatedVersion->get{$fkVersionColumn->getName()}()];
+            if (isset(\$loadedObjects['{$relatedClassName}']) && isset(\$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkField->getName()}()]) && isset(\$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkField->getName()}()][\$relatedVersion->get{$fkVersionField->getName()}()])) {
+                \$related = \$loadedObjects['{$relatedClassName}'][\$relatedVersion->get{$fkField->getName()}()][\$relatedVersion->get{$fkVersionField->getName()}()];
             } else {
                 \$related = new {$relatedClassName}();
                 \$related->populateFromVersion(\$relatedVersion, \$con, \$loadedObjects);
@@ -462,13 +462,13 @@ public function getLastVersionNumber(\$con = null)
 {
     \$v = {$this->getVersionQueryClassName()}::create()
         ->filterBy{$this->table->getName()}(\$this)
-        ->orderBy{$this->getColumnPhpName()}('desc')
+        ->orderBy{$this->getFieldPhpName()}('desc')
         ->findOne(\$con);
     if (!\$v) {
         return 0;
     }
 
-    return \$v->get{$this->getColumnPhpName()}();
+    return \$v->get{$this->getFieldPhpName()}();
 }
 ";
     }
@@ -492,7 +492,7 @@ public function isLastVersion(\$con = null)
 
     protected function addGetOneVersion(&$script)
     {
-        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable()));
+        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getVersionEntity()));
         $script .= "
 /**
  * Retrieves a version object for this entity and a version number
@@ -506,7 +506,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
 {
     return {$this->getVersionQueryClassName()}::create()
         ->filterBy{$this->table->getName()}(\$this)
-        ->filterBy{$this->getColumnPhpName()}(\$versionNumber)
+        ->filterBy{$this->getFieldPhpName()}(\$versionNumber)
         ->findOne(\$con);
 }
 ";
@@ -514,12 +514,12 @@ public function getOneVersion(\$versionNumber, \$con = null)
 
     protected function addGetAllVersions(&$script)
     {
-        $versionTable = $this->behavior->getVersionTable();
-        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
-        //this force the use statement for  VersionTableMap
-        $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
-        $versionForeignColumn = $versionTable->getColumn($this->behavior->getParameter('version_column'));
-        $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
+        $versionEntity = $this->behavior->getVersionEntity();
+        $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionEntity));
+        //this force the use statement for  VersionEntityMap
+        $this->builder->getClassNameFromBuilder($this->builder->getNewEntityMapBuilder($versionEntity));
+        $versionForeignField = $versionEntity->getField($this->behavior->getParameter('version_field'));
+        $fks = $versionEntity->getForeignKeysReferencingEntity($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], true);
         $script .= "
 /**
@@ -532,7 +532,7 @@ public function getOneVersion(\$versionNumber, \$con = null)
 public function getAllVersions(\$con = null)
 {
     \$criteria = new Criteria();
-    \$criteria->addAscendingOrderByColumn({$this->builder->getColumnConstant($versionForeignColumn)});
+    \$criteria->addAscendingOrderByField({$this->builder->getFieldConstant($versionForeignField)});
 
     return \$this->get{$relCol}(\$criteria, \$con);
 }
@@ -554,17 +554,17 @@ public function getAllVersions(\$con = null)
  *
  * @param   array     \$fromVersion     An array representing the original version.
  * @param   array     \$toVersion       An array representing the destination version.
- * @param   string    \$keys            Main key used for the result diff (versions|columns).
- * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ * @param   string    \$keys            Main key used for the result diff (versions|fields).
+ * @param   array     \$ignoredFields  The fields to exclude from the diff.
  *
  * @return  array A list of differences
  */
-protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \$ignoredColumns = array())
+protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'fields', \$ignoredFields = array())
 {
-    \$fromVersionNumber = \$fromVersion['{$this->getColumnPhpName()}'];
-    \$toVersionNumber = \$toVersion['{$this->getColumnPhpName()}'];
-    \$ignoredColumns = array_merge(array(
-        '{$this->getColumnPhpName()}',";
+    \$fromVersionNumber = \$fromVersion['{$this->getFieldPhpName()}'];
+    \$toVersionNumber = \$toVersion['{$this->getFieldPhpName()}'];
+    \$ignoredFields = array_merge(array(
+        '{$this->getFieldPhpName()}',";
         if ($this->behavior->getParameter('log_created_at') == 'true') {
             $script .= "
         'VersionCreatedAt',";
@@ -578,10 +578,10 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
         'VersionComment',";
         }
         $script .= "
-    ), \$ignoredColumns);
+    ), \$ignoredFields);
     \$diff = array();
     foreach (\$fromVersion as \$key => \$value) {
-        if (in_array(\$key, \$ignoredColumns)) {
+        if (in_array(\$key, \$ignoredFields)) {
             continue;
         }
         if (\$toVersion[\$key] != \$value) {
@@ -619,18 +619,18 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  * </code>
  *
  * @param   integer             \$versionNumber
- * @param   string              \$keys Main key used for the result diff (versions|columns)
+ * @param   string              \$keys Main key used for the result diff (versions|fields)
  * @param   ConnectionInterface \$con the connection to use
- * @param   array               \$ignoredColumns  The columns to exclude from the diff.
+ * @param   array               \$ignoredFields  The fields to exclude from the diff.
  *
  * @return  array A list of differences
  */
-public function compareVersion(\$versionNumber, \$keys = 'columns', \$con = null, \$ignoredColumns = array())
+public function compareVersion(\$versionNumber, \$keys = 'fields', \$con = null, \$ignoredFields = array())
 {
     \$fromVersion = \$this->toArray();
     \$toVersion = \$this->getOneVersion(\$versionNumber, \$con)->toArray();
 
-    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredColumns);
+    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredFields);
 }
 ";
     }
@@ -650,18 +650,18 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', \$con = null
  *
  * @param   integer             \$fromVersionNumber
  * @param   integer             \$toVersionNumber
- * @param   string              \$keys Main key used for the result diff (versions|columns)
+ * @param   string              \$keys Main key used for the result diff (versions|fields)
  * @param   ConnectionInterface \$con the connection to use
- * @param   array               \$ignoredColumns  The columns to exclude from the diff.
+ * @param   array               \$ignoredFields  The fields to exclude from the diff.
  *
  * @return  array A list of differences
  */
-public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', \$con = null, \$ignoredColumns = array())
+public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'fields', \$con = null, \$ignoredFields = array())
 {
     \$fromVersion = \$this->getOneVersion(\$fromVersionNumber, \$con)->toArray();
     \$toVersion = \$this->getOneVersion(\$toVersionNumber, \$con)->toArray();
 
-    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredColumns);
+    return \$this->computeDiff(\$fromVersion, \$toVersion, \$keys, \$ignoredFields);
 }
 ";
     }
@@ -669,13 +669,13 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
     protected function addGetLastVersions(&$script)
     {
         $plural = true;
-        $versionTable = $this->behavior->getVersionTable();
-        $versionARClassName = $this->builder->getNewStubObjectBuilder($versionTable)->getClassName();
-        $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
-        $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
+        $versionEntity = $this->behavior->getVersionEntity();
+        $versionARClassName = $this->builder->getNewStubObjectBuilder($versionEntity)->getClassName();
+        $versionEntityMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewEntityMapBuilder($versionEntity));
+        $fks = $versionEntity->getForeignKeysReferencingEntity($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
         $versionGetter = 'get'.$relCol;
-        $colPrefix = Column::CONSTANT_PREFIX;
+        $colPrefix = Field::CONSTANT_PREFIX;
 
         $script .= <<<EOF
 /**
@@ -687,7 +687,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
 public function getLastVersions(\$number = 10, \$criteria = null, \$con = null)
 {
     \$criteria = {$this->getVersionQueryClassName()}::create(null, \$criteria);
-    \$criteria->addDescendingOrderByColumn({$versionTableMapClassName}::{$colPrefix}VERSION);
+    \$criteria->addDescendingOrderByField({$versionEntityMapClassName}::{$colPrefix}VERSION);
     \$criteria->limit(\$number);
 
     return \$this->{$versionGetter}(\$criteria, \$con);

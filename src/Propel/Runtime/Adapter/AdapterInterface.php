@@ -11,8 +11,10 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\FieldMap;
+use Propel\Runtime\Persister\PersisterInterface;
 
 /**
  * Interface for adapters.
@@ -32,6 +34,11 @@ interface AdapterInterface
      * @return ConnectionInterface
      */
     public function getConnection($conparams);
+
+    /**
+     * @return PersisterInterface
+     */
+    public function getPersister($session, $entityMap);
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.

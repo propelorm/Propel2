@@ -82,19 +82,19 @@ class ValidateBehavior extends Behavior
     }
 
     /**
-     * Returns the parameters associated with a given column.
+     * Returns the parameters associated with a given field.
      * Useful for i18n behavior
      *
-     * @param  string $columnName The column name
-     * @return array  The array of parameters associated to given column
+     * @param  string $fieldName The field name
+     * @return array  The array of parameters associated to given field
      */
-    public function getParametersFromColumnName($columnName = null)
+    public function getParametersFromFieldName($fieldName = null)
     {
         $array = array();
-        if (null !== $columnName) {
+        if (null !== $fieldName) {
             $this->cleanupParameters();
             foreach ($this->getParameters() as $key => $parameter) {
-                if ($parameter['column'] === $columnName) {
+                if ($parameter['field'] === $fieldName) {
                     $array[$key] = $parameter;
                 }
             }
@@ -104,18 +104,18 @@ class ValidateBehavior extends Behavior
     }
 
     /**
-     * Remove parameters associated with given column.
+     * Remove parameters associated with given field.
      * Useful for i18n behavior
      *
-     * @param string $columnName The column name
+     * @param string $fieldName The field name
      */
-    public function removeParametersFromColumnName($columnName = null)
+    public function removeParametersFromFieldName($fieldName = null)
     {
-        if (null !== $columnName) {
+        if (null !== $fieldName) {
             $newParams = array();
             $parameters = $this->getParameters();
             foreach ($parameters as $key => $parameter) {
-                if ($parameter['column'] != $columnName) {
+                if ($parameter['field'] != $fieldName) {
                     $newParams[$key] = $parameter;
                 }
             }
@@ -127,15 +127,15 @@ class ValidateBehavior extends Behavior
     /**
      * Add a rule based on primary key type, if there aren't other parameters.
      * Useful when modify table (i18n behavior).
-     * If all the rules have been removed, the behavior can't perform validation on related tables.
+     * If all the rules have been removed, the behavior can't perform validation on related entities.
      * This method introduce a rule to avoid this.
      */
     public function addRuleOnPk()
     {
         if (!count($this->getParameters())) {
-            $pk = $this->getTable()->getPrimaryKey();
+            $pk = $this->getEntity()->getPrimaryKey();
             $parameters = array('auto_rule' => array(
-                'column'     => $pk[0]->getName(),
+                'field'     => $pk[0]->getName(),
                 'validators' => 'Type',
                 'options'    => array(
                     'type'   => $pk[0]->getPhpType(),
@@ -196,8 +196,8 @@ class ValidateBehavior extends Behavior
         $constraints = array();
 
         foreach ($params as $key => $properties) {
-            if (!isset($properties['column'])) {
-                throw new InvalidArgumentException('Please, define the column to validate.');
+            if (!isset($properties['field'])) {
+                throw new InvalidArgumentException('Please, define the field to validate.');
             }
 
             if (!isset($properties['validator'])) {
@@ -238,7 +238,7 @@ class ValidateBehavior extends Behavior
      */
     protected function addValidateMethod()
     {
-        $table = $this->getTable();
+        $table = $this->getEntity();
         $foreignKeys = $table->getForeignKeys();
         $hasForeignKeys = (count($foreignKeys) != 0);
         $aVarNames = array();

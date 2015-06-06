@@ -51,7 +51,7 @@ class QueryCacheBehavior extends Behavior
     public function queryMethods($builder)
     {
         $builder->declareClasses('\Propel\Runtime\Propel');
-        $this->tableClassName = $builder->getTableMapClassName();
+        $this->tableClassName = $builder->getEntityMapClassName();
         $script = '';
         $this->addSetQueryKey($script);
         $this->addGetQueryKey($script);
@@ -171,11 +171,11 @@ public function cacheFetch(\$key)
         $script .= "
 public function doSelect(ConnectionInterface \$con = null)
 {
-    // check that the columns of the main class are already added (if this is the primary ModelCriteria)
+    // check that the fields of the main class are already added (if this is the primary ModelCriteria)
     if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
-        \$this->addSelfSelectColumns();
+        \$this->addSelfSelectFields();
     }
-    \$this->configureSelectColumns();
+    \$this->configureSelectFields();
 
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName ."::DATABASE_NAME);
     \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName ."::DATABASE_NAME);
@@ -219,14 +219,14 @@ public function doCount(ConnectionInterface \$con = null)
         \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
-        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
+        // check that the fields of the main class are already added (if this is the primary ModelCriteria)
         if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
-            \$this->addSelfSelectColumns();
+            \$this->addSelfSelectFields();
         }
 
-        \$this->configureSelectColumns();
+        \$this->configureSelectFields();
 
-        \$needsComplexCount = \$this->getGroupByColumns()
+        \$needsComplexCount = \$this->getGroupByFields()
             || \$this->getOffset()
             || \$this->getLimit()
             || \$this->getHaving()
@@ -236,15 +236,15 @@ public function doCount(ConnectionInterface \$con = null)
         if (\$needsComplexCount) {
             if (\$this->needsSelectAliases()) {
                 if (\$this->getHaving()) {
-                    throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                    throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate field names in the SELECT part');
                 }
-                \$db->turnSelectColumnsToAliases(\$this);
+                \$db->turnSelectFieldsToAliases(\$this);
             }
             \$selectSql = \$this->createSelectSql(\$params);
             \$sql = 'SELECT COUNT(*) FROM (' . \$selectSql . ') propelmatch4cnt';
         } else {
-            // Replace SELECT columns with COUNT(*)
-            \$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+            // Replace SELECT fields with COUNT(*)
+            \$this->clearSelectFields()->addSelectColumn('COUNT(*)');
             \$sql = \$this->createSelectSql(\$params);
         }
 

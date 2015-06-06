@@ -19,11 +19,11 @@ class CopyToParentMethod extends BuildComponent
 $parentProperties = get_object_vars($parentEntity);
 $parentWriter = $this
     ->getConfiguration()
-    ->getTableMap('%s')
+    ->getEntityMap('%s')
     ->getPropWriter();
 
 $reader = $this
-    ->getTableMap()
+    ->getEntityMap()
     ->getPropReader();
 
 foreach ($parentProperties as $propertyName => $defaultValue) {

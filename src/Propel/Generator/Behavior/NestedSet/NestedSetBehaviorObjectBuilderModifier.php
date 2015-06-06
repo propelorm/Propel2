@@ -11,7 +11,7 @@
 namespace Propel\Generator\Behavior\NestedSet;
 
 /**
- * Behavior to adds nested set tree structure columns and abilities
+ * Behavior to adds nested set tree structure fields and abilities
  *
  * @author François Zaninotto
  * @author heltem <heltem@o2php.com>
@@ -29,7 +29,7 @@ class NestedSetBehaviorObjectBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table    = $behavior->getEntity();
     }
 
     protected function getParameter($key)
@@ -37,14 +37,14 @@ class NestedSetBehaviorObjectBuilderModifier
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumnAttribute($name)
+    protected function getFieldAttribute($name)
     {
-        return strtolower($this->behavior->getColumnForParameter($name)->getName());
+        return strtolower($this->behavior->getFieldForParameter($name)->getName());
     }
 
-    protected function getColumnPhpName($name)
+    protected function getFieldPhpName($name)
     {
-        return $this->behavior->getColumnForParameter($name)->getName();
+        return $this->behavior->getFieldForParameter($name)->getName();
     }
 
     protected function setBuilder($builder)
@@ -124,31 +124,31 @@ if (\$this->isInTree()) {
 
         $this->addProcessNestedSetQueries($script);
 
-        if ('LeftValue' !== $this->getColumnPhpName('left_column')) {
+        if ('LeftValue' !== $this->getFieldPhpName('left_field')) {
             $this->addGetLeft($script);
         }
-        if ('RightValue' !== $this->getColumnPhpName('right_column')) {
+        if ('RightValue' !== $this->getFieldPhpName('right_field')) {
             $this->addGetRight($script);
         }
-        if ('Level' !== $this->getColumnPhpName('level_column')) {
+        if ('Level' !== $this->getFieldPhpName('level_field')) {
             $this->addGetLevel($script);
         }
         if ('true' === $this->getParameter('use_scope')
-            && 'ScopeValue' !== $this->getColumnPhpName('scope_column')) {
+            && 'ScopeValue' !== $this->getFieldPhpName('scope_field')) {
             $this->addGetScope($script);
         }
 
-        if ('LeftValue' !== $this->getColumnPhpName('left_column')) {
+        if ('LeftValue' !== $this->getFieldPhpName('left_field')) {
             $script .= $this->addSetLeft();
         }
-        if ('RightValue' !== $this->getColumnPhpName('right_column')) {
+        if ('RightValue' !== $this->getFieldPhpName('right_field')) {
             $this->addSetRight($script);
         }
-        if ('Level' !== $this->getColumnPhpName('level_column')) {
+        if ('Level' !== $this->getFieldPhpName('level_field')) {
             $this->addSetLevel($script);
         }
         if ('true' === $this->getParameter('use_scope')
-            && 'ScopeValue' !== $this->getColumnPhpName('scope_column')) {
+            && 'ScopeValue' !== $this->getFieldPhpName('scope_field')) {
             $this->addSetScope($script);
         }
 
@@ -232,13 +232,13 @@ protected function processNestedSetQueries(\$con)
         $script .= "
 /**
  * Proxy getter method for the left value of the nested set model.
- * It provides a generic way to get the value, whatever the actual column name is.
+ * It provides a generic way to get the value, whatever the actual field name is.
  *
  * @return     int The nested set left value
  */
 public function getLeftValue()
 {
-    return \$this->{$this->getColumnAttribute('left_column')};
+    return \$this->{$this->getFieldAttribute('left_field')};
 }
 ";
     }
@@ -248,13 +248,13 @@ public function getLeftValue()
         $script .= "
 /**
  * Proxy getter method for the right value of the nested set model.
- * It provides a generic way to get the value, whatever the actual column name is.
+ * It provides a generic way to get the value, whatever the actual field name is.
  *
  * @return     int The nested set right value
  */
 public function getRightValue()
 {
-    return \$this->{$this->getColumnAttribute('right_column')};
+    return \$this->{$this->getFieldAttribute('right_field')};
 }
 ";
     }
@@ -264,13 +264,13 @@ public function getRightValue()
         $script .= "
 /**
  * Proxy getter method for the level value of the nested set model.
- * It provides a generic way to get the value, whatever the actual column name is.
+ * It provides a generic way to get the value, whatever the actual field name is.
  *
  * @return     int The nested set level value
  */
 public function getLevel()
 {
-    return \$this->{$this->getColumnAttribute('level_column')};
+    return \$this->{$this->getFieldAttribute('level_field')};
 }
 ";
     }
@@ -280,13 +280,13 @@ public function getLevel()
         $script .= "
 /**
  * Proxy getter method for the scope value of the nested set model.
- * It provides a generic way to get the value, whatever the actual column name is.
+ * It provides a generic way to get the value, whatever the actual field name is.
  *
  * @return     int The nested set scope value
  */
 public function getScopeValue()
 {
-    return \$this->{$this->getColumnAttribute('scope_column')};
+    return \$this->{$this->getFieldAttribute('scope_field')};
 }
 ";
     }
@@ -295,7 +295,7 @@ public function getScopeValue()
     {
         return $this->behavior->renderTemplate('objectSetLeft', array(
             'objectClassName'   => $this->builder->getObjectClassName(),
-            'leftColumn'        => $this->getColumnPhpName('left_column'),
+            'leftField'        => $this->getFieldPhpName('left_field'),
         ));
     }
 
@@ -306,14 +306,14 @@ public function getScopeValue()
         $script .= "
 /**
  * Proxy setter method for the right value of the nested set model.
- * It provides a generic way to set the value, whatever the actual column name is.
+ * It provides a generic way to set the value, whatever the actual field name is.
  *
  * @param      int \$v The nested set right value
  * @return     \$this|{$objectClassName} The current object (for fluent API support)
  */
 public function setRightValue(\$v)
 {
-    return \$this->set{$this->getColumnPhpName('right_column')}(\$v);
+    return \$this->set{$this->getFieldPhpName('right_field')}(\$v);
 }
 ";
     }
@@ -325,14 +325,14 @@ public function setRightValue(\$v)
         $script .= "
 /**
  * Proxy setter method for the level value of the nested set model.
- * It provides a generic way to set the value, whatever the actual column name is.
+ * It provides a generic way to set the value, whatever the actual field name is.
  *
  * @param      int \$v The nested set level value
  * @return     \$this|{$objectClassName} The current object (for fluent API support)
  */
 public function setLevel(\$v)
 {
-    return \$this->set{$this->getColumnPhpName('level_column')}(\$v);
+    return \$this->set{$this->getFieldPhpName('level_field')}(\$v);
 }
 ";
     }
@@ -344,14 +344,14 @@ public function setLevel(\$v)
         $script .= "
 /**
  * Proxy setter method for the scope value of the nested set model.
- * It provides a generic way to set the value, whatever the actual column name is.
+ * It provides a generic way to set the value, whatever the actual field name is.
  *
  * @param      int \$v The nested set scope value
  * @return     \$this|{$objectClassName} The current object (for fluent API support)
  */
 public function setScopeValue(\$v)
 {
-    return \$this->set{$this->getColumnPhpName('scope_column')}(\$v);
+    return \$this->set{$this->getFieldPhpName('scope_field')}(\$v);
 }
 ";
     }
@@ -552,7 +552,7 @@ public function hasPrevSibling(ConnectionInterface \$con = null)
     }
 
     return $queryClassName::create()
-        ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
+        ->filterBy" . $this->getFieldPhpName('right_field') . "(\$this->getLeftValue() - 1)";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
@@ -577,7 +577,7 @@ public function hasPrevSibling(ConnectionInterface \$con = null)
 public function getPrevSibling(ConnectionInterface \$con = null)
 {
     return $queryClassName::create()
-        ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
+        ->filterBy" . $this->getFieldPhpName('right_field') . "(\$this->getLeftValue() - 1)";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
@@ -606,7 +606,7 @@ public function hasNextSibling(ConnectionInterface \$con = null)
     }
 
     return $queryClassName::create()
-        ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
+        ->filterBy" . $this->getFieldPhpName('left_field') . "(\$this->getRightValue() + 1)";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
@@ -631,7 +631,7 @@ public function hasNextSibling(ConnectionInterface \$con = null)
 public function getNextSibling(ConnectionInterface \$con = null)
 {
     return $queryClassName::create()
-        ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
+        ->filterBy" . $this->getFieldPhpName('left_field') . "(\$this->getRightValue() + 1)";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
@@ -1280,7 +1280,7 @@ public function moveToNextSiblingOf(\$sibling, ConnectionInterface \$con = null)
     protected function addMoveSubtreeTo(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
-        $tableMapClass  = $this->builder->getTableMapClass();
+        $tableMapClass  = $this->builder->getEntityMapClass();
         $useScope       = $this->behavior->useScope();
 
         $script .= "
@@ -1380,7 +1380,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName  = $this->builder->getQueryClassName();
-        $tableMapClass   = $this->builder->getTableMapClass();
+        $tableMapClass   = $this->builder->getEntityMapClass();
         $useScope        = $this->behavior->useScope();
 
         $script .= "
@@ -1453,27 +1453,27 @@ protected \$collNestedSetChildren = null;
 protected \$aNestedSetParent = null;
 
 /**
- * Left column for the set
+ * Left field for the set
  */
-const LEFT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('left_column') . "';
+const LEFT_COL = '" . $tableName . '.' . $this->behavior->getFieldConstant('left_field') . "';
 
 /**
- * Right column for the set
+ * Right field for the set
  */
-const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('right_column') . "';
+const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getFieldConstant('right_field') . "';
 
 /**
- * Level column for the set
+ * Level field for the set
  */
-const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('level_column') . "';
+const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getFieldConstant('level_field') . "';
 ";
 
         if ($this->behavior->useScope()) {
             $script .=     "
 /**
- * Scope column for the set
+ * Scope field for the set
  */
-const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('scope_column') . "';
+const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getFieldConstant('scope_field') . "';
 ";
         }
 

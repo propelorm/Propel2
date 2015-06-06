@@ -11,7 +11,7 @@
 namespace Propel\Generator\Behavior\Versionable;
 
 /**
- * Behavior to add versionable columns and abilities
+ * Behavior to add versionable fields and abilities
  *
  * @author François Zaninotto
  */
@@ -28,7 +28,7 @@ class VersionableBehaviorQueryBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table    = $behavior->getEntity();
     }
 
     public function queryAttributes()
@@ -46,19 +46,19 @@ static \$isVersioningEnabled = true;
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumnAttribute($name = 'version_column')
+    protected function getFieldAttribute($name = 'version_field')
     {
-        return strtolower($this->behavior->getColumnForParameter($name)->getName());
+        return strtolower($this->behavior->getFieldForParameter($name)->getName());
     }
 
-    protected function getColumnPhpName($name = 'version_column')
+    protected function getFieldPhpName($name = 'version_field')
     {
-        return $this->behavior->getColumnForParameter($name)->getName();
+        return $this->behavior->getFieldForParameter($name)->getName();
     }
 
     protected function getVersionQueryClassName()
     {
-        return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
+        return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionEntity()));
     }
 
     protected function setBuilder($builder)
@@ -69,30 +69,30 @@ static \$isVersioningEnabled = true;
     }
 
     /**
-     * Get the getter of the column of the behavior
+     * Get the getter of the field of the behavior
      *
      * @return string The related getter, e.g. 'getVersion'
      */
-    protected function getColumnGetter($name = 'version_column')
+    protected function getFieldGetter($name = 'version_field')
     {
-        return 'get' . $this->getColumnPhpName($name);
+        return 'get' . $this->getFieldPhpName($name);
     }
 
     /**
-     * Get the setter of the column of the behavior
+     * Get the setter of the field of the behavior
      *
      * @return string The related setter, e.g. 'setVersion'
      */
-    protected function getColumnSetter($name = 'version_column')
+    protected function getFieldSetter($name = 'version_field')
     {
-        return 'set' . $this->getColumnPhpName($name);
+        return 'set' . $this->getFieldPhpName($name);
     }
 
     public function queryMethods($builder)
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ('version' !== $this->getParameter('version_field')) {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }
@@ -108,15 +108,15 @@ static \$isVersioningEnabled = true;
     {
         $script .= "
 /**
- * Wrap the filter on the version column
+ * Wrap the filter on the version field
  *
  * @param     integer \$version
- * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+ * @param     string  \$comparison Operator to use for the field comparison, defaults to Criteria::EQUAL
  * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function filterByVersion(\$version = null, \$comparison = null)
 {
-    return \$this->filterBy{$this->getColumnPhpName()}(\$version, \$comparison);
+    return \$this->filterBy{$this->getFieldPhpName()}(\$version, \$comparison);
 }
 ";
     }
@@ -125,14 +125,14 @@ public function filterByVersion(\$version = null, \$comparison = null)
     {
         $script .= "
 /**
- * Wrap the order on the version column
+ * Wrap the order on the version field
  *
  * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
  * @return  \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function orderByVersion(\$order = Criteria::ASC)
 {
-    return \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+    return \$this->orderBy('{$this->getFieldPhpName()}', \$order);
 }
 ";
     }

@@ -23,14 +23,23 @@ class SaveEvent extends RepositoryEvent
      */
     public function __construct(Session $session, EntityMap $entityMap, $entitiesToInsert, $entitiesToUpdate)
     {
-        $this->session = $session;
-        $this->entityMap = $entityMap;
+        parent::__construct($session, $entityMap);
         $this->entitiesToInsert = $entitiesToInsert;
         $this->entitiesToUpdate = $entitiesToUpdate;
     }
 
     /**
-     * @return \object[]
+     * Returns both, entities to be inserted and updated.
+     *
+     * @return object[]
+     */
+    public function getEntities()
+    {
+        return array_merge($this->entitiesToInsert, $this->entitiesToUpdate);
+    }
+
+    /**
+     * @return object[]
      */
     public function getEntitiesToInsert()
     {
@@ -38,7 +47,7 @@ class SaveEvent extends RepositoryEvent
     }
 
     /**
-     * @return mixed
+     * @return object[]
      */
     public function getEntitiesToUpdate()
     {

@@ -15,7 +15,7 @@ namespace Propel\Generator\Behavior\Sortable;
  *
  * @author Jérémie Augustin
  */
-class SortableBehaviorTableMapBuilderModifier
+class SortableBehaviorEntityMapBuilderModifier
 {
     /**
      * @var SortableBehavior
@@ -27,7 +27,7 @@ class SortableBehaviorTableMapBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->table = $behavior->getEntity();
     }
 
     public function staticAttributes($builder)
@@ -44,13 +44,13 @@ class SortableBehaviorTableMapBuilderModifier
                 $col = json_encode($col);
                 $col = "'$col'";
             } else {
-                $colNames = $this->getColumnConstant('scope_column');
+                $colNames = $this->getFieldConstant('scope_field');
                 $col =  "'$tableName.$colNames'";
             }
         }
 
         return $this->behavior->renderTemplate('tableMapSortable', array(
-            'rankColumn' => $this->getColumnConstant('rank_column'),
+            'rankField' => $this->getFieldConstant('rank_field'),
             'multiScope' => $this->behavior->hasMultipleScopes(),
             'scope'      => $col,
             'tableName'      => $this->table->getName(),
@@ -58,9 +58,9 @@ class SortableBehaviorTableMapBuilderModifier
         ));
     }
 
-    protected function getColumnConstant($name)
+    protected function getFieldConstant($name)
     {
-        return $this->behavior->getColumnForParameter($name)->getName();
+        return $this->behavior->getFieldForParameter($name)->getName();
     }
 
 }

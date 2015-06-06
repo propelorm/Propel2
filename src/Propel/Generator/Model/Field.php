@@ -337,6 +337,14 @@ class Field extends MappingModel
     }
 
     /**
+     * @return string
+     */
+    public function getMethodName()
+    {
+        return ucfirst($this->getName());
+    }
+
+    /**
      * @return mixed
      */
     public function getColumnName()

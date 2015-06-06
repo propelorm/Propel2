@@ -40,7 +40,7 @@ class ComputeMethod extends BuildComponent
 
         $foreignEntity = $database->getEntity($behavior->getParameter('foreign_entity'));
 //
-//        $tableName = $database->getEntityPrefix() . $foreignEntity->getTableName();
+//        $tableName = $database->getEntityPrefix() . $foreignEntity->getEntityName();
 //        if ($database->getPlatform()->supportsSchemas() && $behavior->getParameter('foreign_schema')) {
 //            $tableName = $behavior->getParameter('foreign_schema')
 //                . $database->getPlatform()->getSchemaDelimiter()

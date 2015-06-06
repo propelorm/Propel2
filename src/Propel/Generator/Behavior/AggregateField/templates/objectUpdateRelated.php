@@ -1,6 +1,6 @@
 
 /**
- * Update the aggregate column in the related <?=$relationName?> object
+ * Update the aggregate field in the related <?=$relationName?> object
  *
  * @param ConnectionInterface $con A connection object
  */

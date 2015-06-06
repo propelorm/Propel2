@@ -24,11 +24,11 @@ class HookMethods extends BuildComponent
             $pre = 'pre' . ucfirst($hook);
             $post = 'post' . ucfirst($hook);
 
-            $code = $this->getBuilder()->applyBehaviorHooks($pre);
             $eventType = sprintf('\Propel\Runtime\Event\%sEvent', ucfirst($hook));
             $eventParameter = new PhpParameter('event');
             $eventParameter->setType($eventType);
 
+            $code = $this->getBuilder()->applyBehaviorHooks($pre);
             if ($code) {
                 $this
                     ->addMethod($pre)

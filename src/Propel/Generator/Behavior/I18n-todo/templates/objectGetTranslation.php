@@ -5,14 +5,14 @@
  * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
  * @param     ConnectionInterface $con an optional connection object
  *
- * @return <?php echo $i18nTablePhpName ?>
+ * @return <?php echo $i18nEntityPhpName ?>
  */
 public function getTranslation($locale = '<?php echo $defaultLocale ?>', ConnectionInterface $con = null)
 {
     if (!isset($this->currentTranslations[$locale])) {
         if (null !== $this-><?php echo $i18nListVariable ?>) {
             foreach ($this-><?php echo $i18nListVariable ?> as $translation) {
-                if ($translation->get<?php echo $localeColumnName ?>() == $locale) {
+                if ($translation->get<?php echo $localeFieldName ?>() == $locale) {
                     $this->currentTranslations[$locale] = $translation;
 
                     return $translation;
@@ -20,8 +20,8 @@ public function getTranslation($locale = '<?php echo $defaultLocale ?>', Connect
             }
         }
         if ($this->isNew()) {
-            $translation = new <?php echo $i18nTablePhpName ?>();
-            $translation->set<?php echo $localeColumnName ?>($locale);
+            $translation = new <?php echo $i18nEntityPhpName ?>();
+            $translation->set<?php echo $localeFieldName ?>($locale);
         } else {
             $translation = <?php echo $i18nQueryName ?>::create()
                 ->filterByPrimaryKey(array($this->getPrimaryKey(), $locale))

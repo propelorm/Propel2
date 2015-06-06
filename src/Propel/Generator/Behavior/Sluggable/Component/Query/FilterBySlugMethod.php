@@ -23,7 +23,7 @@ return \$this->addUsingAlias($fieldConstant, \$slug, Criteria::EQUAL);
 
         $this->addMethod('filterBySlug')
             ->addSimpleParameter('slug', 'string', 'The value to use as filter')
-            ->setDescription('Filter the query on the slug column')
+            ->setDescription('Filter the query on the slug field')
             ->setType('$this|' . $this->getQueryClassName())
             ->setTypeDescription('The current query, for fluid interface')
             ->setBody($body);

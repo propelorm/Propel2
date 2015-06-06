@@ -11,7 +11,7 @@
 namespace Propel\Generator\Behavior\NestedSet;
 
 /**
- * Behavior to adds nested set tree structure columns and abilities
+ * Behavior to adds nested set tree structure fields and abilities
  *
  * @author François Zaninotto
  */
@@ -32,7 +32,7 @@ class NestedSetBehaviorQueryBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table = $behavior->getTable();
+        $this->table = $behavior->getEntity();
     }
 
     protected function getParameter($key)
@@ -40,9 +40,9 @@ class NestedSetBehaviorQueryBuilderModifier
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumn($name)
+    protected function getField($name)
     {
-        return $this->behavior->getColumnForParameter($name);
+        return $this->behavior->getFieldForParameter($name);
     }
 
     protected function setBuilder($builder)
@@ -50,7 +50,7 @@ class NestedSetBehaviorQueryBuilderModifier
         $this->builder           = $builder;
         $this->objectClassName   = $builder->getObjectClassName();
         $this->queryClassName    = $builder->getQueryClassName();
-        $this->tableMapClassName = $builder->getTableMapClassName();
+        $this->tableMapClassName = $builder->getEntityMapClassName();
     }
 
     public function queryMethods($builder)
@@ -293,10 +293,10 @@ public function orderByBranch(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
+            ->addDescendingOrderByField({$this->objectClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
+            ->addAscendingOrderByField({$this->objectClassName}::LEFT_COL);
     }
 }
 ";
@@ -316,12 +316,12 @@ public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
         return \$this
-            ->addDescendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
-            ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
+            ->addDescendingOrderByField({$this->objectClassName}::LEVEL_COL)
+            ->addDescendingOrderByField({$this->objectClassName}::LEFT_COL);
     } else {
         return \$this
-            ->addAscendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
-            ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
+            ->addAscendingOrderByField({$this->objectClassName}::LEVEL_COL)
+            ->addAscendingOrderByField({$this->objectClassName}::LEFT_COL);
     }
 }
 ";
@@ -412,7 +412,7 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "\$con = nu
     {
         $queryClassName     = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
         $script .= "
 /**
@@ -438,7 +438,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
         $queryClassName    = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
         $script .= "
 /**
@@ -472,7 +472,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
         $queryClassName     = $this->queryClassName;
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
         $script .= "
 /**
@@ -492,7 +492,7 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
     if (null === \$criteria) {
         \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
     }
-    \$criteria->addAscendingOrderByColumn($objectClassName::LEFT_COL);";
+    \$criteria->addAscendingOrderByField($objectClassName::LEFT_COL);";
         if ($useScope) {
             $script .= "
     \$criteria->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
@@ -530,7 +530,7 @@ static public function isValid($objectClassName \$node = null)
     {
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
         $script .= "
 /**
@@ -567,9 +567,9 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
     {
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
-        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
+        $this->builder->declareClass('Propel\\Runtime\Map\\EntityMap');
 
         $script .= "
 /**
@@ -592,7 +592,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
     }
 
-    // Shift left column values
+    // Shift left field values
     \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$criterion = \$whereCriteria->getNewCriterion($objectClassName::LEFT_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
@@ -610,7 +610,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 
     \$whereCriteria->doUpdate(\$valuesCriteria, \$con);
 
-    // Shift right column values
+    // Shift right field values
     \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
     \$criterion = \$whereCriteria->getNewCriterion($objectClassName::RIGHT_COL, \$first, Criteria::GREATER_EQUAL);
     if (null !== \$last) {
@@ -635,9 +635,9 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
     {
         $objectClassName   = $this->objectClassName;
         $useScope          = $this->behavior->useScope();
-        $tableMapClassName = $this->builder->getTableMapClass();
+        $tableMapClassName = $this->builder->getEntityMapClass();
 
-        $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
+        $this->builder->declareClass('Propel\\Runtime\Map\\EntityMap');
 
         $script .= "
 /**
@@ -708,11 +708,11 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             $pkey = $this->table->getPrimaryKey();
             $col = array_shift($pkey);
             $script .= "
-            \$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);";
+            \$criteria->add(".$this->builder->getFieldConstant($col).", \$keys, Criteria::IN);";
         } else {
             $fields = array();
             foreach ($this->table->getPrimaryKey() as $k => $col) {
-                $fields[] = $this->builder->getColumnConstant($col);
+                $fields[] = $this->builder->getFieldConstant($col);
             };
             $script .= "
 
@@ -742,20 +742,20 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
                 \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
                 if (null !== (\$object = $tableMapClassName::getInstanceFromPool(\$key))) {";
         $n = 0;
-        foreach ($this->table->getColumns() as $col) {
+        foreach ($this->table->getFields() as $col) {
             if ($col->isLazyLoad()) {
                 continue;
             }
-            if ($col->getName() == $this->getColumnPhpName('left_column')) {
+            if ($col->getName() == $this->getFieldPhpName('left_field')) {
                 $script .= "
                     \$object->setLeftValue(\$row[$n]);";
-            } elseif ($col->getName() == $this->getColumnPhpName('right_column')) {
+            } elseif ($col->getName() == $this->getFieldPhpName('right_field')) {
                 $script .= "
                     \$object->setRightValue(\$row[$n]);";
-            } elseif ($this->getParameter('use_scope') == 'true' && $col->getName() == $this->getColumnPhpName('scope_column')) {
+            } elseif ($this->getParameter('use_scope') == 'true' && $col->getName() == $this->getFieldPhpName('scope_field')) {
                 $script .= "
                     \$object->setScopeValue(\$row[$n]);";
-            } elseif ($col->getName() == $this->getColumnPhpName('level_column')) {
+            } elseif ($col->getName() == $this->getFieldPhpName('level_field')) {
                 $script .= "
                     \$object->setLevel(\$row[$n]);
                     \$object->clearNestedSetChildren();";
@@ -781,10 +781,10 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
 /**
  * Update the tree to allow insertion of a leaf at the specified position
  *
- * @param      int \$left    left column value";
+ * @param      int \$left    left field value";
         if ($useScope) {
             $script .= "
- * @param      integer \$scope    scope column value";
+ * @param      integer \$scope    scope field value";
         }
         $script .= "
  * @param      mixed \$prune    Object to prune from the shift
@@ -814,7 +814,7 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
  *";
         if ($useScope) {
             $script .= "
- * @param      integer \$scope    scope column value";
+ * @param      integer \$scope    scope field value";
         }
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
@@ -827,10 +827,10 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
     \$c->add($objectClassName::SCOPE_COL, \$scope, Criteria::EQUAL);";
         }
         $script .= "
-    \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
+    \$c->addAscendingOrderByField($objectClassName::LEFT_COL);
     \$dataFetcher = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
     ";
-        if (!$this->table->getChildrenColumn()) {
+        if (!$this->table->getChildrenField()) {
             $script .= "
     // set the class once to avoid overhead in the loop
     \$cls = $tableMapClassName::getOMClass(false);";
@@ -844,7 +844,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         // hydrate object
         \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
         if (null === (\$obj = $tableMapClassName::getInstanceFromPool(\$key))) {";
-        if ($this->table->getChildrenColumn()) {
+        if ($this->table->getChildrenField()) {
             $script .= "
             // class must be set each time from the record row
             \$cls = $tableMapClassName::getOMClass(\$row, 0);
@@ -912,8 +912,8 @@ public static function setNegativeScope(\$scope, ConnectionInterface \$con = nul
 ";
     }
 
-    protected function getColumnPhpName($columnName)
+    protected function getFieldPhpName($fieldName)
     {
-        return $this->behavior->getColumnForParameter($columnName)->getName();
+        return $this->behavior->getFieldForParameter($fieldName)->getName();
     }
 }

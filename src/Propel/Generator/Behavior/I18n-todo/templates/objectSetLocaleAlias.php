@@ -9,5 +9,5 @@
  */
 public function set<?php echo $alias ?>($locale = '<?php echo $defaultLocale ?>')
 {
-    return $this->set<?= $localeColumnName ?>($locale);
+    return $this->set<?= $localeFieldName ?>($locale);
 }

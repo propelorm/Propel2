@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 
 /**
  * Behavior to add sortable query methods
@@ -43,9 +43,9 @@ class SortableBehaviorQueryBuilderModifier
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumn($name)
+    protected function getField($name)
     {
-        return $this->behavior->getColumnForParameter($name);
+        return $this->behavior->getFieldForParameter($name);
     }
 
     protected function setBuilder($builder)
@@ -70,13 +70,13 @@ class SortableBehaviorQueryBuilderModifier
         if ($this->behavior->useScope()) {
             $this->addInList($script);
         }
-        if ('rank' !== $this->getParameter('rank_column')) {
+        if ('rank' !== $this->getParameter('rank_field')) {
             $this->addFilterByRank($script);
             $this->addOrderByRank($script);
         }
 
         // select termination methods
-        if ('rank' !== $this->getParameter('rank_column') || $this->behavior->useScope()) {
+        if ('rank' !== $this->getParameter('rank_field') || $this->behavior->useScope()) {
             $this->addFindOneByRank($script);
         }
         $this->addFindList($script);
@@ -115,12 +115,12 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
         if ($this->behavior->hasMultipleScopes()) {
             foreach ($this->behavior->getScopes() as $idx => $scope) {
                 $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::".Field::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
 ";
             }
         } else {
             $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper(current($this->behavior->getScopes())).", \$scope, Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::".Field::CONSTANT_PREFIX.strtoupper(current($this->behavior->getScopes())).", \$scope, Criteria::EQUAL);
 ";
         }
 
@@ -208,10 +208,10 @@ public function orderByRank(\$order = Criteria::ASC)
     \$order = strtoupper(\$order);
     switch (\$order) {
         case Criteria::ASC:
-            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
+            return \$this->addAscendingOrderByField(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
             break;
         case Criteria::DESC:
-            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
+            return \$this->addDescendingOrderByField(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
             break;
         default:
             throw new \Propel\Runtime\Exception\PropelException('{$this->queryClassName}::orderBy() only accepts \"asc\" or \"desc\" as argument');
@@ -379,8 +379,8 @@ public function getMaxRankArray(" . ($useScope ? "\$scope, " : "") . "Connection
 
     protected function addReorder(&$script)
     {
-        $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getName();
-        $columnSetter = 'set' . $this->behavior->getColumnForParameter('rank_column')->getName();
+        $fieldGetter = 'get' . $this->behavior->getFieldForParameter('rank_field')->getName();
+        $fieldSetter = 'set' . $this->behavior->getFieldForParameter('rank_field')->getName();
         $script .= "
 /**
  * Reorder a set of sortable objects based on a list of id/position
@@ -403,8 +403,8 @@ public function reorder(\$order, ConnectionInterface \$con = null)
         \$objects = \$this->findPks(\$ids, \$con);
         foreach (\$objects as \$object) {
             \$pk = \$object->getPrimaryKey();
-            if (\$object->$columnGetter() != \$order[\$pk]) {
-                \$object->$columnSetter(\$order[\$pk]);
+            if (\$object->$fieldGetter() != \$order[\$pk]) {
+                \$object->$fieldSetter(\$order[\$pk]);
                 \$object->save(\$con);
             }
         }
@@ -476,12 +476,12 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
         \$criteria = clone \$criteria;
     }
 
-    \$criteria->clearOrderByColumns();
+    \$criteria->clearOrderByFields();
 
     if (Criteria::ASC == \$order) {
-        \$criteria->addAscendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
+        \$criteria->addAscendingOrderByField({$this->tableMapClassName}::RANK_COL);
     } else {
-        \$criteria->addDescendingOrderByColumn({$this->tableMapClassName}::RANK_COL);
+        \$criteria->addDescendingOrderByField({$this->tableMapClassName}::RANK_COL);
     }
 
     return $queryClassName::create(null, \$criteria)->find(\$con);

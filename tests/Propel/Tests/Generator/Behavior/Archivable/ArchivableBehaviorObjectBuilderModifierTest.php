@@ -11,9 +11,12 @@
 
 namespace Propel\Tests\Generator\Behavior\Archivable;
 
+use Base\BaseArchivableTest10Repository;
+use Map\ArchivableTest10EntityMap;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
@@ -24,76 +27,72 @@ use Propel\Tests\TestCase;
  */
 class ArchivableBehaviorObjectBuilderModifierTest extends TestCase
 {
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        if (!class_exists('\ArchivableTest10')) {
-            $schema = <<<EOF
-<database name="archivable_behavior_test_10">
+        $schema = <<<EOF
+<database name="archivable_behavior_test_10" activeRecord="true">
 
-    <table name="archivable_test_10">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
-        <foreign-key foreignTable="archivable_test_20">
-            <reference local="foo_id" foreign="id" />
-        </foreign-key>
+    <entity name="ArchivableTest10">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="age" type="INTEGER" />
+        <relation field="foo" target="ArchivableTest20" />
         <index>
-            <index-column name="title" />
-            <index-column name="age" />
+            <index-field name="title" />
+            <index-field name="age" />
         </index>
         <behavior name="archivable" />
-    </table>
+    </entity>
 
-    <table name="archivable_test_20">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+    <entity name="ArchivableTest20">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="archivable" />
-    </table>
+    </entity>
 
-    <table name="archivable_test_20_archive">
-        <column name="id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    </table>
+    <entity name="ArchivableTest20Archive">
+        <field name="id" required="true" primaryKey="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+    </entity>
 
-    <table name="archivable_test_30">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
+    <entity name="ArchivableTest30">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="age" type="INTEGER" />
         <behavior name="archivable">
             <parameter name="log_archived_at" value="false" />
-            <parameter name="archive_table" value="my_old_archivable_test_30" />
+            <parameter name="archive_entity" value="MyOldArchivableTest30" />
             <parameter name="archive_on_insert" value="true" />
             <parameter name="archive_on_update" value="true" />
             <parameter name="archive_on_delete" value="false" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="archivable_test_40">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
+    <entity name="ArchivableTest40">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="age" type="INTEGER" />
         <behavior name="archivable">
             <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
         </behavior>
-    </table>
+    </entity>
 
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema);
-        }
+        QuickBuilder::buildSchema($schema);
     }
 
     public function testHasGetArchiveMethod()
     {
-        $this->assertTrue(method_exists('\ArchivableTest10', 'getArchive'));
+        $this->assertTrue(method_exists('\Base\BaseArchivableTest10Repository', 'getArchive'));
     }
+
 
     public function testGetArchiveReturnsNullOnNewObjects()
     {
+        $repo = QuickBuilder::$configuration->getRepository('ArchivableTest10');
         $a = new \ArchivableTest10();
-        $this->assertNull($a->getArchive());
+        $this->assertNull($repo->getArchive($a));
     }
 
     public function testGetArchiveReturnsNullWhenNoArchiveIsFound()
@@ -134,6 +133,10 @@ EOF;
         $archive = \ArchivableTest10ArchiveQuery::create()
             ->filterById($a->getId())
             ->findOne();
+
+        var_dump($a->getId());
+        var_dump($archive);
+        var_dump(\ArchivableTest10ArchiveQuery::create()->find());
         $this->assertInstanceOf('\ArchivableTest10Archive', $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
@@ -153,19 +156,6 @@ EOF;
         $a->archive();
         $this->assertEquals(1, \ArchivableTest10ArchiveQuery::create()->count());
         $this->assertEquals('foo', $b->getTitle());
-    }
-
-    public function testArchiveUsesArchiveClassIfSpecified()
-    {
-        $a = new \ArchivableTest40();
-        $a->setTitle('foo');
-        $a->setAge(12);
-        $a->save();
-        $a->archive();
-        $archive = FooArchiveCollection::getArchiveSingleton();
-        $this->assertEquals($a->getId(), $archive->id);
-        $this->assertEquals('foo', $archive->title);
-        $this->assertEquals(12, $archive->age);
     }
 
     public function testArchiveReturnsArchivedObject()

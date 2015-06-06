@@ -1,12 +1,12 @@
 
 /**
- * Computes the value of the aggregate column <?=$column->getName()?>
+ * Computes the value of the aggregate field <?=$field->getName()?>
  *
  * @param ConnectionInterface $con A connection object
  *
  * @return mixed The scalar result from the aggregate query
  */
-public function compute<?=$column->getName()?>(ConnectionInterface $con)
+public function compute<?=$field->getName()?>(ConnectionInterface $con)
 {
     $stmt = $con->prepare('<?=$sql?>');
 <?php foreach ($bindings as $key => $binding):?>

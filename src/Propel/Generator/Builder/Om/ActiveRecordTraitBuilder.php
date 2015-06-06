@@ -41,5 +41,6 @@ class ActiveRecordTraitBuilder extends AbstractBuilder
             $this->applyComponent('ActiveRecordTrait\\IsNewMethod');
             $this->applyComponent('ActiveRecordTrait\\DeleteMethod');
         }
+        $this->applyComponent('ActiveRecordTrait\\GetRepositoryMethod');
     }
 }

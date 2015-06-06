@@ -179,7 +179,6 @@ class Configuration extends GeneratorConfig
         if ($filename || $extraConf) {
             parent::__construct($filename, $extraConf);
 
-
             foreach ($this->getRuntimeConnections() as $name => $connection) {
                 $this->databaseToAdapter[$name] = $connection['adapter'];
                 $connectionManager = $this->buildConnectionManager($name, $connection);
@@ -427,9 +426,9 @@ class Configuration extends GeneratorConfig
     public function getEntityPersister(Session $session, $entityName)
     {
         $entityMap = $this->getEntityMap($entityName);
-        $class = $entityMap->getPersisterClass();
-
-        return new $class($session, $entityMap);
+        $database = $this->getDatabaseForEntityClass($entityName);
+        $adapter = $this->getAdapter($database->getName());
+        return $adapter->getPersister($session, $entityMap);
     }
 
     /**
@@ -609,6 +608,19 @@ class Configuration extends GeneratorConfig
         return $this->adapters[$name];
     }
 
+    /**
+     * @param string $name
+     * @param AdapterInterface $adapter
+     */
+    public function setAdapter($name, AdapterInterface $adapter)
+    {
+        $this->adapters[$name] = $adapter;
+    }
+
+    /**
+     * @param string $databaseName
+     * @param string $adapterClass
+     */
     public function setAdapterClass($databaseName, $adapterClass)
     {
         $this->databaseToAdapter[$databaseName] = $adapterClass;
@@ -659,7 +671,6 @@ class Configuration extends GeneratorConfig
             $class .= sprintf(', round=%d', $this->getSession()->getRoundIndex()); //$caller['object']));
         }
         $this->log(sprintf('[%s] %s', $class, $message));
-        ob_flush();
     }
 
     /**
@@ -687,7 +698,7 @@ class Configuration extends GeneratorConfig
 
     public function isDebug()
     {
-        return false;
+        return getenv('DEBUG');
     }
 
     /**

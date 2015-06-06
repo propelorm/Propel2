@@ -10,11 +10,16 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use gossi\codegen\model\PhpProperty;
+use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -23,135 +28,157 @@ use Propel\Generator\Model\Table;
  */
 class ArchivableBehavior extends Behavior
 {
+    use ComponentTrait;
+
     // default parameters value
     protected $parameters = array(
-        'archive_table'       => '',
-        'archive_phpname'     => null,
-        'archive_class'       => '',
+        'archive_entity'       => '',
+        'archive_table_name'   => null,
         'log_archived_at'     => 'true',
-        'archived_at_column'  => 'archived_at',
+        'archived_at_field'   => 'archivedAt',
         'archive_on_insert'   => 'false',
         'archive_on_update'   => 'false',
         'archive_on_delete'   => 'true',
     );
 
-    protected $archiveTable;
+    /**
+     * @var Entity
+     */
+    protected $archiveEntity;
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
 
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
-            if ($table->hasBehavior($this->getId())) {
+        foreach ($this->getDatabase()->getEntities() as $entity) {
+            if ($entity->hasBehavior($this->getId())) {
                 // don't add the same behavior twice
                 continue;
             }
-            if (property_exists($table, 'isArchiveTable')) {
-                // don't add the behavior to archive tables
+            if (property_exists($entity, 'isArchiveEntity')) {
+                // don't add the behavior to archive entities
                 continue;
             }
             $b = clone $this;
-            $table->addBehavior($b);
+            $entity->addBehavior($b);
         }
     }
 
-    public function modifyTable()
+    public function modifyEntity()
     {
-        if ($this->getParameter('archive_class') && $this->getParameter('archive_table')) {
-            throw new InvalidArgumentException('Please set only one of the two parameters "archive_class" and "archive_table".');
-        }
-        if (!$this->getParameter('archive_class')) {
-            $this->addArchiveTable();
-        }
+        $this->addArchiveEntity();
     }
 
-    protected function addArchiveTable()
+    protected function addArchiveEntity()
     {
-        $table = $this->getTable();
-        $database = $table->getDatabase();
-        $archiveTableName = $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getName() . '_archive');
-        if (!$database->hasTable($archiveTableName)) {
-            // create the version table
-            $archiveTable = $database->addTable(array(
-                'name'      => $archiveTableName,
-                'phpName'   => $this->getParameter('archive_phpname'),
-                'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
-                'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-            ));
-            $archiveTable->isArchiveTable = true;
-            // copy all the columns
-            foreach ($table->getColumns() as $column) {
-                $columnInArchiveTable = clone $column;
-                if ($columnInArchiveTable->hasReferrers()) {
-                    $columnInArchiveTable->clearReferrers();
+        $entity = $this->getEntity();
+        $database = $entity->getDatabase();
+        $archiveEntityName = $this->getParameter('archive_entity') ?: ($this->getEntity()->getName() . 'Archive');
+
+        if (!$database->hasEntity($archiveEntityName)) {
+            // create the version entity
+            $archiveEntity = $database->addEntity(
+                array(
+                    'name' => $archiveEntityName,
+                    'tableName' => $this->getParameter('archive_table_name'),
+                    'package' => $entity->getPackage(),
+                    'schema' => $entity->getSchema(),
+                    'namespace' => $entity->getNamespace() ? '\\' . $entity->getNamespace() : null,
+                )
+            );
+
+            // copy all the fields
+            foreach ($entity->getFields() as $field) {
+                $fieldInArchiveEntity = clone $field;
+                if ($fieldInArchiveEntity->hasReferrers()) {
+                    $fieldInArchiveEntity->clearReferrers();
                 }
-                if ($columnInArchiveTable->isAutoincrement()) {
-                    $columnInArchiveTable->setAutoIncrement(false);
+                if ($fieldInArchiveEntity->isAutoincrement()) {
+                    $fieldInArchiveEntity->setAutoIncrement(false);
                 }
-                $archiveTable->addColumn($columnInArchiveTable);
+                $archiveEntity->addField($fieldInArchiveEntity);
             }
-            // add archived_at column
-            if ($this->getParameter('log_archived_at') == 'true') {
-                $archiveTable->addColumn(array(
-                    'name' => $this->getParameter('archived_at_column'),
-                    'type' => 'TIMESTAMP'
-                ));
-            }
-            // do not copy foreign keys
-            // copy the indices
-            foreach ($table->getIndices() as $index) {
-                $copiedIndex = clone $index;
-                $archiveTable->addIndex($copiedIndex);
-            }
-            // copy unique indices to indices
-            // see https://github.com/propelorm/Propel/issues/175 for details
-            foreach ($table->getUnices() as $unique) {
-                $index = new Index();
-                $index->setTable($table);
-                foreach ($unique->getColumns() as $columnName) {
-                    if ($size = $unique->getColumnSize($columnName)) {
-                        $index->addColumn(array('name' => $columnName, 'size' => $size));
-                    } else {
-                        $index->addColumn(array('name' => $columnName));
-                    }
-                }
-                $archiveTable->addIndex($index);
-            }
-            // every behavior adding a table should re-execute database behaviors
-            foreach ($database->getBehaviors() as $behavior) {
-                $behavior->modifyDatabase();
-            }
-            $this->archiveTable = $archiveTable;
         } else {
-            $this->archiveTable = $database->getTable($archiveTableName);
+            $archiveEntity = $database->getEntity($archiveEntityName);
         }
+
+        $archiveEntity->isArchiveEntity = true;
+
+        // add archived_at field
+        if ('true' === $this->getParameter('log_archived_at')) {
+            $archiveEntity->addField(array(
+                'name' => $this->getParameter('archived_at_field'),
+                'type' => 'TIMESTAMP'
+            ));
+        }
+
+        // do not copy foreign keys
+        // copy the indices
+        foreach ($entity->getIndices() as $index) {
+            if (!$archiveEntity->isIndex($index->getFieldObjects())) {
+                $copiedIndex = clone $index;
+                $archiveEntity->addIndex($copiedIndex);
+            }
+        }
+        // copy unique indices to indices
+        // see https://github.com/propelorm/Propel/issues/175 for details
+        foreach ($entity->getUnices() as $unique) {
+            $index = new Index();
+            $index->setEntity($entity);
+            foreach ($unique->getFields() as $fieldName) {
+                if ($size = $unique->getFieldSize($fieldName)) {
+                    $index->addField(array('name' => $fieldName, 'size' => $size));
+                } else {
+                    $index->addField(array('name' => $fieldName));
+                }
+            }
+
+            if (!$archiveEntity->isIndex($index->getFieldObjects())) {
+                $archiveEntity->addIndex($index);
+            }
+        }
+
+        // every behavior adding a entity should re-execute database behaviors
+        foreach ($database->getBehaviors() as $behavior) {
+            $behavior->modifyDatabase();
+        }
+
+        $this->archiveEntity = $archiveEntity;
     }
 
     /**
-     * @return Table
+     * @param RepositoryBuilder $builder
      */
-    public function getArchiveTable()
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-        return $this->archiveTable;
+        $archiveExcludePersist = new PhpProperty('archiveExcludePersist');
+        $archiveExcludePersist->setType('array');
+        $archiveExcludePersist->setDefaultValue([]);
+        $builder->getDefinition()->setProperty($archiveExcludePersist);
+
+        $archiveExcludeDelete = clone $archiveExcludePersist;
+        $archiveExcludeDelete->setName('archiveExcludeDelete');
+        $builder->getDefinition()->setProperty($archiveExcludeDelete);
+
+        $this->applyComponent('Repository\\ArchiveMethod', $builder);
+        $this->applyComponent('Repository\\GetArchiveMethod', $builder);
+        $this->applyComponent('Repository\\RestoreFromArchiveMethod', $builder);
+        $this->applyComponent('Repository\\PersistWithoutArchiveMethod', $builder);
+        $this->applyComponent('Repository\\DeleteWithoutArchiveMethod', $builder);
     }
 
-    public function getArchiveTablePhpName($builder)
+    public function activeRecordTraitBuilderModification(ActiveRecordTraitBuilder $builder)
     {
-        if ($this->hasArchiveClass()) {
-            return $this->getParameter('archive_class');
-        }
-
-        return $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getArchiveTable()));
+        $this->applyComponent('ActiveRecordTrait\\GetArchiveMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\\ArchiveMethod', $builder);
     }
 
-    public function getArchiveTableQueryName($builder)
+    /**
+     * @return Entity
+     */
+    public function getArchiveEntity()
     {
-        if ($this->hasArchiveClass()) {
-            return $this->getParameter('archive_class') . 'Query';
-        }
-
-        return $builder->getClassNameFromBuilder($builder->getNewStubQueryBuilder($this->getArchiveTable()));
+        return $this->archiveEntity;
     }
 
     public function hasArchiveClass()
@@ -159,13 +186,61 @@ class ArchivableBehavior extends Behavior
         return $this->getParameter('archive_class') ? true : false;
     }
 
-    /**
-     * @return Column
-     */
-    public function getArchivedAtColumn()
+    public function preDelete()
     {
-        if ($this->getArchiveTable() && 'true' === $this->getParameter('log_archived_at')) {
-            return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
+        if (!$this->isArchiveOnDelete()) {
+            return null;
+        }
+
+        return "
+foreach(\$event->getEntities() as \$entity) {
+    if (isset(\$this->archiveExcludeDelete[spl_object_hash(\$entity)])) {
+        continue;
+    }
+    \$this->archive(\$entity);
+}
+";
+    }
+
+    public function preUpdate()
+    {
+        if (!$this->isArchiveOnUpdate()) {
+            return null;
+        }
+
+        return "
+foreach(\$event->getEntities() as \$entity) {
+    if (isset(\$this->archiveExcludePersist[spl_object_hash(\$entity)])) {
+        continue;
+    }
+    \$this->archive(\$entity);
+}
+";
+    }
+
+    public function postInsert()
+    {
+        if (!$this->isArchiveOnInsert()) {
+            return null;
+        }
+
+        return "
+foreach(\$event->getEntities() as \$entity) {
+    if (isset(\$this->archiveExcludePersist[spl_object_hash(\$entity)])) {
+        continue;
+    }
+    \$this->archive(\$entity, true);
+}
+";
+    }
+
+    /**
+     * @return Field
+     */
+    public function getArchivedAtField()
+    {
+        if ($this->getArchiveEntity() && 'true' === $this->getParameter('log_archived_at')) {
+            return $this->getArchiveEntity()->getField($this->getParameter('archived_at_field'));
         }
     }
 
@@ -182,23 +257,5 @@ class ArchivableBehavior extends Behavior
     public function isArchiveOnDelete()
     {
         return 'true' === $this->getParameter('archive_on_delete');
-    }
-
-    public function getObjectBuilderModifier()
-    {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
-        }
-
-        return $this->objectBuilderModifier;
-    }
-
-    public function getQueryBuilderModifier()
-    {
-        if (null === $this->queryBuilderModifier) {
-            $this->queryBuilderModifier = new ArchivableBehaviorQueryBuilderModifier($this);
-        }
-
-        return $this->queryBuilderModifier;
     }
 }

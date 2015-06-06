@@ -34,7 +34,7 @@ $entityReader = $this->getPropReader();
             if ($field->isImplementationDetail()) {
                 continue;
             }
-            if ($field->isPrimaryKey()) {
+            if ($field->isAutoIncrement()) {
                 continue;
             }
             $placeholder[] = '?';
@@ -48,6 +48,7 @@ $entityReader = $this->getPropReader();
             switch (strtoupper($field->getType())) {
                 case PropelTypes::DATE:
                 case PropelTypes::TIME:
+                case PropelTypes::TIMESTAMP:
                     $dateTimeClass = $this->getBuilder()->getBuildProperty('dateTimeClass');
                     if (!$dateTimeClass) {
                         $dateTimeClass = '\DateTime';

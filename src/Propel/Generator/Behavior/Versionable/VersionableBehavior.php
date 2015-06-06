@@ -22,17 +22,17 @@ class VersionableBehavior extends Behavior
 {
     // default parameters value
     protected $parameters = array(
-        'version_column'            => 'version',
+        'version_field'            => 'version',
         'version_table'             => '',
         'log_created_at'            => 'false',
         'log_created_by'            => 'false',
         'log_comment'               => 'false',
-        'version_created_at_column' => 'version_created_at',
-        'version_created_by_column' => 'version_created_by',
-        'version_comment_column'    => 'version_comment'
+        'version_created_at_field' => 'version_created_at',
+        'version_created_by_field' => 'version_created_by',
+        'version_comment_field'    => 'version_comment'
     );
 
-    protected $versionTable;
+    protected $versionEntity;
 
     protected $objectBuilderModifier;
 
@@ -42,13 +42,13 @@ class VersionableBehavior extends Behavior
 
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
+        foreach ($this->getDatabase()->getEntities() as $table) {
             if ($table->hasBehavior($this->getId())) {
                 // don't add the same behavior twice
                 continue;
             }
-            if (property_exists($table, 'isVersionTable')) {
-                // don't add the behavior to version tables
+            if (property_exists($table, 'isVersionEntity')) {
+                // don't add the behavior to version entities
                 continue;
             }
             $b = clone $this;
@@ -56,114 +56,114 @@ class VersionableBehavior extends Behavior
         }
     }
 
-    public function modifyTable()
+    public function modifyEntity()
     {
-        $this->addVersionColumn();
-        $this->addLogColumns();
-        $this->addVersionTable();
-        $this->addForeignKeyVersionColumns();
+        $this->addVersionField();
+        $this->addLogFields();
+        $this->addVersionEntity();
+        $this->addForeignKeyVersionFields();
     }
 
-    protected function addVersionColumn()
+    protected function addVersionField()
     {
-        $table = $this->getTable();
-        // add the version column
-        if (!$table->hasColumn($this->getParameter('version_column'))) {
-            $table->addColumn(array(
-                'name'    => $this->getParameter('version_column'),
+        $table = $this->getEntity();
+        // add the version field
+        if (!$table->hasField($this->getParameter('version_field'))) {
+            $table->addField(array(
+                'name'    => $this->getParameter('version_field'),
                 'type'    => 'INTEGER',
                 'default' => 0
             ));
         }
     }
 
-    protected function addLogColumns()
+    protected function addLogFields()
     {
-        $table = $this->getTable();
-        if ('true' === $this->getParameter('log_created_at') && !$table->hasColumn($this->getParameter('version_created_at_column'))) {
-            $table->addColumn(array(
-                'name' => $this->getParameter('version_created_at_column'),
+        $table = $this->getEntity();
+        if ('true' === $this->getParameter('log_created_at') && !$table->hasField($this->getParameter('version_created_at_field'))) {
+            $table->addField(array(
+                'name' => $this->getParameter('version_created_at_field'),
                 'type' => 'TIMESTAMP'
             ));
         }
-        if ('true' === $this->getParameter('log_created_by') && !$table->hasColumn($this->getParameter('version_created_by_column'))) {
-            $table->addColumn(array(
-                'name' => $this->getParameter('version_created_by_column'),
+        if ('true' === $this->getParameter('log_created_by') && !$table->hasField($this->getParameter('version_created_by_field'))) {
+            $table->addField(array(
+                'name' => $this->getParameter('version_created_by_field'),
                 'type' => 'VARCHAR',
                 'size' => 100
             ));
         }
-        if ('true' === $this->getParameter('log_comment') && !$table->hasColumn($this->getParameter('version_comment_column'))) {
-            $table->addColumn(array(
-                'name' => $this->getParameter('version_comment_column'),
+        if ('true' === $this->getParameter('log_comment') && !$table->hasField($this->getParameter('version_comment_field'))) {
+            $table->addField(array(
+                'name' => $this->getParameter('version_comment_field'),
                 'type' => 'VARCHAR',
                 'size' => 255
             ));
         }
     }
 
-    protected function addVersionTable()
+    protected function addVersionEntity()
     {
-        $table = $this->getTable();
+        $table = $this->getEntity();
         $database = $table->getDatabase();
-        $versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getName() . '_version');
-        if (!$database->hasTable($versionTableName)) {
+        $versionEntityName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getName() . '_version');
+        if (!$database->hasEntity($versionEntityName)) {
             // create the version table
-            $versionTable = $database->addTable(array(
-                'name'      => $versionTableName,
-                'phpName'   => $this->getVersionTablePhpName(),
+            $versionEntity = $database->addEntity(array(
+                'name'      => $versionEntityName,
+                'phpName'   => $this->getVersionEntityPhpName(),
                 'package'   => $table->getPackage(),
                 'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
                 'skipSql'   => $table->isSkipSql()
             ));
-            $versionTable->isVersionTable = true;
+            $versionEntity->isVersionEntity = true;
             // every behavior adding a table should re-execute database behaviors
             foreach ($database->getBehaviors() as $behavior) {
                 $behavior->modifyDatabase();
             }
-            // copy all the columns
-            foreach ($table->getColumns() as $column) {
-                $columnInVersionTable = clone $column;
-                $columnInVersionTable->clearInheritanceList();
-                if ($columnInVersionTable->hasReferrers()) {
-                    $columnInVersionTable->clearReferrers();
+            // copy all the fields
+            foreach ($table->getFields() as $field) {
+                $fieldInVersionEntity = clone $field;
+                $fieldInVersionEntity->clearInheritanceList();
+                if ($fieldInVersionEntity->hasReferrers()) {
+                    $fieldInVersionEntity->clearReferrers();
                 }
-                if ($columnInVersionTable->isAutoincrement()) {
-                    $columnInVersionTable->setAutoIncrement(false);
+                if ($fieldInVersionEntity->isAutoincrement()) {
+                    $fieldInVersionEntity->setAutoIncrement(false);
                 }
-                $versionTable->addColumn($columnInVersionTable);
+                $versionEntity->addField($fieldInVersionEntity);
             }
             // create the foreign key
             $fk = new ForeignKey();
-            $fk->setForeignTableCommonName($table->getCommonName());
+            $fk->setForeignEntityCommonName($table->getCommonName());
             $fk->setForeignSchemaName($table->getSchema());
             $fk->setOnDelete('CASCADE');
             $fk->setOnUpdate(null);
             $tablePKs = $table->getPrimaryKey();
-            foreach ($versionTable->getPrimaryKey() as $key => $column) {
-                $fk->addReference($column, $tablePKs[$key]);
+            foreach ($versionEntity->getPrimaryKey() as $key => $field) {
+                $fk->addReference($field, $tablePKs[$key]);
             }
-            $versionTable->addForeignKey($fk);
+            $versionEntity->addForeignKey($fk);
 
-            // add the version column to the primary key
-            $versionColumn = $versionTable->getColumn($this->getParameter('version_column'));
-            $versionColumn->setNotNull(true);
-            $versionColumn->setPrimaryKey(true);
-            $this->versionTable = $versionTable;
+            // add the version field to the primary key
+            $versionField = $versionEntity->getField($this->getParameter('version_field'));
+            $versionField->setNotNull(true);
+            $versionField->setPrimaryKey(true);
+            $this->versionEntity = $versionEntity;
         } else {
-            $this->versionTable = $database->getTable($versionTableName);
+            $this->versionEntity = $database->getEntity($versionEntityName);
         }
     }
 
-    public function addForeignKeyVersionColumns()
+    public function addForeignKeyVersionFields()
     {
-        $versionTable = $this->versionTable;
+        $versionEntity = $this->versionEntity;
         foreach ($this->getVersionableFks() as $fk) {
-            $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-            if (!$versionTable->hasColumn($fkVersionColumnName)) {
-                $versionTable->addColumn(array(
-                    'name'    => $fkVersionColumnName,
+            $fkVersionFieldName = $fk->getLocalFieldName() . '_version';
+            if (!$versionEntity->hasField($fkVersionFieldName)) {
+                $versionEntity->addField(array(
+                    'name'    => $fkVersionFieldName,
                     'type'    => 'INTEGER',
                     'default' => 0
                 ));
@@ -171,41 +171,41 @@ class VersionableBehavior extends Behavior
         }
 
         foreach ($this->getVersionableReferrers() as $fk) {
-            $fkTableName = $fk->getTable()->getName();
-            $fkIdsColumnName = $fkTableName . '_ids';
-            if (!$versionTable->hasColumn($fkIdsColumnName)) {
-                $versionTable->addColumn(array(
-                    'name'    => $fkIdsColumnName,
+            $fkEntityName = $fk->getEntity()->getName();
+            $fkIdsFieldName = $fkEntityName . '_ids';
+            if (!$versionEntity->hasField($fkIdsFieldName)) {
+                $versionEntity->addField(array(
+                    'name'    => $fkIdsFieldName,
                     'type'    => 'ARRAY'
                 ));
             }
 
-            $fkVersionsColumnName = $fkTableName . '_versions';
-            if (!$versionTable->hasColumn($fkVersionsColumnName)) {
-                $versionTable->addColumn(array(
-                    'name'    => $fkVersionsColumnName,
+            $fkVersionsFieldName = $fkEntityName . '_versions';
+            if (!$versionEntity->hasField($fkVersionsFieldName)) {
+                $versionEntity->addField(array(
+                    'name'    => $fkVersionsFieldName,
                     'type'    => 'ARRAY'
                 ));
             }
         }
     }
 
-    public function getVersionTable()
+    public function getVersionEntity()
     {
-        return $this->versionTable;
+        return $this->versionEntity;
     }
 
-    public function getVersionTablePhpName()
+    public function getVersionEntityPhpName()
     {
-        return $this->getTable()->getName() . 'Version';
+        return $this->getEntity()->getName() . 'Version';
     }
 
     public function getVersionableFks()
     {
         $versionableFKs = array();
-        if ($fks = $this->getTable()->getForeignKeys()) {
+        if ($fks = $this->getEntity()->getForeignKeys()) {
             foreach ($fks as $fk) {
-                if ($fk->getForeignTable()->hasBehavior($this->getName()) && ! $fk->isComposite()) {
+                if ($fk->getForeignEntity()->hasBehavior($this->getName()) && ! $fk->isComposite()) {
                     $versionableFKs []= $fk;
                 }
             }
@@ -217,9 +217,9 @@ class VersionableBehavior extends Behavior
     public function getVersionableReferrers()
     {
         $versionableReferrers = array();
-        if ($fks = $this->getTable()->getReferrers()) {
+        if ($fks = $this->getEntity()->getReferrers()) {
             foreach ($fks as $fk) {
-                if ($fk->getTable()->hasBehavior($this->getName()) && ! $fk->isComposite()) {
+                if ($fk->getEntity()->hasBehavior($this->getName()) && ! $fk->isComposite()) {
                     $versionableReferrers []= $fk;
                 }
             }
@@ -228,20 +228,20 @@ class VersionableBehavior extends Behavior
         return $versionableReferrers;
     }
 
-    public function getReferrerIdsColumn(ForeignKey $fk)
+    public function getReferrerIdsField(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
-        $fkIdsColumnName = $fkTableName . '_ids';
+        $fkEntityName = $fk->getEntity()->getName();
+        $fkIdsFieldName = $fkEntityName . '_ids';
 
-        return $this->versionTable->getColumn($fkIdsColumnName);
+        return $this->versionEntity->getField($fkIdsFieldName);
     }
 
-    public function getReferrerVersionsColumn(ForeignKey $fk)
+    public function getReferrerVersionsField(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
-        $fkIdsColumnName = $fkTableName . '_versions';
+        $fkEntityName = $fk->getEntity()->getName();
+        $fkIdsFieldName = $fkEntityName . '_versions';
 
-        return $this->versionTable->getColumn($fkIdsColumnName);
+        return $this->versionEntity->getField($fkIdsFieldName);
     }
 
     public function getObjectBuilderModifier()

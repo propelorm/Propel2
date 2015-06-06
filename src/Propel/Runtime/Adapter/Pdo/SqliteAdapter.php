@@ -12,6 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Persister\SQL\SQLitePersister;
 
 /**
  * This is used in order to connect to a SQLite database.
@@ -20,6 +21,11 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
 {
+
+    public function getPersister($session, $entityMap)
+    {
+        return new SQLitePersister($session, $entityMap);
+    }
 
     /**
      * For SQLite this method has no effect, since SQLite doesn't support specifying a character

@@ -21,10 +21,10 @@ class GetPropWriterMethod extends BuildComponent
         $className = $this->getObjectClassName(true);
 
         $body = "
-        if (!\$this->propWriter) {
-            \$this->propWriter = \$this->getClassPropWriter('$className');
-        }
-        return \$this->propWriter;
+if (!\$this->propWriter) {
+\$this->propWriter = \$this->getClassPropWriter('$className');
+}
+return \$this->propWriter;
         ";
 
         $this->addMethod('getPropWriter')

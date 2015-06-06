@@ -503,7 +503,7 @@ PRAGMA foreign_keys = ON;
 
         $script = sprintf($pattern,
             $this->getFieldListDDL($relation->getLocalFieldObjects()),
-            $this->quoteIdentifier($relation->getForeignEntityName()),
+            $this->quoteIdentifier($relation->getEntity()->getFQTableName()),
             $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
 

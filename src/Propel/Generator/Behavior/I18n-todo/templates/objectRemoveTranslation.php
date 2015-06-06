@@ -18,7 +18,7 @@ public function removeTranslation($locale = '<?php echo $defaultLocale ?>', Conn
         unset($this->currentTranslations[$locale]);
     }
     foreach ($this-><?php echo $i18nCollection ?> as $key => $translation) {
-        if ($translation->get<?php echo $localeColumnName ?>() == $locale) {
+        if ($translation->get<?php echo $localeFieldName ?>() == $locale) {
             unset($this-><?php echo $i18nCollection ?>[$key]);
             break;
         }

@@ -20,7 +20,7 @@ use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Relation;
 
 /**
- * Keeps an aggregate column updated with related table
+ * Keeps an aggregate field updated with related table
  *
  * @author François Zaninotto
  */
@@ -75,66 +75,8 @@ class AggregateFieldRelationBehavior extends Behavior
 
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-//        $this->applyComponent('RelationObject\\Attribute', $builder);
-//        $this->applyComponent('RelatedRepository\\FindRelatedMethod', $builder);
         $this->applyComponent('RelatedRepository\\UpdateRelatedMethod', $builder);
     }
-
-    // no need for a postDelete() hook, since delete() uses Query::delete(),
-    // which already has a hook
-
-//    public function objectFilter(&$script, $builder)
-//    {
-//        $relationName = $this->getRelationName($builder);
-//        $aggregateName = $this->getParameter('aggregate_name');
-//        $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
-//        $search = "    public function set{$relationName}({$relatedClass} \$v = null)
-//    {";
-//        $replace = $search . "
-//        // aggregate_column_relation behavior
-//        if (null !== \$this->a{$relationName} && \$v !== \$this->a{$relationName}) {
-//            \$this->old{$relationName}{$aggregateName} = \$this->a{$relationName};
-//        }";
-//        $script = str_replace($search, $replace, $script);
-//    }
-
-//    public function preUpdate($builder)
-//    {
-//        return $this->getFindRelated($builder);
-//    }
-//
-//    public function preDelete($builder)
-//    {
-//        return $this->getFindRelated($builder);
-//    }
-
-//    protected function getFindRelated($builder)
-//    {
-//        $this->builder = $builder;
-//        $relationName = $this->getRelationName();
-//        $aggregateName = $this->getParameter('aggregate_name');
-//
-//        return "\$this->findRelated{$relationName}{$aggregateName}(\$event);";
-//    }
-
-//    public function postUpdate($builder)
-//    {
-//        return $this->getUpdateRelated($builder);
-//    }
-
-//    public function postDelete($builder)
-//    {
-//        return $this->getUpdateRelated($builder);
-//    }
-
-//    protected function getUpdateRelated($builder)
-//    {
-//        $this->builder = $builder;
-//        $relationName = $this->getRelationName();
-//        $aggregateName = ucfirst($this->getParameter('aggregate_name'));
-//
-//        return "\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntities());";
-//    }
 
     /**
      * @return Entity
