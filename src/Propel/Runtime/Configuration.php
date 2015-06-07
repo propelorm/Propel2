@@ -359,7 +359,7 @@ class Configuration extends GeneratorConfig
      */
     public function hasEntityMap($fullEntityClassName)
     {
-        return isset($this->entityMaps[$fullEntityClassName]);
+        return isset($this->entityToDatabaseMap[$fullEntityClassName]);
     }
 
     /**
@@ -665,10 +665,10 @@ class Configuration extends GeneratorConfig
      */
     public function debug($message)
     {
-        list(, $caller) = debug_backtrace(false);
+        list(, $caller) = debug_backtrace();
         $class = $caller['class'];
         if ('Propel\Runtime\Session\SessionRound' === $class) {
-            $class .= sprintf(', round=%d', $this->getSession()->getRoundIndex()); //$caller['object']));
+            $class .= sprintf(', round=%d', $caller['object']->getIdx());
         }
         $this->log(sprintf('[%s] %s', $class, $message));
     }

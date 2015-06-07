@@ -12,12 +12,7 @@
 namespace Propel\Tests\Generator\Behavior\Archivable;
 
 use Base\BaseArchivableTest10Repository;
-use Map\ArchivableTest10EntityMap;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
-
-use Propel\Runtime\Configuration;
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -110,6 +105,7 @@ EOF;
         $a->setTitle('foo');
         $a->setAge(12);
         $a->save();
+
         $archive = new \ArchivableTest10Archive();
         $archive->setId($a->getId());
         $archive->setTitle('bar');
@@ -134,9 +130,6 @@ EOF;
             ->filterById($a->getId())
             ->findOne();
 
-        var_dump($a->getId());
-        var_dump($archive);
-        var_dump(\ArchivableTest10ArchiveQuery::create()->find());
         $this->assertInstanceOf('\ArchivableTest10Archive', $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
@@ -170,7 +163,7 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \InvalidArgumentException
      */
     public function testArchiveThrowsExceptionOnNewObjects()
     {
@@ -216,18 +209,10 @@ EOF;
         $this->assertTrue(method_exists('\ArchivableTest10', 'populateFromArchive'));
     }
 
-    public function testPopulateFromArchiveReturnsCurrentObject()
-    {
-        $archive = new \ArchivableTest10Archive();
-        $a = new \ArchivableTest10();
-        $ret = $a->populateFromArchive($archive);
-        $this->assertSame($ret, $a);
-    }
-
     public function testPopulateFromArchive()
     {
         \ArchivableTest10ArchiveQuery::create()->deleteAll();
-        \ArchivableTest10Query::create()->deleteAllWithoutArchive();
+        \ArchivableTest10Query::create()->deleteAll();
         $archive = new \ArchivableTest10Archive();
         $archive->setId(123); // not autoincremented
         $archive->setTitle('foo');
@@ -235,12 +220,9 @@ EOF;
         $archive->save();
         $a = new \ArchivableTest10();
         $a->populateFromArchive($archive);
-        $this->assertNotEquals(123, $a->getId());
+        $this->assertEquals(123, $a->getId());
         $this->assertEquals('foo', $a->getTitle());
         $this->assertEquals(12, $a->getAge());
-        $b = new \ArchivableTest10();
-        $b->populateFromArchive($archive, true);
-        $this->assertEquals(123, $b->getId());
     }
 
     public function testInsertDoesNotCreateArchiveByDefault()
@@ -260,13 +242,17 @@ EOF;
         $a->setAge(12);
         \MyOldArchivableTest30Query::create()->deleteAll();
         $a->save();
+        $this->assertGreaterThan(0, $a->getId());
+
         $this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
         $archive = \MyOldArchivableTest30Query::create()
             ->filterById($a->getId())
             ->findOne();
+
         $this->assertInstanceOf('\MyOldArchivableTest30', $archive);
         $this->assertEquals('foo', $archive->getTitle());
         $this->assertEquals(12, $archive->getAge());
+        $this->assertEquals($a->getId(), $archive->getId());
     }
 
     public function testUpdateDoesNotCreateArchiveByDefault()
@@ -281,16 +267,30 @@ EOF;
         $this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
     }
 
+    /**
+     * @group test
+     */
     public function testUpdateCreatesArchiveIfSpecified()
     {
+        \MyOldArchivableTest30Query::create()->deleteAll();
         $a = new \ArchivableTest30();
         $a->setTitle('foo');
         $a->setAge(12);
+        var_dump('####FICKIII'); ob_flush();
         $a->save();
+
         $a->setTitle('bar');
-        \MyOldArchivableTest30Query::create()->deleteAll();
-        $a->save();
+        $this->assertGreaterThan(0, $a->getId());
         $this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
+        \MyOldArchivableTest30Query::create()->deleteAll();
+
+        var_dump('####FICKIII 222'); ob_flush();
+        $a->save();
+
+        $this->assertGreaterThan(0, $a->getId());
+        $this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
+
+
         $archive = \MyOldArchivableTest30Query::create()
             ->filterById($a->getId())
             ->findOne();

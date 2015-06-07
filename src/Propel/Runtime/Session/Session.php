@@ -22,6 +22,11 @@ class Session
     protected $currentRound = -1;
 
     /**
+     * @var int
+     */
+    protected $currentCommitRound = -1;
+
+    /**
      * @var array
      */
     protected $knownEntities = [];
@@ -59,7 +64,7 @@ class Session
     /**
      * @param Configuration $configuration
      */
-    function __construct(Configuration $configuration)
+    public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -87,12 +92,12 @@ class Session
     }
 
     /**
-     * @param object  $entity
+     * @param object $entity
      * @param boolean $deep Whether all attached entities(relations) should be persisted too.
      */
     public function persist($entity, $deep = false)
     {
-        if ($this->getCurrentRound()->inCommit()) {
+        if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
         }
 
@@ -190,7 +195,7 @@ class Session
      */
     public function remove($entity)
     {
-        if ($this->getCurrentRound()->inCommit()) {
+        if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
         }
 
@@ -205,25 +210,35 @@ class Session
         $this->currentRound++;
         $this->getConfiguration()->debug('enter new round (' . $this->currentRound . ')');
 
-        return $this->rounds[$this->currentRound] = new SessionRound($this);
+        return $this->rounds[$this->currentRound] = new SessionRound($this, $this->currentRound);
     }
+
+//    /**
+//     *
+//     */
+//    public function closeRound()
+//    {
+//        if ($this->hasOpenRounds()) {
+//            $this->getConfiguration()->debug('close round (' . $this->currentRound . ')');
+//            unset($this->rounds[$this->currentRound]);
+//            $this->currentRound--;
+//        }
+//    }
+
+//    /**
+//     * @return bool
+//     */
+//    public function hasOpenRounds()
+//    {
+//        return $this->currentRound >= 0;
+//    }
 
     /**
-     *
+     * @return int
      */
-    public function closeRound()
+    public function getCurrentCommitRoundIndex()
     {
-        if ($this->currentRound >= 0) {
-            $this->getConfiguration()->debug('close round (' . $this->currentRound . ')');
-            unset($this->rounds[$this->currentRound]);
-            $this->currentRound--;
-        }
-    }
-
-    public function getRoundIndex()
-    {
-        return $this->currentRound;
-//        return array_search($round, $this->rounds, true);
+        return $this->currentCommitRound;
     }
 
     /**
@@ -231,8 +246,36 @@ class Session
      */
     public function commit()
     {
-        $this->getCurrentRound()->commit();
-        $this->closeRound();
+        if (!$this->rounds) {
+            return;
+        }
+
+        while (true) {
+            $allCommitted = true;
+            $allBusy = true;
+
+            foreach ($this->rounds as $idx => $round) {
+                $allCommitted &= $round->isCommitted();
+                if (!$round->isCommitted()) {
+                    $allBusy &= $round->isInCommit();
+                }
+                if (!$round->isCommitted() && !$round->isInCommit()) {
+//                    $this->currentCommitRound = $idx;
+                    $this->getConfiguration()->debug('commit round (' . $idx . ')');
+                    $round->commit();
+                    $this->getConfiguration()->debug('close round (' . $idx . ')');
+                    continue;
+                }
+            }
+
+            if ($allCommitted || $allBusy) {
+                break;
+            }
+        }
+
+//        $this->getConfiguration()->debug(count($this->rounds) . ' rounds committed');
+        $this->currentRound = -1;
+        $this->rounds = [];
     }
 
     /**
@@ -272,7 +315,9 @@ class Session
         }
 
         if (!isset($this->lastKnownValues[$id])) {
-            throw new \InvalidARgumentException('Given id does not exists in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().');
+            throw new \InvalidARgumentException(
+                'Given id does not exists in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().'
+            );
         }
 
         return $this->lastKnownValues[$id];
@@ -313,10 +358,11 @@ class Session
     public function getInstanceFromFirstLevelCache($prefix, $hashCode)
     {
         if (isset($this->firstLevelCache[$prefix][$hashCode])) {
-            $this->getConfiguration()->debug('retrieve firstLevelCache ' . $hashCode);
+            $this->getConfiguration()->debug('retrieve firstLevelCache ' . $prefix . '/' . $hashCode);
+
             return $this->firstLevelCache[$prefix][$hashCode];
         } else {
-            $this->getConfiguration()->debug('rejected firstLevelCache ' . $hashCode);
+            $this->getConfiguration()->debug('rejected firstLevelCache ' . $prefix . '/' . $hashCode);
         }
     }
 
@@ -331,7 +377,7 @@ class Session
         $originPk = json_encode($repo->getOriginPK($entity));
         $currentPk = json_encode($repo->getPK($entity));
 
-        if (!isset($this->firstLevelCache[$prefix])){
+        if (!isset($this->firstLevelCache[$prefix])) {
             $this->firstLevelCache[$prefix] = [];
         }
 

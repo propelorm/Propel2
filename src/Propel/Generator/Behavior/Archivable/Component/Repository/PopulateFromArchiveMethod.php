@@ -18,6 +18,7 @@ class PopulateFromArchiveMethod extends BuildComponent
         /** @var ArchivableBehavior $behavior */
         $behavior = $this->getBehavior();
         $archiveClassName = $behavior->getArchiveEntity()->getFullClassName();
+        $this->getDefinition()->declareUse($archiveClassName);
 
         $body = "
 \$this->getConfiguration()->getEntityMap('$archiveClassName')->copyInto(\$archive, \$entity);

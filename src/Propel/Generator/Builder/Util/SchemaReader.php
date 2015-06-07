@@ -16,6 +16,7 @@ use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Schema;
@@ -234,16 +235,19 @@ class SchemaReader
                     $this->currDB->addDomain($attributes);
                     break;
 
-//                case 'table':
-//                    //backwards compatibility
-//                    $attributes['tableName'] = $attributes['name'];
-//                    if (isset($attributes['phpName'])) {
-//                        $attributes['name'] = $attributes['phpName'];
-//                    } else {
-//                        $attributes['name'] = static::toCamelCase($attributes['tableName']);
-//                    }
-//                    //no break, since we need to treat it as entity now
+                case 'table':
                 case 'entity':
+                    if ('table' === $name) {
+                        //backwards compatibility
+                        $attributes['tableName'] = $attributes['name'];
+
+                        if (isset($attributes['phpName'])) {
+                            $attributes['name'] = $attributes['phpName'];
+                        } else {
+                            $attributes['name'] = ucfirst(NamingTool::toCamelCase($attributes['tableName']));
+                        }
+                    }
+
                     $this->currEntity = $this->currDB->addEntity($attributes);
                     if ($this->isExternalSchema()) {
                         $this->currEntity->setForReferenceOnly($this->isForReferenceOnly);
@@ -264,21 +268,35 @@ class SchemaReader
             }
         } elseif ('entity' === $parentTag || 'table' === $parentTag) {
             switch ($name) {
-//                case 'column':
-//                    //backwards compatibility
-//                    $attributes['tableName'] = $attributes['name'];
-//                    if (isset($attributes['phpName'])) {
-//                        $attributes['name'] = $attributes['phpName'];
-//                    } else {
-//                        $attributes['name'] = static::toCamelCase($attributes['tableName']);
-//                    }
-//                    //no break, since we need to treat it as entity now
+                case 'column':
                 case 'field':
+
+                    if ('column' === $name) {
+                        //backwards compatibility
+                        $attributes['columnName'] = $attributes['name'];
+                        if (isset($attributes['phpName'])) {
+                            $attributes['name'] = $attributes['phpName'];
+                        } else {
+                            $attributes['name'] = NamingTool::toCamelCase($attributes['name']);
+                        }
+                    }
+
                     $this->currField = $this->currEntity->addField($attributes);
                     break;
 
                 case 'relation':
-//                case 'foreign-key':
+                case 'foreign-key':
+
+                    if ('foreign-key' === $name) {
+                        //backwards compatibility
+                        $attributes['target'] = ucfirst(NamingTool::toCamelCase($attributes['foreignTable']));
+                        if (isset($attributes['phpName'])) {
+                            $attributes['field'] = $attributes['phpName'];
+                        } else {
+                            $attributes['field'] = NamingTool::toCamelCase($attributes['foreignTable']);
+                        }
+                    }
+
                     $this->currFK = $this->currEntity->addRelation($attributes);
                     break;
 
@@ -309,7 +327,7 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ('field' === $parentTag) { // || 'column' === $parentTag) {
+        } elseif ('field' === $parentTag || 'column' === $parentTag) {
 
             switch ($name) {
                 case 'inheritance':
@@ -323,10 +341,16 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ('relation' === $parentTag) { // || 'foreign-key' === $parentTag) {
+        } elseif ('relation' === $parentTag || 'foreign-key' === $parentTag) {
 
             switch ($name) {
                 case 'reference':
+                    if ('foreign-key' === $parentTag) {
+                        //backwards compatibility
+                        $attributes['local'] = NamingTool::toCamelCase($attributes['local']);
+                        $attributes['foreign'] = NamingTool::toCamelCase($attributes['foreign']);
+                    }
+
                     $this->currFK->addReference($attributes);
                     break;
 
@@ -340,8 +364,12 @@ class SchemaReader
         } elseif ('index' === $parentTag) {
 
             switch ($name) {
-//                case 'index-column':
+                case 'index-column':
                 case 'index-field':
+                    if ('index-column' === $parentTag) {
+                        //backwards compatibility
+                        $attributes['name'] = NamingTool::toCamelCase($attributes['name']);
+                    }
                     $this->currIndex->addField($attributes);
                     break;
 
@@ -355,8 +383,12 @@ class SchemaReader
         } elseif ('unique' === $parentTag) {
 
             switch ($name) {
-//                case 'unique-column':
+                case 'unique-column':
                 case 'unique-field':
+                    if ('unique-column' === $parentTag) {
+                        //backwards compatibility
+                        $attributes['name'] = NamingTool::toCamelCase($attributes['name']);
+                    }
                     $this->currUnique->addField($attributes);
                     break;
 
@@ -367,7 +399,7 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ($parentTag == 'behavior') {
+        } elseif ($parentTag === 'behavior') {
 
             switch ($name) {
                 case 'parameter':

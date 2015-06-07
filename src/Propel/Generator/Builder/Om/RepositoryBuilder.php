@@ -44,7 +44,8 @@ class RepositoryBuilder extends AbstractBuilder
         }
 
         $this->getDefinition()->declareUses(
-            '\Propel\Runtime\Propel'
+            '\Propel\Runtime\Propel',
+            '\Propel\Runtime\Exception\PropelException'
         );
 
 //        $this->applyComponent('Repository\\IsNewMethod');

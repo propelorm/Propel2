@@ -145,8 +145,12 @@ class SqlPersister implements PersisterInterface
 
         $this->getConfiguration()->debug(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
         $this->getConfiguration()->debug(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
-        $this->doInsert($inserts);
-        $this->doUpdates($updates, $changeSets);
+        if ($inserts) {
+            $this->doInsert($inserts);
+        }
+        if ($updates) {
+            $this->doUpdates($updates, $changeSets);
+        }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
     }
@@ -183,8 +187,13 @@ EOF;
 
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
+        $value = (integer) $stmt->fetchColumn();
 
-        return $stmt->fetchColumn() ?: 0;
+        if ($value > 0) {
+            return $value;
+        }
+
+        return 1;
     }
 
     /**
@@ -205,10 +214,11 @@ EOF;
         $firstFieldName = $fieldNames[0];
         $object[$firstFieldName] = $this->readAutoIncrement($connection);
 
+        $this->getConfiguration()->debug('prepareAutoIncrement for ' . $this->entityMap->getFullClassName(). ': ' . json_encode($object));
         $this->autoIncrementValues = (object)$object;
     }
 
-    protected function doInsert($inserts)
+    protected function doInsert(array $inserts)
     {
         if (!$inserts) {
             return;
@@ -291,7 +301,7 @@ EOF;
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
     }
 
-    protected function doUpdates($updates, $changeSets)
+    protected function doUpdates(array $updates, $changeSets)
     {
         $event = new UpdateEvent($this->getSession(), $this->entityMap, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);

@@ -9,23 +9,20 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class ArchiveMethod extends BuildComponent
+class SaveWithoutArchiveMethod extends BuildComponent
 {
     public function process()
     {
         /** @var ArchivableBehavior $behavior */
         $behavior = $this->getBehavior();
-        $archiveClassName = $behavior->getArchiveEntity()->getFullClassName();
 
         $body = "
-\$archive = \$this->getRepository()->archive(\$this);
+\$this->getRepository()->persistWithoutArchive(\$this);
 \$this->getPropelConfiguration()->getSession()->commit();
-return \$archive;
 ";
 
-        $this->addMethod('archive')
-            ->setDescription('[Archivable] Archives this object and saves it.')
-            ->setType($archiveClassName)
+        $this->addMethod('saveWithoutArchive')
+            ->setDescription('[Archivable] Saves without creating an archive for it.')
             ->setBody($body);
     }
 }

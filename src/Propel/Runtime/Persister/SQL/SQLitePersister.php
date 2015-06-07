@@ -29,7 +29,12 @@ EOF;
 
         $stmt = $connection->prepare($sql);
         $stmt->execute();
+        $value = (integer) $stmt->fetchColumn();
 
-        return $stmt->fetchColumn();
+        if ($value > 0) {
+            return $value + 1;
+        }
+
+        return 1;
     }
 }

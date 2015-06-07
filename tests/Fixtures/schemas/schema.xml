@@ -3,6 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="../../../generator/resources/xsd/database.xsd"
   schema="bookstore_schemas"
+  activeRecord="true"
   namespace="Propel\Tests\BookstoreSchemas">
 
     <entity name="Book" description="Book Table">

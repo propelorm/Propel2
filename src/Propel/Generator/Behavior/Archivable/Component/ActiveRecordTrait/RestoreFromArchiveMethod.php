@@ -9,7 +9,7 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class ArchiveMethod extends BuildComponent
+class RestoreFromArchiveMethod extends BuildComponent
 {
     public function process()
     {
@@ -18,13 +18,12 @@ class ArchiveMethod extends BuildComponent
         $archiveClassName = $behavior->getArchiveEntity()->getFullClassName();
 
         $body = "
-\$archive = \$this->getRepository()->archive(\$this);
-\$this->getPropelConfiguration()->getSession()->commit();
-return \$archive;
+\$this->getRepository()->restoreFromArchive(\$this, true);
 ";
 
-        $this->addMethod('archive')
-            ->setDescription('[Archivable] Archives this object and saves it.')
+        $this->addMethod('restoreFromArchive')
+            ->setDescription('[Archivable] Revert the the current object to the state it had when it was last archived.
+The object must be saved afterwards if the changes must persist.')
             ->setType($archiveClassName)
             ->setBody($body);
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore" defaultIdMethod="native"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          namespace="Propel\Tests\Bookstore">
+          namespace="Propel\Tests\Bookstore" activeRecord="true">
 
     <entity name="Book" description="Book Table">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id"/>

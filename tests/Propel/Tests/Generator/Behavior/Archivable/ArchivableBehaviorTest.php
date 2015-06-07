@@ -79,7 +79,7 @@ class ArchivableBehaviorTest extends TestCase
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <column name="age" type="INTEGER" />
         <behavior name="archivable">
-            <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
+            <parameter name="archive_entity" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
         </behavior>
     </table>
 
@@ -87,12 +87,13 @@ class ArchivableBehaviorTest extends TestCase
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <behavior name="archivable">
             <parameter name="archive_table" value="archivable_test_5_backup" />
-            <parameter name="archive_phpname" value="ArchivableTest5MyBackup" />
+            <parameter name="archive_entity" value="ArchivableTest5MyBackup" />
         </behavior>
     </table>
 
 </database>
 EOF;
+
             $builder = new QuickBuilder();
             $builder->setSchema($schema);
             self::$generatedSQL = $builder->getSQL();
@@ -102,77 +103,73 @@ EOF;
 
     public function testCreatesArchiveTable()
     {
-        $table = \Map\ArchivableTest1TableMap::getTableMap();
-        $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_1_archive'));
-        $this->assertSame("ArchivableTest1Archive", $table->getDatabaseMap()->getTable('archivable_test_1_archive')->getPhpName());
+        $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest1Archive'));
     }
 
     public function testDoesNotCreateCustomArchiveTableIfExists()
     {
-        $table = \Map\ArchivableTest2TableMap::getTableMap();
-        $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_2_archive'));
+        $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest2Archive'));
     }
 
     public function testCanCreateCustomArchiveTableName()
     {
-        $table = \Map\ArchivableTest3TableMap::getTableMap();
-        $this->assertTrue($table->getDatabaseMap()->hasTable('my_old_archivable_test_3'));
-        $this->assertSame("MyOldArchivableTest3", $table->getDatabaseMap()->getTable('my_old_archivable_test_3')->getPhpName());
+        $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('MyOldArchivableTest3'));
+        $entityMap = QuickBuilder::$configuration->getEntityMap('MyOldArchivableTest3');
+        $this->assertEquals('my_old_archivable_test_3', $entityMap->getTableName());
     }
 
     public function testDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
     {
-        $table = \Map\ArchivableTest4TableMap::getTableMap();
-        $this->assertFalse($table->getDatabaseMap()->hasTable('archivable_test_4_archive'));
+        $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('Propel\Tests\Generator\Behavior\Archivable\FooArchive'));
+        $entityMap = QuickBuilder::$configuration->getEntityMap('Propel\Tests\Generator\Behavior\Archivable\FooArchive');
+        $this->assertEquals('foo_archive', $entityMap->getTableName());
     }
 
     public function testCanCreateCustomArchiveTableNameAndPhpName()
     {
-        $table = \Map\ArchivableTest5TableMap::getTableMap();
-        $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_5_backup'));
-        $this->assertSame("ArchivableTest5MyBackup", $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
+        $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest5MyBackup'));
+        $entityMap = QuickBuilder::$configuration->getEntityMap('ArchivableTest5MyBackup');
+        $this->assertEquals('archivable_test_5_backup', $entityMap->getTableName());
     }
 
     public function testCopiesColumnsToArchiveTable()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $this->assertTrue($table->hasColumn('id'));
+        $entity = QuickBuilder::$configuration->getEntityMap('ArchivableTest1Archive');
+        $this->assertTrue($entity->hasField('id'));
         $this->assertContains('id INTEGER NOT NULL,', self::$generatedSQL, 'copied columns are not autoincremented');
-        $this->assertTrue($table->hasColumn('title'));
-        $this->assertTrue($table->hasColumn('age'));
-        $this->assertTrue($table->hasColumn('foo_id'));
+        $this->assertTrue($entity->hasField('title'));
+        $this->assertTrue($entity->hasField('age'));
+        $this->assertTrue($entity->hasField('fooId'));
     }
 
     public function testDoesNotCopyForeignKeys()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $this->assertEquals(array(), $table->getRelations());
+        $entityMap = QuickBuilder::$configuration->getEntityMap('ArchivableTest1Archive');
+        $this->assertEquals(array(), $entityMap->getRelations());
     }
 
     public function testCopiesIndices()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $expected = "CREATE INDEX archivable_test_1_archive_i_6c947f ON archivable_test_1_archive (title,age);";
+        $expected = "CREATE INDEX archivable_test1archive_i_6c947f ON archivable_test1archive (title,age);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
     public function testCopiesUniquesToIndices()
     {
-        $table = \Map\ArchivableTest2ArchiveTableMap::getTableMap();
         $expected = "CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
     public function testAddsArchivedAtColumnToArchiveTableByDefault()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $this->assertTrue($table->hasColumn('archived_at'));
+        $entityMap = QuickBuilder::$configuration->getEntityMap('ArchivableTest1Archive');
+        $this->assertTrue($entityMap->hasField('archivedAt'));
     }
 
     public function testDoesNotAddArchivedAtColumnToArchiveTableIfSpecified()
     {
-        $table = \Map\MyOldArchivableTest3TableMap::getTableMap();
-        $this->assertFalse($table->hasColumn('archived_at'));
+        $entityMap = QuickBuilder::$configuration->getEntityMap('MyOldArchivableTest3');
+        $this->assertFalse($entityMap->hasField('archivedAt'));
     }
 
     public function testDatabaseLevelBehavior()

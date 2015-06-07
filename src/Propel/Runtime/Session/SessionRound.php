@@ -38,11 +38,27 @@ class SessionRound
     protected $inCommit;
 
     /**
+     * @var boolean
+     */
+    protected $committed = false;
+
+    protected $idx;
+
+    /**
      * @param Session $session
      */
-    function __construct(Session $session)
+    public function __construct(Session $session, $roundIdx)
     {
         $this->session = $session;
+        $this->idx = $roundIdx;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdx()
+    {
+        return $this->idx;
     }
 
     /**
@@ -59,6 +75,14 @@ class SessionRound
     public function getConfiguration()
     {
         return $this->session->getConfiguration();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCommitted()
+    {
+        return $this->committed;
     }
 
     /**
@@ -140,13 +164,15 @@ class SessionRound
             throw $e;
         }
 
+        $this->committed = true;
         $this->inCommit = false;
     }
 
     /**
      * Whether this session is currently being in a commit transaction or not.
+     * @return bool
      */
-    public function inCommit()
+    public function isInCommit()
     {
         return $this->inCommit;
     }

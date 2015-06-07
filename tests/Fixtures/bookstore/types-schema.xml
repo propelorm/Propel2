@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\Bookstore">
+<database name="bookstore" defaultIdMethod="native" activeRecord="true" namespace="Propel\Tests\Bookstore">
 
     <entity name="TypeObject">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />

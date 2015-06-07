@@ -50,6 +50,10 @@ return $value;
     {
         $body = '';
 
+        if ($field->isNumericType()) {
+            $body = '$value = $value + 0;';
+        }
+
         if ($field->isTemporalType()) {
 
             $dateTimeClass = $this->getBuilder()->getBuildProperty('dateTimeClass');

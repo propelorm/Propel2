@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.auto_add_pk" namespace="Propel\Tests\Bookstore\Behavior">
+<database name="bookstore-behavior" defaultIdMethod="native" activeRecord="true" namespace="Propel\Tests\Bookstore\Behavior">
 
     <entity name="Entity6">
         <field name="title" type="VARCHAR" size="100" primaryString="true" />

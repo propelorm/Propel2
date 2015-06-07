@@ -56,14 +56,6 @@ class ObjectBuilder extends AbstractBuilder
             $this->applyComponent('Object\\CrossRelationAdderMethods');
         }
 
-        if ($this->isAddGenericMutators()) {
-            $this->applyComponent('Object\\GenericMutatorMethods');
-        }
-
-        if ($this->isAddGenericAccessors()) {
-            $this->applyComponent('Object\\GenericAccessorMethods');
-        }
-
         $this->applyComponent('Object\\ConstructorMethod');
     }
 }

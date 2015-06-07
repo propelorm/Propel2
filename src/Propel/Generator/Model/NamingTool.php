@@ -6,7 +6,7 @@ class NamingTool
 {
     public static function toCamelCase($string)
     {
-        return implode('', array_map('ucfirst', explode('_', $string)));
+        return lcfirst(implode('', array_map('ucfirst', explode('_', $string))));
     }
 
     public static function toUnderscore($string)

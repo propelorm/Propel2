@@ -9,21 +9,22 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 
 /**
- * Adds the save method for ActiveRecord interface.
+ * Adds the getPrimaryKey for ActiveRecord interface.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class SaveMethod extends BuildComponent
+class GetPrimaryKeyMethod extends BuildComponent
 {
     use NamingTrait;
 
     public function process()
     {
         $body = "
-\$this->getRepository()->save(\$this);";
+return \$this->getRepository()->getPrimaryKey(\$this);";
 
-        $this->addMethod('save')
-            ->setDescription('Saves the entity and all it relations immediately')
+        $this->addMethod('getPrimaryKey')
+            ->setDescription('Returns the current primary key')
+            ->setType('array|integer|string')
             ->setBody($body);
     }
 }

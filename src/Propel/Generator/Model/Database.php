@@ -173,7 +173,7 @@ class Database extends ScopedMappingModel
      */
     public function getPlatform()
     {
-        if (null === $this->platform) {
+        if (null === $this->platform && $this->getGeneratorConfig()) {
             $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
         }
 
@@ -837,7 +837,9 @@ class Database extends ScopedMappingModel
             $behavior->setEntityModified(true);
         }
 
-        $this->getPlatform()->finalizeDefinition($this);
+        if ($this->getPlatform()) {
+            $this->getPlatform()->finalizeDefinition($this);
+        }
     }
 
     protected function registerBehavior(Behavior $behavior)

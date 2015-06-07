@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Builder\Om\Component\Object;
+namespace Propel\Generator\Builder\Om\Component\ActiveRecordTrait;
 
 use gossi\codegen\model\PhpConstant;
 use Propel\Generator\Builder\Om\Component\BuildComponent;

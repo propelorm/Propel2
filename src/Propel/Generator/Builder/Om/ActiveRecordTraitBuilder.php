@@ -41,6 +41,17 @@ class ActiveRecordTraitBuilder extends AbstractBuilder
             $this->applyComponent('ActiveRecordTrait\\IsNewMethod');
             $this->applyComponent('ActiveRecordTrait\\DeleteMethod');
         }
+
+
+        if ($this->isAddGenericMutators()) {
+            $this->applyComponent('ActiveRecordTrait\\GenericMutatorMethods');
+        }
+
+        if ($this->isAddGenericAccessors()) {
+            $this->applyComponent('ActiveRecordTrait\\GenericAccessorMethods');
+        }
+
         $this->applyComponent('ActiveRecordTrait\\GetRepositoryMethod');
+        $this->applyComponent('ActiveRecordTrait\\GetPrimaryKeyMethod');
     }
 }

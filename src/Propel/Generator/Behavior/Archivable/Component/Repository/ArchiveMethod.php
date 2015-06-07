@@ -26,7 +26,7 @@ class ArchiveMethod extends BuildComponent
         $body = "
 \$session = \$this->getConfiguration()->getSession();
 if (\$session->isNew(\$entity)) {
-    throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    throw new \\InvalidArgumentException('New objects cannot be archived. You must save the current object before calling archive().');
 }
 
 if (!\$archive = \$this->getArchive(\$entity)) {
@@ -45,16 +45,12 @@ if (!\$archive = \$this->getArchive(\$entity)) {
 $body .= "
 \$session->persist(\$archive);
 
-if (\$andCommit) {
-    \$session->commit();
-}
 return \$archive;
 ";
 
         $this->addMethod('archive')
             ->setDescription('[Archivable] Archives this object and persists it (without commit())')
             ->addSimpleDescParameter('entity', $this->getEntity()->getFullClassName())
-            ->addSimpleDescParameter('andCommit', 'boolean')
             ->setBody($body);
     }
 }

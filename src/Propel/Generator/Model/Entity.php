@@ -1520,7 +1520,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function getField($name, $caseInsensitive = false)
     {
         if (!$this->hasField($name, $caseInsensitive)) {
-            throw new \InvalidArgumentException(sprintf('Field `%s` not found in Entity `%s`', $name, $this->getName()));
+            throw new \InvalidArgumentException(sprintf('Field `%s` not found in Entity `%s` [%s]', $name, $this->getName(), implode(',', array_keys($this->fieldsByName))));
         }
 
         if ($caseInsensitive) {
@@ -1920,6 +1920,14 @@ class Entity extends ScopedMappingModel implements IdMethod
             return $this->getDatabase()->isActiveRecord();
         }
 
+        return $this->activeRecord;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getActiveRecord()
+    {
         return $this->activeRecord;
     }
 

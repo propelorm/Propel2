@@ -9,7 +9,7 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class ArchiveMethod extends BuildComponent
+class PopulateFromArchiveMethod extends BuildComponent
 {
     public function process()
     {
@@ -18,13 +18,12 @@ class ArchiveMethod extends BuildComponent
         $archiveClassName = $behavior->getArchiveEntity()->getFullClassName();
 
         $body = "
-\$archive = \$this->getRepository()->archive(\$this);
-\$this->getPropelConfiguration()->getSession()->commit();
-return \$archive;
+\$this->getRepository()->populateFromArchive(\$this, \$archive);
 ";
 
-        $this->addMethod('archive')
-            ->setDescription('[Archivable] Archives this object and saves it.')
+        $this->addMethod('populateFromArchive')
+            ->setDescription('[Archivable] Populates the object based on a $archive object.')
+            ->addSimpleParameter('archive', 'object')
             ->setType($archiveClassName)
             ->setBody($body);
     }

@@ -20,6 +20,7 @@ use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Entity;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -33,7 +34,7 @@ class ArchivableBehavior extends Behavior
     // default parameters value
     protected $parameters = array(
         'archive_entity'       => '',
-        'archive_table_name'   => null,
+        'archive_table'        => null,
         'log_archived_at'     => 'true',
         'archived_at_field'   => 'archivedAt',
         'archive_on_insert'   => 'false',
@@ -73,16 +74,25 @@ class ArchivableBehavior extends Behavior
     {
         $entity = $this->getEntity();
         $database = $entity->getDatabase();
-        $archiveEntityName = $this->getParameter('archive_entity') ?: ($this->getEntity()->getName() . 'Archive');
+        $archiveEntityName = $this->getParameter('archive_entity');
+
+        if (!$archiveEntityName && $tableName = $this->getParameter('archive_table')) {
+            $archiveEntityName = ucfirst(NamingTool::toCamelCase($tableName));
+        }
+
+        if (!$archiveEntityName) {
+            $archiveEntityName = $this->getEntity()->getName() . 'Archive';
+        }
 
         if (!$database->hasEntity($archiveEntityName)) {
             // create the version entity
             $archiveEntity = $database->addEntity(
                 array(
                     'name' => $archiveEntityName,
-                    'tableName' => $this->getParameter('archive_table_name'),
+                    'tableName' => $this->getParameter('archive_table'),
                     'package' => $entity->getPackage(),
                     'schema' => $entity->getSchema(),
+                    'activeRecord' => $entity->getActiveRecord(),
                     'namespace' => $entity->getNamespace() ? '\\' . $entity->getNamespace() : null,
                 )
             );
@@ -165,12 +175,17 @@ class ArchivableBehavior extends Behavior
         $this->applyComponent('Repository\\RestoreFromArchiveMethod', $builder);
         $this->applyComponent('Repository\\PersistWithoutArchiveMethod', $builder);
         $this->applyComponent('Repository\\DeleteWithoutArchiveMethod', $builder);
+        $this->applyComponent('Repository\\PopulateFromArchiveMethod', $builder);
     }
 
     public function activeRecordTraitBuilderModification(ActiveRecordTraitBuilder $builder)
     {
         $this->applyComponent('ActiveRecordTrait\\GetArchiveMethod', $builder);
         $this->applyComponent('ActiveRecordTrait\\ArchiveMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\\RestoreFromArchiveMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\\PopulateFromArchiveMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\\SaveWithoutArchiveMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\\DeleteWithoutArchiveMethod', $builder);
     }
 
     /**
@@ -179,11 +194,6 @@ class ArchivableBehavior extends Behavior
     public function getArchiveEntity()
     {
         return $this->archiveEntity;
-    }
-
-    public function hasArchiveClass()
-    {
-        return $this->getParameter('archive_class') ? true : false;
     }
 
     public function preDelete()
@@ -198,6 +208,7 @@ foreach(\$event->getEntities() as \$entity) {
         continue;
     }
     \$this->archive(\$entity);
+    unset(\$this->archiveExcludeDelete[spl_object_hash(\$entity)]);
 }
 ";
     }
@@ -214,6 +225,7 @@ foreach(\$event->getEntities() as \$entity) {
         continue;
     }
     \$this->archive(\$entity);
+    unset(\$this->archiveExcludePersist[spl_object_hash(\$entity)]);
 }
 ";
     }
@@ -229,7 +241,8 @@ foreach(\$event->getEntities() as \$entity) {
     if (isset(\$this->archiveExcludePersist[spl_object_hash(\$entity)])) {
         continue;
     }
-    \$this->archive(\$entity, true);
+    \$this->archive(\$entity);
+    unset(\$this->archiveExcludePersist[spl_object_hash(\$entity)]);
 }
 ";
     }
