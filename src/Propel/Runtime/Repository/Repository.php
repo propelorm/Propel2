@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Repository;
 
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Event\CommitEvent;
 use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\InsertEvent;
 use Propel\Runtime\Event\RepositoryEvent;

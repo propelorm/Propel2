@@ -60,6 +60,10 @@ class Entity extends ScopedMappingModel implements IdMethod
     private $description;
 //    private $phpName;
     private $idMethod;
+
+    /**
+     * @var bool
+     */
     private $allowPkInsert;
     private $phpNamingMethod;
 
@@ -521,7 +525,7 @@ class Entity extends ScopedMappingModel implements IdMethod
         $position = false;
         $nbFields = $this->getNumFields();
         for ($pos = 0; $pos < $nbFields; $pos++) {
-            if ($this->fields[$pos] === $field) {
+            if ($this->fields[$pos]->getName() === $field) {
                 $position = $pos;
             }
         }

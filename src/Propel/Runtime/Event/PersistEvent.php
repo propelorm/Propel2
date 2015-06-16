@@ -17,9 +17,9 @@ class PersistEvent extends RepositoryEvent
      * @param Session   $session
      * @param object    $entity
      */
-    public function __construct(Session $session, $entity)
+    public function __construct(Session $session, EntityMap $entityMap, $entity)
     {
-        $this->session = $session;
+        parent::__construct($session, $entityMap);
         $this->entity = $entity;
     }
 

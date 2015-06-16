@@ -32,22 +32,19 @@ class RelationGetterMethods extends BuildComponent
     protected function addRelationGetter(Relation $relation)
     {
         $varName = $this->getRelationVarName($relation);
-        $relationObjectBuilder = $this
-            ->getBuilder()
-            ->getNewObjectBuilder($relation->getForeignEntity())
-            ->getObjectBuilder();
-
-        $className = $this->getClassNameFromBuilder($relationObjectBuilder);
+        $foreignClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
 
         $body = "
-        return \$this->$varName;
+return \$this->$varName;
 ";
+
+        $internal = "\nMapped by fields " . implode(', ', $relation->getLocalFields());
 
         $methodName = 'get' . $this->getRelationPhpName($relation, false);
         $this->addMethod($methodName)
-            ->setType("null|$className")
-            ->setTypeDescription("The associated $className object")
+            ->setType("null|$foreignClassName")
+            ->setTypeDescription("The associated $foreignClassName object$internal")
             ->setBody($body)
-            ->setDescription("Returns the associated $className object or null if none is associated.");
+            ->setDescription("Returns the associated $foreignClassName object or null if none is associated.");
     }
 }

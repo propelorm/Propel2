@@ -227,8 +227,14 @@ class QuickBuilder
 
         $connectionManager = new ConnectionManagerSingle(new SqliteAdapter());
         $connectionManager->setConnection($con);
-        static::$configuration = new Configuration();
-        Configuration::$globalConfiguration = static::$configuration;
+
+        if (!Configuration::$globalConfiguration) {
+            static::$configuration = new Configuration();
+            Configuration::$globalConfiguration = static::$configuration;
+        } else {
+            static::$configuration = Configuration::$globalConfiguration;
+        }
+
         static::$configuration->setConnectionManager($this->getDatabase()->getName(), $connectionManager);
         static::$configuration->setAdapter($this->getDatabase()->getName(), $adapter);
 

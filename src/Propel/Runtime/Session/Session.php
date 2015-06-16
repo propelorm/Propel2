@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Session;
 
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Events;
 
 /**
  *
@@ -67,6 +68,12 @@ class Session
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
+
+        $self = $this;
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, function() use ($self) {
+            //if PRE_SAVE hooks added new rounds, commit those first
+            $self->commit();
+        });
     }
 
     /**

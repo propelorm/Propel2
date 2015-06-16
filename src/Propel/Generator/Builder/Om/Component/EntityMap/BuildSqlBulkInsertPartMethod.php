@@ -24,6 +24,8 @@ class BuildSqlBulkInsertPartMethod extends BuildComponent
 
     public function process()
     {
+
+
         $body = '
 $params = [];
 $entityReader = $this->getPropReader();
@@ -115,7 +117,7 @@ if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
                     ";
                 } else {
                     $body .= "
-                \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
+    \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
                 }
 
                 $body .= "

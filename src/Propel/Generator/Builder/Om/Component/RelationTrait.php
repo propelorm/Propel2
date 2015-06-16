@@ -81,7 +81,7 @@ trait RelationTrait
      * @throws BuildException
      * @return string
      */
-    protected static function getRelatedBySuffix(Relation $relation)
+    protected function getRelatedBySuffix(Relation $relation)
     {
         $relField = '';
         foreach ($relation->getLocalForeignMapping() as $localFieldName => $foreignFieldName) {
@@ -120,6 +120,11 @@ trait RelationTrait
     public function getRelationVarName(Relation $relation, $plural = false)
     {
         return lcfirst($this->getRelationPhpName($relation, $plural));
+    }
+
+    public function getRefRelationVarName(Relation $relation, $plural = false)
+    {
+        return lcfirst($this->getRefRelationPhpName($relation, $plural));
     }
 
     /**

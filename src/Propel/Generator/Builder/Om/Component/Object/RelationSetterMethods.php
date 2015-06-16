@@ -52,10 +52,12 @@ class RelationSetterMethods extends BuildComponent
             'RelationSetterMethod'
         );
 
+        $internal = "\nMapped by fields " . implode(', ', $relation->getLocalFields());
+
         $this->addMethod($setterName)
             ->setDescription("Declares an association between this object and a $relationClassName object.")
             ->setType("\$this|\\$className")
-            ->setTypeDescription("The current object (for fluent API support)")
+            ->setTypeDescription("The current object (for fluent API support)$internal")
             ->addSimpleParameter($varName, $relationClassName, null)
             ->setBody($body);
     }

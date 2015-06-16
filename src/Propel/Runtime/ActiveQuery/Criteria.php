@@ -715,7 +715,7 @@ class Criteria
     public function getEntityNameFor($name)
     {
         if (isset($this->map[$name])) {
-            return $this->map[$name]->getEntity();
+            return $this->map[$name]->getEntityName();
         }
 
         return null;
@@ -2212,9 +2212,7 @@ class Criteria
         // Get the entity name and method for determining the primary
         // key value.
         $keys = $this->keys();
-        if (!empty($keys)) {
-            $entityName = $this->getEntityNameFor($keys[0]);
-        } else {
+        if (empty($keys)) {
             throw new PropelException('Database insert attempted without anything specified to insert.');
         }
 

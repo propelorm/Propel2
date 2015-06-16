@@ -13,14 +13,8 @@ class GetPropelConfigurationMethod extends BuildComponent
 {
     public function process()
     {
-        $this->addProperty('propelConfiguration');
-
         $body = '
-if (!$this->propelConfiguration){
-    $this->propelConfiguration = \Propel\Runtime\Configuration::getCurrentConfiguration();
-}
-
-return $this->propelConfiguration;';
+return \Propel\Runtime\Configuration::getCurrentConfiguration();';
 
         $this->addMethod('getPropelConfiguration')
             ->setType('\Propel\Runtime\Configuration')

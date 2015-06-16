@@ -114,7 +114,7 @@ class Relation extends MappingModel
         parent::__construct();
 
         if (null !== $name) {
-            $this->setName($name);
+            $this->setField($name);
         }
 
         $this->onUpdate = self::NONE;
@@ -131,9 +131,13 @@ class Relation extends MappingModel
 //        $this->foreignSchemaName = $this->getAttribute('targetSchema');
 
         $this->name = $this->getAttribute('name');
-        $this->field = $this->getAttribute('field') ?: ($this->name ?: lcfirst($this->getAttribute('target')));
+        $this->field = $this->getAttribute('field') ?: lcfirst($this->getAttribute('target'));
 
-        $this->refName = $this->getAttribute('refName') ?: $this->getEntity()->getName();
+        if (!$this->field) {
+            throw new \InvalidArgumentException('field value empty for relation');
+        }
+
+        $this->refName = $this->getAttribute('refName') ?: lcfirst($this->getEntity()->getName());
         $this->refField = $this->getAttribute('refField') ?: ($this->refName ?: $this->getAttribute('target'));
 
         $this->defaultJoin = $this->getAttribute('defaultJoin');

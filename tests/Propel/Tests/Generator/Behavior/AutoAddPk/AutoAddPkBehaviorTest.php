@@ -10,14 +10,13 @@
 
 namespace Propel\Tests\Generator\Behavior\AutoAddPk;
 
+use Propel\Tests\Bookstore\Behavior\Entity6;
+use Propel\Tests\Bookstore\Behavior\Entity8;
+use Propel\Tests\Bookstore\Behavior\Entity8Query;
+use Propel\Tests\Bookstore\Behavior\Map\Entity6EntityMap;
+use Propel\Tests\Bookstore\Behavior\Map\Entity7EntityMap;
+use Propel\Tests\Bookstore\Behavior\Map\Entity8EntityMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table6;
-use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
-use Propel\Tests\Bookstore\Behavior\Table7;
-use Propel\Tests\Bookstore\Behavior\Map\Table7TableMap;
-use Propel\Tests\Bookstore\Behavior\Table8;
-use Propel\Tests\Bookstore\Behavior\Map\Table8TableMap;
 
 /**
  * Tests for AutoAddPkBehavior class
@@ -30,8 +29,8 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 {
     public function testDefault()
     {
-        $table6 = Table6TableMap::getTableMap();
-        $this->assertEquals(count($table6->getColumns()), 2, 'auto_add_pk adds one column by default');
+        $table6 = $this->getConfiguration()->getEntityMap(Entity6EntityMap::ENTITY_CLASS);
+        $this->assertEquals(count($table6->getFields()), 2, 'auto_add_pk adds one column by default');
         $pks = $table6->getPrimaryKeys();
         $this->assertEquals(count($pks), 1, 'auto_add_pk adds a simple primary key by default');
         $pk = array_pop($pks);
@@ -43,8 +42,8 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 
     public function testNoTrigger()
     {
-        $table7 = Table7TableMap::getTableMap();
-        $this->assertEquals(count($table7->getColumns()), 2, 'auto_add_pk does not add a column when the table already has a primary key');
+        $table7 = $this->getConfiguration()->getEntityMap(Entity7EntityMap::ENTITY_CLASS);
+        $this->assertEquals(count($table7->getFields()), 2, 'auto_add_pk does not add a column when the table already has a primary key');
         $this->assertFalse(method_exists('Table7', 'getId'), 'auto_add_pk does not add an id column when the table already has a primary key');
         $pks = $table7->getPrimaryKeys();
         $pk = array_pop($pks);
@@ -53,8 +52,8 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 
     public function testParameters()
     {
-        $table8 = Table8TableMap::getTableMap();
-        $this->assertEquals(count($table8->getColumns()), 3, 'auto_add_pk adds one column with custom parameters');
+        $table8 = $this->getConfiguration()->getEntityMap(Entity8EntityMap::ENTITY_CLASS);
+        $this->assertEquals(count($table8->getFields()), 3, 'auto_add_pk adds one column with custom parameters');
         $pks = $table8->getPrimaryKeys();
         $pk = array_pop($pks);
         $this->assertEquals($pk->getName(), 'identifier', 'auto_add_pk accepts customization of pk column name');
@@ -65,14 +64,15 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
 
     public function testForeignKey()
     {
-        $t6 = new Table6();
+        Entity8Query::create()->deleteAll();
+        $t6 = new Entity6();
         $t6->setTitle('foo');
         $t6->save();
-        $t8 = new Table8();
+        $t8 = new Entity8();
         $t8->setIdentifier(1);
-        $t8->setTable6($t6);
+        $t8->setFoo($t6);
         $t8->save();
-        $this->assertEquals($t8->getFooId(), $t6->getId(), 'Auto added pkeys can be used in relations');
+        $this->assertEquals($t8->getFoo()->getId(), $t6->getId(), 'Auto added pkeys can be used in relations');
         $t8->delete();
         $t6->delete();
     }

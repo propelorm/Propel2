@@ -61,7 +61,7 @@ class DependencyGraph {
             } catch (ElementNotFoundException $e) {
                 $source = $this->session->getEntityById($e->getSource());
                 $target = $this->session->getEntityById($e->getTarget());
-                throw new \Exception(sprintf('Dependency not found. From %s to %s. Did you forget to persist() it?', get_class($source), get_class($target)));
+                throw new \Exception(sprintf('Dependency not found. From %s to %s. Did you forget to persist() it?', get_class($source), get_class($target)), 0, $e);
             }
         }
         return $this->orderedList;

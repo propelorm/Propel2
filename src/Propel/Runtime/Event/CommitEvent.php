@@ -16,7 +16,7 @@ class CommitEvent extends Event
     /**
      * @param Session $session
      */
-    function __construct(Session $session)
+    public function __construct(Session $session)
     {
         $this->ssession = $session;
     }

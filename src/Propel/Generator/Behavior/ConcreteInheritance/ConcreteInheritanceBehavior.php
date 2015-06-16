@@ -72,7 +72,7 @@ class ConcreteInheritanceBehavior extends Behavior
         foreach ($parentEntity->getRelations() as $relation) {
             $copiedFk = clone $relation;
             $copiedFk->setName('');
-            $copiedFk->setRefName('');
+            $copiedFk->setRefField('');
             $copiedFk->setSkipCodeGeneration(true);
             $this->getEntity()->addRelation($copiedFk);
         }
@@ -115,21 +115,56 @@ class ConcreteInheritanceBehavior extends Behavior
         return 'true' === $this->getParameter('copy_data_to_parent');
     }
 
-    public function preCommit()
+    public function preSave()
     {
+        $entityClass = $this->getParentEntity()->getFullClassName();
+
         if ($this->isCopyData()) {
-            $code = <<<'EOF'
-$parentRepository = $this->getConfiguration()->getRepository('%s');
-if ($this->isNew($entity)) {
-    $parent = $parentRepository->createObject();
-} else {
-    $parent = $parentRepository->find($this->getPrimaryKey($entity));
+
+            $getter = 'get' . $this->getParentEntity()->getName();
+            $setter = 'set' . $this->getParentEntity()->getName();
+
+            $code = <<<EOF
+\$session = \$this->getConfiguration()->getSession();
+\$parentRepository = \$this->getConfiguration()->getRepository('$entityClass');
+foreach (\$event->getEntities() as \$entity) {
+
+    if (\$session->isNew(\$entity)) {
+        \$parent = \$parentRepository->createObject();
+        \$entity->$setter(\$parent);
+    }
+
+    \$parent = \$entity->$getter();
+
+    \$parentRepository->getEntityMap()->copyInto(\$entity, \$parent);
+    \$session->persist(\$parent, true);
 }
-$this->copyToParent($entity, $parent);
-$parentRepository->persist($parent);
 EOF;
 
-            return sprintf($code, $this->getParentEntity()->getFullClassName());
+            return $code;
+        }
+    }
+
+    public function postSave()
+    {
+        $entityClass = $this->getParentEntity()->getFullClassName();
+
+        if ($this->isCopyData()) {
+
+            $getter = 'get' . $this->getParentEntity()->getName();
+            $setter = 'set' . $this->getParentEntity()->getName();
+
+            $code = <<<EOF
+\$session = \$this->getConfiguration()->getSession();
+\$parentRepository = \$this->getConfiguration()->getRepository('$entityClass');
+foreach (\$event->getEntities() as \$entity) {
+    \$parent = \$entity->$getter();
+
+    \$parentRepository->getEntityMap()->copyInto(\$parent, \$entity);
+}
+EOF;
+
+            return $code;
         }
     }
 
@@ -150,31 +185,31 @@ EOF;
 
     public function objectBuilderModification(Objectbuilder $builder)
     {
-        $builder->getDefinition()->setParentClassName($this->getParentEntity()->getFullClassName());
+        $builder->getDefinition()->setParentClassName('\\' . $this->getParentEntity()->getFullClassName());
     }
 
     public function queryBuilderModification(QueryBuilder $builder)
     {
         $builder->getDefinition()->setParentClassName(
-            $builder->getNewStubQueryBuilder($this->getParentEntity())->getFullClassName()
+            '\\' . $builder->getNewStubQueryBuilder($this->getParentEntity())->getFullClassName()
         );
     }
 
-    public function repositoryBuilderModification(RepositoryBuilder $builder)
-    {
-        $builder->getDefinition()->setParentClassName(
-            $builder->getNewStubRepositoryBuilder($this->getParentEntity())->getFullClassName()
-        );
-
-        if ($this->isCopyData()) {
-            $this->applyComponent('CopyToParentMethod', $builder);
-        }
-    }
-
-    public function entityMapBuilderModification(EntityMapBuilder $builder)
-    {
-        $fullParentClassName = $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName();
-        $parentClassName = $builder->getDefinition()->declareUse($fullParentClassName);
-        $builder->getDefinition()->setParentClassName($parentClassName);
-    }
+//    public function repositoryBuilderModification(RepositoryBuilder $builder)
+//    {
+//        $builder->getDefinition()->setParentClassName(
+//            '\\' . $builder->getNewStubRepositoryBuilder($this->getParentEntity())->getFullClassName()
+//        );
+//
+//        if ($this->isCopyData()) {
+//            $this->applyComponent('CopyToParentMethod', $builder);
+//        }
+//    }
+//
+//    public function entityMapBuilderModification(EntityMapBuilder $builder)
+//    {
+//        $fullParentClassName = $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName();
+//        $parentClassName = $builder->getDefinition()->declareUse($fullParentClassName);
+//        $builder->getDefinition()->setParentClassName($parentClassName);
+//    }
 }

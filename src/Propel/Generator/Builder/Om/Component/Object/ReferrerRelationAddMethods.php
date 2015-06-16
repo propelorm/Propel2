@@ -43,6 +43,7 @@ class ReferrerRelationAddMethods extends BuildComponent
         $methodName = 'add' . ucfirst($varName);
         $colVarName = $this->getRefRelationCollVarName($refRelation);
         $relationClassName = $this->getClassNameFromEntity($refRelation->getEntity());
+//        $relationClassName = '\\' . $refRelation->getEntity()->getFullClassName();
 
         $body = "
 if (!\$this->{$colVarName}->contains(\${$varName})) {

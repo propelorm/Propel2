@@ -9,8 +9,7 @@
     <entity name="ConcreteContent">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <field name="title" type="VARCHAR" size="100" primaryString="true" />
-        <relation target="ConcreteCategory" onDelete="cascade">
-        </relation>
+        <relation target="ConcreteCategory" onDelete="cascade"/>
         <index>
             <index-field name="title" />
         </index>
@@ -18,8 +17,7 @@
 
     <entity name="ConcreteArticle">
         <field name="body" type="longvarchar" />
-        <relation target="ConcreteAuthor" refPhpName="Article" onDelete="cascade">
-        </relation>
+        <relation field="concreteAuthor" refField="article" target="ConcreteAuthor" onDelete="cascade" />
         <behavior name="concrete_inheritance">
             <parameter name="extends" value="ConcreteContent" />
         </behavior>
@@ -29,7 +27,6 @@
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <field name="name" type="VARCHAR" size="100" primaryString="true" />
     </entity>
-
 
     <entity name="ConcreteNews">
         <behavior name="concrete_inheritance">
@@ -51,9 +48,7 @@
         <field name="answer1" type="VARCHAR" size="100" />
         <field name="answer2" type="VARCHAR" size="100" />
         <field name="correct_answer" type="INTEGER" />
-        <relation target="ConcreteQuizz" onDelete="cascade">
-        </relation>
-
+        <relation target="ConcreteQuizz" onDelete="cascade" />
     </entity>
 
 </database>

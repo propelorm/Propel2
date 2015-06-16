@@ -181,6 +181,11 @@ abstract class EntityMap
     protected $propIsset;
 
     /**
+     * @var bool
+     */
+    protected $allowPkInsert;
+
+    /**
      * Construct a new EntityMap.
      */
     public function __construct($name, DatabaseMap $dbMap, Configuration $configuration)
@@ -337,6 +342,22 @@ abstract class EntityMap
         return $this->fullClassName;
     }
 
+    /**
+     * @return boolean
+     */
+    public function isAllowPkInsert()
+    {
+        return $this->allowPkInsert;
+    }
+
+    /**
+     * @param boolean $allowPkInsert
+     */
+    public function setAllowPkInsert($allowPkInsert)
+    {
+        $this->allowPkInsert = $allowPkInsert;
+    }
+
 //    /**
 //     * Set the Package of the Entity
 //     *
@@ -356,6 +377,7 @@ abstract class EntityMap
 //    {
 //        return $this->package;
 //    }
+
 
     /**
      * Set whether or not to use Id generator for primary key.

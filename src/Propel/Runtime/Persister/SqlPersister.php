@@ -135,7 +135,7 @@ class SqlPersister implements PersisterInterface
 
         $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
-//
+
 //        echo sprintf(
 //            "%s: %d inserts, %d updates\n",
 //            $this->entityMap->getFullClassName(),
@@ -274,8 +274,9 @@ EOF;
             return json_encode($v);
         }, $paramsReplace);
 
-        $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
-            return array_shift($paramsReplace);
+        $paramsReplaceReadable = $paramsReplace;
+        $readable = preg_replace_callback('/\?/', function() use (&$paramsReplaceReadable) {
+            return array_shift($paramsReplaceReadable);
         }, $sql);
         $this->getConfiguration()->debug("sql-insert: $readable");
 

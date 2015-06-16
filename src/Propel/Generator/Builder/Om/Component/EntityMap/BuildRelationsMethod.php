@@ -38,7 +38,7 @@ class BuildRelationsMethod extends BuildComponent
                 ) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
         }
         foreach ($this->getEntity()->getReferrers() as $relation) {
-            $relationName = $this->getRefRelationPhpName($relation);
+            $relationName = $this->getRefRelationVarName($relation);
             $columnMapping = 'array(';
             foreach ($relation->getForeignLocalMapping() as $key => $value) {
                 $columnMapping .= "'$key' => '$value', ";
@@ -54,7 +54,7 @@ class BuildRelationsMethod extends BuildComponent
             if ($relation->isLocalPrimaryKey()) {
                 $body .= ");";
             } else {
-                $body .= ", '" . $this->getRefRelationPhpName($relation, true) . "');";
+                $body .= ", '" . $this->getRefRelationVarName($relation, true) . "');";
             }
         }
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {

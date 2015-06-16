@@ -556,7 +556,7 @@ class Configuration extends GeneratorConfig
     public function getConnectionManager($databaseName = 'default')
     {
         if (!isset($this->connectionManager[$databaseName])) {
-            throw new InvalidArgumentException(sprintf('ConnectionManager for %s database not found.', $databaseName));
+            throw new InvalidArgumentException(sprintf('ConnectionManager for %s database not found. [%s]', $databaseName, implode(', ', array_keys($this->connectionManager))));
         }
 
         return $this->connectionManager[$databaseName];

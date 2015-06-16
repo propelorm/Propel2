@@ -103,6 +103,10 @@ abstract class BuildComponent
      */
     protected function addMethod($name, $visibility = 'public')
     {
+//        if ($this->getDefinition()->hasMethod($name)) {
+//            throw new \InvalidArgumentException(sprintf('Method %s already exists in class %s', $name, $this->getDefinition()->getName()));
+//        }
+
         $method = new PhpMethod($name);
         $method->setVisibility($visibility);
         $this->getDefinition()->setMethod($method);

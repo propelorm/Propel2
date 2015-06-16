@@ -8,6 +8,7 @@ use gossi\codegen\model\PhpParameter;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Relation;
 
@@ -19,6 +20,7 @@ use Propel\Generator\Model\Relation;
 class GetSnapshotMethod extends BuildComponent
 {
     use NamingTrait;
+    use RelationTrait;
 
     public function process()
     {
@@ -28,14 +30,16 @@ class GetSnapshotMethod extends BuildComponent
 ";
 
         foreach ($this->getEntity()->getFields() as $field) {
-            if ($field->isImplementationDetail()) continue;
+            if ($field->isImplementationDetail()) {
+                continue;
+            }
 
             $fieldName = $field->getName();
             $body .= "\$snapshot['$fieldName'] = \$this->prepareReadingValue(\$reader(\$entity, '$fieldName'), '$fieldName');\n";
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-            $fieldName = $relation->getField();
+            $fieldName = $this->getRelationVarName($relation);
             $foreignEntityClass = $relation->getForeignEntity()->getFullClassName();
             $body .= "
 if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {

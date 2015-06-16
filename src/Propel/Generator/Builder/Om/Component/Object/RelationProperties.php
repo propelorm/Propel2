@@ -36,7 +36,13 @@ class RelationProperties extends BuildComponent
         $className = $this->getClassNameFromEntity($relation->getForeignEntity());
         $varName = $this->getRelationVarName($relation);
 
-        $this->addProperty($varName)
+        $prop = $this->addProperty($varName)
             ->setType($className);
+
+        if ($relation->isLocalPrimaryKey()) {
+            $prop->setTypeDescription("one-to-one related $className object");
+        } else {
+            $prop->setTypeDescription("many-to-one related $className object");
+        }
     }
 } 

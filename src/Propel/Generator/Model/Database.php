@@ -842,11 +842,17 @@ class Database extends ScopedMappingModel
         }
     }
 
+    /**
+     * @param Behavior $behavior
+     */
     protected function registerBehavior(Behavior $behavior)
     {
         $behavior->setDatabase($this);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $entities = [];

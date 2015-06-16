@@ -7,6 +7,7 @@ use Propel\Runtime\EntityProxyInterface;
 use Propel\Runtime\Event\CommitEvent;
 use Propel\Runtime\Event\PersistEvent;
 use Propel\Runtime\Events;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\UnitOfWork;
 
 /**
@@ -96,17 +97,32 @@ class SessionRound
 
         if (!isset($this->persistQueue[$id])) {
 
+            $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
+
+            if (!$entityMap->isAllowPkInsert() && $entityMap->hasAutoIncrement() && $this->getSession()->isNew($entity)) {
+                //insert PKs is not allowed, so reject it
+//                $entityMap->
+                $propReader = $entityMap->getPropReader();
+                foreach ($entityMap->getAutoIncrementFieldNames() as $fieldName) {
+                    if (null !== $propReader($entity, $fieldName)) {
+                        throw new PropelException(
+                            'Cannot insert a value for auto-increment primary key (' . $fieldName . ') in entity ' . $entityMap->getFullClassName(
+                            )
+                        );
+                    }
+                }
+            }
+
 //            if ($this->getSession()->isNew($entity) || $this->getSession()->isChanged($entity)) {
-                $event = new PersistEvent($this->getSession(), $entity);
-                $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
-                $this->persistQueue[$id] = $entity;
-                $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PERSIST, $event);
+            $event = new PersistEvent($this->getSession(), $entityMap, $entity);
+            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
+            $this->persistQueue[$id] = $entity;
+            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PERSIST, $event);
 //            } else {
 //                var_dump('fitz');
 //            }
 
             if ($deep) {
-                $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
                 $entityMap->persistDependencies($this->getSession(), $entity, true);
             }
         }
@@ -151,6 +167,9 @@ class SessionRound
         $event = new CommitEvent($this->getSession());
         $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_COMMIT, $event);
 
+        //if PRE_COMMIT hooks added new rounds, commit those first
+        $this->getSession()->commit();
+
         //create transaction
         try {
             $this->doDelete();
@@ -170,6 +189,7 @@ class SessionRound
 
     /**
      * Whether this session is currently being in a commit transaction or not.
+     *
      * @return bool
      */
     public function isInCommit()
@@ -237,20 +257,23 @@ class SessionRound
                 $entity = $this->persistQueue[$entityId];
                 $entities[] = $entity;
             }
-            $this->getConfiguration()->debug(sprintf('persist-pre: %d $this->persistQueue', count($this->persistQueue)));
+            $this->getConfiguration()->debug(
+                sprintf('persist-pre: %d $this->persistQueue', count($this->persistQueue))
+            );
             $this->getConfiguration()->debug(
                 sprintf('Persister::persist() with %d items of %s', $group->length, $group->type)
             );
             try {
                 $persister->persist($entities);
-                $this->getConfiguration()->debug(sprintf('persist-post: %d $this->persistQueue', count($this->persistQueue)));
+                $this->getConfiguration()->debug(
+                    sprintf('persist-post: %d $this->persistQueue', count($this->persistQueue))
+                );
 
                 foreach ($entityIds as $entityId) {
                     $entity = $this->persistQueue[$entityId];
                     $this->getSession()->addToFirstLevelCache($entity);
                     $this->getSession()->snapshot($entity);
                 }
-
             } catch (\Exception $e) {
                 foreach ($entityIds as $entityId) {
                     $this->getSession()->removePersisted($entityId);
