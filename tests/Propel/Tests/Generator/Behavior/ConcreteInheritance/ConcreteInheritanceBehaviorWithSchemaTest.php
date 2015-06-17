@@ -12,8 +12,9 @@
 namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Tests\BookstoreSchemas\Book;
+use Propel\Tests\BookstoreSchemas\Map\SecondHandBookEntityMap;
 use Propel\Tests\BookstoreSchemas\SecondHandBook;
-use Propel\Tests\BookstoreSchemas\Map\BookTableMap;
+use Propel\Tests\BookstoreSchemas\Map\BookEntityMap;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
@@ -27,7 +28,7 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
     public function testParentBehaviorWithSchemas()
     {
-        $behaviors = BookTableMap::getTableMap()->getBehaviors();
+        $behaviors = $this->getConfiguration()->getEntityMap(BookEntityMap::ENTITY_CLASS)->getBehaviors();
         $this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyTable() gives the parent table the concrete_inheritance_parent behavior');
         $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendant_column parameter to the parent behavior');
     }
@@ -35,6 +36,11 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends TestCaseFixturesDatabase
     public function testGetParentOrCreateNewWithSchemas()
     {
         $second_hand_book = new SecondHandBook();
+
+        $repository = $this->getConfiguration()->getRepository(SecondHandBookEntityMap::ENTITY_CLASS);
+
+        //todo
+        $repository->callHook();
         $book = $second_hand_book->getParentOrCreate();
         $this->assertTrue($book instanceof Book, 'getParentOrCreate() returns an instance of the parent class');
         $this->assertTrue($book->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');

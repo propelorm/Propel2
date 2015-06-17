@@ -11,6 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 use gossi\codegen\generator\CodeGenerator;
+use gossi\codegen\model\PhpMethod;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
@@ -270,9 +271,24 @@ abstract class AbstractBuilder extends DataModelBuilder
         foreach ($this->getEntity()->getBehaviors() as $behavior) {
             if (method_exists($behavior, $hookName)) {
                 $code = $behavior->$hookName($this);
+
+                $behaviorShortName = (new \ReflectionClass($behavior))->getShortName();
+                $hookBehaviorMethodName = $hookName . $behaviorShortName;
+
                 if ($code) {
                     $body .= "//behavior hook {$behavior->getName()}#{$behavior->getId()}\n";
-                    $body .= $code;
+                    $method = new PhpMethod($hookBehaviorMethodName);
+                    $method->setVisibility('protected');
+                    $method->addSimpleParameter('event');
+                    $method->setType('boolean|null', 'Returns false to cancel the event hook');
+                    $method->setBody($code);
+
+                    $this->getDefinition()->setMethod($method);
+                    $body .= "
+if (false === \$this->$hookBehaviorMethodName(\$event)) {
+    return false;
+}
+";
                 }
             }
         }

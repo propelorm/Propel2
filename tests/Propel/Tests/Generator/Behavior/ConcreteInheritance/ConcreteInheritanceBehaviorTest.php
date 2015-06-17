@@ -190,9 +190,6 @@ EOF;
         $this->assertNull($content);
     }
 
-    /**
-     * @group test
-     */
     public function testGetParentOrCreateExistingParent()
     {
         ConcreteContentQuery::create()->deleteAll();
@@ -208,10 +205,10 @@ EOF;
         $article->setConcreteContent($content);
         $article->save();
 
+        $this->assertEquals($id, $content->getId());
         $this->assertEquals($id, $article->getId(), 'getParentOrCreate() keeps manually set pk');
         $this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
     }
-
 
     public function testPostDeleteCopyData()
     {
@@ -233,44 +230,57 @@ EOF;
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
         \ConcreteArticleSetPkQuery::create()->deleteAll();
+
         $article = new \ConcreteArticleSetPk();
         $article->setId(2);
+        $article->setTitle('Test');
         $article->save();
+
+        $this->assertEquals(2, $article->getConcreteContentSetPk()->getId());
         $this->assertEquals(2, $article->getId(), 'getParentOrCreate() keeps manually set pk after save');
         $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->count(), 'getParentOrCreate() creates a parent entry');
+        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->findOne()->getId(), 'getParentOrCreate() creates a parent entry');
+
         $articledb = \ConcreteArticleSetPkQuery::create()->findOneById(2);
+        $this->assertEquals(2, $article->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
+        $this->assertEquals('Test', $articledb->getTitle());
         $this->assertEquals(2, $articledb->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
     }
 
+    /**
+     * @expectedException \Propel\Runtime\Persister\Exception\UniqueConstraintException
+     * @expectedExceptionMessage Unique constraint failure for field id in entity ConcreteArticleSetPk
+     */
     public function testSetPKOnNewObjectWithPkAlreadyInParentTable()
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
         \ConcreteArticleSetPkQuery::create()->deleteAll();
-        try {
-            $article = new \ConcreteArticleSetPk();
-            $article->setId(4);
-            $article->save();
-            $article = new \ConcreteArticleSetPk();
-            $article->setId(4);
-            $article->save();
-            $this->fail('getParentOrCreate() returns a new parent object on new child objects with pk set');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'getParentOrCreate() returns a new parent object on new child objects with pk set');
-        }
+
+        $article = new \ConcreteArticleSetPk();
+        $article->setId(4);
+        $article->save();
+
+        $article = new \ConcreteArticleSetPk();
+        $article->setId(4);
+        $article->save();
     }
 
     public function testSetPkAllowPkInsertIsFalse()
     {
         ConcreteContentQuery::create()->deleteAll();
         ConcreteArticleQuery::create()->deleteAll();
-        try {
-            $article = new ConcreteArticle();
-            $article->setId(4);
-            $article->save();
-            $this->fail('SetPk fails when allowPkInsert is false');
-        } catch (PropelException $e) {
-            $this->assertTrue(true, 'SetPk fails when allowPkInsert is false');
-        }
-    }
 
+        $content = new ConcreteContent();
+        $content->save();
+        $content = new ConcreteContent();
+        $content->save();
+        $content = new ConcreteContent();
+        $content->save();
+
+        $article = new ConcreteArticle();
+        $article->setId(1);
+        $article->save();
+
+        $this->assertGreaterThan(1, $article->getId());
+    }
 }

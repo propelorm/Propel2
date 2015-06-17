@@ -223,7 +223,6 @@ class QuickBuilder
 
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
-        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
         $adapter->initConnection($con, []);
 
         $connectionManager = new ConnectionManagerSingle(new SqliteAdapter());

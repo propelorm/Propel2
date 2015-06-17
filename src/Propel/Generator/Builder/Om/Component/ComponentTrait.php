@@ -12,6 +12,8 @@ trait ComponentTrait
      * @param string          $className fqcn or relative to current '__NAMESPACE__\\Component\\' of $this unless prefixed with \\.
      * @param AbstractBuilder $builder
      * @param Behavior        $behavior
+     *
+     * @return mixed
      */
     protected function applyComponent($className, AbstractBuilder $builder = null, Behavior $behavior = null)
     {
@@ -34,7 +36,9 @@ trait ComponentTrait
 
         $args = func_get_args();
         array_shift($args); //shift $className away
+        array_shift($args); //shift $builder away
+        array_shift($args); //shift $behavior away
 
-        call_user_func_array([$instance, 'process'], $args);
+        return call_user_func_array([$instance, 'process'], $args);
     }
 }

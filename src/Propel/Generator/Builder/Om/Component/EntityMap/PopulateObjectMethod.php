@@ -8,6 +8,7 @@ use gossi\codegen\model\PhpParameter;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
 
 /**
@@ -18,6 +19,7 @@ use Propel\Generator\Model\Field;
 class PopulateObjectMethod extends BuildComponent
 {
     use NamingTrait;
+    use RelationTrait;
 
     public function process()
     {
@@ -200,7 +202,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 ";
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-            $relationName = $relation->getField();
+            $relationName = $this->getRelationVarName($relation);
             $className = $relation->getForeignEntity()->getFullClassName();
 
             $body .= "

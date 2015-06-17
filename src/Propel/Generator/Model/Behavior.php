@@ -518,5 +518,28 @@ class Behavior extends MappingModel
         return $this->additionalBuilders;
     }
 
+    public function preSave(RepositoryBuilder $builder)
+    {
+    }
+
+    public function preInsert(RepositoryBuilder $builder)
+    {
+    }
+
+    public function preUpdate(RepositoryBuilder $builder)
+    {
+    }
+
+    public function postSave(RepositoryBuilder $builder)
+    {
+    }
+
+    public function postInsert(RepositoryBuilder $builder)
+    {
+    }
+
+    public function postUpdate(RepositoryBuilder $builder)
+    {
+    }
 
 }

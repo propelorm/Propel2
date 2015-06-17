@@ -14,6 +14,8 @@ use Propel\Runtime\Events;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Persister\Exception\PersisterException;
+use Propel\Runtime\Persister\Exception\UniqueConstraintException;
 use Propel\Runtime\Session\Session;
 
 class SqlPersister implements PersisterInterface
@@ -218,6 +220,11 @@ EOF;
         $this->autoIncrementValues = (object)$object;
     }
 
+    /**
+     * @param array $inserts
+     *
+     * @throws PersisterException
+     */
     protected function doInsert(array $inserts)
     {
         if (!$inserts) {
@@ -284,6 +291,12 @@ EOF;
             $stmt = $connection->prepare($sql);
             $stmt->execute($params);
         } catch (\Exception $e) {
+            if ($e instanceof \PDOException) {
+                if ($normalizedException = $this->normalizePdoException($e)) {
+                    throw $normalizedException;
+                }
+            }
+
             throw new RuntimeException(sprintf(
                 'Can not execute INSERT query for entity %s: %s [%s]',
                 $this->entityMap->getFullClassName(),
@@ -300,6 +313,29 @@ EOF;
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
+    }
+
+    /**
+     * @param \PDOException $PDOException
+     *
+     * @return PersisterException|null
+     */
+    protected function normalizePdoException(\PDOException $PDOException)
+    {
+        $message= $PDOException->getMessage();
+
+        if (false !== strpos($message, 'Integrity constraint violation')) {
+            preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches);
+            return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
+        }
+    }
+
+    /**
+     * @return EntityMap
+     */
+    public function getEntityMap()
+    {
+        return $this->entityMap;
     }
 
     protected function doUpdates(array $updates, $changeSets)

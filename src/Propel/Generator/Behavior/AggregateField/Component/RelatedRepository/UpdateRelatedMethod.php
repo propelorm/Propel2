@@ -37,7 +37,7 @@ class UpdateRelatedMethod extends BuildComponent
 
         $repositoryClass = $this->getRepositoryClassNameForEntity($relation->getForeignEntity(), true);
 
-        $objectGetter = 'get' . ucfirst($relation->getField());
+        $objectGetter = 'get' . $this->getRelationPhpName($relation);
         $body = "
 if (!\$entities) {
     return;

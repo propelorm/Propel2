@@ -10,10 +10,7 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
-use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
-use Propel\Generator\Builder\Om\Component\NamingTrait;
-use Propel\Generator\Builder\Om\EntityMapBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
@@ -64,6 +61,7 @@ class ConcreteInheritanceBehavior extends Behavior
                 $relation->setOnDelete('CASCADE');
                 $relation->setOnUpdate('CASCADE');
                 $relation->addReference($copiedField, $field);
+                $entity->concreteParentRelation = $relation;
                 $entity->addRelation($relation);
             }
         }
@@ -115,39 +113,11 @@ class ConcreteInheritanceBehavior extends Behavior
         return 'true' === $this->getParameter('copy_data_to_parent');
     }
 
-    public function preSave()
+    public function preSave(RepositoryBuilder $repositoryBuilder)
     {
         if ($this->isCopyData()) {
 
-            $entityClass = $this->getParentEntity()->getFullClassName();
-            $getter = 'get' . $this->getParentEntity()->getName();
-            $setter = 'set' . $this->getParentEntity()->getName();
-
-            $hasAutoIncrement = $this->getParentEntity()->hasAutoIncrement() ? 'true' : 'false';
-
-            $code = <<<EOF
-\$session = \$this->getConfiguration()->getSession();
-\$parentRepository = \$this->getConfiguration()->getRepository('$entityClass');
-foreach (\$event->getEntities() as \$entity) {
-
-    if (!\$entity->$getter()) {
-        \$entity->$setter(\$parentRepository->createObject());
-    }
-
-    \$parent = \$entity->$getter();
-
-    \$hasAutoIncrement = $hasAutoIncrement;
-    \$skipAutoIncrements = false;
-    if (\$hasAutoIncrement && \$session->isNew(\$entity)) {
-        \$skipAutoIncrements = true;
-    }
-
-    \$parentRepository->getEntityMap()->copyInto(\$entity, \$parent, \$skipAutoIncrements);
-    \$session->persist(\$parent, true);
-}
-EOF;
-
-            return $code;
+            return $this->applyComponent('PreSave', $repositoryBuilder, $this);
         }
     }
 
@@ -199,6 +169,12 @@ EOF;
     public function objectBuilderModification(Objectbuilder $builder)
     {
         $builder->getDefinition()->setParentClassName('\\' . $this->getParentEntity()->getFullClassName());
+
+        if (!isset($this->getEntity()->concreteParentRelation)) {
+            return;
+        }
+
+        $this->applyComponent('OverwritePrimaryKeyGetter', $builder, $this, $this->getEntity()->concreteParentRelation);
     }
 
     public function queryBuilderModification(QueryBuilder $builder)

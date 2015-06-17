@@ -6,6 +6,7 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
 
 /**
  * Adds copyInto method.
@@ -15,10 +16,12 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
 class CopyIntoMethod extends BuildComponent
 {
     use NamingTrait;
+    use RelationTrait;
 
     public function process()
     {
         $body = "
+\$excludeFields = array_flip(\$excludeFields);
 \$entityReader = \$this->getPropReader();
 \$targetWriter = \$this->getConfiguration()->getEntityMapForEntity(\$target)->getPropWriter();
 ";
@@ -28,23 +31,25 @@ class CopyIntoMethod extends BuildComponent
                 continue;
             }
 
-            $isAutoIncrement = $field->isAutoIncrement() ? 'true' : 'false';
             $body .= "
-if (!\$skipAutoIncrements || !$isAutoIncrement) {
+if (!isset(\$excludeFields['{$field->getName()}'])) {
     \$targetWriter(\$target, '{$field->getName()}', \$entityReader(\$entity, '{$field->getName()}'));
 }
-
 ";
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-            $body .= "\$targetWriter(\$target, '{$relation->getField()}', \$entityReader(\$entity, '{$relation->getField()}'));\n";
+            $fieldName = $this->getRelationVarName($relation);
+            $body .= "
+if (!isset(\$excludeFields['{$fieldName}'])) {
+    \$targetWriter(\$target, '{$fieldName}', \$entityReader(\$entity, '{$fieldName}'));
+}";
         }
 
         $this->addMethod('copyInto')
             ->addSimpleParameter('entity')
             ->addSimpleParameter('target')
-            ->addSimpleParameter('skipAutoIncrements', 'boolean', false)
+            ->addSimpleParameter('excludeFields', 'array', [])
             ->setBody($body);
     }
 }

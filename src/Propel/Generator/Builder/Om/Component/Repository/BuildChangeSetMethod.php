@@ -6,6 +6,7 @@ namespace Propel\Generator\Builder\Om\Component\Repository;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Builder\Om\Component\RelationTrait;
 
 /**
  * Adds getChangeset method.
@@ -15,6 +16,7 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
 class BuildChangeSetMethod extends BuildComponent
 {
     use NamingTrait;
+    use RelationTrait;
 
     public function process()
     {
@@ -72,7 +74,7 @@ if (\$different) {
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-            $fieldName = $relation->getField();
+            $fieldName = $this->getRelationVarName($relation);
             $foreignEntityClass = $relation->getForeignEntity()->getFullClassName();
             $body .= "
 // relation {$relation->getField()}
