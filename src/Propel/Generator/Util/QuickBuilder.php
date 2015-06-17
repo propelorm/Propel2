@@ -393,7 +393,6 @@ class QuickBuilder
         if ($separate) {
             foreach ($includes as $tempFile) {
                 include($tempFile);
-                var_dump($tempFile);
             }
         } else {
             $tempFile = $dir . join('_', $allCodeName).'.php';

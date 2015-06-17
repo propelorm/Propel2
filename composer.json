@@ -11,8 +11,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "William Durand",
-            "email": "william.durand1@gmail.com"
+            "name": "Marc J. Schmidt",
+            "email": "marc@marcjschmidt.de"
         }
     ],
     "require": {
@@ -26,7 +26,8 @@
         "symfony/config": "~2.3",
         "psr/log": "~1.0",
         "gossi/php-code-generator": "dev-master",
-        "mustache/mustache": "~2.6"
+        "mustache/mustache": "~2.6",
+        "marcj/topsort": "^0.2.0"
     },
     "require-dev": {
         "behat/behat": "~2.4",

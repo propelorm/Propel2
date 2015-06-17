@@ -199,7 +199,6 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $comment2->setAggregatePost($post);
         $comment2->save();
         $this->assertEquals(2, $post->getCommentsCount());
-        var_dump('set aggragatePost = null');
         $comment2->setAggregatePost(null);
         $comment2->save();
         $this->assertEquals(1, $post->getCommentsCount(), 'Removing a relation changes the related object aggregate column');

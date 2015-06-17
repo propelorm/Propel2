@@ -56,7 +56,6 @@ class RepositoryTest extends TestCase
             $builder->registerEntities($configuration);
 
             $v = $configuration->getEntitiesForDatabase('default');
-            var_dump($v);
         }
 
         $db = $configuration->getDatabase('default');

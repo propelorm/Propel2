@@ -276,7 +276,6 @@ EOF;
         $a = new \ArchivableTest30();
         $a->setTitle('foo');
         $a->setAge(12);
-        var_dump('####FICKIII'); ob_flush();
         $a->save();
 
         $a->setTitle('bar');
@@ -284,7 +283,6 @@ EOF;
         $this->assertEquals(1, \MyOldArchivableTest30Query::create()->count());
         \MyOldArchivableTest30Query::create()->deleteAll();
 
-        var_dump('####FICKIII 222'); ob_flush();
         $a->save();
 
         $this->assertGreaterThan(0, $a->getId());

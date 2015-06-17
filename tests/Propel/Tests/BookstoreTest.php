@@ -183,7 +183,6 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
-        var_dump('@@@@@@@@@@@@@@@@@@@@@@ ');
         $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
@@ -273,7 +272,6 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $bookClubList1->addBookListRel($bookListRelation1);
         $bookClubList1->addBookListRel($bookListRelation2);
 
-        var_dump('11111###############################################');
         $bookClubList1->save();
 
         $this->assertNotNull($bookClubList1->getId(), 'BookClubList 1 was saved');
@@ -289,7 +287,6 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $bookClubList2->addBookListRel($bookListRelation3);
 
-        var_dump('###############################################');
         $bookClubList2->save();
 
         $this->assertNotNull($bookClubList2->getId(), 'BookClubList 2 was saved');
@@ -352,7 +349,6 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $c->add($cn);
         $c->doDelete();
 
-        var_dump('moepxxxxxx, delete?');
         // Attempting to delete book [id = $td_id]
         $td->delete();
 
