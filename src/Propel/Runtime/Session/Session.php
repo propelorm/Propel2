@@ -74,6 +74,10 @@ class Session
             //if PRE_SAVE hooks added new rounds, commit those first
             $self->commit();
         });
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
+            //if PRE_SAVE hooks added new rounds, commit those first
+            $self->commit();
+        });
     }
 
     /**

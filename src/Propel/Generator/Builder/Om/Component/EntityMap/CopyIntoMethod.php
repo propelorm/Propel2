@@ -27,7 +27,14 @@ class CopyIntoMethod extends BuildComponent
             if ($field->isImplementationDetail()) {
                 continue;
             }
-            $body .= "\$targetWriter(\$target, '{$field->getName()}', \$entityReader(\$entity, '{$field->getName()}'));\n";
+
+            $isAutoIncrement = $field->isAutoIncrement() ? 'true' : 'false';
+            $body .= "
+if (!\$skipAutoIncrements || !$isAutoIncrement) {
+    \$targetWriter(\$target, '{$field->getName()}', \$entityReader(\$entity, '{$field->getName()}'));
+}
+
+";
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
@@ -37,6 +44,7 @@ class CopyIntoMethod extends BuildComponent
         $this->addMethod('copyInto')
             ->addSimpleParameter('entity')
             ->addSimpleParameter('target')
+            ->addSimpleParameter('skipAutoIncrements', 'boolean', false)
             ->setBody($body);
     }
 }

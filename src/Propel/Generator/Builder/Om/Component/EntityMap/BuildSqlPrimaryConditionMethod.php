@@ -52,9 +52,10 @@ $entityReader = $this->getPropReader();
                     }
 
                     $relationEntityName = $relation->getForeignEntity()->getFullClassName();
+                    $propertyName = $this->getRelationVarName($relation);
                     $body .= "
 if (null === \$foreignEntity) {
-    \$foreignEntity = \$entityReader(\$entity, '{$relation->getField()}');
+    \$foreignEntity = \$entityReader(\$entity, '$propertyName');
     \$foreignEntityReader = \$this->getClassPropReader('$relationEntityName');
     \$value = \$foreignEntityReader(\$foreignEntity, '{$foreignField->getName()}');
 }

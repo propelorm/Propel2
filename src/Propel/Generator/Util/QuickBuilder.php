@@ -220,6 +220,7 @@ class QuickBuilder
         if (null === $classTargets) {
             $classTargets = $this->classTargets;
         }
+
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);

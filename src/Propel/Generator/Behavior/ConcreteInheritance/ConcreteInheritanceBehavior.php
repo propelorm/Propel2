@@ -117,26 +117,32 @@ class ConcreteInheritanceBehavior extends Behavior
 
     public function preSave()
     {
-        $entityClass = $this->getParentEntity()->getFullClassName();
-
         if ($this->isCopyData()) {
 
+            $entityClass = $this->getParentEntity()->getFullClassName();
             $getter = 'get' . $this->getParentEntity()->getName();
             $setter = 'set' . $this->getParentEntity()->getName();
+
+            $hasAutoIncrement = $this->getParentEntity()->hasAutoIncrement() ? 'true' : 'false';
 
             $code = <<<EOF
 \$session = \$this->getConfiguration()->getSession();
 \$parentRepository = \$this->getConfiguration()->getRepository('$entityClass');
 foreach (\$event->getEntities() as \$entity) {
 
-    if (\$session->isNew(\$entity)) {
-        \$parent = \$parentRepository->createObject();
-        \$entity->$setter(\$parent);
+    if (!\$entity->$getter()) {
+        \$entity->$setter(\$parentRepository->createObject());
     }
 
     \$parent = \$entity->$getter();
 
-    \$parentRepository->getEntityMap()->copyInto(\$entity, \$parent);
+    \$hasAutoIncrement = $hasAutoIncrement;
+    \$skipAutoIncrements = false;
+    if (\$hasAutoIncrement && \$session->isNew(\$entity)) {
+        \$skipAutoIncrements = true;
+    }
+
+    \$parentRepository->getEntityMap()->copyInto(\$entity, \$parent, \$skipAutoIncrements);
     \$session->persist(\$parent, true);
 }
 EOF;
@@ -171,11 +177,18 @@ EOF;
     public function preDelete()
     {
         if ($this->isCopyData()) {
-            $code = <<<'EOF'
-$parentRepository = $this->getConfiguration()->getRepository('%s');
-if (!$this->isNew($entity)) {
-    $parent = $parentRepository->find($this->getPrimaryKey($entity));
-    $parentRepository->delete($parent);
+            $entityClass = $this->getParentEntity()->getFullClassName();
+            $getter = 'get' . $this->getParentEntity()->getName();
+
+            $code = <<<EOF
+\$parentRepository = \$this->getConfiguration()->getRepository('%s');
+\$session = \$this->getConfiguration()->getSession();
+
+foreach (\$event->getEntities() as \$entity) {
+    if (!\$session->isNew(\$entity)) {
+        \$parent = \$entity->$getter();
+        \$session->remove(\$parent);
+    }
 }
 EOF;
 

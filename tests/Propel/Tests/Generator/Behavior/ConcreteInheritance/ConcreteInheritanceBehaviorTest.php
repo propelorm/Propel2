@@ -42,11 +42,11 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
     public function setUp()
     {
-        parent::setUp();
-
         if (!class_exists('ConcreteContentSetPkQuery')) {
+            parent::setUp();
+
             $schema = <<<EOF
-<database name="concrete_content_set_pk">
+<database name="concrete_content_set_pk" activeRecord="true">
     <table name="concrete_content_set_pk" phpName="ConcreteContentSetPk" allowPkInsert="true">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <field name="title" type="VARCHAR" size="100" primaryString="true" />
@@ -66,6 +66,8 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 EOF;
 
             QuickBuilder::buildSchema($schema);
+        } else {
+            $this->configuration = QuickBuilder::$configuration;
         }
     }
 
@@ -173,7 +175,7 @@ EOF;
         $this->assertNotNull($category->getId());
         $content = ConcreteContentQuery::create()->findPk($article->getId());
         $this->assertNotNull($content);
-        $this->assertEquals($category->getId(), $content->getCategoryId());
+        $this->assertEquals($category->getId(), $content->getConcreteCategory()->getId());
     }
 
     public function testPreSaveNoCopyData()
@@ -188,52 +190,28 @@ EOF;
         $this->assertNull($content);
     }
 
-    public function testGetParentOrCreateNew()
-    {
-        $article = new ConcreteArticle();
-        $content = $article->getParentOrCreate();
-        $this->assertTrue($content instanceof ConcreteContent, 'getParentOrCreate() returns an instance of the parent class');
-        $this->assertTrue($content->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
-        $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteArticle', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
-    }
-
-    public function testGetParentOrCreateExisting()
-    {
-        $article = new ConcreteArticle();
-        $article->save();
-        ConcreteContentTableMap::clearInstancePool();
-        $content = $article->getParentOrCreate();
-        $this->assertTrue($content instanceof ConcreteContent, 'getParentOrCreate() returns an instance of the parent class');
-        $this->assertFalse($content->isNew(), 'getParentOrCreate() returns an existing instance of the parent class if the object is persisted');
-        $this->assertEquals($article->getId(), $content->getId(), 'getParentOrCreate() returns the parent object related to the current object');
-    }
-
+    /**
+     * @group test
+     */
     public function testGetParentOrCreateExistingParent()
     {
         ConcreteContentQuery::create()->deleteAll();
         ConcreteArticleQuery::create()->deleteAll();
+
         $content = new ConcreteContent();
         $content->save();
+        $this->assertGreaterThan(0, $content->getId());
         $id = $content->getId();
-        ConcreteContentTableMap::clearInstancePool();
+        $this->getConfiguration()->getSession()->clearFirstLevelCache();
+
         $article = new ConcreteArticle();
-        $article->setId($id);
+        $article->setConcreteContent($content);
         $article->save();
+
         $this->assertEquals($id, $article->getId(), 'getParentOrCreate() keeps manually set pk');
         $this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
     }
 
-    public function testGetSyncParent()
-    {
-        $category = new ConcreteCategory();
-        $category->setName('main');
-        $article = new ConcreteArticle();
-        $article->setTitle('FooBar');
-        $article->setConcreteCategory($category);
-        $content = $article->getSyncParent();
-        $this->assertEquals('FooBar', $content->getTitle(), 'getSyncParent() returns a synchronized parent object');
-        $this->assertEquals($category, $content->getConcreteCategory(), 'getSyncParent() returns a synchronized parent object');
-    }
 
     public function testPostDeleteCopyData()
     {
@@ -249,20 +227,6 @@ EOF;
         $id = $article->getId();
         $article->delete();
         $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
-    }
-
-    public function testGetParentOrCreateNewWithPK()
-    {
-        \ConcreteContentSetPkQuery::create()->deleteAll();
-        \ConcreteArticleSetPkQuery::create()->deleteAll();
-        $article = new \ConcreteArticleSetPk();
-        $article->setId(5);
-        $content = $article->getParentOrCreate();
-        $this->assertEquals(5, $article->getId(), 'getParentOrCreate() keeps manually set pk');
-        $this->assertTrue($content instanceof \ConcreteContentSetPk, 'getParentOrCreate() returns an instance of the parent class');
-        $this->assertTrue($content->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
-        $this->assertEquals(5,$content->getId(), 'getParentOrCreate() returns a instance of the parent class with pk set');
-        $this->assertEquals('ConcreteArticleSetPk', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
     }
 
     public function testSetPKOnNewObject()
