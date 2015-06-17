@@ -35,6 +35,7 @@ class ConcreteInheritanceBehavior extends Behavior
     protected $parameters = array(
         'extends' => '',
         'copy_data_to_parent' => 'true',
+        'descendant_field'   => 'descendantClass',
     );
 
     public function modifyEntity()
@@ -42,8 +43,26 @@ class ConcreteInheritanceBehavior extends Behavior
         $entity = $this->getEntity();
         $parentEntity = $this->getParentEntity();
 
+        if ($this->isCopyData()) {
+            // tell the parent table that it has a descendant
+            if (!$parentEntity->hasBehavior('concrete_inheritance_parent')) {
+                $parentBehavior = new ConcreteInheritanceParentBehavior();
+                $parentBehavior->setName('concrete_inheritance_parent');
+                $parentBehavior->addParameter(array('name' => 'descendant_field', 'value' => $this->getParameter('descendant_field')));
+
+                $parentEntity->addBehavior($parentBehavior);
+                // The parent table's behavior modifyTable() must be executed before this one
+                $parentBehavior->getEntityModifier()->modifyEntity();
+                $parentBehavior->setEntityModified(true);
+            }
+        }
+
         // Add the fields of the parent entity
         foreach ($parentEntity->getFields() as $field) {
+            if ($field->getName() == $this->getParameter('descendant_field')) {
+                continue;
+            }
+
             if ($entity->hasField($field->getName())) {
                 continue;
             }
@@ -116,12 +135,11 @@ class ConcreteInheritanceBehavior extends Behavior
     public function preSave(RepositoryBuilder $repositoryBuilder)
     {
         if ($this->isCopyData()) {
-
             return $this->applyComponent('PreSave', $repositoryBuilder, $this);
         }
     }
 
-    public function postSave()
+    public function postSave(RepositoryBuilder $repositoryBuilder)
     {
         $entityClass = $this->getParentEntity()->getFullClassName();
 
@@ -144,7 +162,7 @@ EOF;
         }
     }
 
-    public function preDelete()
+    public function preDelete(RepositoryBuilder $repositoryBuilder  )
     {
         if ($this->isCopyData()) {
             $entityClass = $this->getParentEntity()->getFullClassName();
@@ -166,7 +184,7 @@ EOF;
         }
     }
 
-    public function objectBuilderModification(Objectbuilder $builder)
+    public function objectBuilderModification(ObjectBuilder $builder)
     {
         $builder->getDefinition()->setParentClassName('\\' . $this->getParentEntity()->getFullClassName());
 

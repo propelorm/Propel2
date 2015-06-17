@@ -16,6 +16,7 @@ use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\PhpModel\ClassDefinition;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Abstract class for all builders.
@@ -272,8 +273,7 @@ abstract class AbstractBuilder extends DataModelBuilder
             if (method_exists($behavior, $hookName)) {
                 $code = $behavior->$hookName($this);
 
-                $behaviorShortName = (new \ReflectionClass($behavior))->getShortName();
-                $hookBehaviorMethodName = $hookName . $behaviorShortName;
+                $hookBehaviorMethodName = $hookName . ucfirst(NamingTool::toCamelCase($behavior->getId()));
 
                 if ($code) {
                     $body .= "//behavior hook {$behavior->getName()}#{$behavior->getId()}\n";

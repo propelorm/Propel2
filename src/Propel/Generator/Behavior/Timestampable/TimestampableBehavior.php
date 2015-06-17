@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\Timestampable;
 
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -66,7 +67,7 @@ class TimestampableBehavior extends Behavior
         }
     }
 
-    public function preUpdate()
+    public function preUpdate(RepositoryBuilder $repositoryBuilder)
     {
         if ($this->withUpdatedAt()) {
             $field = $this->getEntity()->getField($this->getParameter('update_field'))->getName();
@@ -83,7 +84,7 @@ foreach (\$event->getEntities() as \$entity) {
         }
     }
 
-    public function preInsert()
+    public function preInsert(RepositoryBuilder $repositoryBuilder)
     {
         $script = "\$writer = \$this->getEntityMap()->getPropWriter();
 

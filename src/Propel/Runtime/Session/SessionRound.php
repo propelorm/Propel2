@@ -167,9 +167,6 @@ class SessionRound
         $event = new CommitEvent($this->getSession());
         $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_COMMIT, $event);
 
-        //if PRE_COMMIT hooks added new rounds, commit those first
-        $this->getSession()->commit();
-
         //create transaction
         try {
             $this->doDelete();
@@ -231,13 +228,8 @@ class SessionRound
     {
         $dependencyGraph = new DependencyGraph($this->getSession());
         foreach ($this->persistQueue as $entity) {
-            $this
-                ->getConfiguration()
-                ->getEntityMapForEntity($entity)
-                ->populateDependencyGraph(
-                    $entity,
-                    $dependencyGraph
-                );
+            $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
+            $entityMap->populateDependencyGraph($entity, $dependencyGraph);
         }
 
         $list = $dependencyGraph->getList();

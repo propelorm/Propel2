@@ -66,7 +66,7 @@ class SluggableBehavior extends Behavior
         }
     }
 
-    public function preSave($builder)
+    public function preSave(RepositoryBuilder $repositoryBuilder)
     {
         return <<<'EOF'
 $this->preSaveSluggable($event);

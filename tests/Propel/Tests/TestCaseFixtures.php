@@ -131,6 +131,11 @@ class TestCaseFixtures extends TestCase
         $this->readAllRuntimeConfigs();
     }
 
+    protected function tearDown()
+    {
+        $this->getConfiguration()->getSession()->reset();
+    }
+
     /**
      * @return Configuration
      */

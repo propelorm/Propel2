@@ -29,27 +29,22 @@ class PopulateObjectMethod extends BuildComponent
         //first check primary key and first level cache
         $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
         $implementationDetail = [];
-        $fieldCount = 0;
         $singlePk = 1 === count($this->getEntity()->getPrimaryKey());
-        foreach ($this->getEntity()->getPrimaryKey() as $field) {
-            if ($field->isLazyLoad()) {
+        foreach ($this->getEntity()->getFields() as $idx => $field) {
+            if ($field->isLazyLoad() || !$field->isPrimaryKey()) {
                 continue;
             }
-
-            $fieldCount++;
 
             if ($field->isImplementationDetail()) {
                 $implementationDetail[$field->getName()] = true;
             }
 
-            $fieldNames[] = $field->getName();
-            $fieldTypes[] = $field->getType();
-            $camelNames[] = $field->getCamelCaseName();
-            $columnNames[] = $field->getColumnName();
-            $fullColumnNames[] = $field->getEntity()->getName(). '.' .$field->getColumnName();
+            $fieldNames[$idx] = $field->getName();
+            $fieldTypes[$idx] = $field->getType();
+            $camelNames[$idx] = $field->getCamelCaseName();
+            $columnNames[$idx] = $field->getColumnName();
+            $fullColumnNames[$idx] = $field->getEntity()->getName(). '.' .$field->getColumnName();
         }
-
-
 
         $body .= "
 if (EntityMap::TYPE_NUM === \$indexType) {

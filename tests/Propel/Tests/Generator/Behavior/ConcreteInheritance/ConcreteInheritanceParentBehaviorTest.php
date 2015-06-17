@@ -40,6 +40,14 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $article = new ConcreteArticle();
         $article->save();
         $content = $article->getConcreteContent();
+
+        $this->getConfiguration()->getSession()->clearFirstLevelCache();
+
+        $article = ConcreteArticleQuery::create()->findOne();
+        $this->assertEquals($content->getId(), $article->getConcreteContent()->getId());
+        $this->assertEquals($content->getId(), $article->getId());
+
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteArticle', $content->getDescendantClass());
         $this->assertTrue($content->hasChildObject());
     }
 
@@ -56,7 +64,8 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $article = new ConcreteArticle();
         $article->save();
         $content = $article->getConcreteContent();
-        $this->assertEquals($article, $content->getChildObject());
+
+        $this->assertSame($article, $content->getChildObject());
     }
 
 }

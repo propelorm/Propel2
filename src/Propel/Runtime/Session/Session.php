@@ -4,6 +4,7 @@ namespace Propel\Runtime\Session;
 
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Events;
+use Propel\Runtime\Exception\SessionClosedException;
 
 /**
  *
@@ -21,6 +22,11 @@ class Session
      * @var int
      */
     protected $currentRound = -1;
+
+    /**
+     * @var bool
+     */
+    protected $closed = false;
 
     /**
      * @var int
@@ -73,11 +79,11 @@ class Session
         $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, function() use ($self) {
             //if PRE_SAVE hooks added new rounds, commit those first
             $self->commit();
-        });
+        }, -128);
         $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
             //if PRE_SAVE hooks added new rounds, commit those first
             $self->commit();
-        });
+        }, -128);
     }
 
     /**
@@ -100,20 +106,6 @@ class Session
         }
 
         return $this->knownEntities[$splId];
-    }
-
-    /**
-     * @param object $entity
-     * @param boolean $deep Whether all attached entities(relations) should be persisted too.
-     */
-    public function persist($entity, $deep = false)
-    {
-        if ($this->getCurrentRound()->isInCommit()) {
-            $this->enterNewRound();
-        }
-
-        $this->knownEntities[spl_object_hash($entity)] = $entity;
-        $this->getCurrentRound()->persist($entity, $deep);
     }
 
     /**
@@ -253,6 +245,20 @@ class Session
     }
 
     /**
+     * @param object $entity
+     * @param boolean $deep Whether all attached entities(relations) should be persisted too.
+     */
+    public function persist($entity, $deep = false)
+    {
+        if ($this->getCurrentRound()->isInCommit()) {
+            $this->enterNewRound();
+        }
+
+        $this->knownEntities[spl_object_hash($entity)] = $entity;
+        $this->getCurrentRound()->persist($entity, $deep);
+    }
+
+    /**
      * @throws \Exception
      */
     public function commit()
@@ -260,6 +266,12 @@ class Session
         if (!$this->rounds) {
             return;
         }
+
+        if ($this->closed) {
+            throw new SessionClosedException('Session is closed due to a exception. Repair its failure and call reset() to open it again.');
+        }
+
+        $allCommitted = false;
 
         while (true) {
             $allCommitted = true;
@@ -273,7 +285,13 @@ class Session
                 if (!$round->isCommitted() && !$round->isInCommit()) {
 //                    $this->currentCommitRound = $idx;
                     $this->getConfiguration()->debug('commit round (' . $idx . ')');
-                    $round->commit();
+                    try {
+                        $round->commit();
+                    } catch (\Exception $e) {
+                        $this->getConfiguration()->debug('force close session');
+                        $this->closed = true;
+                        throw $e;
+                    }
                     $this->getConfiguration()->debug('close round (' . $idx . ')');
                     continue;
                 }
@@ -284,7 +302,27 @@ class Session
             }
         }
 
-//        $this->getConfiguration()->debug(count($this->rounds) . ' rounds committed');
+        if ($allCommitted) {
+            $this->getConfiguration()->debug('close all rounds. ' . count($this->rounds) . ' rounds committed');
+            $this->currentRound = -1;
+            $this->rounds = [];
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isClosed()
+    {
+        return $this->closed;
+    }
+
+    /**
+     * Opens the session again and resets all rounds.
+     */
+    public function reset()
+    {
+        $this->closed = false;
         $this->currentRound = -1;
         $this->rounds = [];
     }
@@ -302,6 +340,8 @@ class Session
 
         return $this->lastKnownValues[spl_object_hash($entity)] = $values;
     }
+
+
 
     /**
      * Returns last known values by the database. Those values are currently known by the database and

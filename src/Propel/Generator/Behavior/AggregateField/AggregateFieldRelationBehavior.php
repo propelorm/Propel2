@@ -48,7 +48,7 @@ class AggregateFieldRelationBehavior extends Behavior
         return true;
     }
 
-    public function postSave($builder)
+    public function postSave(RepositoryBuilder $builder)
     {
         $this->builder = $builder;
 
@@ -61,7 +61,7 @@ class AggregateFieldRelationBehavior extends Behavior
 ";
     }
 
-    public function postDelete($builder)
+    public function postDelete(RepositoryBuilder $builder)
     {
         $this->builder = $builder;
 

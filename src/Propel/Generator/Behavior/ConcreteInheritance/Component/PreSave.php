@@ -74,6 +74,7 @@ EOF;
 
         $code .= <<<EOF
     \$parentRepository->getEntityMap()->copyInto(\$entity, \$parent, \$excludeFields);
+    \$parent->set{$parentEntity->getField($behavior->getParameter('descendant_field'))->getMethodName()}('{$behavior->getEntity()->getFullClassName()}');
     \$session->persist(\$parent, true);
 }
 EOF;

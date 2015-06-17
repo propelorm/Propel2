@@ -21,7 +21,7 @@ class SaveEvent extends RepositoryEvent
      * @param object[]  $entitiesToInsert
      * @param object[]  $entitiesToUpdate
      */
-    public function __construct(Session $session, EntityMap $entityMap, $entitiesToInsert, $entitiesToUpdate)
+    public function __construct(Session $session, EntityMap $entityMap, $entitiesToInsert = [], $entitiesToUpdate = [])
     {
         parent::__construct($session, $entityMap);
         $this->entitiesToInsert = $entitiesToInsert;

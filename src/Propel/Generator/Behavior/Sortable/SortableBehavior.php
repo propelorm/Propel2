@@ -140,7 +140,7 @@ class SortableBehavior extends Behavior
 //        $this->addProcessSortableQueries($script);
     }
 
-    public function preSave()
+    public function preSave(RepositoryBuilder $repositoryBuilder)
     {
         return "\$this->processSortableQueries();";
     }

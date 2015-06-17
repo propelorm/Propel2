@@ -196,7 +196,7 @@ class ArchivableBehavior extends Behavior
         return $this->archiveEntity;
     }
 
-    public function preDelete()
+    public function preDelete(RepositoryBuilder $builder)
     {
         if (!$this->isArchiveOnDelete()) {
             return null;
@@ -213,7 +213,7 @@ foreach(\$event->getEntities() as \$entity) {
 ";
     }
 
-    public function preUpdate()
+    public function preUpdate(RepositoryBuilder $builder)
     {
         if (!$this->isArchiveOnUpdate()) {
             return null;
@@ -230,7 +230,7 @@ foreach(\$event->getEntities() as \$entity) {
 ";
     }
 
-    public function postInsert()
+    public function postInsert(RepositoryBuilder $builder)
     {
         if (!$this->isArchiveOnInsert()) {
             return null;

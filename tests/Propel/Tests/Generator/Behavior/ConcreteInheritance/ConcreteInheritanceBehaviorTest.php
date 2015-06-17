@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
+use Propel\Runtime\Event\SaveEvent;
+use Propel\Tests\Bookstore\Behavior\Base\BaseConcreteArticleRepository;
 use Propel\Tests\Bookstore\Behavior\Map\ConcreteArticleEntityMap;
 use Propel\Tests\Bookstore\Behavior\Map\ConcreteAuthorEntityMap;
 use Propel\Tests\Bookstore\Behavior\Map\ConcreteContentEntityMap;
@@ -71,43 +73,42 @@ EOF;
         }
     }
 
-//    public function testParentBehavior()
-//    {
-//        $behaviors = $this->getConfiguration()->getEntityMap(ConcreteContentEntityMap::ENTITY_CLASS)->getBehaviors();
-//        var_dump($behaviors);
-//        $this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyTable() gives the parent table the concrete_inheritance_parent behavior');
-//        $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_Field'], 'modifyTable() passed the descendant_Field parameter to the parent behavior');
-//    }
+    public function testParentBehavior()
+    {
+        $behaviors = $this->getConfiguration()->getEntityMap(ConcreteContentEntityMap::ENTITY_CLASS)->getBehaviors();
+        $this->assertTrue(array_key_exists('concrete_inheritance_parent', $behaviors), 'modifyEntity() gives the parent table the concrete_inheritance_parent behavior');
+        $this->assertEquals('descendantClass', $behaviors['concrete_inheritance_parent']['descendant_field'], 'modifyEntity() passed the descendant_Field parameter to the parent behavior');
+    }
 
-    public function testModifyTableAddsParentField()
+    public function testmodifyEntityAddsParentField()
     {
         $contentFields = array('id', 'title', 'concreteCategoryId');
         $article = $this->getConfiguration()->getEntityMap(ConcreteArticleEntityMap::ENTITY_CLASS);
         foreach ($contentFields as $field) {
-            $this->assertTrue($article->hasField($field), 'modifyTable() adds the Fields of the parent table');
+            $this->assertTrue($article->hasField($field), 'modifyEntity() adds the Fields of the parent table');
         }
         $quizz = $this->getConfiguration()->getEntityMap(ConcreteQuizzEntityMap::ENTITY_CLASS);
-        $this->assertEquals(3, count($quizz->getFields()), 'modifyTable() does not add a Field of the parent table if a similar Field exists');
+        $this->assertEquals(3, count($quizz->getFields()), 'modifyEntity() does not add a field of the parent table if a similar field exists');
     }
 
-    public function testModifyTableCopyDataAddsOneToOneRelationships()
+    public function testmodifyEntityCopyDataAddsOneToOneRelationships()
     {
         $article = $this->getConfiguration()->getEntityMap(ConcreteArticleEntityMap::ENTITY_CLASS);
-        $this->assertTrue($article->hasRelation('concreteContent'), 'modifyTable() adds a relationship to the parent');
+        $this->assertTrue($article->hasRelation('concreteContent'), 'modifyEntity() adds a relationship to the parent');
         $relation = $article->getRelation('concreteContent');
-        $this->assertEquals(RelationMap::MANY_TO_ONE, $relation->getType(), 'modifyTable adds a one-to-one relationship');
+        $this->assertEquals(RelationMap::MANY_TO_ONE, $relation->getType(), 'modifyEntity adds a one-to-one relationship');
         $content = $this->getConfiguration()->getEntityMap(ConcreteContentEntityMap::ENTITY_CLASS);
         $relation = $content->getRelation('concreteArticle');
-        $this->assertEquals(RelationMap::ONE_TO_ONE, $relation->getType(), 'modifyTable adds a one-to-one relationship');
+        $this->assertEquals(RelationMap::ONE_TO_ONE, $relation->getType(), 'modifyEntity adds a one-to-one relationship');
     }
 
-    public function testModifyTableNoCopyDataNoParentRelationship()
+    public function testmodifyEntityNoCopyDataNoParentRelationship()
     {
         $quizz = $this->getConfiguration()->getEntityMap(ConcreteQuizzEntityMap::ENTITY_CLASS);
-        $this->assertFalse($quizz->hasRelation('concreteContent'), 'modifyTable() does not add a relationship to the parent when copy_data is false');
+        $this->assertFalse($quizz->hasRelation('concreteContent'), 'modifyEntity() does not add a relationship to the parent when copy_data is false');
     }
 
-    public function testModifyTableCopyDataRemovesAutoIncrement()
+    public function testmodifyEntityCopyDataRemovesAutoIncrement()
     {
         ConcreteArticleQuery::create()->deleteAll();
         $article = new ConcreteArticle();
@@ -120,7 +121,7 @@ EOF;
      * @expectedException \Propel\Runtime\Exception\PropelException
      * @expectedExceptionMessage Cannot insert a value for auto-increment primary key (id)
      */
-    public function testModifyTableNoCopyDataKeepsAutoIncrement()
+    public function testmodifyEntityNoCopyDataKeepsAutoIncrement()
     {
         ConcreteQuizzQuery::create()->deleteAll();
         $quizz = new ConcreteQuizz();
@@ -128,16 +129,16 @@ EOF;
         $quizz->save();
     }
 
-    public function testModifyTableAddsForeignKeys()
+    public function testmodifyEntityAddsForeignKeys()
     {
         $article = $this->getConfiguration()->getEntityMap(ConcreteArticleEntityMap::ENTITY_CLASS);
-        $this->assertTrue($article->hasRelation('concreteCategory'), 'modifyTable() copies relationships from parent table');
+        $this->assertTrue($article->hasRelation('concreteCategory'), 'modifyEntity() copies relationships from parent table');
     }
 
-    public function testModifyTableAddsForeignKeysWithoutDuplicates()
+    public function testmodifyEntityAddsForeignKeysWithoutDuplicates()
     {
         $article = $this->getConfiguration()->getEntityMap(ConcreteAuthorEntityMap::ENTITY_CLASS);
-        $this->assertTrue($article->hasRelation('concreteNews'), 'modifyTable() copies relationships from parent table and removes hardcoded refPhpName');
+        $this->assertTrue($article->hasRelation('concreteNews'), 'modifyEntity() copies relationships from parent table and removes hardcoded refPhpName');
     }
 
     // no way to test copying of indices and uniques, except by reverse engineering the db...
@@ -190,7 +191,40 @@ EOF;
         $this->assertNull($content);
     }
 
-    public function testGetParentOrCreateExistingParent()
+    public function testPreSaveNew()
+    {
+        $article = new ConcreteArticle();
+
+        /** @var BaseConcreteArticleRepository $repository */
+        $repository = $this->getConfiguration()->getRepository(ConcreteArticleEntityMap::ENTITY_CLASS);
+
+        $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getConfiguration()->getEntityMap(ConcreteArticleEntityMap::ENTITY_CLASS), [$article]);
+        $repository->preSave($event);
+        $content = $article->getConcreteContent();
+
+        $this->assertTrue($content instanceof ConcreteContent, 'preSave() sets an instance of the parent class');
+        $this->assertTrue($this->getConfiguration()->getSession()->isNew($content), 'preSave() sets a new instance of the parent class if the object is new');
+        $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteArticle', $content->getDescendantClass(), 'preSave() correctly sets the descendant_class of the parent object');
+    }
+
+    public function testPreSaveExisting()
+    {
+        $article = new ConcreteArticle();
+        $article->save();
+
+        /** @var BaseConcreteArticleRepository $repository */
+        $repository = $this->getConfiguration()->getRepository(ConcreteArticleEntityMap::ENTITY_CLASS);
+
+        $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getConfiguration()->getEntityMap(ConcreteArticleEntityMap::ENTITY_CLASS), [$article]);
+        $repository->preSave($event);
+        $content = $article->getConcreteContent();
+
+        $this->assertTrue($content instanceof ConcreteContent, 'preSave() returns an instance of the parent class');
+        $this->assertFalse($content->isNew(), 'preSave() returns an existing instance of the parent class if the object is persisted');
+        $this->assertEquals($article->getId(), $content->getId(), 'preSave() returns the parent object related to the current object');
+    }
+
+    public function testPreSaveExistingParent()
     {
         ConcreteContentQuery::create()->deleteAll();
         ConcreteArticleQuery::create()->deleteAll();
@@ -206,8 +240,8 @@ EOF;
         $article->save();
 
         $this->assertEquals($id, $content->getId());
-        $this->assertEquals($id, $article->getId(), 'getParentOrCreate() keeps manually set pk');
-        $this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
+        $this->assertEquals($id, $article->getId(), 'preSave() keeps manually set pk');
+        $this->assertEquals(1, ConcreteContentQuery::create()->count(), 'preSave() creates no new parent entry');
     }
 
     public function testPostDeleteCopyData()
@@ -237,14 +271,14 @@ EOF;
         $article->save();
 
         $this->assertEquals(2, $article->getConcreteContentSetPk()->getId());
-        $this->assertEquals(2, $article->getId(), 'getParentOrCreate() keeps manually set pk after save');
-        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->count(), 'getParentOrCreate() creates a parent entry');
-        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->findOne()->getId(), 'getParentOrCreate() creates a parent entry');
+        $this->assertEquals(2, $article->getId(), 'preSave() keeps manually set pk after save');
+        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->count(), 'preSave() creates a parent entry');
+        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->findOne()->getId(), 'preSave() creates a parent entry');
 
         $articledb = \ConcreteArticleSetPkQuery::create()->findOneById(2);
-        $this->assertEquals(2, $article->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
+        $this->assertEquals(2, $article->getId(), 'preSave() keeps manually set pk after save and reload from db');
         $this->assertEquals('Test', $articledb->getTitle());
-        $this->assertEquals(2, $articledb->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
+        $this->assertEquals(2, $articledb->getId(), 'preSave() keeps manually set pk after save and reload from db');
     }
 
     /**
