@@ -30,8 +30,13 @@ $reader = $this->getPropReader();
 
         foreach ($this->getEntity()->getRelations() as $relation) {
             $relationName = $this->getRelationVarName($relation);
+            if ($relation->isLocalPrimaryKey()) {
+                $body .= "// one-to-one {$relation->getForeignEntity()->getFullClassName()}\n";
+            } else {
+                $body .= "// many-to-one {$relation->getForeignEntity()->getFullClassName()}\n";
+            }
+
             $body .= "
-// many-to-one {$relation->getForeignEntity()->getFullClassName()}
 if (\$relationEntity = \$reader(\$entity, '$relationName')) {
     \$session->persist(\$relationEntity, \$deep);
 }
@@ -39,7 +44,14 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
         }
 
 //        foreach ($this->getEntity()->getReferrers() as $relation) {
-//            $relationName = $this->getRefRelationCollVarName($relation);
+//            if ($relation->isLocalPrimaryKey()) {
+//                $relationName = $this->getRefRelationVarName($relation);
+//                $body .= "// one-to-one {$relation->getEntity()->getFullClassName()}\n";
+//            } else {
+//                $relationName = $this->getRefRelationCollVarName($relation);
+//                $body .= "// one-to-many {$relation->getEntity()->getFullClassName()}\n";
+//            }
+//
 //            $body .= "
 //if (\$relationEntities = \$reader(\$entity, '$relationName')) {
 //    foreach (\$relationEntities as \$relationEntity) {

@@ -43,8 +43,8 @@ return \$this->$varName;
         $methodName = 'get' . $this->getRelationPhpName($relation, false);
         $this->addMethod($methodName)
             ->setType("null|$foreignClassName")
-            ->setTypeDescription("The associated $foreignClassName object$internal")
+            ->setTypeDescription("The associated $foreignClassName object")
             ->setBody($body)
-            ->setDescription("Returns the associated $foreignClassName object or null if none is associated.");
+            ->setDescription("Returns the associated $foreignClassName object or null if none is associated.$internal");
     }
 }

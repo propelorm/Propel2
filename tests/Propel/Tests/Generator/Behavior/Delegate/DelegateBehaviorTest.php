@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Delegate;
 
+use Map\DelegateDelegateEntityMap;
 use Propel\Generator\Behavior\Delegate\DelegateBehavior;
 use Propel\Generator\Util\QuickBuilder;
 
@@ -28,7 +29,7 @@ class DelegateBehaviorTest extends TestCase
     {
         if (!class_exists('DelegateDelegate')) {
             $schema = <<<EOF
-<database name="delegate_behavior_test_1">
+<database name="delegate_behavior_test_1" activeRecord="true">
 
     <table name="delegate_main">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -38,7 +39,7 @@ class DelegateBehaviorTest extends TestCase
             <reference local="delegate_id" foreign="id" />
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_delegate, second_delegate_delegate" />
+            <parameter name="to" value="DelegateDelegate, SecondDelegateDelegate" />
         </behavior>
     </table>
 
@@ -50,7 +51,7 @@ class DelegateBehaviorTest extends TestCase
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="summary" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="delegate">
-            <parameter name="to" value="third_delegate_delegate" />
+            <parameter name="to" value="ThirdDelegateDelegate" />
         </behavior>
     </table>
 
@@ -73,7 +74,7 @@ class DelegateBehaviorTest extends TestCase
             <reference local="player_id" foreign="id" />
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player" />
+            <parameter name="to" value="DelegatePlayer" />
         </behavior>
     </table>
 
@@ -95,7 +96,7 @@ class DelegateBehaviorTest extends TestCase
             <reference local="team_id" foreign="id" />
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player, delegate_team" />
+            <parameter name="to" value="DelegatePlayer, DelegateTeam" />
         </behavior>
     </table>
 
@@ -107,8 +108,8 @@ EOF;
 
     public function testModifyTableRelatesOneToOneDelegate()
     {
-        $delegateTable = \Map\DelegateDelegateTableMap::getTableMap();
-        $this->assertEquals(2, count($delegateTable->getColumns()));
+        $delegateTable = QuickBuilder::$configuration->getEntityMap(DelegateDelegateEntityMap::ENTITY_CLASS);
+        $this->assertEquals(2, count($delegateTable->getFields()));
         $this->assertEquals(1, count($delegateTable->getRelations()));
         $this->assertTrue(method_exists('DelegateMain', 'getDelegateDelegate'));
         $this->assertTrue(method_exists('DelegateDelegate', 'getDelegateMain'));
@@ -120,7 +121,7 @@ EOF;
         $main->setSubtitle('foo');
         $delegate = $main->getDelegateDelegate();
         $this->assertInstanceOf('DelegateDelegate', $delegate);
-        $this->assertTrue($delegate->isNew());
+        $this->assertTrue(QuickBuilder::$configuration->getSession()->isNew($delegate));
         $this->assertEquals('foo', $delegate->getSubtitle());
         $this->assertEquals('foo', $main->getSubtitle());
     }
@@ -131,7 +132,7 @@ EOF;
         $main->setSummary('foo');
         $delegate = $main->getSecondDelegateDelegate();
         $this->assertInstanceOf('SecondDelegateDelegate', $delegate);
-        $this->assertTrue($delegate->isNew());
+        $this->assertTrue(QuickBuilder::$configuration->getSession()->isNew($delegate));
         $this->assertEquals('foo', $delegate->getSummary());
         $this->assertEquals('foo', $main->getSummary());
     }
@@ -161,12 +162,12 @@ EOF;
         $main->setSummary('bar');
         $delegate = $main->getDelegateDelegate();
         $this->assertInstanceOf('DelegateDelegate', $delegate);
-        $this->assertTrue($delegate->isNew());
+        $this->assertTrue(QuickBuilder::$configuration->getSession()->isNew($delegate));
         $this->assertEquals('foo', $delegate->getSubtitle());
         $this->assertEquals('foo', $main->getSubtitle());
         $delegate = $main->getSecondDelegateDelegate();
         $this->assertInstanceOf('SecondDelegateDelegate', $delegate);
-        $this->assertTrue($delegate->isNew());
+        $this->assertTrue(QuickBuilder::$configuration->getSession()->isNew($delegate));
         $this->assertEquals('bar', $delegate->getSummary());
         $this->assertEquals('bar', $main->getSummary());
     }

@@ -10,8 +10,11 @@
 
 namespace Propel\Generator\Behavior\Delegate;
 
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Entity;
+use Propel\Generator\Model\Relation;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -29,6 +32,8 @@ class DelegateBehavior extends Behavior
     );
 
     protected $delegates = array();
+
+    use ComponentTrait;
 
     /**
      * Lists the delegates and checks that the behavior can use them,
@@ -60,7 +65,7 @@ class DelegateBehavior extends Behavior
                     $fk = $fks[0];
                     if (!$fk->isLocalPrimaryKey()) {
                         throw new \InvalidArgumentException(sprintf(
-                            'Delegate table "%s" has a relationship with table "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
+                            'Delegate table "%s" has a relationship with entity "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
                             $delegate,
                             $table->getName()
                         ));
@@ -75,7 +80,15 @@ class DelegateBehavior extends Behavior
         }
     }
 
-    protected function relateDelegateToMainEntity($delegateEntity, $mainEntity)
+    /**
+     * @return array
+     */
+    public function getDelegates()
+    {
+        return $this->delegates;
+    }
+
+    protected function relateDelegateToMainEntity(Entity $delegateEntity, Entity $mainEntity)
     {
         $pks = $mainEntity->getPrimaryKey();
         foreach ($pks as $field) {
@@ -87,53 +100,24 @@ class DelegateBehavior extends Behavior
             }
         }
         // Add a one-to-one fk
-        $fk = new ForeignKey();
-        $fk->setForeignEntityCommonName($mainEntity->getCommonName());
-        $fk->setForeignSchemaName($mainEntity->getSchema());
-        $fk->setDefaultJoin('LEFT JOIN');
-        $fk->setOnDelete(ForeignKey::CASCADE);
-        $fk->setOnUpdate(ForeignKey::NONE);
+        $relation = new Relation();
+        $relation->setForeignEntityName($mainEntity->getName());
+        $relation->setDefaultJoin('LEFT JOIN');
+        $relation->setOnDelete(Relation::CASCADE);
+        $relation->setOnUpdate(Relation::NONE);
         foreach ($pks as $field) {
-            $fk->addReference($field->getName(), $field->getName());
+            $relation->addReference($field->getName(), $field->getName());
         }
-        $delegateEntity->addForeignKey($fk);
+        $delegateEntity->addRelation($relation);
     }
 
-    protected function getDelegateEntity($delegateEntityName)
+    public function getDelegateEntity($delegateEntityName)
     {
         return $this->getEntity()->getDatabase()->getEntity($delegateEntityName);
     }
 
-    public function objectCall($builder)
+    public function objectBuilderModification(ObjectBuilder $builder)
     {
-        $plural = false;
-        $script = '';
-        foreach ($this->delegates as $delegate => $type) {
-            $delegateEntity = $this->getDelegateEntity($delegate);
-            if ($type == self::ONE_TO_ONE) {
-                $fks = $delegateEntity->getForeignKeysReferencingEntity($this->getEntity()->getName());
-                $fk = $fks[0];
-                $ARClassName = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($fk->getEntity()));
-                $ARFQCN = $builder->getNewStubObjectBuilder($fk->getEntity())->getFullyQualifiedClassName();
-                $relationName = $builder->getRefFKPhpNameAffix($fk, $plural);
-            } else {
-                $fks = $this->getEntity()->getForeignKeysReferencingEntity($delegate);
-                $fk = $fks[0];
-                $ARClassName = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($delegateEntity));
-                $ARFQCN = $builder->getNewStubObjectBuilder($delegateEntity)->getFullyQualifiedClassName();
-                $relationName = $builder->getFKPhpNameAffix($fk);
-            }
-                $script .= "
-if (is_callable(array('$ARFQCN', \$name))) {
-    if (!\$delegate = \$this->get$relationName()) {
-        \$delegate = new $ARClassName();
-        \$this->set$relationName(\$delegate);
-    }
-
-    return call_user_func_array(array(\$delegate, \$name), \$params);
-}";
-        }
-
-        return $script;
+        $this->applyComponent('MagicCallMethod', $builder);
     }
 }

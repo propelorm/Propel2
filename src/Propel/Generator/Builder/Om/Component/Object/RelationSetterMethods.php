@@ -47,7 +47,7 @@ class RelationSetterMethods extends BuildComponent
                 'setter' => 'set' . $this->getRefRelationPhpName($relation, false),
                 'varName' => $varName,
                 'isOneToOne' => $relation->isLocalPrimaryKey(),
-                'isManyToOne' => !$relation->isLocalPrimaryKey(),
+                'isManyToOne' => !$relation->isLocalPrimaryKey()
             ],
             'RelationSetterMethod'
         );
@@ -55,9 +55,9 @@ class RelationSetterMethods extends BuildComponent
         $internal = "\nMapped by fields " . implode(', ', $relation->getLocalFields());
 
         $this->addMethod($setterName)
-            ->setDescription("Declares an association between this object and a $relationClassName object.")
+            ->setDescription("Declares an association between this object and a $relationClassName object.$internal")
             ->setType("\$this|\\$className")
-            ->setTypeDescription("The current object (for fluent API support)$internal")
+            ->setTypeDescription("The current object (for fluent API support)")
             ->addSimpleParameter($varName, $relationClassName, null)
             ->setBody($body);
     }

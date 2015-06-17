@@ -8,7 +8,7 @@ use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Relation;
 
 /**
- * Adds all referrer add methods.
+ * Adds all many-to-one referrer add methods.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */

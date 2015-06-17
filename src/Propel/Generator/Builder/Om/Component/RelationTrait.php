@@ -122,6 +122,12 @@ trait RelationTrait
         return lcfirst($this->getRelationPhpName($relation, $plural));
     }
 
+    /**
+     * @param Relation $relation
+     * @param bool     $plural
+     *
+     * @return string
+     */
     public function getRefRelationVarName(Relation $relation, $plural = false)
     {
         return lcfirst($this->getRefRelationPhpName($relation, $plural));

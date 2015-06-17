@@ -335,7 +335,7 @@ class ObjectCollection extends Collection
      */
     protected function getHashCode($instance)
     {
-        if (is_callable([$instance, 'hashCode'])) {
+        if (method_exists($instance, 'hashCode')) {
             return $instance->hashCode();
         }
 

@@ -30,7 +30,7 @@ abstract class BuildComponent
     /**
      * @param AbstractBuilder $builder
      */
-    function __construct(AbstractBuilder $builder, Behavior $behavior = null)
+    public function __construct(AbstractBuilder $builder, Behavior $behavior = null)
     {
         $this->builder = $builder;
         $this->behavior = $behavior;
