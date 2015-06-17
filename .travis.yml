@@ -15,7 +15,7 @@ env:
 before_script:
   # Composer
   - wget http://getcomposer.org/composer.phar
-  - php composer.phar install --prefer-source
+  - php composer.phar install --prefer-dist
 
   - if [ "$DB" != 'agnostic' ]; then ./tests/bin/setup.$DB.sh; fi   # setup only for integration tests
 
