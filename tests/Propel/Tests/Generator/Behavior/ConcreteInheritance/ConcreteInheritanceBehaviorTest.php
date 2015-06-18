@@ -260,11 +260,15 @@ EOF;
         $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
     }
 
+    /**
+     * @group test
+     */
     public function testSetPKOnNewObject()
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
         \ConcreteArticleSetPkQuery::create()->deleteAll();
 
+        var_dump('##################SAVE');
         $article = new \ConcreteArticleSetPk();
         $article->setId(2);
         $article->setTitle('Test');

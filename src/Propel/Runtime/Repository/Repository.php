@@ -3,7 +3,6 @@
 namespace Propel\Runtime\Repository;
 
 use Propel\Runtime\Configuration;
-use Propel\Runtime\Event\CommitEvent;
 use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\InsertEvent;
 use Propel\Runtime\Event\RepositoryEvent;
@@ -100,69 +99,19 @@ abstract class Repository
     }
 
     /**
-     * @param object $entity
-     *
-     * @return array|false Returns false when no changes are detected
+     * @return EntityMap
      */
-    abstract public function buildChangeSet($entity);
-
-    protected function preSave(SaveEvent $event)
+    public function getEntityMap()
     {
-    }
-
-    protected function preUpdate(UpdateEvent $event)
-    {
-    }
-
-    protected function preInsert(InsertEvent $event)
-    {
-    }
-
-    protected function preDelete(DeleteEvent $event)
-    {
-    }
-
-    protected function postSave(SaveEvent $event)
-    {
-//        foreach ($event->getEntitiesToInsert() as $entity) {
-//            $this->getConfiguration()->debug('inserted ' . spl_object_hash($entity) . ' => ' . get_class($entity));
-////            $this->committedIds[spl_object_hash($entity)] = true;
-//            $this->addToFirstLevelCache($entity);
-//            $this->snapshot($entity);
-//        }
-//        foreach ($event->getEntitiesToUpdate() as $entity) {
-//            $this->getConfiguration()->debug('updated ' . spl_object_hash($entity) . ' => ' . get_class($entity));
-////            $this->committedIds[spl_object_hash($entity)] = true;
-//            $this->addToFirstLevelCache($entity);
-//            $this->snapshot($entity);
-//        }
-    }
-
-    protected function postUpdate(UpdateEvent $event)
-    {
-    }
-
-    protected function postInsert(InsertEvent $event)
-    {
-    }
-
-    protected function postDelete(DeleteEvent $event)
-    {
-//        foreach ($event->getEntities() as $entity) {
-//            $id = spl_object_hash($entity);
-////            unset($this->committedIds[$id]);
-////            $this->deletedIds[$id] = true;
-////            unset($this->lastKnownValues[$id]);
-//        }
+        return $this->entityMap;
     }
 
     /**
-     * @param string   $eventName
-     * @param callable $listener
+     * @param EntityMap $entityMap
      */
-    public function on($eventName, callable $listener)
+    public function setEntityMap($entityMap)
     {
-        $this->getEventDispatcher()->addListener($eventName, $listener);
+        $this->entityMap = $entityMap;
     }
 
     /**
@@ -186,6 +135,22 @@ abstract class Repository
     }
 
     /**
+     * @param object $entity
+     *
+     * @return array|false Returns false when no changes are detected
+     */
+    abstract public function buildChangeSet($entity);
+
+    /**
+     * @param string   $eventName
+     * @param callable $listener
+     */
+    public function on($eventName, callable $listener)
+    {
+        $this->getEventDispatcher()->addListener($eventName, $listener);
+    }
+
+    /**
      * Deletes all objects from the backend and clears the first level cache.
      */
     public function deleteAll()
@@ -194,20 +159,19 @@ abstract class Repository
     }
 
     /**
-     * This is the actual implementation of `find`, which will be provided
-     * by the platform.
-     *
-     * @param array|string|integer $key
-     *
-     * @return object
-     */
-    abstract protected function doFind($key);
-
-    /**
      * This is the actual implementation of `deleteAll`, which will be provided
      * by the platform.
      */
     abstract protected function doDeleteAll();
+
+    /**
+     * @param object $entity
+     * @param bool   $deep
+     */
+    public function persist($entity, $deep = false)
+    {
+        $this->getConfiguration()->getSession()->persist($entity, $deep);
+    }
 
     /**
      * @return Configuration
@@ -223,22 +187,6 @@ abstract class Repository
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
-    }
-
-    /**
-     * @return EntityMap
-     */
-    public function getEntityMap()
-    {
-        return $this->entityMap;
-    }
-
-    /**
-     * @param EntityMap $entityMap
-     */
-    public function setEntityMap($entityMap)
-    {
-        $this->entityMap = $entityMap;
     }
 
     public function persistDependencies($entity)
@@ -345,4 +293,46 @@ abstract class Repository
 
         return $pk;
     }
+
+    protected function preSave(SaveEvent $event)
+    {
+    }
+
+    protected function preUpdate(UpdateEvent $event)
+    {
+    }
+
+    protected function preInsert(InsertEvent $event)
+    {
+    }
+
+    protected function preDelete(DeleteEvent $event)
+    {
+    }
+
+    protected function postSave(SaveEvent $event)
+    {
+    }
+
+    protected function postUpdate(UpdateEvent $event)
+    {
+    }
+
+    protected function postInsert(InsertEvent $event)
+    {
+    }
+
+    protected function postDelete(DeleteEvent $event)
+    {
+    }
+
+    /**
+     * This is the actual implementation of `find`, which will be provided
+     * by the platform.
+     *
+     * @param array|string|integer $key
+     *
+     * @return object
+     */
+    abstract protected function doFind($key);
 }

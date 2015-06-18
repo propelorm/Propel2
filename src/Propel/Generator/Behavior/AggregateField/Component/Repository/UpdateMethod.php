@@ -31,9 +31,7 @@ class UpdateMethod extends BuildComponent
 
         $body = "
 \$entity->{$setter}(\$this->compute{$name}(\$entity));
-if (\$save) {
-    \$this->save(\$entity);
-}
+\$this->persist(\$entity);
 ";
 
         $this->addMethod('update' . ucfirst($behavior->getField()->getName()))

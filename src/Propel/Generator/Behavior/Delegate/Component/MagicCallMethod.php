@@ -41,7 +41,7 @@ class MagicCallMethod extends BuildComponent
 
             $script .= "
 //type=$type
-if (is_callable(array('$ARFQCN', \$name))) {
+if (method_exists('$ARFQCN', \$name) && is_callable(array('$ARFQCN', \$name))) {
     if (!\$delegate = \$this->get$relationName()) {
         \$delegate = new $ARClassName();
         \$this->set$relationName(\$delegate);

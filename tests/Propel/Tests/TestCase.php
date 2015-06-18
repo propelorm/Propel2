@@ -11,6 +11,9 @@
 namespace Propel\Tests;
 
 
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Configuration;
+
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getDriver()
@@ -44,6 +47,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         return $sql;
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        if (Configuration::$globalConfiguration) {
+            Configuration::$globalConfiguration->reset();
+            Configuration::$globalConfiguration->getSession()->reset();
+        }
     }
 
     /**

@@ -80,6 +80,14 @@ class Session
             //if PRE_SAVE hooks added new rounds, commit those first
             $self->commit();
         }, -128);
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_INSERT, function() use ($self) {
+            //if PRE_SAVE hooks added new rounds, commit those first
+            $self->commit();
+        }, -128);
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_UPDATE, function() use ($self) {
+            //if PRE_SAVE hooks added new rounds, commit those first
+            $self->commit();
+        }, -128);
         $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
             //if PRE_SAVE hooks added new rounds, commit those first
             $self->commit();
@@ -325,10 +333,12 @@ class Session
         $this->closed = false;
         $this->currentRound = -1;
         $this->rounds = [];
+        $this->lastKnownValues = [];
+        $this->firstLevelCache = [];
     }
 
     /**
-     * Reads all values of $entities and place it in lastKnownValues.
+     * Reads all values of $entity and place it in lastKnownValues.
      *
      * @param object $entity
      *
@@ -340,8 +350,6 @@ class Session
 
         return $this->lastKnownValues[spl_object_hash($entity)] = $values;
     }
-
-
 
     /**
      * Returns last known values by the database. Those values are currently known by the database and

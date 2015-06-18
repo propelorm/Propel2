@@ -97,7 +97,7 @@ foreach (\$entities as \$entity) {
     ->filterByPrimaryKeys(\$pks)
     ->find();
 foreach (\$relatedObjects as \$relatedObject) {
-    \$relatedRepo->$updateMethodName(\$relatedObject, true);
+    \$relatedRepo->$updateMethodName(\$relatedObject);
 }
 ";
         $name = 'updateRelated' . $relationName . $aggregateName;

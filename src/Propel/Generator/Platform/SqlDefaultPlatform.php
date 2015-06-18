@@ -232,6 +232,18 @@ class SqlDefaultPlatform implements PlatformInterface
                 }
             } else {
                 //we have references, make sure all those columns are marked as implementationDetail
+//                if ($relation->isLocalPrimaryKey()) {
+//                    //one-to-one relation are not marked as implementation detail
+//                    continue;
+//                }
+//                foreach ($relation->getFieldObjectsMapArray() as $fields) {
+//                    /** @var Field $local */
+//                    /** @var Field $foreign */
+//                    list($local, $foreign) = $fields;
+//                    if ($local->isPrimaryKey()) {
+//                        $foreign->setImplementationDetail(true);
+//                    }
+//                }
                 foreach($relation->getLocalFieldObjects() as $field) {
                     $field->setImplementationDetail(true);
                 }

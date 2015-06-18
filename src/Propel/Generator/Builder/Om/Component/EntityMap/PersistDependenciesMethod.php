@@ -43,23 +43,19 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
 ";
         }
 
-//        foreach ($this->getEntity()->getReferrers() as $relation) {
-//            if ($relation->isLocalPrimaryKey()) {
-//                $relationName = $this->getRefRelationVarName($relation);
-//                $body .= "// one-to-one {$relation->getEntity()->getFullClassName()}\n";
-//            } else {
-//                $relationName = $this->getRefRelationCollVarName($relation);
-//                $body .= "// one-to-many {$relation->getEntity()->getFullClassName()}\n";
-//            }
-//
-//            $body .= "
-//if (\$relationEntities = \$reader(\$entity, '$relationName')) {
-//    foreach (\$relationEntities as \$relationEntity) {
-//        \$session->persist(\$relationEntity, \$deep);
-//    }
-//}
-//";
-//        }
+        foreach ($this->getEntity()->getReferrers() as $relation) {
+            if ($relation->isLocalPrimaryKey()) {
+                $relationName = $this->getRefRelationVarName($relation);
+                $body .= "//ref one-to-one {$relation->getEntity()->getFullClassName()}
+if (\$relationEntity = \$reader(\$entity, '$relationName')) {
+    \$session->persist(\$relationEntity, \$deep);
+}
+";
+            } else {
+                //one-to-many not for now
+                continue;
+            }
+        }
 
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
             $varName = $this->getRefRelationCollVarName($crossRelation->getIncomingRelation());

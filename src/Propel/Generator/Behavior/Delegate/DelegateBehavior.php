@@ -88,6 +88,10 @@ class DelegateBehavior extends Behavior
         return $this->delegates;
     }
 
+    /**
+     * @param Entity $delegateEntity
+     * @param Entity $mainEntity
+     */
     protected function relateDelegateToMainEntity(Entity $delegateEntity, Entity $mainEntity)
     {
         $pks = $mainEntity->getPrimaryKey();
@@ -104,18 +108,26 @@ class DelegateBehavior extends Behavior
         $relation->setForeignEntityName($mainEntity->getName());
         $relation->setDefaultJoin('LEFT JOIN');
         $relation->setOnDelete(Relation::CASCADE);
-        $relation->setOnUpdate(Relation::NONE);
+        $relation->setOnUpdate(Relation::CASCADE);
         foreach ($pks as $field) {
             $relation->addReference($field->getName(), $field->getName());
         }
         $delegateEntity->addRelation($relation);
     }
 
+    /**
+     * @param $delegateEntityName
+     *
+     * @return Entity
+     */
     public function getDelegateEntity($delegateEntityName)
     {
         return $this->getEntity()->getDatabase()->getEntity($delegateEntityName);
     }
 
+    /**
+     * @param ObjectBuilder $builder
+     */
     public function objectBuilderModification(ObjectBuilder $builder)
     {
         $this->applyComponent('MagicCallMethod', $builder);

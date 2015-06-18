@@ -133,6 +133,8 @@ class TestCaseFixtures extends TestCase
 
     protected function tearDown()
     {
+        parent::tearDown();
+        $this->getConfiguration()->reset();
         $this->getConfiguration()->getSession()->reset();
     }
 

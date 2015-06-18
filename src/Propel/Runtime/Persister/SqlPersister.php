@@ -118,14 +118,14 @@ class SqlPersister implements PersisterInterface
      */
     public function persist($entities)
     {
-        $changeSets = $inserts = $updates = [];
+        $inserts = $updates = [];
         foreach ($entities as $entity) {
             if ($this->getSession()->isNew($entity)) {
                 $inserts[] = $entity;
             } else {
                 if ($this->getSession()->hasKnownValues($entity) && $changeSet = $this->getRepository()->buildChangeSet($entity)) {
+                    //only add to $updates if really changes are detected
                     $updates[] = $entity;
-                    $changeSets[spl_object_hash($entity)] = $changeSet;
                 }
             }
         }
@@ -138,20 +138,13 @@ class SqlPersister implements PersisterInterface
         $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
 
-//        echo sprintf(
-//            "%s: %d inserts, %d updates\n",
-//            $this->entityMap->getFullClassName(),
-//            count($inserts),
-//            count($updates)
-//        );
-
         $this->getConfiguration()->debug(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
         $this->getConfiguration()->debug(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
         if ($inserts) {
             $this->doInsert($inserts);
         }
         if ($updates) {
-            $this->doUpdates($updates, $changeSets);
+            $this->doUpdates($updates);
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
@@ -322,9 +315,10 @@ EOF;
      */
     protected function normalizePdoException(\PDOException $PDOException)
     {
-        $message= $PDOException->getMessage();
+        $message = $PDOException->getMessage();
 
-        if (false !== strpos($message, 'Integrity constraint violation')) {
+        if (false !== strpos($message, 'Integrity constraint violation: UNIQUE constraint failed')) {
+            var_dump($message);
             preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches);
             return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
         }
@@ -338,7 +332,7 @@ EOF;
         return $this->entityMap;
     }
 
-    protected function doUpdates(array $updates, $changeSets)
+    protected function doUpdates(array $updates)
     {
         $event = new UpdateEvent($this->getSession(), $this->entityMap, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);
@@ -355,7 +349,8 @@ EOF;
         $connection = $connection->getWriteConnection();
 
         foreach($updates as $entity) {
-            $changeSet = $changeSets[spl_object_hash($entity)]; //$this->getRepository()->buildChangeSet($entity);
+            //regenerate changeSet since PRE_UPDATE/PRE_SAVE could have changed entities
+            $changeSet = $this->getRepository()->buildChangeSet($entity);
             if ($changeSet) {
                 $params = [];
                 $sets = [];

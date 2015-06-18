@@ -100,11 +100,12 @@ class SessionRound
             $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
 
             if (!$entityMap->isAllowPkInsert() && $entityMap->hasAutoIncrement() && $this->getSession()->isNew($entity)) {
-                //insert PKs is not allowed, so reject it
+                //insert PKs is not allowed, so reject it if set
 //                $entityMap->
                 $propReader = $entityMap->getPropReader();
+                $propIsset = $entityMap->getPropIsset();
                 foreach ($entityMap->getAutoIncrementFieldNames() as $fieldName) {
-                    if (null !== $propReader($entity, $fieldName)) {
+                    if ($propIsset($entity, $fieldName) && null !== $propReader($entity, $fieldName)) {
                         throw new PropelException(
                             'Cannot insert a value for auto-increment primary key (' . $fieldName . ') in entity ' . $entityMap->getFullClassName(
                             )

@@ -400,6 +400,12 @@ class Configuration extends GeneratorConfig
         return $map;
     }
 
+    public function reset()
+    {
+        $this->databaseMaps = [];
+        $this->entityMaps = [];
+    }
+
     /**
      * @param Session $session
      * @param object $entity
@@ -667,10 +673,11 @@ class Configuration extends GeneratorConfig
     {
         list(, $caller) = debug_backtrace();
         $class = $caller['class'];
+        $additional = '';
         if ('Propel\Runtime\Session\SessionRound' === $class) {
-            $class .= sprintf(', round=%d', $caller['object']->getIdx());
+            $additional = sprintf(', round=%d', $caller['object']->getIdx());
         }
-        $this->log(sprintf('[%s] %s', $class, $message));
+        $this->log(sprintf('[%s:%d%s] %s', $class, $caller['line'], $additional, $message));
     }
 
     /**
