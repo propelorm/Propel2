@@ -20,8 +20,6 @@ use Propel\Generator\Manager\MigrationManager;
  */
 class MigrationStatusCommand extends AbstractCommand
 {
-    const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
-
     /**
      * {@inheritdoc}
      */
@@ -31,7 +29,7 @@ class MigrationStatusCommand extends AbstractCommand
 
         $this
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
+            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->setName('migration:status')
             ->setAliases(array('status'))
@@ -49,7 +47,11 @@ class MigrationStatusCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-
+        
+        if ($this->hasInputOption('migration-table', $input)) {
+            $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
+        }
+        
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -69,7 +71,7 @@ class MigrationStatusCommand extends AbstractCommand
         }
 
         $manager->setConnections($connections);
-        $manager->setMigrationTable($input->getOption('migration-table'));
+        $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         $output->writeln('Checking Database Versions...');
