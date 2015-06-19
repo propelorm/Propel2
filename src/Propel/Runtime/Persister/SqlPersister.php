@@ -237,7 +237,7 @@ EOF;
         $fieldObjects = $this->entityMap->getFields();
         $fields = [];
         foreach ($fieldObjects as $field) {
-            if ($field->isAutoIncrement()) {
+            if (!$this->entityMap->isAllowPkInsert() && $field->isAutoIncrement()) {
                 continue;
             }
             if ($field->isImplementationDetail()) {
@@ -315,13 +315,6 @@ EOF;
      */
     protected function normalizePdoException(\PDOException $PDOException)
     {
-        $message = $PDOException->getMessage();
-
-        if (false !== strpos($message, 'Integrity constraint violation: UNIQUE constraint failed')) {
-            var_dump($message);
-            preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches);
-            return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
-        }
     }
 
     /**

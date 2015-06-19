@@ -55,7 +55,6 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
         <index>
             <index-field name="title" />
         </index>
-
     </table>
     <table name="concrete_article_set_pk" allowPkInsert="true">
         <field name="body" type="longvarchar" />
@@ -260,9 +259,6 @@ EOF;
         $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
     }
 
-    /**
-     * @group test
-     */
     public function testSetPKOnNewObject()
     {
         \ConcreteContentSetPkQuery::create()->deleteAll();
@@ -277,7 +273,7 @@ EOF;
         $this->assertEquals(2, $article->getConcreteContentSetPk()->getId());
         $this->assertEquals(2, $article->getId(), 'preSave() keeps manually set pk after save');
         $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->count(), 'preSave() creates a parent entry');
-        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->findOne()->getId(), 'preSave() creates a parent entry');
+        $this->assertEquals(2, \ConcreteContentSetPkQuery::create()->findOne()->getId(), 'preSave() creates a parent entry');
 
         $articledb = \ConcreteArticleSetPkQuery::create()->findOneById(2);
         $this->assertEquals(2, $article->getId(), 'preSave() keeps manually set pk after save and reload from db');
@@ -287,7 +283,7 @@ EOF;
 
     /**
      * @expectedException \Propel\Runtime\Persister\Exception\UniqueConstraintException
-     * @expectedExceptionMessage Unique constraint failure for field id in entity ConcreteArticleSetPk
+     * @expectedExceptionMessage Unique constraint failure for field id in entity ConcreteContentSetPk
      */
     public function testSetPKOnNewObjectWithPkAlreadyInParentTable()
     {

@@ -25,7 +25,6 @@ class BuildSqlBulkInsertPartMethod extends BuildComponent
     public function process()
     {
 
-
         $body = '
 $params = [];
 $entityReader = $this->getPropReader();
@@ -36,7 +35,7 @@ $entityReader = $this->getPropReader();
             if ($field->isImplementationDetail()) {
                 continue;
             }
-            if ($field->isAutoIncrement()) {
+            if (!$this->getEntity()->isAllowPkInsert() && $field->isAutoIncrement()) {
                 continue;
             }
             $placeholder[] = '?';
