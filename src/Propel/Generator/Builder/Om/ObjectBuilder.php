@@ -898,7 +898,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$format === null) {
-            return \$this->$clo;
+            return \$this->$clo instanceof \DateTime ? clone \$this->{$clo} : null;
         } else {
             return \$this->$clo instanceof \DateTime ? \$this->{$clo}->format(\$format) : null;
         }";
