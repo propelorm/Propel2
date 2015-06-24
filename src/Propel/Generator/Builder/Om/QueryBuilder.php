@@ -1317,6 +1317,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     {
         \$tableMap = \$this->getTableMap();
         \$relationMap = \$tableMap->getRelation('" . $relationName . "');
+        \$relationAlias = \$relationAlias ?: '" . $relationName . "';
 
         // create a ModelJoin object for this join
         \$join = new ModelJoin();

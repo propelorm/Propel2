@@ -449,12 +449,17 @@ class ModelCriteria extends BaseModelCriteria
      * @param string $relation Relation to use for the join
      * @param string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
+     * @throws PropelException Unknown table or alias
+     * @throws UnknownRelationException Unknown relation %s on the %s table
+     *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function join($relation, $joinType = Criteria::INNER_JOIN)
     {
         // relation looks like '$leftName.$relationName $relationAlias'
         list($fullName, $relationAlias) = self::getClassAndAlias($relation);
+        $relationAlias = $relationAlias ?: $fullName;
+
         if (false === strpos($fullName, '.')) {
             // simple relation name, refers to the current table
             $leftName = $this->getModelAliasOrName();
