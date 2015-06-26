@@ -33,6 +33,7 @@ class PropelConfiguration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('propel');
 
         $this->addGeneralSection($rootNode);
+        $this->addExcludeTablesSection($rootNode);
         $this->addPathsSection($rootNode);
         $this->addDatabaseSection($rootNode);
         $this->addMigrationsSection($rootNode);
@@ -202,6 +203,17 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('parserClass')->end()
                     ->end()
                 ->end() //reverse
+            ->end()
+        ;
+    }
+
+    protected function addExcludeTablesSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('exclude_tables')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
     }
