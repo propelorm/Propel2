@@ -284,7 +284,7 @@ class InitCommand extends AbstractCommand
         $outputDir = sys_get_temp_dir();
 
         $this->getApplication()->setAutoExit(false);
-        $fullDsn = sprintf('%s;user=%s;password=%', $options['dsn'], urlencode($options['user']), urlencode($options['password']));
+        $fullDsn = sprintf('%s;user=%s;password=%s', $options['dsn'], urlencode($options['user']), urlencode($options['password']));
 
         $input = new ArrayInput([
             'reverse',
