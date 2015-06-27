@@ -504,6 +504,21 @@ class Database extends ScopedMappingModel
         }
     }
 
+    public function removeTable(Table $table)
+    {
+        if ($this->hasTable($table->getName(), true)) {
+            foreach($this->tables as $id => $tableExam) {
+                if ($table->getName() === $tableExam->getName()) {
+                    unset($this->tables[$id]);
+                }
+            }
+
+            unset($this->tablesByName[$table->getName()]);
+            unset($this->tablesByLowercaseName[strtolower($table->getName())]);
+            unset($this->tablesByPhpName[$table->getPhpName()]);
+        }
+    }
+
     /**
      * @param string[] $sequences
      */
