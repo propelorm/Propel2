@@ -15,6 +15,7 @@ use Propel\Generator\Command\Helper\DialogHelper;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\Exception\ConnectionException;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\Output;
@@ -283,7 +284,16 @@ class InitCommand extends AbstractCommand
         $outputDir = sys_get_temp_dir();
 
         $this->getApplication()->setAutoExit(false);
-        if (0 === $this->getApplication()->run(new StringInput(sprintf('reverse %s --output-dir %s', escapeshellarg($options['dsn']), $outputDir)), $output)) {
+        $fullDsn = sprintf('%s;user=%s;password=%', $options['dsn'], urlencode($options['user']), urlencode($options['password']));
+
+        $input = new ArrayInput([
+            'reverse',
+            'connection' => $fullDsn,
+            '--output-dir' => $outputDir
+        ]);
+        $result = $this->getApplication()->run($input,$output);
+
+        if (0 === $result) {
             $schema = file_get_contents($outputDir . '/schema.xml');
         } else {
             exit(1);
