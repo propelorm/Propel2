@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Common\Config\ConfigurationManager;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -176,6 +177,9 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
                 continue;
             }
+
+            $configManager = new ConfigurationManager();
+            $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
 
             $databaseDiff = DatabaseComparator::computeDiff($database, $appDataDatabase, false, $tableRenaming, $removeTable, $excludedTables);
 

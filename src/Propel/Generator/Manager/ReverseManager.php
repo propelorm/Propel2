@@ -195,6 +195,27 @@ class ReverseManager extends AbstractManager
         $this->log(sprintf('SchemaParser `%s` chosen', get_class($parser)));
         $nbTables = $parser->parse($database);
 
+        $excludeTables = $config->getConfigProperty('exclude_tables');
+        $tables = [];
+
+        foreach ($database->getTables() as $table) {
+            /* Was copypasted from DatabaseComparator::isTableExcluded() */
+            $skip = false;
+            $tablename = $table->getName();
+
+            if (in_array($tablename, $excludeTables)) {
+                $skip = true;
+            } else {
+                foreach ($excludeTables as $exclude_tablename) {
+                    if (preg_match('/^' . str_replace('*', '.*', $exclude_tablename) . '$/', $tablename)) {
+                        $skip = true;
+                    }
+                }
+            }
+
+            $skip && $database->removeTable($table);
+        }
+
         $this->log(sprintf('Successfully reverse engineered %d tables', $nbTables));
 
         return $database;
