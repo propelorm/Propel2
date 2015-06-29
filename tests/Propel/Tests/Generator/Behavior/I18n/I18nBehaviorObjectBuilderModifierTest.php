@@ -23,6 +23,7 @@ use Propel\Tests\TestCase;
  * Tests for I18nBehavior class object modifier
  *
  * @author François Zaninotto
+ * @group skip
  */
 class I18nBehaviorObjectBuilderModifierTest extends TestCase
 {

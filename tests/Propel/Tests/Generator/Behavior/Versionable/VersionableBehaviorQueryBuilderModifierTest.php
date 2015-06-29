@@ -16,6 +16,7 @@ use Propel\Generator\Util\QuickBuilder;
  * Tests for VersionableBehavior class
  *
  * @author François Zaninotto
+ * @group skip
  */
 class VersionableBehaviorQueryBuilderModifierTest extends TestCase
 {

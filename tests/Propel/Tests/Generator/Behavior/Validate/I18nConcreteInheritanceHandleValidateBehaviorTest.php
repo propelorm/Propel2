@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
  * @author Cristiano Cinotti
  *
  * @group database
+ * @group skip
  */
 class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBase
 {

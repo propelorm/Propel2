@@ -30,6 +30,7 @@ use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
  * @author François Zaninotto
  *
  * @group database
+ * @group skip
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {

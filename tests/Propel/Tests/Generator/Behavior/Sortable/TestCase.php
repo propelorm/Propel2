@@ -22,6 +22,7 @@ use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
+ * @group skip
  */
 class TestCase extends TestCaseFixturesDatabase
 {

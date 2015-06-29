@@ -21,6 +21,7 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
  * @author Massimiliano Arione
  *
  * @group database
+ * @group skip
  */
 class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
 {

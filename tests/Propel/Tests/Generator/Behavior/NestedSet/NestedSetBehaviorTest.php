@@ -14,6 +14,7 @@ namespace Propel\Tests\Generator\Behavior\NestedSet;
  * Tests for NestedSetBehavior class
  *
  * @author François Zaninotto
+ * @group skip
  */
 class NestedSetBehaviorTest extends TestCase
 {

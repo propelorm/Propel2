@@ -17,6 +17,7 @@ use Propel\Runtime\Collection\ObjectCollection;
  * Tests for NestedSetBehaviorQueryBuilderModifier class with scope enabled
  *
  * @author François Zaninotto
+ * @group skip
  */
 class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
 {

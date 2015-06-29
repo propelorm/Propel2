@@ -20,6 +20,7 @@ use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
  * @author Massimiliano Arione
  *
  * @group database
+ * @group skip
  */
 class SortableBehaviorObjectBuilderModifierTest extends TestCase
 {

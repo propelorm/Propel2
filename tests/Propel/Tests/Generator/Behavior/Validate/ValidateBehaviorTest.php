@@ -24,6 +24,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  * @author Cristiano Cinotti
  *
  * @group database
+ * @group skip
  */
 class ValidateBehaviorTest extends BookstoreTestBase
 {

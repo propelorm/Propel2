@@ -13,6 +13,12 @@ namespace Propel\Tests\Generator\Behavior\Sluggable;
 use Propel\Tests\Bookstore\Behavior\Table13;
 use Propel\Tests\Bookstore\Behavior\Table14;
 
+/**
+ *
+ * @group skip
+ *
+ * @author Marc J. Schmidt <marc@marcjschmidt.de>
+ */
 class TestableTable13 extends Table13
 {
     public function createSlug()

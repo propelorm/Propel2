@@ -264,7 +264,6 @@ EOF;
         \ConcreteContentSetPkQuery::create()->deleteAll();
         \ConcreteArticleSetPkQuery::create()->deleteAll();
 
-        var_dump('##################SAVE');
         $article = new \ConcreteArticleSetPk();
         $article->setId(2);
         $article->setTitle('Test');

@@ -16,6 +16,7 @@ use Propel\Runtime\Exception\PropelException;
  * Tests for NestedSetBehaviorObjectBuilderModifier class
  *
  * @author François Zaninotto
+ * @group skip
  */
 class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {

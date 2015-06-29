@@ -20,6 +20,7 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  * @author William Durand <william.durand1@gmail.com>
  *
  * @group database
+ * @group skip
  */
 class SortableBehaviorTest extends TestCase
 {

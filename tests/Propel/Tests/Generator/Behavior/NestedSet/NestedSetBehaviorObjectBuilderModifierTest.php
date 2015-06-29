@@ -18,6 +18,7 @@ use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
+ * @group skip
  */
 class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 {

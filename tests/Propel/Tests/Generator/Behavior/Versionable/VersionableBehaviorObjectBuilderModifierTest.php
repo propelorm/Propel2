@@ -17,6 +17,7 @@ use Propel\Runtime\Collection\ObjectCollection;
  * Tests for VersionableBehavior class
  *
  * @author François Zaninotto
+ * @group skip
  */
 class VersionableBehaviorObjectBuilderModifierTest extends TestCase
 {

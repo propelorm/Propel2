@@ -20,6 +20,7 @@ use Propel\Tests\TestCase;
  * Tests for I18nBehavior class
  *
  * @author François Zaninotto
+ * @group skip
  */
 class I18nBehaviorTest extends TestCase
 {
