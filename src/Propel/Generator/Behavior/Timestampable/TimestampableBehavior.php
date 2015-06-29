@@ -26,8 +26,8 @@ class TimestampableBehavior extends Behavior
     use ComponentTrait;
 
     protected $parameters = [
-        'create_field' => 'created_at',
-        'update_field' => 'updated_at',
+        'create_field' => 'createdAt',
+        'update_field' => 'updatedAt',
         'disable_created_at' => 'false',
         'disable_updated_at' => 'false',
     ];
@@ -76,7 +76,7 @@ class TimestampableBehavior extends Behavior
 \$writer = \$this->getEntityMap()->getPropWriter();
 
 foreach (\$event->getEntities() as \$entity) {
-    if (!\$this->isFieldModified('$field')) {
+    if (!\$this->isFieldModified(\$entity, '$field')) {
         \$writer(\$entity, '$field', time());
     }
 }
@@ -96,14 +96,14 @@ foreach (\$event->getEntities() as \$entity) {
 
         if ($this->withCreatedAt()) {
             $script .= "
-    if (!\$this->isFieldModified('$createdAtField')) {
+    if (!\$this->isFieldModified(\$entity, '$createdAtField')) {
         \$writer(\$entity, '$createdAtField', time());
     }";
         }
 
         if ($this->withUpdatedAt()) {
             $script .= "
-    if (!\$this->isFieldModified('$updatedAtField')) {
+    if (!\$this->isFieldModified(\$entity, '$updatedAtField')) {
         \$writer(\$entity, '$updatedAtField', time());
     }";
         }
