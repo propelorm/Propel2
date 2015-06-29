@@ -115,6 +115,12 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass innerJoin(\$relation) Adds a INNER JOIN clause to the query
  *";
 
+        $script .= "
+ * @method     $queryClass leftJoinWith(\$relation) Adds a LEFT JOIN clause and with to the query
+ * @method     $queryClass rightJoinWith(\$relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     $queryClass innerJoinWith(\$relation) Adds a INNER JOIN clause and with to the query
+ *";
+
         $relationQueryClasses = [];
 
         // magic XXXjoinYYY() methods, for IDE completion
@@ -127,6 +133,16 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
  *";
 
+            $script .= "
+ * @method     $queryClass joinWith" . $relationName . "(\$joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the " . $relationName . " relation
+ *";
+
+            $script .= "
+ * @method     $queryClass leftJoinWith" . $relationName . "() Adds a LEFT JOIN clause and with to the query using the " . $relationName . " relation
+ * @method     $queryClass rightJoinWith" . $relationName . "() Adds a RIGHT JOIN clause and with to the query using the " . $relationName . " relation
+ * @method     $queryClass innerJoinWith" . $relationName . "() Adds a INNER JOIN clause and with to the query using the " . $relationName . " relation
+ *";
+
             $relationQueryClasses[$this->getNewStubQueryBuilder($fk->getForeignTable())->getQueryClassName(true)] = true;
         }
         foreach ($this->getTable()->getReferrers() as $refFK) {
@@ -136,6 +152,16 @@ class QueryBuilder extends AbstractOMBuilder
  * @method     $queryClass leftJoin" . $relationName . "(\$relationAlias = null) Adds a LEFT JOIN clause to the query using the " . $relationName . " relation
  * @method     $queryClass rightJoin" . $relationName . "(\$relationAlias = null) Adds a RIGHT JOIN clause to the query using the " . $relationName . " relation
  * @method     $queryClass innerJoin" . $relationName . "(\$relationAlias = null) Adds a INNER JOIN clause to the query using the " . $relationName . " relation
+ *";
+
+            $script .= "
+ * @method     $queryClass joinWith" . $relationName . "(\$joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the " . $relationName . " relation
+ *";
+
+            $script .= "
+ * @method     $queryClass leftJoinWith" . $relationName . "() Adds a LEFT JOIN clause and with to the query using the " . $relationName . " relation
+ * @method     $queryClass rightJoinWith" . $relationName . "() Adds a RIGHT JOIN clause and with to the query using the " . $relationName . " relation
+ * @method     $queryClass innerJoinWith" . $relationName . "() Adds a INNER JOIN clause and with to the query using the " . $relationName . " relation
  *";
 
             $relationQueryClasses[$this->getNewStubQueryBuilder($refFK->getTable())->getQueryClassName(true)] = true;
