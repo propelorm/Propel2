@@ -164,7 +164,6 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $writeConnection->beginTransaction();
         $this->assertSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
         $writeConnection->rollBack();
-        $this->assertNotSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
 
         $writeConnection->beginTransaction();
         $this->assertSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));

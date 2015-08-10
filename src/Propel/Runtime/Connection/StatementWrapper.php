@@ -193,7 +193,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     {
         $return = $this->statement->execute($input_parameters);
         if ($this->connection->useDebug) {
-            $sql = $this->getExecutedQueryString($input_parameters);
+            $sql = $this->getExecutedQueryString();
             $this->connection->log($sql);
             $this->connection->setLastExecutedQuery($sql);
             $this->connection->incrementQueryCount();
@@ -205,7 +205,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     /**
      * @return string
      */
-    public function getExecutedQueryString($input_parameters = null)
+    public function getExecutedQueryString()
     {
         $sql = $this->statement->queryString;
         $matches = array();
@@ -213,10 +213,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
             $size = count($matches[1]);
             for ($i = $size-1; $i >= 0; $i--) {
                 $pos = $matches[1][$i];
-                if (isset($this->boundValues[$pos]))
-                    $sql = str_replace($pos, $this->boundValues[$pos], $sql);
-                if (isset($input_parameters[$pos]))
-                    $sql = str_replace($pos, $input_parameters[$pos], $sql);
+                $sql = str_replace($pos, $this->boundValues[$pos], $sql);
             }
         }
 
