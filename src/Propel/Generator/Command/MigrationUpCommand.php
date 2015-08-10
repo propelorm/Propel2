@@ -22,6 +22,8 @@ use Propel\Generator\Util\SqlParser;
  */
 class MigrationUpCommand extends AbstractCommand
 {
+    const DEFAULT_MIGRATION_TABLE   = 'propel_migration';
+
     /**
      * {@inheritdoc}
      */
@@ -31,7 +33,7 @@ class MigrationUpCommand extends AbstractCommand
 
         $this
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
+            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name', self::DEFAULT_MIGRATION_TABLE)
             ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
             ->addOption('fake',             null, InputOption::VALUE_NONE,  'Does not touch the actual schema, but marks next migration as executed.')
             ->addOption('force',            null, InputOption::VALUE_NONE,  'Continues with the migration even when errors occur.')
@@ -51,11 +53,7 @@ class MigrationUpCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-        
-        if ($this->hasInputOption('migration-table', $input)) {
-            $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
-        }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -75,7 +73,7 @@ class MigrationUpCommand extends AbstractCommand
         }
 
         $manager->setConnections($connections);
-        $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
+        $manager->setMigrationTable($input->getOption('migration-table'));
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {

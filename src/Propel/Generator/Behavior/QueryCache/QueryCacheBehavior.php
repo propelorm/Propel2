@@ -228,11 +228,9 @@ public function doCount(ConnectionInterface \$con = null)
 
         \$needsComplexCount = \$this->getGroupByColumns()
             || \$this->getOffset()
-            || \$this->getLimit() >= 0
+            || \$this->getLimit()
             || \$this->getHaving()
-            || in_array(Criteria::DISTINCT, \$this->getSelectModifiers())
-            || count(\$this->selectQueries) > 0
-        ;
+            || in_array(Criteria::DISTINCT, \$this->getSelectModifiers());
 
         \$params = array();
         if (\$needsComplexCount) {
