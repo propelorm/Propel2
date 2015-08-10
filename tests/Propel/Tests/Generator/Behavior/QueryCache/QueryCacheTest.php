@@ -62,4 +62,18 @@ class QueryCacheTest extends BookstoreTestBase
         $this->assertTrue(QuerycacheTable1Query::create()->cacheContains('test2'), ' cache contains "test2" key');
         $this->assertEquals($expectedSql, $q->cacheFetch('test2'));
     }
+
+    public function testSimpleCountSql()
+    {
+        $con = \Propel\Runtime\Propel::getConnection();
+        $con->useDebug(true);
+
+        $exec = QuerycacheTable1Query::create()
+            ->count($con);
+
+        $expectedSql = $this->getSql("SELECT COUNT(*) FROM querycache_table1");
+        $renderedSql = \Propel\Runtime\Propel::getConnection()->getLastExecutedQuery();
+
+        $this->assertEquals($expectedSql, $renderedSql);
+    }
 }

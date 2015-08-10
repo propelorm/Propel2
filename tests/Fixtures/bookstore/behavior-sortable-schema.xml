@@ -20,6 +20,17 @@
         </behavior>
     </table>
 
+    <table name="sortable_table13">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="style" type="ENUM" valueSet="novel, essay" />
+
+        <behavior name="sortable">
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_column" value="style" />
+        </behavior>
+    </table>
+
     <table name="sortable_multi_scopes">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="category_id" required="true" type="INTEGER" />
