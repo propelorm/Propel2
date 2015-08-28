@@ -37,6 +37,7 @@ class SqlBuildCommand extends AbstractCommand
             ->addOption('schema-name',  null, InputOption::VALUE_REQUIRED,  'The schema name for RDBMS supporting them', '')
             //->addOption('encoding',     null, InputOption::VALUE_REQUIRED,  'The encoding to use for the database')
             ->addOption('table-prefix', null, InputOption::VALUE_REQUIRED,  'Add a prefix to all the table names in the database')
+            ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED, 'Directory in which your composer.json resides', null)
             ->setName('sql:build')
             ->setAliases(array('build-sql'))
             ->setDescription('Build SQL files')
@@ -67,6 +68,9 @@ class SqlBuildCommand extends AbstractCommand
                         break;
                     case 'mysql-engine';
                         $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
+                        break;
+                    case 'composer-dir':
+                        $configOptions['propel']['paths']['composerDir'] = $option;
                         break;
                 }
             }
