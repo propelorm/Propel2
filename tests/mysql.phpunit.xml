@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="bootstrap.php">
+
+  <testsuites>
+    <testsuite name="Propel2 Test Suite">
+      <directory>Propel/Tests/</directory>
+    </testsuite>
+  </testsuites>
+
+  <groups>
+    <include>
+      <group>database</group>
+    </include>
+    <exclude>
+      <group>pgsql</group>
+    </exclude>
+  </groups>
+
+  <php>
+    <env name="DB" value="mysql"/>
+    <env name="DB_USER" value="root"/>
+  </php>
+
+  <filter>
+    <whitelist>
+      <directory>../src/Propel/</directory>
+    </whitelist>
+  </filter>
+</phpunit>

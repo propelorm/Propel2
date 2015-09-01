@@ -222,7 +222,7 @@ class TestCaseFixtures extends TestCase
         if (!$db || 'agnostic' === $db) {
             $db = 'mysql';
         }
-
+        
         $dsn = $db . ':host=' . (getenv('DB_HOSTNAME') ?: '127.0.0.1' ) . ';dbname=';
         $dsn .= getenv('DB_NAME') ?: 'test';
 
