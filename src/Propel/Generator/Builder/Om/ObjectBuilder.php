@@ -469,7 +469,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
     /**
-     * The value for the $clo field.";
+     * The value for the $clo field.
+     * ".$column->getDescription();
         if ($column->getDefaultValue()) {
             if ($column->getDefaultValue()->isExpression()) {
                 $script .= "
