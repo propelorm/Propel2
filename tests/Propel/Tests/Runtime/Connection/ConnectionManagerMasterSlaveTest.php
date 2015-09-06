@@ -146,4 +146,29 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
         $pdo = $con->getWrappedConnection();
         $this->assertEquals(PDO::CASE_UPPER, $pdo->getAttribute(PDO::ATTR_CASE));
     }
+
+    /**
+     * When master is in transaction then we need to return the master connection for getReadConnection,
+     * otherwise lookup queries fail
+     */
+    public function testReadConnectionWhenMasterIsInTransaction()
+    {
+        $manager = new ConnectionManagerMasterSlave();
+        $manager->setWriteConfiguration(array('dsn' => 'sqlite::memory:', 'attributes' => array('ATTR_CASE' => PDO::CASE_UPPER)));
+        $manager->setReadConfiguration(array(array('dsn' => 'sqlite::memory:', 'attributes' => array('ATTR_CASE' => PDO::CASE_LOWER))));
+
+        $writeConnection = $manager->getWriteConnection(new SqliteAdapter());
+        $this->assertFalse($writeConnection->inTransaction());
+
+        $this->assertNotSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
+        $writeConnection->beginTransaction();
+        $this->assertSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
+        $writeConnection->rollBack();
+        $this->assertNotSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
+
+        $writeConnection->beginTransaction();
+        $this->assertSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
+        $writeConnection->commit();
+        $this->assertNotSame($writeConnection, $manager->getReadConnection(new SqliteAdapter()));
+    }
 }
