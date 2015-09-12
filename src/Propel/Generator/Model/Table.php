@@ -164,13 +164,13 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns a qualified name of this table with scheme and common name
      * separated by '_'.
      *
-     * If schemaAutoPrefix is set. Otherwise get the common name.
+     * If autoPrefix is set. Otherwise get the common name.
      *
      * @return string
      */
     private function getStdSeparatedName()
     {
-        if ($this->schema && $this->getBuildProperty('schemaAutoPrefix')) {
+        if ($this->schema && $this->getBuildProperty('generator.schema.autoPrefix')) {
             return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
         }
 

@@ -14,6 +14,7 @@ use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\NameGeneratorInterface;
 use Propel\Generator\Util\PhpParser;
 use Propel\Runtime\Exception\PropelException;
 
@@ -154,19 +155,20 @@ if (is_callable(array('$ARFQCN', \$name))) {
         foreach ($this->delegates as $key => $value) {
             $delegateTable = $this->getDelegateTable($key);
 
+            $tn = ($delegateTable->getSchema() ? $delegateTable->getSchema() . NameGeneratorInterface::STD_SEPARATOR_CHAR : '') . $delegateTable->getCommonName();
             $ns = $delegateTable->getNamespace() ? '\\'.$delegateTable->getNamespace() : '';
-            $new_result .= "\$keys_{$key} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
+            $new_result .= "{$indent}\$keys_{$tn} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
             $i = 0;
             foreach ($delegateTable->getColumns() as $column) {
                 if (!$this->isColumnForeignKeyOrDuplicated($column)) {
-                    $values .= "{$indent}    \$keys_{$key}[{$i}] => \$this->get{$column->getPhpName()}(),\n";
+                    $values .= "{$indent}    \$keys_{$tn}[{$i}] => \$this->get{$column->getPhpName()}(),\n";
                 }
                 $i++;
             }
         }
 
         $new_result .= "{$indent}\$result = array({$values}\n{$indent});";
-        $text = str_replace($matches[1], $new_result , $text);
+        $text = str_replace($matches[1], ltrim($new_result), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();
 
