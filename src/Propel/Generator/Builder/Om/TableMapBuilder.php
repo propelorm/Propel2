@@ -554,33 +554,31 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     public function buildRelations()
     {";
         foreach ($this->getTable()->getForeignKeys() as $fkey) {
-            $columnMapping = 'array(';
-            foreach ($fkey->getLocalForeignMapping() as $key => $value) {
-                $columnMapping .= "'$key' => '$value', ";
-            }
-            $columnMapping .= ')';
+            $joinCondition = var_export($fkey->getNormalizedMap($fkey->getMapping()), true);
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
+            $isPolymorphic = $fkey->isPolymorphic() ? 'true' : 'false';
             $script .= "
-        \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassName()) . "', RelationMap::MANY_TO_ONE, $columnMapping, $onDelete, $onUpdate);";
+        \$this->addRelation('" . $this->getFKPhpNameAffix($fkey) . "', '" . addslashes($this->getNewStubObjectBuilder($fkey->getForeignTable())->getFullyQualifiedClassName()) . "', RelationMap::MANY_TO_ONE, $joinCondition, $onDelete, $onUpdate, null, $isPolymorphic);";
         }
+
         foreach ($this->getTable()->getReferrers() as $fkey) {
             $relationName = $this->getRefFKPhpNameAffix($fkey);
-            $columnMapping = 'array(';
-            foreach ($fkey->getForeignLocalMapping() as $key => $value) {
-                $columnMapping .= "'$key' => '$value', ";
-            }
-            $columnMapping .= ')';
+            $joinCondition = var_export($fkey->getNormalizedMap($fkey->getMapping()), true);
             $onDelete = $fkey->hasOnDelete() ? "'" . $fkey->getOnDelete() . "'" : 'null';
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
+            $isPolymorphic = $fkey->isPolymorphic() ? 'true' : 'false';
             $script .= "
-        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassName()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $columnMapping, $onDelete, $onUpdate";
+        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassName()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $joinCondition, $onDelete, $onUpdate";
             if ($fkey->isLocalPrimaryKey()) {
-                 $script .= ");";
+                 $script .= ", null";
             } else {
-                $script .= ", '" . $this->getRefFKPhpNameAffix($fkey, true) . "');";
+                $script .= ", '" . $this->getRefFKPhpNameAffix($fkey, true) . "'";
             }
+
+            $script .= ", $isPolymorphic);";
         }
+
         foreach ($this->getTable()->getCrossFks() as $crossFKs) {
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 $relationName = $this->getFKPhpNameAffix($crossFK);

@@ -127,7 +127,7 @@ END
 
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "
@@ -145,7 +145,7 @@ END
 
     public function getForeignKeyDDL(ForeignKey $fk)
     {
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';

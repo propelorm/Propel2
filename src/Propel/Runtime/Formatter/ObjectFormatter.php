@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Object formatter for Propel query
@@ -22,6 +22,12 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class ObjectFormatter extends AbstractFormatter
 {
+
+    /**
+     * @var array
+     */
+    protected $objects = [];
+
     public function format(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
@@ -37,13 +43,13 @@ class ObjectFormatter extends AbstractFormatter
             if ($this->hasLimit) {
                 throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
             }
-            $pks = array();
             foreach ($dataFetcher as $row) {
                 $object = $this->getAllObjectsFromRow($row);
                 $pk     = $object->getPrimaryKey();
-                if (!in_array($pk, $pks)) {
+
+                if (!isset($this->objects[serialize($pk)])) {
+                    $this->objects[serialize($pk)] = $object;
                     $collection[] = $object;
-                    $pks[]        = $pk;
                 }
             }
         } else {
@@ -71,6 +77,10 @@ class ObjectFormatter extends AbstractFormatter
     {
         $this->checkInit();
         $result = null;
+
+        if ($this->isWithOneToMany() && $this->hasLimit) {
+            throw new LogicException('Cannot use limit() in conjunction with with() on a one-to-many relationship. Please remove the with() call, or the limit() call.');
+        }
 
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -105,6 +115,14 @@ class ObjectFormatter extends AbstractFormatter
         // main object
         list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
 
+        $pk = $obj->getPrimaryKey();
+
+        if (isset($this->objects[serialize($pk)])) {
+            //if instance pooling is disabled, we need to make sure we're working on the correct (already fetched) object
+            //so one-to-many relations are correctly loaded.
+            $obj = $this->objects[serialize($pk)];
+        }
+
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
             list($endObject, $col) = $modelWith->getTableMap()->populateobject($row, $col, $this->getDataFetcher()->getIndexType());
@@ -120,6 +138,7 @@ class ObjectFormatter extends AbstractFormatter
             } else {
                 continue;
             }
+
             // as we may be in a left join, the endObject may be empty
             // in which case it should not be related to the previous object
             if (null === $endObject || $endObject->isPrimaryKeyNull()) {

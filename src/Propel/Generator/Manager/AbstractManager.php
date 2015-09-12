@@ -364,13 +364,17 @@ abstract class AbstractManager
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
+            if (!is_readable($include)) {
+                throw new BuildException("External schema '$include' does not exist");
+            }
+
             $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
             $externalSchemaDom->load(realpath($include));
 
             // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
-                if ($referenceOnly) {
+                if ("true" === $referenceOnly) {
                     $tableNode->setAttribute("skipSql", "true");
                 }
                 $databaseNode->appendChild($dom->importNode($tableNode, true));

@@ -20,6 +20,35 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class TypeTest extends BookstoreTestBase
 {
+    public function testTypeHintClass()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setDummyObject');
+        $param = $method->getParameters()[0];
+
+        $this->assertEquals('Propel\Tests\Runtime\TypeTests\DummyObjectClass', $param->getClass()->name);
+        $this->assertTrue($param->allowsNull());
+    }
+
+    public function testTypeHintArray()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setSomeArray');
+        $param = $method->getParameters()[0];
+
+        $this->assertTrue($param->isArray());
+        $this->assertTrue($param->allowsNull());
+    }
+
+    public function testInterface()
+    {
+        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $method = $reflection->getMethod('setTypeObject');
+        $param = $method->getParameters()[0];
+
+        $this->assertEquals('Propel\Tests\Runtime\TypeTests\TypeObjectInterface', $param->getClass()->name);
+        $this->assertTrue($param->allowsNull());
+    }
 
     public function testObjectType()
     {
@@ -44,6 +73,17 @@ class TypeTest extends BookstoreTestBase
         $this->assertEquals($c, $typeObjectEntity->getDetails()->getPropPrivate());
 
         $typeObjectEntity->save();
+        
+        $typeObjectEntity->setDetails($objectInstance);
+        $this->assertFalse($typeObjectEntity->isModified('details'));
+
+
+        $clone = clone $objectInstance;
+        $clone->setPropPublic('changed');
+
+        $typeObjectEntity->setDetails($clone);
+        $this->assertTrue($typeObjectEntity->isModified('details'));
+            
 
         TypeObjectTableMap::clearInstancePool();
         $typeObjectEntity = TypeObjectQuery::create()->findOne();

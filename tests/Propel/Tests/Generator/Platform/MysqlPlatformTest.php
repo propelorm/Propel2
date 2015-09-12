@@ -839,4 +839,19 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+
+    public function testNormalizeTable()
+    {
+        $column = new Column('price', 'DECIMAL');
+        $column->getDomain()->copy($this->getPlatform()->getDomainForType('DECIMAL'));
+        $column->setSize(10);
+        $column->setScale(3);
+        $table = new Table('prices');
+        $table->addColumns([$column]);
+        $this->getPlatform()->normalizeTable($table);
+        $this->assertEquals("`price` DECIMAL(10,3)", $this->getPlatform()->getColumnDDL($column));
+    }
+
+
+
 }

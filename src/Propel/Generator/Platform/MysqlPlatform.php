@@ -222,7 +222,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
         if ($this->supportsForeignKeys($table)) {
             foreach ($table->getForeignKeys() as $foreignKey) {
-                if ($foreignKey->isSkipSql()) {
+                if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
                 $lines[] = str_replace("
@@ -542,7 +542,7 @@ DROP INDEX %s ON %s;
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
         if (!$this->supportsForeignKeys($fk->getTable())) return '';
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "
@@ -681,6 +681,57 @@ ALTER TABLE %s CHANGE %s %s;
         }
 
         return $ret;
+    }
+
+    /**
+     * Builds the DDL SQL to add a column
+     *
+     * @param Column $column
+     *
+     * @return string
+     */
+    public function getAddColumnDDL(Column $column)
+    {
+        $pattern = "
+ALTER TABLE %s ADD %s %s;
+";
+        $tableColumns = $column->getTable()->getColumns();
+
+        // Default to add first if no column is found before the current one
+        $insertPositionDDL = "FIRST";
+        foreach ($tableColumns as $i => $tableColumn) {
+            // We found the column, use the one before it if it's not the first
+            if ($tableColumn->getName() == $column->getName()) {
+                // We have a column that is not the first one
+                if ($i > 0) {
+                    $insertPositionDDL = "AFTER " . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
+                }
+                break;
+            }
+        }
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($column->getTable()->getName()),
+            $this->getColumnDDL($column),
+            $insertPositionDDL
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to add a list of columns
+     *
+     * @param  Column[] $columns
+     *
+     * @return string
+     */
+    public function getAddColumnsDDL($columns)
+    {
+        $lines = '';
+        foreach ($columns as $column) {
+            $lines .= $this->getAddColumnDDL($column);
+        }
+
+        return $lines;
     }
 
     /**

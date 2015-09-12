@@ -26,6 +26,9 @@ $column15 = new Column('body', 'clob');
 $column16 = new Column('average_rating', 'float', 2);
 $column16->setScale(2);
 $column16->setDescription('The post rating in percentage');
+$column17 = new Column('price_without_decimal_places', 'DECIMAL', 10);
+$column17->setScale(0);
+$column17->setDescription('The Price without decimal places');
 
 $column21 = new Column('id', 'smallint', 3);
 $column21->setAutoIncrement();
@@ -123,7 +126,7 @@ $table1 = new Table('blog_post');
 $table1->setDescription('The list of posts');
 $table1->setNamespace('Blog');
 $table1->setPackage('Acme.Blog');
-$table1->addColumns([ $column11, $column12, $column13, $column14, $column15, $column16 ]);
+$table1->addColumns([ $column11, $column12, $column13, $column14, $column15, $column16, $column17 ]);
 $table1->addForeignKeys([ $fkAuthorPost, $fkCategoryPost ]);
 $table1->addBehavior($timestampableBehavior);
 $table1->addBehavior($sluggableBehavior);

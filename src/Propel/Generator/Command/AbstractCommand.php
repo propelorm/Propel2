@@ -33,7 +33,7 @@ abstract class AbstractCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.', 'mysql')
+            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.')
             ->addOption('config-dir', null, InputOption::VALUE_REQUIRED,  'The directory where the configuration file is placed.', self::DEFAULT_CONFIG_DIRECTORY)
             ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory')
         ;
@@ -54,8 +54,8 @@ abstract class AbstractCommand extends Command
             return new GeneratorConfig(null, $properties);
         }
 
-        if ($input->hasOption('platform') && ($platformClass = $input->getOption('platform'))) {
-            $properties['propel']['generator']['platformClass'] = $platformClass;
+        if ($this->hasInputOption('platform', $input)) {
+            $properties['propel']['generator']['platformClass'] = $input->getOption('platform');
         }
 
         return new GeneratorConfig($input->getOption('config-dir'), $properties);

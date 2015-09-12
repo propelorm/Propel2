@@ -214,7 +214,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
     public function getForeignKeyDDL(ForeignKey $fk)
     {
-        if ($fk->isSkipSql()) {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
         $pattern = "CONSTRAINT %s

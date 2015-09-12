@@ -3,7 +3,15 @@
 
     <table name="type_object">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="details" type="object" />
+        <column name="details" type="object"/>
+        <column name="dummy_object" type="object" typeHint="Propel\Tests\Runtime\TypeTests\DummyObjectClass"/>
+
+        <column name="self_ref" type="INTEGER" />
+        <column name="some_array" type="array" typeHint="array" />
+
+        <foreign-key phpName="TypeObject" foreignTable="type_object" interface="Propel\Tests\Runtime\TypeTests\TypeObjectInterface">
+            <reference local="self_ref" foreign="id" />
+        </foreign-key>
     </table>
 
 </database>

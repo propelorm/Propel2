@@ -470,6 +470,41 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    public function testIndicesParameter()
+    {
+        $schema = <<<EOF
+<database name="versionable_behavior_test_0">
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <index>
+            <index-column name="bar"/>
+        </index>
+        <behavior name="versionable">
+            <parameter name="indices" value="true" />
+        </behavior>
+    </table>
+</database>
+EOF;
+        $expected = <<<EOF
+CREATE TABLE versionable_behavior_test_0_version
+(
+    id INTEGER NOT NULL,
+    bar INTEGER,
+    version INTEGER DEFAULT 0 NOT NULL,
+    PRIMARY KEY (id,version),
+    UNIQUE (id,version),
+    FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX versionable_behavior_test_0_version_i_14f552 ON versionable_behavior_test_0_version (bar);
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $this->assertContains($expected, $builder->getSQL());
+    }
+
     public function testSkipSqlParameterOnParentTable()
     {
         $schema = <<<EOF

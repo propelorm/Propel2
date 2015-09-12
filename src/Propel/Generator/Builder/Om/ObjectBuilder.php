@@ -1189,7 +1189,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".$column->getPhpType()."
+     * @return ".($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed'))."
      */";
     }
 
@@ -1404,7 +1404,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param  ".$column->getPhpType()." \$v new value
+     * @param ".($column->getPhpType() ?: 'mixed')." \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
@@ -1420,8 +1420,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $this->getTable()->isReadOnly() ? 'protected' : $column->getMutatorVisibility();
 
+        $typeHint = '';
+        $null = '';
+
+        if ($column->getTypeHint()) {
+            $typeHint = $column->getTypeHint();
+            if ('array' !== $typeHint) {
+                $typeHint = $this->declareClass($typeHint);
+            }
+
+            $typeHint .= ' ';
+
+            if (!$column->isNotNull()) {
+                $null = ' = null';
+            }
+        }
+
         $script .= "
-    ".$visibility." function set$cfc(\$v)
+    ".$visibility." function set$cfc($typeHint\$v$null)
     {";
     }
 
@@ -1474,6 +1490,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
                 $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
                 $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
+
+                if (!$colFK) {
+                    continue;
+                }
 
                 $varName = $this->getFKVarName($fk);
 
@@ -1595,12 +1615,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
                  ) {";
         } else {
+            switch ($col->getType()) {
+                case 'DATE':
+                    $format = 'Y-m-d';
+                    break;
+                case 'TIME':
+                    $format = 'H:i:s';
+                    break;
+                default:
+                    $format = 'Y-m-d H:i:s';
+            }
             $script .= "
-            if (\$dt !== \$this->{$clo}) {";
+            if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";
         }
 
         $script .= "
-                \$this->$clo = \$dt;
+                \$this->$clo = \$dt === null ? null : clone \$dt;
                 \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
             }
         } // if either are not null
@@ -1635,13 +1665,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorOpen($script, $col);
 
         $script .= "
-        if (\$this->$clo !== serialize(\$v)) {
+        if (null === \$this->$clo || stream_get_contents(\$this->$clo) !== serialize(\$v)) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, serialize(\$v));
-            rewind(\$this->$clo);
             \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
+        rewind(\$this->$clo);
 ";
         $this->addMutatorClose($script, $col);
     }
@@ -2122,7 +2152,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$rehydrate) {
                 \$this->ensureConsistency();
             }
+";
 
+        $this->applyBehaviorModifier('postHydrate', $script, "            ");
+
+        $script .= "
             return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
@@ -2349,6 +2383,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
         );";
+
+        $timezoneDefined = false;
+        foreach ($this->getTable()->getColumns() as $num => $col) {
+            if ($col->isTemporalType()) {
+                if (!$timezoneDefined) {
+                    $script .= "
+
+        \$utc = new \DateTimeZone('utc');";
+                    $timezoneDefined = true;
+                }
+        $script .= "
+        if (\$result[\$keys[$num]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            \$dateTime = clone \$result[\$keys[$num]];
+            \$result[\$keys[$num]] = \$dateTime->setTimezone(\$utc)->format('Y-m-d\TH:i:s\Z');
+        }
+        ";
+            }
+        }
         $script .= "
         \$virtualColumns = \$this->virtualColumns;
         foreach (\$virtualColumns as \$key => \$virtualColumn) {
@@ -3281,7 +3334,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
 
-        $className = $this->getClassNameFromTable($fkTable);
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromTable($fkTable);
+        }
 
         $varName = $this->getFKVarName($fk);
 
@@ -3295,18 +3352,28 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
     {";
-        foreach ($fk->getLocalColumns() as $columnName) {
-            $column = $table->getColumn($columnName);
-            $lfmap = $fk->getLocalForeignMapping();
-            $colFKName = $lfmap[$columnName];
-            $colFK = $fkTable->getColumn($colFKName);
-            $script .= "
+
+        foreach ($fk->getMapping() as $map) {
+            list($column, $rightValueOrColumn) = $map;
+
+            if ($rightValueOrColumn instanceof Column) {
+                $script .= "
         if (\$v === null) {
-            \$this->set".$column->getPhpName()."(".$this->getDefaultValueString($column).");
+            \$this->set" . $column->getPhpName() . "(" . $this->getDefaultValueString($column) . ");
         } else {
-            \$this->set".$column->getPhpName()."(\$v->get".$colFK->getPhpName()."());
+            \$this->set" . $column->getPhpName() . "(\$v->get" . $rightValueOrColumn->getPhpName() . "());
         }
 ";
+            } else {
+                $val = var_export($rightValueOrColumn, true);
+                $script .= "
+        if (\$v === null) {
+            \$this->set" . $column->getPhpName() . "(null);
+        } else {
+            \$this->set" . $column->getPhpName() . "($val);
+        }
+                ";
+            }
 
         } /* foreach local col */
 
@@ -3355,7 +3422,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
-        $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+        $returnDesc = '';
+        if ($interface = $fk->getInterface()) {
+            $className = $this->declareClass($interface);
+        } else {
+            $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
+            $returnDesc = "The associated $className object.";
+        }
 
         $and = '';
         $conditional = '';
@@ -3366,24 +3439,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // of instance pooling
         $findPk = $fk->isForeignPrimaryKey();
 
-        foreach ($fk->getLocalColumns() as $columnName) {
+        foreach ($fk->getMapping() as $mapping) {
+            list($column, $rightValueOrColumn) = $mapping;
 
-            $lfmap = $fk->getLocalForeignMapping();
-
-            $foreignColumn = $fk->getForeignTable()->getColumn($lfmap[$columnName]);
-
-            $column = $table->getColumn($columnName);
             $cptype = $column->getPhpType();
             $clo = $column->getLowercasedName();
-            $localColumns[$foreignColumn->getPosition()] = '$this->'.$clo;
 
-            if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
-                $conditional .= $and . "\$this->". $clo ." != 0";
-            } elseif ($cptype == "string") {
-                $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+            if ($rightValueOrColumn instanceof Column) {
+                $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
+
+                if ($cptype == "integer" || $cptype == "float" || $cptype == "double") {
+                    $conditional .= $and . "\$this->". $clo ." != 0";
+                } elseif ($cptype == "string") {
+                    $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+                } else {
+                    $conditional .= $and . "\$this->" . $clo ." !== null";
+                }
             } else {
-                $conditional .= $and . "\$this->" . $clo ." !== null";
+                $val = var_export($rightValueOrColumn, true);
+                $conditional .= $and . "\$this->" . $clo ." === " . $val;
             }
+
 
             $and = " && ";
         }
@@ -3398,7 +3474,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className The associated $className object.
+     * @return $className $returnDesc
      * @throws PropelException
      */
     public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)
@@ -5316,7 +5392,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->isNew() || \$this->isModified()) {
                 // persist changes
                 if (\$this->isNew()) {
-                    \$this->doInsert(\$con);";
+                    \$this->doInsert(\$con);
+                    \$affectedRows += 1;";
         if ($reloadOnInsert) {
             $script .= "
                     if (!\$skipReload) {
@@ -5325,7 +5402,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $script .= "
                 } else {
-                    \$this->doUpdate(\$con);";
+                    \$affectedRows += \$this->doUpdate(\$con);";
         if ($reloadOnUpdate) {
             $script .= "
                     if (!\$skipReload) {
@@ -5333,8 +5410,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }";
         }
         $script .= "
-                }
-                \$affectedRows += 1;";
+                }";
 
         // We need to rewind any LOB columns
         foreach ($table->getColumns() as $col) {
@@ -5901,6 +5977,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
                     $varName = $this->getFKVarName($fk);
+
+                    if (!$colFK) {
+                        continue;
+                    }
 
                     $script .= "
         if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {

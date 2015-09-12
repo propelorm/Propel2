@@ -11,6 +11,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Exception\EntityNotFoundException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\ObjectCollection;
@@ -74,6 +75,13 @@ class ModelCriteria extends BaseModelCriteria
 
     // temporary property used in replaceNames
     protected $currentAlias;
+
+    /**
+     * Used to memorize whether we added self-select columns before.
+     *
+     * @var bool
+     */
+    protected $isSelfSelected = false;
 
     /**
      * Adds a condition on a column based on a pseudo SQL clause
@@ -420,18 +428,6 @@ class ModelCriteria extends BaseModelCriteria
     public function setPreviousJoin(Join $previousJoin)
     {
         $this->previousJoin = $previousJoin;
-    }
-
-    /**
-     * This method returns an already defined join clause from the query
-     *
-     * @param string $name The name of the join clause
-     *
-     * @return Join A join object
-     */
-    public function getJoin($name)
-    {
-        return $this->joins[$name];
     }
 
     /**
@@ -783,7 +779,8 @@ class ModelCriteria extends BaseModelCriteria
 
         $this->with = array();
         $this->primaryCriteria = null;
-        $this->formatter=null;
+        $this->formatter = null;
+        $this->select = null;
 
         return $this;
     }
@@ -836,21 +833,27 @@ class ModelCriteria extends BaseModelCriteria
             }
             $this->setModelAlias($alias, true);
             // so we can add selfSelectColumns
-            $this->addSelfSelectColumns();
+            $this->addSelfSelectColumns(true);
         }
 
         return $this;
     }
 
     /**
-     * Adds the select columns for a the current table
+     * Adds the select columns for the current table
      *
+     * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      * @return $this|ModelCriteria The current object, for fluid interface
      */
-    public function addSelfSelectColumns()
+    public function addSelfSelectColumns($force = false)
     {
+        if ($this->isSelfSelected && !$force) {
+            return $this;
+        }
+
         $tableMap = $this->modelTableMapName;
         $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        $this->isSelfSelected = true;
 
         return $this;
     }
@@ -983,7 +986,9 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
      * and format the result with the current formatter
-     * By default, returns a model object
+     * By default, returns a model object.
+     *
+     * Does not work with ->with()s containing one-to-many relations.
      *
      * @param ConnectionInterface $con an optional connection object
      *
@@ -1004,6 +1009,122 @@ class ModelCriteria extends BaseModelCriteria
             ->getFormatter()
             ->init($criteria)
             ->formatOne($dataFetcher);
+    }
+
+    /**
+     * Find object by primary key
+     * Behaves differently if the model has simple or composite primary key
+     * <code>
+     * // simple primary key
+     * $book  = $c->requirePk(12, $con);
+     * // composite primary key
+     * $bookOpinion = $c->requirePk(array(34, 634), $con);
+     * </code>
+     *
+     * Throws an exception when nothing was found.
+     *
+     * @param mixed               $key Primary key to use for the query
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requirePk($key, ConnectionInterface $con = null)
+    {
+        $result = $this->findPk($key, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Issue a SELECT ... LIMIT 1 query based on the current ModelCriteria
+     * and format the result with the current formatter
+     * By default, returns a model object.
+     *
+     * Throws an exception when nothing was found.
+     *
+     * Does not work with ->with()s containing one-to-many relations.
+     *
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requireOne(ConnectionInterface $con = null)
+    {
+        $result = $this->findOne($con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Apply a condition on a column and issues the SELECT ... LIMIT 1 query
+     *
+     * Throws an exception when nothing was found.
+     *
+     * @see filterBy()
+     * @see findOne()
+     *
+     * @param mixed               $column A string representing the column phpName, e.g. 'AuthorId'
+     * @param mixed               $value  A value for the condition
+     * @param ConnectionInterface $con    an optional connection object
+     *
+     * @return mixed the result, formatted by the current formatter
+     * @throws EntityNotFoundException|\Exception When nothing is found
+     */
+    public function requireOneBy($column, $value, ConnectionInterface $con = null)
+    {
+        $result = $this->findOneBy($column, $value, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Apply a list of conditions on columns and issues the SELECT ... LIMIT 1 query
+     * <code>
+     * $c->requireOneByArray([
+     *  'Title'     => 'War And Peace',
+     *  'Publisher' => $publisher
+     * ], $con);
+     * </code>
+     *
+     * @see requireOne()
+     *
+     * @param mixed               $conditions An array of conditions, using column phpNames as key
+     * @param ConnectionInterface $con        an optional connection object
+     *
+     * @return mixed the list of results, formatted by the current formatter
+     */
+    public function requireOneByArray($conditions, ConnectionInterface $con = null)
+    {
+        $result = $this->findOneByArray($conditions, $con);
+
+        if ($result === null) {
+            throw $this->createEntityNotFoundException();
+        }
+
+        return $result;
+    }
+
+    private function createEntityNotFoundException()
+    {
+        if (!isset($this->entityNotFoundExceptionClass)) {
+            throw new PropelException('Please define a entityNotFoundExceptionClass property with the name of your NotFoundException-class in ' . get_class($this));
+        }
+
+        return new $this->entityNotFoundExceptionClass("{$this->getModelShortName()} could not be found");
     }
 
     /**
@@ -1245,6 +1366,39 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         return parent::doCount($con);
+    }
+
+    /**
+     * Issue an existence check on the current ModelCriteria
+     *
+     * @param ConnectionInterface $con an optional connection object
+     *
+     * @return bool column existence
+     */
+    public function exists(ConnectionInterface $con = null)
+    {
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+
+        $this->basePreSelect($con);
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        $criteria->setDbName($this->getDbName()); // Set the correct dbName
+        $criteria->clearOrderByColumns(); // ORDER BY will do nothing but slow down the query
+        $criteria->clearSelectColumns(); // We are not retrieving data
+        $criteria->addSelectColumn('1');
+        $criteria->limit(1);
+
+        // We need to set the primary table name, since in the case that there are no WHERE columns
+        // it will be impossible for the createSelectSql() method to determine which
+        // tables go into the FROM clause.
+        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
+
+        $dataFetcher = $criteria->doSelect($con);
+        $exists = (boolean) $dataFetcher->fetchColumn(0);
+        $dataFetcher->close();
+
+        return $exists;
     }
 
     /**
@@ -1612,7 +1766,7 @@ class ModelCriteria extends BaseModelCriteria
             }
         } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif ('ENUM' === $colMap->getType()) {
+        } elseif ('ENUM' === $colMap->getType() && !is_null($value)) {
             if (is_array($value)) {
                 $value = array_map(array($colMap, 'getValueSetKey'), $value);
             } else {
@@ -1743,11 +1897,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function doSelect(ConnectionInterface $con = null)
     {
-
-        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
-        if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
-            $this->addSelfSelectColumns();
-        }
+        $this->addSelfSelectColumns();
 
         if (null === $con) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
@@ -1938,18 +2088,18 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Handle the magic
-     * Supports findByXXX(), findOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
+     * Supports findByXXX(), findOneByXXX(), requireOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
      * where XXX is a column phpName.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
      */
     public function __call($name, $arguments)
     {
         // Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
-        static $methods = array('findBy', 'findOneBy', 'filterBy', 'orderBy', 'groupBy');
+        static $methods = array('findBy', 'findOneBy', 'requireOneBy', 'filterBy', 'orderBy', 'groupBy');
         foreach ($methods as $method) {
             if (0 === strpos($name, $method)) {
                 $columns = substr($name, strlen($method));
-                if (in_array($method, array('findBy', 'findOneBy')) && strpos($columns, 'And') !== false) {
+                if (in_array($method, array('findBy', 'findOneBy', 'requireOneBy')) && strpos($columns, 'And') !== false) {
                     $method = $method . 'Array';
                     $columns = explode('And', $columns);
                     $conditions = array();
@@ -2014,5 +2164,17 @@ class ModelCriteria extends BaseModelCriteria
         if (null !== $this->formatter) {
             $this->formatter = clone $this->formatter;
         }
+    }
+
+    /**
+     * Override method to prevent an addition of self columns.
+     *
+     * @param string $name
+     * @return $this|Criteria
+     */
+    public function addSelectColumn($name)
+    {
+        $this->isSelfSelected = true;
+        return parent::addSelectColumn($name);
     }
 }

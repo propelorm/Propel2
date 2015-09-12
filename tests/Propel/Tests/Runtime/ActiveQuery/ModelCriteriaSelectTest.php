@@ -372,6 +372,23 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $this->assertEquals(serialize($rows->getData()), serialize($expectedRows), 'find() called after select(array) can cope with a column added with withColumn()');
     }
 
+    public function testSelectAllWithColumn()
+    {
+        BookstoreDataPopulator::depopulate($this->con);
+        BookstoreDataPopulator::populate($this->con);
+
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->join('Propel\Tests\Bookstore\Book.Author');
+        $c->useQuery('Author')
+            ->withColumn('Propel\Tests\Bookstore\Author.LastName', 'authorLastName')
+            ->endUse();
+        $rows = $c->find($this->con);
+
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, author.last_name AS authorLastName FROM book INNER JOIN author ON (book.author_id=author.id)');
+        $this->assertEquals($expectedSQL, $this->con->getLastExecutedQuery(), 'Rest of table after column added with withColumn() is not properly loaded');
+
+    }
+
     public function testSelectArrayPaginate()
     {
         BookstoreDataPopulator::depopulate($this->con);

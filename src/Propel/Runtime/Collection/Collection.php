@@ -63,11 +63,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     protected $data = array();
 
     /**
-     * @var CollectionIterator
-     */
-    protected $lastIterator;
-
-    /**
      * @var PluralizerInterface|null
      */
     private $pluralizer;
@@ -167,7 +162,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function getIterator()
     {
-        return $this->lastIterator = new CollectionIterator($this);
+        return new CollectionIterator($this);
     }
 
     public function count()
@@ -554,12 +549,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
 
             return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
-        }
-        if (!$this->lastIterator) {
-            $this->getIterator();
-        }
-        if (is_callable([$this->lastIterator, $name])) {
-            return call_user_func_array([$this->lastIterator, $name], $params);
         }
         throw new BadMethodCallException('Call to undefined method: ' . $name);
     }

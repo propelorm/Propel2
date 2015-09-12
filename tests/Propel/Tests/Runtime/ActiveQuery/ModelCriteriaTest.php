@@ -1968,6 +1968,20 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, $nbBooks, 'count() returns the number of results in the query');
     }
 
+    public function testExists()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
+        $c->where('b.Title = ?', 'foo');
+        $booksExists = $c->exists();
+        $this->assertFalse($booksExists, 'exists() returns false when there are are matching results');
+
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
+        $c->join('b.Author a');
+        $c->where('a.FirstName = ?', 'Neal');
+        $booksExists = $c->exists();
+        $this->assertTrue($booksExists, 'exists() returns true when there are matching results');
+    }
+
     public function testPaginate()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2703,5 +2717,61 @@ class ModelCriteriaTest extends BookstoreTestBase
             ->findByAuthorAndISBN($testAuthor, 1234);
         $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=" . $testAuthor->getId() . " AND book.isbn=1234");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX, YYY), $value)');
+    }
+
+    public function testRequirePkReturnsModel()
+    {
+        // retrieve the test data
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $testBook = $c->findOne();
+
+        $book = BookQuery::create()->requirePk($testBook->getId());
+        $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
+    }
+
+    public function testRequirePkThrowsException()
+    {
+        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+
+        BookQuery::create()->requirePk(-1337);
+    }
+
+    public function testRequireOneReturnsModel()
+    {
+        $book = BookQuery::create()->orderByTitle()->requireOne();
+        $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
+    }
+
+    public function testRequireOneThrowsException()
+    {
+        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+
+        BookQuery::create()->filterByTitle('Not existing title')->requireOne();
+    }
+
+    public function testMagicRequireOneReturnsModel()
+    {
+        $book = BookQuery::create()->requireOneByTitle('Harry Potter and the Order of the Phoenix');
+        $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
+    }
+
+    public function testMagicRequireOneThrowsException()
+    {
+        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+
+        BookQuery::create()->requireOneById(-1337);
+    }
+
+    public function testMagicRequireOneWithAndReturnsModel()
+    {
+        $book = BookQuery::create()->requireOneByIsbnAndTitle('043935806X', 'Harry Potter and the Order of the Phoenix');
+        $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
+    }
+
+    public function testMagicRequireOneWithAndThrowsException()
+    {
+        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+
+        BookQuery::create()->requireOneByTitleAndId('Not Existing Book', -1337);
     }
 }

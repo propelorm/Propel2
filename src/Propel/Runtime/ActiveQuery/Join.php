@@ -39,6 +39,9 @@ class Join
     // the left parts of the join condition
     protected $left = array();
 
+    protected $leftValues = array();
+    protected $rightValues = array();
+
     // the right parts of the join condition
     protected $right = array();
 
@@ -122,6 +125,8 @@ class Join
             $this->right[] = $right;
         }
 
+        $this->leftValues[] = null;
+        $this->rightValues[] = null;
         $this->operators[] = $operator;
         $this->count++;
     }
@@ -164,14 +169,54 @@ class Join
      * @param string $rightTableAlias
      * @param string $operator        The comparison operator of the join condition, default Join::EQUAL
      */
-    public function addExplicitCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $rightTableName = null, $rightColumnName = null, $rightTableAlias = null, $operator = self::EQUAL)
-    {
-        $this->leftTableName   = $leftTableName;
+    public function addExplicitCondition(
+        $leftTableName,
+        $leftColumnName,
+        $leftTableAlias = null,
+        $rightTableName = null,
+        $rightColumnName = null,
+        $rightTableAlias = null,
+        $operator = self::EQUAL
+    ) {
+        $this->leftTableName = $leftTableName;
         $this->leftTableAlias  = $leftTableAlias;
         $this->rightTableName  = $rightTableName;
         $this->rightTableAlias = $rightTableAlias;
         $this->left[] = $leftColumnName;
+        $this->leftValues[] = null;
+        $this->rightValues[] = null;
         $this->right[] = $rightColumnName;
+        $this->operators[] = $operator;
+        $this->count++;
+    }
+
+    /**
+     * @param string $leftTableName
+     * @param string $leftColumnName
+     * @param mixed  $leftTableAlias
+     * @param mixed  $leftColumnValue
+     * @param string $operator
+     */
+    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $leftColumnValue, $operator = self::EQUAL)
+    {
+        $this->leftTableName = $leftTableName;
+        $this->leftTableAlias  = $leftTableAlias;
+        $this->left[] = $leftColumnName;
+        $this->leftValues[] = $leftColumnValue;
+        $this->rightValues[] = null;
+        $this->right[] = null;
+        $this->operators[] = $operator;
+        $this->count++;
+    }
+
+    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias = null, $rightColumnValue, $operator = self::EQUAL)
+    {
+        $this->rightTableName = $rightTableName;
+        $this->rightTableAlias = $rightTableAlias;
+        $this->right[] = $rightColumnName;
+        $this->rightValues[] = $rightColumnValue;
+        $this->leftValues[] = null;
+        $this->left[] = null;
         $this->operators[] = $operator;
         $this->count++;
     }
@@ -215,7 +260,7 @@ class Join
 
     /**
      * @param int $index
-     * @return string[] the comparison operator for the join condition
+     * @return string the comparison operator for the join condition
      */
     public function getOperator($index = 0)
     {
@@ -263,6 +308,16 @@ class Join
     public function addLeftColumnName($left)
     {
         $this->left[] = $left;
+    }
+
+    /**
+     * Adds a value for a leftColumn.
+     *
+     * @param string|number $value an actual value
+     */
+    public function addLeftValue($value)
+    {
+        $this->leftValues = $value;
     }
 
     /**
@@ -553,7 +608,25 @@ class Join
         /** @var AbstractCriterion $joinCondition */
         $joinCondition = null;
         for ($i = 0; $i < $this->count; $i++) {
-            $criterion = $c->getNewCriterion($this->getLeftColumn($i), $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i), Criteria::CUSTOM);
+            if ($this->leftValues[$i]) {
+                $criterion = $c->getNewCriterion(
+                    $this->getLeftColumn($i),
+                    $this->leftValues[$i],
+                    self::EQUAL
+                );
+            } else if ($this->rightValues[$i]) {
+                $criterion = $c->getNewCriterion(
+                    $this->getRightColumn($i),
+                    $this->rightValues[$i],
+                    self::EQUAL
+                );
+            } else {
+                $criterion = $c->getNewCriterion(
+                    $this->getLeftColumn($i),
+                    $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
+                    Criteria::CUSTOM
+                );
+            }
             if (null === $joinCondition) {
                 $joinCondition = $criterion;
             } else {
@@ -585,7 +658,13 @@ class Join
         if (null === $this->joinCondition) {
             $conditions = array();
             for ($i = 0; $i < $this->count; $i++) {
-                $conditions []= $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
+                if ($this->leftValues[$i]) {
+                    $conditions[] = $this->getLeftColumn($i) . $this->getOperator($i) . var_export($this->leftValues[$i], true);
+                } else if ($this->rightValues[$i]) {
+                        $conditions[] = $this->getRightColumn($i) . $this->getOperator($i) . var_export($this->rightValues[$i], true);
+                } else {
+                    $conditions[] = $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i);
+                }
             }
             $joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
         } else {

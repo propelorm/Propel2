@@ -347,7 +347,7 @@ class XmlDumper implements DumperInterface
             $columnNode->setAttribute('size', $size);
         }
 
-        if ($scale = $domain->getScale()) {
+        if (null !== ($scale = $domain->getScale())) {
             $columnNode->setAttribute('scale', $scale);
         }
 

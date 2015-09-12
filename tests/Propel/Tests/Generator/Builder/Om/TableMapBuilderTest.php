@@ -64,7 +64,7 @@ class TableMapBuilderTest extends BookstoreTestBase
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
         $this->assertEquals(
-            12,
+            13,
             count($bookTable->getRelations()),
             'The map builder creates relations for both incoming and outgoing keys'
         );
@@ -100,11 +100,11 @@ class TableMapBuilderTest extends BookstoreTestBase
     {
         $essayTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Essay');
         $this->assertTrue(
-            $essayTable->hasRelation('AuthorRelatedByFirstAuthor'),
+            $essayTable->hasRelation('FirstAuthor'),
             'The map builder creates relations based on the foreign table name and the foreign key'
         );
         $this->assertTrue(
-            $essayTable->hasRelation('AuthorRelatedBySecondAuthor'),
+            $essayTable->hasRelation('SecondAuthor'),
             'The map builder creates relations based on the foreign table name and the foreign key'
         );
     }

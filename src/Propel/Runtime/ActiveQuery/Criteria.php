@@ -310,7 +310,7 @@ class Criteria
         $this->selectQueries = array();
         $this->dbName = $this->originalDbName;
         $this->offset = 0;
-        $this->limit = 0;
+        $this->limit = -1;
         $this->aliases = array();
         $this->useTransaction = false;
         $this->ifLvlCount = false;
@@ -1022,6 +1022,28 @@ class Criteria
     public function getJoins()
     {
         return $this->joins;
+    }
+
+    /**
+     * This method returns an already defined join clause from the query
+     *
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function getJoin($name)
+    {
+        return $this->joins[$name];
+    }
+
+    /**
+     * @param string $name The name of the join clause
+     *
+     * @return Join A join object
+     */
+    public function hasJoin($name)
+    {
+        return isset($this->joins[$name]);
     }
 
     /**

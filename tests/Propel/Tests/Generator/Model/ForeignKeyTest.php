@@ -193,6 +193,8 @@ class ForeignKeyTest extends ModelTestCase
         $inversedFk = new ForeignKey();
         $inversedFk->addReference('id', 'author_id');
         $inversedFk->setTable($localTable);
+        $inversedFk->setForeignSchemaName('bookstore');
+        $inversedFk->setForeignTableCommonName('authors');
 
         $foreignTable
             ->expects($this->any())
