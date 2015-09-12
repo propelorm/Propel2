@@ -347,13 +347,23 @@ class StandardServiceContainerTest extends BaseTestCase
                 'time' => array(
                     'name'      => 'Time',
                     'precision' => 3,
-                    'pad'       => 8,
+                    'pad'       => 8
                 ),
                 'mem' => array(
                     'name'      => 'Memory',
                     'precision' => 3,
-                    'pad'       => 7,
-                )
+                    'pad'       => 8
+                ),
+                'memDelta' => array(
+                    'name'      => 'Memory Delta',
+                    'precision' => 3,
+                    'pad'       => 8
+                ),
+                'memPeak' => array(
+                    'name'      => 'Memory Peak',
+                    'precision' => 3,
+                    'pad'       => 8
+                ),
             ),
             'innerGlue'    => ': ',
             'outerGlue'    => ' | ',

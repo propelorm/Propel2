@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Runtime\Util;
+use Propel\Common\Config\Exception\InvalidConfigurationException;
 
 /**
 * Profiler for Propel
@@ -32,7 +33,17 @@ class Profiler
         'mem' => array(
             'name'      => 'Memory',
             'precision' => 3,
-            'pad'       => 7
+            'pad'       => 8
+        ),
+        'memDelta' => array(
+            'name'      => 'Memory Delta',
+            'precision' => 3,
+            'pad'       => 8
+        ),
+        'memPeak' => array(
+            'name'      => 'Memory Peak',
+            'precision' => 3,
+            'pad'       => 8
         ),
     );
 
@@ -100,7 +111,17 @@ class Profiler
      *            'name' => 'Memory',
      *            'precision' => '3',
      *            'pad' => '8',
-     *        )
+     *        ),
+     *        'memDelta' => array(
+     *            'name' => 'Memory Delta',
+     *            'precision' => '3',
+     *            'pad' => '8',
+     *        ),
+     *        'memPeak' => array(
+     *            'name' => 'Memory Peak',
+     *            'precision' => '3',
+     *            'pad' => '8',
+     *        ),
      *   ),
      *   'outerGlue' => ': ',
      *   'innerGlue' => ' | '
@@ -200,7 +221,7 @@ class Profiler
                     $value = self::formatMemory($endSnapshot['memoryPeakUsage'], $config['precision']);
                     break;
                 default:
-                    $value = 'n/a';
+                    throw new InvalidConfigurationException("`$detailName` isn't a valid profiler key (Section: propel.runtime.profiler).");
                     break;
             }
             $profile .= $config['name'] . $this->innerGlue . str_pad($value, $config['pad'], ' ', STR_PAD_LEFT) . $this->outerGlue;
