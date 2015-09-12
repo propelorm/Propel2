@@ -1,4 +1,4 @@
 #!/usr/bin/env php
 <?php
 
-include('propel.php');
+require(__DIR__ . '/propel.php');
