@@ -2490,7 +2490,17 @@ class Criteria
                 $db->turnSelectColumnsToAliases($this);
             }
             $selectSql = $this->createSelectSql($params);
-            $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+            //replace the first occurence of 'select' with 'SELECT SQL_CALC_FOUND_ROWS '
+            $sql = preg_replace('/select/i', 'SELECT SQL_CALC_FOUND_ROWS ', $selectSql, 1);
+            try {
+                $stmt = $con->prepare($sql);
+                $db->bindValues($stmt, $params, $dbMap);
+                $stmt->execute();
+            } catch (\Exception $e) {
+                Propel::log($e->getMessage(), Propel::LOG_ERR);
+                throw new PropelException(sprintf('Unable to execute count with SQL_CALC_FOUND_ROWS statement [%s]', $sql));
+            }
+            $sql = "SELECT FOUND_ROWS()";
         } else {
             // Replace SELECT columns with COUNT(*)
             $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
