@@ -36,6 +36,17 @@ class Inheritance extends MappingModel
     }
 
     /**
+    * Get constant names' safe value of the key name.
+    *
+    * @return string
+    */
+    public function getConstantSuffix()
+    {
+        $separator = PhpNameGenerator::STD_SEPARATOR_CHAR;
+        return strtoupper(rtrim(preg_replace('/(\W|_)+/', $separator, $this->key), $separator));
+    }
+
+    /**
      * Sets a key name.
      *
      * @param string $key
