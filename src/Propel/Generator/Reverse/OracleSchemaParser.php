@@ -83,7 +83,7 @@ class OracleSchemaParser extends AbstractSchemaParser
         $tables = array();
         $stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 
-        $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracleAutoincrementSequencePattern'];
+        $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracle']['autoincrementSequencePattern'];
 
         // First load the tables (important that this happen before filling out details of tables)
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -196,11 +196,10 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
-        $stmt = $this->dbh->query("SELECT COLUMN_NAME, INDEX_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 
         $indices = array();
-        foreach ($rows as $row) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $indices[$row['INDEX_NAME']][]= $row['COLUMN_NAME'];
         }
 
