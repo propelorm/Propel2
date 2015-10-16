@@ -102,11 +102,6 @@ CREATE TABLE [book]
 
 CREATE INDEX [book_i_639136] ON [book] ([title]);
 
-BEGIN
-ALTER TABLE [book] ADD CONSTRAINT [book_fk_ea464c] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
-END
-;
-
 -----------------------------------------------------------------------
 -- author
 -----------------------------------------------------------------------
@@ -143,6 +138,11 @@ CREATE TABLE [author]
     [last_name] VARCHAR(100) NULL,
     CONSTRAINT [author_pk] PRIMARY KEY ([id])
 );
+
+BEGIN
+ALTER TABLE [book] ADD CONSTRAINT [book_fk_ea464c] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
+END
+;
 
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -197,11 +197,6 @@ CREATE TABLE [x].[book]
 );
 
 CREATE INDEX [book_i_639136] ON [x].[book] ([title]);
-
-BEGIN
-ALTER TABLE [x].[book] ADD CONSTRAINT [book_fk_4444ca] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
-END
-;
 
 -----------------------------------------------------------------------
 -- y.author
@@ -279,6 +274,11 @@ CREATE TABLE [x].[book_summary]
     [summary] VARCHAR(MAX) NOT NULL,
     CONSTRAINT [book_summary_pk] PRIMARY KEY ([id])
 );
+
+BEGIN
+ALTER TABLE [x].[book] ADD CONSTRAINT [book_fk_4444ca] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
+END
+;
 
 BEGIN
 ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_fk_23450f] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
