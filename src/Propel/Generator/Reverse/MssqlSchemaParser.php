@@ -24,6 +24,7 @@ use Propel\Generator\Model\PropelTypes;
  * Microsoft SQL Server database schema parser.
  *
  * @author Hans Lellelid <hans@xmpl.org>
+ * @author Dominic Winkler <d.winkler@flexarts.at> (Flexarts)
  */
 class MssqlSchemaParser extends AbstractSchemaParser
 {
@@ -64,6 +65,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'varbinary(max)'     => PropelTypes::CLOB,
         'varchar'            => PropelTypes::VARCHAR,
         'varchar(max)'       => PropelTypes::CLOB,
+        'geometry'           => PropelTypes::GEOMETRY,
         // SQL Server 2000 only
         'bigint identity'    => PropelTypes::BIGINT,
         'bigint'             => PropelTypes::BIGINT,
@@ -118,6 +120,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     protected function addColumns(Table $table)
     {
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
+        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
         foreach ($dataFetcher as $row) {
 
@@ -161,18 +164,20 @@ class MssqlSchemaParser extends AbstractSchemaParser
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();
-
-        $dataFetcher = $this->dbh->query("SELECT ccu1.TABLE_NAME, ccu1.COLUMN_NAME, ccu2.TABLE_NAME AS FK_TABLE_NAME, ccu2.COLUMN_NAME AS FK_COLUMN_NAME
-            FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu1 INNER JOIN
-            INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc1 ON tc1.CONSTRAINT_NAME = ccu1.CONSTRAINT_NAME AND
-            CONSTRAINT_TYPE = 'Foreign Key' INNER JOIN
-            INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc1 ON rc1.CONSTRAINT_NAME = tc1.CONSTRAINT_NAME INNER JOIN
-            INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu2 ON ccu2.CONSTRAINT_NAME = rc1.UNIQUE_CONSTRAINT_NAME
-            WHERE (ccu1.table_name = '".$table->getName()."')");
+        
+        $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME
+         from sys.foreign_keys as fk 
+         inner join sys.foreign_key_columns ref on ref.constraint_object_id = fk.object_id
+         inner join sys.columns lcol on lcol.object_id = ref.parent_object_id and lcol.column_id = ref.parent_column_id
+         inner join sys.columns rcol on rcol.object_id = ref.referenced_object_id and rcol.column_id = ref.referenced_column_id
+         inner join sys.tables rtab on rtab.object_id = ref.referenced_object_id
+         where fk.parent_object_id = OBJECT_ID('".$table->getName()."')");
+        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
         $foreignKeys = array(); // local store to avoid duplicates
         foreach ($dataFetcher as $row) {
 
+            $name = $this->cleanDelimitedIdentifiers($row['CONSTRAINT_NAME']);
             $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
             $fcol = $this->cleanDelimitedIdentifiers($row['FK_COLUMN_NAME']);
@@ -201,19 +206,31 @@ class MssqlSchemaParser extends AbstractSchemaParser
     protected function addIndexes(Table $table)
     {
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
+        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
         $indexes = array();
         foreach ($dataFetcher as $row) {
-            $colName = $this->cleanDelimitedIdentifiers($row["COLUMN_NAME"]);
+            $colName = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);
 
+            $isPk = $this->cleanDelimitedIdentifiers($row['PRIMARY_KEY']);
+            $isUnique = $this->cleanDelimitedIdentifiers($row['UNIQUE']);
+
+            $localColumn   = $table->getColumn($colName);
+
             // FIXME -- Add UNIQUE support
+            if ($isPk || $isUnique) {
+                continue;
+            }
+            
             if (!isset($indexes[$name])) {
                 $indexes[$name] = new Index($name);
-                $table->addIndex($indexes[$name]);
             }
+            $indexes[$name]->addColumn($localColumn);
+        }
 
-            $indexes[$name]->addColumn($table->getColumn($colName));
+        foreach ($indexes as $name => $index) {
+            $table->addIndex($index);
         }
     }
 

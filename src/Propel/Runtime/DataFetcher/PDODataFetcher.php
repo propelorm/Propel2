@@ -30,10 +30,37 @@ class PDODataFetcher extends AbstractDataFetcher
     private $cachedCount;
 
     /**
+     * fetch style (default FETCH_NUM)
+     * @var integer
+     */
+    private $style = \PDO::FETCH_NUM;
+
+    /**
+     * Sets a new fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH). Returns previous fetch style.
+     * @var integer
+     */
+    public function setStyle($style) {
+        $old_style = $this->style;
+        $this->style = $style;
+        return $old_style;
+    }
+
+    /**
+     * Returns current fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH).
+     * @var integer
+     */
+    public function getStyle() {
+        return $this->style;
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public function fetch($style = \PDO::FETCH_NUM)
+    public function fetch($style = null)
     {
+        if (is_null($style)) {
+            $style = $this->style;
+        }
         return $this->getDataObject()->fetch($style);
     }
 
@@ -43,7 +70,7 @@ class PDODataFetcher extends AbstractDataFetcher
     public function next()
     {
         if (null !== $this->dataObject) {
-            $this->current = $this->dataObject->fetch(\PDO::FETCH_NUM);
+            $this->current = $this->dataObject->fetch($this->style);
             if ($this->current) {
                 $this->index++;
             }
@@ -81,7 +108,7 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function rewind()
     {
-        $this->current = $this->dataObject->fetch(\PDO::FETCH_NUM);
+        $this->current = $this->dataObject->fetch($this->style);
     }
 
     /**
