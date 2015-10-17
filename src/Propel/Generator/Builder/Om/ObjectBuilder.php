@@ -264,7 +264,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
 
-        $this->declareClasses(
+        $classesToDeclare = array(
             '\Exception',
             '\PDO',
             '\Propel\Runtime\Exception\PropelException',
@@ -281,6 +281,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\Map\TableMap'
         );
+
+        $baseClass = $this->getBaseClass();
+        if (strrpos($baseClass, '\\') !== FALSE) {
+            $classesToDeclare[] = $baseClass;
+        }
+
+        $reflectionMethod = new \ReflectionMethod($this, 'declareClasses');
+        $reflectionMethod->invokeArgs($this, $classesToDeclare);
 
         $table = $this->getTable();
         if (!$table->isAlias()) {
