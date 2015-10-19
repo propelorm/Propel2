@@ -347,7 +347,7 @@ CREATE TABLE [foo]
     [id] INT NOT NULL IDENTITY,
     [bar] INT NULL,
     CONSTRAINT [foo_pk] PRIMARY KEY ([id]),
-    UNIQUE ([bar])
+    CONSTRAINT [foo_u_14f552] UNIQUE NONCLUSTERED ([bar]) ON [PRIMARY]
 );
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
@@ -544,7 +544,7 @@ DROP INDEX [babar];
      */
     public function testGetUniqueDDL($index)
     {
-        $expected = 'UNIQUE ([bar1],[bar2])';
+        $expected = 'CONSTRAINT [babar] UNIQUE NONCLUSTERED ([bar1],[bar2]) ON [PRIMARY]';
         $this->assertEquals($expected, $this->getPlatform()->getUniqueDDL($index));
     }
 

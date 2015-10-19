@@ -15,7 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
-
+use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
@@ -218,19 +218,29 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
             $localColumn   = $table->getColumn($colName);
 
-            // FIXME -- Add UNIQUE support
-            if ($isPk || $isUnique) {
+            // ignore PRIMARY index
+            if ($isPk) {
                 continue;
             }
-            
+
             if (!isset($indexes[$name])) {
-                $indexes[$name] = new Index($name);
+                if ($isUnique) {
+                    $indexes[$name] = new Unique($name);
+                } else {
+                    $indexes[$name] = new Index($name);
+                }
+                $indexes[$name]->setTable($table);
             }
+
             $indexes[$name]->addColumn($localColumn);
         }
 
-        foreach ($indexes as $name => $index) {
-            $table->addIndex($index);
+        foreach ($indexes as $index) {
+            if ($index instanceof Unique) {
+                $table->addUnique($index);
+            } else {
+                $table->addIndex($index);
+            }
         }
     }
 

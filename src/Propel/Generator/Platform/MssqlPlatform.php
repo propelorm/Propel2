@@ -15,6 +15,7 @@ use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 
 /**
  * MS SQL PlatformInterface implementation.
@@ -170,6 +171,21 @@ END
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->getForeignKeyDDL($fk)
+        );
+    }
+
+    /**
+     * Builds the DDL SQL for a Unique constraint object. MS SQL Server CONTRAINT specific
+     *
+     * @param  Unique $unique
+     * @return string
+     */
+    public function getUniqueDDL(Unique $unique)
+    {
+        $pattern = 'CONSTRAINT %s UNIQUE NONCLUSTERED (%s) ON [PRIMARY]';
+        return sprintf($pattern,
+            $this->quoteIdentifier($unique->getName()),
+            $this->getColumnListDDL($unique->getColumnObjects())
         );
     }
 
