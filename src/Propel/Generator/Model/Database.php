@@ -49,6 +49,7 @@ class Database extends ScopedMappingModel
     private $name;
 
     private $baseClass;
+    private $parentClass;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
 
@@ -142,6 +143,7 @@ class Database extends ScopedMappingModel
 
         $this->name = $this->getAttribute('name');
         $this->baseClass = $this->getAttribute('baseClass');
+        $this->parentClass = $this->getAttribute('parentClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
@@ -212,6 +214,17 @@ class Database extends ScopedMappingModel
     }
 
     /**
+     * Returns the name of the base super class inherited by query
+     * objects. This parameter is overridden at the table level.
+     *
+     * @return string
+     */
+    public function getParentClass()
+    {
+        return $this->parentClass;
+    }
+
+    /**
      * Sets the name of the base super class inherited by active record objects.
      * This parameter is overridden at the table level.
      *
@@ -220,6 +233,17 @@ class Database extends ScopedMappingModel
     public function setBaseClass($class)
     {
         $this->baseClass = $class;
+    }
+
+    /**
+     * Sets the name of the base super class inherited by query objects.
+     * This parameter is overridden at the table level.
+     *
+     * @param string $class.
+     */
+    public function setParentClass($class)
+    {
+        $this->parentClass = $class;
     }
 
     /**

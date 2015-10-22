@@ -59,11 +59,14 @@ class QueryBuilder extends AbstractOMBuilder
         return $this->getStubQueryBuilder()->getUnprefixedClassName();
     }
 
+    /**
+     * Returns parent class name that extends TableQuery Object if is set this class must extends ModelCriteria for be compatible
+     * @return string
+     */
     public function getParentClass()
     {
         $parentClass = $this->getBehaviorContent('parentClass');
-
-        return null === $parentClass ? 'ModelCriteria' : $parentClass;
+        return null === $parentClass ? ($this->getDatabase()->getParentClass() != "" ? $this->getDatabase()->getParentClass() : 'ModelCriteria') : $parentClass;
     }
 
     /**
