@@ -297,7 +297,7 @@ class QuickBuilder
             $tables[] = $table->getName();
         }
         $name = implode('_', $tables);
-        if (!$classTargets || count($classTargets) == 5) {
+        if (!$classTargets || count($classTargets) === 5) {
             $name .= '-all';
         } else {
             $name .= '-' . implode('_', $classTargets);

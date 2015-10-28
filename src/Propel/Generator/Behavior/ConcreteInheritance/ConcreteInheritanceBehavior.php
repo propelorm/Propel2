@@ -135,7 +135,8 @@ class ConcreteInheritanceBehavior extends Behavior
             $tableName = $this->getParameter('schema').$database->getPlatform()->getSchemaDelimiter().$tableName;
         }
 
-        if (!$table = $database->getTable($tableName)) {
+        $table = $database->getTable($tableName);
+        if (!$table) {
             throw new InvalidArgumentException(sprintf('Table "%s" used in the concrete_inheritance behavior at table "%s" not exist.', $tableName, $this->getTable()->getName()));
         }
 

@@ -600,7 +600,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      */
     protected function addGetBehaviors(&$script)
     {
-        if ($behaviors = $this->getTable()->getBehaviors()) {
+        $behaviors = $this->getTable()->getBehaviors();
+        if ($behaviors) {
             $script .= "
     /**
      *

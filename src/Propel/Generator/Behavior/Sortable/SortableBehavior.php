@@ -138,7 +138,8 @@ class SortableBehavior extends Behavior
 
         } elseif ($this->useScope()) {
             $methodSignature = '$scope';
-            if ($column = $this->table->getColumn($this->getParameter('scope_column'))) {
+            $column = $this->table->getColumn($this->getParameter('scope_column'));
+            if ($column) {
                 if (!$column->isNotNull()) {
                     $methodSignature .= ' = null';
                 }

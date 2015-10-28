@@ -530,10 +530,11 @@ class Criteria
      */
     public function getLastCriterion()
     {
-        if ($cnt = count($this->map)) {
+        $count = count($this->map);
+        if ($count) {
             $map = array_values($this->map);
 
-            return $map[$cnt - 1];
+            return $map[$count - 1];
         }
 
         return null;
@@ -954,7 +955,8 @@ class Criteria
         foreach ($conditions as $condition) {
             $left = $condition[0];
             $right = $condition[1];
-            if ($pos = strrpos($left, '.')) {
+            $pos = strrpos($left, '.');
+            if ($pos) {
                 $leftTableAlias = substr($left, 0, $pos);
                 $leftColumnName = substr($left, $pos + 1);
                 list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
@@ -963,7 +965,8 @@ class Criteria
                 $leftColumnName = $left;
             }
 
-            if ($pos = strrpos($right, '.')) {
+            $pos = strrpos($right, '.');
+            if ($pos) {
                 $rightTableAlias = substr($right, 0, $pos);
                 $rightColumnName = substr($right, $pos + 1);
                 list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
@@ -982,7 +985,7 @@ class Criteria
 
             $conditionClause = $leftTableAlias ? $leftTableAlias . '.' : ($leftTableName ? $leftTableName . '.' : '');
             $conditionClause .= $leftColumnName;
-            $conditionClause .= isset($condition[2]) ? $condition[2] : JOIN::EQUAL;
+            $conditionClause .= isset($condition[2]) ? $condition[2] : Join::EQUAL;
             $conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
             $conditionClause .= $rightColumnName;
             $criterion = $this->getNewCriterion($leftTableName.'.'.$leftColumnName, $conditionClause, Criteria::CUSTOM);
@@ -1468,15 +1471,17 @@ class Criteria
      */
     public function remove($key)
     {
-        if (isset($this->map[$key])) {
-            $removed = $this->map[$key];
-            unset($this->map[$key]);
-            if ($removed instanceof AbstractCriterion) {
-                return $removed->getValue();
-            }
-
-            return $removed;
+        if (!isset($this->map[$key])) {
+            return null;
         }
+
+        $removed = $this->map[$key];
+        unset($this->map[$key]);
+        if ($removed instanceof AbstractCriterion) {
+            return $removed->getValue();
+        }
+
+        return $removed;
     }
 
     /**
@@ -1486,7 +1491,6 @@ class Criteria
      */
     public function toString()
     {
-
         $sb = 'Criteria:';
         try {
 
@@ -1649,7 +1653,8 @@ class Criteria
         }
 
         // merge having
-        if ($having = $criteria->getHaving()) {
+        $having = $criteria->getHaving();
+        if ($having) {
             if ($this->getHaving()) {
                 $this->addHaving($this->getHaving()->addAnd($having));
             } else {
@@ -1770,6 +1775,10 @@ class Criteria
      *  - addOr(column, value)
      *  - addOr(Criterion)
      *
+     * @param mixed $p1
+     * @param mixed $p2
+     * @param mixed $p3
+     * @param bool $preferColumnCondition
      * @return $this|Criteria A modified Criteria object.
      */
     public function addOr($p1, $p2 = null, $p3 = null, $preferColumnCondition = true)
@@ -1943,12 +1952,14 @@ class Criteria
                 }
 
                 $tableAlias = $tableName;
-                if ($aliasTableName = $this->getTableForAlias($tableName)) {
+                $aliasTableName = $this->getTableForAlias($tableName);
+                if ($aliasTableName) {
                     $tableName = $aliasTableName;
                 }
 
                 $columnAlias = $columnName;
-                if ($asColumnName = $this->getColumnForAs($columnName)) {
+                $asColumnName = $this->getColumnForAs($columnName);
+                if ($asColumnName) {
                     $columnName = $asColumnName;
                 }
 
@@ -2008,7 +2019,8 @@ class Criteria
             .' FROM '  . $from
             .($whereClause ? ' WHERE '.implode(' AND ', $whereClause) : '');
 
-        if ($groupBy = $adapter->getGroupBy($this)) {
+        $groupBy = $adapter->getGroupBy($this);
+        if ($groupBy) {
             $this->replaceNames($groupBy);
             $sql .= $groupBy;
         }
@@ -2357,11 +2369,13 @@ class Criteria
             $stmt = null;
             try {
                 $sql = 'UPDATE ';
-                if ($queryComment = $this->getComment()) {
+                $queryComment = $this->getComment();
+                if ($queryComment) {
                     $sql .= '/* ' . $queryComment . ' */ ';
                 }
                 // is it a table alias?
-                if ($realTableName = $this->getTableForAlias($tableName)) {
+                $realTableName = $this->getTableForAlias($tableName);
+                if ($realTableName) {
                     $updateTable = $realTableName . ' ' . $tableName;
                     $tableName = $realTableName;
                 } else {
@@ -2517,7 +2531,8 @@ class Criteria
     {
         $columnNames = array();
         foreach ($this->getSelectColumns() as $fullyQualifiedColumnName) {
-            if ($pos = strrpos($fullyQualifiedColumnName, '.')) {
+            $pos = strrpos($fullyQualifiedColumnName, '.');
+            if ($pos) {
                 $columnName = substr($fullyQualifiedColumnName, $pos);
                 if (isset($columnNames[$columnName])) {
                     // more than one column with the same name, so aliasing is required

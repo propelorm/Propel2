@@ -130,7 +130,8 @@ class DelegateBehavior extends Behavior
             }
                 $script .= "
 if (is_callable(array('$ARFQCN', \$name))) {
-    if (!\$delegate = \$this->get$relationName()) {
+    \$delegate = \$this->get$relationName();
+    if (!\$delegate) {
         \$delegate = new $ARClassName();
         \$this->set$relationName(\$delegate);
     }

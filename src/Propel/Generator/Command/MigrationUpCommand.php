@@ -78,7 +78,8 @@ class MigrationUpCommand extends AbstractCommand
         $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
-        if (!$nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp()) {
+        $nextMigrationTimestamp = $manager->getFirstUpMigrationTimestamp();
+        if (!$nextMigrationTimestamp) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
             return false;
@@ -180,7 +181,8 @@ class MigrationUpCommand extends AbstractCommand
             $migration->postUp($manager);
         }
 
-        if ($timestamps = $manager->getValidMigrationTimestamps()) {
+        $timestamps = $manager->getValidMigrationTimestamps();
+        if ($timestamps) {
             $output->writeln(sprintf(
                 'Migration complete. %d migrations left to execute.',
                 count($timestamps)
