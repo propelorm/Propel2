@@ -11,7 +11,8 @@
  */
 public function restoreFromArchive(ConnectionInterface $con = null)
 {
-    if (!$archive = $this->getArchive($con)) {
+    $archive = $this->getArchive($con);
+    if (!$archive) {
         throw new PropelException('The current object has never been archived and cannot be restored');
     }
     $this->populateFromArchive($archive);

@@ -122,7 +122,8 @@ class MigrationManager extends AbstractManager
 
     public function getAllDatabaseVersions()
     {
-        if (!$connections = $this->getConnections()) {
+        $connections = $this->getConnections();
+        if (!$connections) {
             throw new \Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 

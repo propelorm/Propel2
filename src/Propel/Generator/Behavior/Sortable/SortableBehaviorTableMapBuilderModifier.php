@@ -53,7 +53,7 @@ class SortableBehaviorTableMapBuilderModifier
             'rankColumn' => $this->getColumnConstant('rank_column'),
             'multiScope' => $this->behavior->hasMultipleScopes(),
             'scope'      => $col,
-            'tableName'      => $this->table->getName(),
+            'tableName'  => $this->table->getName(),
             'useScope'   => $this->behavior->useScope(),
         ));
     }

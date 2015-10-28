@@ -15,7 +15,8 @@ public function archive(ConnectionInterface $con = null)
     if ($this->isNew()) {
         throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive(<?php if (!$hasArchiveClass): ?>$con<?php endif; ?>)) {
+    $archive = $this->getArchive(<?php if (!$hasArchiveClass): ?>$con<?php endif; ?>);
+    if (!$archive) {
         $archive = new <?php echo $archiveTablePhpName ?>();
         $archive->setPrimaryKey($this->getPrimaryKey());
     }

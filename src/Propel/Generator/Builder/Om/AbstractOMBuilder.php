@@ -950,7 +950,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                     $modifier->$hookName($script, $this);
                 } else {
                     // regular hook: the behavior returns a string to append to the script string
-                    if (!$addedScript = $modifier->$hookName($this)) {
+                    $addedScript = $modifier->$hookName($this);
+                    if (!$addedScript) {
                         continue;
                     }
                     $script .= "
@@ -1015,6 +1016,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Most of the code comes from the PHP-CS-Fixer project
+     *
+     * @param $content
+     * @return mixed
      */
     private function clean($content)
     {

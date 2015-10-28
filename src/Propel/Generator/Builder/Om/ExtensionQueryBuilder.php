@@ -109,7 +109,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
-        return $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
+        $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
 
     /**

@@ -46,7 +46,8 @@ class AggregateColumnBehavior extends Behavior
     public function modifyTable()
     {
         $table = $this->getTable();
-        if (!$columnName = $this->getParameter('name')) {
+        $columnName = $this->getParameter('name');
+        if (!$columnName) {
             throw new \InvalidArgumentException(sprintf('You must define a \'name\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $table->getName()));
         }
 

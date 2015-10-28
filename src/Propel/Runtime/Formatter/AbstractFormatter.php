@@ -165,7 +165,8 @@ abstract class AbstractFormatter
     {
         $collection = array();
 
-        if ($class = $this->getCollectionClassName()) {
+        $class = $this->getCollectionClassName();
+        if ($class) {
             /** @var Collection $collection */
             $collection = new $class();
             $collection->setModel($this->class);

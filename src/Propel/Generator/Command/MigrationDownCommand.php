@@ -79,7 +79,8 @@ class MigrationDownCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         $previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
-        if (!$nextMigrationTimestamp = array_pop($previousTimestamps)) {
+        $nextMigrationTimestamp = array_pop($previousTimestamps);
+        if (!$nextMigrationTimestamp) {
             $output->writeln('No migration were ever executed on this database - nothing to reverse.');
 
             return false;
@@ -90,7 +91,8 @@ class MigrationDownCommand extends AbstractCommand
             $manager->getMigrationClassName($nextMigrationTimestamp)
         ));
 
-        if ($nbPreviousTimestamps = count($previousTimestamps)) {
+        $nbPreviousTimestamps = count($previousTimestamps);
+        if ($nbPreviousTimestamps) {
             $previousTimestamp = array_pop($previousTimestamps);
         } else {
             $previousTimestamp = 0;

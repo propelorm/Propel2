@@ -1144,7 +1144,8 @@ class ModelCriteria extends BaseModelCriteria
             throw new PropelException(__METHOD__ .' cannot be used on a query with a join, because Propel cannot transform a SQL JOIN into a subquery. You should split the query in two queries to avoid joins.');
         }
 
-        if (!$ret = $this->findOne($con)) {
+        $ret = $this->findOne($con);
+        if (!$ret) {
             $class = $this->getModelName();
             $obj = new $class();
             foreach ($this->keys() as $key) {
@@ -1346,7 +1347,8 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
         $dataFetcher = $criteria->doCount($con);
-        if ($row = $dataFetcher->fetch()) {
+        $row = $dataFetcher->fetch();
+        if ($row) {
             $count = (int) current($row);
         } else {
             $count = 0; // no rows returned; we infer that means 0 matches.
@@ -1426,12 +1428,17 @@ class ModelCriteria extends BaseModelCriteria
      * Code to execute before every DELETE statement
      *
      * @param ConnectionInterface $con The connection object used by the query
+     * @return int
      */
     protected function basePreDelete(ConnectionInterface $con)
     {
         return $this->preDelete($con);
     }
 
+    /**
+     * @param ConnectionInterface $con
+     * @return int
+     */
     protected function preDelete(ConnectionInterface $con)
     {
     }
@@ -1441,12 +1448,18 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param int                 $affectedRows the number of deleted rows
      * @param ConnectionInterface $con          The connection object used by the query
+     * @return int
      */
     protected function basePostDelete($affectedRows, ConnectionInterface $con)
     {
         return $this->postDelete($affectedRows, $con);
     }
 
+    /**
+     * @param int $affectedRows
+     * @param ConnectionInterface $con
+     * @return int
+     */
     protected function postDelete($affectedRows, ConnectionInterface $con)
     {
     }
@@ -1476,7 +1489,8 @@ class ModelCriteria extends BaseModelCriteria
 
         try {
             return $con->transaction(function () use ($con, $criteria) {
-                if (!$affectedRows = $criteria->basePreDelete($con)) {
+                $affectedRows = $criteria->basePreDelete($con);
+                if (!$affectedRows) {
                     $affectedRows = $criteria->doDelete($con);
                 }
                 $criteria->basePostDelete($affectedRows, $con);
@@ -1567,12 +1581,19 @@ class ModelCriteria extends BaseModelCriteria
      * @param array               $values               The associative array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
      * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @return int
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         return $this->preUpdate($values, $con, $forceIndividualSaves);
     }
 
+    /**
+     * @param array $values
+     * @param ConnectionInterface $con
+     * @param bool $forceIndividualSaves
+     * @return int
+     */
     protected function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
     }
@@ -1582,12 +1603,18 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param int                 $affectedRows the number of updated rows
      * @param ConnectionInterface $con          The connection object used by the query
+     * @return int
      */
     protected function basePostUpdate($affectedRows, ConnectionInterface $con)
     {
         return $this->postUpdate($affectedRows, $con);
     }
 
+    /**
+     * @param int $affectedRows
+     * @param ConnectionInterface $con
+     * @return int
+     */
     protected function postUpdate($affectedRows, ConnectionInterface $con)
     {
     }
@@ -1627,7 +1654,8 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
-            if (!$affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves)) {
+            $affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves);
+            if (!$affectedRows) {
                 $affectedRows = $criteria->doUpdate($values, $con, $forceIndividualSaves);
             }
             $criteria->basePostUpdate($affectedRows, $con);
@@ -2124,7 +2152,8 @@ class ModelCriteria extends BaseModelCriteria
                 $joinType = Criteria::INNER_JOIN;
             }
 
-            if (!$relation = substr($name, $pos + 8)) {
+            $relation = substr($name, $pos + 8);
+            if (!$relation) {
                 $relation = $arguments[0];
             }
 
