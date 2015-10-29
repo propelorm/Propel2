@@ -147,11 +147,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params[] = $filterTable->getCommonName();
 
         } else if (!$database->getSchema()) {
-            $stmt = $this->dbh->query('SELECT current_schemas(false)');
-            $searchPathString = substr($stmt->fetchColumn(), 1, -1);
+            $stmt = $this->dbh->query('SELECT schema_name FROM information_schema.schemata');
+            $searchPath = [];
 
-            $params = [];
-            $searchPath = explode(',', $searchPathString);
+            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $searchPath[] = $row['schema_name'];
+            }
 
             foreach ($searchPath as &$path) {
                 $params[] = $path;
@@ -186,13 +187,16 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $table->setSchema($namespaceName);
             }
             $table->setIdMethod($database->getDefaultIdMethod());
-            $database->addTable($table);
+            $table->setDatabase($database);
+            if (!$database->hasTable($table->getName())) {
+                $database->addTable($table);
 
-            // Create a wrapper to hold these tables and their associated OID
-            $wrap = new \stdClass;
-            $wrap->table = $table;
-            $wrap->oid = $oid;
-            $tableWraps[] = $wrap;
+                // Create a wrapper to hold these tables and their associated OID
+                $wrap = new \stdClass;
+                $wrap->table = $table;
+                $wrap->oid = $oid;
+                $tableWraps[] = $wrap;
+            }
         }
 
     }
