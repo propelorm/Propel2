@@ -84,7 +84,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private $alias;
     private $interface;
     private $baseClass;
-    private $parentClass;
+    private $baseQueryClass;
     private $columnsByName;
     private $columnsByLowercaseName;
     private $columnsByPhpName;
@@ -201,7 +201,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $this->isAbstract = $this->booleanValue($this->getAttribute('abstract'));
         $this->baseClass = $this->getAttribute('baseClass');
-        $this->parentClass = $this->getAttribute('parentClass');
+        $this->baseQueryClass = $this->getAttribute('baseQueryClass');
         $this->alias = $this->getAttribute('alias');
 
         $this->heavyIndexing = (
@@ -479,22 +479,18 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the name of the parent class used for superclass of all query objects
+     * Returns the name of the base query class used for superclass of all query objects
      * of this table.
      *
      * @return string
      */
-    public function getParentClass()
+    public function getBaseQueryClass()
     {
-        if ($this->isAlias() && null === $this->parentClass) {
-            return $this->alias;
+        if (null === $this->baseQueryClass) {
+            return $this->database->getBaseQueryClass();
         }
 
-        if (null === $this->parentClass) {
-            return $this->database->getParentClass();
-        }
-
-        return $this->parentClass;
+        return $this->baseQueryClass;
     }
 
     /**
@@ -508,13 +504,13 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets the parent class name.
+     * Sets the base query class name.
      *
      * @param string $class
      */
-    public function setParentClass($class)
+    public function setBaseQueryClass($class)
     {
-        $this->parentClass = $class;
+        $this->baseQueryClass = $class;
     }
 
     /**

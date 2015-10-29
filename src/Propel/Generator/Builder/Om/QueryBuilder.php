@@ -66,7 +66,7 @@ class QueryBuilder extends AbstractOMBuilder
     public function getParentClass()
     {
         $parentClass = $this->getBehaviorContent('parentClass');
-        return null === $parentClass ? ($this->getTable()->getParentClass() != "" ? $this->getTable()->getParentClass() : 'ModelCriteria') : $parentClass;
+        return null === $parentClass ? ($this->getTable()->getBaseQueryClass() != "" ? $this->getTable()->getBaseQueryClass() : 'ModelCriteria') : $parentClass;
     }
 
     /**

@@ -699,6 +699,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="baseQueryClass" type="php_class" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Allows you to specify a class that the generated Propel Query Objects should extend (in place of ModelCriteria) this class should extend ModelCriteria
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="alias" type="table_name" use="optional"/>
         <xs:attribute name="package" type="xs:string" use="optional">
             <xs:annotation>
@@ -843,6 +850,13 @@
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Allows to specify a default base class that all generated Propel objects should extend (in place of propel.om.BaseObject)
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="baseQueryClass" type="php_class" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Allows you to specify a class that the generated Propel Query objects should extend (in place of ModelCriteria) this class should extend ModelCriteria
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

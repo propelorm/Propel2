@@ -49,7 +49,7 @@ class Database extends ScopedMappingModel
     private $name;
 
     private $baseClass;
-    private $parentClass;
+    private $baseQueryClass;
     private $defaultIdMethod;
     private $defaultPhpNamingMethod;
 
@@ -143,7 +143,7 @@ class Database extends ScopedMappingModel
 
         $this->name = $this->getAttribute('name');
         $this->baseClass = $this->getAttribute('baseClass');
-        $this->parentClass = $this->getAttribute('parentClass');
+        $this->baseQueryClass = $this->getAttribute('baseQueryClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
@@ -219,9 +219,9 @@ class Database extends ScopedMappingModel
      *
      * @return string
      */
-    public function getParentClass()
+    public function getBaseQueryClass()
     {
-        return $this->parentClass;
+        return $this->baseQueryClass;
     }
 
     /**
@@ -241,9 +241,9 @@ class Database extends ScopedMappingModel
      *
      * @param string $class.
      */
-    public function setParentClass($class)
+    public function setBaseQueryClass($class)
     {
-        $this->parentClass = $class;
+        $this->baseQueryClass = $class;
     }
 
     /**
