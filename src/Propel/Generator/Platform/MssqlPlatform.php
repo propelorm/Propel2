@@ -10,16 +10,19 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 
 /**
  * MS SQL PlatformInterface implementation.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author Martin Poeschl <mpoeschl@marmot.at> (Torque)
+ * @author Dominic Winkler <d.winkler@flexarts.at> (Flexarts)
  */
 class MssqlPlatform extends DefaultPlatform
 {
@@ -69,6 +72,34 @@ class MssqlPlatform extends DefaultPlatform
     public function supportsInsertNullPk()
     {
         return false;
+    }
+
+    /**
+     * Returns the DDL SQL to add the tables of a database
+     * together with index and foreign keys. 
+     * Since MSSQL always checks it the tables in foreign key definitions exist, 
+     * the foreign key DDLs are moved after all tables are created
+     *
+     * @return string
+     */
+    public function getAddTablesDDL(Database $database)
+    {
+        $ret = $this->getBeginDDL();
+        foreach ($database->getTablesForSql() as $table) {
+            $this->normalizeTable($table);
+        }
+        foreach ($database->getTablesForSql() as $table) {
+            $ret .= $this->getCommentBlockDDL($table->getName());
+            $ret .= $this->getDropTableDDL($table);
+            $ret .= $this->getAddTableDDL($table);
+            $ret .= $this->getAddIndicesDDL($table);
+        }
+        foreach ($database->getTablesForSql() as $table) {
+            $ret .= $this->getAddForeignKeysDDL($table);
+        }
+        $ret .= $this->getEndDDL();
+
+        return $ret;
     }
 
     public function getDropTableDDL(Table $table)
@@ -143,6 +174,21 @@ END
         );
     }
 
+    /**
+     * Builds the DDL SQL for a Unique constraint object. MS SQL Server CONTRAINT specific
+     *
+     * @param  Unique $unique
+     * @return string
+     */
+    public function getUniqueDDL(Unique $unique)
+    {
+        $pattern = 'CONSTRAINT %s UNIQUE NONCLUSTERED (%s) ON [PRIMARY]';
+        return sprintf($pattern,
+            $this->quoteIdentifier($unique->getName()),
+            $this->getColumnListDDL($unique->getColumnObjects())
+        );
+    }
+
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
@@ -175,7 +221,8 @@ END
 
     public function hasSize($sqlType)
     {
-        return !('INT' === $sqlType || 'TEXT' === $sqlType);
+        $nosize = array('INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT');
+        return !(in_array($sqlType, $nosize));
     }
 
     /**
