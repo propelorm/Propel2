@@ -745,7 +745,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $review = new Review();
         $review->setReviewDate($date);
 
-        $this->assertEquals('2015-01-04T16:00:02Z', $review->toArray()['ReviewDate'], 'toArray() format temporal colums as ISO8601');
+        $this->assertEquals('2015-01-04T16:00:02+00:00', $review->toArray()['ReviewDate'], 'toArray() format temporal colums as ISO8601');
     }
 
     public function testWithColumn()

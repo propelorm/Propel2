@@ -2385,20 +2385,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
         );";
 
-        $timezoneDefined = false;
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isTemporalType()) {
-                if (!$timezoneDefined) {
-                    $script .= "
-
-        \$utc = new \DateTimeZone('utc');";
-                    $timezoneDefined = true;
-                }
-        $script .= "
+                $script .= "
         if (\$result[\$keys[$num]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            \$dateTime = clone \$result[\$keys[$num]];
-            \$result[\$keys[$num]] = \$dateTime->setTimezone(\$utc)->format('Y-m-d\TH:i:s\Z');
+            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('c');
         }
         ";
             }
