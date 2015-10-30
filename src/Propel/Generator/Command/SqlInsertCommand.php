@@ -31,7 +31,7 @@ class SqlInsertCommand extends AbstractCommand
             ->addOption('sql-dir', null, InputOption::VALUE_REQUIRED, 'The SQL files directory')
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)')
             ->setName('sql:insert')
-            ->setAliases(array('insert-sql'))
+            ->setAliases(['insert-sql'])
             ->setDescription('Insert SQL statements')
         ;
     }
@@ -43,21 +43,21 @@ class SqlInsertCommand extends AbstractCommand
     {
         $manager = new SqlManager();
 
-        $configOptions = array();
+        $configOptions = [];
         if ($sqlDir = $input->getOption('sql-dir')) {
             $configOptions['propel']['paths']['sqlDir'] = $sqlDir;
         }
 
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
-        $connections = array();
+        $connections = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);
-                $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+                $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
 

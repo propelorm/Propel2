@@ -72,7 +72,7 @@ class PropelTemplate
      *
      * @return string The rendered template
      */
-    public function render($vars = array())
+    public function render($vars = [])
     {
         if (null === $this->templateFile && null === $this->template) {
             throw new InvalidArgumentException('You must set a template or a template file before rendering');

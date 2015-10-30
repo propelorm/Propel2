@@ -69,7 +69,7 @@ class PropelPDOTest extends BookstoreTestBase
 
         $stmt->execute();
         $con->commit();
-        $authorArr = array(0 => 'Test', 1 => 'User');
+        $authorArr = [0 => 'Test', 1 => 'User'];
 
         $i = 0;
         try {
@@ -110,7 +110,7 @@ class PropelPDOTest extends BookstoreTestBase
         $stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
 
         $stmt->execute();
-        $authorArr = array(0 => 'Test', 1 => 'User');
+        $authorArr = [0 => 'Test', 1 => 'User'];
 
         $i = 0;
         $row = $stmt->fetch( PDO::FETCH_NUM );
@@ -341,7 +341,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookTableMap::COL_ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
+        $c->add(BookTableMap::COL_ID, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], Criteria::IN);
         $books = BookQuery::create(null, $c)->find($con);
         $expected = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.id IN (1,1,1,1,1,1,1,1,1,1,1,1)");
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
@@ -458,14 +458,14 @@ class PropelPDOTest extends BookstoreTestBase
         $handler = new LastMessageHandler();
         $testLog->pushHandler($handler);
         $con->setLogger($testLog);
-        $con->setLogMethods(array(
+        $con->setLogMethods([
             'exec',
             'query',
             'execute',
             'beginTransaction',
             'commit',
             'rollBack',
-        ));
+        ]);
         $con->useDebug(true);
 
         $con->beginTransaction();

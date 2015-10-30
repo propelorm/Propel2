@@ -29,7 +29,7 @@ class ObjectCombinationCollection extends ObjectCollection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
-        $ret = array();
+        $ret = [];
 
         /** @var $obj ActiveRecordInterface */
         foreach ($this as $combination) {

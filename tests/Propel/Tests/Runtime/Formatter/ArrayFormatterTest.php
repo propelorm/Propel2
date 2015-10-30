@@ -78,7 +78,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
         $book = $books->shift();
         $this->assertTrue(is_array($book), 'ArrayFormatter::format() returns an array of arrays');
         $this->assertEquals('Quicksilver', $book['Title'], 'ArrayFormatter::format() returns the arrays matching the query');
-        $expected = array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId');
+        $expected = ['Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId'];
         $this->assertEquals($expected, array_keys($book), 'ArrayFormatter::format() returns an associative array with column phpNames as keys');
     }
 
@@ -119,7 +119,7 @@ class ArrayFormatterTest extends BookstoreEmptyTestBase
         $book = $formatter->formatOne($dataFetcher);
 
         $this->assertTrue(is_array($book), 'ArrayFormatter::formatOne() returns an array');
-        $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId'), array_keys($book), 'ArrayFormatter::formatOne() returns a single row even if the query has many results');
+        $this->assertEquals(['Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId'], array_keys($book), 'ArrayFormatter::formatOne() returns a single row even if the query has many results');
     }
 
     public function testFormatOneNoResult()

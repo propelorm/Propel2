@@ -44,7 +44,7 @@ class CsvParser extends AbstractParser
      */
     public function fromArray($array, $rootKey = null, $isList = false, $includeHeading = true)
     {
-        $rows = array();
+        $rows = [];
         if ($isList) {
             if ($includeHeading) {
                 $rows[] = implode($this->formatRow(array_keys(reset($array))), $this->delimiter);
@@ -192,17 +192,17 @@ class CsvParser extends AbstractParser
             $keys = range(0, count($this->getColumns($rows[0])) - 1);
         }
         if ($isList) {
-            $array = array();
+            $array = [];
             foreach ($rows as $row) {
                 $values = $this->cleanupRow($this->getColumns($row));
-                if ($values !== array()) {
+                if ($values !== []) {
                     $array []= array_combine($keys, $values);
                 }
             }
         } else {
             $values = $this->cleanupRow($this->getColumns(array_shift($rows)));
-            if ($keys === array('') && $values === array()) {
-                $array = array();
+            if ($keys === [''] && $values === []) {
+                $array = [];
             } else {
                 if (count($keys) > count($values)) {
                     // empty values at the end of the row are not match bu the getColumns() regexp

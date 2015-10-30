@@ -98,7 +98,7 @@ class PropelTableColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getAddedColumns()));
-        $this->assertEquals(array('Foo' => $c2), $tableDiff->getAddedColumns());
+        $this->assertEquals(['Foo' => $c2], $tableDiff->getAddedColumns());
     }
 
     public function testCompareRemovedColumn()
@@ -120,7 +120,7 @@ class PropelTableColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRemovedColumns()));
-        $this->assertEquals(array('Bar' => $c1), $tableDiff->getRemovedColumns());
+        $this->assertEquals(['Bar' => $c1], $tableDiff->getRemovedColumns());
     }
 
     public function testCompareModifiedColumn()
@@ -148,7 +148,7 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getModifiedColumns()));
         $columnDiff = ColumnComparator::computeDiff($c1, $c2);
-        $this->assertEquals(array('Foo' => $columnDiff), $tableDiff->getModifiedColumns());
+        $this->assertEquals(['Foo' => $columnDiff], $tableDiff->getModifiedColumns());
     }
 
     public function testCompareRenamedColumn()
@@ -177,9 +177,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRenamedColumns()));
-        $this->assertEquals(array(array($c1, $c2)), $tableDiff->getRenamedColumns());
-        $this->assertEquals(array(), $tableDiff->getAddedColumns());
-        $this->assertEquals(array(), $tableDiff->getRemovedColumns());
+        $this->assertEquals([[$c1, $c2]], $tableDiff->getRenamedColumns());
+        $this->assertEquals([], $tableDiff->getAddedColumns());
+        $this->assertEquals([], $tableDiff->getRemovedColumns());
     }
 
     public function testCompareSeveralColumnDifferences()
@@ -223,11 +223,11 @@ class PropelTableColumnComparatorTest extends TestCase
         $nbDiffs = $tc->compareColumns();
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(4, $nbDiffs);
-        $this->assertEquals(array(array($c2, $c5)), $tableDiff->getRenamedColumns());
-        $this->assertEquals(array('col4' => $c6), $tableDiff->getAddedColumns());
-        $this->assertEquals(array('col3' => $c3), $tableDiff->getRemovedColumns());
+        $this->assertEquals([[$c2, $c5]], $tableDiff->getRenamedColumns());
+        $this->assertEquals(['col4' => $c6], $tableDiff->getAddedColumns());
+        $this->assertEquals(['col3' => $c3], $tableDiff->getRemovedColumns());
         $columnDiff = ColumnComparator::computeDiff($c1, $c4);
-        $this->assertEquals(array('col1' => $columnDiff), $tableDiff->getModifiedColumns());
+        $this->assertEquals(['col1' => $columnDiff], $tableDiff->getModifiedColumns());
     }
 
     public function testCompareSeveralRenamedSameColumns()
@@ -267,10 +267,10 @@ class PropelTableColumnComparatorTest extends TestCase
         $nbDiffs = $tc->compareColumns();
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(2, $nbDiffs);
-        $this->assertEquals(array(array($c1, $c4), array($c2, $c5)), $tableDiff->getRenamedColumns());
-        $this->assertEquals(array(), $tableDiff->getAddedColumns());
-        $this->assertEquals(array(), $tableDiff->getRemovedColumns());
-        $this->assertEquals(array(), $tableDiff->getModifiedColumns());
+        $this->assertEquals([[$c1, $c4], [$c2, $c5]], $tableDiff->getRenamedColumns());
+        $this->assertEquals([], $tableDiff->getAddedColumns());
+        $this->assertEquals([], $tableDiff->getRemovedColumns());
+        $this->assertEquals([], $tableDiff->getModifiedColumns());
     }
 
 }

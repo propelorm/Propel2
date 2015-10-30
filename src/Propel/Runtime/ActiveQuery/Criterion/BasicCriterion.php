@@ -76,7 +76,7 @@ class BasicCriterion extends AbstractCriterion
                 $sb .= $field . $this->comparison . $this->value;
             } else {
 
-                $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+                $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];
 
                 // default case, it is a normal col = value expression; value
                 // will be replaced w/ '?' and will be inserted later using PDO bindValue()

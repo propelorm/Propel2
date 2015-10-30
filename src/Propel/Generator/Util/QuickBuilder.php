@@ -66,7 +66,7 @@ class QuickBuilder
     /**
      * @var array
      */
-    protected $classTargets = array('tablemap', 'object', 'query', 'objectstub', 'querystub');
+    protected $classTargets = ['tablemap', 'object', 'query', 'objectstub', 'querystub'];
 
     /**
      * Identifier quoting for reversed database.
@@ -312,7 +312,7 @@ class QuickBuilder
      */
     public function buildClasses(array $classTargets = null, $separate = false)
     {
-        $classes = $classTargets === null ? array('tablemap', 'object', 'query', 'objectstub', 'querystub') : $classTargets;
+        $classes = $classTargets === null ? ['tablemap', 'object', 'query', 'objectstub', 'querystub'] : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
         $dir = sys_get_temp_dir() . "/propelQuickBuild-" . Propel::VERSION .  "-$dirHash/";
@@ -387,7 +387,7 @@ class QuickBuilder
                         $class = $builder->build();
                         $script .= $this->fixNamespaceDeclarations($class);
 
-                        foreach (array('objectmultiextend', 'queryinheritancestub') as $target) {
+                        foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
                             $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                             $builder->setChild($child);
                             $class = $builder->build();
@@ -446,7 +446,7 @@ class QuickBuilder
             $token = $tokens[$i];
             if (is_string($token)) {
                 $output .= $token;
-            } elseif (in_array($token[0], array(T_COMMENT, T_DOC_COMMENT))) {
+            } elseif (in_array($token[0], [T_COMMENT, T_DOC_COMMENT])) {
                 // strip comments
                 $output .= $token[1];
             } elseif (T_NAMESPACE === $token[0]) {
@@ -456,7 +456,7 @@ class QuickBuilder
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && '{' === $t) {

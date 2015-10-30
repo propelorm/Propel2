@@ -28,6 +28,6 @@ class MysqlPlatformMigrationTestProvider extends PlatformMigrationTestProvider {
 EOF;
         $column = $this->getDatabaseFromSchema($schema)->getTable('foo')->getColumn('bar');
 
-        return array(array($column));
+        return [[$column]];
     }
 }

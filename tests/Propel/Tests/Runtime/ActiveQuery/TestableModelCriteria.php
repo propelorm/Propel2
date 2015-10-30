@@ -6,7 +6,7 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 class TestableModelCriteria extends ModelCriteria
 {
-    public $joins = array();
+    public $joins = [];
 
     public function replaceNames(&$sql)
     {

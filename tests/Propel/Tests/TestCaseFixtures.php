@@ -50,12 +50,12 @@ class TestCaseFixtures extends TestCase
     {
         $dsn = $this->getFixturesConnectionDsn();
 
-        $options = array(
+        $options = [
             'command' => 'test:prepare',
             '--vendor' => $this->getDriver(),
             '--dsn' => $dsn,
             '--verbose' => true
-        );
+        ];
 
         if (!static::$withDatabaseSchema) {
             $options['--exclude-database'] = true;

@@ -20,14 +20,14 @@ use Propel\Generator\Model\Behavior;
 class NestedSetBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'left_column'       => 'tree_left',
         'right_column'      => 'tree_right',
         'level_column'      => 'tree_level',
         'use_scope'         => 'false',
         'scope_column'      => 'tree_scope',
         'method_proxies'    => 'false'
-    );
+    ];
 
     protected $objectBuilderModifier;
 
@@ -41,31 +41,31 @@ class NestedSetBehavior extends Behavior
         $table = $this->getTable();
 
         if (!$table->hasColumn($this->getParameter('left_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('left_column'),
                 'type' => 'INTEGER'
-            ));
+            ]);
         }
 
         if (!$table->hasColumn($this->getParameter('right_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('right_column'),
                 'type' => 'INTEGER'
-            ));
+            ]);
         }
 
         if (!$table->hasColumn($this->getParameter('level_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('level_column'),
                 'type' => 'INTEGER'
-            ));
+            ]);
         }
 
         if ('true' === $this->getParameter('use_scope') && !$table->hasColumn($this->getParameter('scope_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('scope_column'),
                 'type' => 'INTEGER'
-            ));
+            ]);
         }
     }
 

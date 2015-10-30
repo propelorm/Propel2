@@ -265,7 +265,7 @@ EOF;
        $reader->setEmail('zora.null@'); //failure
        $reader->setBirthday('1983-09-22');
 
-       $failedProperties = array('last_name', 'first_name', 'email');
+       $failedProperties = ['last_name', 'first_name', 'email'];
 
        $res = $reader->validate();
 
@@ -373,13 +373,13 @@ EOF;
     public function testComplexValidationMultipleFailures()
     {
         //Array of expected failures. key: property failed, value: Class in wich the property has failed
-        $failedProperties = array(
+        $failedProperties = [
             'first_name' => 'Propel\Tests\Bookstore\Behavior\ValidateAuthor',
             'website'    => 'Propel\Tests\Bookstore\Behavior\ValidatePublisher',
             'title'      => 'Propel\Tests\Bookstore\Behavior\ValidateBook',
             'email'      => 'Propel\Tests\Bookstore\Behavior\ValidateReader',
             'last_name'  => 'Propel\Tests\Bookstore\Behavior\ValidateReader'
-        );
+        ];
 
         $author = new ValidateAuthor();
         $author->setId(1);

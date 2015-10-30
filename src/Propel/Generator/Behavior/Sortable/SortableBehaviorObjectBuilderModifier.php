@@ -135,7 +135,7 @@ class SortableBehaviorObjectBuilderModifier
         if ($this->behavior->useScope()) {
             $this->setBuilder($builder);
 
-            $condition = array();
+            $condition = [];
 
             foreach ($this->behavior->getScopes() as $scope) {
                 $condition[] = "\$this->isColumnModified({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).")";

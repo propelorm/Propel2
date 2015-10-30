@@ -130,7 +130,7 @@ class TableMapTest extends BookstoreTestBase
         $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
         $c->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID);
 
-        $params = array();
+        $params = [];
         $sql = $c->createSelectSql($params);
 
         $expectedSql = "SELECT book.id, book.title FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.id), author WHERE book.AUTHOR_ID=author.id";
@@ -155,7 +155,7 @@ class TableMapTest extends BookstoreTestBase
         $c->setOffset(0);
         $c->setLimit(20);
 
-        $params = array();
+        $params = [];
         $sql = $c->createSelectSql($params);
 
         $expectedSql = "SELECT TOP 20 book.id, book.title, publisher.NAME, (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) AS PublisherName FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.id)";
@@ -178,7 +178,7 @@ class TableMapTest extends BookstoreTestBase
         $c->setOffset(20);
         $c->setLimit(20);
 
-        $params = array();
+        $params = [];
 
         $expectedSql = "SELECT [book.id], [book.title], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY book.id) AS [RowNumber], book.id AS [book.id], book.title AS [book.title], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.id)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
         $sql = $c->createSelectSql($params);
@@ -202,7 +202,7 @@ class TableMapTest extends BookstoreTestBase
         $c->setOffset(20);
         $c->setLimit(20);
 
-        $params = array();
+        $params = [];
 
         $expectedSql = "SELECT [book.id], [book.title], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) DESC) AS [RowNumber], book.id AS [book.id], book.title AS [book.title], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.id)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
         $sql = $c->createSelectSql($params);
@@ -227,7 +227,7 @@ class TableMapTest extends BookstoreTestBase
         $c->setOffset(20);
         $c->setLimit(20);
 
-        $params = array();
+        $params = [];
 
         $expectedSql = "SELECT [book.id], [book.title], [publisher.NAME], [PublisherName] FROM (SELECT ROW_NUMBER() OVER(ORDER BY (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) DESC, book.title ASC) AS [RowNumber], book.id AS [book.id], book.title AS [book.title], publisher.NAME AS [publisher.NAME], (SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID) AS [PublisherName] FROM book LEFT JOIN publisher ON (book.PUBLISHER_ID=publisher.id)) AS derivedb WHERE RowNumber BETWEEN 21 AND 40";
         $sql = $c->createSelectSql($params);
@@ -328,7 +328,7 @@ class TableMapTest extends BookstoreTestBase
         $c->setComment('Foo');
         $c->addSelectColumn(BookTableMap::COL_ID);
         $expected = $this->getSql('SELECT /* Foo */ book.id FROM book');
-        $params = array();
+        $params = [];
         $this->assertEquals($expected, $c->createSelectSQL($params), 'Criteria::setComment() adds a comment to select queries');
     }
 

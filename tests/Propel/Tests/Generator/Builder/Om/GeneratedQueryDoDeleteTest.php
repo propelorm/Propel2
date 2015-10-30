@@ -195,10 +195,10 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 
         $this->assertEquals($origBceCount + 1, $newCount, "Expected new number of rows in BCE to be orig + 1");
 
-        $bcetest = BookstoreContestEntryQuery::create()->findPk(array($store1->getId(), $c1->getId(), $cust1->getId()));
+        $bcetest = BookstoreContestEntryQuery::create()->findPk([$store1->getId(), $c1->getId(), $cust1->getId()]);
         $this->assertNull($bcetest, "Expected BCE for store1 to be cascade deleted.");
 
-        $bcetest2 = BookstoreContestEntryQuery::create()->findPk(array($store1->getId(), $c2->getId(), $cust1->getId()));
+        $bcetest2 = BookstoreContestEntryQuery::create()->findPk([$store1->getId(), $c2->getId(), $cust1->getId()]);
         $this->assertNotNull($bcetest2, "Expected BCE for store2 to NOT be cascade deleted.");
 
     }
@@ -258,7 +258,7 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
         $book2 = $books[1];
 
         // 4) delete the books
-        BookTableMap::doDelete(array($book1->getId(), $book2->getId()));
+        BookTableMap::doDelete([$book1->getId(), $book2->getId()]);
 
         // 5) we should have two less books than before
         $this->assertEquals($bookCount-2, BookQuery::create()->count(), 'Two books deleted successfully.');
@@ -366,29 +366,29 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 
         // Now delete 2 of those rows (2 is special in that it is the number of rows
         // being deleted, as well as the number of things in the primary key)
-        ReaderFavoriteTableMap::doDelete(array(array(1,1), array(2,2)));
+        ReaderFavoriteTableMap::doDelete([[1,1], [2,2]]);
         $this->assertEquals(4, ReaderFavoriteQuery::create()->count());
 
         //Note: these composite PK's are pairs of (BookId, ReaderId)
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,1)));
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,2)));
-        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(1,1)));
-        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(2,2)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([2,1]));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([1,2]));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([3,1]));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([3,2]));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk([1,1]));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk([2,2]));
 
         //test deletion of a single composite PK
-        ReaderFavoriteTableMap::doDelete(array(3,1));
+        ReaderFavoriteTableMap::doDelete([3,1]);
         $this->assertEquals(3, ReaderFavoriteQuery::create()->count());
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(2,1)));
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(1,2)));
-        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk(array(3,2)));
-        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(1,1)));
-        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(2,2)));
-        $this->assertNull(ReaderFavoriteQuery::create()->findPk(array(3,1)));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([2,1]));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([1,2]));
+        $this->assertNotNull(ReaderFavoriteQuery::create()->findPk([3,2]));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk([1,1]));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk([2,2]));
+        $this->assertNull(ReaderFavoriteQuery::create()->findPk([3,1]));
 
         //test deleting the last three
-        ReaderFavoriteTableMap::doDelete(array(array(2,1), array(1,2), array(3,2)));
+        ReaderFavoriteTableMap::doDelete([[2,1], [1,2], [3,2]]);
         $this->assertEquals(0, ReaderFavoriteQuery::create()->count());
     }
 

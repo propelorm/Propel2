@@ -117,6 +117,6 @@ XML;
         $this->dumpTempFile('empty.xml', '');
         $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/empty.xml');
 
-        $this->assertEquals(array(), $actual);
+        $this->assertEquals([], $actual);
     }
 }

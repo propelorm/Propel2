@@ -109,7 +109,7 @@ $fkTagPost->setOnDelete('CASCADE');
 /* Regular Indexes */
 $pageContentFulltextIdx = new Index('page_content_fulltext_idx');
 $pageContentFulltextIdx->setColumns([ [ 'name' => 'content' ] ]);
-$pageContentFulltextIdx->addVendorInfo(new VendorInfo('mysql', array('Index_type' => 'FULLTEXT')));
+$pageContentFulltextIdx->addVendorInfo(new VendorInfo('mysql', ['Index_type' => 'FULLTEXT']));
 
 /* Unique Indexes */
 $authorUsernameUnique = new Unique('author_password_unique_idx');
@@ -164,7 +164,7 @@ $table6->setBaseClass('Acme\\Model\\PublicationActiveRecord');
 $table6->setPackage('Acme.Cms');
 $table6->addColumns([ $column61, $column62, $column63, $column64 ]);
 $table6->addIndex($pageContentFulltextIdx);
-$table6->addVendorInfo(new VendorInfo('mysql', array('Engine' => 'MyISAM')));
+$table6->addVendorInfo(new VendorInfo('mysql', ['Engine' => 'MyISAM']));
 
 /* Database */
 $database = new Database('acme_blog', new MysqlPlatform());

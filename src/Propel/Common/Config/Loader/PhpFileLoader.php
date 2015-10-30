@@ -70,6 +70,6 @@ class PhpFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return $this->checkSupports(array('php', 'inc'), $resource);
+        return $this->checkSupports(['php', 'inc'], $resource);
     }
 }

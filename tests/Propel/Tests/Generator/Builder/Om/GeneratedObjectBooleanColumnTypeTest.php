@@ -48,27 +48,27 @@ EOF;
 
     public function providerForSetter()
     {
-        return array(
-            array(true, true),
-            array(false, false),
-            array('true', true),
-            array('false', false),
-            array(1, true),
-            array(0, false),
-            array('1', true),
-            array('0', false),
-            array('on', true),
-            array('off', false),
-            array('yes', true),
-            array('no', false),
-            array('y', true),
-            array('n', false),
-            array('Y', true),
-            array('N', false),
-            array('+', true),
-            array('-', false),
-            array('', false),
-        );
+        return [
+            [true, true],
+            [false, false],
+            ['true', true],
+            ['false', false],
+            [1, true],
+            [0, false],
+            ['1', true],
+            ['0', false],
+            ['on', true],
+            ['off', false],
+            ['yes', true],
+            ['no', false],
+            ['y', true],
+            ['n', false],
+            ['Y', true],
+            ['N', false],
+            ['+', true],
+            ['-', false],
+            ['', false],
+        ];
     }
 
     /**

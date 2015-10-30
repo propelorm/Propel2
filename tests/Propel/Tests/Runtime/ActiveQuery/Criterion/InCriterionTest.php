@@ -26,46 +26,46 @@ class InCriterionTest extends BaseTestCase
 
     public function testAppendPsToCreatesAnInConditionByDefault()
     {
-        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo'));
+        $cton = new InCriterion(new Criteria(), 'A.COL', ['foo']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToCreatesANotInConditionWhenSpecified()
     {
-        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo'), Criteria::NOT_IN);
+        $cton = new InCriterion(new Criteria(), 'A.COL', ['foo'], Criteria::NOT_IN);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToCreatesAnInConditionUsingAColumnAlias()
     {
-        $cton = new InCriterion(new Criteria(), 'my_alias', array('foo'));
+        $cton = new InCriterion(new Criteria(), 'my_alias', ['foo']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('my_alias IN (:p1)', $ps);
-        $expected = array(
-            array('table' => null, 'column' => 'my_alias', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => null, 'column' => 'my_alias', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -73,32 +73,32 @@ class InCriterionTest extends BaseTestCase
     {
         $c = new Criteria();
         $c->addAlias('bar_alias', 'bar');
-        $cton = new InCriterion($c, 'bar_alias.COL', array('foo'));
+        $cton = new InCriterion($c, 'bar_alias.COL', ['foo']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('bar_alias.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'bar', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'bar', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToWithArrayValueCreatesAnInCondition()
     {
-        $cton = new InCriterion(new Criteria(), 'A.COL', array('foo', 'bar'));
+        $cton = new InCriterion(new Criteria(), 'A.COL', ['foo', 'bar']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1,:p2)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo'),
-            array('table' => 'A', 'column' => 'COL', 'value' => 'bar')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
+            ['table' => 'A', 'column' => 'COL', 'value' => 'bar']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -106,25 +106,25 @@ class InCriterionTest extends BaseTestCase
     {
         $cton = new InCriterion(new Criteria(), 'A.COL', 'foo');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public static function providerForNotEmptyValues()
     {
-        return array(
-            array(''),
-            array(0),
-            array(true),
-            array(false)
-        );
+        return [
+            [''],
+            [0],
+            [true],
+            [false]
+        ];
     }
 
     /**
@@ -134,23 +134,23 @@ class InCriterionTest extends BaseTestCase
     {
         $cton = new InCriterion(new Criteria(), 'A.COL', $notEmptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue)
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue]
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public static function providerForEmptyValues()
     {
-        return array(
-            array(array()),
-            array(null)
-        );
+        return [
+            [[]],
+            [null]
+        ];
     }
 
     /**
@@ -160,12 +160,12 @@ class InCriterionTest extends BaseTestCase
     {
         $cton = new InCriterion(new Criteria(), 'A.COL', $emptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('1<>1', $ps);
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $params);
     }
 
@@ -176,28 +176,28 @@ class InCriterionTest extends BaseTestCase
     {
         $cton = new InCriterion(new Criteria(), 'A.COL', $emptyValue, Criteria::NOT_IN);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('1=1', $ps);
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToWithArrayCollection()
     {
-        $collection = new ArrayCollection(array('foo'));
+        $collection = new ArrayCollection(['foo']);
         $cton = new InCriterion(new Criteria(), 'A.COL', $collection);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 

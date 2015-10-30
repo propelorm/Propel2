@@ -38,6 +38,6 @@ SCHEMA;
 
     public function testGetPrimaryKeyHashFromRowReturnsNull()
     {
-        $this->assertNull(\Map\StuffTableMap::getPrimaryKeyHashFromRow($row = array()));
+        $this->assertNull(\Map\StuffTableMap::getPrimaryKeyHashFromRow($row = []));
     }
 }

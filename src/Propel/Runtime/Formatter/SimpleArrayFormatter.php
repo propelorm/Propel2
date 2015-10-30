@@ -88,7 +88,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      */
     public function formatRecord(ActiveRecordInterface $record = null)
     {
-        return $record ? $record->toArray() : array();
+        return $record ? $record->toArray() : [];
     }
 
     public function isObjectFormatter()
@@ -100,7 +100,7 @@ class SimpleArrayFormatter extends AbstractFormatter
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {
-            $finalRow = array();
+            $finalRow = [];
             foreach ($row as $index => $value) {
                 $finalRow[str_replace('"', '', $columnNames[$index])] = $value;
             }

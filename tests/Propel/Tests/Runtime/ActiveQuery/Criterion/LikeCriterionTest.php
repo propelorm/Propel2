@@ -28,14 +28,14 @@ class LikeCriterionTest extends BaseTestCase
     {
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::LIKE);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -43,14 +43,14 @@ class LikeCriterionTest extends BaseTestCase
     {
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::NOT_LIKE);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT LIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -59,14 +59,14 @@ class LikeCriterionTest extends BaseTestCase
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::LIKE);
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('UPPER(A.COL) LIKE UPPER(:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -75,14 +75,14 @@ class LikeCriterionTest extends BaseTestCase
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::NOT_LIKE);
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('UPPER(A.COL) NOT LIKE UPPER(:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -90,14 +90,14 @@ class LikeCriterionTest extends BaseTestCase
     {
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::LIKE);
         $cton->setAdapter(new PgsqlAdapter());
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -106,14 +106,14 @@ class LikeCriterionTest extends BaseTestCase
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::LIKE);
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL ILIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -122,14 +122,14 @@ class LikeCriterionTest extends BaseTestCase
         $cton = new LikeCriterion(new Criteria(), 'A.COL', 'foo%', Criteria::NOT_LIKE);
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT ILIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 

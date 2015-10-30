@@ -112,7 +112,7 @@ class PropelDateTime extends \DateTime
         $this->dateString = $this->format('Y-m-d H:i:s');
         $this->tzString = $this->getTimeZone()->getName();
 
-        return array('dateString', 'tzString');
+        return ['dateString', 'tzString'];
     }
 
     /**

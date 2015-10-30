@@ -134,16 +134,16 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
     public function testReorder()
     {
         $objects = SortableTable12Query::create()->findList(1);
-        $ids = array();
+        $ids = [];
         foreach ($objects as $object) {
             $ids[]= $object->getPrimaryKey();
         }
-        $ranks = array(4, 3, 2, 1);
+        $ranks = [4, 3, 2, 1];
         $order = array_combine($ids, $ranks);
         SortableTable12Query::create()->reorder($order);
-        $expected = array(1 => 'row4', 2 => 'row3', 3 => 'row2', 4 => 'row1');
+        $expected = [1 => 'row4', 2 => 'row3', 3 => 'row2', 4 => 'row1'];
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'reorder() reorders the suite');
-        $expected = array(1 => 'row5', 2 => 'row6');
+        $expected = [1 => 'row5', 2 => 'row6'];
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'reorder() leaves other suites unchanged');
     }
 }

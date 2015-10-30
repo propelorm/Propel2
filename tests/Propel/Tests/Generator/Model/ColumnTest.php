@@ -50,11 +50,11 @@ class ColumnTest extends ModelTestCase
     {
         $database = $this->getDatabaseMock('bookstore');
 
-        $table = $this->getTableMock('books', array('database' => $database));
+        $table = $this->getTableMock('books', ['database' => $database]);
 
         $column = new Column();
         $column->setTable($table);
-        $column->loadMapping(array('name' => 'title'));
+        $column->loadMapping(['name' => 'title']);
 
         $this->assertSame('title', $column->getName());
         $this->assertSame('VARCHAR', $column->getDomain()->getType());
@@ -76,10 +76,10 @@ class ColumnTest extends ModelTestCase
             ->will($this->returnValue(false))
         ;
 
-        $table = $this->getTableMock('books', array(
+        $table = $this->getTableMock('books', [
             'database' => $database,
             'platform' => $platform,
-        ));
+        ]);
 
         $domain = $this->getDomainMock('VARCHAR');
         $domain
@@ -91,7 +91,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($domain);
-        $column->loadMapping(array('name' => 'title'));
+        $column->loadMapping(['name' => 'title']);
 
         $this->assertSame('title', $column->getName());
     }
@@ -107,19 +107,19 @@ class ColumnTest extends ModelTestCase
             ->will($this->returnValue($this->getDomainMock('DATE')))
         ;
 
-        $table = $this->getTableMock('books', array(
+        $table = $this->getTableMock('books', [
             'database' => $database,
             'platform' => $platform,
-        ));
+        ]);
 
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('VARCHAR'));
-        $column->loadMapping(array(
+        $column->loadMapping([
             'type'        => 'date',
             'name'        => 'created_at',
             'defaultExpr' => 'NOW()',
-        ));
+        ]);
 
         $this->assertSame('created_at', $column->getName());
     }
@@ -134,12 +134,12 @@ class ColumnTest extends ModelTestCase
             ->will($this->returnValue($this->getDomainMock('INTEGER')))
         ;
 
-        $table = $this->getTableMock('books', array('database' => $database));
+        $table = $this->getTableMock('books', ['database' => $database]);
 
         $column = new Column();
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('BOOLEAN'));
-        $column->loadMapping(array(
+        $column->loadMapping([
             'domain'             => 'BOOLEAN',
             'name'               => 'is_published',
             'phpName'            => 'IsPublished',
@@ -161,7 +161,7 @@ class ColumnTest extends ModelTestCase
             'size'               => 1,
             'defaultValue'       => 'true',
             'valueSet'           => 'FOO, BAR, BAZ',
-        ));
+        ]);
 
         $this->assertSame('is_published', $column->getName());
         $this->assertSame('IsPublished', $column->getPhpName());
@@ -245,14 +245,14 @@ class ColumnTest extends ModelTestCase
 
     public function provideDefaultValues()
     {
-        return array(
-            array('DOUBLE', 3.14, 3.14),
-            array('VARCHAR', 'hello', "'hello'"),
-            array('VARCHAR', "john's bike", "'john\\'s bike'"),
-            array('BOOLEAN', 1, 'true'),
-            array('BOOLEAN', 0, 'false'),
-            array('ENUM', 'foo,bar', "'foo,bar'"),
-        );
+        return [
+            ['DOUBLE', 3.14, 3.14],
+            ['VARCHAR', 'hello', "'hello'"],
+            ['VARCHAR', "john's bike", "'john\\'s bike'"],
+            ['BOOLEAN', 1, 'true'],
+            ['BOOLEAN', 0, 'false'],
+            ['ENUM', 'foo,bar', "'foo,bar'"],
+        ];
     }
 
     public function testAddInheritance()
@@ -283,29 +283,29 @@ class ColumnTest extends ModelTestCase
     {
         $column = new Column();
 
-        $column->addInheritance(array(
+        $column->addInheritance([
             'key' => 'baz',
             'extends' => 'BaseObject',
             'class' => 'Foo\Bar',
             'package' => 'Foo',
-        ));
+        ]);
 
-        $column->addInheritance(array(
+        $column->addInheritance([
             'key' => 'foo',
             'extends' => 'BaseObject',
             'class' => 'Acme\Foo',
             'package' => 'Acme',
-        ));
+        ]);
 
         $this->assertCount(2, $column->getChildren());
     }
 
     public function testClearForeignKeys()
     {
-        $fks = array(
+        $fks = [
             $this->getMock('Propel\Generator\Model\ForeignKey'),
             $this->getMock('Propel\Generator\Model\ForeignKey'),
-        );
+        ];
 
         $table = $this->getTableMock('books');
         $table
@@ -369,9 +369,9 @@ class ColumnTest extends ModelTestCase
         ;
 
         $column = new Column();
-        $column->setTable($this->getTableMock('books', array(
+        $column->setTable($this->getTableMock('books', [
             'platform' => $platform
-        )));
+        ]));
         $column->setDomain($domain);
         $column->setDomainForType('BOOLEAN');
 
@@ -394,7 +394,7 @@ class ColumnTest extends ModelTestCase
             ->will($this->returnValue('NOT NULL'))
         ;
 
-        $table = $this->getTableMock('books', array('platform' => $platform));
+        $table = $this->getTableMock('books', ['platform' => $platform]);
 
         $column = new Column();
         $column->setTable($table);
@@ -425,36 +425,36 @@ class ColumnTest extends ModelTestCase
 
     public function providePdoTypes()
     {
-        return array(
-            array('CHAR', \PDO::PARAM_STR),
-            array('VARCHAR', \PDO::PARAM_STR),
-            array('LONGVARCHAR', \PDO::PARAM_STR),
-            array('CLOB', \PDO::PARAM_STR),
-            array('CLOB_EMU', \PDO::PARAM_STR),
-            array('NUMERIC', \PDO::PARAM_INT),
-            array('DECIMAL', \PDO::PARAM_STR),
-            array('TINYINT', \PDO::PARAM_INT),
-            array('SMALLINT', \PDO::PARAM_INT),
-            array('INTEGER', \PDO::PARAM_INT),
-            array('BIGINT', \PDO::PARAM_INT),
-            array('REAL', \PDO::PARAM_STR),
-            array('FLOAT', \PDO::PARAM_STR),
-            array('DOUBLE', \PDO::PARAM_STR),
-            array('BINARY', \PDO::PARAM_STR),
-            array('VARBINARY', \PDO::PARAM_LOB),
-            array('LONGVARBINARY', \PDO::PARAM_LOB),
-            array('BLOB', \PDO::PARAM_LOB),
-            array('DATE', \PDO::PARAM_STR),
-            array('TIME', \PDO::PARAM_STR),
-            array('TIMESTAMP', \PDO::PARAM_STR),
-            array('BOOLEAN', \PDO::PARAM_BOOL),
-            array('BOOLEAN_EMU', \PDO::PARAM_INT),
-            array('OBJECT', \PDO::PARAM_LOB),
-            array('ARRAY', \PDO::PARAM_STR),
-            array('ENUM', \PDO::PARAM_INT),
-            array('BU_DATE', \PDO::PARAM_STR),
-            array('BU_TIMESTAMP', \PDO::PARAM_STR),
-        );
+        return [
+            ['CHAR', \PDO::PARAM_STR],
+            ['VARCHAR', \PDO::PARAM_STR],
+            ['LONGVARCHAR', \PDO::PARAM_STR],
+            ['CLOB', \PDO::PARAM_STR],
+            ['CLOB_EMU', \PDO::PARAM_STR],
+            ['NUMERIC', \PDO::PARAM_INT],
+            ['DECIMAL', \PDO::PARAM_STR],
+            ['TINYINT', \PDO::PARAM_INT],
+            ['SMALLINT', \PDO::PARAM_INT],
+            ['INTEGER', \PDO::PARAM_INT],
+            ['BIGINT', \PDO::PARAM_INT],
+            ['REAL', \PDO::PARAM_STR],
+            ['FLOAT', \PDO::PARAM_STR],
+            ['DOUBLE', \PDO::PARAM_STR],
+            ['BINARY', \PDO::PARAM_STR],
+            ['VARBINARY', \PDO::PARAM_LOB],
+            ['LONGVARBINARY', \PDO::PARAM_LOB],
+            ['BLOB', \PDO::PARAM_LOB],
+            ['DATE', \PDO::PARAM_STR],
+            ['TIME', \PDO::PARAM_STR],
+            ['TIMESTAMP', \PDO::PARAM_STR],
+            ['BOOLEAN', \PDO::PARAM_BOOL],
+            ['BOOLEAN_EMU', \PDO::PARAM_INT],
+            ['OBJECT', \PDO::PARAM_LOB],
+            ['ARRAY', \PDO::PARAM_STR],
+            ['ENUM', \PDO::PARAM_INT],
+            ['BU_DATE', \PDO::PARAM_STR],
+            ['BU_TIMESTAMP', \PDO::PARAM_STR],
+        ];
     }
 
     public function testEnumType()
@@ -469,7 +469,7 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setDomain($domain);
         $column->setType('ENUM');
-        $column->setValueSet(array('FOO', 'BAR'));
+        $column->setValueSet(['FOO', 'BAR']);
 
         $this->assertSame('int', $column->getPhpType());
         $this->assertTrue($column->isPhpPrimitiveType());
@@ -534,13 +534,13 @@ class ColumnTest extends ModelTestCase
 
     public function provideMappingTemporalTypes()
     {
-        return array(
-            array('DATE'),
-            array('TIME'),
-            array('TIMESTAMP'),
-            array('BU_DATE'),
-            array('BU_TIMESTAMP'),
-        );
+        return [
+            ['DATE'],
+            ['TIME'],
+            ['TIMESTAMP'],
+            ['BU_DATE'],
+            ['BU_TIMESTAMP'],
+        ];
     }
 
     /**
@@ -572,11 +572,11 @@ class ColumnTest extends ModelTestCase
 
     public function provideMappingLobTypes()
     {
-        return array(
-            array('VARBINARY', 'string', true),
-            array('LONGVARBINARY', 'string', true),
-            array('BLOB', 'resource', false),
-        );
+        return [
+            ['VARBINARY', 'string', true],
+            ['LONGVARBINARY', 'string', true],
+            ['BLOB', 'resource', false],
+        ];
     }
 
     /**
@@ -608,10 +608,10 @@ class ColumnTest extends ModelTestCase
 
     public function provideMappingBooleanTypes()
     {
-        return array(
-            array('BOOLEAN'),
-            array('BOOLEAN_EMU'),
-        );
+        return [
+            ['BOOLEAN'],
+            ['BOOLEAN_EMU'],
+        ];
     }
 
     /**
@@ -644,17 +644,17 @@ class ColumnTest extends ModelTestCase
 
     public function provideMappingNumericTypes()
     {
-        return array(
-            array('SMALLINT', 'int', true),
-            array('TINYINT', 'int', true),
-            array('INTEGER', 'int', true),
-            array('BIGINT', 'string', false),
-            array('FLOAT', 'double', true),
-            array('DOUBLE', 'double', true),
-            array('NUMERIC', 'string', false),
-            array('DECIMAL', 'string', false),
-            array('REAL', 'double', true),
-        );
+        return [
+            ['SMALLINT', 'int', true],
+            ['TINYINT', 'int', true],
+            ['INTEGER', 'int', true],
+            ['BIGINT', 'string', false],
+            ['FLOAT', 'double', true],
+            ['DOUBLE', 'double', true],
+            ['NUMERIC', 'string', false],
+            ['DECIMAL', 'string', false],
+            ['REAL', 'double', true],
+        ];
     }
 
     /**
@@ -686,17 +686,17 @@ class ColumnTest extends ModelTestCase
 
     public function provideMappingTextTypes()
     {
-        return array(
-            array('CHAR'),
-            array('VARCHAR'),
-            array('LONGVARCHAR'),
-            array('CLOB'),
-            array('DATE'),
-            array('TIME'),
-            array('TIMESTAMP'),
-            array('BU_DATE'),
-            array('BU_TIMESTAMP'),
-        );
+        return [
+            ['CHAR'],
+            ['VARCHAR'],
+            ['LONGVARCHAR'],
+            ['CLOB'],
+            ['DATE'],
+            ['TIME'],
+            ['TIMESTAMP'],
+            ['BU_DATE'],
+            ['BU_TIMESTAMP'],
+        ];
     }
 
     public function testGetSizeDefinition()
@@ -810,7 +810,7 @@ class ColumnTest extends ModelTestCase
             ->will($this->returnValue('AUTO_INCREMENT'))
         ;
 
-        $table = $this->getTableMock('books', array('platform' => $platform));
+        $table = $this->getTableMock('books', ['platform' => $platform]);
         $table
             ->expects($this->once())
             ->method('getIdMethod')
@@ -834,9 +834,9 @@ class ColumnTest extends ModelTestCase
 
     public function testHasPlatform()
     {
-        $table = $this->getTableMock('books', array(
+        $table = $this->getTableMock('books', [
             'platform' => $this->getPlatformMock(),
-        ));
+        ]);
 
         $column = new Column();
         $column->setTable($table);

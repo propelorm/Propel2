@@ -103,7 +103,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function quoteIdentifierTable($table)
     {
         // e.g. 'database.table alias' should be escaped as '[database].[table] [alias]'
-        return '[' . strtr($table, array('.' => '].[', ' ' => '] [')) . ']';
+        return '[' . strtr($table, ['.' => '].[', ' ' => '] [']) . ']';
     }
 
     /**
@@ -140,7 +140,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         // split the select and from clauses out of the original query
-        $selectSegment = array();
+        $selectSegment = [];
 
         $selectText = 'SELECT ';
 
@@ -178,10 +178,10 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
             $nbOrders = count($orders);
             for ($i = 0; $i < $nbOrders; $i ++) {
-                $orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = array(
+                $orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = [
                     'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
                     'key' => $i
-                );
+                ];
             }
         }
 
@@ -267,7 +267,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
         $i = 1;
-        $paramCols = array();
+        $paramCols = [];
         foreach ($params as $param) {
             if (null !== $param['table']) {
                 $column = $dbMap->getTable($param['table'])->getColumn($param['column']);

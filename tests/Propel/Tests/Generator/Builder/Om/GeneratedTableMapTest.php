@@ -50,14 +50,14 @@ class GeneratedTableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         BookTableMap::addSelectColumns($c);
-        $expected = array(
+        $expected = [
             BookTableMap::COL_ID,
             BookTableMap::COL_TITLE,
             BookTableMap::COL_ISBN,
             BookTableMap::COL_PRICE,
             BookTableMap::COL_PUBLISHER_ID,
             BookTableMap::COL_AUTHOR_ID
-        );
+        ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() adds the columns of the model to the criteria');
     }
 
@@ -65,10 +65,10 @@ class GeneratedTableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         MediaTableMap::addSelectColumns($c);
-        $expected = array(
+        $expected = [
             MediaTableMap::COL_ID,
             MediaTableMap::COL_BOOK_ID
-        );
+        ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns');
     }
 
@@ -76,14 +76,14 @@ class GeneratedTableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         BookTableMap::addSelectColumns($c, 'foo');
-        $expected = array(
+        $expected = [
             'foo.id',
             'foo.title',
             'foo.isbn',
             'foo.price',
             'foo.publisher_id',
             'foo.author_id'
-        );
+        ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() uses the second parameter as a table alias');
     }
 
@@ -91,10 +91,10 @@ class GeneratedTableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         MediaTableMap::addSelectColumns($c, 'bar');
-        $expected = array(
+        $expected = [
             'bar.id',
             'bar.book_id'
-        );
+        ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns but uses the second parameter as an alias');
     }
 

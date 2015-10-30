@@ -60,14 +60,14 @@ class TableMap
      *
      * @var ColumnMap[]
      */
-    protected $columns = array();
+    protected $columns = [];
 
     /**
      * Columns in the table, using table phpName as key
      *
      * @var ColumnMap[]
      */
-    protected $columnsByPhpName = array();
+    protected $columnsByPhpName = [];
 
     /**
      * The database this table belongs to
@@ -130,21 +130,21 @@ class TableMap
      *
      * @var ColumnMap[]
      */
-    protected $primaryKeys = array();
+    protected $primaryKeys = [];
 
     /**
      * The foreign key columns in the table
      *
      * @var ColumnMap[]
      */
-    protected $foreignKeys = array();
+    protected $foreignKeys = [];
 
     /**
      *  The relationships in the table
      *
      * @var RelationMap[]
      */
-    protected $relations = array();
+    protected $relations = [];
 
     /**
      *  Relations are lazy loaded. This property tells if the relations are loaded or not
@@ -619,7 +619,7 @@ class TableMap
      *
      * @return RelationMap the built RelationMap object
      */
-    public function addRelation($name, $tablePhpName, $type, $joinConditionMapping = array(), $onDelete = null, $onUpdate = null, $pluralName = null, $polymorphic = false)
+    public function addRelation($name, $tablePhpName, $type, $joinConditionMapping = [], $onDelete = null, $onUpdate = null, $pluralName = null, $polymorphic = false)
     {
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
@@ -721,7 +721,7 @@ class TableMap
      */
     public function getBehaviors()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -752,15 +752,15 @@ class TableMap
 
     public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
     {
-        $callable   = array($classname::TABLE_MAP, 'getFieldnames');
+        $callable   = [$classname::TABLE_MAP, 'getFieldnames'];
 
         return call_user_func($callable, $type);
     }
 
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
     {
-        $callable   = array($classname::TABLE_MAP, 'translateFieldname');
-        $args       = array($fieldname, $fromType, $toType);
+        $callable   = [$classname::TABLE_MAP, 'translateFieldname'];
+        $args       = [$fieldname, $fromType, $toType];
 
         return call_user_func_array($callable, $args);
     }

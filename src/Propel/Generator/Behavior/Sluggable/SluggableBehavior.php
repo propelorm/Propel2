@@ -45,12 +45,12 @@ class SluggableBehavior extends Behavior
         $table = $this->getTable();
 
         if (!$table->hasColumn($this->getParameter('slug_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name'     => $this->getParameter('slug_column'),
                 'type'     => 'VARCHAR',
                 'size'     => 255,
                 'required' => false,
-            ));
+            ]);
             // add a unique to column
             $unique = new Unique($this->getColumnForParameter('slug_column'));
             $unique->setName($table->getCommonName() . '_slug');
@@ -188,7 +188,7 @@ protected function createRawSlug()
 {
     ";
         if ($pattern) {
-            $script .= "return '" . str_replace(array('{', '}'), array('\' . $this->cleanupSlugPart($this->get', '()) . \''), $pattern). "';";
+            $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart($this->get', '()) . \''], $pattern). "';";
         } else {
             $script .= "return \$this->cleanupSlugPart(\$this->__toString());";
         }

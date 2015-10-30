@@ -18,19 +18,19 @@ class SqlParserTest extends TestCase
 {
     public function stripSqlCommentsDataProvider()
     {
-        return array(
-            array('', ''),
-            array('foo with no comments', 'foo with no comments'),
-            array('foo with // inline comments', 'foo with // inline comments'),
-            array("foo with\n// comments", "foo with\n"),
-            array(" // comments preceded by blank\nfoo", "foo"),
-            array("// slash-style comments\nfoo", "foo"),
-            array("-- dash-style comments\nfoo", "foo"),
-            array("# hash-style comments\nfoo", "foo"),
-            array("/* c-style comments*/\nfoo", "\nfoo"),
-            array("foo with\n// comments\nwith foo", "foo with\nwith foo"),
-            array("// comments with\nfoo with\n// comments\nwith foo", "foo with\nwith foo"),
-        );
+        return [
+            ['', ''],
+            ['foo with no comments', 'foo with no comments'],
+            ['foo with // inline comments', 'foo with // inline comments'],
+            ["foo with\n// comments", "foo with\n"],
+            [" // comments preceded by blank\nfoo", "foo"],
+            ["// slash-style comments\nfoo", "foo"],
+            ["-- dash-style comments\nfoo", "foo"],
+            ["# hash-style comments\nfoo", "foo"],
+            ["/* c-style comments*/\nfoo", "\nfoo"],
+            ["foo with\n// comments\nwith foo", "foo with\nwith foo"],
+            ["// comments with\nfoo with\n// comments\nwith foo", "foo with\nwith foo"],
+        ];
     }
 
     /**
@@ -46,14 +46,14 @@ class SqlParserTest extends TestCase
 
     public function convertLineFeedsToUnixStyleDataProvider()
     {
-        return array(
-            array('', ''),
-            array("foo bar", "foo bar"),
-            array("foo\nbar", "foo\nbar"),
-            array("foo\rbar", "foo\nbar"),
-            array("foo\r\nbar", "foo\nbar"),
-            array("foo\r\nbar\rbaz\nbiz\r\n", "foo\nbar\nbaz\nbiz\n"),
-        );
+        return [
+            ['', ''],
+            ["foo bar", "foo bar"],
+            ["foo\nbar", "foo\nbar"],
+            ["foo\rbar", "foo\nbar"],
+            ["foo\r\nbar", "foo\nbar"],
+            ["foo\r\nbar\rbaz\nbiz\r\n", "foo\nbar\nbaz\nbiz\n"],
+        ];
     }
 
     /**
@@ -69,18 +69,18 @@ class SqlParserTest extends TestCase
 
     public function explodeIntoStatementsDataProvider()
     {
-        return array(
-            array('', array()),
-            array('foo', array('foo')),
-            array('foo;', array('foo')),
-            array('foo; ', array('foo')),
-            array('foo;bar', array('foo', 'bar')),
-            array('foo;bar;', array('foo', 'bar')),
-            array("f\no\no;\nb\nar\n;", array("f\no\no", "b\nar")),
-            array('foo";"bar;baz', array('foo";"bar', 'baz')),
-            array('foo\';\'bar;baz', array('foo\';\'bar', 'baz')),
-            array('foo"\";"bar;', array('foo"\";"bar')),
-        );
+        return [
+            ['', []],
+            ['foo', ['foo']],
+            ['foo;', ['foo']],
+            ['foo; ', ['foo']],
+            ['foo;bar', ['foo', 'bar']],
+            ['foo;bar;', ['foo', 'bar']],
+            ["f\no\no;\nb\nar\n;", ["f\no\no", "b\nar"]],
+            ['foo";"bar;baz', ['foo";"bar', 'baz']],
+            ['foo\';\'bar;baz', ['foo\';\'bar', 'baz']],
+            ['foo"\";"bar;', ['foo"\";"bar']],
+        ];
     }
     /**
      * @dataProvider explodeIntoStatementsDataProvider

@@ -199,7 +199,7 @@ EOF;
         $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml');
         $actual = $manager->get();
 
-        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $actual);
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual);
     }
 
     public function testLoadAlsoDistConfigFile()
@@ -221,8 +221,8 @@ EOF;
         $manager = new TestableConfigurationManager();
         $actual = $manager->get();
 
-        $this->assertEquals(array('bfoo' => 'bbar', 'bbar' => 'bbaz'), $actual['buildtime']);
-        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $actual['runtime']);
+        $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
     }
 
     public function testLoadOnlyDistFile()
@@ -238,7 +238,7 @@ EOF;
         $manager = new TestableConfigurationManager();
         $actual = $manager->get();
 
-        $this->assertEquals(array('runtime' => array('foo' => 'bar', 'bar' => 'baz')), $actual);
+        $this->assertEquals(['runtime' => ['foo' => 'bar', 'bar' => 'baz']], $actual);
     }
 
     public function testLoadGivenFileAndDist()
@@ -259,8 +259,8 @@ EOF;
         $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml');
         $actual = $manager->get();
 
-        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $actual['runtime']);
-        $this->assertEquals(array('bfoo' => 'bbar', 'bbar' => 'bbaz'), $actual['buildtime']);
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
+        $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
     }
 
     public function testLoadDistGivenFileOnly()
@@ -275,7 +275,7 @@ EOF;
         $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml.dist');
         $actual = $manager->get();
 
-        $this->assertEquals(array('runtime' => array('foo' => 'bar', 'bar' => 'baz')), $actual);
+        $this->assertEquals(['runtime' => ['foo' => 'bar', 'bar' => 'baz']], $actual);
     }
 
     public function testLoadInGivenDirectory()
@@ -296,21 +296,21 @@ EOF;
         $manager = new TestableConfigurationManager('myDir/mySubdir/');
         $actual = $manager->get();
 
-        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $actual['runtime']);
-        $this->assertEquals(array('bfoo' => 'bbar', 'bbar' => 'bbaz'), $actual['buildtime']);
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
+        $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
     }
 
     public function testMergeExtraProperties()
     {
-        $extraConf = array(
-            'buildtime' => array(
+        $extraConf = [
+            'buildtime' => [
                 'bfoo' => 'extrabar'
-            ),
-            'extralevel' => array(
+            ],
+            'extralevel' => [
                 'extra1' => 'val1',
                 'extra2' => 'val2'
-            )
-        );
+            ]
+        ];
 
         $yamlConf = <<<EOF
 runtime:
@@ -325,9 +325,9 @@ EOF;
         $manager = new TestableConfigurationManager(null, $extraConf);
         $actual = $manager->get();
 
-        $this->assertEquals($actual['runtime'], array('foo' => 'bar', 'bar' => 'baz'));
-        $this->assertEquals($actual['buildtime'], array('bfoo' => 'extrabar', 'bbar' => 'bbaz'));
-        $this->assertEquals($actual['extralevel'], array('extra1' => 'val1', 'extra2' => 'val2'));
+        $this->assertEquals($actual['runtime'], ['foo' => 'bar', 'bar' => 'baz']);
+        $this->assertEquals($actual['buildtime'], ['bfoo' => 'extrabar', 'bbar' => 'bbaz']);
+        $this->assertEquals($actual['extralevel'], ['extra1' => 'val1', 'extra2' => 'val2']);
     }
 
     /**
@@ -488,7 +488,7 @@ EOF;
         $actual = $manager->getSection('runtime');
 
         $this->assertEquals($actual['defaultConnection'], 'mysource');
-        $this->assertEquals($actual['connections'], array('mysource', 'yoursource'));
+        $this->assertEquals($actual['connections'], ['mysource', 'yoursource']);
     }
 
     public function testSomeDeafults()
@@ -655,29 +655,29 @@ EOF;
 
     public function testProcessWithParam()
     {
-        $configs = array(
-            'propel' => array(
-                'database' => array(
-                    'connections' => array(
-                        'default' => array(
+        $configs = [
+            'propel' => [
+                'database' => [
+                    'connections' => [
+                        'default' => [
                             'adapter' => 'sqlite',
                             'classname' => 'Propel\Runtime\Connection\DebugPDO',
                             'dsn' => 'sqlite::memory:',
                             'user' => '',
                             'password' => ''
-                        )
-                    )
-                ),
-                'runtime' => array(
+                        ]
+                    ]
+                ],
+                'runtime' => [
                     'defaultConnection' => 'default',
-                    'connections' => array('default')
-                ),
-                'generator' => array(
+                    'connections' => ['default']
+                ],
+                'generator' => [
                     'defaultConnection' => 'default',
-                    'connections' => array('default')
-                )
-            )
-        );
+                    'connections' => ['default']
+                ]
+            ]
+        ];
 
         $manager = new NotLoadingConfigurationManager($configs);
         $actual = $manager->GetSection('database')['connections'];
@@ -722,32 +722,32 @@ propel:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
-        $expectedRuntime = array(
-            'mysource' => array(
+        $expectedRuntime = [
+            'mysource' => [
                 'adapter' => 'mysql',
                 'classname' => 'Propel\Runtime\Connection\DebugPDO',
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
                 'password' => ''
-            ),
-            'yoursource' => array(
+            ],
+            'yoursource' => [
                 'adapter' => 'mysql',
                 'classname' => 'Propel\Runtime\Connection\DebugPDO',
                 'dsn' => 'mysql:host=localhost;dbname=yourdb',
                 'user' => 'root',
                 'password' => ''
-            )
-        );
+            ]
+        ];
 
-        $expectedGenerator = array(
-            'mysource' => array(
+        $expectedGenerator = [
+            'mysource' => [
                 'adapter' => 'mysql',
                 'classname' => 'Propel\Runtime\Connection\DebugPDO',
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
                 'password' => ''
-            )
-        );
+            ]
+        ];
 
         $manager = new ConfigurationManager();
         $this->assertEquals($expectedRuntime, $manager->getConnectionParametersArray('runtime'));
@@ -780,8 +780,8 @@ EOF;
 
         $this->assertEquals('mysource', $manager->getSection('generator')['defaultConnection']);
         $this->assertEquals('mysource', $manager->getSection('runtime')['defaultConnection']);
-        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('generator')['connections']);
-        $this->assertEquals(array('mysource', 'yoursource'), $manager->getSection('runtime')['connections']);
+        $this->assertEquals(['mysource', 'yoursource'], $manager->getSection('generator')['connections']);
+        $this->assertEquals(['mysource', 'yoursource'], $manager->getSection('runtime')['connections']);
     }
 }
 

@@ -43,18 +43,18 @@ class NameFactoryTest extends BaseTestCase
      * fully qualified class names to <code>NameGeneratorInterface</code>
      * implementations.
      */
-    private static $ALGORITHMS = array(NameFactory::CONSTRAINT_GENERATOR, NameFactory::PHP_GENERATOR);
+    private static $ALGORITHMS = [NameFactory::CONSTRAINT_GENERATOR, NameFactory::PHP_GENERATOR];
 
     /**
      * Two dimensional arrays of inputs for each algorithm.
      */
-    private static $INPUTS = array();
+    private static $INPUTS = [];
 
 
     /**
      * Given the known inputs, the expected name outputs.
      */
-    private static $OUTPUTS = array();
+    private static $OUTPUTS = [];
 
     /**
      * Used as an input.
@@ -67,30 +67,30 @@ class NameFactoryTest extends BaseTestCase
      */
     public function __construct()
     {
-        self::$INPUTS = array(
-                array( array(self::makeString(61), "I", 1),
-                        array(self::makeString(61), "I", 2),
-                        array(self::makeString(65), "I", 3),
-                        array(self::makeString(4), "FK", 1),
-                        array(self::makeString(5), "FK", 2)
-                    ),
-                array(
-                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE),
-                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME),
-                        array("MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE)
-                    )
-                );
+        self::$INPUTS = [
+                [ [self::makeString(61), "I", 1],
+                        [self::makeString(61), "I", 2],
+                        [self::makeString(65), "I", 3],
+                        [self::makeString(4), "FK", 1],
+                        [self::makeString(5), "FK", 2]
+                    ],
+                [
+                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE],
+                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME],
+                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE]
+                    ]
+                ];
 
 
-        self::$OUTPUTS = array(
-                        array(
+        self::$OUTPUTS = [
+                        [
                             self::makeString(60) . "_I_1",
                             self::makeString(60) . "_I_2",
                             self::makeString(60) . "_I_3",
                             self::makeString(4) . "_FK_1",
-                            self::makeString(5) . "_FK_2"),
-                        array("MyUser", "MYUSER", "MY_USER")
-                    );
+                            self::makeString(5) . "_FK_2"],
+                        ["MyUser", "MYUSER", "MY_USER"]
+                    ];
 
     }
 

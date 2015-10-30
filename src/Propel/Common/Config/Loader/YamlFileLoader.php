@@ -44,7 +44,7 @@ class YamlFileLoader extends FileLoader
 
         //config file is empty
         if (null === $content) {
-            $content = array();
+            $content = [];
         }
 
         $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
@@ -63,6 +63,6 @@ class YamlFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return $this->checkSupports(array('yaml', 'yml'), $resource);
+        return $this->checkSupports(['yaml', 'yml'], $resource);
     }
 }

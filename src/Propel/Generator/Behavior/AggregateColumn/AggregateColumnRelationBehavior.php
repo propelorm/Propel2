@@ -20,11 +20,11 @@ use Propel\Generator\Model\Behavior;
 class AggregateColumnRelationBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'foreign_table'     => '',
         'update_method'     => '',
         'aggregate_name'    => '',
-    );
+    ];
 
     public function allowMultiple()
     {
@@ -64,12 +64,12 @@ protected \$old{$relationName}{$aggregateName};
     {
         $relationName = $this->getRelationName($builder);
 
-        return $this->renderTemplate('objectUpdateRelated', array(
+        return $this->renderTemplate('objectUpdateRelated', [
             'relationName'     => $relationName,
             'aggregateName'    => $this->getParameter('aggregate_name'),
             'variableName'     => lcfirst($relationName),
             'updateMethodName' => $this->getParameter('update_method'),
-        ));
+        ]);
     }
 
     public function objectFilter(&$script, $builder)
@@ -144,26 +144,26 @@ protected \$old{$relationName}{$aggregateName};
             $foreignKey->getForeignTable()->getNamespace()
         );
 
-        return $this->renderTemplate('queryFindRelated', array(
+        return $this->renderTemplate('queryFindRelated', [
             'foreignTable'     => $this->getForeignTable(),
             'relationName'     => $relationName,
             'aggregateName'    => $this->getParameter('aggregate_name'),
             'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
             'foreignQueryName' => $foreignQueryBuilder->getClassName(),
             'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
-        ));
+        ]);
     }
 
     protected function addQueryUpdateRelated($builder)
     {
         $relationName = $this->getRelationName($builder);
 
-        return $this->renderTemplate('queryUpdateRelated', array(
+        return $this->renderTemplate('queryUpdateRelated', [
             'relationName'     => $relationName,
             'aggregateName'    => $this->getParameter('aggregate_name'),
             'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
             'updateMethodName' => $this->getParameter('update_method'),
-        ));
+        ]);
     }
 
     protected function getForeignTable()

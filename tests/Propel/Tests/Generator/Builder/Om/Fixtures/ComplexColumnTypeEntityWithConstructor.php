@@ -17,7 +17,7 @@ class ComplexColumnTypeEntityWithConstructor extends \MyNameSpace\Base\ComplexCo
         parent::__construct();
 
         $this->setTags(
-            array('foo', 'bar')
+            ['foo', 'bar']
         );
     }
 }

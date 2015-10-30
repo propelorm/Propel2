@@ -40,7 +40,7 @@ class IniFileLoader extends FileLoader
      */
     public function supports($resource, $type = null)
     {
-        return $this->checkSupports(array('ini', 'properties'), $resource);
+        return $this->checkSupports(['ini', 'properties'], $resource);
     }
 
     /**
@@ -78,7 +78,7 @@ class IniFileLoader extends FileLoader
      */
     private function parse(array $data)
     {
-        $config = array();
+        $config = [];
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
@@ -109,7 +109,7 @@ class IniFileLoader extends FileLoader
             return $this->parseSection($value);
         }
 
-        $nestedSection = array();
+        $nestedSection = [];
 
         $first = array_shift($sections);
         $nestedSection[$first] = $this->buildNestedSection($sections, $value);
@@ -125,7 +125,7 @@ class IniFileLoader extends FileLoader
      */
     private function parseSection(array $section)
     {
-        $config = array();
+        $config = [];
 
         foreach ($section as $key => $value) {
             $this->parseKey($key, $value, $config);
@@ -152,9 +152,9 @@ class IniFileLoader extends FileLoader
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
             } elseif (!isset($config[$pieces[0]])) {
                 if ($pieces[0] === '0' && !empty($config)) {
-                    $config = array($pieces[0] => $config);
+                    $config = [$pieces[0] => $config];
                 } else {
-                    $config[$pieces[0]] = array();
+                    $config[$pieces[0]] = [];
                 }
             } elseif (!is_array($config[$pieces[0]])) {
                 throw new IniParseException(sprintf(

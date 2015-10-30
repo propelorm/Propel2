@@ -50,17 +50,17 @@ class DefaultPlatformTest extends TestCase
 
     public function provideValidBooleanValues()
     {
-        return array(
-            array(true),
-            array('TRUE'),
-            array('true'),
-            array('1'),
-            array(1),
-            array('y'),
-            array('Y'),
-            array('yes'),
-            array('YES'),
-        );
+        return [
+            [true],
+            ['TRUE'],
+            ['true'],
+            ['1'],
+            [1],
+            ['y'],
+            ['Y'],
+            ['yes'],
+            ['YES'],
+        ];
     }
 
     /**
@@ -76,18 +76,18 @@ class DefaultPlatformTest extends TestCase
 
     public function provideInvalidBooleanValues()
     {
-        return array(
-            array(false),
-            array('FALSE'),
-            array('false'),
-            array('0'),
-            array(0),
-            array('n'),
-            array('N'),
-            array('no'),
-            array('NO'),
-            array('foo'),
-        );
+        return [
+            [false],
+            ['FALSE'],
+            ['false'],
+            ['0'],
+            [0],
+            ['n'],
+            ['N'],
+            ['no'],
+            ['NO'],
+            ['foo'],
+        ];
     }
 
     public function testQuote()
@@ -126,21 +126,21 @@ class DefaultPlatformTest extends TestCase
 
     public function getColumnDefaultValueDDLDataProvider()
     {
-        return array(
-            array($this->createColumn(PropelTypes::INTEGER, 0), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::INTEGER, '0'), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::VARCHAR, 'foo'), "DEFAULT 'foo'"),
-            array($this->createColumn(PropelTypes::VARCHAR, 0), "DEFAULT '0'"),
-            array($this->createColumn(PropelTypes::BOOLEAN, true), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, false), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"),
-            array($this->createColumn(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'foo'), "DEFAULT 0"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'bar'), "DEFAULT 1"),
-            array($this->createEnumColumn(array('foo', 'bar', 'baz'), 'baz'), "DEFAULT 2"),
-        );
+        return [
+            [$this->createColumn(PropelTypes::INTEGER, 0), "DEFAULT 0"],
+            [$this->createColumn(PropelTypes::INTEGER, '0'), "DEFAULT 0"],
+            [$this->createColumn(PropelTypes::VARCHAR, 'foo'), "DEFAULT 'foo'"],
+            [$this->createColumn(PropelTypes::VARCHAR, 0), "DEFAULT '0'"],
+            [$this->createColumn(PropelTypes::BOOLEAN, true), "DEFAULT 1"],
+            [$this->createColumn(PropelTypes::BOOLEAN, false), "DEFAULT 0"],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'foo'), "DEFAULT 0"],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'bar'), "DEFAULT 1"],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'baz'), "DEFAULT 2"],
+        ];
     }
 
     /**

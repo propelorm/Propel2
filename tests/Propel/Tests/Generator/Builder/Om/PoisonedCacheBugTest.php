@@ -56,7 +56,7 @@ class PoisonedCacheBugTest extends BookstoreTestBase
         $a->save();
 
         $this->author = $a;
-        $this->books = array($b1, $b2);
+        $this->books = [$b1, $b2];
 
         Propel::enableInstancePooling();
 

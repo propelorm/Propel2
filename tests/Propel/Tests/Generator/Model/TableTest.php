@@ -53,14 +53,14 @@ class TableTest extends ModelTestCase
 
     public function provideNamespaces()
     {
-        return array(
-            array('\Acme', '\Acme'),
-            array('Acme', 'Acme'),
-            array('Acme\\', 'Acme'),
-            array('\Acme\Model', '\Acme\Model'),
-            array('Acme\Model', 'Acme\Model'),
-            array('Acme\Model\\', 'Acme\Model'),
-        );
+        return [
+            ['\Acme', '\Acme'],
+            ['Acme', 'Acme'],
+            ['Acme\\', 'Acme'],
+            ['\Acme\Model', '\Acme\Model'],
+            ['Acme\Model', 'Acme\Model'],
+            ['Acme\Model\\', 'Acme\Model'],
+        ];
     }
 
     public function testGetGeneratorConfig()
@@ -131,15 +131,15 @@ class TableTest extends ModelTestCase
 
     public function testGetAdditionalBuilders()
     {
-        $additionalBehaviors = array(
+        $additionalBehaviors = [
             $this->getBehaviorMock('foo'),
             $this->getBehaviorMock('bar'),
             $this->getBehaviorMock('baz'),
-        );
+        ];
 
-        $behavior = $this->getBehaviorMock('mix', array(
+        $behavior = $this->getBehaviorMock('mix', [
             'additional_builders' => $additionalBehaviors,
-        ));
+        ]);
 
         $table = new Table();
         $table->addBehavior($behavior);
@@ -159,11 +159,11 @@ class TableTest extends ModelTestCase
 
     public function testGetColumnList()
     {
-        $columns = array(
+        $columns = [
             $this->getColumnMock('foo'),
             $this->getColumnMock('bar'),
             $this->getColumnMock('baz'),
-        );
+        ];
 
         $table = new Table();
 
@@ -183,9 +183,9 @@ class TableTest extends ModelTestCase
      */
     public function testGetNameWithPlatform($supportsSchemas, $schemaName, $expectedName)
     {
-        $database = $this->getDatabaseMock($schemaName, array(
+        $database = $this->getDatabaseMock($schemaName, [
             'platform' => $this->getPlatformMock($supportsSchemas),
-        ));
+        ]);
 
         $database
             ->expects($supportsSchemas ? $this->once() : $this->never())
@@ -202,11 +202,11 @@ class TableTest extends ModelTestCase
 
     public function provideSchemaNames()
     {
-        return array(
-            array(false, 'bookstore', 'books'),
-            array(false, null, 'books'),
-            array(true, 'bookstore', 'bookstore.books'),
-        );
+        return [
+            [false, 'bookstore', 'books'],
+            [false, null, 'books'],
+            [true, 'bookstore', 'bookstore.books'],
+        ];
     }
 
     public function testSetDefaultPhpName()
@@ -274,18 +274,18 @@ class TableTest extends ModelTestCase
 
     public function provideStringFormats()
     {
-        return array(
-            array('XML'),
-            array('YAML'),
-            array('JSON'),
-            array('CSV'),
-        );
+        return [
+            ['XML'],
+            ['YAML'],
+            ['JSON'],
+            ['CSV'],
+        ];
     }
 
     public function testAddSameColumnTwice()
     {
         $table = new Table('books');
-        $column = $this->getColumnMock('created_at', array('phpName' => 'CreatedAt'));
+        $column = $this->getColumnMock('created_at', ['phpName' => 'CreatedAt']);
 
         $this->setExpectedException('Propel\Generator\Exception\EngineException');
 
@@ -295,7 +295,7 @@ class TableTest extends ModelTestCase
 
     public function testGetChildrenNames()
     {
-        $column = $this->getColumnMock('created_at', array('inheritance' => true));
+        $column = $this->getColumnMock('created_at', ['inheritance' => true]);
 
         $column
             ->expects($this->any())
@@ -324,7 +324,7 @@ class TableTest extends ModelTestCase
 
     public function testCantGetChildrenNames()
     {
-        $column = $this->getColumnMock('created_at', array('inheritance' => true));
+        $column = $this->getColumnMock('created_at', ['inheritance' => true]);
 
         $column
             ->expects($this->any())
@@ -341,7 +341,7 @@ class TableTest extends ModelTestCase
     public function testAddInheritanceColumn()
     {
         $table = new Table('books');
-        $column = $this->getColumnMock('created_at', array('inheritance' => true));
+        $column = $this->getColumnMock('created_at', ['inheritance' => true]);
 
         $this->assertInstanceOf('Propel\Generator\Model\Column', $table->addColumn($column));
         $this->assertInstanceOf('Propel\Generator\Model\Column', $table->getChildrenColumn());
@@ -439,9 +439,9 @@ class TableTest extends ModelTestCase
     public function testGetNumLazyLoadColumns()
     {
         $column1 = $this->getColumnMock('created_at');
-        $column2 = $this->getColumnMock('updated_at', array('lazy' => true));
+        $column2 = $this->getColumnMock('updated_at', ['lazy' => true]);
 
-        $column3 = $this->getColumnMock('deleted_at', array('lazy' => true));
+        $column3 = $this->getColumnMock('deleted_at', ['lazy' => true]);
 
         $table = new Table('books');
         $table->addColumn($column1);
@@ -527,7 +527,7 @@ class TableTest extends ModelTestCase
     public function testAddArrayIndex()
     {
         $table = new Table();
-        $table->addIndex(array('name' => 'author_idx', 'columns' => [['name' => 'bla']]));
+        $table->addIndex(['name' => 'author_idx', 'columns' => [['name' => 'bla']]]);
 
         $this->assertCount(1, $table->getIndices());
     }
@@ -561,15 +561,15 @@ class TableTest extends ModelTestCase
     public function testAddArrayUnique()
     {
         $table = new Table();
-        $table->addUnique(array('name' => 'author_unq'));
+        $table->addUnique(['name' => 'author_unq']);
 
         $this->assertCount(1, $table->getUnices());
     }
 
     public function testGetCompositePrimaryKey()
     {
-        $column1 = $this->getColumnMock('book_id', array('primary' => true));
-        $column2 = $this->getColumnMock('author_id', array('primary' => true));
+        $column1 = $this->getColumnMock('book_id', ['primary' => true]);
+        $column2 = $this->getColumnMock('author_id', ['primary' => true]);
         $column3 = $this->getColumnMock('rank');
 
         $table = new Table();
@@ -588,7 +588,7 @@ class TableTest extends ModelTestCase
 
     public function testGetSinglePrimaryKey()
     {
-        $column1 = $this->getColumnMock('id', array('primary' => true));
+        $column1 = $this->getColumnMock('id', ['primary' => true]);
         $column2 = $this->getColumnMock('title');
         $column3 = $this->getColumnMock('isbn');
 
@@ -628,10 +628,10 @@ class TableTest extends ModelTestCase
 
     public function testGetAutoIncrementPrimaryKey()
     {
-        $column1 = $this->getColumnMock('id', array(
+        $column1 = $this->getColumnMock('id', [
             'primary' => true,
             'auto_increment' => true
-        ));
+        ]);
 
         $column2 = $this->getColumnMock('title');
         $column3 = $this->getColumnMock('isbn');
@@ -669,7 +669,7 @@ class TableTest extends ModelTestCase
     public function testAddArrayIdMethodParameter()
     {
         $table = new Table();
-        $table->addIdMethodParameter(array('name' => 'foo', 'value' => 'bar'));
+        $table->addIdMethodParameter(['name' => 'foo', 'value' => 'bar']);
 
         $this->assertCount(1, $table->getIdMethodParameters());
     }
@@ -684,9 +684,9 @@ class TableTest extends ModelTestCase
 
     public function testAddForeignKey()
     {
-        $fk = $this->getForeignKeyMock('fk_author_id', array(
+        $fk = $this->getForeignKeyMock('fk_author_id', [
             'foreign_table_name' => 'authors',
-        ));
+        ]);
 
         $table = new Table('books');
 
@@ -701,13 +701,13 @@ class TableTest extends ModelTestCase
         $table = new Table('books');
         $table->setDatabase($this->getDatabaseMock('bookstore'));
 
-        $fk = $table->addForeignKey(array(
+        $fk = $table->addForeignKey([
             'name'         => 'fk_author_id',
             'phpName'      => 'Author',
             'refPhpName'   => 'Books',
             'onDelete'     => 'CASCADE',
             'foreignTable' => 'authors',
-        ));
+        ]);
 
         $this->assertInstanceOf('Propel\Generator\Model\ForeignKey', $fk);
         $this->assertCount(1, $table->getForeignKeys());
@@ -718,9 +718,9 @@ class TableTest extends ModelTestCase
 
     public function testGetForeignKeysReferencingTable()
     {
-        $fk1 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
-        $fk2 = $this->getForeignKeyMock('fk2', array('foreign_table_name' => 'categories'));
-        $fk3 = $this->getForeignKeyMock('fk3', array('foreign_table_name' => 'authors'));
+        $fk1 = $this->getForeignKeyMock('fk1', ['foreign_table_name' => 'authors']);
+        $fk2 = $this->getForeignKeyMock('fk2', ['foreign_table_name' => 'categories']);
+        $fk3 = $this->getForeignKeyMock('fk3', ['foreign_table_name' => 'authors']);
 
         $table = new Table();
         $table->addForeignKey($fk1);
@@ -732,9 +732,9 @@ class TableTest extends ModelTestCase
 
     public function testGetForeignKeysReferencingTableMoreThenOnce()
     {
-        $fk1 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
-        $fk2 = $this->getForeignKeyMock('fk2', array('foreign_table_name' => 'categories'));
-        $fk3 = $this->getForeignKeyMock('fk1', array('foreign_table_name' => 'authors'));
+        $fk1 = $this->getForeignKeyMock('fk1', ['foreign_table_name' => 'authors']);
+        $fk2 = $this->getForeignKeyMock('fk2', ['foreign_table_name' => 'categories']);
+        $fk3 = $this->getForeignKeyMock('fk1', ['foreign_table_name' => 'authors']);
 
         $table = new Table();
         $table->addForeignKey($fk1);
@@ -747,13 +747,13 @@ class TableTest extends ModelTestCase
 
     public function testGetColumnForeignKeys()
     {
-        $fk1 = $this->getForeignKeyMock('fk1', array(
-            'local_columns' => array('foo', 'author_id', 'bar')
-        ));
+        $fk1 = $this->getForeignKeyMock('fk1', [
+            'local_columns' => ['foo', 'author_id', 'bar']
+        ]);
 
-        $fk2 = $this->getForeignKeyMock('fk2', array(
-            'local_columns' => array('foo', 'bar')
-        ));
+        $fk2 = $this->getForeignKeyMock('fk2', [
+            'local_columns' => ['foo', 'bar']
+        ]);
 
         $table = new Table();
         $table->addForeignKey($fk1);
@@ -808,19 +808,19 @@ class TableTest extends ModelTestCase
     public function testTablePrefix()
     {
         $database = new Database();
-        $database->loadMapping(array(
+        $database->loadMapping([
             'name'                   => 'bookstore',
             'defaultIdMethod'        => 'native',
             'defaultPhpNamingMethod' => 'underscore',
             'tablePrefix'            => 'acme_',
             'defaultStringFormat'    => 'XML',
-        ));
+        ]);
 
         $table = new Table();
         $database->addTable($table);
-        $table->loadMapping(array(
+        $table->loadMapping([
            'name' => 'books'
-        ));
+        ]);
         $this->assertEquals('Books', $table->getPhpName());
         $this->assertEquals('acme_books', $table->getCommonName());
     }
@@ -868,16 +868,16 @@ class TableTest extends ModelTestCase
      * @param  array  $options An array of options
      * @return Column
      */
-    protected function getColumnMock($name, array $options = array())
+    protected function getColumnMock($name, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'primary' => false,
             'auto_increment' => false,
             'inheritance' => false,
             'lazy' => false,
             'phpName' => str_replace(' ', '', ucwords(strtolower(str_replace('_', ' ', $name)))),
             'pg_transaction' => true,
-        );
+        ];
 
         // Overwrite default options with custom options
         $options = array_merge($defaults, $options);

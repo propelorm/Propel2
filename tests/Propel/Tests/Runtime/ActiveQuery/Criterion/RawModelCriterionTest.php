@@ -31,7 +31,7 @@ class RawModelCriterionTest extends BaseTestCase
     {
         $cton = new RawModelCriterion(new Criteria(), 'A.COL = BAR', 'A.COL', 1, null, PDO::PARAM_INT);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
     }
@@ -40,14 +40,14 @@ class RawModelCriterionTest extends BaseTestCase
     {
         $cton = new RawModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 1, null, PDO::PARAM_INT);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL = :p1', $ps);
-        $expected = array(
-            array('table' => null, 'value' => 1, 'type' => PDO::PARAM_INT)
-        );
+        $expected = [
+            ['table' => null, 'value' => 1, 'type' => PDO::PARAM_INT]
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -55,14 +55,14 @@ class RawModelCriterionTest extends BaseTestCase
     {
         $cton = new RawModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 1);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL = :p1', $ps);
-        $expected = array(
-            array('table' => null, 'value' => 1, 'type' => PDO::PARAM_STR)
-        );
+        $expected = [
+            ['table' => null, 'value' => 1, 'type' => PDO::PARAM_STR]
+        ];
         $this->assertEquals($expected, $params);
     }
 

@@ -100,8 +100,8 @@ class ObjectBuilder extends AbstractObjectBuilder
         // Check to see whether any generated foreign key names
         // will conflict with column names.
 
-        $colPhpNames = array();
-        $fkPhpNames = array();
+        $colPhpNames = [];
+        $fkPhpNames = [];
 
         foreach ($table->getColumns() as $col) {
             $colPhpNames[] = $col->getPhpName();
@@ -638,7 +638,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addBaseObjectMethods(&$script)
     {
-        $script .= $this->renderTemplate('baseObjectMethods', array('className' => $this->getUnqualifiedClassName()));
+        $script .= $this->renderTemplate('baseObjectMethods', ['className' => $this->getUnqualifiedClassName()]);
     }
 
     /**
@@ -648,9 +648,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addHookMethods(&$script)
     {
-        $hooks = array();
-        foreach (array('pre', 'post') as $hook) {
-            foreach (array('Insert', 'Update', 'Save', 'Delete') as $action) {
+        $hooks = [];
+        foreach (['pre', 'post'] as $hook) {
+            foreach (['Insert', 'Update', 'Save', 'Delete'] as $action) {
                 $hooks[$hook.$action] = false === strpos($script, "function $hook.$action(");
             }
         }
@@ -709,7 +709,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // FIXME - Apply support for PHP default expressions here
         // see: http://propel.phpdb.org/trac/ticket/378
 
-        $colsWithDefaults = array();
+        $colsWithDefaults = [];
         foreach ($table->getColumns() as $column) {
             $def = $column->getDefaultValue();
             if ($def !== null && !$def->isExpression()) {
@@ -1968,7 +1968,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addHasOnlyDefaultValuesBody(&$script)
     {
         $table = $this->getTable();
-        $colsWithDefaults = array();
+        $colsWithDefaults = [];
         foreach ($table->getColumns() as $col) {
             $def = $col->getDefaultValue();
             if ($def !== null && !$def->isExpression()) {
@@ -3241,7 +3241,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
         return null === \$this->get" . $pkeys[0]->getPhpName() . "();";
         } else {
-            $tests = array();
+            $tests = [];
             foreach ($pkeys as $pkey) {
                 $tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
             }
@@ -3424,7 +3424,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $and = '';
         $conditional = '';
-        $localColumns = array(); // foreign key local attributes names
+        $localColumns = []; // foreign key local attributes names
 
         // If the related columns are a primary key on the foreign table
         // then use findPk() instead of doSelect() to take advantage
@@ -6045,7 +6045,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function copyInto(\$copyObj, \$deepCopy = false, \$makeNew = true)
     {";
 
-        $autoIncCols = array();
+        $autoIncCols = [];
         foreach ($table->getColumns() as $col) {
             /* @var        $col Column */
             if ($col->isAutoIncrement()) {
@@ -6200,7 +6200,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function clearAllReferences(\$deep = false)
     {
         if (\$deep) {";
-        $vars = array();
+        $vars = [];
         foreach ($this->getTable()->getReferrers() as $refFK) {
             if ($refFK->isLocalPrimaryKey()) {
                 $varName = $this->getPKRefFKVarName($refFK);
@@ -6302,8 +6302,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $behaviorCallScript = '';
         $this->applyBehaviorModifier('objectCall', $behaviorCallScript, "    ");
 
-        $script .= $this->renderTemplate('baseObjectMethodMagicCall', array(
+        $script .= $this->renderTemplate('baseObjectMethodMagicCall', [
                 'behaviorCallScript' => $behaviorCallScript
-                ));
+                ]);
     }
 }

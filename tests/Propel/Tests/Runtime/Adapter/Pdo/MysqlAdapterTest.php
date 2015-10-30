@@ -26,16 +26,16 @@ class MysqlAdapterTest extends TestCaseFixtures
 {
     public static function getConParams()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'dsn' => 'dsn=my_dsn',
-                    'settings' => array(
+                    'settings' => [
                         'charset' => 'foobar'
-                    )
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
     }
 
     /**
@@ -68,7 +68,7 @@ class MysqlAdapterTest extends TestCaseFixtures
         $db = new TestableMysqlAdapter();
         $params = $db->prepareParams($conparams);
 
-        $settings = array();
+        $settings = [];
         if (isset($params['settings'])) {
             $settings = $params['settings'];
         }

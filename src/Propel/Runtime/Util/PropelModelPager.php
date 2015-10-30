@@ -165,7 +165,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     public function getLinks($nbLinks = 5)
     {
-        $links = array();
+        $links = [];
         $tmp   = $this->page - floor($nbLinks / 2);
         $check = $this->lastPage - $nbLinks + 1;
         $limit = ($check > 0) ? $check : 1;

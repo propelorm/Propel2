@@ -56,10 +56,10 @@ class TestAllHooksTableModifier
 
     public function modifyTable()
     {
-        $this->table->addColumn(array(
+        $this->table->addColumn([
             'name' => 'test',
             'type' => 'TIMESTAMP'
-        ));
+        ]);
     }
 }
 

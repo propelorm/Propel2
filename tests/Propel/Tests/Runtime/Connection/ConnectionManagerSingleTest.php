@@ -43,7 +43,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
     public function testGetWriteConnectionBuildsConnectionBasedOnConfiguration()
     {
         $manager = new ConnectionManagerSingle();
-        $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
+        $manager->setConfiguration(['dsn' => 'sqlite::memory:']);
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
@@ -54,7 +54,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
     {
         $manager = new ConnectionManagerSingle();
         $manager->setName('foo');
-        $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
+        $manager->setConfiguration(['dsn' => 'sqlite::memory:']);
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertEquals('foo', $con->getName());
     }
@@ -62,7 +62,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
     public function testGetReadConnectionReturnsWriteConnection()
     {
         $manager = new ConnectionManagerSingle();
-        $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
+        $manager->setConfiguration(['dsn' => 'sqlite::memory:']);
         $writeCon = $manager->getWriteConnection(new SqliteAdapter());
         $readCon  = $manager->getReadConnection(new SqliteAdapter());
         $this->assertSame($writeCon, $readCon);

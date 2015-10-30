@@ -76,10 +76,10 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $author->setFirstName('Jane');
         $author->setLastName('Austen');
         $author->save();
-        $books = array(
-            array('Title' => 'Mansfield Park', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()),
-            array('Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId())
-        );
+        $books = [
+            ['Title' => 'Mansfield Park', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()],
+            ['Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()]
+        ];
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Book');
         $col->fromArray($books);
@@ -107,29 +107,29 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         }
 
         $booksArray = $books->toArray();
-        $keys = array(0, 1, 2, 3);
+        $keys = [0, 1, 2, 3];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->toArray(null, true);
-        $keys = array(
+        $keys = [
             'Book_0',
             'Book_1',
             'Book_2',
             'Book_3'
-        );
+        ];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->toArray('Title');
-        $keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
+        $keys = ['Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum'];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->toArray('Title', true);
-        $keys = array(
+        $keys = [
             'Book_Harry Potter and the Order of the Phoenix',
             'Book_Quicksilver',
             'Book_Don Juan',
             'Book_The Tin Drum'
-        );
+        ];
         $this->assertEquals($keys, array_keys($booksArray));
     }
 
@@ -144,29 +144,29 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         }
 
         $booksArray = $books->getArrayCopy();
-        $keys = array(0, 1, 2, 3);
+        $keys = [0, 1, 2, 3];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->getArrayCopy(null, true);
-        $keys = array(
+        $keys = [
             'Book_0',
             'Book_1',
             'Book_2',
             'Book_3'
-        );
+        ];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->getArrayCopy('Title');
-        $keys = array('Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum');
+        $keys = ['Harry Potter and the Order of the Phoenix', 'Quicksilver', 'Don Juan', 'The Tin Drum'];
         $this->assertEquals($keys, array_keys($booksArray));
 
         $booksArray = $books->getArrayCopy('Title', true);
-        $keys = array(
+        $keys = [
             'Book_Harry Potter and the Order of the Phoenix',
             'Book_Quicksilver',
             'Book_Don Juan',
             'Book_The Tin Drum'
-        );
+        ];
         $this->assertEquals($keys, array_keys($booksArray));
     }
 
@@ -174,7 +174,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getTitle()] = $book->getISBN();
         }
@@ -182,14 +182,14 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, count($booksArray));
         $this->assertEquals($expected, $booksArray, 'toKeyValue() turns the collection to an associative array');
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getISBN()] = $book->getTitle();
         }
         $booksArray = $books->toKeyValue('ISBN');
         $this->assertEquals($expected, $booksArray, 'toKeyValue() uses __toString() for the value if no second field name is passed');
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getId()] = $book->getTitle();
         }
@@ -201,7 +201,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getTitle()] = $book;
         }
@@ -211,7 +211,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 
         $this->assertEquals($booksArray, $books->toKeyIndex('title'));
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getISBN()] = $book;
         }
@@ -219,7 +219,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $booksArray = $books->toKeyIndex('ISBN');
         $this->assertEquals($expected, $booksArray, 'toKeyIndex() uses `ISBN` for the key');
 
-        $expected = array();
+        $expected = [];
         foreach ($books as $book) {
             $expected[$book->getId()] = $book;
         }

@@ -29,7 +29,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo', 'bar');
         $expected = 'SELECT  FROM  WHERE foo=:p1';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -42,7 +42,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo2', 'bar2');
         $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -56,7 +56,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo2', 'bar2');
         $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2)';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -69,7 +69,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo', 'bar');
         $expected = 'SELECT  FROM  WHERE foo=:p1';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -83,7 +83,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo2', 'bar2');
         $expected = 'SELECT  FROM  WHERE foo1=:p1 AND foo2=:p2';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -99,7 +99,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo3', 'bar3');
         $expected = 'SELECT  FROM  WHERE ((foo1=:p1 OR foo2=:p2) OR foo3=:p3)';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);
@@ -114,7 +114,7 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $c->addUsingOperator('foo3', 'bar3');
         $expected = 'SELECT  FROM  WHERE (foo1=:p1 OR foo2=:p2) AND foo3=:p3';
 
-        $params = array();
+        $params = [];
         $result = $c->createSelectSql($params);
 
         $this->assertEquals($expected, $result);

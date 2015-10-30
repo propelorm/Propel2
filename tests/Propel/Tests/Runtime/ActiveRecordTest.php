@@ -29,18 +29,18 @@ class ActiveRecordTest extends TestCase
     public function testGetVirtualColumns()
     {
         $b = new TestableActiveRecord();
-        $this->assertEquals(array(), $b->getVirtualColumns(), 'getVirtualColumns() returns an empty array for new objects');
-        $b->virtualColumns = array('foo' => 'bar');
-        $this->assertEquals(array('foo' => 'bar'), $b->getVirtualColumns(), 'getVirtualColumns() returns an associative array of virtual columns');
+        $this->assertEquals([], $b->getVirtualColumns(), 'getVirtualColumns() returns an empty array for new objects');
+        $b->virtualColumns = ['foo' => 'bar'];
+        $this->assertEquals(['foo' => 'bar'], $b->getVirtualColumns(), 'getVirtualColumns() returns an associative array of virtual columns');
     }
 
     public function testHasVirtualColumn()
     {
         $b = new TestableActiveRecord();
         $this->assertFalse($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns false if the virtual column is not set');
-        $b->virtualColumns = array('foo' => 'bar');
+        $b->virtualColumns = ['foo' => 'bar'];
         $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set');
-        $b->virtualColumns = array('foo' => null);
+        $b->virtualColumns = ['foo' => null];
         $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set and has NULL value');
     }
 
@@ -56,7 +56,7 @@ class ActiveRecordTest extends TestCase
     public function testGetVirtualColumn()
     {
         $b = new TestableActiveRecord();
-        $b->virtualColumns = array('foo' => 'bar');
+        $b->virtualColumns = ['foo' => 'bar'];
         $this->assertEquals('bar', $b->getVirtualColumn('foo'), 'getVirtualColumn() returns a virtual column value based on its key');
     }
 

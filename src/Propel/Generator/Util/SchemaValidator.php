@@ -31,7 +31,7 @@ use Propel\Generator\Model\Table;
 class SchemaValidator
 {
     protected $schema;
-    protected $errors = array();
+    protected $errors = [];
 
     public function __construct(Schema $schema)
     {
@@ -52,13 +52,13 @@ class SchemaValidator
 
     protected function validateDatabaseTables(Database $database)
     {
-        $phpNames = array();
-        $namespaces = array();
+        $phpNames = [];
+        $namespaces = [];
         foreach ($database->getTables() as $table) {
             $list = &$phpNames;
             if ($table->getNamespace()) {
                 if (!isset($namespaces[$table->getNamespace()])) {
-                    $namespaces[$table->getNamespace()] = array();
+                    $namespaces[$table->getNamespace()] = [];
                 }
 
                 $list = &$namespaces[$table->getNamespace()];
@@ -74,7 +74,7 @@ class SchemaValidator
 
     protected function validateTableAttributes(Table $table)
     {
-        $reservedTableNames = array('table_name');
+        $reservedTableNames = ['table_name'];
         $tableName = strtolower($table->getName());
         if (in_array($tableName, $reservedTableNames)) {
             $this->errors[] = sprintf('Table "%s" uses a reserved keyword as name', $table->getName());
@@ -86,7 +86,7 @@ class SchemaValidator
         if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {
             $this->errors[] = sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $table->getName());
         }
-        $phpNames = array();
+        $phpNames = [];
         foreach ($table->getColumns() as $column) {
             if (in_array($column->getPhpName(), $phpNames)) {
                 $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());

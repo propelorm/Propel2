@@ -202,7 +202,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
     public function getAddTableDDL(Table $table)
     {
-        $lines = array();
+        $lines = [];
 
         foreach ($table->getColumns() as $column) {
             $lines[] = $this->getColumnDDL($column);
@@ -271,10 +271,10 @@ CREATE TABLE %s
         $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
         $tableVI = $table->getVendorInfoForType('mysql');
         $vi = $dbVI->getMergedVendorInfo($tableVI);
-        $tableOptions = array();
+        $tableOptions = [];
         // List of supported table options
         // see http://dev.mysql.com/doc/refman/5.5/en/create-table.html
-        $supportedOptions = array(
+        $supportedOptions = [
             'AutoIncrement'   => 'AUTO_INCREMENT',
             'AvgRowLength'    => 'AVG_ROW_LENGTH',
             'Charset'         => 'CHARACTER SET',
@@ -293,7 +293,7 @@ CREATE TABLE %s
             'PackKeys'        => 'PACK_KEYS',
             'RowFormat'       => 'ROW_FORMAT',
             'Union'           => 'UNION',
-        );
+        ];
 
         $noQuotedValue = array_flip([
             'InsertMethod',
@@ -358,7 +358,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             }
         }
 
-        $ddl = array($this->quoteIdentifier($col->getName()));
+        $ddl = [$this->quoteIdentifier($col->getName())];
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             $ddl[] = $sqlType . $col->getSizeDefinition();
         } else {
@@ -413,7 +413,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      */
     protected function getIndexColumnListDDL(Index $index)
     {
-        $list = array();
+        $list = [];
         foreach ($index->getColumns() as $col) {
             $list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
         }
@@ -744,25 +744,25 @@ ALTER TABLE %s ADD %s %s;
 
     public function hasSize($sqlType)
     {
-        return !in_array($sqlType, array(
+        return !in_array($sqlType, [
             'MEDIUMTEXT',
             'LONGTEXT',
             'BLOB',
             'MEDIUMBLOB',
             'LONGBLOB',
-        ));
+        ]);
     }
 
     public function getDefaultTypeSizes()
     {
-        return array(
+        return [
             'char'     => 1,
             'tinyint'  => 4,
             'smallint' => 6,
             'int'      => 11,
             'bigint'   => 20,
             'decimal'  => 10,
-        );
+        ];
     }
 
     /**
@@ -787,7 +787,7 @@ ALTER TABLE %s ADD %s %s;
      */
     public function doQuoting($text)
     {
-        return '`' . strtr($text, array('.' => '`.`')) . '`';
+        return '`' . strtr($text, ['.' => '`.`']) . '`';
     }
 
     public function getTimestampFormatter()

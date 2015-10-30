@@ -17,8 +17,8 @@ trait DataProviderTrait
 {
     public function providerForInvalidConnections()
     {
-        return array(
-            array("
+        return [
+            ["
 propel:
   database:
       connections:
@@ -34,8 +34,8 @@ propel:
           - wrongsource
 
 "
-            , 'runtime'),
-            array("
+            , 'runtime'],
+            ["
 propel:
   database:
       connections:
@@ -52,8 +52,8 @@ propel:
           - wrongsource
 
 "
-            , 'runtime'),
-            array("
+            , 'runtime'],
+            ["
 propel:
   database:
       connections:
@@ -69,8 +69,8 @@ propel:
           - wrongsource
 
 "
-            , 'generator'),
-            array("
+            , 'generator'],
+            ["
 propel:
   database:
       connections:
@@ -87,8 +87,8 @@ propel:
           - mysource
 
 "
-            , 'generator'),
-            array("
+            , 'generator'],
+            ["
 propel:
   database:
       connections:
@@ -110,14 +110,14 @@ propel:
 
 
 "
-            , 'runtime'),
-        );
+            , 'runtime'],
+        ];
     }
 
     public function providerForInvalidDefaultConnection()
     {
-        return array(
-            array("
+        return [
+            ["
 propel:
   database:
       connections:
@@ -133,8 +133,8 @@ propel:
           - mysource
 
 "
-            , 'runtime'),
-            array("
+            , 'runtime'],
+            ["
 propel:
   database:
       connections:
@@ -150,8 +150,8 @@ propel:
           - mysource
 
 "
-            , 'generator'),
-            array("
+            , 'generator'],
+            ["
 propel:
   database:
       connections:
@@ -173,14 +173,14 @@ propel:
 
 
 "
-            , 'runtime'),
-        );
+            , 'runtime'],
+        ];
     }
 
     public function providerForXmlToArrayConverter()
     {
-        return array(
-            array(<<< XML
+        return [
+            [<<< XML
 <?xml version='1.0' standalone='yes'?>
 <movies>
  <movie>
@@ -193,9 +193,9 @@ propel:
  </movie>
 </movies>
 XML
-            , array('movie' => array(0 => array('title' => 'Star Wars', 'starred' => true), 1 => array('title' => 'The Lord Of The Rings', 'starred' => false)))
-            ),
-            array(<<< XML
+            , ['movie' => [0 => ['title' => 'Star Wars', 'starred' => true], 1 => ['title' => 'The Lord Of The Rings', 'starred' => false]]]
+            ],
+            [<<< XML
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <log>
@@ -211,23 +211,23 @@ XML
   </log>
 </config>
 XML
-            , array('log' => array(
-                'logger' => array(
-                    array(
+            , ['log' => [
+                'logger' => [
+                    [
                         'type' => 'stream',
                         'path' => '/var/log/propel.log',
                         'level' => '300',
                         'name' => 'defaultLogger',
-                    ),
-                    array(
+                    ],
+                    [
                         'type' => 'stream',
                         'path' => '/var/log/propel_bookstore.log',
                         'name' => 'bookstore',
-                    ),
-                ),
-            ))
-            ),
-            array(<<<EOF
+                    ],
+                ],
+            ]]
+            ],
+            [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -248,21 +248,21 @@ XML
   </datasources>
 </config>
 EOF
-            , array('datasources' => array(
-                'bookstore' => array(
+            , ['datasources' => [
+                'bookstore' => [
                     'adapter' => 'mysql',
-                    'connection' => array('dsn' => 'mysql:host=localhost;dbname=bookstore'),
-                    'slaves' => array(
-                        'connection' => array(
-                            array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
-                            array('dsn' => 'mysql:host=slave-server2; dbname=bookstore'),
-                        ),
-                    ),
-                ),
+                    'connection' => ['dsn' => 'mysql:host=localhost;dbname=bookstore'],
+                    'slaves' => [
+                        'connection' => [
+                            ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
+                            ['dsn' => 'mysql:host=slave-server2; dbname=bookstore'],
+                        ],
+                    ],
+                ],
                 'default' => 'bookstore',
-            ))
-            ),
-            array(<<<EOF
+            ]]
+            ],
+            [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -275,17 +275,17 @@ EOF
   </datasources>
 </config>
 EOF
-            , array('datasources' => array(
-                'bookstore' => array(
+            , ['datasources' => [
+                'bookstore' => [
                     'adapter' => 'mysql',
-                    'connection' => array(
+                    'connection' => [
                         'dsn' => 'mysql:host=localhost;dbname=bookstore',
-                    ),
-                ),
+                    ],
+                ],
                 'default' => 'bookstore',
-            ))
-            ),
-            array(<<<EOF
+            ]]
+            ],
+            [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <profiler class="\Runtime\Runtime\Util\Profiler">
@@ -299,17 +299,17 @@ EOF
   </profiler>
  </config>
 EOF
-            , array('profiler' => array(
+            , ['profiler' => [
                 'class' => '\Runtime\Runtime\Util\Profiler',
                 'slowTreshold' => 0.2,
-                'details' => array(
-                    'time' => array('name' => 'Time', 'precision' => 3, 'pad' => '8'),
-                    'mem' => array('name' => 'Memory', 'precision' => 3, 'pad' => '8'),
-                ),
+                'details' => [
+                    'time' => ['name' => 'Time', 'precision' => 3, 'pad' => '8'],
+                    'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => '8'],
+                ],
                 'innerGlue' => ': ',
                 'outerGlue' => ' | '
-            ))
-            )
-        );
+            ]]
+            ]
+        ];
     }
 }

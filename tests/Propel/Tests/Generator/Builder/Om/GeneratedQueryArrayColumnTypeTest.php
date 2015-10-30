@@ -38,13 +38,13 @@ EOF;
             $e0 = new \ComplexColumnTypeEntity11();
             $e0->save();
             $e1 = new \ComplexColumnTypeEntity11();
-            $e1->setTags(array('foo', 'bar', 'baz'));
+            $e1->setTags(['foo', 'bar', 'baz']);
             $e1->save();
             $e2 = new \ComplexColumnTypeEntity11();
-            $e2->setTags(array('bar'));
+            $e2->setTags(['bar']);
             $e2->save();
             $e3 = new \ComplexColumnTypeEntity11();
-            $e3->setTags(array('bar23'));
+            $e3->setTags(['bar23']);
             $e3->save();
         }
     }
@@ -60,7 +60,7 @@ EOF;
     public function testColumnHydration()
     {
         $e = \ComplexColumnTypeEntity11Query::create()->orderById()->offset(1)->findOne();
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e->getTags(), 'array columns are correctly hydrated');
+        $this->assertEquals(['foo', 'bar', 'baz'], $e->getTags(), 'array columns are correctly hydrated');
     }
 
     public function testWhere()
@@ -69,54 +69,54 @@ EOF;
             ->where('ComplexColumnTypeEntity11.Tags LIKE ?', '%| bar23 |%')
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array('bar23'), $e[0]->getTags(), 'array columns are searchable by serialized object using where()');
+        $this->assertEquals(['bar23'], $e[0]->getTags(), 'array columns are searchable by serialized object using where()');
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->where('ComplexColumnTypeEntity11.Tags = ?', array('bar23'))
+            ->where('ComplexColumnTypeEntity11.Tags = ?', ['bar23'])
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array('bar23'), $e[0]->getTags(), 'array columns are searchable by object using where()');
+        $this->assertEquals(['bar23'], $e[0]->getTags(), 'array columns are searchable by object using where()');
     }
 
     public function testFilterByColumn()
     {
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar'))
+            ->filterByTags(['bar'])
             ->orderById()
             ->find();
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags(), 'array columns are searchable by element');
-        $this->assertEquals(array('bar'), $e[1]->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['bar'], $e[1]->getTags(), 'array columns are searchable by element');
         $this->assertEquals(2, $e->count(), 'array columns do not return false positives');
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar23'))
+            ->filterByTags(['bar23'])
             ->findOne();
-        $this->assertEquals(array('bar23'), $e->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['bar23'], $e->getTags(), 'array columns are searchable by element');
     }
 
     public function testFilterByColumnUsingContainsAll()
     {
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array(), Criteria::CONTAINS_ALL)
+            ->filterByTags([], Criteria::CONTAINS_ALL)
             ->find();
         $this->assertEquals(4, $e->count());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar'), Criteria::CONTAINS_ALL)
+            ->filterByTags(['bar'], Criteria::CONTAINS_ALL)
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags());
-        $this->assertEquals(array('bar'), $e[1]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags());
+        $this->assertEquals(['bar'], $e[1]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar23'), Criteria::CONTAINS_ALL)
+            ->filterByTags(['bar23'], Criteria::CONTAINS_ALL)
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array('bar23'), $e[0]->getTags());
+        $this->assertEquals(['bar23'], $e[0]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar'), Criteria::CONTAINS_ALL)
+            ->filterByTags(['foo', 'bar'], Criteria::CONTAINS_ALL)
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar23'), Criteria::CONTAINS_ALL)
+            ->filterByTags(['foo', 'bar23'], Criteria::CONTAINS_ALL)
             ->find();
         $this->assertEquals(0, $e->count());
     }
@@ -124,70 +124,70 @@ EOF;
     public function testFilterByColumnUsingContainsSome()
     {
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array(), Criteria::CONTAINS_SOME)
+            ->filterByTags([], Criteria::CONTAINS_SOME)
             ->find();
         $this->assertEquals(4, $e->count());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar'), Criteria::CONTAINS_SOME)
+            ->filterByTags(['bar'], Criteria::CONTAINS_SOME)
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags());
-        $this->assertEquals(array('bar'), $e[1]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags());
+        $this->assertEquals(['bar'], $e[1]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar23'), Criteria::CONTAINS_SOME)
+            ->filterByTags(['bar23'], Criteria::CONTAINS_SOME)
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array('bar23'), $e[0]->getTags());
+        $this->assertEquals(['bar23'], $e[0]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar'), Criteria::CONTAINS_SOME)
+            ->filterByTags(['foo', 'bar'], Criteria::CONTAINS_SOME)
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags());
-        $this->assertEquals(array('bar'), $e[1]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags());
+        $this->assertEquals(['bar'], $e[1]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar23'), Criteria::CONTAINS_SOME)
+            ->filterByTags(['foo', 'bar23'], Criteria::CONTAINS_SOME)
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags());
-        $this->assertEquals(array('bar23'), $e[1]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags());
+        $this->assertEquals(['bar23'], $e[1]->getTags());
     }
 
     public function testFilterByColumnUsingContainsNone()
     {
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array(), Criteria::CONTAINS_NONE)
+            ->filterByTags([], Criteria::CONTAINS_NONE)
             ->find();
         $this->assertEquals(1, $e->count());
-        $this->assertEquals(array(), $e[0]->getTags());
+        $this->assertEquals([], $e[0]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar'), Criteria::CONTAINS_NONE)
+            ->filterByTags(['bar'], Criteria::CONTAINS_NONE)
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array(), $e[0]->getTags());
-        $this->assertEquals(array('bar23'), $e[1]->getTags());
+        $this->assertEquals([], $e[0]->getTags());
+        $this->assertEquals(['bar23'], $e[1]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('bar23'), Criteria::CONTAINS_NONE)
+            ->filterByTags(['bar23'], Criteria::CONTAINS_NONE)
             ->find();
         $this->assertEquals(3, $e->count());
-        $this->assertEquals(array(), $e[0]->getTags());
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[1]->getTags());
-        $this->assertEquals(array('bar'), $e[2]->getTags());
+        $this->assertEquals([], $e[0]->getTags());
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[1]->getTags());
+        $this->assertEquals(['bar'], $e[2]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar'), Criteria::CONTAINS_NONE)
+            ->filterByTags(['foo', 'bar'], Criteria::CONTAINS_NONE)
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array(), $e[0]->getTags());
-        $this->assertEquals(array('bar23'), $e[1]->getTags());
+        $this->assertEquals([], $e[0]->getTags());
+        $this->assertEquals(['bar23'], $e[1]->getTags());
         $e = \ComplexColumnTypeEntity11Query::create()
-            ->filterByTags(array('foo', 'bar23'), Criteria::CONTAINS_NONE)
+            ->filterByTags(['foo', 'bar23'], Criteria::CONTAINS_NONE)
             ->find();
         $this->assertEquals(2, $e->count());
-        $this->assertEquals(array(), $e[0]->getTags());
-        $this->assertEquals(array('bar'), $e[1]->getTags());
+        $this->assertEquals([], $e[0]->getTags());
+        $this->assertEquals(['bar'], $e[1]->getTags());
     }
 
     public function testFilterBySingularColumn()
@@ -196,13 +196,13 @@ EOF;
             ->filterByTag('bar')
             ->orderById()
             ->find();
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags(), 'array columns are searchable by element');
-        $this->assertEquals(array('bar'), $e[1]->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['bar'], $e[1]->getTags(), 'array columns are searchable by element');
         $this->assertEquals(2, $e->count(), 'array columns do not return false positives');
         $e = \ComplexColumnTypeEntity11Query::create()
             ->filterByTag('bar23')
             ->findOne();
-        $this->assertEquals(array('bar23'), $e->getTags(), 'array columns are searchable by element');
+        $this->assertEquals(['bar23'], $e->getTags(), 'array columns are searchable by element');
     }
 
     public function testFilterBySingularColumnUsingContainsAll()
@@ -212,8 +212,8 @@ EOF;
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
-        $this->assertEquals(array('foo', 'bar', 'baz'), $e[0]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
-        $this->assertEquals(array('bar'), $e[1]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
+        $this->assertEquals(['foo', 'bar', 'baz'], $e[0]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
+        $this->assertEquals(['bar'], $e[1]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_ALL');
     }
 
     public function testFilterBySingularColumnUsingContainsNone()
@@ -223,7 +223,7 @@ EOF;
             ->orderById()
             ->find();
         $this->assertEquals(2, $e->count(), 'array columns are searchable by element using Criteria::CONTAINS_NONE');
-        $this->assertEquals(array(), $e[0]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_NONE');
-        $this->assertEquals(array('bar23'), $e[1]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_NONE');
+        $this->assertEquals([], $e[0]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_NONE');
+        $this->assertEquals(['bar23'], $e[1]->getTags(), 'array columns are searchable by element using Criteria::CONTAINS_NONE');
     }
 }

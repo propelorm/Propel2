@@ -185,10 +185,10 @@ EOF;
 
     public function providerForNewActiveRecordTests()
     {
-        return array(
-            array('\VersionableBehaviorTest1'),
-            array('VersionableBehaviorTest2'),
-        );
+        return [
+            ['\VersionableBehaviorTest1'],
+            ['VersionableBehaviorTest2'],
+        ];
     }
 
     /**
@@ -750,18 +750,18 @@ EOF;
         $o->setVersionComment('Foo');
         $o->save();
         $diff = $o->compareVersion(3); // $o is in version 3
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $diff);
         $diff = $o->compareVersion(2);
-        $expected = array(
-            'Bar' => array(2 => 456, 3 => 789),
-        );
+        $expected = [
+            'Bar' => [2 => 456, 3 => 789],
+        ];
         $this->assertEquals($expected, $diff);
 
         $diff = $o->compareVersion(1);
-        $expected = array(
-            'Bar' => array(1 => 123, 3 => 789),
-        );
+        $expected = [
+            'Bar' => [1 => 123, 3 => 789],
+        ];
         $this->assertEquals($expected, $diff);
     }
 
@@ -778,15 +778,15 @@ EOF;
         $o->setVersionComment('Foo');
         $o->save();
         $diff = $o->compareVersions(1, 3);
-        $expected = array(
-            'Bar' => array(1 => 123, 3 => 789)
-        );
+        $expected = [
+            'Bar' => [1 => 123, 3 => 789]
+        ];
         $this->assertEquals($expected, $diff);
         $diff = $o->compareVersions(1, 3, 'versions');
-        $expected = array(
-            1 => array('Bar' => 123),
-            3 => array('Bar' => 789)
-        );
+        $expected = [
+            1 => ['Bar' => 123],
+            3 => ['Bar' => 789]
+        ];
         $this->assertEquals($expected, $diff);
     }
 
@@ -822,11 +822,11 @@ EOF;
         $a->addVersionableBehaviorTest5($b2);
         $a->save(); //b1
         $this->assertEquals(1, $a->getVersion());
-        $this->assertEquals(array(1, 1), $a->getOneVersion(1)->getVersionableBehaviorTest5Versions());
+        $this->assertEquals([1, 1], $a->getOneVersion(1)->getVersionableBehaviorTest5Versions());
         $b1->setFoo('Heloo');
         $a->save();
         $this->assertEquals(2, $a->getVersion());
-        $this->assertEquals(array(2, 1), $a->getOneVersion(2)->getVersionableBehaviorTest5Versions());
+        $this->assertEquals([2, 1], $a->getOneVersion(2)->getVersionableBehaviorTest5Versions());
         $b3 = new \VersionableBehaviorTest5();
         $b3->setFoo('Yep');
         $a->clearVersionableBehaviorTest5s();
@@ -834,7 +834,7 @@ EOF;
         $a->save();
         $a->clearVersionableBehaviorTest5s();
         $this->assertEquals(3, $a->getVersion());
-        $this->assertEquals(array(2, 1, 1), $a->getOneVersion(3)->getVersionableBehaviorTest5Versions());
+        $this->assertEquals([2, 1, 1], $a->getOneVersion(3)->getVersionableBehaviorTest5Versions());
     }
 
     public function testEnumField()

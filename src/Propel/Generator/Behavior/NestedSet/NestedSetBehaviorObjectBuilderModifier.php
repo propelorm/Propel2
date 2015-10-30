@@ -301,10 +301,10 @@ public function getScopeValue()
 
     protected function addSetLeft()
     {
-        return $this->behavior->renderTemplate('objectSetLeft', array(
+        return $this->behavior->renderTemplate('objectSetLeft', [
             'objectClassName'   => $this->builder->getObjectClassName(),
             'leftColumn'        => $this->getColumnPhpName('left_column'),
-        ));
+        ]);
     }
 
     protected function addSetRight(&$script)
@@ -1062,11 +1062,11 @@ public function insertAsFirstChildOf($objectClassName \$parent)
 
     protected function addInsertAsLastChildOf()
     {
-        return $this->behavior->renderTemplate('objectInsertAsLastChildOf', array(
+        return $this->behavior->renderTemplate('objectInsertAsLastChildOf', [
             'objectClassName' => $this->builder->getObjectClassName(),
             'queryClassName'  => $this->builder->getQueryClassName(true),
             'useScope'        => $this->behavior->useScope(),
-        ));
+        ]);
     }
 
     protected function addInsertAsPrevSiblingOf(&$script)

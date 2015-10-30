@@ -791,7 +791,7 @@ class ForeignKey extends MappingModel
             $foreignPKCols[] = $fPKCol->getName();
         }
 
-        $foreignCols = array ();
+        $foreignCols = [];
         foreach ($this->localColumns as $idx => $colName) {
             if ($this->foreignColumns[$idx]) {
                 $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();

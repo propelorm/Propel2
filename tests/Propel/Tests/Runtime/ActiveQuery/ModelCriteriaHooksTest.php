@@ -114,7 +114,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
     {
         $c = new ModelCriteriaWithPreUpdateHook('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'Don Juan');
-        $nbBooks = $c->update(array('Title' => 'foo'));
+        $nbBooks = $c->update(['Title' => 'foo']);
 
         $c = new ModelCriteriaWithPreUpdateHook('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'foo');
@@ -129,7 +129,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 
         $c = new ModelCriteriaWithPostUpdateHook('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'Don Juan');
-        $nbBooks = $c->update(array('Title' => 'foo'), $this->con);
+        $nbBooks = $c->update(['Title' => 'foo'], $this->con);
         $this->assertEquals(1, $this->con->lastAffectedRows, 'postUpdate() is called after update()');
     }
 
@@ -139,7 +139,7 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 
         $c = new ModelCriteriaWithPreAndPostUpdateHook('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'Don Juan');
-        $nbBooks = $c->update(array('Title' => 'foo'), $this->con);
+        $nbBooks = $c->update(['Title' => 'foo'], $this->con);
         $this->assertEquals(52, $this->con->lastAffectedRows, 'postUpdate() is called after update() even if preUpdate() returns not null');
     }
 }

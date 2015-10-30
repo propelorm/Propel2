@@ -24,88 +24,88 @@ class FileLoaderTest extends TestCase
 
     public function resolveParamsProvider()
     {
-        return array(
-            array(
-                array('foo'),
-                array('foo'),
+        return [
+            [
+                ['foo'],
+                ['foo'],
                 '->resolve() returns its argument unmodified if no placeholders are found'
-            ),
-            array(
-                array('foo' => 'bar', 'I\'m a %foo%'),
-                array('foo' => 'bar', 'I\'m a bar'),
+            ],
+            [
+                ['foo' => 'bar', 'I\'m a %foo%'],
+                ['foo' => 'bar', 'I\'m a bar'],
                 '->resolve() replaces placeholders by their values'
-            ),
-            array(
-                array('foo' => 'bar', '%foo%' => '%foo%'),
-                array('foo' => 'bar', 'bar' => 'bar'),
+            ],
+            [
+                ['foo' => 'bar', '%foo%' => '%foo%'],
+                ['foo' => 'bar', 'bar' => 'bar'],
                 '->resolve() replaces placeholders in keys and values of arrays'
-            ),
-            array(
-                array('foo' => 'bar', '%foo%' => array('%foo%' => array('%foo%' => '%foo%'))),
-                array('foo' => 'bar', 'bar' => array('bar' => array('bar' => 'bar'))),
+            ],
+            [
+                ['foo' => 'bar', '%foo%' => ['%foo%' => ['%foo%' => '%foo%']]],
+                ['foo' => 'bar', 'bar' => ['bar' => ['bar' => 'bar']]],
                 '->resolve() replaces placeholders in nested arrays'
-            ),
-            array(
-                array('foo' => 'bar', 'I\'m a %%foo%%'),
-                array('foo' => 'bar', 'I\'m a %foo%'),
+            ],
+            [
+                ['foo' => 'bar', 'I\'m a %%foo%%'],
+                ['foo' => 'bar', 'I\'m a %foo%'],
                 '->resolve() supports % escaping by doubling it'
-            ),
-            array(
-                array('foo' => 'bar', 'I\'m a %foo% %%foo %foo%'),
-                array('foo' => 'bar', 'I\'m a bar %foo bar'),
+            ],
+            [
+                ['foo' => 'bar', 'I\'m a %foo% %%foo %foo%'],
+                ['foo' => 'bar', 'I\'m a bar %foo bar'],
                 '->resolve() supports % escaping by doubling it'
-            ),
-            array(
-                array('foo'=>'bar', 'foo' => array('bar' => array('ding' => 'I\'m a bar %%foo %%bar'))),
-                array('foo'=>'bar', 'foo' => array('bar' => array('ding' => 'I\'m a bar %foo %bar'))),
+            ],
+            [
+                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %%foo %%bar']]],
+                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %foo %bar']]],
                 '->resolve() supports % escaping by doubling it'
-            ),
-            array(
-                array('foo' => 'bar', 'baz' => '%%%foo% %foo%%% %%foo%% %%%foo%%%'),
-                array('foo' => 'bar', 'baz' => '%bar bar% %foo% %bar%'),
+            ],
+            [
+                ['foo' => 'bar', 'baz' => '%%%foo% %foo%%% %%foo%% %%%foo%%%'],
+                ['foo' => 'bar', 'baz' => '%bar bar% %foo% %bar%'],
                 '->resolve() replaces params placed besides escaped %'
-            ),
-            array(
-                array('baz' => '%%s?%%s', '%baz%'),
-                array('baz' => '%s?%s', '%s?%s'),
+            ],
+            [
+                ['baz' => '%%s?%%s', '%baz%'],
+                ['baz' => '%s?%s', '%s?%s'],
                 '->resolve() is not replacing greedily'
-            ),
-            array(
-                array('host' => 'foo.bar', 'port' => 1337, '%host%:%port%'),
-                array('host' => 'foo.bar', 'port' => 1337, 'foo.bar:1337'),
+            ],
+            [
+                ['host' => 'foo.bar', 'port' => 1337, '%host%:%port%'],
+                ['host' => 'foo.bar', 'port' => 1337, 'foo.bar:1337'],
                 ''
-            ),
-            array(
-                array('foo' => 'bar', '%foo%'),
-                array('foo' => 'bar', 'bar'),
+            ],
+            [
+                ['foo' => 'bar', '%foo%'],
+                ['foo' => 'bar', 'bar'],
                 'Parameters must be wrapped by %.'
-            ),
-            array(
-                array('foo' => 'bar', '% foo %'),
-                array('foo' => 'bar', '% foo %'),
+            ],
+            [
+                ['foo' => 'bar', '% foo %'],
+                ['foo' => 'bar', '% foo %'],
                 'Parameters should not have spaces.'
-            ),
-            array(
-                array('foo' => 'bar', '{% set my_template = "foo" %}'),
-                array('foo' => 'bar', '{% set my_template = "foo" %}'),
+            ],
+            [
+                ['foo' => 'bar', '{% set my_template = "foo" %}'],
+                ['foo' => 'bar', '{% set my_template = "foo" %}'],
                 'Twig-like strings are not parameters.'
-            ),
-            array(
-                array('foo' => 'bar', '50% is less than 100%'),
-                array('foo' => 'bar', '50% is less than 100%'),
+            ],
+            [
+                ['foo' => 'bar', '50% is less than 100%'],
+                ['foo' => 'bar', '50% is less than 100%'],
                 'Text between % signs is allowed, if there are spaces.'
-            ),
-            array(
-                array('foo' => array('bar' => 'baz', '%bar%' => 'babar'), 'babaz' => '%foo%'),
-                array('foo' => array('bar' => 'baz', 'baz' => 'babar'), 'babaz' => array('bar' => 'baz', 'baz' => 'babar')),
+            ],
+            [
+                ['foo' => ['bar' => 'baz', '%bar%' => 'babar'], 'babaz' => '%foo%'],
+                ['foo' => ['bar' => 'baz', 'baz' => 'babar'], 'babaz' => ['bar' => 'baz', 'baz' => 'babar']],
                 ''
-            ),
-            array(
-                array('foo' => array('bar' => 'baz'), 'babaz' => '%foo%'),
-                array('foo' => array('bar' => 'baz'), 'babaz' => array('bar' => 'baz')),
+            ],
+            [
+                ['foo' => ['bar' => 'baz'], 'babaz' => '%foo%'],
+                ['foo' => ['bar' => 'baz'], 'babaz' => ['bar' => 'baz']],
                 ''
-            )
-        );
+            ]
+        ];
     }
 
     public function testInitialResolveValueIsFalse()
@@ -118,41 +118,41 @@ class FileLoaderTest extends TestCase
         putenv('host=127.0.0.1');
         putenv('user=root');
 
-        $config = array(
+        $config = [
             'HoMe' => 'myHome',
             'project' => 'myProject',
             'subhome' => '%HoMe%/subhome',
             'property1' => 1,
             'property2' => false,
-            'direcories' => array(
+            'direcories' => [
                 'project' => '%HoMe%/projects/%project%',
                 'conf' => '%project%',
                 'schema' => '%project%/schema',
                 'template' => '%HoMe%/templates',
                 'output%project%' => '/build'
-            ),
+            ],
             '%HoMe%' => 4,
             'host' => '%env.host%',
             'user' => '%env.user%'
-        );
+        ];
 
-        $expected = array(
+        $expected = [
             'HoMe' => 'myHome',
             'project' => 'myProject',
             'subhome' => 'myHome/subhome',
             'property1' => 1,
             'property2' => false,
-            'direcories' => array(
+            'direcories' => [
                 'project' => 'myHome/projects/myProject',
                 'conf' => 'myProject',
                 'schema' => 'myProject/schema',
                 'template' => 'myHome/templates',
                 'outputmyProject' => '/build'
-            ),
+            ],
             'myHome' => 4,
             'host' => '127.0.0.1',
             'user' => 'root'
-        );
+        ];
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
 
@@ -172,7 +172,7 @@ class FileLoaderTest extends TestCase
 
     public function testResolveReplaceWithoutCasting()
     {
-        $conf = $this->loader->resolveParams(array('foo'=>true, 'expfoo' => '%foo%', 'bar' => null, 'expbar' => '%bar%'));
+        $conf = $this->loader->resolveParams(['foo'=>true, 'expfoo' => '%foo%', 'bar' => null, 'expbar' => '%bar%']);
 
         $this->assertTrue($conf['expfoo'], '->resolve() replaces arguments that are just a placeholder by their value without casting them to strings');
         $this->assertNull($conf['expbar'], '->resolve() replaces arguments that are just a placeholder by their value without casting them to strings');
@@ -184,7 +184,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsExceptionIfInvalidPlaceholder()
     {
-        $this->loader->resolveParams(array('foo' => 'bar', '%baz%'));
+        $this->loader->resolveParams(['foo' => 'bar', '%baz%']);
     }
 
     /**
@@ -193,7 +193,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsExceptionIfNonExistentParameter()
     {
-        $this->loader->resolveParams(array('foo %foobar% bar'));
+        $this->loader->resolveParams(['foo %foobar% bar']);
     }
 
     /**
@@ -202,7 +202,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReference()
     {
-        $this->loader->resolveParams(array('foo' => '%bar%', 'bar' => '%foobar%', 'foobar' => '%foo%'));
+        $this->loader->resolveParams(['foo' => '%bar%', 'bar' => '%foobar%', 'foobar' => '%foo%']);
     }
 
     /**
@@ -211,7 +211,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReferenceMixed()
     {
-        $this->loader->resolveParams(array('foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%'));
+        $this->loader->resolveParams(['foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%']);
     }
 
     public function testResolveEnvironmentVariable()
@@ -221,29 +221,29 @@ class FileLoaderTest extends TestCase
         putenv('isBoolean=true');
         putenv('integer=1');
 
-        $config = array(
+        $config = [
             'home' => '%env.home%',
             'property1' => '%env.integer%',
             'property2' => '%env.isBoolean%',
-            'direcories' => array(
+            'direcories' => [
                 'projects' => '%home%/projects',
                 'schema' => '%env.schema%',
                 'template' => '%home%/templates',
                 'output%env.home%' => '/build'
-            )
-        );
+            ]
+        ];
 
-        $expected = array(
+        $expected = [
             'home' => 'myHome',
             'property1' => '1',
             'property2' => 'true',
-            'direcories' => array(
+            'direcories' => [
                 'projects' => 'myHome/projects',
                 'schema' => 'mySchema',
                 'template' => 'myHome/templates',
                 'outputmyHome' => '/build'
-            )
-        );
+            ]
+        ];
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
 
@@ -257,7 +257,7 @@ class FileLoaderTest extends TestCase
     public function testResourceNameIsNotStringReturnsFalse()
     {
         $this->assertFalse($this->loader->checkSupports('ini', null));
-        $this->assertFalse($this->loader->checkSupports('yaml', array('foo',  'bar')));
+        $this->assertFalse($this->loader->checkSupports('yaml', ['foo',  'bar']));
     }
 
     public function testExtensionIsNotStringOrArrayReturnsFalse()
@@ -274,10 +274,10 @@ class FileLoaderTest extends TestCase
     {
         putenv('home=myHome');
 
-        $config = array(
+        $config = [
             'home' => '%env.home%',
             'property1' => '%env.foo%',
-        );
+        ];
 
         $this->loader->resolveParams($config);
     }
@@ -288,23 +288,23 @@ class FileLoaderTest extends TestCase
      */
     public function testParameterIsNotStringOrNumber()
     {
-        $config = array(
+        $config = [
             'foo' => 'a %bar%',
-            'bar' => array(),
+            'bar' => [],
             'baz' => '%foo%'
-        );
+        ];
 
         $this->loader->resolveParams($config);
     }
 
     public function testCallResolveParamTwiceReturnNull()
     {
-        $config = array(
+        $config = [
             'foo' => 'bar',
             'baz' => '%foo%'
-        );
+        ];
 
-        $this->assertEquals(array('foo' => 'bar', 'baz' => 'bar'), $this->loader->resolveParams($config));
+        $this->assertEquals(['foo' => 'bar', 'baz' => 'bar'], $this->loader->resolveParams($config));
         $this->assertNull($this->loader->resolveParams($config));
     }
 }

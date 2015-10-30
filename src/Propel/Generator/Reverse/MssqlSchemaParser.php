@@ -32,7 +32,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * Map MSSQL native types to Propel types.
      * @var array
      */
-    private static $mssqlTypeMap = array(
+    private static $mssqlTypeMap = [
         'binary'             => PropelTypes::BINARY,
         'bit'                => PropelTypes::BOOLEAN,
         'char'               => PropelTypes::CHAR,
@@ -70,7 +70,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'bigint identity'    => PropelTypes::BIGINT,
         'bigint'             => PropelTypes::BIGINT,
         'sql_variant'        => PropelTypes::VARCHAR,
-    );
+    ];
 
     /**
      * @see AbstractSchemaParser::getTypeMapping()
@@ -80,12 +80,12 @@ class MssqlSchemaParser extends AbstractSchemaParser
         return self::$mssqlTypeMap;
     }
 
-    public function parse(Database $database, array $additionalTables = array())
+    public function parse(Database $database, array $additionalTables = [])
     {
         $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
 
         // First load the tables (important that this happen before filling out details of tables)
-        $tables = array();
+        $tables = [];
         foreach ($dataFetcher as $row) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
             if ($name === $this->getMigrationTable()) {
@@ -174,7 +174,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
          where fk.parent_object_id = OBJECT_ID('".$table->getName()."')");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
-        $foreignKeys = array(); // local store to avoid duplicates
+        $foreignKeys = []; // local store to avoid duplicates
         foreach ($dataFetcher as $row) {
 
             $name = $this->cleanDelimitedIdentifiers($row['CONSTRAINT_NAME']);
@@ -208,7 +208,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
-        $indexes = array();
+        $indexes = [];
         foreach ($dataFetcher as $row) {
             $colName = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $name = $this->cleanDelimitedIdentifiers($row['INDEX_NAME']);

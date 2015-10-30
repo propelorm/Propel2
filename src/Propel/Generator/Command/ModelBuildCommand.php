@@ -47,7 +47,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE, 'Disable namespace auto-packaging')
             ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED, 'Directory in which your composer.json resides', null)
             ->setName('model:build')
-            ->setAliases(array('build'))
+            ->setAliases(['build'])
             ->setDescription('Build the model classes based on Propel XML schemas')
         ;
     }
@@ -57,7 +57,7 @@ class ModelBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configOptions = array();
+        $configOptions = [];
         $inputOptions = $input->getOptions();
 
         foreach ($inputOptions as $key => $option) {

@@ -79,7 +79,7 @@ EOF;
 
         $actual = $this->loader->load('empty.ini');
 
-        $this->assertEquals(array(), $actual);
+        $this->assertEquals([], $actual);
     }
 
     public function testWithSections()
@@ -190,7 +190,7 @@ foo = bar
 EOF;
         $this->dumpTempFile('parameters.ini', $content);
 
-        $this->assertEquals(array('0' => array('foo' => 'bar', 'babar' => 'baz')), $this->loader->load('parameters.ini'));
+        $this->assertEquals(['0' => ['foo' => 'bar', 'babar' => 'baz']], $this->loader->load('parameters.ini'));
     }
 
     /**

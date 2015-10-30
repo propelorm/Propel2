@@ -88,7 +88,7 @@ class ColumnMap
      *
      * @var array
      */
-    protected $valueSet = array();
+    protected $valueSet = [];
 
     /**
      * Is this a primaryString column?
@@ -206,11 +206,11 @@ class ColumnMap
      */
     public function isLob()
     {
-        return in_array($this->type, array(
+        return in_array($this->type, [
             PropelTypes::BLOB,
             PropelTypes::VARBINARY,
             PropelTypes::LONGVARBINARY,
-        ));
+        ]);
     }
 
     /**
@@ -220,13 +220,13 @@ class ColumnMap
      */
     public function isTemporal()
     {
-        return in_array($this->type, array(
+        return in_array($this->type, [
             PropelTypes::TIMESTAMP,
             PropelTypes::DATE,
             PropelTypes::TIME,
             PropelTypes::BU_DATE,
             PropelTypes::BU_TIMESTAMP,
-        ));
+        ]);
     }
 
     /**
@@ -236,7 +236,7 @@ class ColumnMap
      */
     public function isNumeric()
     {
-        return in_array($this->type, array(
+        return in_array($this->type, [
             PropelTypes::NUMERIC,
             PropelTypes::DECIMAL,
             PropelTypes::TINYINT,
@@ -246,7 +246,7 @@ class ColumnMap
             PropelTypes::REAL,
             PropelTypes::FLOAT,
             PropelTypes::DOUBLE,
-        ));
+        ]);
     }
 
     /**
@@ -256,11 +256,11 @@ class ColumnMap
      */
     public function isText()
     {
-        return in_array($this->type, array(
+        return in_array($this->type, [
             PropelTypes::VARCHAR,
             PropelTypes::LONGVARCHAR,
             PropelTypes::CHAR,
-        ));
+        ]);
     }
 
     /**

@@ -148,7 +148,7 @@ class TestCase extends TestCaseFixturesDatabase
     protected function getFixturesArray()
     {
         $ts = SortableTable11Query::create()->orderByRank()->find();
-        $ret = array();
+        $ret = [];
         foreach ($ts as $t) {
             $ret[$t->getRank()] = $t->getTitle();
         }
@@ -161,7 +161,7 @@ class TestCase extends TestCaseFixturesDatabase
         $c = new Criteria();
         $c->add(SortableTable12TableMap::SCOPE_COL, $scope);
         $ts  = SortableTable12Query::create(null, $c)->orderByPosition()->find();
-        $ret = array();
+        $ret = [];
 
         foreach ($ts as $t) {
             $ret[$t->getRank()] = $t->getTitle();

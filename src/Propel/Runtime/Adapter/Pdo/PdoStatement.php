@@ -68,7 +68,7 @@ class PdoStatement extends BasePdoStatement implements StatementInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      */
-    public function fetchAll($fetch_style = null, $fetch_argument = null, $ctor_args = array())
+    public function fetchAll($fetch_style = null, $fetch_argument = null, $ctor_args = [])
     {
         switch (func_num_args()) {
         case 0:

@@ -20,11 +20,11 @@ use Propel\Generator\Model\Behavior;
 class AutoAddPkBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'name'          => 'id',
         'autoIncrement' => 'true',
         'type'          => 'INTEGER'
-    );
+    ];
 
     /**
      * Copy the behavior to the database tables
@@ -47,7 +47,7 @@ class AutoAddPkBehavior extends Behavior
     {
         $table = $this->getTable();
         if (!$table->hasPrimaryKey() && !$table->hasBehavior('concrete_inheritance')) {
-            $columnAttributes = array_merge(array('primaryKey' => 'true'), $this->getParameters());
+            $columnAttributes = array_merge(['primaryKey' => 'true'], $this->getParameters());
             $this->getTable()->addColumn($columnAttributes);
         }
     }

@@ -94,10 +94,10 @@ class ArchivableBehaviorObjectBuilderModifier
     public function preDelete($builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
-            return $this->behavior->renderTemplate('objectPreDelete', array(
+            return $this->behavior->renderTemplate('objectPreDelete', [
                 'queryClassName' => $builder->getQueryClassName(),
                 'isAddHooks'     => $builder->getGeneratorConfig()->get()['generator']['objectModel']['addHooks'],
-            ));
+            ]);
         }
     }
 
@@ -127,10 +127,10 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addGetArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectGetArchive', array(
+        return $this->behavior->renderTemplate('objectGetArchive', [
             'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
             'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
-        ));
+        ]);
     }
 
     /**
@@ -138,12 +138,12 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectArchive', array(
+        return $this->behavior->renderTemplate('objectArchive', [
             'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
             'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
             'archivedAtColumn'      => $this->behavior->getArchivedAtColumn(),
             'hasArchiveClass'       => $this->behavior->hasArchiveClass()
-        ));
+        ]);
     }
 
     /**
@@ -152,9 +152,9 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addRestoreFromArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectRestoreFromArchive', array(
+        return $this->behavior->renderTemplate('objectRestoreFromArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),
-        ));
+        ]);
     }
 
     /**
@@ -166,12 +166,12 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addPopulateFromArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectPopulateFromArchive', array(
+        return $this->behavior->renderTemplate('objectPopulateFromArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'usesAutoIncrement'   => $this->table->hasAutoIncrementPrimaryKey(),
             'objectClassName'     => $this->builder->getObjectClassName(),
             'columns'             => $this->table->getColumns(),
-        ));
+        ]);
     }
 
     /**
@@ -179,11 +179,11 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addSaveWithoutArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectSaveWithoutArchive', array(
+        return $this->behavior->renderTemplate('objectSaveWithoutArchive', [
             'objectClassName'   => $this->builder->getObjectClassName(),
             'isArchiveOnInsert' => $this->behavior->isArchiveOnInsert(),
             'isArchiveOnUpdate' => $this->behavior->isArchiveOnUpdate(),
-        ));
+        ]);
     }
 
     /**
@@ -191,8 +191,8 @@ class ArchivableBehaviorObjectBuilderModifier
      */
     public function addDeleteWithoutArchive($builder)
     {
-        return $this->behavior->renderTemplate('objectDeleteWithoutArchive', array(
+        return $this->behavior->renderTemplate('objectDeleteWithoutArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),
-        ));
+        ]);
     }
 }

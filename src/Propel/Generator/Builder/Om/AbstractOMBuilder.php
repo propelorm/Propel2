@@ -37,21 +37,21 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @var array
      */
-    protected $declaredClasses = array();
+    protected $declaredClasses = [];
 
     /**
      * Mapping between fully qualified classnames and their short classname or alias
      *
      * @var array
      */
-    protected $declaredShortClassesOrAlias = array();
+    protected $declaredShortClassesOrAlias = [];
 
     /**
      * List of classes that can be use without alias when model don't have namespace
      *
      * @var array
      */
-    protected $whiteListOfDeclaredClasses = array('PDO', 'Exception', 'DateTime');
+    protected $whiteListOfDeclaredClasses = ['PDO', 'Exception', 'DateTime'];
 
     /**
      * Builds the PHP source for current class and returns it as a string.
@@ -302,7 +302,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         if (!$forcedAlias && !isset($this->declaredShortClassesOrAlias[$aliasWanted])) {
             if (!isset($this->declaredClasses[$namespace])) {
-                $this->declaredClasses[$namespace] = array();
+                $this->declaredClasses[$namespace] = [];
             }
 
             $this->declaredClasses[$namespace][$class] = $aliasWanted;
@@ -353,7 +353,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         if (empty($namespace) && 'Base' === $this->getNamespace()) {
-            if (str_replace(array('Query'), '', $class) == str_replace(array('Query'), '', $this->getUnqualifiedClassName())) {
+            if (str_replace(['Query'], '', $class) == str_replace(['Query'], '', $this->getUnqualifiedClassName())) {
                 return true;
             }
 
@@ -989,7 +989,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param  string $templateDir
      * @return string
      */
-    public function renderTemplate($filename, $vars = array(), $templateDir = '/templates/')
+    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
     {
         $filePath = __DIR__ . $templateDir . $filename;
         if (!file_exists($filePath)) {
@@ -1001,7 +1001,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, array('behavior' => $this));
+        $vars = array_merge($vars, ['behavior' => $this]);
 
         return $template->render($vars);
     }

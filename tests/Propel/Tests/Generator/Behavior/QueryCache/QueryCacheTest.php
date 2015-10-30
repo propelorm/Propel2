@@ -58,7 +58,7 @@ class QueryCacheTest extends BookstoreTestBase
 
         $expectedSql = $this->getSql("SELECT querycache_table1.id, querycache_table1.title FROM querycache_table1 WHERE querycache_table1.title=:p1");
 
-        $params = array();
+        $params = [];
         $this->assertTrue(QuerycacheTable1Query::create()->cacheContains('test2'), ' cache contains "test2" key');
         $this->assertEquals($expectedSql, $q->cacheFetch('test2'));
     }

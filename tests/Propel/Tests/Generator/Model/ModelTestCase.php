@@ -26,13 +26,13 @@ abstract class ModelTestCase extends TestCase
      * @param  array    $options An array of options
      * @return Behavior
      */
-    protected function getBehaviorMock($name, array $options = array())
+    protected function getBehaviorMock($name, array $options = [])
     {
-        $defaults = array(
-            'additional_builders' => array(),
+        $defaults = [
+            'additional_builders' => [],
             'is_table_modified'   => false,
             'modification_order'  => 0,
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -93,14 +93,14 @@ abstract class ModelTestCase extends TestCase
      * @param  array      $options An array of options
      * @return ForeignKey
      */
-    protected function getForeignKeyMock($name = null, array $options = array())
+    protected function getForeignKeyMock($name = null, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'foreign_table_name' => '',
             'table' => null,
-            'other_fks' => array(),
-            'local_columns' => array(),
-        );
+            'other_fks' => [],
+            'local_columns' => [],
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -150,11 +150,11 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Index
      */
-    protected function getIndexMock($name = null, array $options = array())
+    protected function getIndexMock($name = null, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'foreign_table_name' => '',
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -183,7 +183,7 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Unique
      */
-    protected function getUniqueIndexMock($name = null, array $options = array())
+    protected function getUniqueIndexMock($name = null, array $options = [])
     {
         $unique = $this
             ->getMockBuilder('Propel\Generator\Model\Unique')
@@ -210,11 +210,11 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Schema
      */
-    protected function getSchemaMock($name = null, array $options = array())
+    protected function getSchemaMock($name = null, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'generator_config' => null,
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -245,11 +245,11 @@ abstract class ModelTestCase extends TestCase
      * @param  string            $schemaDelimiter
      * @return PlatformInterface
      */
-    protected function getPlatformMock($supportsSchemas = true, array $options = array(), $schemaDelimiter = '.')
+    protected function getPlatformMock($supportsSchemas = true, array $options = [], $schemaDelimiter = '.')
     {
-        $defaults = array(
+        $defaults = [
             'max_column_name_length' => null,
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -287,9 +287,9 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Domain
      */
-    protected function getDomainMock($name = null, array $options = array())
+    protected function getDomainMock($name = null, array $options = [])
     {
-        $defaults = array();
+        $defaults = [];
 
         $options = array_merge($defaults, $options);
 
@@ -315,18 +315,18 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Table
      */
-    protected function getTableMock($name, array $options = array())
+    protected function getTableMock($name, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'php_name'    => str_replace(' ', '', ucwords(str_replace('_', ' ', $name))),
             'namespace'   => null,
             'database'    => null,
             'platform'    => null,
             'common_name' => $name,
-            'behaviors'   => array(),
-            'indices'     => array(),
-            'unices'      => array(),
-        );
+            'behaviors'   => [],
+            'indices'     => [],
+            'unices'      => [],
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -400,11 +400,11 @@ abstract class ModelTestCase extends TestCase
      * @param  array    $options An array of options
      * @return Database
      */
-    protected function getDatabaseMock($name, array $options = array())
+    protected function getDatabaseMock($name, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'platform' => null,
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 
@@ -434,11 +434,11 @@ abstract class ModelTestCase extends TestCase
      * @param  array  $options An array of options
      * @return Column
      */
-    protected function getColumnMock($name, array $options = array())
+    protected function getColumnMock($name, array $options = [])
     {
-        $defaults = array(
+        $defaults = [
             'size' => null,
-        );
+        ];
 
         $options = array_merge($defaults, $options);
 

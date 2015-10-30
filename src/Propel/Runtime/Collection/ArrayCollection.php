@@ -88,8 +88,8 @@ class ArrayCollection extends Collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
-        $ret      = array();
-        $callable = array($this->getTableMapClass(), 'getPrimaryKeyFromRow');
+        $ret      = [];
+        $callable = [$this->getTableMapClass(), 'getPrimaryKeyFromRow'];
 
         foreach ($this as $key => $element) {
             $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -147,7 +147,7 @@ class ArrayCollection extends Collection
      */
     public function toArray($keyColumn = null, $usePrefix = false)
     {
-        $ret = array();
+        $ret = [];
         foreach ($this as $key => $element) {
             $key = null === $keyColumn ? $key : $element[$keyColumn];
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -189,7 +189,7 @@ class ArrayCollection extends Collection
      */
     public function toKeyValue($keyColumn, $valueColumn)
     {
-        $ret = array();
+        $ret = [];
         foreach ($this as $obj) {
             $ret[$obj[$keyColumn]] = $obj[$valueColumn];
         }

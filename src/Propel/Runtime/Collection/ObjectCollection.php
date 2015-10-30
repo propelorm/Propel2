@@ -32,7 +32,7 @@ class ObjectCollection extends Collection
     protected $index;
     protected $indexSplHash;
 
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         parent::__construct($data);
         $this->rebuildIndex();
@@ -97,7 +97,7 @@ class ObjectCollection extends Collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
-        $ret = array();
+        $ret = [];
 
         /** @var $obj ActiveRecordInterface */
         foreach ($this as $key => $obj) {
@@ -160,9 +160,9 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = [])
     {
-        $ret = array();
+        $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
         /** @var $obj ActiveRecordInterface */
@@ -208,7 +208,7 @@ class ObjectCollection extends Collection
         if (null === $keyColumn && false === $usePrefix) {
             return parent::getArrayCopy();
         }
-        $ret = array();
+        $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
         foreach ($this as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
@@ -235,7 +235,7 @@ class ObjectCollection extends Collection
      */
     public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null)
     {
-        $ret = array();
+        $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
         $valueGetterMethod = (null === $valueColumn) ? '__toString' : ('get' . $valueColumn);
         foreach ($this as $obj) {
@@ -265,7 +265,7 @@ class ObjectCollection extends Collection
      */
     public function toKeyIndex($keyColumn = 'PrimaryKey')
     {
-        $ret = array();
+        $ret = [];
         $keyGetterMethod = 'get' . ucfirst($keyColumn);
         foreach ($this as $obj) {
             $ret[$obj->$keyGetterMethod()] = $obj;

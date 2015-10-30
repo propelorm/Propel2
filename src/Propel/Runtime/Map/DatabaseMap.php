@@ -41,14 +41,14 @@ class DatabaseMap
      *
      * @var TableMap[]
      */
-    protected $tables = array();
+    protected $tables = [];
 
     /**
      * Tables in the database, using table phpName as key
      *
      * @var TableMap[]
      */
-    protected $tablesByPhpName = array();
+    protected $tablesByPhpName = [];
 
     /**
      * Constructor.

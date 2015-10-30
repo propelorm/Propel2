@@ -56,7 +56,7 @@ trait TableMapTrait
     public static function translateFieldNames($row, $fromType, $toType)
     {
         $toNames = static::getFieldNames($toType);
-        $newRow = array();
+        $newRow = [];
         foreach ($row as $name => $field) {
             if ($key = static::$fieldKeys[$fromType][$name]) {
                 $newRow[$toNames[$key]] = $field;

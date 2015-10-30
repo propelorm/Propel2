@@ -23,14 +23,14 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
 
 	chdir(__DIR__.'/../../../../Fixtures/bookstore');
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput(array(
+        $input = new \Symfony\Component\Console\Input\ArrayInput([
             'command' => 'database:reverse',
             '--database-name' => 'reverse-test',
             '--output-dir' => $outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()).'Platform',
             'connection' => $this->getConnectionDsn('bookstore-schemas', true)
-        ));
+        ]);
 
         $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
         $app->setAutoExit(false);

@@ -60,14 +60,14 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * @var PluralizerInterface|null
      */
     private $pluralizer;
 
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         $this->data = $data;
     }
@@ -323,7 +323,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function clear()
     {
-        return $this->exchangeArray(array());
+        return $this->exchangeArray([]);
     }
 
     /**
@@ -376,11 +376,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function serialize()
     {
-        $repr = array(
+        $repr = [
             'data' => $this->getArrayCopy(),
             'model' => $this->model,
             'fullyQualifiedModel' => $this->fullyQualifiedModel,
-        );
+        ];
 
         return serialize($repr);
     }

@@ -45,17 +45,17 @@ class AbstractOMBuilderRelatedByTest extends TestCase
 
     public static function getRelatedBySuffixDataProvider()
     {
-        return array(
-            array('book', 0, '', ''),
-            array('essay', 0, 'RelatedByFirstAuthorId', 'RelatedByFirstAuthorId'),
-            array('essay', 1, 'RelatedBySecondAuthorId', 'RelatedBySecondAuthorId'),
-            array('essay', 2, 'RelatedById', 'RelatedByNextEssayId'),
-            array('bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'),
-            array('composite_essay', 0, 'RelatedById0', 'RelatedByFirstEssayId'),
-            array('composite_essay', 1, 'RelatedById1', 'RelatedBySecondEssayId'),
-            array('man', 0, 'RelatedByWifeId', 'RelatedByWifeId'),
-            array('woman', 0, 'RelatedByHusbandId', 'RelatedByHusbandId'),
-        );
+        return [
+            ['book', 0, '', ''],
+            ['essay', 0, 'RelatedByFirstAuthorId', 'RelatedByFirstAuthorId'],
+            ['essay', 1, 'RelatedBySecondAuthorId', 'RelatedBySecondAuthorId'],
+            ['essay', 2, 'RelatedById', 'RelatedByNextEssayId'],
+            ['bookstore_employee', 0, 'RelatedById', 'RelatedBySupervisorId'],
+            ['composite_essay', 0, 'RelatedById0', 'RelatedByFirstEssayId'],
+            ['composite_essay', 1, 'RelatedById1', 'RelatedBySecondEssayId'],
+            ['man', 0, 'RelatedByWifeId', 'RelatedByWifeId'],
+            ['woman', 0, 'RelatedByHusbandId', 'RelatedByHusbandId'],
+        ];
     }
 
     /**

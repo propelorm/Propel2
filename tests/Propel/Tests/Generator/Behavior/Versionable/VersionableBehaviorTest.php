@@ -31,7 +31,7 @@ class VersionableBehaviorTest extends TestCase
 </database>
 EOF;
 
-        return array(array($schema));
+        return [[$schema]];
     }
 
     /**
@@ -145,7 +145,7 @@ EOF;
 </database>
 EOF;
 
-        return array(array($schema));
+        return [[$schema]];
     }
 
     /**
@@ -374,7 +374,7 @@ EOF;
 </database>
 EOF;
 
-        return array(array($schema));
+        return [[$schema]];
     }
 
     /**

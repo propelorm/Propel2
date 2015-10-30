@@ -31,7 +31,7 @@ class ConfigConvertCommand extends AbstractCommand
             ->addOption('output-dir',  null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED,  'The output file',       self::DEFAULT_OUTPUT_FILE)
             ->setName('config:convert')
-            ->setAliases(array('convert-conf'))
+            ->setAliases(['convert-conf'])
             ->setDescription('Transform the configuration to PHP code leveraging the ServiceContainer')
         ;
     }

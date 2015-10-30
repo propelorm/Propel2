@@ -20,10 +20,10 @@ use Propel\Generator\Model\Behavior;
 class QueryCacheBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'backend'     => 'apc',
         'lifetime'    => 3600,
-    );
+    ];
 
     private $tableClassName;
 

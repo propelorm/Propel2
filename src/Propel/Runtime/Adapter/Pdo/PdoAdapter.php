@@ -52,7 +52,7 @@ abstract class PdoAdapter
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
-        $driver_options = array();
+        $driver_options = [];
         if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
                 $value = $optiondata;
@@ -68,7 +68,7 @@ abstract class PdoAdapter
 
         try {
             $con = new PdoConnection($dsn, $user, $password, $driver_options);
-            $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : array());
+            $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : []);
         } catch (\PDOException $e) {
             throw new AdapterException("Unable to open PDO connection", 0, $e);
         }
@@ -245,7 +245,7 @@ abstract class PdoAdapter
      **/
     public function quoteIdentifierTable($table)
     {
-        return implode(' ', array_map(array($this, 'quoteIdentifier'), explode(' ', $table)));
+        return implode(' ', array_map([$this, 'quoteIdentifier'], explode(' ', $table)));
     }
 
     /**
@@ -414,7 +414,7 @@ abstract class PdoAdapter
      */
     public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
     {
-        $selectClause = array();
+        $selectClause = [];
 
         if ($aliasAll) {
             $this->turnSelectColumnsToAliases($criteria);

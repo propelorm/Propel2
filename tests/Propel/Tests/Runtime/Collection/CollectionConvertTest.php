@@ -76,7 +76,7 @@ class CollectionConvertTest extends TestCaseFixtures
 
 EOF;
 
-        return array(array($expected));
+        return [[$expected]];
     }
 
     /**
@@ -124,7 +124,7 @@ Books:
 
 EOF;
 
-        return array(array($expected));
+        return [[$expected]];
     }
 
     /**
@@ -157,7 +157,7 @@ EOF;
 {"Books":[{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}]}
 EOF;
 
-        return array(array($expected));
+        return [[$expected]];
     }
 
     /**
@@ -188,7 +188,7 @@ EOF;
     {
         $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId\r\n9012,Don Juan,0140422161,12.99,1234,5678\r\n58,Harry Potter and the Order of the Phoenix,043935806X,10.99,N;,N;\r\n";
 
-        return array(array($expected));
+        return [[$expected]];
     }
 
     /**

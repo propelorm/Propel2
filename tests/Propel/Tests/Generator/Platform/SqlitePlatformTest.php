@@ -37,7 +37,7 @@ class SqlitePlatformTest extends PlatformTestProvider
     public function testQuoteConnected()
     {
         $p = $this->getPlatform();
-        $p->setConnection(ConnectionFactory::create(array('dsn' => 'sqlite::memory:'), AdapterFactory::create('sqlite')));
+        $p->setConnection(ConnectionFactory::create(['dsn' => 'sqlite::memory:'], AdapterFactory::create('sqlite')));
 
         $unquoted = "Naughty ' string";
         $quoted = $p->quote($unquoted);

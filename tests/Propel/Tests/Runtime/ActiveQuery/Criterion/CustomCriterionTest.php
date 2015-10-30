@@ -26,12 +26,12 @@ class CustomCriterionTest extends BaseTestCase
     {
         $cton = new CustomCriterion(new Criteria(), 'date_part(\'YYYY\', A.COL) = \'2007\'');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $expected = "date_part('YYYY', A.COL) = '2007'";
         $this->assertEquals($expected, $ps);
-        $this->assertEquals(array(), $params);
+        $this->assertEquals([], $params);
     }
 }

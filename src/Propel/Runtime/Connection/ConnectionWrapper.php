@@ -88,7 +88,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @var array  [sql => StatementWrapper]
      */
-    protected $cachedPreparedStatements = array();
+    protected $cachedPreparedStatements = [];
 
     /**
      * Whether to cache prepared statements.
@@ -102,11 +102,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @var array
      */
-    protected $logMethods = array(
+    protected $logMethods = [
         'exec',
         'query',
         'execute',
-    );
+    ];
 
     /**
      * Configured logger.
@@ -431,7 +431,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $args = func_get_args();
         $sql = array_shift($args);
         $statementWrapper = $this->createStatementWrapper($sql);
-        $return = call_user_func_array(array($statementWrapper, 'query'), $args);
+        $return = call_user_func_array([$statementWrapper, 'query'], $args);
 
         if ($this->useDebug) {
             $this->log($sql);
@@ -517,7 +517,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function clearStatementCache()
     {
-        $this->cachedPreparedStatements = array();
+        $this->cachedPreparedStatements = [];
     }
 
     /**
@@ -656,7 +656,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->connection, $method), $args);
+        return call_user_func_array([$this->connection, $method], $args);
     }
 
     /**

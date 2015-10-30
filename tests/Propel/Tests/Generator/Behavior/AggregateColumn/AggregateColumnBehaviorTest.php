@@ -132,7 +132,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
-            ->update(array('Score' => 4), $this->con);
+            ->update(['Score' => 4], $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query updates the aggregate column');
         $this->assertEquals(2, $poll->getNbVotes());
     }
@@ -144,7 +144,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
             ->setModelAlias('foo', true)
-            ->update(array('Score' => 4), $this->con);
+            ->update(['Score' => 4], $this->con);
         $this->assertEquals(8, $poll->getTotalScore(), 'Updating related objects with a query using alias updates the aggregate column');
         $this->assertEquals(2, $poll->getNbVotes());
     }
@@ -230,7 +230,7 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $item2->setAggregatePoll($poll);
         $item2->save($this->con);
 
-        return array($poll, $item1, $item2);
+        return [$poll, $item1, $item2];
     }
 
 }

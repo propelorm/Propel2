@@ -31,7 +31,7 @@ class PropelTemplateTest extends TestCase
     {
         $t = new PropelTemplate();
         $t->setTemplate('Hello, <?php echo $name ?>');
-        $res = $t->render(array('name' => 'John'));
+        $res = $t->render(['name' => 'John']);
         $this->assertEquals('Hello, John', $res);
     }
 
@@ -40,7 +40,7 @@ class PropelTemplateTest extends TestCase
         $time = time();
         $t = new PropelTemplate();
         $t->setTemplate('Hello, <?php echo $name ?>, it is <?php echo $time ?> to go!');
-        $res = $t->render(array('name' => 'John', 'time' => $time));
+        $res = $t->render(['name' => 'John', 'time' => $time]);
         $this->assertEquals('Hello, John, it is ' . $time . ' to go!', $res);
     }
 
@@ -48,7 +48,7 @@ class PropelTemplateTest extends TestCase
     {
         $t = new PropelTemplate();
         $t->setTemplateFile(dirname(__FILE__).'/template.php');
-        $res = $t->render(array('name' => 'John'));
+        $res = $t->render(['name' => 'John']);
         $this->assertEquals('Hello, John', $res);
     }
 }

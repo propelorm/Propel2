@@ -29,12 +29,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var array[\Propel\Runtime\Adapter\AdapterInterface] List of database adapter instances
      */
-    protected $adapters = array();
+    protected $adapters = [];
 
     /**
      * @var array[string] List of database adapter classes
      */
-    protected $adapterClasses = array();
+    protected $adapterClasses = [];
 
     /**
      * @var string
@@ -49,12 +49,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
      */
-    protected $databaseMaps = array();
+    protected $databaseMaps = [];
 
     /**
      * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
      */
-    protected $connectionManagers = array();
+    protected $connectionManagers = [];
 
     /**
      * @var string
@@ -64,7 +64,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var array
      */
-    protected $profilerConfiguration = array();
+    protected $profilerConfiguration = [];
 
     /**
      * @var \Propel\Runtime\Util\Profiler
@@ -74,12 +74,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var array[LoggerInterface] list of loggers
      */
-    protected $loggers = array();
+    protected $loggers = [];
 
     /**
      * @var array
      */
-    protected $loggerConfigurations = array();
+    protected $loggerConfigurations = [];
 
     /**
      * @return string
@@ -135,7 +135,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     public function setAdapterClasses($adapterClasses)
     {
         $this->adapterClasses = $adapterClasses;
-        $this->adapters = array();
+        $this->adapters = [];
     }
 
     /**
@@ -183,8 +183,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function setAdapters($adapters)
     {
-        $this->adapterClasses = array();
-        $this->adapters = array();
+        $this->adapterClasses = [];
+        $this->adapters = [];
         foreach ($adapters as $name => $adapter) {
             $this->setAdapter($name, $adapter);
         }

@@ -35,7 +35,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      *
      * @var array
      */
-    private static $sqliteTypeMap = array(
+    private static $sqliteTypeMap = [
         'tinyint'    => PropelTypes::TINYINT,
         'smallint'   => PropelTypes::SMALLINT,
         'mediumint'  => PropelTypes::SMALLINT,
@@ -65,7 +65,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'text'       => PropelTypes::LONGVARCHAR,
         'enum'       => PropelTypes::CHAR,
         'set'        => PropelTypes::CHAR,
-    );
+    ];
 
     /**
      * Gets a type mapping from native types to Propel types
@@ -77,7 +77,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         return self::$sqliteTypeMap;
     }
 
-    public function parse(Database $database, array $additionalTables = array())
+    public function parse(Database $database, array $additionalTables = [])
     {
         if ($this->getGeneratorConfig()) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];

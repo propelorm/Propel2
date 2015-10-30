@@ -280,7 +280,7 @@ class BookstoreDataPopulator
 
     public static function depopulate($con = null)
     {
-        $tableMapClasses = array(
+        $tableMapClasses = [
             'Propel\Tests\Bookstore\Map\AuthorTableMap',
             'Propel\Tests\Bookstore\Map\BookstoreTableMap',
             'Propel\Tests\Bookstore\Map\BookstoreContestTableMap',
@@ -302,7 +302,7 @@ class BookstoreDataPopulator
             'Propel\Tests\Bookstore\Map\BookSummaryTableMap',
             'Propel\Tests\Bookstore\Map\RecordLabelTableMap',
             'Propel\Tests\Bookstore\Map\ReleasePoolTableMap',
-        );
+        ];
         // free the memory from existing objects
         foreach ($tableMapClasses as $tableMapClass) {
             foreach ($tableMapClass::$instances as $i) {

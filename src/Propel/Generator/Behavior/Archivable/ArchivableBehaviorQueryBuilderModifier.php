@@ -96,10 +96,10 @@ if (\$this->archiveOnUpdate) {
      */
     protected function addArchive($builder)
     {
-        return $this->behavior->renderTemplate('queryArchive', array(
+        return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'modelTableMap'       => $builder->getTableMapClass(),
-        ));
+        ]);
     }
 
     /**
