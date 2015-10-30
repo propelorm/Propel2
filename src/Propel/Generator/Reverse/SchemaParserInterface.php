@@ -65,5 +65,5 @@ interface SchemaParserInterface
      * @param  Table[]  $additionalTables additional tables to parse and add to $database
      * @return int      number of generated tables
      */
-    public function parse(Database $database, array $additionalTables = array());
+    public function parse(Database $database, array $additionalTables = []);
 }

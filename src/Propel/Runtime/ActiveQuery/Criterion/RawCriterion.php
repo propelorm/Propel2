@@ -54,7 +54,7 @@ class RawCriterion extends AbstractCriterion
         if (1 !== substr_count($this->column, '?')) {
             throw new InvalidClauseException(sprintf('Could not build SQL for expression "%s" because Criteria::RAW works only with a clause containing a single question mark placeholder', $this->column));
         }
-        $params[] = array('table' => null, 'type' => $this->type, 'value' => $this->value);
+        $params[] = ['table' => null, 'type' => $this->type, 'value' => $this->value];
         $sb .= str_replace('?', ':p' . count($params), $this->column);
     }
 

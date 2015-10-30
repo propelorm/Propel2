@@ -45,7 +45,7 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
     public function key()
     {
         $method = method_exists($this->curNode, 'getPath') ? 'getPath' : 'getAncestors';
-        $key = array();
+        $key = [];
         foreach ($this->curNode->$method() as $node) {
             $key[] = $node->getPrimaryKey();
         }

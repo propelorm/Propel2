@@ -22,11 +22,11 @@ use Propel\Generator\Model\Behavior;
 class SortableBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'rank_column'  => 'sortable_rank',
         'use_scope'    => 'false',
         'scope_column' => '',
-    );
+    ];
 
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
@@ -40,18 +40,18 @@ class SortableBehavior extends Behavior
         $table = $this->getTable();
 
         if (!$table->hasColumn($this->getParameter('rank_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('rank_column'),
                 'type' => 'INTEGER'
-            ));
+            ]);
         }
 
         if ($this->useScope()) {
             if (!$this->hasMultipleScopes() && !$table->hasColumn($this->getParameter('scope_column'))) {
-                $table->addColumn(array(
+                $table->addColumn([
                     'name' => $this->getParameter('scope_column'),
                     'type' => 'INTEGER'
-                ));
+                ]);
             }
 
             $scopes = $this->getScopes();
@@ -112,9 +112,9 @@ class SortableBehavior extends Behavior
 
         if ($this->hasMultipleScopes()) {
 
-            $methodSignature = array();
-            $buildScope      = array();
-            $paramsDoc       = array();
+            $methodSignature = [];
+            $buildScope      = [];
+            $paramsDoc       = [];
 
             foreach ($this->getScopes() as $idx => $scope) {
 
@@ -147,7 +147,7 @@ class SortableBehavior extends Behavior
             }
         }
 
-        return array($methodSignature, $paramsDoc, $buildScope, $buildScopeVars);
+        return [$methodSignature, $paramsDoc, $buildScope, $buildScopeVars];
     }
 
     /**
@@ -193,7 +193,7 @@ class SortableBehavior extends Behavior
     {
         return $this->getParameter('scope_column')
             ? explode(',', str_replace(' ', '', trim($this->getParameter('scope_column'))))
-            : array();
+            : [];
     }
 
     /**

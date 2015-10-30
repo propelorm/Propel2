@@ -33,7 +33,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @var array string[]
      */
-    protected $warnings = array();
+    protected $warnings = [];
 
     /**
      * GeneratorConfig object holding build properties.

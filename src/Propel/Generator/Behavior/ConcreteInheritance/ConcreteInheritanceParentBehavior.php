@@ -22,19 +22,19 @@ use Propel\Generator\Model\Behavior;
 class ConcreteInheritanceParentBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'descendant_column' => 'descendant_class'
-    );
+    ];
 
     public function modifyTable()
     {
         $table = $this->getTable();
         if (!$table->hasColumn($this->getParameter('descendant_column'))) {
-            $table->addColumn(array(
+            $table->addColumn([
                 'name' => $this->getParameter('descendant_column'),
                 'type' => 'VARCHAR',
                 'size' => 100
-            ));
+            ]);
         }
     }
 

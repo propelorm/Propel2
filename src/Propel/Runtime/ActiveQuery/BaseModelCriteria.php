@@ -21,7 +21,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
 
     protected $formatter;
 
-    protected $with = array();
+    protected $with = [];
 
     protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 

@@ -35,7 +35,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Map MySQL native types to Propel types.
      * @var array
      */
-    private static $mysqlTypeMap = array(
+    private static $mysqlTypeMap = [
         'tinyint'    => PropelTypes::TINYINT,
         'smallint'   => PropelTypes::SMALLINT,
         'mediumint'  => PropelTypes::SMALLINT,
@@ -65,16 +65,16 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'text'       => PropelTypes::LONGVARCHAR,
         'enum'       => PropelTypes::CHAR,
         'set'        => PropelTypes::CHAR,
-    );
+    ];
 
-    protected static $defaultTypeSizes = array(
+    protected static $defaultTypeSizes = [
         'char'     => 1,
         'tinyint'  => 4,
         'smallint' => 6,
         'int'      => 11,
         'bigint'   => 20,
         'decimal'  => 10,
-    );
+    ];
 
     /**
      * Gets a type mapping from native types to Propel types
@@ -91,7 +91,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * @param  Table[]  $additionalTables
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = array())
+    public function parse(Database $database, array $additionalTables = [])
     {
         if (null !== $this->getGeneratorConfig()) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];
@@ -135,7 +135,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
-        $tables = array();
+        $tables = [];
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -251,7 +251,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $default = 'false';
                 }
             }
-            if (in_array($default, array('CURRENT_TIMESTAMP'))) {
+            if (in_array($default, ['CURRENT_TIMESTAMP'])) {
                 $type = ColumnDefaultValue::TYPE_EXPR;
             } else {
                 $type = ColumnDefaultValue::TYPE_VALUE;
@@ -279,7 +279,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
         $row = $dataFetcher->fetch();
 
-        $foreignKeys = array(); // local store to avoid duplicates
+        $foreignKeys = []; // local store to avoid duplicates
 
         // Get the information on all the foreign keys
         $pattern = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^\s]+)` \((.+)\)(.*)/';
@@ -292,21 +292,21 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $rawfcol = $matches[4][$curKey];
                 $fkey    = $matches[5][$curKey];
 
-                $lcols = array();
+                $lcols = [];
                 foreach (preg_split('/`, `/', $rawlcol) as $piece) {
                     $lcols[] = trim($piece, '` ');
                 }
 
-                $fcols = array();
+                $fcols = [];
                 foreach (preg_split('/`, `/', $rawfcol) as $piece) {
                     $fcols[] = trim($piece, '` ');
                 }
 
                 // typical for mysql is RESTRICT
-                $fkactions = array(
+                $fkactions = [
                     'ON DELETE' => ForeignKey::RESTRICT,
                     'ON UPDATE' => ForeignKey::RESTRICT,
-                );
+                ];
 
                 if ($fkey) {
                     // split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
@@ -326,8 +326,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     }
                 }
 
-                $localColumns = array();
-                $foreignColumns = array();
+                $localColumns = [];
+                $foreignColumns = [];
                 if ($table->guessSchemaName() != $database->getSchema() && false == strpos($ftbl, $database->getPlatform()->getSchemaDelimiter())) {
                     $ftbl = $table->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
                 }
@@ -376,7 +376,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         // adding each column for that key.
 
         /** @var $indexes Index[] */
-        $indexes = array();
+        $indexes = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $colName = $row['Column_name'];
             $colSize = $row['Sub_part'];
@@ -445,7 +445,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
-            $row = array('Engine' => $row['Engine']);
+            $row = ['Engine' => $row['Engine']];
         }
         $vi = $this->getNewVendorInfoObject($row);
         $table->addVendorInfo($vi);

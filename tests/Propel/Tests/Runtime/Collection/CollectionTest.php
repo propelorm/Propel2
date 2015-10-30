@@ -37,7 +37,7 @@ class CollectionTest extends BookstoreTestBase
 
     public function testArrayAccess()
     {
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals('bar1', $col[0], 'Collection allows access via $foo[$index]');
         $this->assertEquals('bar2', $col[1], 'Collection allows access via $foo[$index]');
@@ -47,8 +47,8 @@ class CollectionTest extends BookstoreTestBase
     public function testGetData()
     {
         $col = new Collection();
-        $this->assertEquals(array(), $col->getData(), 'getData() returns an empty array for empty collections');
-        $data = array('bar1', 'bar2', 'bar3');
+        $this->assertEquals([], $col->getData(), 'getData() returns an empty array for empty collections');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals($data, $col->getData(), 'getData() returns the collection data');
         $col[0] = 'bar4';
@@ -58,10 +58,10 @@ class CollectionTest extends BookstoreTestBase
     public function testSetData()
     {
         $col = new Collection();
-        $col->setData(array());
-        $this->assertEquals(array(), $col->getArrayCopy(), 'setData() can set data to an empty array');
+        $col->setData([]);
+        $this->assertEquals([], $col->getArrayCopy(), 'setData() can set data to an empty array');
 
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection();
         $col->setData($data);
         $this->assertEquals($data, $col->getArrayCopy(), 'setData() sets the collection data');
@@ -71,7 +71,7 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $this->assertTrue($col->isEmpty(), 'isEmpty() returns true on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertFalse($col->isEmpty(), 'isEmpty() returns false on a non empty collection');
     }
@@ -79,7 +79,7 @@ class CollectionTest extends BookstoreTestBase
     public function testCallIteratorMethods()
     {
         $methods = ['getPosition', 'isFirst', 'isLast', 'isOdd', 'isEven'];
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $it = $col->getIterator();
         foreach ($it as $item) {
@@ -94,7 +94,7 @@ class CollectionTest extends BookstoreTestBase
 
     public function testNestedIteration()
     {
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $sequence = '';
         foreach ($col as $i => $element) {
@@ -108,7 +108,7 @@ class CollectionTest extends BookstoreTestBase
 
     public function testGet()
     {
-        $col = new Collection(array('foo', 'bar'));
+        $col = new Collection(['foo', 'bar']);
         $this->assertEquals('foo', $col->get(0), 'get() returns an element from its key');
     }
 
@@ -125,42 +125,42 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $this->assertNull($col->pop(), 'pop() returns null on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals('bar3', $col->pop(), 'pop() returns the last element of the collection');
-        $this->assertEquals(array('bar1', 'bar2'), $col->getData(), 'pop() removes the last element of the collection');
+        $this->assertEquals(['bar1', 'bar2'], $col->getData(), 'pop() removes the last element of the collection');
     }
 
     public function testShift()
     {
         $col = new Collection();
         $this->assertNull($col->shift(), 'shift() returns null on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals('bar1', $col->shift(), 'shift() returns the first element of the collection');
-        $this->assertEquals(array('bar2', 'bar3'), $col->getData(), 'shift() removes the first element of the collection');
+        $this->assertEquals(['bar2', 'bar3'], $col->getData(), 'shift() removes the first element of the collection');
     }
 
     public function testPrepend()
     {
         $col = new Collection();
         $this->assertEquals(1, $col->prepend('a'), 'prepend() returns 1 on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals(4, $col->prepend('bar4'), 'prepend() returns the new number of elements in the collection when adding a variable');
-        $this->assertEquals(array('bar4', 'bar1', 'bar2', 'bar3'), $col->getData(), 'prepend() adds new element to the beginning of the collection');
+        $this->assertEquals(['bar4', 'bar1', 'bar2', 'bar3'], $col->getData(), 'prepend() adds new element to the beginning of the collection');
     }
 
     public function testSet()
     {
         $col = new Collection();
         $col->set(4, 'bar');
-        $this->assertEquals(array(4 => 'bar'), $col->getData(), 'set() adds an element to the collection with a key');
+        $this->assertEquals([4 => 'bar'], $col->getData(), 'set() adds an element to the collection with a key');
 
         $col = new Collection();
         $col->set(null, 'foo');
         $col->set(null, 'bar');
-        $this->assertEquals(array('foo', 'bar'), $col->getData(), 'set() adds an element to the collection without a key');
+        $this->assertEquals(['foo', 'bar'], $col->getData(), 'set() adds an element to the collection without a key');
     }
 
     public function testRemove()
@@ -169,7 +169,7 @@ class CollectionTest extends BookstoreTestBase
         $col[0] = 'bar';
         $col[1] = 'baz';
         $col->remove(1);
-        $this->assertEquals(array('bar'), $col->getData(), 'remove() removes an element from its key');
+        $this->assertEquals(['bar'], $col->getData(), 'remove() removes an element from its key');
     }
 
     /**
@@ -185,18 +185,18 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $col->clear();
-        $this->assertEquals(array(), $col->getData(), 'clear() empties the collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $this->assertEquals([], $col->getData(), 'clear() empties the collection');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $col->clear();
-        $this->assertEquals(array(), $col->getData(), 'clear() empties the collection');
+        $this->assertEquals([], $col->getData(), 'clear() empties the collection');
     }
 
     public function testContains()
     {
         $col = new Collection();
         $this->assertFalse($col->contains('foo_1'), 'contains() returns false on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertTrue($col->contains('bar1'), 'contains() returns true when the key exists');
         $this->assertFalse($col->contains('bar4'), 'contains() returns false when the key does not exist');
@@ -206,7 +206,7 @@ class CollectionTest extends BookstoreTestBase
     {
         $col = new Collection();
         $this->assertFalse($col->search('bar1'), 'search() returns false on an empty collection');
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $this->assertEquals(1, $col->search('bar2'), 'search() returns the key when the element exists');
         $this->assertFalse($col->search('bar4'), 'search() returns false when the element does not exist');
@@ -214,7 +214,7 @@ class CollectionTest extends BookstoreTestBase
 
     public function testSerializable()
     {
-        $data = array('bar1', 'bar2', 'bar3');
+        $data = ['bar1', 'bar2', 'bar3'];
         $col = new Collection($data);
         $col->setModel('Foo');
         $serializedCol = serialize($col);

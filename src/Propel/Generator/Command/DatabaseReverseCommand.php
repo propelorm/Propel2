@@ -44,7 +44,7 @@ class DatabaseReverseCommand extends AbstractCommand
                 'default'
             )
             ->setName('database:reverse')
-            ->setAliases(array('reverse'))
+            ->setAliases(['reverse'])
             ->setDescription('Reverse-engineer a XML schema file based on given database. Uses given `connection` as name, as dsn or your `reverse.connection` configuration in propel config as connection.')
         ;
     }
@@ -54,7 +54,7 @@ class DatabaseReverseCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configOptions = array();
+        $configOptions = [];
 
         $connection = $input->getArgument('connection');
         if (false === strpos($connection, ':')) {

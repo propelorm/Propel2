@@ -123,7 +123,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $book = $c->findOne($con);
         $count = $con->getQueryCount();
         $author = $book['Author'];
-        $this->assertEquals(array(), $author, 'Related object is not hydrated if empty');
+        $this->assertEquals([], $author, 'Related object is not hydrated if empty');
     }
 
     public function testFindOneWithRelationName()
@@ -284,11 +284,11 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, count($books), 'with() does not duplicate the main object');
         $book = $books[0];
         $this->assertEquals($book['Title'], 'Harry Potter and the Order of the Phoenix', 'Main object is correctly hydrated');
-        $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Reviews'), array_keys($book), 'with() adds a plural index for the one to many relationship');
+        $this->assertEquals(['Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Reviews'], array_keys($book), 'with() adds a plural index for the one to many relationship');
         $reviews = $book['Reviews'];
         $this->assertEquals(2, count($reviews), 'Related objects are correctly hydrated');
         $review1 = $reviews[0];
-        $this->assertEquals(array('Id', 'ReviewedBy', 'ReviewDate', 'Recommended', 'Status', 'BookId'), array_keys($review1), 'with() Related objects are correctly hydrated');
+        $this->assertEquals(['Id', 'ReviewedBy', 'ReviewDate', 'Recommended', 'Status', 'BookId'], array_keys($review1), 'with() Related objects are correctly hydrated');
     }
 
     public function testFindOneWithOneToManyCustomOrder()
@@ -426,7 +426,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $c->withColumn('Author.LastName', 'AuthorName2');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
-        $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
+        $this->assertEquals(['Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'AuthorName', 'AuthorName2'], array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
         $this->assertEquals('Gunter', $book['AuthorName'], 'ArrayFormatter adds withColumns as columns');
         $this->assertEquals('Grass', $book['AuthorName2'], 'ArrayFormatter correctly hydrates all as columns');
@@ -447,7 +447,7 @@ class ArrayFormatterWithTest extends BookstoreEmptyTestBase
         $c->with('Author');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $book = $c->findOne($con);
-        $this->assertEquals(array('Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Author', 'AuthorName', 'AuthorName2'), array_keys($book), 'withColumn() do not change the resulting model class');
+        $this->assertEquals(['Id', 'Title', 'ISBN', 'Price', 'PublisherId', 'AuthorId', 'Author', 'AuthorName', 'AuthorName2'], array_keys($book), 'withColumn() do not change the resulting model class');
         $this->assertEquals('The Tin Drum', $book['Title']);
         $this->assertEquals('Gunter', $book['Author']['FirstName'], 'ArrayFormatter correctly hydrates withclass and columns');
         $this->assertEquals('Gunter', $book['AuthorName'], 'ArrayFormatter adds withColumns as columns');

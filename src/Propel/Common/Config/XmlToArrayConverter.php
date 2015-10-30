@@ -39,7 +39,7 @@ class XmlToArrayConverter
 
         //Empty xml file returns empty array
         if ('' === $xmlToParse) {
-            return array();
+            return [];
         }
 
         if ($xmlToParse[0] !== '<') {
@@ -74,7 +74,7 @@ class XmlToArrayConverter
      */
     protected static function simpleXmlToArray($xml)
     {
-        $ar = array();
+        $ar = [];
         foreach ($xml->children() as $k => $v) {
             // recurse the child
             $child = self::simpleXmlToArray($v);
@@ -108,7 +108,7 @@ class XmlToArrayConverter
                 // array, that it has numeric keys.  this distinguishes it from simply having other
                 // nested element data.
                 if (!is_array($ar[$k]) || !isset($ar[$k][0])) {
-                    $ar[$k] = array($ar[$k]);
+                    $ar[$k] = [$ar[$k]];
                 }
 
                 $ar[$k][] = $child;

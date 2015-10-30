@@ -115,7 +115,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
     public function testConcreteInheritanceAndI18nBehaviorHandlesValidateBehavior()
     {
-        $classes = array('ValidateTriggerFictionI18n', 'ValidateTriggerComicI18n');
+        $classes = ['ValidateTriggerFictionI18n', 'ValidateTriggerComicI18n'];
 
         foreach ($classes as $class) {
             $this->checkClassHasValidateBehavior('Propel\Tests\Bookstore\Behavior\\'.$class);

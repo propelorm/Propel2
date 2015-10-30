@@ -77,14 +77,14 @@ class SqlitePlatform extends DefaultPlatform
 
     public function getDefaultTypeSizes()
     {
-        return array(
+        return [
             'char'      => 1,
             'character' => 1,
             'integer'   => 32,
             'bigint'    => 64,
             'smallint'  => 16,
             'double precision' => 54
-        );
+        ];
     }
 
     /**
@@ -159,7 +159,7 @@ ALTER TABLE %s ADD %s;
                     //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
                     || false !== array_search(
-                        $column->getDefaultValue(), array('CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'))
+                        $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
                     || substr(trim($column->getDefaultValue()), 0, 1) == '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
@@ -453,7 +453,7 @@ PRAGMA foreign_keys = ON;
         $table = clone $table;
         $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
 
-        $lines = array();
+        $lines = [];
 
         foreach ($table->getColumns() as $column) {
             $lines[] = $this->getColumnDDL($column);
@@ -523,13 +523,13 @@ PRAGMA foreign_keys = ON;
 
     public function hasSize($sqlType)
     {
-        return !in_array($sqlType, array(
+        return !in_array($sqlType, [
             'MEDIUMTEXT',
             'LONGTEXT',
             'BLOB',
             'MEDIUMBLOB',
             'LONGBLOB',
-        ));
+        ]);
     }
 
     /**
@@ -537,7 +537,7 @@ PRAGMA foreign_keys = ON;
      */
     public function doQuoting($text)
     {
-        return '[' . strtr($text, array('.' => '].[')) . ']';
+        return '[' . strtr($text, ['.' => '].[']) . ']';
     }
 
     public function supportsSchemas()

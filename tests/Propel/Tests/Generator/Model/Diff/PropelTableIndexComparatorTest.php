@@ -139,7 +139,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getAddedIndices()));
-        $this->assertEquals(array('Foo_Index' => $i2), $tableDiff->getAddedIndices());
+        $this->assertEquals(['Foo_Index' => $i2], $tableDiff->getAddedIndices());
     }
 
     public function testCompareRemovedIndices()
@@ -164,7 +164,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRemovedIndices()));
-        $this->assertEquals(array('Bar_Index' => $i1), $tableDiff->getRemovedIndices());
+        $this->assertEquals(['Bar_Index' => $i1], $tableDiff->getRemovedIndices());
     }
 
     public function testCompareModifiedIndices()
@@ -197,7 +197,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getModifiedIndices()));
-        $this->assertEquals(array('Foo_Index' => array($i1, $i2)), $tableDiff->getModifiedIndices());
+        $this->assertEquals(['Foo_Index' => [$i1, $i2]], $tableDiff->getModifiedIndices());
     }
 
 }

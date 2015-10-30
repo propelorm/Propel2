@@ -56,7 +56,7 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testGetAdapterClassUsesDefaultDatasource()
     {
-        $this->sc->setAdapterClasses(array('default' => 'bar1', 'foo' => 'bar2'));
+        $this->sc->setAdapterClasses(['default' => 'bar1', 'foo' => 'bar2']);
         $this->assertEquals('bar1', $this->sc->getAdapterClass());
         $this->sc->setDefaultDatasource('foo');
         $this->assertEquals('bar2', $this->sc->getAdapterClass());
@@ -70,7 +70,7 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testSetAdapterClassesSetsAdapterClassForAllDatasources()
     {
-        $this->sc->setAdapterClasses(array('foo1' => 'bar1', 'foo2' => 'bar2'));
+        $this->sc->setAdapterClasses(['foo1' => 'bar1', 'foo2' => 'bar2']);
         $this->assertEquals('bar1', $this->sc->getAdapterClass('foo1'));
         $this->assertEquals('bar2', $this->sc->getAdapterClass('foo2'));
     }
@@ -79,8 +79,8 @@ class StandardServiceContainerTest extends BaseTestCase
     {
         $sc = new TestableServiceContainer;
         $sc->setAdapterClass('foo', 'bar');
-        $sc->setAdapterClasses(array('foo1' => 'bar1', 'foo2' => 'bar2'));
-        $this->assertEquals(array('foo1' => 'bar1', 'foo2' => 'bar2'), $sc->adapterClasses);
+        $sc->setAdapterClasses(['foo1' => 'bar1', 'foo2' => 'bar2']);
+        $this->assertEquals(['foo1' => 'bar1', 'foo2' => 'bar2'], $sc->adapterClasses);
     }
 
     public function testSetAdapterClassAllowsToReplaceExistingAdapter()
@@ -106,9 +106,9 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testGetAdapterUsesDefaultDatasource()
     {
-        $this->sc->setAdapterClasses(array(
+        $this->sc->setAdapterClasses([
             'default' => '\Propel\Runtime\Adapter\Pdo\SqliteAdapter',
-            'foo'     => '\Propel\Runtime\Adapter\Pdo\MysqlAdapter'));
+            'foo'     => '\Propel\Runtime\Adapter\Pdo\MysqlAdapter']);
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\SqliteAdapter', $this->sc->getAdapter());
         $this->sc->setDefaultDatasource('foo');
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapter());
@@ -122,10 +122,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testSetAdaptersSetsAllAdapters()
     {
-        $this->sc->setAdapters(array(
+        $this->sc->setAdapters([
             'foo1' => new SqliteAdapter(),
             'foo2' => new MysqlAdapter()
-        ));
+        ]);
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\SqliteAdapter', $this->sc->getAdapterClass('foo1'));
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapterClass('foo2'));
     }
@@ -134,19 +134,19 @@ class StandardServiceContainerTest extends BaseTestCase
     {
         $sc = new TestableServiceContainer;
         $sc->setAdapter('foo', new SqliteAdapter());
-        $sc->setAdapters(array(
+        $sc->setAdapters([
             'foo1' => new SqliteAdapter(),
             'foo2' => new MysqlAdapter()
-        ));
-        $this->assertEquals(array(
+        ]);
+        $this->assertEquals([
             'foo1' => new SqliteAdapter(),
             'foo2' => new MysqlAdapter()
-        ), $sc->adapters);
+        ], $sc->adapters);
     }
 
     public function testCheckInvalidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', array('warning'), array('mylogger'));
+        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
         $logger->expects($this->once())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);
@@ -155,7 +155,7 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testCheckValidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', array('warning'), array('mylogger'));
+        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
         $logger->expects($this->never())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);
@@ -235,10 +235,10 @@ class StandardServiceContainerTest extends BaseTestCase
         $manager2 = new ConnectionManagerSingle();
         $this->sc->setConnectionManager('foo1', $manager1);
         $this->sc->setConnectionManager('foo2', $manager2);
-        $expected = array(
+        $expected = [
             'foo1' => $manager1,
             'foo2' => $manager2
-        );
+        ];
         $this->assertEquals($expected, $this->sc->getConnectionManagers());
     }
 
@@ -342,41 +342,41 @@ class StandardServiceContainerTest extends BaseTestCase
     public function testGetProfilerUsesDefaultConfiguration()
     {
         $config = $this->sc->getProfiler()->getConfiguration();
-        $expected = array(
-            'details' => array(
-                'time' => array(
+        $expected = [
+            'details' => [
+                'time' => [
                     'name'      => 'Time',
                     'precision' => 3,
                     'pad'       => 8
-                ),
-                'mem' => array(
+                ],
+                'mem' => [
                     'name'      => 'Memory',
                     'precision' => 3,
                     'pad'       => 8
-                ),
-                'memDelta' => array(
+                ],
+                'memDelta' => [
                     'name'      => 'Memory Delta',
                     'precision' => 3,
                     'pad'       => 8
-                ),
-                'memPeak' => array(
+                ],
+                'memPeak' => [
                     'name'      => 'Memory Peak',
                     'precision' => 3,
                     'pad'       => 8
-                ),
-            ),
+                ],
+            ],
             'innerGlue'    => ': ',
             'outerGlue'    => ' | ',
             'slowTreshold' => 0.1
-        );
+        ];
         $this->assertEquals($expected, $config);
     }
 
     public function testGetProfilerUsesProfilerConfigurationWhenGiven()
     {
-        $this->sc->setProfilerConfiguration(array(
+        $this->sc->setProfilerConfiguration([
             'slowTreshold' => 22
-        ));
+        ]);
         $config = $this->sc->getProfiler()->getConfiguration();
         $this->assertEquals(22, $config['slowTreshold']);
     }
@@ -423,10 +423,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testGetLoggerLazyLoadsLoggerFromConfiguration()
     {
-        $this->sc->setLoggerConfiguration('defaultLogger', array(
+        $this->sc->setLoggerConfiguration('defaultLogger', [
             'type' => 'stream',
             'path' => 'php://stderr',
-        ));
+        ]);
         $logger = $this->sc->getLogger();
         $this->assertInstanceOf('\Monolog\Logger', $logger);
         $handler = $logger->popHandler();
@@ -437,8 +437,8 @@ class StandardServiceContainerTest extends BaseTestCase
 
 class TestableServiceContainer extends StandardServiceContainer
 {
-    public $adapterClasses = array();
-    public $adapters = array();
+    public $adapterClasses = [];
+    public $adapters = [];
 }
 
 class MyDatabaseMap extends DatabaseMap

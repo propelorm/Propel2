@@ -24,7 +24,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
     /**
      * @var array
      */
-    protected $plural = array(
+    protected $plural = [
         '(matr|vert|ind)(ix|ex)' => '\1ices',
         '(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us' => '\1i',
         '(buffal|tomat)o' => '\1oes',
@@ -73,9 +73,9 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'arf'  => 'arves',
         'nife' => 'nives',
         'life' => 'lives'
-    );
+    ];
 
-    protected $irregular = array(
+    protected $irregular = [
         'leaf'   => 'leaves',
         'loaf'   => 'loaves',
         'move'   => 'moves',
@@ -94,9 +94,9 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'numen'  => 'numina',
         'quiz' => 'quizzes',
         'alias' => 'aliases',
-    );
+    ];
 
-    protected $uncountable = array(
+    protected $uncountable = [
         'sheep',
         'fish',
         'deer',
@@ -108,7 +108,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'equipment',
         'news',
         'people',
-    );
+    ];
 
     /**
      * Generate a plural name based on the passed in root.

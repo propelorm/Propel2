@@ -89,20 +89,20 @@ class AbstractOMBuilderNamespaceTest extends TestCase
     {
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClassNamespace('Foo');
-        $this->assertEquals(array('' => array('Foo' => 'Foo')), $builder->getDeclaredClasses());
+        $this->assertEquals(['' => ['Foo' => 'Foo']], $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Bar');
-        $this->assertEquals(array('' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(['' => ['Foo' => 'Foo', 'Bar' => 'Bar']], $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Foo');
-        $this->assertEquals(array('' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(['' => ['Foo' => 'Foo', 'Bar' => 'Bar']], $builder->getDeclaredClasses());
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClassNamespace('Foo', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo' => 'Foo')), $builder->getDeclaredClasses());
+        $this->assertEquals(['Foo' => ['Foo' => 'Foo']], $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Bar', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(['Foo' => ['Foo' => 'Foo', 'Bar' => 'Bar']], $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Foo', 'Foo');
-        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar')), $builder->getDeclaredClasses());
+        $this->assertEquals(['Foo' => ['Foo' => 'Foo', 'Bar' => 'Bar']], $builder->getDeclaredClasses());
         $builder->declareClassNamespace('Bar', 'Bar', 'Bar2');
-        $this->assertEquals(array('Foo' => array('Foo' => 'Foo', 'Bar' => 'Bar'), 'Bar' => array('Bar' => 'Bar2')), $builder->getDeclaredClasses());
+        $this->assertEquals(['Foo' => ['Foo' => 'Foo', 'Bar' => 'Bar'], 'Bar' => ['Bar' => 'Bar2']], $builder->getDeclaredClasses());
     }
 
     /**
@@ -118,29 +118,29 @@ class AbstractOMBuilderNamespaceTest extends TestCase
     public function testGetDeclareClass()
     {
         $builder = new TestableOMBuilder2(new Table('fooTable'));
-        $this->assertEquals(array(), $builder->getDeclaredClasses());
+        $this->assertEquals([], $builder->getDeclaredClasses());
         $builder->declareClass('\\Foo');
-        $this->assertEquals(array('Foo' => 'Foo'), $builder->getDeclaredClasses(''));
+        $this->assertEquals(['Foo' => 'Foo'], $builder->getDeclaredClasses(''));
         $builder->declareClass('Bar');
-        $this->assertEquals(array('Foo' => 'Foo', 'Bar' => 'Bar'), $builder->getDeclaredClasses(''));
+        $this->assertEquals(['Foo' => 'Foo', 'Bar' => 'Bar'], $builder->getDeclaredClasses(''));
         $builder->declareClass('Foo\\Bar2');
-        $this->assertEquals(array('Bar2' => 'Bar2'), $builder->getDeclaredClasses('Foo'));
+        $this->assertEquals(['Bar2' => 'Bar2'], $builder->getDeclaredClasses('Foo'));
         $builder->declareClass('Foo\\Bar\\Baz');
-        $this->assertEquals(array('Bar2' => 'Bar2'), $builder->getDeclaredClasses('Foo'));
-        $this->assertEquals(array('Baz' => 'Baz'), $builder->getDeclaredClasses('Foo\\Bar'));
+        $this->assertEquals(['Bar2' => 'Bar2'], $builder->getDeclaredClasses('Foo'));
+        $this->assertEquals(['Baz' => 'Baz'], $builder->getDeclaredClasses('Foo\\Bar'));
         $builder->declareClass('\\Hello\\World');
-        $this->assertEquals(array('World' => 'World'), $builder->getDeclaredClasses('Hello'));
+        $this->assertEquals(['World' => 'World'], $builder->getDeclaredClasses('Hello'));
     }
 
     public function testDeclareClasses()
     {
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClasses('Foo', '\\Bar', 'Baz\\Baz', 'Hello\\Cruel\\World');
-        $expected = array(
-            ''             => array('Foo' => 'Foo', 'Bar' => 'Bar'),
-            'Baz'          => array('Baz' => 'Baz'),
-            'Hello\\Cruel' => array('World' => 'World')
-        );
+        $expected = [
+            ''             => ['Foo' => 'Foo', 'Bar' => 'Bar'],
+            'Baz'          => ['Baz' => 'Baz'],
+            'Hello\\Cruel' => ['World' => 'World']
+        ];
         $this->assertEquals($expected, $builder->getDeclaredClasses());
     }
 }

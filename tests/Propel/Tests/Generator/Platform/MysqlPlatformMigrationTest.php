@@ -403,9 +403,9 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, true);
         $renamedTables = $diff->getRenamedTables();
 
-        $firstPair = array(key($renamedTables), current($renamedTables));
+        $firstPair = [key($renamedTables), current($renamedTables)];
         next($renamedTables);
-        $secondPair = array(key($renamedTables), current($renamedTables));
+        $secondPair = [key($renamedTables), current($renamedTables)];
 
         $this->assertEquals('foo', $firstPair[0]);
         $this->assertEquals('foo_bla', $firstPair[1]);

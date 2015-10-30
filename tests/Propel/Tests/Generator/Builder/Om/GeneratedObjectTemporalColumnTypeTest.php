@@ -172,12 +172,12 @@ EOF;
         $builder->setPlatform(new MysqlPlatform());
         $builder->buildClasses();
         $r = new \ComplexColumnTypeEntity6();
-        $r->hydrate(array(
+        $r->hydrate([
             123,
             '0000-00-00',
             '00:00:00',
             '0000-00-00 00:00:00'
-        ));
+        ]);
         $this->assertNull($r->getBar1());
         $this->assertEquals('00:00:00', $r->getBar2()->format('H:i:s'));
         $this->assertNull($r->getBar3());

@@ -160,7 +160,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $results = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->find();
         $this->assertEquals(1, count($results));
 
-        $results = BookQuery::create()->filterByISBN(array("0380977427", "0140422161"), Criteria::IN)->find();
+        $results = BookQuery::create()->filterByISBN(["0380977427", "0140422161"], Criteria::IN)->find();
         $this->assertEquals(2, count($results));
 
         // Perform a "limit" search
@@ -504,7 +504,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, count($results));
 
         $results = BookQuery::create()
-            ->where('Book.ISBN IN ?', array("0380977427", "0140422161"))
+            ->where('Book.ISBN IN ?', ["0380977427", "0140422161"])
             ->find();
         $this->assertEquals(2, count($results));
 

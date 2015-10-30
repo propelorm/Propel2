@@ -19,106 +19,106 @@ class ProfilerTest extends BaseTestCase
     public function testGetProfileBetweenAddsSlowTreshold()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array());
+        $profiler->setDetails([]);
         $profiler->setSlowTreshold(1000);
-        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 1200));
+        $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
         $this->assertEquals('     ', $res);
-        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 2200));
+        $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
         $this->assertEquals('SLOW ', $res);
     }
 
     public function testGetProfileBetweenDoesNotAddSlowTresholdWhenValueIsNull()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array());
+        $profiler->setDetails([]);
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 1200));
+        $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
         $this->assertEquals('', $res);
-        $res = $profiler->getProfileBetween(array('microtime' => 1000), array('microtime' => 2200));
+        $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
         $this->assertEquals('', $res);
     }
 
     public function testGetProfileBetweenAddsTime()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array('time' => array('name' => 'Time', 'precision' => 3, 'pad' => 3)));
+        $profiler->setDetails(['time' => ['name' => 'Time', 'precision' => 3, 'pad' => 3]]);
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getProfileBetween(array('microtime' => 1.000), array('microtime' => 1.234));
+        $res = $profiler->getProfileBetween(['microtime' => 1.000], ['microtime' => 1.234]);
         $this->assertEquals('Time: 234ms | ', $res);
-        $res = $profiler->getProfileBetween(array('microtime' => 1.234), array('microtime' => 2.345));
+        $res = $profiler->getProfileBetween(['microtime' => 1.234], ['microtime' => 2.345]);
         $this->assertEquals('Time: 1.11s  | ', $res);
     }
 
     public function testGetProfileBetweenAddsMemoryUsage()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array('mem' => array('name' => 'Memory', 'precision' => 3, 'pad' => 3)));
+        $profiler->setDetails(['mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => 3]]);
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getProfileBetween(array(), array('memoryUsage' => 343245));
+        $res = $profiler->getProfileBetween([], ['memoryUsage' => 343245]);
         $this->assertEquals('Memory: 335kB | ', $res);
-        $res = $profiler->getProfileBetween(array(), array('memoryUsage' => 73456345634));
+        $res = $profiler->getProfileBetween([], ['memoryUsage' => 73456345634]);
         $this->assertEquals('Memory: 68.4GB | ', $res);
     }
 
     public function testGetProfileBetweenAddsMemoryDeltaUsage()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array('memDelta' => array('name' => 'Delta', 'precision' => 3, 'pad' => 3)));
+        $profiler->setDetails(['memDelta' => ['name' => 'Delta', 'precision' => 3, 'pad' => 3]]);
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getProfileBetween(array('memoryUsage' => 343245), array('memoryUsage' => 888064));
+        $res = $profiler->getProfileBetween(['memoryUsage' => 343245], ['memoryUsage' => 888064]);
         $this->assertEquals('Delta: +532kB | ', $res);
-        $res = $profiler->getProfileBetween(array('memoryUsage' => 234523523), array('memoryUsage' => 73456345634));
+        $res = $profiler->getProfileBetween(['memoryUsage' => 234523523], ['memoryUsage' => 73456345634]);
         $this->assertEquals('Delta: +68.2GB | ', $res);
-        $res = $profiler->getProfileBetween(array('memoryUsage' => 73456345634), array('memoryUsage' => 234523523));
+        $res = $profiler->getProfileBetween(['memoryUsage' => 73456345634], ['memoryUsage' => 234523523]);
         $this->assertEquals('Delta: -68.2GB | ', $res);
     }
 
     public function testGetProfileBetweenAddsMemoryPeakUsage()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array('memPeak' => array('name' => 'Peak', 'precision' => 3, 'pad' => 3)));
+        $profiler->setDetails(['memPeak' => ['name' => 'Peak', 'precision' => 3, 'pad' => 3]]);
         $profiler->setSlowTreshold(0);
-        $res = $profiler->getProfileBetween(array(), array('memoryPeakUsage' => 343245));
+        $res = $profiler->getProfileBetween([], ['memoryPeakUsage' => 343245]);
         $this->assertEquals('Peak: 335kB | ', $res);
-        $res = $profiler->getProfileBetween(array(), array('memoryPeakUsage' => 73456345634));
+        $res = $profiler->getProfileBetween([], ['memoryPeakUsage' => 73456345634]);
         $this->assertEquals('Peak: 68.4GB | ', $res);
     }
 
     public function testGetProfileBetweenCombinesDetails()
     {
         $profiler = new Profiler();
-        $profiler->setDetails(array(
-            'time'     => array('name' => 'Time', 'precision' => 3, 'pad' => 3),
-            'mem'      => array('name' => 'Memory', 'precision' => 3, 'pad' => 3),
-            'memDelta' => array('name' => 'Delta', 'precision' => 3, 'pad' => 3),
-            'memPeak'  => array('name' => 'Peak', 'precision' => 3, 'pad' => 3),
-        ));
+        $profiler->setDetails([
+            'time'     => ['name' => 'Time', 'precision' => 3, 'pad' => 3],
+            'mem'      => ['name' => 'Memory', 'precision' => 3, 'pad' => 3],
+            'memDelta' => ['name' => 'Delta', 'precision' => 3, 'pad' => 3],
+            'memPeak'  => ['name' => 'Peak', 'precision' => 3, 'pad' => 3],
+        ]);
         $res = $profiler->getProfileBetween(
-            array('microtime' => 1.234, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357),
-            array('microtime' => 2.345, 'memoryUsage' => 888064, 'memoryPeakUsage' => 343245)
+            ['microtime' => 1.234, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357],
+            ['microtime' => 2.345, 'memoryUsage' => 888064, 'memoryPeakUsage' => 343245]
         );
         $this->assertEquals('SLOW Time: 1.11s  | Memory: 867kB | Delta: +532kB | Peak: 335kB | ', $res);
         $res = $profiler->getProfileBetween(
-            array('microtime' => 1.000, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357),
-            array('microtime' => 1.0345, 'memoryUsage' => 245643, 'memoryPeakUsage' => 343245)
+            ['microtime' => 1.000, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357],
+            ['microtime' => 1.0345, 'memoryUsage' => 245643, 'memoryPeakUsage' => 343245]
         );
         $this->assertEquals('     Time: 34.5ms | Memory: 240kB | Delta: -95.3kB | Peak: 335kB | ', $res);
     }
 
     public function providerForTestFormatMemory()
     {
-        return array(
-            array(1234567890, number_format(1.15, 2) . 'GB'),
-            array(123456789.0, number_format(118) . 'MB'),
-            array(12345678.90, number_format(11.8, 1) . 'MB'),
-            array(1234567.890, number_format(1.18, 2) . 'MB'),
-            array(123456.7890, number_format(121) . 'kB'),
-            array(12345.67890, number_format(12.1, 1) . 'kB'),
-            array(1234.567890, number_format(1.21, 2) . 'kB'),
-            array(123.4567890, number_format(123) . 'B'),
-            array(12.34567890, number_format(12.3, 1) . 'B'),
-            array(1.234567890, number_format(1.23, 2) . 'B'),
-        );
+        return [
+            [1234567890, number_format(1.15, 2) . 'GB'],
+            [123456789.0, number_format(118) . 'MB'],
+            [12345678.90, number_format(11.8, 1) . 'MB'],
+            [1234567.890, number_format(1.18, 2) . 'MB'],
+            [123456.7890, number_format(121) . 'kB'],
+            [12345.67890, number_format(12.1, 1) . 'kB'],
+            [1234.567890, number_format(1.21, 2) . 'kB'],
+            [123.4567890, number_format(123) . 'B'],
+            [12.34567890, number_format(12.3, 1) . 'B'],
+            [1.234567890, number_format(1.23, 2) . 'B'],
+        ];
     }
 
     /**
@@ -131,14 +131,14 @@ class ProfilerTest extends BaseTestCase
 
     public function providerForTestFormatMemoryPrecision()
     {
-        return array(
-            array(1, number_format(10) . 'kB'),
-            array(2, number_format(12) . 'kB'),
-            array(3, number_format(12.1, 1) . 'kB'),
-            array(4, number_format(12.06, 2) . 'kB'),
-            array(5, number_format(12.056, 3) . 'kB'),
-            array(6, number_format(12.0563, 4) . 'kB'),
-        );
+        return [
+            [1, number_format(10) . 'kB'],
+            [2, number_format(12) . 'kB'],
+            [3, number_format(12.1, 1) . 'kB'],
+            [4, number_format(12.06, 2) . 'kB'],
+            [5, number_format(12.056, 3) . 'kB'],
+            [6, number_format(12.0563, 4) . 'kB'],
+        ];
     }
 
     /**
@@ -151,21 +151,21 @@ class ProfilerTest extends BaseTestCase
 
     public function providerForTestFormatDuration()
     {
-        return array(
-            array(1234567890, number_format(1230000000) . 's '),
-            array(123456789.0, number_format(123000000) . 's '),
-            array(12345678.90, number_format(12300000) . 's '),
-            array(1234567.890, number_format(1230000) . 's '),
-            array(123456.7890, number_format(123000) . 's '),
-            array(12345.67890, number_format(12300) . 's '),
-            array(1234.567890, number_format(1230) . 's '),
-            array(123.4567890, number_format(123) . 's '),
-            array(12.34567890, number_format(12.3, 1) . 's '),
-            array(1.234567890, number_format(1.23, 2) . 's '),
-            array(0.123456789, number_format(123) . 'ms'),
-            array(0.012345678, number_format(12.3, 1) . 'ms'),
-            array(0.001234567, number_format(1.23, 2) . 'ms'),
-        );
+        return [
+            [1234567890, number_format(1230000000) . 's '],
+            [123456789.0, number_format(123000000) . 's '],
+            [12345678.90, number_format(12300000) . 's '],
+            [1234567.890, number_format(1230000) . 's '],
+            [123456.7890, number_format(123000) . 's '],
+            [12345.67890, number_format(12300) . 's '],
+            [1234.567890, number_format(1230) . 's '],
+            [123.4567890, number_format(123) . 's '],
+            [12.34567890, number_format(12.3, 1) . 's '],
+            [1.234567890, number_format(1.23, 2) . 's '],
+            [0.123456789, number_format(123) . 'ms'],
+            [0.012345678, number_format(12.3, 1) . 'ms'],
+            [0.001234567, number_format(1.23, 2) . 'ms'],
+        ];
     }
 
     /**
@@ -178,14 +178,14 @@ class ProfilerTest extends BaseTestCase
 
     public function providerForTestFormatDurationPrecision()
     {
-        return array(
-            array(1, number_format(100) . 's '),
-            array(2, number_format(120) . 's '),
-            array(3, number_format(123) . 's '),
-            array(4, number_format(123.5, 1) . 's '),
-            array(5, number_format(123.46, 2) . 's '),
-            array(6, number_format(123.457, 3) . 's '),
-        );
+        return [
+            [1, number_format(100) . 's '],
+            [2, number_format(120) . 's '],
+            [3, number_format(123) . 's '],
+            [4, number_format(123.5, 1) . 's '],
+            [5, number_format(123.46, 2) . 's '],
+            [6, number_format(123.457, 3) . 's '],
+        ];
     }
 
     /**
@@ -198,26 +198,26 @@ class ProfilerTest extends BaseTestCase
 
     public function providerForTestToPrecision()
     {
-        return array(
-            array(1234567890, number_format(1230000000)),
-            array(123456789.0, number_format(123000000)),
-            array(12345678.90, number_format(12300000)),
-            array(1234567.890, number_format(1230000)),
-            array(123456.7890, number_format(123000)),
-            array(12345.67890, number_format(12300)),
-            array(1234.567890, number_format(1230)),
-            array(123.4567890, number_format(123)),
-            array(12.34567890, number_format(12.3, 1)),
-            array(1.234567890, number_format(1.23, 2)),
-            array(0, 0),
-            array(0.123456789, number_format(0.123, 3)),
-            array(0.012345678, number_format(0.0123, 4)),
-            array(0.001234567, number_format(0.00123, 5)),
-            array(0.000123456, number_format(0.000123, 6)),
-            array(0.000012345, number_format(0.0000123, 7)),
-            array(0.000001234, number_format(0.00000123, 8)),
-            array(-1234567.890, number_format(-1230000)),
-        );
+        return [
+            [1234567890, number_format(1230000000)],
+            [123456789.0, number_format(123000000)],
+            [12345678.90, number_format(12300000)],
+            [1234567.890, number_format(1230000)],
+            [123456.7890, number_format(123000)],
+            [12345.67890, number_format(12300)],
+            [1234.567890, number_format(1230)],
+            [123.4567890, number_format(123)],
+            [12.34567890, number_format(12.3, 1)],
+            [1.234567890, number_format(1.23, 2)],
+            [0, 0],
+            [0.123456789, number_format(0.123, 3)],
+            [0.012345678, number_format(0.0123, 4)],
+            [0.001234567, number_format(0.00123, 5)],
+            [0.000123456, number_format(0.000123, 6)],
+            [0.000012345, number_format(0.0000123, 7)],
+            [0.000001234, number_format(0.00000123, 8)],
+            [-1234567.890, number_format(-1230000)],
+        ];
     }
 
     /**
@@ -230,15 +230,15 @@ class ProfilerTest extends BaseTestCase
 
     public function providerForTestToPrecisionPrecision()
     {
-        return array(
-            array(0, 0),
-            array(1, number_format(100)),
-            array(2, number_format(120)),
-            array(3, number_format(123)),
-            array(4, number_format(123.5, 1)),
-            array(5, number_format(123.46, 2)),
-            array(6, number_format(123.457, 3)),
-        );
+        return [
+            [0, 0],
+            [1, number_format(100)],
+            [2, number_format(120)],
+            [3, number_format(123)],
+            [4, number_format(123.5, 1)],
+            [5, number_format(123.46, 2)],
+            [6, number_format(123.457, 3)],
+        ];
     }
 
     /**

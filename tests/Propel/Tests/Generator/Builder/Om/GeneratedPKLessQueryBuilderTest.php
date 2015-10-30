@@ -70,7 +70,7 @@ SCHEMA;
      */
     public function testFindPksThrowsAnError()
     {
-        \StuffQuery::create()->findPks(array(42, 24));
+        \StuffQuery::create()->findPks([42, 24]);
     }
 
     /**

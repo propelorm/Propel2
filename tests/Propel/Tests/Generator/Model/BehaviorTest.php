@@ -26,14 +26,14 @@ class BehaviorTest extends TestCase
     public function testSetupObject()
     {
         $b = new Behavior();
-        $b->loadMapping(array('name' => 'foo'));
+        $b->loadMapping(['name' => 'foo']);
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
     }
 
     public function testSetupObjectWithMultipleBehaviorWithNoId()
     {
         $b = new Propel\Tests\Helpers\MultipleBehavior();
-        $b->loadMapping(array('name' => 'foo'));
+        $b->loadMapping(['name' => 'foo']);
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
         $this->assertEquals($b->getId(), 'foo', 'setupObject() sets the Behavior id from its name when no explicit id is given');
@@ -42,7 +42,7 @@ class BehaviorTest extends TestCase
     public function testSetupObjectWithMultipleBehaviorWithId()
     {
         $b = new Propel\Tests\Helpers\MultipleBehavior();
-        $b->loadMapping(array('name' => 'foo', 'id' => 'bar'));
+        $b->loadMapping(['name' => 'foo', 'id' => 'bar']);
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
         $this->assertEquals($b->getId(), 'bar', 'setupObject() sets the Behavior id from XML attributes');
@@ -54,7 +54,7 @@ class BehaviorTest extends TestCase
     public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
     {
         $b = new Behavior();
-        $b->loadMapping(array('name' => 'foo', 'id' => 'lala'));
+        $b->loadMapping(['name' => 'foo', 'id' => 'lala']);
     }
 
     public function testName()
@@ -78,16 +78,16 @@ class BehaviorTest extends TestCase
     public function testParameters()
     {
         $b = new Behavior();
-        $this->assertEquals($b->getParameters(), array(), 'Behavior parameters is an empty array by default');
-        $b->addParameter(array('name' => 'foo', 'value' => 'bar'));
-        $this->assertEquals($b->getParameters(), array('foo' => 'bar'), 'addParameter() sets a parameter from an associative array');
-        $b->addParameter(array('name' => 'foo2', 'value' => 'bar2'));
-        $this->assertEquals($b->getParameters(), array('foo' => 'bar', 'foo2' => 'bar2'), 'addParameter() adds a parameter from an associative array');
-        $b->addParameter(array('name' => 'foo', 'value' => 'bar3'));
-        $this->assertEquals($b->getParameters(), array('foo' => 'bar3', 'foo2' => 'bar2'), 'addParameter() changes a parameter from an associative array');
+        $this->assertEquals($b->getParameters(), [], 'Behavior parameters is an empty array by default');
+        $b->addParameter(['name' => 'foo', 'value' => 'bar']);
+        $this->assertEquals($b->getParameters(), ['foo' => 'bar'], 'addParameter() sets a parameter from an associative array');
+        $b->addParameter(['name' => 'foo2', 'value' => 'bar2']);
+        $this->assertEquals($b->getParameters(), ['foo' => 'bar', 'foo2' => 'bar2'], 'addParameter() adds a parameter from an associative array');
+        $b->addParameter(['name' => 'foo', 'value' => 'bar3']);
+        $this->assertEquals($b->getParameters(), ['foo' => 'bar3', 'foo2' => 'bar2'], 'addParameter() changes a parameter from an associative array');
         $this->assertEquals($b->getParameter('foo'), 'bar3', 'getParameter() retrieves a parameter value by name');
-        $b->setParameters(array('foo3' => 'bar3', 'foo4' => 'bar4'));
-        $this->assertEquals($b->getParameters(), array('foo3' => 'bar3', 'foo4' => 'bar4'), 'setParameters() changes the whole parameter array');
+        $b->setParameters(['foo3' => 'bar3', 'foo4' => 'bar4']);
+        $this->assertEquals($b->getParameters(), ['foo3' => 'bar3', 'foo4' => 'bar4'], 'setParameters() changes the whole parameter array');
     }
 
     /**
@@ -118,7 +118,7 @@ EOF;
         $behavior = $table->getBehavior('timestampable');
         $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
         $this->assertEquals(
-            array('create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'),
+            ['create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'],
             $behavior->getParameters(),
             'SchemaReader sets the behavior parameters correctly'
         );

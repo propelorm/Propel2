@@ -216,7 +216,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function quoteIdentifierTable($table)
     {
         // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
-        return '"' . strtr($table, array('.' => '"."', ' ' => '" "')) . '"';
+        return '"' . strtr($table, ['.' => '"."', ' ' => '" "']) . '"';
     }
 
     /**
@@ -231,7 +231,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function doExplainPlan(ConnectionInterface $con, $query)
     {
         if ($query instanceof Criteria) {
-            $params = array();
+            $params = [];
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($query->getDbName());
             $sql = $query->createSelectSql($params);
         } else {

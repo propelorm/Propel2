@@ -26,14 +26,14 @@ use Propel\Generator\Model\ForeignKey;
 class ConcreteInheritanceBehavior extends Behavior
 {
     // default parameters value
-    protected $parameters = array(
+    protected $parameters = [
         'extends'             => '',
         'descendant_column'   => 'descendant_class',
         'copy_data_to_parent' => 'true',
         'copy_data_to_child'  => 'false',
         'schema'              => '',
         'exclude_behaviors'   => '',
-    );
+    ];
 
     public function modifyTable()
     {
@@ -45,7 +45,7 @@ class ConcreteInheritanceBehavior extends Behavior
             if (!$parentTable->hasBehavior('concrete_inheritance_parent')) {
                 $parentBehavior = new ConcreteInheritanceParentBehavior();
                 $parentBehavior->setName('concrete_inheritance_parent');
-                $parentBehavior->addParameter(array('name' => 'descendant_column', 'value' => $this->getParameter('descendant_column')));
+                $parentBehavior->addParameter(['name' => 'descendant_column', 'value' => $this->getParameter('descendant_column')]);
                 $parentTable->addBehavior($parentBehavior);
                 // The parent table's behavior modifyTable() must be executed before this one
                 $parentBehavior->getTableModifier()->modifyTable();

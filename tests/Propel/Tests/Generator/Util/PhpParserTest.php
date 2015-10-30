@@ -50,7 +50,7 @@ class Foo
 }
 EOF;
 
-        return array(array($code));
+        return [[$code]];
     }
 
     /**

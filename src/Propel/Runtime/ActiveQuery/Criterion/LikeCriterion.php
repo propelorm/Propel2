@@ -82,7 +82,7 @@ class LikeCriterion extends AbstractCriterion
             }
         }
 
-        $params[] = array('table' => $this->realtable, 'column' => $this->column, 'value' => $this->value);
+        $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];
 
         $sb .= $field . $this->comparison;
 

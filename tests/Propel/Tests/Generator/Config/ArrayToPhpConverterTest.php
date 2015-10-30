@@ -17,19 +17,19 @@ class ArrayToPhpConverterTest extends TestCase
 {
     public function testConvertConvertsSimpleDatasourceSection()
     {
-        $conf = array(
-            'connections' => array(
-                'bookstore' => array(
+        $conf = [
+            'connections' => [
+                'bookstore' => [
                   'adapter' => 'mysql',
                   'classname' => 'DebugPDO',
                   'dsn' => 'mysql:host=localhost;dbname=bookstore',
                   'user' => 'testuser',
                   'password' => 'password',
-                  'options' =>  array('ATTR_PERSISTENT' => false),
-                  'attributes' => array('ATTR_EMULATE_PREPARES' => true)
-                )
-            )
-        );
+                  'options' =>  ['ATTR_PERSISTENT' => false],
+                  'attributes' => ['ATTR_EMULATE_PREPARES' => true]
+                ]
+            ]
+        ];
         $expected = <<<EOF
 \$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 \$serviceContainer->checkVersion('2.0.0-dev');
@@ -58,18 +58,18 @@ EOF;
 
     public function testConvertConvertsMasterSlaveDatasourceSection()
     {
-        $conf = array(
-            'connections' => array(
-                'bookstore-cms' => array(
+        $conf = [
+            'connections' => [
+                'bookstore-cms' => [
                     'adapter' => 'mysql',
                     'dsn' => 'mysql:host=localhost;dbname=bookstore',
-                    'slaves' => array(
-                        array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
-                        array('dsn' => 'mysql:host=slave-server2; dbname=bookstore')
-                    )
-                )
-            )
-        );
+                    'slaves' => [
+                        ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
+                        ['dsn' => 'mysql:host=slave-server2; dbname=bookstore']
+                    ]
+                ]
+            ]
+        ];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
@@ -97,14 +97,14 @@ EOF;
 
     public function testConvertConvertsProfilerSection()
     {
-        $conf = array('profiler' => array(
+        $conf = ['profiler' => [
             'classname' => '\Propel\Runtime\Util\Profiler',
             'slowTreshold' => 0.2,
-            'time' => array('precision' => 3, 'pad' => '8'),
-            'memory' => array('precision' => 3, 'pad' => '8'),
+            'time' => ['precision' => 3, 'pad' => '8'],
+            'memory' => ['precision' => 3, 'pad' => '8'],
             'innerGlue' => ': ',
             'outerGlue' => ' | '
-        ));
+        ]];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
@@ -130,11 +130,11 @@ EOF;
 
     public function testConvertConvertsLogSection()
     {
-        $conf = array('log' => array('defaultLogger' => array(
+        $conf = ['log' => ['defaultLogger' => [
             'type' => 'stream',
             'level' => '300',
             'path' => '/var/log/propel.log',
-        )));
+        ]]];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
@@ -149,17 +149,17 @@ EOF;
 
     public function testConvertConvertsLogSectionWithMultipleLoggers()
     {
-        $conf = array('log' => array(
-            'defaultLogger' => array(
+        $conf = ['log' => [
+            'defaultLogger' => [
                 'type' => 'stream',
                 'path' => '/var/log/propel.log',
                 'level' => '300'
-            ),
-            'bookstoreLogger' => array(
+            ],
+            'bookstoreLogger' => [
                 'type' => 'stream',
                 'path' => '/var/log/propel_bookstore.log',
-            )
-        ));
+            ]
+        ]];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');
@@ -178,40 +178,40 @@ EOF;
 
     public function testConvertConvertsCompleteConfiguration()
     {
-        $conf = array(
-          'log' => array('defaultLogger' => array(
+        $conf = [
+          'log' => ['defaultLogger' => [
             'type' => 'stream',
             'level' => '300',
             'path' => '/var/log/propel.log',
-          )),
-          'connections' => array(
-            'bookstore' => array(
+          ]],
+          'connections' => [
+            'bookstore' => [
               'adapter' => 'mysql',
               'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
               'dsn' => 'mysql:host=127.0.0.1;dbname=test',
               'user' => 'root',
               'password' => '',
-              'options' => array(
+              'options' => [
                 'ATTR_PERSISTENT' => false,
-              ),
-              'attributes' => array(
+              ],
+              'attributes' => [
                 'ATTR_EMULATE_PREPARES' => true,
-              ),
-              'settings' => array(
+              ],
+              'settings' => [
                 'charset' => 'utf8',
-              ),
-            ),
-            'bookstore-cms' => array(
+              ],
+            ],
+            'bookstore-cms' => [
               'adapter' => 'mysql',
               'dsn' => 'mysql:host=localhost;dbname=bookstore',
-              'slaves' => array(
-                  array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
-                  array('dsn' => 'mysql:host=slave-server2; dbname=bookstore'),
-                ),
-              ),
-            ),
+              'slaves' => [
+                  ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
+                  ['dsn' => 'mysql:host=slave-server2; dbname=bookstore'],
+                ],
+              ],
+            ],
             'defaultConnection' => 'bookstore'
-        );
+        ];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion('2.0.0-dev');

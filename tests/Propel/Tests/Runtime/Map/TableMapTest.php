@@ -43,7 +43,7 @@ class TableMapTest extends TestCase
 
     public function testConstructor()
     {
-        $this->assertEquals(array(), $this->tmap->getColumns(), 'A new table map has no columns');
+        $this->assertEquals([], $this->tmap->getColumns(), 'A new table map has no columns');
         $this->assertEquals($this->tableName, $this->tmap->getName(), 'constructor can set the table name');
         $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
         try {
@@ -57,7 +57,7 @@ class TableMapTest extends TestCase
     public function testProperties()
     {
         $tmap = new TableMap();
-        $properties = array('name', 'phpName', 'className', 'package');
+        $properties = ['name', 'phpName', 'className', 'package'];
         foreach ($properties as $property) {
             $getter = 'get' . ucfirst($property);
             $setter = 'set' . ucfirst($property);
@@ -107,10 +107,10 @@ class TableMapTest extends TestCase
 
     public function testGetColumns()
     {
-        $this->assertEquals(array(), $this->tmap->getColumns(), 'getColumns returns an empty array when no columns were added');
+        $this->assertEquals([], $this->tmap->getColumns(), 'getColumns returns an empty array when no columns were added');
         $column1 = $this->tmap->addColumn('BAR', 'Bar', 'INTEGER');
         $column2 = $this->tmap->addColumn('BAZ', 'Baz', 'INTEGER');
-        $this->assertEquals(array('BAR' => $column1, 'BAZ' => $column2), $this->tmap->getColumns(), 'getColumns returns the columns indexed by name');
+        $this->assertEquals(['BAR' => $column1, 'BAZ' => $column2], $this->tmap->getColumns(), 'getColumns returns the columns indexed by name');
     }
 
     public function testAddPrimaryKey()
@@ -129,10 +129,10 @@ class TableMapTest extends TestCase
 
     public function testGetPrimaryKeys()
     {
-        $this->assertEquals(array(), $this->tmap->getPrimaryKeys(), 'getPrimaryKeys() returns an empty array by default');
+        $this->assertEquals([], $this->tmap->getPrimaryKeys(), 'getPrimaryKeys() returns an empty array by default');
         $column1 = $this->tmap->addPrimaryKey('BAR', 'Bar', 'INTEGER');
         $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, true);
-        $expected = array('BAR' => $column1, 'BAZZ' => $column3);
+        $expected = ['BAR' => $column1, 'BAZZ' => $column3];
         $this->assertEquals($expected, $this->tmap->getPrimaryKeys(), 'getPrimaryKeys() returns an array of the table primary keys');
     }
 
@@ -152,10 +152,10 @@ class TableMapTest extends TestCase
 
     public function testGetForeignKeys()
     {
-        $this->assertEquals(array(), $this->tmap->getForeignKeys(), 'getForeignKeys() returns an empty array by default');
+        $this->assertEquals([], $this->tmap->getForeignKeys(), 'getForeignKeys() returns an empty array by default');
         $column1 = $this->tmap->addForeignKey('BAR', 'Bar', 'INTEGER', 'Table1', 'column1');
         $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, false, 'Table1', 'column1');
-        $expected = array('BAR' => $column1, 'BAZZ' => $column3);
+        $expected = ['BAR' => $column1, 'BAZZ' => $column3];
         $this->assertEquals($expected, $this->tmap->getForeignKeys(), 'getForeignKeys() returns an array of the table foreign keys');
     }
 
@@ -197,7 +197,7 @@ class TableMapTest extends TestCase
         $this->assertEquals($this->rmap2->getLocalTable(), $foreigntmap2, 'adding a relation with HAS_MANY sets the local table according to the name given');
         $this->assertEquals(RelationMap::ONE_TO_MANY, $this->rmap2->getType(), 'adding a relation with HAS_MANY sets the foreign table type accordingly');
 
-        $expectedRelations = array('Bar' => $this->rmap1, 'Bazz' => $this->rmap2);
+        $expectedRelations = ['Bar' => $this->rmap1, 'Bazz' => $this->rmap2];
         $this->assertEquals($expectedRelations, $this->tmap->getRelations(), 'getRelations() returns an associative array of all the relations');
     }
 

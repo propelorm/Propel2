@@ -49,13 +49,13 @@ class SortableBehaviorTableMapBuilderModifier
             }
         }
 
-        return $this->behavior->renderTemplate('tableMapSortable', array(
+        return $this->behavior->renderTemplate('tableMapSortable', [
             'rankColumn' => $this->getColumnConstant('rank_column'),
             'multiScope' => $this->behavior->hasMultipleScopes(),
             'scope'      => $col,
             'tableName'  => $this->table->getName(),
             'useScope'   => $this->behavior->useScope(),
-        ));
+        ]);
     }
 
     protected function getColumnConstant($name)

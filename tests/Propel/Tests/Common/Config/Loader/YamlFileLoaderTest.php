@@ -79,7 +79,7 @@ EOF;
 
         $actual = $this->loader->load('empty.yaml');
 
-        $this->assertEquals(array(), $actual);
+        $this->assertEquals([], $actual);
     }
 
     /**

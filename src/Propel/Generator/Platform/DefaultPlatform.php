@@ -128,7 +128,7 @@ class DefaultPlatform implements PlatformInterface
      */
     protected function initialize()
     {
-        $this->schemaDomainMap = array();
+        $this->schemaDomainMap = [];
         foreach (PropelTypes::getPropelTypes() as $type) {
             $this->schemaDomainMap[$type] = new Domain($type);
         }
@@ -243,7 +243,7 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getSequenceName(Table $table)
     {
-        static $longNamesMap = array();
+        static $longNamesMap = [];
         $result = null;
         if (IdMethod::NATIVE === $table->getIdMethod()) {
             $idMethodParams = $table->getIdMethodParameters();
@@ -328,7 +328,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     {
         $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
 
-        $lines = array();
+        $lines = [];
 
         foreach ($table->getColumns() as $column) {
             $lines[] = $this->getColumnDDL($column);
@@ -367,7 +367,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     {
         $domain = $col->getDomain();
 
-        $ddl = array($this->quoteIdentifier($col->getName()));
+        $ddl = [$this->quoteIdentifier($col->getName())];
         $sqlType = $domain->getSqlType();
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             $ddl[] = $sqlType . $col->getSizeDefinition();
@@ -402,7 +402,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             } else {
                 if ($col->isTextType()) {
                     $default .= $this->quote($defaultValue->getValue());
-                } elseif (in_array($col->getType(), array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
+                } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
@@ -436,7 +436,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      */
     public function getColumnListDDL($columns, $delimiter = ',')
     {
-        $list = array();
+        $list = [];
         foreach ($columns as $column) {
             $columnName = $column->getName();
             $list[] = $this->quoteIdentifier($columnName);
@@ -1016,7 +1016,7 @@ ALTER TABLE %s MODIFY %s;
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
-        $lines = array();
+        $lines = [];
         $table = null;
         foreach ($columnDiffs as $columnDiff) {
             $toColumn = $columnDiff->getToColumn();
@@ -1067,7 +1067,7 @@ ALTER TABLE %s ADD %s;
      */
     public function getAddColumnsDDL($columns)
     {
-        $lines = array();
+        $lines = [];
         $table = null;
         foreach ($columns as $column) {
             if (null === $table) {
@@ -1159,7 +1159,7 @@ ALTER TABLE %s ADD
      */
     public function doQuoting($text)
     {
-        return '"' . strtr($text, array('.' => '"."')) . '"';
+        return '"' . strtr($text, ['.' => '"."']) . '"';
     }
 
     /**
@@ -1242,7 +1242,7 @@ ALTER TABLE %s ADD
         }
 
         if (is_string($b)
-            && in_array(strtolower($b), array('1', 'true', 'y', 'yes'))) {
+            && in_array(strtolower($b), ['1', 'true', 'y', 'yes'])) {
             return '1';
         }
 
@@ -1256,7 +1256,7 @@ ALTER TABLE %s ADD
             return null;
         }
 
-        $values = array();
+        $values = [];
         foreach (explode(',', $stringValue) as $v) {
             $values[] = trim($v);
         }

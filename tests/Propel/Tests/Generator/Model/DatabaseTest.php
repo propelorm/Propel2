@@ -46,7 +46,7 @@ class DatabaseTest extends ModelTestCase
     public function testSetupObject()
     {
         $database = new Database();
-        $database->loadMapping(array(
+        $database->loadMapping([
             'name'                   => 'bookstore',
             'baseClass'              => 'CustomBaseObject',
             'defaultIdMethod'        => 'native',
@@ -54,7 +54,7 @@ class DatabaseTest extends ModelTestCase
             'heavyIndexing'          => 'true',
             'tablePrefix'            => 'acme_',
             'defaultStringFormat'    => 'XML',
-        ));
+        ]);
 
         $this->assertSame('bookstore', $database->getName());
         $this->assertSame('CustomBaseObject', $database->getBaseClass());
@@ -71,9 +71,9 @@ class DatabaseTest extends ModelTestCase
         $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
                             ->disableOriginalConstructor()->getMock();
 
-        $schema = $this->getSchemaMock('bookstore', array(
+        $schema = $this->getSchemaMock('bookstore', [
             'generator_config' => $config
-        ));
+        ]);
 
         $platform = $this->getPlatformMock();
         $platform
@@ -123,7 +123,7 @@ class DatabaseTest extends ModelTestCase
         $this->setExpectedException('Propel\Generator\Exception\BehaviorNotFoundException');
 
         $database = new Database();
-        $behavior = $database->addBehavior(array('name' => 'foo'));
+        $behavior = $database->addBehavior(['name' => 'foo']);
     }
 
     /**
@@ -139,31 +139,31 @@ class DatabaseTest extends ModelTestCase
         );
 
         $database = new Database();
-        $behavior = $database->addBehavior(array('name' => $name));
+        $behavior = $database->addBehavior(['name' => $name]);
 
         $this->assertInstanceOf($type, $behavior);
     }
 
     public function testGetNextTableBehavior()
     {
-        $table1 = $this->getTableMock('books', array('behaviors' => array(
-            $this->getBehaviorMock('foo', array(
+        $table1 = $this->getTableMock('books', ['behaviors' => [
+            $this->getBehaviorMock('foo', [
                 'is_table_modified'  => false,
                 'modification_order' => 2,
-            )),
-            $this->getBehaviorMock('bar', array(
+            ]),
+            $this->getBehaviorMock('bar', [
                 'is_table_modified'  => false,
                 'modification_order' => 1,
-            )),
-            $this->getBehaviorMock('baz', array('is_table_modified'  => true)),
-        )));
+            ]),
+            $this->getBehaviorMock('baz', ['is_table_modified'  => true]),
+        ]]);
 
-        $table2 = $this->getTableMock('authors', array('behaviors' => array(
-            $this->getBehaviorMock('mix', array(
+        $table2 = $this->getTableMock('authors', ['behaviors' => [
+            $this->getBehaviorMock('mix', [
                 'is_table_modified'  => false,
                 'modification_order' => 1,
-            )),
-        )));
+            ]),
+        ]]);
 
         $database = new Database();
         $database->addTable($table1);
@@ -177,9 +177,9 @@ class DatabaseTest extends ModelTestCase
 
     public function testCantGetNextTableBehavior()
     {
-        $table1 = $this->getTableMock('books', array('behaviors' => array(
-            $this->getBehaviorMock('foo', array('is_table_modified' => true)),
-        )));
+        $table1 = $this->getTableMock('books', ['behaviors' => [
+            $this->getBehaviorMock('foo', ['is_table_modified' => true]),
+        ]]);
 
         $database = new Database();
         $database->addTable($table1);
@@ -201,7 +201,7 @@ class DatabaseTest extends ModelTestCase
 
     public function testAddNamespacedTable()
     {
-        $table = $this->getTableMock('books', array('namespace' => '\Acme'));
+        $table = $this->getTableMock('books', ['namespace' => '\Acme']);
 
         $database = new Database();
         $database->addTable($table);
@@ -211,9 +211,9 @@ class DatabaseTest extends ModelTestCase
 
     public function testAddTable()
     {
-        $table = $this->getTableMock('books', array(
+        $table = $this->getTableMock('books', [
             'namespace' => 'Acme\Model',
-        ));
+        ]);
 
         $database = new Database();
         $database->setPackage('acme');
@@ -235,10 +235,10 @@ class DatabaseTest extends ModelTestCase
     public function testAddArrayTable()
     {
         $database = new Database();
-        $database->addTable(array('name' => 'books'));
-        $database->addTable(array('name' => 'authors'));
-        $database->addTable(array('name' => 'categories', 'skipSql' => 'true'));
-        $database->addTable(array('name' => 'publishers', 'readOnly' => 'true'));
+        $database->addTable(['name' => 'books']);
+        $database->addTable(['name' => 'authors']);
+        $database->addTable(['name' => 'categories', 'skipSql' => 'true']);
+        $database->addTable(['name' => 'publishers', 'readOnly' => 'true']);
 
         $this->assertTrue($database->hasTable('books'));
         $this->assertTrue($database->hasTable('books', true));
@@ -259,25 +259,25 @@ class DatabaseTest extends ModelTestCase
         $this->setExpectedException('Propel\Generator\Exception\EngineException');
 
         $database = new Database();
-        $database->addTable(array('name' => 'authors'));
-        $database->addTable(array('name' => 'authors'));
+        $database->addTable(['name' => 'authors']);
+        $database->addTable(['name' => 'authors']);
     }
 
     public function provideBehaviors()
     {
-        return array(
-            array('aggregate_column', 'AggregateColumn'),
-            array('auto_add_pk', 'AutoAddPk'),
-            array('concrete_inheritance', 'ConcreteInheritance'),
-            array('delegate', 'Delegate'),
-            array('nested_set', 'NestedSet'),
-            array('query_cache', 'QueryCache'),
-            array('sluggable', 'Sluggable'),
-            array('sortable', 'Sortable'),
-            array('timestampable', 'Timestampable'),
-            array('validate', 'Validate'),
-            array('versionable', 'Versionable'),
-        );
+        return [
+            ['aggregate_column', 'AggregateColumn'],
+            ['auto_add_pk', 'AutoAddPk'],
+            ['concrete_inheritance', 'ConcreteInheritance'],
+            ['delegate', 'Delegate'],
+            ['nested_set', 'NestedSet'],
+            ['query_cache', 'QueryCache'],
+            ['sluggable', 'Sluggable'],
+            ['sortable', 'Sortable'],
+            ['timestampable', 'Timestampable'],
+            ['validate', 'Validate'],
+            ['versionable', 'Versionable'],
+        ];
     }
 
     public function testGetGeneratorConfig()
@@ -285,9 +285,9 @@ class DatabaseTest extends ModelTestCase
         $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
             ->disableOriginalConstructor()->getMock();
 
-        $schema = $this->getSchemaMock('bookstore', array(
+        $schema = $this->getSchemaMock('bookstore', [
             'generator_config' => $config
-        ));
+        ]);
 
         $database = new Database();
         $database->setParentSchema($schema);
@@ -307,9 +307,9 @@ class DatabaseTest extends ModelTestCase
             ->will($this->returnValue('InnoDB'))
         ;
 
-        $schema = $this->getSchemaMock('bookstore', array(
+        $schema = $this->getSchemaMock('bookstore', [
             'generator_config' => $config
-        ));
+        ]);
 
         $database = new Database();
         $database->setParentSchema($schema);
@@ -331,7 +331,7 @@ class DatabaseTest extends ModelTestCase
         $database = new Database();
         $database->setPlatform($platform);
 
-        $domain1  = $database->addDomain(array('name' => 'foo'));
+        $domain1  = $database->addDomain(['name' => 'foo']);
 
         $this->assertInstanceOf('Propel\Generator\Model\Domain', $domain1);
         $this->assertSame($domain1, $database->getDomain('foo'));
@@ -374,12 +374,12 @@ class DatabaseTest extends ModelTestCase
 
     public function provideSupportedFormats()
     {
-        return array(
-            array('xml'),
-            array('yaml'),
-            array('json'),
-            array('csv'),
-        );
+        return [
+            ['xml'],
+            ['yaml'],
+            ['json'],
+            ['csv'],
+        ];
     }
 
     public function testSetHeavyIndexing()

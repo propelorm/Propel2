@@ -168,8 +168,8 @@ class XmlParser extends AbstractParser
      */
     protected function convertDOMElementToArray(\DOMNode $data)
     {
-        $array = array();
-        $elementNames = array();
+        $array = [];
+        $elementNames = [];
         foreach ($data->childNodes as $element) {
             if ($element->nodeType == XML_TEXT_NODE) {
                 continue;

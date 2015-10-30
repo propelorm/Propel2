@@ -50,7 +50,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($xmlSchema);
 
-        return array(array($builder));
+        return [[$builder]];
     }
 
     /**
@@ -105,7 +105,7 @@ EOF;
      */
     public function testGetClassesLimitedClassTargets($builder)
     {
-        $script = $builder->getClasses(array('tablemap', 'object', 'query'));
+        $script = $builder->getClasses(['tablemap', 'object', 'query']);
         $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
         $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);

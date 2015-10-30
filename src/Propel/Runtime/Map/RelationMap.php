@@ -56,19 +56,19 @@ class RelationMap
     /**
      * @var ColumnMap[]
      */
-    protected $localColumns = array();
+    protected $localColumns = [];
 
     /**
      * Values used for polymorphic associations.
      *
      * @var array
      */
-    protected $localValues = array();
+    protected $localValues = [];
 
     /**
      * @var ColumnMap[]
      */
-    protected $foreignColumns = array();
+    protected $foreignColumns = [];
 
     protected $onUpdate;
 
@@ -235,7 +235,7 @@ class RelationMap
      */
     public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
     {
-        $h = array();
+        $h = [];
         if (RelationMap::LEFT_TO_RIGHT === $direction
             && RelationMap::MANY_TO_ONE === $this->getType()) {
             $direction = RelationMap::LOCAL_TO_FOREIGN;
@@ -367,9 +367,9 @@ class RelationMap
      */
     public function getSymmetricalRelation()
     {
-        $localMapping = array($this->getLeftColumns(), $this->getRightColumns());
+        $localMapping = [$this->getLeftColumns(), $this->getRightColumns()];
         foreach ($this->getRightTable()->getRelations() as $relation) {
-            if ($localMapping == array($relation->getRightColumns(), $relation->getLeftColumns())) {
+            if ($localMapping == [$relation->getRightColumns(), $relation->getLeftColumns()]) {
                 return $relation;
             }
         }

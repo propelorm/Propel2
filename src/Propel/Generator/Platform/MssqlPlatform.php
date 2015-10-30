@@ -221,7 +221,7 @@ END
 
     public function hasSize($sqlType)
     {
-        $nosize = array('INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT');
+        $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
         return !(in_array($sqlType, $nosize));
     }
 
@@ -230,7 +230,7 @@ END
      */
     public function doQuoting($text)
     {
-        return '[' . strtr($text, array('.' => '].[')) . ']';
+        return '[' . strtr($text, ['.' => '].[']) . ']';
     }
 
     public function getTimestampFormatter()

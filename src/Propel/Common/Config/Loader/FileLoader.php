@@ -41,7 +41,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @var array
      */
-    private $config = array();
+    private $config = [];
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ abstract class FileLoader extends BaseFileLoader
         }
 
         $this->config = $configuration;
-        $parameters = array();
+        $parameters = [];
         foreach ($configuration as $key => $value) {
             $key = $this->resolveValue($key);
             $value = $this->resolveValue($value);
@@ -154,10 +154,10 @@ abstract class FileLoader extends BaseFileLoader
      * @return mixed The resolved value
      *
      */
-    private function resolveValue($value, array $resolving = array())
+    private function resolveValue($value, array $resolving = [])
     {
         if (is_array($value)) {
-            $args = array();
+            $args = [];
             foreach ($value as $k => $v) {
                 $args[$this->resolveValue($k, $resolving)] = $this->resolveValue($v, $resolving);
             }
@@ -182,7 +182,7 @@ abstract class FileLoader extends BaseFileLoader
      * @throws \Propel\Common\Config\Exception\RuntimeException         if a problem occurs
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException if a parameter is non-existent
      */
-    private function resolveString($value, array $resolving = array())
+    private function resolveString($value, array $resolving = [])
     {
         if (preg_match('/^%([^%\s]+)%$/', $value, $match)) {
             if (null !== $ret = $this->parseEnvironmentParams($match[1])) {
@@ -243,7 +243,7 @@ abstract class FileLoader extends BaseFileLoader
         }
 
         if (is_array($value)) {
-            $result = array();
+            $result = [];
             foreach ($value as $k => $v) {
                 $result[$k] = $this->unescapeValue($v);
             }

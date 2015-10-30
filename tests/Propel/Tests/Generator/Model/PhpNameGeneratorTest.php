@@ -20,16 +20,16 @@ class PhpNameGeneratorTest extends TestCase
 {
     public static function phpnameMethodDataProvider()
     {
-        return array(
-            array('foo', 'Foo'),
-            array('Foo', 'Foo'),
-            array('FOO', 'FOO'),
-            array('123', '123'),
-            array('foo_bar', 'FooBar'),
-            array('bar_1', 'Bar1'),
-            array('bar_0', 'Bar0'),
-            array('my_CLASS_name', 'MyCLASSName'),
-        );
+        return [
+            ['foo', 'Foo'],
+            ['Foo', 'Foo'],
+            ['FOO', 'FOO'],
+            ['123', '123'],
+            ['foo_bar', 'FooBar'],
+            ['bar_1', 'Bar1'],
+            ['bar_0', 'Bar0'],
+            ['my_CLASS_name', 'MyCLASSName'],
+        ];
     }
 
     /**
@@ -43,16 +43,16 @@ class PhpNameGeneratorTest extends TestCase
 
     public static function underscoreMethodDataProvider()
     {
-        return array(
-            array('foo', 'Foo'),
-            array('Foo', 'Foo'),
-            array('Foo', 'Foo'),
-            array('123', '123'),
-            array('foo_bar', 'FooBar'),
-            array('bar_1', 'Bar1'),
-            array('bar_0', 'Bar0'),
-            array('my_CLASS_name', 'MyClassName'),
-        );
+        return [
+            ['foo', 'Foo'],
+            ['Foo', 'Foo'],
+            ['Foo', 'Foo'],
+            ['123', '123'],
+            ['foo_bar', 'FooBar'],
+            ['bar_1', 'Bar1'],
+            ['bar_0', 'Bar0'],
+            ['my_CLASS_name', 'MyClassName'],
+        ];
     }
 
     /**

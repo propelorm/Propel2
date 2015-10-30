@@ -50,7 +50,7 @@ class JoinTest extends BaseTestCase
     public function testEmptyConditions()
     {
         $j = new Join();
-        $this->assertEquals(array(), $j->getConditions());
+        $this->assertEquals([], $j->getConditions());
     }
 
     public function testAddCondition()
@@ -66,7 +66,7 @@ class JoinTest extends BaseTestCase
     {
         $j = new Join();
         $j->addCondition('foo', 'bar');
-        $expect = array(array('left' => 'foo', 'operator' => '=', 'right' => 'bar'));
+        $expect = [['left' => 'foo', 'operator' => '=', 'right' => 'bar']];
         $this->assertEquals($expect, $j->getConditions());
     }
 
@@ -74,7 +74,7 @@ class JoinTest extends BaseTestCase
     {
         $j = new Join();
         $j->addCondition('foo', 'bar', '>=');
-        $expect = array(array('left' => 'foo', 'operator' => '>=', 'right' => 'bar'));
+        $expect = [['left' => 'foo', 'operator' => '>=', 'right' => 'bar']];
         $this->assertEquals($expect, $j->getConditions());
     }
 
@@ -83,13 +83,13 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->addCondition('foo', 'bar');
         $j->addCondition('baz', 'bal');
-        $expect = array(
-            array('left' => 'foo', 'operator' => '=', 'right' => 'bar'),
-            array('left' => 'baz', 'operator' => '=', 'right' => 'bal')
-        );
-        $this->assertEquals(array('=', '='), $j->getOperators());
-        $this->assertEquals(array('foo', 'baz'), $j->getLeftColumns());
-        $this->assertEquals(array('bar', 'bal'), $j->getRightColumns());
+        $expect = [
+            ['left' => 'foo', 'operator' => '=', 'right' => 'bar'],
+            ['left' => 'baz', 'operator' => '=', 'right' => 'bal']
+        ];
+        $this->assertEquals(['=', '='], $j->getOperators());
+        $this->assertEquals(['foo', 'baz'], $j->getLeftColumns());
+        $this->assertEquals(['bar', 'bal'], $j->getRightColumns());
         $this->assertEquals($expect, $j->getConditions());
     }
 
@@ -112,7 +112,7 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->setJoinType(Criteria::LEFT_JOIN);
         $j->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID', 'a', Join::EQUAL);
-        $params = array();
+        $params = [];
         $this->assertEquals($j->getClause($params), 'LEFT JOIN author a ON (book.AUTHOR_ID=a.ID)');
     }
 
@@ -123,7 +123,7 @@ class JoinTest extends BaseTestCase
         $j->setJoinType(Criteria::LEFT_JOIN);
         $j->addExplicitCondition('log', 'AUTHOR_ID', null, 'author', 'ID', 'a', Join::EQUAL);
         $j->addLocalValueCondition('log', 'target_type', null, 'author', Join::EQUAL);
-        $params = array();
+        $params = [];
         $this->assertEquals('LEFT JOIN author a ON (log.AUTHOR_ID=a.ID AND log.target_type=\'author\')', $j->getClause($params));
     }
 
@@ -165,18 +165,18 @@ class JoinTest extends BaseTestCase
     public function testSimpleConstructor()
     {
         $j = new Join('foo', 'bar', 'LEFT JOIN');
-        $expect = array(array('left' => 'foo', 'operator' => '=', 'right' => 'bar'));
+        $expect = [['left' => 'foo', 'operator' => '=', 'right' => 'bar']];
         $this->assertEquals($expect, $j->getConditions());
         $this->assertEquals('LEFT JOIN', $j->getJoinType());
     }
 
     public function testCompositeConstructor()
     {
-        $j = new Join(array('foo1', 'foo2'), array('bar1', 'bar2'), 'LEFT JOIN');
-        $expect = array(
-            array('left' => 'foo1', 'operator' => '=', 'right' => 'bar1'),
-            array('left' => 'foo2', 'operator' => '=', 'right' => 'bar2')
-        );
+        $j = new Join(['foo1', 'foo2'], ['bar1', 'bar2'], 'LEFT JOIN');
+        $expect = [
+            ['left' => 'foo1', 'operator' => '=', 'right' => 'bar1'],
+            ['left' => 'foo2', 'operator' => '=', 'right' => 'bar2']
+        ];
         $this->assertEquals($expect, $j->getConditions());
         $this->assertEquals('LEFT JOIN', $j->getJoinType());
     }

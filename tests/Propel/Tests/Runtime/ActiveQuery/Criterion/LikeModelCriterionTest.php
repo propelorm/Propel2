@@ -28,14 +28,14 @@ class LikeModelCriterionTest extends BaseTestCase
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -43,14 +43,14 @@ class LikeModelCriterionTest extends BaseTestCase
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT LIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -62,7 +62,7 @@ class LikeModelCriterionTest extends BaseTestCase
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
     }
@@ -72,14 +72,14 @@ class LikeModelCriterionTest extends BaseTestCase
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL ILIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -88,14 +88,14 @@ class LikeModelCriterionTest extends BaseTestCase
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new PgsqlAdapter());
         $cton->setIgnoreCase(true);
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT ILIKE :p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+        ];
         $this->assertEquals($expected, $params);
     }
 }

@@ -146,7 +146,7 @@ EOF;
     public function testDoesNotCopyForeignKeys()
     {
         $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $this->assertEquals(array(), $table->getRelations());
+        $this->assertEquals([], $table->getRelations());
     }
 
     public function testCopiesIndices()

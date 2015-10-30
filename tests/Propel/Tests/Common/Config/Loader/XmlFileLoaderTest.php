@@ -80,7 +80,7 @@ EOF;
 
         $actual = $this->loader->load('empty.xml');
 
-        $this->assertEquals(array(), $actual);
+        $this->assertEquals([], $actual);
     }
 
     /**

@@ -35,7 +35,7 @@ class JsonFileLoader extends FileLoader
     {
         $json = file_get_contents($this->getPath($file));
 
-        $content = array();
+        $content = [];
 
         if ('' !== $json) {
             $content = json_decode($json, true);

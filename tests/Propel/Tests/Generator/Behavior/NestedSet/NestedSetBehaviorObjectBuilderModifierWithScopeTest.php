@@ -72,18 +72,18 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          t9 t10
         */
         $t5->delete();
-        $expected = array(
-            't1' => array(1, 8, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(4, 7, 1),
-            't4' => array(5, 6, 2),
-        );
+        $expected = [
+            't1' => [1, 8, 0],
+            't2' => [2, 3, 1],
+            't3' => [4, 7, 1],
+            't4' => [5, 6, 2],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'delete() deletes all descendants and shifts the entire subtree correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'delete() does not delete anything out of the scope');
     }
 
@@ -189,12 +189,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          t9 t10
         */
         $descendants = $t3->getDescendants();
-        $expected = array(
-            't4' => array(5, 6, 2),
-            't5' => array(7, 12, 2),
-            't6' => array(8, 9, 3),
-            't7' => array(10, 11, 3),
-        );
+        $expected = [
+            't4' => [5, 6, 2],
+            't5' => [7, 12, 2],
+            't6' => [8, 9, 3],
+            't7' => [10, 11, 3],
+        ];
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns descendants from the current scope only');
     }
 
@@ -215,12 +215,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $this->assertEquals(array(), $t1->getAncestors(), 'getAncestors() returns an empty array for roots');
+        $this->assertEquals([], $t1->getAncestors(), 'getAncestors() returns an empty array for roots');
         $ancestors = $t5->getAncestors();
-        $expected = array(
-            't1' => array(1, 14, 0),
-            't3' => array(4, 13, 1),
-        );
+        $expected = [
+            't1' => [1, 14, 0],
+            't3' => [4, 13, 1],
+        ];
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns ancestors from the current scope only');
     }
 
@@ -251,22 +251,22 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t11->insertAsFirstChildOf($fixtures[2]); // first child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
         $t11->save();
-        $expected = array(
-            't1' => array(1, 16, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(4, 15, 1),
-            't4' => array(7, 8, 2),
-            't5' => array(9, 14, 2),
-            't6' => array(10, 11, 3),
-            't7' => array(12, 13, 3),
-            't11' => array(5, 6, 2)
-        );
+        $expected = [
+            't1' => [1, 16, 0],
+            't2' => [2, 3, 1],
+            't3' => [4, 15, 1],
+            't4' => [7, 8, 2],
+            't5' => [9, 14, 2],
+            't6' => [10, 11, 3],
+            't7' => [12, 13, 3],
+            't11' => [5, 6, 2]
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsFirstChildOf() shifts the other nodes correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsFirstChildOf() does not shift anything out of the scope');
     }
 
@@ -324,22 +324,22 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t11->insertAsLastChildOf($fixtures[2]); // last child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
         $t11->save();
-        $expected = array(
-            't1' => array(1, 16, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(4, 15, 1),
-            't4' => array(5, 6, 2),
-            't5' => array(7, 12, 2),
-            't6' => array(8, 9, 3),
-            't7' => array(10, 11, 3),
-            't11' => array(13, 14, 2)
-        );
+        $expected = [
+            't1' => [1, 16, 0],
+            't2' => [2, 3, 1],
+            't3' => [4, 15, 1],
+            't4' => [5, 6, 2],
+            't5' => [7, 12, 2],
+            't6' => [8, 9, 3],
+            't7' => [10, 11, 3],
+            't11' => [13, 14, 2]
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsLastChildOf() shifts the other nodes correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsLastChildOf() does not shift anything out of the scope');
     }
 
@@ -397,22 +397,22 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t11->insertAsPrevSiblingOf($fixtures[2]); // prev sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
         $t11->save();
-        $expected = array(
-            't1' => array(1, 16, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(6, 15, 1),
-            't4' => array(7, 8, 2),
-            't5' => array(9, 14, 2),
-            't6' => array(10, 11, 3),
-            't7' => array(12, 13, 3),
-            't11' => array(4, 5, 1)
-        );
+        $expected = [
+            't1' => [1, 16, 0],
+            't2' => [2, 3, 1],
+            't3' => [6, 15, 1],
+            't4' => [7, 8, 2],
+            't5' => [9, 14, 2],
+            't6' => [10, 11, 3],
+            't7' => [12, 13, 3],
+            't11' => [4, 5, 1]
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsPrevSiblingOf() shifts the other nodes correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsPrevSiblingOf() does not shift anything out of the scope');
     }
 
@@ -481,22 +481,22 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t11->insertAsNextSiblingOf($fixtures[2]); // next sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');
         $t11->save();
-        $expected = array(
-            't1' => array(1, 16, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(4, 13, 1),
-            't4' => array(5, 6, 2),
-            't5' => array(7, 12, 2),
-            't6' => array(8, 9, 3),
-            't7' => array(10, 11, 3),
-            't11' => array(14, 15, 1)
-        );
+        $expected = [
+            't1' => [1, 16, 0],
+            't2' => [2, 3, 1],
+            't3' => [4, 13, 1],
+            't4' => [5, 6, 2],
+            't5' => [7, 12, 2],
+            't6' => [8, 9, 3],
+            't7' => [10, 11, 3],
+            't11' => [14, 15, 1]
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsNextSiblingOf() shifts the other nodes correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
     }
 
@@ -570,10 +570,10 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
 
-        $expected = array(
-            't8' => array(1, 4, 0),
-            't9' => array(2, 3, 1),
-        );
+        $expected = [
+            't8' => [1, 4, 0],
+            't9' => [2, 3, 1],
+        ];
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
@@ -596,7 +596,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($oldt4Left+(2*3), $t4->getLeftValue(), 't4 was moved by 3 items before it');
         $this->assertEquals(3, $t9->getLevel(), 'New level is 3');
 
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
@@ -630,10 +630,10 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
 
-        $expected = array(
-            't8' => array(1, 4, 0),
-            't9' => array(2, 3, 1),
-        );
+        $expected = [
+            't8' => [1, 4, 0],
+            't9' => [2, 3, 1],
+        ];
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
@@ -653,7 +653,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(19, $t3->getRightValue(), 't3 was extended for 3 more children, from 13+(3*2) to 19');
         $this->assertEquals(3, $t9->getLevel(), 'New level is 3');
 
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
@@ -689,10 +689,10 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
 
-        $expected = array(
-            't8' => array(1, 4, 0),
-            't9' => array(2, 3, 1),
-        );
+        $expected = [
+            't8' => [1, 4, 0],
+            't9' => [2, 3, 1],
+        ];
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
@@ -713,7 +713,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, $t9->getLevel(), 'New level is 2');
         $this->assertEquals(1, $t8->getLevel(), 'New level is 1');
 
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
@@ -752,10 +752,10 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $this->assertEquals($t2->getScopeValue(), $t10->getScopeValue(), 'Should have now the same scope');
 
-        $expected = array(
-            't8' => array(1, 4, 0),
-            't9' => array(2, 3, 1),
-        );
+        $expected = [
+            't8' => [1, 4, 0],
+            't9' => [2, 3, 1],
+        ];
 
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 't10 removed from scope 2, therefore t8 `right` has been changed');
         $this->assertEquals(15, $t3->getRightValue(), 't3 has shifted by one item, so from 13 to 15');
@@ -779,7 +779,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, $t8->getLevel(), 'New level is 1');
         $this->assertEquals(2, $t9->getLevel(), 'New level is 2');
 
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
 }
 
@@ -801,17 +801,17 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          t9 t10
         */
         $this->assertEquals(4, $t3->deleteDescendants(), 'deleteDescendants() returns the number of deleted nodes');
-        $expected = array(
-            't1' => array(1, 6, 0),
-            't2' => array(2, 3, 1),
-            't3' => array(4, 5, 1),
-        );
+        $expected = [
+            't1' => [1, 6, 0],
+            't2' => [2, 3, 1],
+            't3' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'deleteDescendants() shifts the entire subtree correctly');
-        $expected = array(
-            't8' => array(1, 6, 0),
-            't9' => array(2, 3, 1),
-            't10' => array(4, 5, 1),
-        );
+        $expected = [
+            't8' => [1, 6, 0],
+            't9' => [2, 3, 1],
+            't10' => [4, 5, 1],
+        ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteDescendants() does not delete anything out of the scope');
     }
 

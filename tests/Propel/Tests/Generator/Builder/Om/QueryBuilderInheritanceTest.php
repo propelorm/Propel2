@@ -87,7 +87,7 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $cashier1->save($this->con);
         $cashier2 = new BookstoreCashier();
         $cashier2->save($this->con);
-        BookstoreManagerQuery::create()->update(array('Name' => 'foo'), $this->con);
+        BookstoreManagerQuery::create()->update(['Name' => 'foo'], $this->con);
         $nbMan = BookstoreEmployeeQuery::create()
             ->filterByName('foo')
             ->count($this->con);

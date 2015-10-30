@@ -77,7 +77,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getAddedPkColumns()));
-        $this->assertEquals(array('Foo' => $c2), $tableDiff->getAddedPkColumns());
+        $this->assertEquals(['Foo' => $c2], $tableDiff->getAddedPkColumns());
     }
 
     public function testCompareRemovedPkColumn()
@@ -99,7 +99,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRemovedPkColumns()));
-        $this->assertEquals(array('Foo' => $c1), $tableDiff->getRemovedPkColumns());
+        $this->assertEquals(['Foo' => $c1], $tableDiff->getRemovedPkColumns());
     }
 
     public function testCompareRenamedPkColumn()
@@ -130,9 +130,9 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(1, $nbDiffs);
         $this->assertEquals(1, count($tableDiff->getRenamedPkColumns()));
-        $this->assertEquals(array(array($c1, $c2)), $tableDiff->getRenamedPkColumns());
-        $this->assertEquals(array(), $tableDiff->getAddedPkColumns());
-        $this->assertEquals(array(), $tableDiff->getRemovedPkColumns());
+        $this->assertEquals([[$c1, $c2]], $tableDiff->getRenamedPkColumns());
+        $this->assertEquals([], $tableDiff->getAddedPkColumns());
+        $this->assertEquals([], $tableDiff->getRemovedPkColumns());
     }
 
     public function testCompareSeveralPrimaryKeyDifferences()
@@ -180,9 +180,9 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $nbDiffs = $tc->comparePrimaryKeys();
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(3, $nbDiffs);
-        $this->assertEquals(array(array($c2, $c5)), $tableDiff->getRenamedPkColumns());
-        $this->assertEquals(array('col4' => $c6), $tableDiff->getAddedPkColumns());
-        $this->assertEquals(array('col3' => $c3), $tableDiff->getRemovedPkColumns());
+        $this->assertEquals([[$c2, $c5]], $tableDiff->getRenamedPkColumns());
+        $this->assertEquals(['col4' => $c6], $tableDiff->getAddedPkColumns());
+        $this->assertEquals(['col3' => $c3], $tableDiff->getRemovedPkColumns());
     }
 
     public function testCompareSeveralRenamedSamePrimaryKeys()
@@ -228,9 +228,9 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $nbDiffs = $tc->comparePrimaryKeys();
         $tableDiff = $tc->getTableDiff();
         $this->assertEquals(2, $nbDiffs);
-        $this->assertEquals(array(array($c1, $c4), array($c2, $c5)), $tableDiff->getRenamedPkColumns());
-        $this->assertEquals(array(), $tableDiff->getAddedPkColumns());
-        $this->assertEquals(array(), $tableDiff->getRemovedPkColumns());
+        $this->assertEquals([[$c1, $c4], [$c2, $c5]], $tableDiff->getRenamedPkColumns());
+        $this->assertEquals([], $tableDiff->getAddedPkColumns());
+        $this->assertEquals([], $tableDiff->getRemovedPkColumns());
     }
 
 }

@@ -520,8 +520,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *";
         if ($table->hasCompositePrimaryKey()) {
             $pks = $table->getPrimaryKey();
-            $examplePk = array_slice(array(12, 34, 56, 78, 91), 0, count($pks));
-            $colNames = array();
+            $examplePk = array_slice([12, 34, 56, 78, 91], 0, count($pks));
+            $colNames = [];
             foreach ($pks as $col) {
                 $colNames[]= '$' . $col->getName();
             }
@@ -560,7 +560,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             return null;
         }";
         if ($table->hasCompositePrimaryKey()) {
-            $pks = array();
+            $pks = [];
             foreach ($table->getPrimaryKey() as $index => $column) {
                 $pks []= "\$key[$index]";
             }
@@ -602,13 +602,13 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClasses('\PDO');
-        $selectColumns = array();
+        $selectColumns = [];
         foreach ($table->getColumns() as $column) {
             if (!$column->isLazyLoad()) {
                 $selectColumns []= $this->quoteIdentifier($column->getName());
             }
         }
-        $conditions = array();
+        $conditions = [];
         foreach ($table->getPrimaryKey() as $index => $column) {
             $conditions []= sprintf('%s = :p%d', $this->quoteIdentifier($column->getName()), $index);
         }
@@ -618,7 +618,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $this->quoteIdentifier($table->getName()),
             implode(' AND ', $conditions)
         );
-        $pks = array();
+        $pks = [];
         if ($table->hasCompositePrimaryKey()) {
             foreach ($table->getPrimaryKey() as $index => $column) {
                 $pks []= "\$key[$index]";
@@ -1481,7 +1481,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $pks = $table->getPrimaryKey();
         if (count($pks) > 1) {
             $i = 0;
-            $conditions = array();
+            $conditions = [];
             foreach ($pks as $col) {
                 $const = $this->getColumnConstant($col);
                 $condName = "'pruneCond" . $i . "'";

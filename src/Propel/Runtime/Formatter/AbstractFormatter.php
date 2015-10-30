@@ -50,9 +50,9 @@ abstract class AbstractFormatter
 
     public function __construct(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
     {
-        $this->with = array();
-        $this->asColumns = array();
-        $this->currentObjects = array();
+        $this->with = [];
+        $this->asColumns = [];
+        $this->currentObjects = [];
         $this->hasLimit = false;
 
         if (null !== $criteria) {
@@ -126,7 +126,7 @@ abstract class AbstractFormatter
         return $this->class;
     }
 
-    public function setWith($withs = array())
+    public function setWith($withs = [])
     {
         $this->with = $withs;
     }
@@ -136,7 +136,7 @@ abstract class AbstractFormatter
         return $this->with;
     }
 
-    public function setAsColumns($asColumns = array())
+    public function setAsColumns($asColumns = [])
     {
         $this->asColumns = $asColumns;
     }
@@ -163,7 +163,7 @@ abstract class AbstractFormatter
      */
     protected function getCollection()
     {
-        $collection = array();
+        $collection = [];
 
         $class = $this->getCollectionClassName();
         if ($class) {

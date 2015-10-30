@@ -155,37 +155,37 @@ class Criteria
      * Storage of select data. Collection of column names.
      * @var array
      */
-    protected $selectColumns = array();
+    protected $selectColumns = [];
 
     /**
      * Storage of aliased select data. Collection of column names.
      * @var string[]
      */
-    protected $asColumns = array();
+    protected $asColumns = [];
 
     /**
      * Storage of select modifiers data. Collection of modifier names.
      * @var string[]
      */
-    protected $selectModifiers = array();
+    protected $selectModifiers = [];
 
     /**
      * Storage of conditions data. Collection of Criterion objects.
      * @var AbstractCriterion[]
      */
-    protected $map = array();
+    protected $map = [];
 
     /**
      * Storage of ordering data. Collection of column names.
      * @var array
      */
-    protected $orderByColumns = array();
+    protected $orderByColumns = [];
 
     /**
      * Storage of grouping data. Collection of column names.
      * @var array
      */
-    protected $groupByColumns = array();
+    protected $groupByColumns = [];
 
     /**
      * Storage of having data.
@@ -197,9 +197,9 @@ class Criteria
      * Storage of join data. collection of Join objects.
      * @var Join[]
      */
-    protected $joins = array();
+    protected $joins = [];
 
-    protected $selectQueries = array();
+    protected $selectQueries = [];
 
     /**
      * The name of the database.
@@ -233,7 +233,7 @@ class Criteria
      */
     protected $queryComment;
 
-    protected $aliases = array();
+    protected $aliases = [];
 
     protected $useTransaction = false;
 
@@ -241,7 +241,7 @@ class Criteria
      * Storage for Criterions expected to be combined
      * @var array
      */
-    protected $namedCriterions = array();
+    protected $namedCriterions = [];
 
     /**
      * Default operator for combination of criterions
@@ -296,22 +296,22 @@ class Criteria
      */
     public function clear()
     {
-        $this->map = array();
-        $this->namedCriterions = array();
+        $this->map = [];
+        $this->namedCriterions = [];
         $this->ignoreCase = false;
         $this->singleRecord = false;
-        $this->selectModifiers = array();
-        $this->selectColumns = array();
-        $this->orderByColumns = array();
-        $this->groupByColumns = array();
+        $this->selectModifiers = [];
+        $this->selectColumns = [];
+        $this->orderByColumns = [];
+        $this->groupByColumns = [];
         $this->having = null;
-        $this->asColumns = array();
-        $this->joins = array();
-        $this->selectQueries = array();
+        $this->asColumns = [];
+        $this->joins = [];
+        $this->selectQueries = [];
         $this->dbName = $this->originalDbName;
         $this->offset = 0;
         $this->limit = -1;
-        $this->aliases = array();
+        $this->aliases = [];
         $this->useTransaction = false;
         $this->ifLvlCount = false;
         $this->wasTrue = false;
@@ -427,10 +427,10 @@ class Criteria
     public function getTableNameAndAlias($tableAliasOrName)
     {
         if (isset($this->aliases[$tableAliasOrName])) {
-            return array($this->aliases[$tableAliasOrName], $tableAliasOrName);
+            return [$this->aliases[$tableAliasOrName], $tableAliasOrName];
         }
 
-        return array($tableAliasOrName, null);
+        return [$tableAliasOrName, null];
     }
 
     /**
@@ -611,7 +611,7 @@ class Criteria
      */
     public function getTablesColumns()
     {
-        $tables = array();
+        $tables = [];
         foreach ($this->keys() as $key) {
             $tableName = substr($key, 0, strrpos($key, '.'));
             $tables[$tableName][] = $key;
@@ -848,10 +848,10 @@ class Criteria
      * @param  string         $name       optional name to combine the criterion later
      * @return $this|Criteria
      */
-    public function combine($criterions = array(), $operator = self::LOGICAL_AND, $name = null)
+    public function combine($criterions = [], $operator = self::LOGICAL_AND, $name = null)
     {
         $operatorMethod = (self::LOGICAL_AND === strtoupper($operator)) ? 'addAnd' : 'addOr';
-        $namedCriterions = array();
+        $namedCriterions = [];
         foreach ($criterions as $key) {
             if (array_key_exists($key, $this->namedCriterions)) {
                 $namedCriterions[]= $this->namedCriterions[$key];
@@ -892,9 +892,9 @@ class Criteria
     public function addJoin($left, $right, $joinType = null)
     {
         if (is_array($left)) {
-            $conditions = array();
+            $conditions = [];
             foreach ($left as $key => $value) {
-                $condition = array($value, $right[$key]);
+                $condition = [$value, $right[$key]];
                 $conditions[] = $condition;
             }
 
@@ -961,7 +961,7 @@ class Criteria
                 $leftColumnName = substr($left, $pos + 1);
                 list($leftTableName, $leftTableAlias) = $this->getTableNameAndAlias($leftTableAlias);
             } else {
-                list($leftTableName, $leftTableAlias) = array(null, null);
+                list($leftTableName, $leftTableAlias) = [null, null];
                 $leftColumnName = $left;
             }
 
@@ -971,7 +971,7 @@ class Criteria
                 $rightColumnName = substr($right, $pos + 1);
                 list($rightTableName, $rightTableAlias) = $this->getTableNameAndAlias($rightTableAlias);
             } else {
-                list($rightTableName, $rightTableAlias) = array(null, null);
+                list($rightTableName, $rightTableAlias) = [null, null];
                 $rightColumnName = $right;
             }
 
@@ -1171,7 +1171,7 @@ class Criteria
      */
     public function removeSelectModifier($modifier)
     {
-        $this->selectModifiers = array_values(array_diff($this->selectModifiers, array($modifier)));
+        $this->selectModifiers = array_values(array_diff($this->selectModifiers, [$modifier]));
 
         return $this;
     }
@@ -1355,7 +1355,7 @@ class Criteria
      */
     public function clearSelectColumns()
     {
-        $this->selectColumns = $this->asColumns = array();
+        $this->selectColumns = $this->asColumns = [];
 
         return $this;
     }
@@ -1426,7 +1426,7 @@ class Criteria
      */
     public function clearOrderByColumns()
     {
-        $this->orderByColumns = array();
+        $this->orderByColumns = [];
 
         return $this;
     }
@@ -1438,7 +1438,7 @@ class Criteria
      */
     public function clearGroupByColumns()
     {
-        $this->groupByColumns = array();
+        $this->groupByColumns = [];
 
         return $this;
     }
@@ -1494,11 +1494,11 @@ class Criteria
         $sb = 'Criteria:';
         try {
 
-            $params = array();
+            $params = [];
             $sb .= "\nSQL (may not be complete): ".$this->createSelectSql($params);
 
             $sb .= "\nParams: ";
-            $paramstr = array();
+            $paramstr = [];
             foreach ($params as $param) {
                 $paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);
             }
@@ -1840,11 +1840,11 @@ class Criteria
         $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
 
-        $fromClause = array();
-        $joinClause = array();
-        $joinTables = array();
-        $whereClause = array();
-        $orderByClause = array();
+        $fromClause = [];
+        $joinClause = [];
+        $joinTables = [];
+        $whereClause = [];
+        $orderByClause = [];
 
         $orderBy = $this->getOrderByColumns();
 
@@ -1901,7 +1901,7 @@ class Criteria
 
         // Unique from clause elements
         $fromClause = array_unique($fromClause);
-        $fromClause = array_diff($fromClause, array(''));
+        $fromClause = array_diff($fromClause, ['']);
 
         // tables should not exist in both the from and join clauses
         if ($joinTables && $fromClause) {
@@ -1996,8 +1996,8 @@ class Criteria
         }
 
         // from / join tables quoted if it is necessary
-        $fromClause = array_map(array($this, 'quoteIdentifierTable'), $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteIdentifierTable'), $joinClause);
+        $fromClause = array_map([$this, 'quoteIdentifierTable'], $fromClause);
+        $joinClause = $joinClause ? $joinClause : array_map([$this, 'quoteIdentifierTable'], $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -2123,7 +2123,7 @@ class Criteria
      */
     public function replaceNames(&$sql)
     {
-        $this->replacedColumns = array();
+        $this->replacedColumns = [];
         $this->currentAlias = '';
         $this->foundMatch = false;
         $isAfterBackslash = false;
@@ -2147,7 +2147,7 @@ class Criteria
                             $isInString = false;
                         }
                     } elseif (!$isInString) {
-                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", [$this, 'doReplaceNameInExpression'], $stringToTransform);
                         $stringToTransform = '';
                         $stringQuotes = $char;
                         $isInString = true;
@@ -2169,7 +2169,7 @@ class Criteria
         }
 
         if ($stringToTransform) {
-            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", [$this, 'doReplaceNameInExpression'], $stringToTransform);
         }
 
         $sql = $parsedString;
@@ -2245,13 +2245,13 @@ class Criteria
 
         try {
             $qualifiedCols = $this->keys(); // we need table.column cols when populating values
-            $columns = array(); // but just 'column' cols for the SQL
+            $columns = []; // but just 'column' cols for the SQL
             foreach ($qualifiedCols as $qualifiedCol) {
                 $columns[] = substr($qualifiedCol, strrpos($qualifiedCol, '.') + 1);
             }
 
             // add identifiers
-            $columns = array_map(array($this, 'quoteIdentifier'), $columns);
+            $columns = array_map([$this, 'quoteIdentifier'], $columns);
             $tableName = $this->quoteIdentifierTable($tableName);
 
             $sql = 'INSERT INTO ' . $tableName
@@ -2344,7 +2344,7 @@ class Criteria
         // Get list of required tables, containing all columns
         $tablesColumns = $this->getTablesColumns();
         if (empty($tablesColumns) && ($table = $this->getPrimaryTableName())) {
-            $tablesColumns = array($table => array());
+            $tablesColumns = [$table => []];
         }
 
         // we also need the columns for the update SQL
@@ -2364,8 +2364,8 @@ class Criteria
 
         foreach ($tablesColumns as $tableName => $columns) {
 
-            $whereClause = array();
-            $params = array();
+            $whereClause = [];
+            $params = [];
             $stmt = null;
             try {
                 $sql = 'UPDATE ';
@@ -2463,15 +2463,15 @@ class Criteria
         if (!$values) {
             $values = $this;
         }
-        $params = array();
+        $params = [];
         foreach ($columns as $key) {
             if ($values->containsKey($key)) {
                 $crit = $values->getCriterion($key);
-                $params[] = array(
+                $params[] = [
                     'column' => $crit->getColumn(),
                     'table' => $crit->getTable(),
                     'value' => $crit->getValue()
-                );
+                ];
             }
         }
 
@@ -2495,7 +2495,7 @@ class Criteria
             || count($this->selectQueries) > 0
         ;
 
-        $params = array();
+        $params = [];
         if ($needsComplexCount) {
             if ($this->needsSelectAliases()) {
                 if ($this->getHaving()) {
@@ -2529,7 +2529,7 @@ class Criteria
      */
     public function needsSelectAliases()
     {
-        $columnNames = array();
+        $columnNames = [];
         foreach ($this->getSelectColumns() as $fullyQualifiedColumnName) {
             $pos = strrpos($fullyQualifiedColumnName, '.');
             if ($pos) {
@@ -2579,8 +2579,8 @@ class Criteria
 
         foreach ($tables as $tableName => $columns) {
 
-            $whereClause = array();
-            $params = array();
+            $whereClause = [];
+            $params = [];
             $stmt = null;
             try {
                 $sql = $adapter->getDeleteFromClause($this, $tableName);
@@ -2625,7 +2625,7 @@ class Criteria
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
 
-        $params = array();
+        $params = [];
         $sql = $this->createSelectSql($params);
         try {
             $stmt = $con->prepare($sql);

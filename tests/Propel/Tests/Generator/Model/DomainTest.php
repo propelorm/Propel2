@@ -43,10 +43,10 @@ class DomainTest extends ModelTestCase
         ;
 
         $domain = new Domain();
-        $domain->setDatabase($this->getDatabaseMock('bookstore', array(
+        $domain->setDatabase($this->getDatabaseMock('bookstore', [
             'platform' => $platform
-        )));
-        $domain->loadMapping(array(
+        ]));
+        $domain->loadMapping([
             'type' => 'BOOLEAN',
             'name' => 'foo',
             'default' => $default,
@@ -54,7 +54,7 @@ class DomainTest extends ModelTestCase
             'size' => 10,
             'scale' => 2,
             'description' => 'Some description',
-        ));
+        ]);
 
         $this->assertSame('BOOLEAN', $domain->getType());
         $this->assertSame('foo', $domain->getName());
@@ -66,10 +66,10 @@ class DomainTest extends ModelTestCase
 
     public function provideDomainData()
     {
-        return array(
-            array(1, null),
-            array(null, 'NOW()'),
-        );
+        return [
+            [1, null],
+            [null, 'NOW()'],
+        ];
     }
 
     public function testSetDatabase()
@@ -137,20 +137,20 @@ class DomainTest extends ModelTestCase
 
     public function provideBooleanValues()
     {
-        return array(
-            array('BOOLEAN', 1, true),
-            array('BOOLEAN', 0, false),
-            array('BOOLEAN', 't', true),
-            array('BOOLEAN', 'f', false),
-            array('BOOLEAN', 'y', true),
-            array('BOOLEAN', 'n', false),
-            array('BOOLEAN', 'yes', true),
-            array('BOOLEAN', 'no', false),
-            array('BOOLEAN', 'true', true),
-            array('BOOLEAN_EMU', 'true', true),
-            array('BOOLEAN', 'false', false),
-            array('BOOLEAN_EMU', 'false', false),
-        );
+        return [
+            ['BOOLEAN', 1, true],
+            ['BOOLEAN', 0, false],
+            ['BOOLEAN', 't', true],
+            ['BOOLEAN', 'f', false],
+            ['BOOLEAN', 'y', true],
+            ['BOOLEAN', 'n', false],
+            ['BOOLEAN', 'yes', true],
+            ['BOOLEAN', 'no', false],
+            ['BOOLEAN', 'true', true],
+            ['BOOLEAN_EMU', 'true', true],
+            ['BOOLEAN', 'false', false],
+            ['BOOLEAN_EMU', 'false', false],
+        ];
     }
 
     public function testCantGetPhpDefaultValue()
@@ -182,11 +182,11 @@ class DomainTest extends ModelTestCase
 
     public function provideSizeDefinitions()
     {
-        return array(
-            array(10, null, '(10)'),
-            array(10, 2, '(10,2)'),
-            array(null, null, ''),
-        );
+        return [
+            [10, null, '(10)'],
+            [10, 2, '(10,2)'],
+            [null, null, ''],
+        ];
     }
 
     public function testCopyDomain()

@@ -46,7 +46,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
      *
      * @var array string[]
      */
-    protected $sampleLobFiles = array();
+    protected $sampleLobFiles = [];
 
     protected function setUp()
     {

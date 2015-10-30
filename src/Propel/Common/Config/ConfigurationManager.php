@@ -32,7 +32,7 @@ class ConfigurationManager
      *
      * @var array
      */
-    private $config = array();
+    private $config = [];
 
     /**
      * Load and validate configuration values from a file.
@@ -41,7 +41,7 @@ class ConfigurationManager
      * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
      *                          It's useful when passing configuration parameters from command line.
      */
-    public function __construct($filename = null, $extraConf = array())
+    public function __construct($filename = null, $extraConf = [])
     {
         $this->load($filename, $extraConf);
         $this->process();
@@ -112,11 +112,11 @@ class ConfigurationManager
      */
     public function getConnectionParametersArray($section = 'runtime')
     {
-        if (!in_array($section, array('runtime', 'generator'))) {
+        if (!in_array($section, ['runtime', 'generator'])) {
             return null;
         }
 
-        $output = array();
+        $output = [];
         foreach ($this->config[$section]['connections'] as $connection) {
             $output[$connection] = $this->config['database']['connections'][$connection];
         }
@@ -144,7 +144,7 @@ class ConfigurationManager
         }
 
         if (null === $extraConf) {
-            $extraConf = array();
+            $extraConf = [];
         }
 
         if (self::CONFIG_FILE_NAME === $fileName) {
@@ -239,7 +239,7 @@ class ConfigurationManager
     private function loadFile($fileName)
     {
         if (!file_exists($fileName)) {
-            return array();
+            return [];
         }
 
         $delegatingLoader = new DelegatingLoader();
@@ -256,7 +256,7 @@ class ConfigurationManager
     private function getDirs($fileName)
     {
         if (is_file($fileName)) {
-            return array();
+            return [];
         }
 
         $currentDir = getcwd();

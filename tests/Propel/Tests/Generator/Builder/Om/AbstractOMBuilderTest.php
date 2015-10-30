@@ -80,25 +80,25 @@ EOF;
 
     public function dataGetPackagePath()
     {
-        return array(
-            array('', ''),
-            array('foo.bar', 'foo/bar'),
-            array('foo/bar', 'foo/bar'),
-            array('foo.bar.map', 'foo/bar/map'),
-            array('foo.bar.om', 'foo/bar/om'),
-            array('foo.bar.baz', 'foo/bar/baz'),
-            array('foo.bar.baz.om', 'foo/bar/baz/om'),
-            array('foo.bar.baz.map', 'foo/bar/baz/map'),
-            array('foo/bar/baz', 'foo/bar/baz'),
-            array('foo/bar/baz/map', 'foo/bar/baz/map'),
-            array('foo/bar/baz/om', 'foo/bar/baz/om'),
-            array('foo/bar.baz', 'foo/bar.baz'),
-            array('foo/bar.baz.map', 'foo/bar.baz/map'),
-            array('foo/bar.baz.om', 'foo/bar.baz/om'),
-            array('foo.bar/baz', 'foo.bar/baz'),
-            array('foo.bar/baz.om', 'foo.bar/baz/om'),
-            array('foo.bar/baz.map', 'foo.bar/baz/map'),
-        );
+        return [
+            ['', ''],
+            ['foo.bar', 'foo/bar'],
+            ['foo/bar', 'foo/bar'],
+            ['foo.bar.map', 'foo/bar/map'],
+            ['foo.bar.om', 'foo/bar/om'],
+            ['foo.bar.baz', 'foo/bar/baz'],
+            ['foo.bar.baz.om', 'foo/bar/baz/om'],
+            ['foo.bar.baz.map', 'foo/bar/baz/map'],
+            ['foo/bar/baz', 'foo/bar/baz'],
+            ['foo/bar/baz/map', 'foo/bar/baz/map'],
+            ['foo/bar/baz/om', 'foo/bar/baz/om'],
+            ['foo/bar.baz', 'foo/bar.baz'],
+            ['foo/bar.baz.map', 'foo/bar.baz/map'],
+            ['foo/bar.baz.om', 'foo/bar.baz/om'],
+            ['foo.bar/baz', 'foo.bar/baz'],
+            ['foo.bar/baz.om', 'foo.bar/baz/om'],
+            ['foo.bar/baz.map', 'foo.bar/baz/map'],
+        ];
     }
 
 }

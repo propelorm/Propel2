@@ -75,7 +75,7 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
      */
     protected function getBooleanSql($value)
     {
-        if (in_array($value, array('f', 'false', '0'))) {
+        if (in_array($value, ['f', 'false', '0'])) {
             $value = false;
         }
 

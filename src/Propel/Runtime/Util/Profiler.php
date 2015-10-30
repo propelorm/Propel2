@@ -24,28 +24,28 @@ class Profiler
 
     protected $snapshot;
 
-    protected $details = array(
-        'time' => array(
+    protected $details = [
+        'time' => [
             'name'      => 'Time',
             'precision' => 3,
             'pad'       => 8
-        ),
-        'mem' => array(
+        ],
+        'mem' => [
             'name'      => 'Memory',
             'precision' => 3,
             'pad'       => 8
-        ),
-        'memDelta' => array(
+        ],
+        'memDelta' => [
             'name'      => 'Memory Delta',
             'precision' => 3,
             'pad'       => 8
-        ),
-        'memPeak' => array(
+        ],
+        'memPeak' => [
             'name'      => 'Memory Peak',
             'precision' => 3,
             'pad'       => 8
-        ),
-    );
+        ],
+    ];
 
     public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
     {
@@ -155,12 +155,12 @@ class Profiler
      */
     public function getConfiguration()
     {
-        return array(
+        return [
             'slowTreshold' => $this->slowTreshold,
             'details'      => $this->details,
             'innerGlue'    => $this->innerGlue,
             'outerGlue'    => $this->outerGlue,
-        );
+        ];
     }
 
     public function start()
@@ -238,11 +238,11 @@ class Profiler
      */
     public static function getSnapshot()
     {
-        return array(
+        return [
             'microtime'       => microtime(true),
             'memoryUsage'     => memory_get_usage(),
             'memoryPeakUsage' => memory_get_peak_usage(),
-        );
+        ];
     }
 
     /**
@@ -257,7 +257,7 @@ class Profiler
     {
         $absBytes = abs($bytes);
         $sign = ($bytes == $absBytes) ? 1 : -1;
-        $suffix = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+        $suffix = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $total = count($suffix);
 
         for ($i = 0; $absBytes > 1024 && $i < $total; $i++) {

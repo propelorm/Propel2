@@ -22,15 +22,15 @@ class CsvParserTest extends TestCase
 {
     public static function arrayCsvConversionDataProvider()
     {
-        return array(
-            array(array(), "\r\n\r\n", 'empty array'),
-            array(array('a' => 0, 'b' => null, 'c' => ''), "a,b,c\r\n0,N;,\r\n", 'associative array with empty values'),
-            array(array('a' => 1, 'b' => 'bar'), "a,b\r\n1,bar\r\n", 'associative array with strings'),
-            array(array('a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'), "a\r\n\"<html><body><p style=\\\"width:30px;\\\">Hello, World!</p></body></html>\"\r\n", 'associative array with code'),
-            array(array('a' => 1, 'b' => array('foo' => 2)), "a,b\r\n1,\"a:1:{s:3:\\\"foo\\\";i:2;}\"\r\n", 'nested associative arrays'),
-            array(array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')), "Id,Title,AuthorId,ISBN,Author\r\n123,Pride and Prejudice,456,0553213105,\"a:3:{s:2:\\\"Id\\\";i:456;s:9:\\\"FirstName\\\";s:4:\\\"Jane\\\";s:8:\\\"LastName\\\";s:6:\\\"Austen\\\";}\"\r\n", 'array resulting from an object conversion'),
-            array(array('a1' => 1, 'b2' => 2), "a1,b2\r\n1,2\r\n", 'keys with numbers'),
-        );
+        return [
+            [[], "\r\n\r\n", 'empty array'],
+            [['a' => 0, 'b' => null, 'c' => ''], "a,b,c\r\n0,N;,\r\n", 'associative array with empty values'],
+            [['a' => 1, 'b' => 'bar'], "a,b\r\n1,bar\r\n", 'associative array with strings'],
+            [['a' => '<html><body><p style="width:30px;">Hello, World!</p></body></html>'], "a\r\n\"<html><body><p style=\\\"width:30px;\\\">Hello, World!</p></body></html>\"\r\n", 'associative array with code'],
+            [['a' => 1, 'b' => ['foo' => 2]], "a,b\r\n1,\"a:1:{s:3:\\\"foo\\\";i:2;}\"\r\n", 'nested associative arrays'],
+            [['Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => ['Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen']], "Id,Title,AuthorId,ISBN,Author\r\n123,Pride and Prejudice,456,0553213105,\"a:3:{s:2:\\\"Id\\\";i:456;s:9:\\\"FirstName\\\";s:4:\\\"Jane\\\";s:8:\\\"LastName\\\";s:6:\\\"Austen\\\";}\"\r\n", 'array resulting from an object conversion'],
+            [['a1' => 1, 'b2' => 2], "a1,b2\r\n1,2\r\n", 'keys with numbers'],
+        ];
     }
 
     /**
@@ -71,11 +71,11 @@ class CsvParserTest extends TestCase
 
     public static function listToCSVDataProvider()
     {
-        $list = array(
-            array('Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => array('Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen')),
-            array('Id' => 82, 'Title' => 'Anna Karenina', 'AuthorId' => 543, 'ISBN' => '0143035002', 'Author' => array('Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi')),
-            array('Id' => 567, 'Title' => 'War and Peace', 'AuthorId' => 543, 'ISBN' => '067003469X', 'Author' => array('Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi')),
-        );
+        $list = [
+            ['Id' => 123, 'Title' => 'Pride and Prejudice', 'AuthorId' => 456, 'ISBN' => '0553213105', 'Author' => ['Id' => 456, 'FirstName' => 'Jane', 'LastName' => 'Austen']],
+            ['Id' => 82, 'Title' => 'Anna Karenina', 'AuthorId' => 543, 'ISBN' => '0143035002', 'Author' => ['Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi']],
+            ['Id' => 567, 'Title' => 'War and Peace', 'AuthorId' => 543, 'ISBN' => '067003469X', 'Author' => ['Id' => 543, 'FirstName' => 'Leo', 'LastName' => 'Tolstoi']],
+        ];
         $heading = <<<EOF
 Id,Title,AuthorId,ISBN,Author
 
@@ -87,7 +87,7 @@ EOF;
 
 EOF;
 
-        return array(array($list, $heading, $csv));
+        return [[$list, $heading, $csv]];
     }
 
     /**

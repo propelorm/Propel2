@@ -101,7 +101,7 @@ class PropelQueryTest extends BookstoreTestBase
             ->find();
 
         $booksIn = BookQuery::create()
-          ->filterById(array($booksAll[1]->getId(), $booksAll[2]->getId()))
+          ->filterById([$booksAll[1]->getId(), $booksAll[2]->getId()])
           ->find();
 
         $this->assertTrue($booksIn[0] == $booksAll[1]);
@@ -112,7 +112,7 @@ class PropelQueryTest extends BookstoreTestBase
 
         $booksIn = BookQuery::create()
             ->filterById(
-               array('min' => $booksAll[2]->getId()))
+               ['min' => $booksAll[2]->getId()])
             ->find();
 
         $this->assertTrue($booksIn[1] == $booksAll[3]);
@@ -122,7 +122,7 @@ class PropelQueryTest extends BookstoreTestBase
 
         $booksIn = BookQuery::create()
           ->filterById(
-            array('max' => $booksAll[1]->getId()) )
+            ['max' => $booksAll[1]->getId()] )
           ->find();
 
         $this->assertTrue($booksIn[1] == $booksAll[1]);
@@ -134,15 +134,15 @@ class PropelQueryTest extends BookstoreTestBase
 
         $minMax = BookQuery::create()
           ->filterById(
-            array('min' => $booksAll[1]->getId(),
-                'max' => $booksAll[2]->getId())
+            ['min' => $booksAll[1]->getId(),
+                'max' => $booksAll[2]->getId()]
             )
           ->find();
 
         $In = BookQuery::create()
           ->filterById(
-            array($booksAll[1]->getId(),
-                $booksAll[2]->getId())
+            [$booksAll[1]->getId(),
+                $booksAll[2]->getId()]
             )
           ->find();
 

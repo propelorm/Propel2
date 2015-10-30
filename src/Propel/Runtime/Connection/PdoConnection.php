@@ -48,7 +48,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     {
         parent::__construct($dsn, $user, $password, $options);
 
-        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\Propel\Runtime\Adapter\Pdo\PdoStatement', array()));
+        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, ['\Propel\Runtime\Adapter\Pdo\PdoStatement', []]);
         $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
@@ -140,7 +140,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      */
     public function prepare($statement, $driver_options = null)
     {
-        return parent::prepare($statement, $driver_options ?: array());
+        return parent::prepare($statement, $driver_options ?: []);
     }
 
     /**

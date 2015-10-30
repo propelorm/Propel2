@@ -36,10 +36,10 @@ class ForeignKeyTest extends ModelTestCase
         $platform     = $this->getPlatformMock();
         $foreignTable = $this->getTableMock('authors');
 
-        $localTable   = $this->getTableMock('books', array(
+        $localTable   = $this->getTableMock('books', [
             'platform' => $platform,
             'database' => $database
-        ));
+        ]);
 
         $idColumn     = $this->getColumnMock('id');
         $authorIdColumn = $this->getColumnMock('author_id');
@@ -54,7 +54,7 @@ class ForeignKeyTest extends ModelTestCase
         $foreignTable
             ->expects($this->once())
             ->method('getPrimaryKey')
-            ->will($this->returnValue(array($idColumn)))
+            ->will($this->returnValue([$idColumn]))
         ;
 
         $foreignTable
@@ -139,10 +139,10 @@ class ForeignKeyTest extends ModelTestCase
         $platform = $this->getPlatformMock(false);
         $foreignTable = $this->getTableMock('authors');
 
-        $localTable = $this->getTableMock('books', array(
+        $localTable = $this->getTableMock('books', [
             'platform' => $platform,
             'database' => $database
-        ));
+        ]);
 
         $database
             ->expects($this->any())
@@ -158,7 +158,7 @@ class ForeignKeyTest extends ModelTestCase
         $foreignTable
             ->expects($this->any())
             ->method('getForeignKeys')
-            ->will($this->returnValue(array()))
+            ->will($this->returnValue([]))
         ;
 
         $fk = new ForeignKey();
@@ -178,10 +178,10 @@ class ForeignKeyTest extends ModelTestCase
         $platform = $this->getPlatformMock(true);
         $foreignTable = $this->getTableMock('authors');
 
-        $localTable = $this->getTableMock('books', array(
+        $localTable = $this->getTableMock('books', [
             'platform' => $platform,
             'database' => $database
-        ));
+        ]);
 
         $database
             ->expects($this->any())
@@ -199,7 +199,7 @@ class ForeignKeyTest extends ModelTestCase
         $foreignTable
             ->expects($this->any())
             ->method('getForeignKeys')
-            ->will($this->returnValue(array($inversedFk)))
+            ->will($this->returnValue([$inversedFk]))
         ;
 
         $fk = new ForeignKey();
@@ -237,7 +237,7 @@ class ForeignKeyTest extends ModelTestCase
 
     public function testForeignKeyIsNotLocalPrimaryKey()
     {
-        $pks = array($this->getColumnMock('id'));
+        $pks = [$this->getColumnMock('id')];
 
         $table = $this->getTableMock('books');
         $table
@@ -255,10 +255,10 @@ class ForeignKeyTest extends ModelTestCase
 
     public function testForeignKeyIsLocalPrimaryKey()
     {
-        $pks = array(
+        $pks = [
             $this->getColumnMock('book_id'),
             $this->getColumnMock('author_id'),
-        );
+        ];
 
         $table = $this->getTableMock('books');
         $table
@@ -347,7 +347,7 @@ class ForeignKeyTest extends ModelTestCase
 
     public function testAddSingleArrayReference()
     {
-        $reference = array('local' => 'author_id', 'foreign' => 'id');
+        $reference = ['local' => 'author_id', 'foreign' => 'id'];
 
         $fk = new ForeignKey();
         $fk->addReference($reference);
@@ -445,14 +445,14 @@ class ForeignKeyTest extends ModelTestCase
 
     public function provideOnActionBehaviors()
     {
-        return array(
-            array(null, ''),
-            array('none', ''),
-            array('NONE', ''),
-            array('setnull', 'SET NULL'),
-            array('SETNULL', 'SET NULL'),
-            array('cascade', 'CASCADE'),
-            array('CASCADE', 'CASCADE'),
-        );
+        return [
+            [null, ''],
+            ['none', ''],
+            ['NONE', ''],
+            ['setnull', 'SET NULL'],
+            ['SETNULL', 'SET NULL'],
+            ['cascade', 'CASCADE'],
+            ['CASCADE', 'CASCADE'],
+        ];
     }
 }

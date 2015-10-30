@@ -29,16 +29,16 @@ class MappingModelTest extends TestCase
 
     public static function providerForGetDefaultValueForArray()
     {
-        return array(
-            array('', null),
-            array(null, null),
-            array('FOO', '||FOO||'),
-            array('FOO, BAR', '||FOO | BAR||'),
-            array('FOO , BAR', '||FOO | BAR||'),
-            array('FOO,BAR', '||FOO | BAR||'),
-            array(' ', null),
-            array(', ', null),
-        );
+        return [
+            ['', null],
+            [null, null],
+            ['FOO', '||FOO||'],
+            ['FOO, BAR', '||FOO | BAR||'],
+            ['FOO , BAR', '||FOO | BAR||'],
+            ['FOO,BAR', '||FOO | BAR||'],
+            [' ', null],
+            [', ', null],
+        ];
     }
 }
 

@@ -257,7 +257,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $list->clearBookListRels();
         $list->clearBooks();
         $books = $list->getBooks();
-        $this->assertEquals(array($book), iterator_to_array($books), 'addCrossFk() adds the object properly');
+        $this->assertEquals([$book], iterator_to_array($books), 'addCrossFk() adds the object properly');
         $this->assertEquals(1, $list->countBookListRels());
     }
 
@@ -659,7 +659,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookListRelQuery::create()->deleteAll();
 
         $books = new ObjectCollection();
-        foreach (array('foo', 'bar') as $title) {
+        foreach (['foo', 'bar'] as $title) {
             $b = new Book();
             $b->setTitle($title);
             $b->setIsbn('FA404');
@@ -677,7 +677,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals('bar', $books[1]->getTitle());
 
         $books = new ObjectCollection();
-        foreach (array('bam', 'bom') as $title) {
+        foreach (['bam', 'bom'] as $title) {
             $b = new Book();
             $b->setTitle($title);
             $b->setIsbn('FA404');
@@ -719,7 +719,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         BookListFavoriteQuery::create()->deleteAll();
 
         $books = new ObjectCollection();
-        foreach (array('foo', 'bar', 'test') as $title) {
+        foreach (['foo', 'bar', 'test'] as $title) {
             $b = new Book();
             $b->setTitle($title);
             $b->setIsbn('FA404');

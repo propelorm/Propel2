@@ -46,7 +46,7 @@ EOF;
     public function testPopulateObjectNotInPool()
     {
         \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
-        $values = array(123, 'fooValue', 'bazValue');
+        $values = [123, 'fooValue', 'bazValue'];
         $col = 0;
         list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
@@ -65,7 +65,7 @@ EOF;
         $ar->setBaz('bazValue');
         $ar->setNew(false);
         \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
-        $values = array(123, 'fooValue', 'bazValue');
+        $values = [123, 'fooValue', 'bazValue'];
         $col = 0;
         list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
@@ -78,7 +78,7 @@ EOF;
     public function testPopulateObjectNotInPoolStartColGreaterThanOne()
     {
         \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
-        $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
+        $values = ['dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy'];
         $col = 2;
         list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);
@@ -97,7 +97,7 @@ EOF;
         $ar->setBaz('bazValue');
         $ar->setNew(false);
         \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
-        $values = array('dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy');
+        $values = ['dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy'];
         $col = 2;
         list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);

@@ -25,47 +25,47 @@ class InModelCriterionTest extends BaseTestCase
 {
     public function testAppendPsToCreatesAnInConditionByDefault()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', array('foo'));
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', ['foo']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToCreatesANotInConditionWhenSpecified()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', array('foo'));
+        $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', ['foo']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL NOT IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToWithArrayValueCreatesAnInCondition()
     {
-        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', array('foo', 'bar'));
+        $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', ['foo', 'bar']);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1,:p2)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo'),
-            array('table' => 'A', 'column' => 'COL', 'value' => 'bar')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
+            ['table' => 'A', 'column' => 'COL', 'value' => 'bar']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -73,25 +73,25 @@ class InModelCriterionTest extends BaseTestCase
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', 'foo');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public static function providerForNotEmptyValues()
     {
-        return array(
-            array(''),
-            array(0),
-            array(true),
-            array(false)
-        );
+        return [
+            [''],
+            [0],
+            [true],
+            [false]
+        ];
     }
 
     /**
@@ -101,23 +101,23 @@ class InModelCriterionTest extends BaseTestCase
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $notEmptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue)
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue]
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public static function providerForEmptyValues()
     {
-        return array(
-            array(array()),
-            array(null)
-        );
+        return [
+            [[]],
+            [null]
+        ];
     }
 
     /**
@@ -127,12 +127,12 @@ class InModelCriterionTest extends BaseTestCase
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $emptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('1<>1', $ps);
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $params);
     }
 
@@ -143,12 +143,12 @@ class InModelCriterionTest extends BaseTestCase
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', $emptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('1=1', $ps);
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $params);
     }
 
@@ -159,28 +159,28 @@ class InModelCriterionTest extends BaseTestCase
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL not in ?', 'A.COL', $emptyValue);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('1=1', $ps);
-        $expected = array();
+        $expected = [];
         $this->assertEquals($expected, $params);
     }
 
     public function testAppendPsToWithArrayCollection()
     {
-        $collection = new ArrayCollection(array('foo'));
+        $collection = new ArrayCollection(['foo']);
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', $collection);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 

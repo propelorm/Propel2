@@ -143,20 +143,20 @@ class ObjectFormatter extends AbstractFormatter
             // in which case it should not be related to the previous object
             if (null === $endObject || $endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
-                    call_user_func(array($startObject, $modelWith->getInitMethod()), false);
+                    call_user_func([$startObject, $modelWith->getInitMethod()], false);
                 }
                 continue;
             }
             if (isset($hydrationChain)) {
                 $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
             } else {
-                $hydrationChain = array($modelWith->getRightPhpName() => $endObject);
+                $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
             }
 
-            call_user_func(array($startObject, $modelWith->getRelationMethod()), $endObject);
+            call_user_func([$startObject, $modelWith->getRelationMethod()], $endObject);
 
             if ($modelWith->isAdd()) {
-                call_user_func(array($startObject, $modelWith->getResetPartialMethod()), false);
+                call_user_func([$startObject, $modelWith->getResetPartialMethod()], false);
             }
         }
 

@@ -182,7 +182,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      */
     protected function addConstants()
     {
-        return $this->renderTemplate('tableMapConstants', array(
+        return $this->renderTemplate('tableMapConstants', [
             'className'         => $this->getClasspath(),
             'dbName'            => $this->getDatabase()->getName(),
             'tableName'         => $this->getTable()->getName(),
@@ -193,7 +193,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             'nbHydrateColumns'  => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
             'columns'           => $this->getTable()->getColumns(),
             'stringFormat'      => $this->getTable()->getDefaultStringFormat(),
-        ));
+        ]);
     }
 
     /**
@@ -386,7 +386,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $fieldKeysNum            .= "$num, ";
         }
 
-        return $this->renderTemplate('tableMapFields', array(
+        return $this->renderTemplate('tableMapFields', [
                 'fieldNamesPhpName'       => $fieldNamesPhpName,
                 'fieldNamesCamelCaseName' => $fieldNamesCamelCaseName,
                 'fieldNamesColname'       => $fieldNamesColname,
@@ -399,7 +399,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 'fieldKeysRawColname'     => $fieldKeysRawColname,
                 'fieldKeysFieldName'      => $fieldKeysFieldName,
                 'fieldKeysNum'            => $fieldKeysNum,
-        ));
+        ]);
     }
 
     /**
@@ -672,8 +672,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             return;
         }
 
-        $add = array();
-        $removeObjects = array();
+        $add = [];
+        $removeObjects = [];
         foreach ($pks as $pk) {
             $add[] = '$obj->get' . $pk->getPhpName() . '()';
             $removeObjects[] = '$value->get' . $pk->getPhpName() . '()';
@@ -681,26 +681,26 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $addInstancePoolKeySnippet = $this->getInstancePoolKeySnippet($add);
         $removeInstancePoolKeySnippetObjects = $this->getInstancePoolKeySnippet($removeObjects);
 
-        $removePks = array();
+        $removePks = [];
         $nbPks = count($pks);
         for ($i = 0; $i < $nbPks; $i++) {
             $removePks[] = "\$value[$i]";
         }
         $removeInstancePoolKeySnippetPks = $this->getInstancePoolKeySnippet($removePks);
 
-        return $this->renderTemplate('tableMapInstancePool', array(
+        return $this->renderTemplate('tableMapInstancePool', [
                 'objectClassName'                     => $this->getStubObjectBuilder()->getClassName(),
                 'addInstancePoolKeySnippet'           => $addInstancePoolKeySnippet,
                 'removeInstancePoolKeySnippetObjects' => $removeInstancePoolKeySnippetObjects,
                 'removeInstancePoolKeySnippetPks'     => $removeInstancePoolKeySnippetPks,
                 'countPks'                            => count($pks)
-        ));
+        ]);
     }
 
     public function addClearRelatedInstancePool()
     {
         $table = $this->getTable();
-        $relatedClassNames = array();
+        $relatedClassNames = [];
 
         // Handle ON DELETE CASCADE for updating instance pool
         foreach ($table->getReferrers() as $fk) {
@@ -725,10 +725,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             return '';
         }
 
-        return $this->renderTemplate('tableMapClearRelatedInstancePool', array(
+        return $this->renderTemplate('tableMapClearRelatedInstancePool', [
             'tableName'           => $table->getName(),
             'relatedClassNames'   => $relatedClassNames,
-        ));
+        ]);
     }
 
     /**
@@ -763,8 +763,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         // We have to iterate through all the columns so that we know the offset of the primary
         // key columns.
         $n = 0;
-        $pk = array();
-        $cond = array();
+        $pk = [];
+        $cond = [];
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 if ($col->isPrimaryKey()) {
@@ -842,7 +842,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             \$pks = [];
             ";
 
-            $pks = array();
+            $pks = [];
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {

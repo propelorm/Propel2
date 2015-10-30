@@ -108,7 +108,7 @@ class ClassTools
      */
     public static function getPhpReservedWords()
     {
-        return array(
+        return [
             'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',
             'array', 'as', 'break', 'case', 'class', 'const', 'continue',
             'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty',
@@ -119,6 +119,6 @@ class ClassTools
             '__FUNCTION__', '__CLASS__', '__METHOD__', '__DIR__', '__NAMESPACE__', 'final', 'php_user_filter', 'interface',
             'implements', 'extends', 'public', 'protected', 'private', 'abstract', 'clone', 'try', 'catch',
             'throw', 'this', 'namespace'
-        );
+        ];
     }
 }

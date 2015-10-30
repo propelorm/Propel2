@@ -50,11 +50,11 @@ class ObjectBuilderTest extends TestCase
         $col3->setDefaultValue(new ColumnDefaultValue('0000-00-00', ColumnDefaultValue::TYPE_VALUE));
         $val3 = "NULL";
 
-        return array(
-            array($col1, $val1),
-            array($col2, $val2),
-            array($col3, $val3),
-        );
+        return [
+            [$col1, $val1],
+            [$col2, $val2],
+            [$col3, $val3],
+        ];
     }
 
     /**

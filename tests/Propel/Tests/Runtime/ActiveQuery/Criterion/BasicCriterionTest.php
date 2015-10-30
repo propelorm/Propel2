@@ -28,14 +28,14 @@ class BasicCriterionTest extends BaseTestCase
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', 'foo');
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL=:p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -43,14 +43,14 @@ class BasicCriterionTest extends BaseTestCase
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', 'foo', Criteria::GREATER_THAN);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL>:p1', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
@@ -60,24 +60,24 @@ class BasicCriterionTest extends BaseTestCase
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('UPPER(A.COL)=UPPER(:p1)', $ps);
-        $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
-        );
+        $expected = [
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+        ];
         $this->assertEquals($expected, $params);
     }
 
     public static function supportedANSIFunctions()
     {
-        return array(
-            array(Criteria::CURRENT_DATE),
-            array(Criteria::CURRENT_TIME),
-            array(Criteria::CURRENT_TIMESTAMP)
-        );
+        return [
+            [Criteria::CURRENT_DATE],
+            [Criteria::CURRENT_TIME],
+            [Criteria::CURRENT_TIMESTAMP]
+        ];
     }
 
     /**
@@ -87,36 +87,36 @@ class BasicCriterionTest extends BaseTestCase
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', $ansiFunction);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL=' . $ansiFunction, $ps);
-        $this->assertEquals(array(), $params);
+        $this->assertEquals([], $params);
     }
 
     public function testAppendPsCanHandleEqualToNull()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IS NULL ', $ps);
-        $this->assertEquals(array(), $params);
+        $this->assertEquals([], $params);
     }
 
     public function testAppendPsCanHandleNotEqualToNull()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null, Criteria::NOT_EQUAL);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 
         $this->assertEquals('A.COL IS NOT NULL ', $ps);
-        $this->assertEquals(array(), $params);
+        $this->assertEquals([], $params);
     }
 
     /**
@@ -126,7 +126,7 @@ class BasicCriterionTest extends BaseTestCase
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null, Criteria::GREATER_THAN);
 
-        $params = array();
+        $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
 

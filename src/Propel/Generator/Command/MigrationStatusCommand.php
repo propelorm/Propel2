@@ -30,9 +30,9 @@ class MigrationStatusCommand extends AbstractCommand
         $this
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
+            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
             ->setName('migration:status')
-            ->setAliases(array('status'))
+            ->setAliases(['status'])
             ->setDescription('Get migration status')
         ;
     }
@@ -42,7 +42,7 @@ class MigrationStatusCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configOptions = array();
+        $configOptions = [];
 
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
@@ -59,14 +59,14 @@ class MigrationStatusCommand extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        $connections = array();
+        $connections = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);
-                $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+                $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
 

@@ -30,12 +30,12 @@ class MigrationManager extends AbstractManager
     /**
      * @var array
      */
-    protected $connections = array();
+    protected $connections = [];
 
     /**
      * @var ConnectionInterface[]
      */
-    protected $adapterConnections = array();
+    protected $adapterConnections = [];
 
     /**
      * @var string
@@ -127,7 +127,7 @@ class MigrationManager extends AbstractManager
             throw new \Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
-        $migrationTimestamps = array();
+        $migrationTimestamps = [];
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
             $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
@@ -225,7 +225,7 @@ class MigrationManager extends AbstractManager
     public function getMigrationTimestamps()
     {
         $path = $this->getWorkingDirectory();
-        $migrationTimestamps = array();
+        $migrationTimestamps = [];
 
         if (is_dir($path)) {
             $files = scandir($path);
@@ -249,7 +249,7 @@ class MigrationManager extends AbstractManager
 
     public function hasPendingMigrations()
     {
-        return array() !== $this->getValidMigrationTimestamps();
+        return [] !== $this->getValidMigrationTimestamps();
     }
 
     public function getAlreadyExecutedMigrationTimestamps()

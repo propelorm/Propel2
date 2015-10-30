@@ -92,7 +92,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     public function testToArray()
     {
-        $this->assertNotEquals(array(), $this->books->toArray());
+        $this->assertNotEquals([], $this->books->toArray());
         // since the code from toArray comes from ObjectCollection, we'll assume it's good
     }
 
@@ -101,7 +101,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
      */
     public function testFromArray()
     {
-        $this->books->fromArray(array());
+        $this->books->fromArray([]);
     }
 
 }

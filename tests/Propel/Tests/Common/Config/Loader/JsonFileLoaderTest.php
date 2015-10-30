@@ -77,7 +77,7 @@ EOF;
 
         $actual = $this->loader->load('empty.json');
 
-        $this->assertEquals(array(), $actual);
+        $this->assertEquals([], $actual);
     }
 
     /**

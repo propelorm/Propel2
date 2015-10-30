@@ -37,16 +37,16 @@ class Join
     const INNER_JOIN = 'INNER JOIN';
 
     // the left parts of the join condition
-    protected $left = array();
+    protected $left = [];
 
-    protected $leftValues = array();
-    protected $rightValues = array();
+    protected $leftValues = [];
+    protected $rightValues = [];
 
     // the right parts of the join condition
-    protected $right = array();
+    protected $right = [];
 
     // the comparison operators for each pair of columns in the join condition
-    protected $operators = array();
+    protected $operators = [];
 
     // the type of the join (LEFT JOIN, ...)
     protected $joinType;
@@ -139,7 +139,7 @@ class Join
      * @param array $operators The comparison operators of the join condition, default Join::EQUAL
      * @throws \Propel\Runtime\Exception\LogicException
      */
-    public function addConditions($lefts, $rights, $operators = array())
+    public function addConditions($lefts, $rights, $operators = [])
     {
         if (count($lefts) != count($rights)) {
             throw new LogicException("Unable to create join because the left column count isn't equal to the right column count");
@@ -238,13 +238,13 @@ class Join
      */
     public function getConditions()
     {
-        $conditions = array();
+        $conditions = [];
         for ($i = 0; $i < $this->count; $i++) {
-            $conditions[] = array(
+            $conditions[] = [
                 'left'     => $this->getLeftColumn($i),
                 'operator' => $this->getOperator($i),
                 'right'    => $this->getRightColumn($i)
-            );
+            ];
         }
 
         return $conditions;
@@ -360,7 +360,7 @@ class Join
      */
     public function getLeftColumns()
     {
-        $columns = array();
+        $columns = [];
         foreach ($this->left as $index => $column) {
             $columns[] = $this->getLeftColumn($index);
         }
@@ -484,7 +484,7 @@ class Join
      */
     public function getRightColumns()
     {
-        $columns = array();
+        $columns = [];
         foreach ($this->right as $index => $column) {
             $columns[] = $this->getRightColumn($index);
         }
@@ -656,7 +656,7 @@ class Join
     public function getClause(&$params)
     {
         if (null === $this->joinCondition) {
-            $conditions = array();
+            $conditions = [];
             for ($i = 0; $i < $this->count; $i++) {
                 if ($this->leftValues[$i]) {
                     $conditions[] = $this->getLeftColumn($i) . $this->getOperator($i) . var_export($this->leftValues[$i], true);
@@ -691,8 +691,8 @@ class Join
      */
     public function equals($join)
     {
-        $parametersOfThisClauses = array();
-        $parametersOfJoinClauses = array();
+        $parametersOfThisClauses = [];
+        $parametersOfJoinClauses = [];
 
         return null !== $join
             && $join instanceof Join
@@ -709,7 +709,7 @@ class Join
      */
     public function toString()
     {
-        $params = array();
+        $params = [];
 
         return $this->getClause($params);
     }

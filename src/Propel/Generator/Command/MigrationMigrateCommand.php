@@ -32,11 +32,11 @@ class MigrationMigrateCommand extends AbstractCommand
         $this
             ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
             ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', array())
+            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
             ->addOption('fake',             null, InputOption::VALUE_NONE,  'Does not touch the actual schema, but marks all migration as executed.')
             ->addOption('force',            null, InputOption::VALUE_NONE,  'Continues with the migration even when errors occur.')
             ->setName('migration:migrate')
-            ->setAliases(array('migrate'))
+            ->setAliases(['migrate'])
             ->setDescription('Execute all pending migrations')
         ;
     }
@@ -46,7 +46,7 @@ class MigrationMigrateCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configOptions = array();
+        $configOptions = [];
 
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
@@ -63,14 +63,14 @@ class MigrationMigrateCommand extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        $connections = array();
+        $connections = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
                 list($name, $dsn, $infos) = $this->parseConnection($connection);
-                $connections[$name] = array_merge(array('dsn' => $dsn), $infos);
+                $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
 

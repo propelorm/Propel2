@@ -65,35 +65,35 @@ EOF;
     public function testGetterDefaultValue()
     {
         $e = new ComplexColumnTypeEntity2();
-        $this->assertEquals(array(), $e->getTags(), 'array columns return an empty array by default');
+        $this->assertEquals([], $e->getTags(), 'array columns return an empty array by default');
     }
 
     public function testGetterDefaultValueWithData()
     {
         $e = new ComplexColumnTypeEntity2();
-        $this->assertEquals(array('FOO'), $e->getDefaults());
+        $this->assertEquals(['FOO'], $e->getDefaults());
     }
 
     public function testGetterDefaultValueWithMultipleData()
     {
         $e = new ComplexColumnTypeEntity2();
-        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
+        $this->assertEquals(['FOO', 'BAR', 'BAZ'], $e->getMultipleDefaults());
     }
 
     public function testAdderAddsNewValueToExistingData()
     {
         $e = new ComplexColumnTypeEntity2();
-        $this->assertEquals(array('FOO'), $e->getDefaults());
+        $this->assertEquals(['FOO'], $e->getDefaults());
         $e->addDefault('bar');
-        $this->assertEquals(array('FOO', 'bar'), $e->getDefaults());
+        $this->assertEquals(['FOO', 'bar'], $e->getDefaults());
     }
 
     public function testAdderAddsNewValueToMultipleExistingData()
     {
         $e = new ComplexColumnTypeEntity2();
-        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
+        $this->assertEquals(['FOO', 'BAR', 'BAZ'], $e->getMultipleDefaults());
         $e->addMultipleDefault('bar');
-        $this->assertEquals(array('FOO', 'BAR', 'BAZ', 'bar'), $e->getMultipleDefaults());
+        $this->assertEquals(['FOO', 'BAR', 'BAZ', 'bar'], $e->getMultipleDefaults());
     }
 
     public function testDefaultValuesAreWellPersisted()
@@ -104,7 +104,7 @@ EOF;
         ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
-        $this->assertEquals(array('FOO'), $e->getDefaults());
+        $this->assertEquals(['FOO'], $e->getDefaults());
     }
 
     public function testMultipleDefaultValuesAreWellPersisted()
@@ -115,13 +115,13 @@ EOF;
         ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
-        $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());
+        $this->assertEquals(['FOO', 'BAR', 'BAZ'], $e->getMultipleDefaults());
     }
 
     public function testSetterArrayValue()
     {
         $e = new ComplexColumnTypeEntity2();
-        $value = array('foo', 1234);
+        $value = ['foo', 1234];
         $e->setTags($value);
         $this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
     }
@@ -129,10 +129,10 @@ EOF;
     public function testSetterResetValue()
     {
         $e = new ComplexColumnTypeEntity2();
-        $value = array('foo', 1234);
+        $value = ['foo', 1234];
         $e->setTags($value);
-        $e->setTags(array());
-        $this->assertEquals(array(), $e->getTags(), 'object columns can be reset');
+        $e->setTags([]);
+        $this->assertEquals([], $e->getTags(), 'object columns can be reset');
     }
 
     public function testTester()
@@ -140,7 +140,7 @@ EOF;
         $e = new ComplexColumnTypeEntity2();
         $this->assertFalse($e->hasTag('foo'));
         $this->assertFalse($e->hasTag(1234));
-        $value = array('foo', 1234);
+        $value = ['foo', 1234];
         $e->setTags($value);
         $this->assertTrue($e->hasTag('foo'));
         $this->assertTrue($e->hasTag(1234));
@@ -152,37 +152,37 @@ EOF;
     {
         $e = new ComplexColumnTypeEntity2();
         $e->addTag('foo');
-        $this->assertEquals(array('foo'), $e->getTags());
+        $this->assertEquals(['foo'], $e->getTags());
         $e->addTag(1234);
-        $this->assertEquals(array('foo', 1234), $e->getTags());
+        $this->assertEquals(['foo', 1234], $e->getTags());
         $e->addTag('foo');
-        $this->assertEquals(array('foo', 1234, 'foo'), $e->getTags());
-        $e->setTags(array(12, 34));
+        $this->assertEquals(['foo', 1234, 'foo'], $e->getTags());
+        $e->setTags([12, 34]);
         $e->addTag('foo');
-        $this->assertEquals(array(12, 34, 'foo'), $e->getTags());
+        $this->assertEquals([12, 34, 'foo'], $e->getTags());
     }
 
     public function testRemover()
     {
         $e = new ComplexColumnTypeEntity2();
         $e->removeTag('foo');
-        $this->assertEquals(array(), $e->getTags());
-        $e->setTags(array('foo', 1234));
+        $this->assertEquals([], $e->getTags());
+        $e->setTags(['foo', 1234]);
         $e->removeTag('foo');
-        $this->assertEquals(array(1234), $e->getTags());
+        $this->assertEquals([1234], $e->getTags());
         $e->removeTag(1234);
-        $this->assertEquals(array(), $e->getTags());
-        $e->setTags(array(12, 34, 1234));
+        $this->assertEquals([], $e->getTags());
+        $e->setTags([12, 34, 1234]);
         $e->removeTag('foo');
-        $this->assertEquals(array(12, 34, 1234), $e->getTags());
+        $this->assertEquals([12, 34, 1234], $e->getTags());
         $e->removeTag('1234');
-        $this->assertEquals(array(12, 34), $e->getTags());
+        $this->assertEquals([12, 34], $e->getTags());
     }
 
     public function testValueIsPersisted()
     {
         $e = new ComplexColumnTypeEntity2();
-        $value = array('foo', 1234);
+        $value = ['foo', 1234];
         $e->setTags($value);
         $e->save();
         ComplexColumnTypeEntity2TableMap::clearInstancePool();
@@ -195,18 +195,18 @@ EOF;
         ComplexColumnTypeEntity2Query::create()->deleteAll();
 
         $e = new ComplexColumnTypeEntity2();
-        $e->setTags(array(1,2));
+        $e->setTags([1,2]);
         $e->save();
 
         $e = new ComplexColumnTypeEntity2();
-        $e->setTags(array(3,4));
+        $e->setTags([3,4]);
         $e->save();
 
         $q = ComplexColumnTypeEntity2Query::create()
             ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)
             ->find();
 
-        $tags = array();
+        $tags = [];
         foreach ($q as $e) {
             $tags[] = $e->getTags();
         }
@@ -228,16 +228,16 @@ EOF;
         Propel::disableInstancePooling(); // need to be disabled to test the hydrate() method
 
         $obj = new ComplexColumnTypeEntityWithConstructor();
-        $this->assertEquals(array('foo', 'bar'), $obj->getTags());
+        $this->assertEquals(['foo', 'bar'], $obj->getTags());
 
-        $obj->setTags(array('baz'));
-        $this->assertEquals(array('baz'), $obj->getTags());
+        $obj->setTags(['baz']);
+        $this->assertEquals(['baz'], $obj->getTags());
 
         $obj->save();
 
         $obj = ComplexColumnTypeEntityWithConstructorQuery::create()
             ->findOne();
-        $this->assertEquals(array('baz'), $obj->getTags());
+        $this->assertEquals(['baz'], $obj->getTags());
 
         Propel::enableInstancePooling();
     }

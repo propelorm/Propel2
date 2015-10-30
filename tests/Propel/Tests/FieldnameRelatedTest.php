@@ -51,55 +51,55 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testGetFieldNames ()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
-        $expecteds = array (
-            TableMap::TYPE_PHPNAME => array(
+        ];
+        $expecteds = [
+            TableMap::TYPE_PHPNAME => [
                 0 => 'Id',
                 1 => 'Title',
                 2 => 'ISBN',
                 3 => 'Price',
                 4 => 'PublisherId',
                 5 => 'AuthorId'
-            ),
-            TableMap::TYPE_CAMELNAME => array(
+            ],
+            TableMap::TYPE_CAMELNAME => [
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
                 3 => 'price',
                 4 => 'publisherId',
                 5 => 'authorId'
-            ),
-            TableMap::TYPE_COLNAME => array(
+            ],
+            TableMap::TYPE_COLNAME => [
                 0 => 'book.id',
                 1 => 'book.title',
                 2 => 'book.isbn',
                 3 => 'book.price',
                 4 => 'book.publisher_id',
                 5 => 'book.author_id'
-            ),
-            TableMap::TYPE_FIELDNAME => array(
+            ],
+            TableMap::TYPE_FIELDNAME => [
                 0 => 'id',
                 1 => 'title',
                 2 => 'isbn',
                 3 => 'price',
                 4 => 'publisher_id',
                 5 => 'author_id'
-            ),
-            TableMap::TYPE_NUM => array(
+            ],
+            TableMap::TYPE_NUM => [
                 0 => 0,
                 1 => 1,
                 2 => 2,
                 3 => 3,
                 4 => 4,
                 5 => 5
-            )
-        );
+            ]
+        ];
 
         foreach ($types as $type) {
             $results[$type] = BookTableMap::getFieldnames($type);
@@ -117,20 +117,20 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testTranslateFieldName ()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
-        $expecteds = array (
+        ];
+        $expecteds = [
             TableMap::TYPE_PHPNAME => 'AuthorId',
             TableMap::TYPE_CAMELNAME => 'authorId',
             TableMap::TYPE_COLNAME => 'book.author_id',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
-        );
+        ];
         foreach ($types as $fromType) {
             foreach ($types as $toType) {
                 $name = $expecteds[$fromType];
@@ -146,55 +146,55 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testGetFieldNamesStatic ()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
-        $expecteds = array (
-            TableMap::TYPE_PHPNAME => array(
+        ];
+        $expecteds = [
+            TableMap::TYPE_PHPNAME => [
                 0 => 'Id',
                 1 => 'Title',
                 2 => 'ISBN',
                 3 => 'Price',
                 4 => 'PublisherId',
                 5 => 'AuthorId'
-            ),
-            TableMap::TYPE_CAMELNAME => array(
+            ],
+            TableMap::TYPE_CAMELNAME => [
                 0 => 'id',
                 1 => 'title',
                 2 => 'iSBN',
                 3 => 'price',
                 4 => 'publisherId',
                 5 => 'authorId'
-            ),
-            TableMap::TYPE_COLNAME => array(
+            ],
+            TableMap::TYPE_COLNAME => [
                 0 => 'book.id',
                 1 => 'book.title',
                 2 => 'book.isbn',
                 3 => 'book.price',
                 4 => 'book.publisher_id',
                 5 => 'book.author_id'
-            ),
-            TableMap::TYPE_FIELDNAME => array(
+            ],
+            TableMap::TYPE_FIELDNAME => [
                 0 => 'id',
                 1 => 'title',
                 2 => 'isbn',
                 3 => 'price',
                 4 => 'publisher_id',
                 5 => 'author_id'
-            ),
-            TableMap::TYPE_NUM => array(
+            ],
+            TableMap::TYPE_NUM => [
                 0 => 0,
                 1 => 1,
                 2 => 2,
                 3 => 3,
                 4 => 4,
                 5 => 5
-            )
-        );
+            ]
+        ];
 
         foreach ($types as $type) {
             $results[$type] = TableMap::getFieldnamesForClass('\Propel\Tests\Bookstore\Book', $type);
@@ -212,20 +212,20 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testTranslateFieldNameStatic ()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
-        $expecteds = array (
+        ];
+        $expecteds = [
             TableMap::TYPE_PHPNAME => 'AuthorId',
             TableMap::TYPE_CAMELNAME => 'authorId',
             TableMap::TYPE_COLNAME => 'book.author_id',
             TableMap::TYPE_FIELDNAME => 'author_id',
             TableMap::TYPE_NUM => 5,
-        );
+        ];
         foreach ($types as $fromType) {
             foreach ($types as $toType) {
                 $name = $expecteds[$fromType];
@@ -241,13 +241,13 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testGetByName()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME => 'Title',
             TableMap::TYPE_CAMELNAME => 'title',
             TableMap::TYPE_COLNAME => 'book.title',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
-        );
+        ];
 
         $book = new Book();
         $book->setTitle('Harry Potter and the Order of the Phoenix');
@@ -265,13 +265,13 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testSetByName()
     {
         $book = new Book();
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME => 'Title',
             TableMap::TYPE_CAMELNAME => 'title',
             TableMap::TYPE_COLNAME => 'book.title',
             TableMap::TYPE_FIELDNAME => 'title',
             TableMap::TYPE_NUM => 1
-        );
+        ];
 
         $title = 'Harry Potter and the Order of the Phoenix';
         foreach ($types as $type => $name) {
@@ -288,42 +288,42 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testFromArray()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
-        $expecteds = array (
-            TableMap::TYPE_PHPNAME => array (
+        ];
+        $expecteds = [
+            TableMap::TYPE_PHPNAME => [
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
-            ),
-            TableMap::TYPE_CAMELNAME => array (
+            ],
+            TableMap::TYPE_CAMELNAME => [
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
-            ),
-            TableMap::TYPE_COLNAME => array (
+            ],
+            TableMap::TYPE_COLNAME => [
                 'book.title' => 'Harry Potter and the Order of the Phoenix',
                 'book.isbn' => '043935806X'
-            ),
-            TableMap::TYPE_FIELDNAME => array (
+            ],
+            TableMap::TYPE_FIELDNAME => [
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
-            ),
-            TableMap::TYPE_NUM => array (
+            ],
+            TableMap::TYPE_NUM => [
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X'
-            )
-        );
+            ]
+        ];
 
         $book = new Book();
 
         foreach ($types as $type) {
             $expected = $expecteds[$type];
             $book->fromArray($expected, $type);
-            $result = array();
+            $result = [];
             foreach (array_keys($expected) as $key) {
                 $result[$key] = $book->getByName($key, $type);
             }
@@ -341,42 +341,42 @@ class FieldnameRelatedTest extends TestCaseFixtures
      */
     public function testToArray()
     {
-        $types = array(
+        $types = [
             TableMap::TYPE_PHPNAME,
             TableMap::TYPE_CAMELNAME,
             TableMap::TYPE_COLNAME,
             TableMap::TYPE_FIELDNAME,
             TableMap::TYPE_NUM
-        );
+        ];
 
         $book = new Book();
-        $book->fromArray(array (
+        $book->fromArray([
             'Title' => 'Harry Potter and the Order of the Phoenix',
             'ISBN' => '043935806X'
-        ));
+        ]);
 
-        $expecteds = array (
-            TableMap::TYPE_PHPNAME => array (
+        $expecteds = [
+            TableMap::TYPE_PHPNAME => [
                 'Title' => 'Harry Potter and the Order of the Phoenix',
                 'ISBN' => '043935806X'
-            ),
-            TableMap::TYPE_CAMELNAME => array (
+            ],
+            TableMap::TYPE_CAMELNAME => [
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X'
-            ),
-            TableMap::TYPE_COLNAME => array (
+            ],
+            TableMap::TYPE_COLNAME => [
                 'book.title' => 'Harry Potter and the Order of the Phoenix',
                 'book.isbn' => '043935806X'
-            ),
-            TableMap::TYPE_FIELDNAME => array (
+            ],
+            TableMap::TYPE_FIELDNAME => [
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
-            ),
-            TableMap::TYPE_NUM => array (
+            ],
+            TableMap::TYPE_NUM => [
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X'
-            )
-        );
+            ]
+        ];
 
         foreach ($types as $type) {
             $expected = $expecteds[$type];
@@ -426,7 +426,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
             ->addReview($review)
             ->setPrice(10);
 
-        $expecteds = array (
+        $expecteds = [
             TableMap::TYPE_PHPNAME => [
                 'Id' => null,
                 'Title' => 'Harry Potter and the Order of the Phoenix',
@@ -446,7 +446,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
                     ]
                 ]
             ],
-            TableMap::TYPE_CAMELNAME => array (
+            TableMap::TYPE_CAMELNAME => [
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'iSBN' => '043935806X',
@@ -464,8 +464,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                         'book' => '*RECURSION*'
                     ]
                 ]
-            ),
-            TableMap::TYPE_COLNAME => array (
+            ],
+            TableMap::TYPE_COLNAME => [
                 'book.id' => null,
                 'book.title' => 'Harry Potter and the Order of the Phoenix',
                 'book.isbn' => '043935806X',
@@ -483,8 +483,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                         'Book' => '*RECURSION*'
                     ]
                 ]
-            ),
-            TableMap::TYPE_FIELDNAME => array (
+            ],
+            TableMap::TYPE_FIELDNAME => [
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X',
@@ -502,8 +502,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                         'book' => '*RECURSION*'
                     ]
                 ]
-            ),
-            TableMap::TYPE_NUM => array (
+            ],
+            TableMap::TYPE_NUM => [
                 '0' => null,
                 '1' => 'Harry Potter and the Order of the Phoenix',
                 '2' => '043935806X',
@@ -521,8 +521,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
                         'Book' => '*RECURSION*',
                     ]
                 ]
-            )
-        );
+            ]
+        ];
 
         foreach ($types as $type) {
             $expected = $expecteds[$type];

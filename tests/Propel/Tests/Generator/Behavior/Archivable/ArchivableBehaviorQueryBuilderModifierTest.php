@@ -147,7 +147,7 @@ EOF;
         \ArchivableTest100ArchiveQuery::create()->deleteAll();
         \ArchivableTest100Query::create()
             ->filterById($a->getId())
-            ->update(array('Title' => 'bar'));
+            ->update(['Title' => 'bar']);
         $this->assertEquals(1, \ArchivableTest100Query::create()->filterByTitle('bar')->count());
         $this->assertEquals(0, \ArchivableTest100ArchiveQuery::create()->count());
     }
@@ -162,7 +162,7 @@ EOF;
         \MyOldArchivableTest300Query::create()->deleteAll();
         \ArchivableTest300Query::create()
             ->filterById($a->getId())
-            ->update(array('Title' => 'bar'));
+            ->update(['Title' => 'bar']);
         $this->assertEquals(1, \ArchivableTest300Query::create()->filterByTitle('bar')->count());
         $this->assertEquals(1, \MyOldArchivableTest300Query::create()->count());
     }
@@ -240,7 +240,7 @@ EOF;
         \MyOldArchivableTest300Query::create()->deleteAll();
         \ArchivableTest300Query::create()
             ->filterById($a->getId())
-            ->updateWithoutArchive(array('Title' => 'bar'));
+            ->updateWithoutArchive(['Title' => 'bar']);
         $this->assertEquals(1, \ArchivableTest300Query::create()->filterByTitle('bar')->count());
         $this->assertEquals(0, \MyOldArchivableTest300Query::create()->count());
     }

@@ -25,13 +25,13 @@ class LoaderResolver extends BaseLoaderResolver
     public function __construct(array $loaders = null)
     {
         if (null === $loaders) {
-            $loaders = array(
+            $loaders = [
                 new IniFileLoader(),
                 new PhpFileLoader(),
                 new XmlFileLoader(),
                 new YamlFileLoader(),
                 new JsonFileLoader(),
-            );
+            ];
         }
 
         parent::__construct($loaders);

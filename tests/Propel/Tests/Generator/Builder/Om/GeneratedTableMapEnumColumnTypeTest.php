@@ -39,15 +39,15 @@ EOF;
 
     public function valueSetConstantProvider()
     {
-        return array(
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO', 'foo'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAR', 'bar'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAZ', 'baz'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_1', '1'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_4', '4'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR__', '('),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO_BAR', 'foo bar'),
-        );
+        return [
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO', 'foo'],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAR', 'bar'],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAZ', 'baz'],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_1', '1'],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_4', '4'],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR__', '('],
+            ['\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO_BAR', 'foo bar'],
+        ];
     }
 
     /**
@@ -61,13 +61,13 @@ EOF;
 
     public function testGetValueSets()
     {
-        $expected = array(\Map\ComplexColumnTypeEntity103TableMap::COL_BAR => array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar'));
+        $expected = [\Map\ComplexColumnTypeEntity103TableMap::COL_BAR => ['foo', 'bar', 'baz', '1', '4', '(', 'foo bar']];
         $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSets());
     }
 
     public function testGetValueSet()
     {
-        $expected = array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar');
+        $expected = ['foo', 'bar', 'baz', '1', '4', '(', 'foo bar'];
         $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSet(\Map\ComplexColumnTypeEntity103TableMap::COL_BAR));
     }
 }

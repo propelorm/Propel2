@@ -91,7 +91,7 @@ EOF;
 
     public function testModifyTableAddsParentColumn()
     {
-        $contentColumns = array('id', 'title', 'category_id');
+        $contentColumns = ['id', 'title', 'category_id'];
         $article = ConcreteArticleTableMap::getTableMap();
         foreach ($contentColumns as $column) {
             $this->assertTrue($article->hasColumn($column), 'modifyTable() adds the columns of the parent table');

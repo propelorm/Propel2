@@ -55,7 +55,7 @@ abstract class DataModelBuilder
      * An array of warning messages that can be retrieved for display.
      * @var array string[]
      */
-    private $warnings = array();
+    private $warnings = [];
 
     /**
      * Object builder class for current table.

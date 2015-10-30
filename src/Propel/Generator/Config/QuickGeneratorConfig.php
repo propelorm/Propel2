@@ -26,36 +26,36 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
      */
     protected $behaviorLocator = null;
 
-    public function __construct($extraConf = array())
+    public function __construct($extraConf = [])
     {
         if (null === $extraConf) {
-            $extraConf = array();
+            $extraConf = [];
         }
 
         //Creates a GeneratorConfig based on Propel default values plus the following
-        $configs = array(
-           'propel' => array(
-               'database' => array(
-                   'connections' => array(
-                       'default' => array(
+        $configs = [
+           'propel' => [
+               'database' => [
+                   'connections' => [
+                       'default' => [
                            'adapter' => 'sqlite',
                            'classname' => 'Propel\Runtime\Connection\DebugPDO',
                            'dsn' => 'sqlite::memory:',
                            'user' => '',
                            'password' => ''
-                       )
-                   )
-               ),
-               'runtime' => array(
+                       ]
+                   ]
+               ],
+               'runtime' => [
                    'defaultConnection' => 'default',
-                   'connections' => array('default')
-               ),
-               'generator' => array(
+                   'connections' => ['default']
+               ],
+               'generator' => [
                    'defaultConnection' => 'default',
-                   'connections' => array('default')
-               )
-           )
-        );
+                   'connections' => ['default']
+               ]
+           ]
+        ];
 
         $configs = array_replace_recursive($configs, $extraConf);
         $this->process($configs);
