@@ -208,8 +208,11 @@
 
         $cls = new \ReflectionClass($this);
         $propertyNames = [];
-        foreach($cls->getProperties() as $property) {
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+        
+        foreach($serializableProperties as $property) {
             $propertyNames[] = $property->getName();
         }
+        
         return $propertyNames;
     }
