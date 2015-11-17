@@ -166,9 +166,10 @@ class InitCommand extends AbstractCommand
     private function initMysql(OutputInterface $output, DialogHelper $dialog)
     {
         $host = $dialog->ask($output, 'Please enter your database host', 'localhost');
+        $port = $dialog->ask($output, 'Please enter your database port', '3306');
         $database = $dialog->ask($output, 'Please enter your database name');
 
-        return sprintf('mysql:host=%s;dbname=%s', $host, $database);
+        return sprintf('mysql:host=%s;port=%s;dbname=%s', $host, $port, $database);
     }
 
     private function initSqlite(OutputInterface $output, DialogHelper $dialog)
