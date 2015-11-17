@@ -205,6 +205,15 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
         $this->assertCount(5, $pager);
     }
 
+    public function testZeroOnNoResult()
+    {
+        $pager = $this->getPager(1, 100);
+        $this->assertEquals(0, $pager->getNbResults());
+        $this->assertEquals(0, $pager->getPage()); 
+        $this->assertEquals(0, $pager->getFirstPage());
+        $this->assertEquals(0, $pager->getLastPage());
+    }
+
     public function testCallIteratorMethods()
     {
         $this->createBooks(5);
