@@ -10,7 +10,6 @@ dependencies:
     - echo "memory_limit=520M" > ~/.phpenv/versions/$(phpenv global)/etc/conf.d/memlimit.ini
     - if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
     - if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
-    - if [ "$CIRCLE_NODE_INDEX" = "3" ]; then ./tests/bin/setup.sqlite.sh; fi
 
 notify:
   webhooks:

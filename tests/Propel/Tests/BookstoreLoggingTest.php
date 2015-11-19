@@ -131,6 +131,11 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $this->assertEquals($author->getId(), $foundAuthor->getId());
     }
 
+    /**
+     *
+     * @group mysql
+     * @group pgsql
+     */
     public function testQueryJoins()
     {
         if ($this->runningOnSQLite()) {
