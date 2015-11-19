@@ -1854,6 +1854,8 @@ class ModelCriteria extends BaseModelCriteria
             $tableMap = $this->joins[$shortClass]->getTableMap();
         } elseif ($this->hasSelectQuery($prefix)) {
             return $this->getColumnFromSubQuery($prefix, $phpName, $failSilently);
+        } elseif ($modelJoin = $this->getModelJoinByTableName($prefix)) {
+            $tableMap = $modelJoin->getTableMap();
         } elseif ($failSilently) {
             return array(null, null);
         } else {
@@ -1885,6 +1887,20 @@ class ModelCriteria extends BaseModelCriteria
         }
     }
 
+    /**
+     * @param string $tableName
+     *
+     * @return null|ModelJoin
+     */
+    public function getModelJoinByTableName($tableName) {
+        foreach ($this->joins as $join) {
+            if ($join instanceof ModelJoin && $join->getTableMap()->getName() == $tableName) {
+                return $join;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Builds, binds and executes a SELECT query based on the current object.
