@@ -2774,4 +2774,12 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         BookQuery::create()->requireOneByTitleAndId('Not Existing Book', -1337);
     }
+
+    public function testJoinSelectColumn()
+    {
+        BookQuery::create()
+            ->innerJoinAuthor()
+            ->select(AuthorTableMap::COL_LAST_NAME)
+            ->find();
+    }
 }
