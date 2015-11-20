@@ -1181,6 +1181,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo=$column->getLowercasedName();
 
+        $typeHint = null;
+
+        if($column->getTypeHint()){
+            $typeHint = $column->getTypeHint();
+            if ('array' !== $typeHint) {
+                $typeHint = $this->declareClass($typeHint);
+            }
+        }
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1190,7 +1199,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed'))."
+     * @return ".($typeHint ?: ($column->getPhpType() ?: 'mixed'))."
      */";
     }
 
@@ -1401,11 +1410,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function addMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+        $typeHint = null;
+
+        if($column->getTypeHint()){
+            $typeHint = $column->getTypeHint();
+            if ('array' !== $typeHint) {
+                $typeHint = $this->declareClass($typeHint);
+            }
+        }
         $script .= "
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param ".($column->getPhpType() ?: 'mixed')." \$v new value
+     * @param ".($typeHint?: $column->getPhpType()?: 'mixed')." \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
