@@ -1,5 +1,8 @@
 #!/bin/sh
 
+DIR=`dirname $0`;
+. $DIR/base.sh;
+
 mysql=`which mysql`;
 if [ "$mysql" = "" ]; then
     mysql=`which mysql5`;
@@ -22,8 +25,6 @@ fi
 
 DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
 
-"$mysql" --version;
-
 "$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e '
 SET FOREIGN_KEY_CHECKS = 0;
 DROP DATABASE IF EXISTS test;
@@ -33,6 +34,7 @@ DROP SCHEMA IF EXISTS bookstore_schemas;
 DROP SCHEMA IF EXISTS migration;
 SET FOREIGN_KEY_CHECKS = 1;
 '
+check;
 
 "$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e '
 CREATE DATABASE test;
@@ -41,3 +43,4 @@ CREATE SCHEMA contest;
 CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
 ';
+check;
