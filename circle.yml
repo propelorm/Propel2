@@ -19,5 +19,5 @@ notify:
 
 test:
   override:
-    - ./tests/bin/phpunit.circleci.sh:
+    - ./tests/bin/circleci.sh:
         parallel: true
