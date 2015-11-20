@@ -22,7 +22,7 @@ fi
 
 if [ "$CIRCLE_NODE_INDEX" = "3" ]; then
     echo "sqlite tests"
-    ./vendor/bin/phpunit  -c tests/sqlite.phpunit.xml --coverage-php=tests/clover.cov";
+    ./vendor/bin/phpunit -c tests/sqlite.phpunit.xml --coverage-php=tests/clover.cov";
 fi
 
 if [ "$PHPUNIT_COVERAGE" = "1" ]; then
