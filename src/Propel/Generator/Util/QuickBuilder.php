@@ -487,12 +487,6 @@ class QuickBuilder
     protected function forceNamespace($code)
     {
         if (0 === preg_match('/\nnamespace/', $code)) {
-
-            $use = array_filter(explode(PHP_EOL, $code), function($string) {
-                return substr($string, 0, 5) === 'use \\';
-            });
-
-            $code = str_replace($use, '', $code);
             return "\nnamespace\n{\n" . $code . "\n}\n";
         }
 
