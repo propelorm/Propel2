@@ -110,6 +110,16 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
+     * Returns timestamptz formatter string for use in date() function.
+     *
+     * @return string
+     */
+    public function getTimestampTzFormatter()
+    {
+        return 'c';
+    }
+
+    /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string

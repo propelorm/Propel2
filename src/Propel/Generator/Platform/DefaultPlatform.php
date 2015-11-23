@@ -138,6 +138,9 @@ class DefaultPlatform implements PlatformInterface
 
         // Boolean is a bit special, since typically it must be mapped to INT type.
         $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN, 'INTEGER');
+
+        // Default timestamptz to timestamp for non-pgsql
+        $this->schemaDomainMap[PropelTypes::TIMESTAMPTZ] = new Domain(PropelTypes::TIMESTAMPTZ, 'TIMESTAMP');
     }
 
     /**
@@ -1279,6 +1282,15 @@ ALTER TABLE %s ADD
     }
 
     /**
+     * Gets the preferred timestamp with timezone formatter for setting date/time values.
+     * @return string
+     */
+    public function getTimestampTzFormatter()
+    {
+        return 'Y-m-d H:i:s';
+    }
+
+    /**
      * Gets the preferred time formatter for setting date/time values.
      * @return string
      */
@@ -1305,7 +1317,15 @@ ALTER TABLE %s ADD
     {
         $script = '';
         if ($column->isTemporalType()) {
-            $columnValueAccessor = $columnValueAccessor . " ? " . $columnValueAccessor . "->format(\""  . $this->getTimeStampFormatter() . "\") : null";
+            $formatter = null;
+            switch ($column->getType()) {
+                case 'TIMESTAMPTZ':
+                    $formatter = $this->getTimeStampTzFormatter();
+                    break;
+                default:
+                    $formatter = $this->getTimeStampFormatter();
+            }
+            $columnValueAccessor = $columnValueAccessor . " ? " . $columnValueAccessor . "->format(\""  . $formatter . "\") : null";
         } elseif ($column->isLobType()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.

@@ -34,6 +34,7 @@
             <xs:enumeration value="DATE"/>
             <xs:enumeration value="TIME"/>
             <xs:enumeration value="TIMESTAMP"/>
+            <xs:enumeration value="TIMESTAMPTZ"/>
             <xs:enumeration value="BINARY"/>
             <xs:enumeration value="VARBINARY"/>
             <xs:enumeration value="LONGVARBINARY"/>

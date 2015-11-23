@@ -308,6 +308,9 @@ abstract class PdoAdapter
                 case PropelTypes::BU_TIMESTAMP:
                     $value = $dt->format($this->getTimestampFormatter());
                     break;
+                case PropelTypes::TIMESTAMPTZ:
+                    $value = $dt->format($this->getTimestampTzFormatter());
+                    break;
                 case PropelTypes::DATE:
                 case PropelTypes::BU_DATE:
                     $value = $dt->format($this->getDateFormatter());
@@ -327,6 +330,16 @@ abstract class PdoAdapter
      * @return string
      */
     public function getTimestampFormatter()
+    {
+        return 'Y-m-d H:i:s';
+    }
+
+    /**
+     * Returns timestamptz formatter string for use in date() function.
+     *
+     * @return string
+     */
+    public function getTimestampTzFormatter()
     {
         return 'Y-m-d H:i:s';
     }
