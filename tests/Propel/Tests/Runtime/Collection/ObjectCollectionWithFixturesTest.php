@@ -227,6 +227,34 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $booksArray = $books->toKeyIndex();
         $this->assertEquals($expected, $booksArray, 'toKeyIndex() uses primary key for the key');
     }
+    public function testGetColumnValues()
+    {
+        $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
+
+        $expected = [];
+        foreach ($books as $book) {
+            $expected[] = $book->getTitle();
+        }
+        $booksArray = $books->getColumnValues('Title');
+        $this->assertEquals(4, count($booksArray));
+        $this->assertEquals($expected, $booksArray, 'getColumnValues() turns the collection to `Title` array');
+
+        $expected = [];
+        foreach ($books as $book) {
+            $expected[] = $book->getISBN();
+        }
+        $this->assertEquals(4, count($booksArray));
+        $booksArray = $books->getColumnValues('ISBN');
+        $this->assertEquals($expected, $booksArray, 'getColumnValues() uses `ISBN` for the key');
+
+        $expected = [];
+        foreach ($books as $book) {
+            $expected[] = $book->getId();
+        }
+        $this->assertEquals(4, count($booksArray));
+        $booksArray = $books->getColumnValues();
+        $this->assertEquals($expected, $booksArray, 'getColumnValues() uses primary key for the key');
+    }
 
     public function testPopulateRelation()
     {
