@@ -233,6 +233,26 @@ SET search_path TO public;
 
         return $ret;
     }
+    
+    /**
+     * @return string
+     */
+    public function getBeginDDL()
+    {
+        return "
+BEGIN;
+";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getEndDDL()
+    {
+        return "
+COMMIT;
+";
+    }
 
     /**
      * {@inheritDoc}
