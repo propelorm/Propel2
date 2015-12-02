@@ -139,6 +139,10 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('tablePrefix', $tablePrefix);
         }
 
+        if ($database->isIdentifierQuotingEnabled()) {
+            $databaseNode->setAttribute('identifierQuoting', 'true');
+        }
+
         /*
             FIXME - Before we can add support for domains in the schema, we need
             to have a method of the Column that indicates whether the column was mapped
