@@ -39,6 +39,7 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     public function testGetModifyDatabaseDDL($databaseDiff)
     {
         $expected = <<<END
+
 BEGIN;
 
 DROP TABLE IF EXISTS "foo1" CASCADE;
@@ -62,6 +63,7 @@ ALTER TABLE "foo2"
   ADD "baz3" TEXT;
 
 COMMIT;
+
 END;
         $this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
     }
