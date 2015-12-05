@@ -21,10 +21,9 @@ use Propel\Runtime\Collection\ObjectCollection;
 class VersionableBehaviorObjectBuilderModifierTest extends TestCase
 {
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        if (!class_exists('VersionableBehaviorTest1')) {
-            $schema = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_1">
     <table name="versionable_behavior_test_1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -65,10 +64,9 @@ class VersionableBehaviorObjectBuilderModifierTest extends TestCase
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema);
-        }
-        if (!class_exists('VersionableBehaviorTest6')) {
-            $schema2 = <<<EOF
+        QuickBuilder::buildSchema($schema);
+
+        $schema2 = <<<EOF
 <database name="versionable_behavior_test_2" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest6">
         <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -98,11 +96,9 @@ EOF;
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema2);
-        }
+        QuickBuilder::buildSchema($schema2);
 
-        if (!class_exists('VersionableBehaviorTest8')) {
-            $schema2 = <<<EOF
+        $schema3 = <<<EOF
 <database name="versionable_behavior_test_3" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest8">
         <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -117,12 +113,10 @@ EOF;
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema2);
-        }
+        QuickBuilder::buildSchema($schema3);
 
 
-        if (!class_exists('VersionableBehaviorTest10')) {
-            $schema4 = <<<EOF
+        $schema4 = <<<EOF
 <database name="versionable_behavior_test_4">
     <table name="VersionableBehaviorTest10">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -153,8 +147,7 @@ EOF;
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema4);
-        }
+        QuickBuilder::buildSchema($schema4);
     }
 
     public function testGetVersionExists()
