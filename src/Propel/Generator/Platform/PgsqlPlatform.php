@@ -213,8 +213,7 @@ SET search_path TO public;
 
     public function getAddTablesDDL(Database $database)
     {
-        $ret = $this->getBeginDDL();
-        $ret .= $this->getAddSchemasDDL($database);
+        $ret = $this->getAddSchemasDDL($database);
 
         foreach ($database->getTablesForSql() as $table) {
             $this->normalizeTable($table);
@@ -229,9 +228,32 @@ SET search_path TO public;
         foreach ($database->getTablesForSql() as $table) {
             $ret .= $this->getAddForeignKeysDDL($table);
         }
-        $ret .= $this->getEndDDL();
+
+        if (!empty($ret)) {
+            $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
+        }
 
         return $ret;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getBeginDDL()
+    {
+        return "
+BEGIN;
+";
+    }
+    
+    /**
+     * @return string
+     */
+    public function getEndDDL()
+    {
+        return "
+COMMIT;
+";
     }
 
     /**

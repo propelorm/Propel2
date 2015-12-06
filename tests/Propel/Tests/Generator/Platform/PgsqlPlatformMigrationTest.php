@@ -40,6 +40,8 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     {
         $expected = <<<END
 
+BEGIN;
+
 DROP TABLE IF EXISTS "foo1" CASCADE;
 
 ALTER TABLE "foo3" RENAME TO "foo4";
@@ -59,6 +61,8 @@ ALTER TABLE "foo2"
   ALTER COLUMN "baz" DROP NOT NULL,
 
   ADD "baz3" TEXT;
+
+COMMIT;
 
 END;
         $this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));

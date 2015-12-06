@@ -70,6 +70,8 @@ class PgsqlPlatformTest extends PlatformTestProvider
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
 
+BEGIN;
+
 -----------------------------------------------------------------------
 -- book
 -----------------------------------------------------------------------
@@ -103,6 +105,8 @@ CREATE TABLE "author"
 ALTER TABLE "book" ADD CONSTRAINT "book_fk_ea464c"
     FOREIGN KEY ("author_id")
     REFERENCES "author" ("id");
+
+COMMIT;
 
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
@@ -141,6 +145,8 @@ EOF;
 EOF;
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
+
+BEGIN;
 
 CREATE SCHEMA "Woopah";
 
@@ -198,6 +204,8 @@ CREATE TABLE "table3"
 
 SET search_path TO public;
 
+COMMIT;
+
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
@@ -209,6 +217,8 @@ EOF;
     {
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
+
+BEGIN;
 
 -----------------------------------------------------------------------
 -- x.book
@@ -262,6 +272,8 @@ ALTER TABLE "x"."book_summary" ADD CONSTRAINT "book_summary_fk_23450f"
     FOREIGN KEY ("book_id")
     REFERENCES "x"."book" ("id")
     ON DELETE CASCADE;
+
+COMMIT;
 
 EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
