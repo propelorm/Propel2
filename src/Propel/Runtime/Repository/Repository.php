@@ -99,6 +99,29 @@ abstract class Repository
     }
 
     /**
+     * @param object $entity
+     * @param string $fieldName
+     *
+     * @return boolean
+     */
+    public function isFieldModified($entity, $fieldName)
+    {
+        $reader = $this->getEntityMap()->getPropReader();
+        $currentValue = $reader($entity, $fieldName);
+
+        if (!$this->hasKnownValues($entity)) {
+            //it's a not committed entity, see if its value is different that its default
+            $defaultValue = $this->getEntityMap()->getField($fieldName)->getDefaultValue();
+
+            return $defaultValue != $currentValue;
+        }
+
+        $oldValues = $this->getLastKnownValues($entity);
+
+        return $currentValue !== $oldValues[$fieldName];
+    }
+
+    /**
      * @return EntityMap
      */
     public function getEntityMap()
@@ -235,6 +258,16 @@ abstract class Repository
     public function getLastKnownValues($entity, $orCreate = false)
     {
         return $this->getConfiguration()->getSession()->getLastKnownValues($entity, $orCreate);
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function hasKnownValues($entity)
+    {
+        return $this->getConfiguration()->getSession()->hasKnownValues($entity);
     }
 
     /**

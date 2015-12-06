@@ -36,7 +36,7 @@ class Properties extends BuildComponent
                 // it's a implementation detail, we don't need to expose it to the domain model.
                 continue;
             }
-            
+
             if ($field->isSkipCodeGeneration()){
                 continue;
             }

@@ -13,11 +13,11 @@ namespace Propel\Tests\Generator\Behavior\Timestampable;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\Behavior\Table1;
-use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2;
-use Propel\Tests\Bookstore\Behavior\Map\Table2TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2Query;
+use Propel\Tests\Bookstore\Behavior\Entity1;
+use Propel\Tests\Bookstore\Behavior\Map\Entity1EntityMap;
+use Propel\Tests\Bookstore\Behavior\Entity2;
+use Propel\Tests\Bookstore\Behavior\Map\Entity2EntityMap;
+use Propel\Tests\Bookstore\Behavior\Entity2Query;
 
 use Propel\Runtime\Collection\ObjectCollection;
 
@@ -30,12 +30,6 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {
-    public static function setUpBeforeClass()
-    {
-        static::$isInitialized = false;
-        parent::setUpBeforeClass();
-    }
-
     private function assertTimeEquals($expected, $actual, $message = '')
     {
         // accept $expected or ($expected + 1s)
@@ -51,19 +45,19 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testParameters()
     {
-        $table2 = Table2TableMap::getTableMap();
-        $this->assertEquals(count($table2->getColumns()), 4, 'Timestampable adds two columns by default');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table2', 'getCreatedAt'), 'Timestampable adds a created_at column by default');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table2', 'getUpdatedAt'), 'Timestampable adds an updated_at column by default');
-        $table1 = Table1TableMap::getTableMap();
-        $this->assertEquals(count($table1->getColumns()), 4, 'Timestampable does not add two columns when they already exist');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getCreatedOn'), 'Timestampable allows customization of create_column name');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');
+        $entity2 = Entity2EntityMap::getEntityMap();
+        $this->assertEquals(count($entity2->getFields()), 4, 'Timestampable adds two columns by default');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity2', 'getCreatedAt'), 'Timestampable adds a created_at column by default');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity2', 'getUpdatedAt'), 'Timestampable adds an updated_at column by default');
+        $entity1 = Entity1EntityMap::getEntityMap();
+        $this->assertEquals(count($entity1->getFields()), 4, 'Timestampable does not add two columns when they already exist');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity1', 'getCreatedOn'), 'Timestampable allows customization of create_column name');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');
     }
 
     public function testPreSave()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $this->assertNull($t1->getUpdatedAt());
         $tsave = time();
         $t1->save();
@@ -77,7 +71,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testPreSaveNoChange()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $this->assertNull($t1->getUpdatedAt());
         $tsave = time();
         $t1->save();
@@ -90,7 +84,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testPreSaveManuallyUpdated()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
@@ -106,7 +100,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testPreInsert()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $this->assertNull($t1->getCreatedAt());
         $tsave = time();
         $t1->save();
@@ -120,7 +114,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testPreInsertManuallyUpdated()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $t1->setCreatedAt(time() - 10);
         $tsave = time();
         $t1->save();
@@ -129,11 +123,15 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testObjectKeepUpdateDateUnchanged()
     {
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
         $this->assertLessThan($tsave, $t1->getUpdatedAt('U'));
+        $this->assertFalse(
+            $this->getConfiguration()->getRepositoryForEntity($t1)->isFieldModified($t1, 'updatedAt'),
+            'updatedAt should not be modified after save call'
+        );
         // let's save it a second time; the updated_at should be changed
         $t1->setTitle('foo');
         $tsave = time();
@@ -141,7 +139,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'));
 
         // now let's do this a second time
-        $t1 = new Table2();
+        $t1 = new Entity2();
         $t1->setUpdatedAt(time() - 10);
         $tsave = time();
         $t1->save();
@@ -157,11 +155,11 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     protected function populateUpdatedAt()
     {
-        Table2Query::create()->deleteAll();
+        Entity2Query::create()->deleteAll();
         $ts = new ObjectCollection();
-        $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
+        $ts->setModel('\Propel\Tests\Bookstore\Behavior\Entity2');
         for ($i=0; $i < 10; $i++) {
-            $t = new Table2();
+            $t = new Entity2();
             $t->setTitle('UpdatedAt' . $i);
             /* additional -30 in case the check is done in the same second (which we can't guarantee, so no assert(8 ...) below).*/
             $t->setUpdatedAt(time() - $i * 24 * 60 * 60 - 30);
@@ -172,11 +170,11 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     protected function populateCreatedAt()
     {
-        Table2Query::create()->deleteAll();
+        Entity2Query::create()->deleteAll();
         $ts = new ObjectCollection();
-        $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
+        $ts->setModel('\Propel\Tests\Bookstore\Behavior\Entity2');
         for ($i=0; $i < 10; $i++) {
-            $t = new Table2();
+            $t = new Entity2();
             $t->setTitle('CreatedAt' . $i);
             $t->setCreatedAt(time() - $i * 24 * 60 * 60 - 30);
             $ts[]= $t;
@@ -186,59 +184,59 @@ class TimestampableBehaviorTest extends BookstoreTestBase
 
     public function testQueryRecentlyUpdated()
     {
-        $q = Table2Query::create()->recentlyUpdated();
-        $this->assertTrue($q instanceof Table2Query, 'recentlyUpdated() returns the current Query object');
+        $q = Entity2Query::create()->recentlyUpdated();
+        $this->assertTrue($q instanceof Entity2Query, 'recentlyUpdated() returns the current Query object');
         $this->populateUpdatedAt();
-        $ts = Table2Query::create()->recentlyUpdated()->count();
+        $ts = Entity2Query::create()->recentlyUpdated()->count();
         $this->assertEquals(7, $ts, 'recentlyUpdated() returns the elements updated in the last 7 days by default');
-        $ts = Table2Query::create()->recentlyUpdated(5)->count();
+        $ts = Entity2Query::create()->recentlyUpdated(5)->count();
         $this->assertEquals(5, $ts, 'recentlyUpdated() accepts a number of days as parameter');
     }
 
     public function testQueryRecentlyCreated()
     {
-        $q = Table2Query::create()->recentlyCreated();
-        $this->assertTrue($q instanceof Table2Query, 'recentlyCreated() returns the current Query object');
+        $q = Entity2Query::create()->recentlyCreated();
+        $this->assertTrue($q instanceof Entity2Query, 'recentlyCreated() returns the current Query object');
         $this->populateCreatedAt();
-        $ts = Table2Query::create()->recentlyCreated()->count();
+        $ts = Entity2Query::create()->recentlyCreated()->count();
         $this->assertEquals(7, $ts, 'recentlyCreated() returns the elements created in the last 7 days by default');
-        $ts = Table2Query::create()->recentlyCreated(5)->count();
+        $ts = Entity2Query::create()->recentlyCreated(5)->count();
         $this->assertEquals(5, $ts, 'recentlyCreated() accepts a number of days as parameter');
     }
 
     public function testQueryLastUpdatedFirst()
     {
-        $q = Table2Query::create()->lastUpdatedFirst();
-        $this->assertTrue($q instanceof Table2Query, 'lastUpdatedFirst() returns the current Query object');
+        $q = Entity2Query::create()->lastUpdatedFirst();
+        $this->assertTrue($q instanceof Entity2Query, 'lastUpdatedFirst() returns the current Query object');
         $this->populateUpdatedAt();
-        $t = Table2Query::create()->lastUpdatedFirst()->findOne();
+        $t = Entity2Query::create()->lastUpdatedFirst()->findOne();
         $this->assertEquals('UpdatedAt0', $t->getTitle(), 'lastUpdatedFirst() returns element with most recent update date first');
     }
 
     public function testQueryFirstUpdatedFirst()
     {
-        $q = Table2Query::create()->firstUpdatedFirst();
-        $this->assertTrue($q instanceof Table2Query, 'firstUpdatedFirst() returns the current Query object');
+        $q = Entity2Query::create()->firstUpdatedFirst();
+        $this->assertTrue($q instanceof Entity2Query, 'firstUpdatedFirst() returns the current Query object');
         $this->populateUpdatedAt();
-        $t = Table2Query::create()->firstUpdatedFirst()->findOne();
+        $t = Entity2Query::create()->firstUpdatedFirst()->findOne();
         $this->assertEquals('UpdatedAt9', $t->getTitle(), 'firstUpdatedFirst() returns the element with oldest updated date first');
     }
 
     public function testQueryLastCreatedFirst()
     {
-        $q = Table2Query::create()->lastCreatedFirst();
-        $this->assertTrue($q instanceof Table2Query, 'lastCreatedFirst() returns the current Query object');
+        $q = Entity2Query::create()->lastCreatedFirst();
+        $this->assertTrue($q instanceof Entity2Query, 'lastCreatedFirst() returns the current Query object');
         $this->populateCreatedAt();
-        $t = Table2Query::create()->lastCreatedFirst()->findOne();
+        $t = Entity2Query::create()->lastCreatedFirst()->findOne();
         $this->assertEquals('CreatedAt0', $t->getTitle(), 'lastCreatedFirst() returns element with most recent create date first');
     }
 
     public function testQueryFirstCreatedFirst()
     {
-        $q = Table2Query::create()->firstCreatedFirst();
-        $this->assertTrue($q instanceof Table2Query, 'firstCreatedFirst() returns the current Query object');
+        $q = Entity2Query::create()->firstCreatedFirst();
+        $this->assertTrue($q instanceof Entity2Query, 'firstCreatedFirst() returns the current Query object');
         $this->populateCreatedAt();
-        $t = Table2Query::create()->firstCreatedFirst()->findOne();
+        $t = Entity2Query::create()->firstCreatedFirst()->findOne();
         $this->assertEquals('CreatedAt9', $t->getTitle(), 'firstCreatedFirst() returns the element with oldest create date first');
     }
 
@@ -246,14 +244,14 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     {
         $schema = <<<EOF
 <database name="timestampable_database">
-    <table name="table_without_updated_at">
+    <Entity name="Entity_without_updated_at">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="name" type="varchar" />
 
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true" />
         </behavior>
-    </table>
+    </Entity>
 </database>
 EOF;
 
@@ -261,12 +259,12 @@ EOF;
         $builder->setSchema($schema);
         $builder->build();
 
-        $this->assertTrue(method_exists('TableWithoutUpdatedAt', 'getCreatedAt'));
-        $this->assertTrue(method_exists('TableWithoutUpdatedAt', 'setCreatedAt'));
-        $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'getUpdatedAt'));
-        $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'setUpdatedAt'));
+        $this->assertTrue(method_exists('EntityWithoutUpdatedAt', 'getCreatedAt'));
+        $this->assertTrue(method_exists('EntityWithoutUpdatedAt', 'setCreatedAt'));
+        $this->assertFalse(method_exists('EntityWithoutUpdatedAt', 'getUpdatedAt'));
+        $this->assertFalse(method_exists('EntityWithoutUpdatedAt', 'setUpdatedAt'));
 
-        $obj = new \TableWithoutUpdatedAt();
+        $obj = new \EntityWithoutUpdatedAt();
         $obj->setName('Peter');
         $this->assertNull($obj->getCreatedAt());
         $this->assertEquals(1, $obj->save());
@@ -277,14 +275,14 @@ EOF;
     {
         $schema = <<<EOF
 <database name="timestampable_database">
-    <table name="table_without_created_at">
+    <Entity name="Entity_without_created_at">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="name" type="varchar" />
 
         <behavior name="timestampable">
             <parameter name="disable_created_at" value="true" />
         </behavior>
-    </table>
+    </Entity>
 </database>
 EOF;
 
@@ -292,12 +290,12 @@ EOF;
         $builder->setSchema($schema);
         $builder->build();
 
-        $this->assertFalse(method_exists('TableWithoutCreatedAt', 'getCreatedAt'));
-        $this->assertFalse(method_exists('TableWithoutCreatedAt', 'setCreatedAt'));
-        $this->assertTrue(method_exists('TableWithoutCreatedAt', 'getUpdatedAt'));
-        $this->assertTrue(method_exists('TableWithoutCreatedAt', 'setUpdatedAt'));
+        $this->assertFalse(method_exists('EntityWithoutCreatedAt', 'getCreatedAt'));
+        $this->assertFalse(method_exists('EntityWithoutCreatedAt', 'setCreatedAt'));
+        $this->assertTrue(method_exists('EntityWithoutCreatedAt', 'getUpdatedAt'));
+        $this->assertTrue(method_exists('EntityWithoutCreatedAt', 'setUpdatedAt'));
 
-        $obj = new \TableWithoutCreatedAt();
+        $obj = new \EntityWithoutCreatedAt();
         $obj->setName('Peter');
         $this->assertNull($obj->getUpdatedAt());
         $this->assertEquals(1, $obj->save());

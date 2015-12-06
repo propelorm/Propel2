@@ -44,7 +44,7 @@ class PropertyGetterMethods extends BuildComponent
 
         if ($field->isTemporalType()) {
                 $body .= "
-if (\$format && \$this->{$varName}) {
+if (\$format && \$this->{$varName} instanceof \\DateTime) {
     return \$this->{$varName}->format(\$format);
 }";
             $method->addSimpleParameter('format', 'string', null);

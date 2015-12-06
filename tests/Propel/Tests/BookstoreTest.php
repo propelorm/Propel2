@@ -240,6 +240,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup->setCoverImage(file_get_contents($blob2_path));
         $m1_lookup->save();
 
+        /** @var Media $m2_lookup */
         $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 

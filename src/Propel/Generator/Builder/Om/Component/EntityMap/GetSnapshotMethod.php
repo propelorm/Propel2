@@ -69,7 +69,6 @@ if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
     \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
                 }
 
-
                 $emptyBody .="
     \$snapshot['$relationFieldName'] = null;";
                 $body .= "

@@ -114,14 +114,14 @@ abstract class EntityMap
      *
      * @var boolean
      */
-    protected $isSingleEntityInheritance = false;
+    protected $singleEntityInheritance = false;
 
     /**
      * Whether the entity is a Many to Many entity
      *
      * @var boolean
      */
-    protected $isCrossRef = false;
+    protected $crossRef = false;
 
     /**
      * The primary key fields in the entity
@@ -196,6 +196,16 @@ abstract class EntityMap
     }
 
     /**
+     * Active-Record like access to this entityMap. Primarily for prototyping usages.
+     *
+     * @return EntityMap
+     */
+    public static function getEntityMap()
+    {
+        return Configuration::getCurrentConfiguration()->getEntityMap(static::ENTITY_CLASS);
+    }
+
+    /**
      * @return string
      */
     public function getDatabaseName()
@@ -209,6 +219,20 @@ abstract class EntityMap
     public function setDatabaseName($databaseName)
     {
         $this->databaseName = $databaseName;
+    }
+
+    /**
+     * @return \Propel\Runtime\Adapter\AdapterInterface
+     */
+    public function getAdapter()
+    {
+        return $this->getConfiguration()->getAdapter($this->getDatabaseName());
+    }
+
+    public function getFieldType($fieldName)
+    {
+        $field = $this->getField($fieldName);
+        return $this->getConfiguration()->getFieldType($field->getType());
     }
 
     /**
@@ -406,7 +430,7 @@ abstract class EntityMap
      */
     public function setSingleEntityInheritance($bit)
     {
-        $this->isSingleEntityInheritance = $bit;
+        $this->singleEntityInheritance = $bit;
     }
 
     /**
@@ -416,7 +440,7 @@ abstract class EntityMap
      */
     public function isSingleEntityInheritance()
     {
-        return $this->isSingleEntityInheritance;
+        return $this->singleEntityInheritance;
     }
 
     /**
@@ -787,7 +811,7 @@ abstract class EntityMap
      */
     public function isCrossRef()
     {
-        return $this->isCrossRef;
+        return $this->crossRef;
     }
 
     /**
@@ -797,7 +821,7 @@ abstract class EntityMap
      */
     public function setIsCrossRef($isCrossRef)
     {
-        $this->isCrossRef = $isCrossRef;
+        $this->crossRef = $isCrossRef;
     }
 
     /**

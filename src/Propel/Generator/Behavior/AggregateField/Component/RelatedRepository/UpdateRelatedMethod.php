@@ -94,7 +94,7 @@ foreach (\$entities as \$entity) {
 \$relatedRepo = \$this->getConfiguration()->getRepository('{$relation->getForeignEntity()->getFullClassName()}');
 \$relatedQuery = \$relatedRepo->createQuery();
 \$relatedObjects = \$relatedQuery
-    ->filterByPrimaryKeys(\$pks)
+    ->filterByPrimaryKeys(array_unique(\$pks))
     ->find();
 foreach (\$relatedObjects as \$relatedObject) {
     \$relatedRepo->$updateMethodName(\$relatedObject);

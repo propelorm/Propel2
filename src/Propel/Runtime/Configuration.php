@@ -170,6 +170,8 @@ class Configuration extends GeneratorConfig
      */
     protected $eventDispatcher;
 
+    protected $typeMaps = [];
+
     /**
      * @param string $filename
      * @param array  $extraConf
@@ -446,6 +448,38 @@ class Configuration extends GeneratorConfig
     public function createQuery($entityName, $alias = '')
     {
         return $this->getRepository($entityName)->createQuery($alias);
+    }
+
+    public function getFieldType($type)
+    {
+        $type = strtolower($type);
+
+        //@todo, move this to PropelConfiguration tree
+        $typeMap = [
+            'varchar' => 'Propel\Common\Types\SQL\VarcharType',
+            'integer' => 'Propel\Common\Types\SQL\IntegerType',
+            'double' => 'Propel\Common\Types\SQL\DoubleType',
+            'float' => 'Propel\Common\Types\SQL\DoubleType',
+            'datetime' => 'Propel\Common\Types\SQL\DateTimeType',
+            'date' => 'Propel\Common\Types\SQL\DateTimeType',
+            'timestamp' => 'Propel\Common\Types\SQL\DateTimeType',
+            'lob' => 'Propel\Common\Types\SQL\LobType',
+            'clob' => 'Propel\Common\Types\SQL\LobType',
+            'blob' => 'Propel\Common\Types\SQL\LobType',
+        ];
+
+        if (!isset($typeMap[$type])) {
+            $class = 'Propel\Common\Types\SQL\VarcharType';
+        } else {
+            $class = $typeMap[$type];
+        }
+
+        if (!isset($this->typeMaps[$class])) {
+            $this->typeMaps[$class] = new $class;
+        }
+
+        return $this->typeMaps[$class];
+
     }
 
     /**

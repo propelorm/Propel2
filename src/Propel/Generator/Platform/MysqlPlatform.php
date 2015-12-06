@@ -473,18 +473,18 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
 
         // Special handling of TIMESTAMP/DATETIME types ...
         // See: http://propel.phpdb.org/trac/ticket/538
-        if ($sqlType == 'DATETIME') {
+        if ($sqlType === 'DATETIME') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 // DATETIME values can only have constant expressions
                 $sqlType = 'TIMESTAMP';
             }
-        } elseif ($sqlType == 'DATE') {
+        } elseif ($sqlType === 'DATE') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 throw new EngineException('DATE fields cannot have default *expressions* in MySQL.');
             }
-        } elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
+        } elseif ($sqlType === 'TEXT' || $sqlType === 'BLOB') {
             if ($domain->getDefaultValue()) {
                 throw new EngineException('BLOB and TEXT fields cannot have DEFAULT values. in MySQL.');
             }
@@ -505,11 +505,11 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
         } elseif ($colinfo->hasParameter('Collate')) {
             $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
         }
-        if ($sqlType == 'TIMESTAMP') {
+        if ($sqlType === 'TIMESTAMP') {
             if ($notNullString == '') {
                 $notNullString = 'NULL';
             }
-            if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
+            if ($defaultSetting == '' && $notNullString === 'NOT NULL') {
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
             if ($notNullString) {

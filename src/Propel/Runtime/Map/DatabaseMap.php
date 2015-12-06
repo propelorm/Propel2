@@ -96,26 +96,6 @@ class DatabaseMap
     }
 
     /**
-     * Add a new entity to the database, using the entitymap class name.
-     *
-     * @param  string $entityMapClass The name of the entity map to add
-     *
-     * @return \Propel\Runtime\Map\EntityMap The EntityMap object
-     */
-    public function addEntityFromMapClass($entityMapClass)
-    {
-        /** @var EntityMap $entity */
-        $entity = new $entityMapClass();
-        if (!$this->hasEntity($entity->getName())) {
-            $this->addEntityObject($entity);
-
-            return $entity;
-        }
-
-        return $this->getEntity($entity->getName());
-    }
-
-    /**
      * Does this database contain this specific entity?
      *
      * @param  string $name The String representation of the entity.
@@ -179,55 +159,4 @@ class DatabaseMap
 
         return $this->getEntity($entityName)->getField($fieldName, false);
     }
-
-//    /**
-//     * @param string $phpName
-//     *
-//     * @return EntityMap
-//     */
-//    public function getEntityByPhpName($phpName)
-//    {
-//        if ('\\' !== $phpName[0]) {
-//            $phpName = '\\' . $phpName;
-//        }
-//        if (isset($this->entitiesByPhpName[$phpName])) {
-//            return $this->entitiesByPhpName[$phpName];
-//        }
-//
-//        if (class_exists($tmClass = $phpName . 'EntityMap')) {
-//            $this->addEntityFromMapClass($tmClass);
-//
-//            return $this->entitiesByPhpName[$phpName];
-//        }
-//
-//        if (class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'EntityMap')
-//            || class_exists($tmClass = '\\Map\\' . $phpName . 'EntityMap')
-//        ) {
-//            $this->addEntityFromMapClass($tmClass);
-//
-//            if (isset($this->entitiesByPhpName[$phpName])) {
-//                return $this->entitiesByPhpName[$phpName];
-//            }
-//
-//            if (isset($this->entitiesByPhpName[$phpName])) {
-//                return $this->entitiesByPhpName[$phpName];
-//            }
-//        }
-//
-//        throw new EntityNotFoundException(
-//            sprintf('Cannot fetch EntityMap for undefined entity phpName: %s.', $phpName)
-//        );
-//    }
-
-//    /**
-//     * Convenience method to get the AdapterInterface registered with Propel for this database.
-//     *
-//     * @see Propel::getServiceContainer()->getAdapter(string) .
-//     *
-//     * @return \Propel\Runtime\Adapter\AdapterInterface
-//     */
-//    public function getAbstractAdapter()
-//    {
-//        return Propel::getServiceContainer()->getAdapter($this->name);
-//    }
 }

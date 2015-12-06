@@ -276,7 +276,11 @@ EOF;
 
         $paramsReplaceReadable = $paramsReplace;
         $readable = preg_replace_callback('/\?/', function() use (&$paramsReplaceReadable) {
-            return array_shift($paramsReplaceReadable);
+            $value = array_shift($paramsReplaceReadable);
+            if (is_string($value) && strlen($value) > 64) {
+                $value = substr($value, 0, 64) . '...';
+            }
+            return var_export($value, true);
         }, $sql);
         $this->getConfiguration()->debug("sql-insert: $readable");
 
@@ -364,7 +368,11 @@ EOF;
 
                 $paramsReplace = $params;
                 $readable = preg_replace_callback('/\?/', function() use (&$paramsReplace) {
-                    return var_export(array_shift($paramsReplace), true);
+                    $value = array_shift($paramsReplace);
+                    if (is_string($value) && strlen($value) > 64) {
+                        $value = substr($value, 0, 64) . '...';
+                    }
+                    return var_export($value, true);
                 }, $query);
                 $this->getConfiguration()->debug("sql-update: $readable");
 

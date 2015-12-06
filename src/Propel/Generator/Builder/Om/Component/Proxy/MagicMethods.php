@@ -40,7 +40,7 @@ if (!isset(\$this->__duringInitializing__) && '{$fieldName}' === \$name && !isse
 
     \$this->__duringInitializing__ = true;
 
-    echo \"@@start lazy loading due to \$name \" . __METHOD__ . PHP_EOL;
+//    echo \"@@start lazy loading due to \$name \" . __METHOD__ . PHP_EOL;
     $entityLazyLoading
     $fieldLazyLoading
 

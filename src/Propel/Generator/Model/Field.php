@@ -1319,7 +1319,7 @@ class Field extends MappingModel
         }
 
         if ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
-            return sprintf("'%s'", str_replace("'", "\'", $defaultValue->getValue()));
+            return sprintf("'%s'", str_replace("'", "\\'", $defaultValue->getValue()));
         }
 
         if ($this->getType() === PropelTypes::BOOLEAN) {
