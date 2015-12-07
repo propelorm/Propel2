@@ -646,14 +646,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $pkphp = (array) $pkphp; // make it an array if it is not.
         $script = '';
         if (count($pkphp) > 1) {
-            $script .= "serialize(array(";
+            $script .= "serialize([";
             $i = 0;
             foreach ($pkphp as $pkvar) {
-                $script .= ($i++ ? ', ' : '') . "(string) $pkvar";
+                $script .= ($i++ ? ', ' : '') . "(null === {$pkvar} || is_scalar({$pkvar}) || is_callable([{$pkvar}, '__toString']) ? (string) {$pkvar} : {$pkvar})";
             }
-            $script .= "))";
+            $script .= "])";
         } else {
-            $script .= "(string) " . $pkphp[0];
+            $script .= "null === {$pkphp[0]} || is_scalar({$pkphp[0]}) || is_callable([{$pkphp[0]}, '__toString']) ? (string) {$pkphp[0]} : {$pkphp[0]}";
         }
 
         return $script;
