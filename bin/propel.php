@@ -8,10 +8,10 @@ if (!class_exists('\Symfony\Component\Console\Application')) {
     }
 }
 
-use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
 
 use Propel\Runtime\Propel;
+use Propel\Generator\Application;
 
 $finder = new Finder();
 $finder->files()->name('*.php')->in(__DIR__.'/../src/Propel/Generator/Command')->depth(0);
