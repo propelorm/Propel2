@@ -146,7 +146,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
     public function objectFilter(&$script)
     {
         $p = new PhpParser($script, true);
-        $text = $p->findMethod('toArray', true);
+        $text = $p->findMethod('toArray');
         $matches = [];
         preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
         $values = rtrim($matches[2]) . "\n";
@@ -172,8 +172,6 @@ if (is_callable(array('$ARFQCN', \$name))) {
         $text = str_replace($matches[1], ltrim($new_result), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();
-
-        return $script;
     }
 
     /**
