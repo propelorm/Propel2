@@ -172,8 +172,6 @@ if (is_callable(array('$ARFQCN', \$name))) {
         $text = str_replace($matches[1], ltrim($new_result), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();
-
-        return $script;
     }
 
     /**
