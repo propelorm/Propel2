@@ -146,7 +146,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
     public function objectFilter(&$script)
     {
         $p = new PhpParser($script, true);
-        $text = $p->findMethod('toArray', true);
+        $text = $p->findMethod('toArray');
         $matches = [];
         preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
         $values = rtrim($matches[2]) . "\n";
