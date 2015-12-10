@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\Validate;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
 
 /**
@@ -28,7 +27,13 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
     public function assertPreConditions()
     {
-        $this->metadataFactory = new ClassMetadataFactory(new StaticMethodLoader());
+        //if SF >= 2.5 use new validator classes
+        if(class_exists('Symfony\\Component\\Validator\\Validator\\RecursiveValidator')) {
+            $this->metadataFactory = new \Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory(new StaticMethodLoader());
+        } else {
+            $this->metadataFactory = new \Symfony\Component\Validator\Mapping\ClassMetadataFactory(new StaticMethodLoader());
+        }
+
     }
 
     public function testI18nBehaviorHandlesValidateBehavior()
@@ -40,7 +45,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertCount(1, $classMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('isbn', $classMetadata->getConstrainedProperties(), true));
 
-        $metadatas = $classMetadata->getMemberMetadatas('isbn');
+        $metadatas = $classMetadata->getPropertyMetadata('isbn');
         $this->assertCount(1, $metadatas);
 
         $constraints = $metadatas[0]->getConstraints();
@@ -55,7 +60,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertCount(1, $i18nClassMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('title', $i18nClassMetadata->getConstrainedProperties(), true));
 
-        $i18nMetadatas = $i18nClassMetadata->getMemberMetadatas('title');
+        $i18nMetadatas = $i18nClassMetadata->getPropertyMetadata('title');
         $this->assertCount(1, $i18nMetadatas);
 
         $i18nConstraints = $i18nMetadatas[0]->getConstraints();
@@ -74,7 +79,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertCount(1, $fictionMetadata->getConstrainedProperties());
         $this->assertTrue(in_array('isbn', $fictionMetadata->getConstrainedProperties(), true));
 
-        $fictionMetadatas = $fictionMetadata->getMemberMetadatas('isbn');
+        $fictionMetadatas = $fictionMetadata->getPropertyMetadata('isbn');
         $this->assertCount(1, $fictionMetadatas);
 
         $fictionConstraints = $fictionMetadatas[0]->getConstraints();
@@ -94,8 +99,8 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertTrue(in_array('isbn', $comicMetadata->getConstrainedProperties(), true));
         $this->assertTrue(in_array('bar', $comicMetadata->getConstrainedProperties(), true));
 
-        $comicMetadatas['isbn'] = $comicMetadata->getMemberMetadatas('isbn');
-        $comicMetadatas['bar']  = $comicMetadata->getMemberMetadatas('bar');
+        $comicMetadatas['isbn'] = $comicMetadata->getPropertyMetadata('isbn');
+        $comicMetadatas['bar']  = $comicMetadata->getPropertyMetadata('bar');
         $this->assertCount(1, $comicMetadatas['isbn']);
         $this->assertCount(1, $comicMetadatas['bar']);
 
@@ -124,7 +129,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
             $this->assertCount(1, $classMetadata->getConstrainedProperties());
             $this->assertTrue(in_array('title', $classMetadata->getConstrainedProperties(), true));
 
-            $metadatas = $classMetadata->getMemberMetadatas('title');
+            $metadatas = $classMetadata->getPropertyMetadata('title');
             $this->assertCount(1, $metadatas);
 
             $constraints = $metadatas[0]->getConstraints();

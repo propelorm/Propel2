@@ -46,20 +46,25 @@ class ValidateBehavior extends Behavior
             'Symfony\\Component\\Validator\\DefaultTranslator',
             'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
             'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
-            'Symfony\\Component\\Validator\\Mapping\\ClassMetadataFactory',
             'Symfony\\Component\\Validator\\ConstraintViolationList'
         );
 
-        //if SF >= 5.3 use new validator classes
-        if(class_exists('Symfony\\Component\\Validator\\Validator\\LegacyValidator')){
+        //if SF >= 2.5 use new validator classes
+        if(class_exists('Symfony\\Component\\Validator\\Validator\\RecursiveValidator')) {
             $this->builder->declareClasses(
-                'Symfony\\Component\\Validator\\Validator\\LegacyValidator',
+                'Symfony\\Component\\Validator\\Validator\\RecursiveValidator',
                 'Symfony\\Component\\Validator\\Context\\ExecutionContextFactory',
-                'Symfony\\Component\\Validator\\Validator\\ValidatorInterface'
+                'Symfony\\Component\\Validator\\Mapping\\Factory\LazyLoadingMetadataFactory',
+                'Symfony\\Component\\Validator\\Context\\ExecutionContextInterface',
+                'Symfony\\Component\\Validator\\Validator\\ValidatorInterface',
+                'Symfony\\Component\\Translation\\IdentityTranslator'
             );
-        }else{
+        } else {
             $this->builder->declareClasses(
                 'Symfony\\Component\\Validator\\Validator',
+                'Symfony\\Component\\Validator\\Mapping\ClassMetadataFactory',
+                'Symfony\\Component\\Validator\\DefaultTranslator',
+                'Symfony\\Component\\Validator\\ExecutionContextInterface',
                 'Symfony\\Component\\Validator\\ValidatorInterface'
             );
         }
