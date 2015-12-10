@@ -275,6 +275,34 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * Get an array representation of the column.
+     *
+     * <code>
+     *   $res = $userCollection->toKeyIndex('Name');
+     *
+     *   $res = array(
+     *       'peter',
+     *       'hans',
+     *       ...
+     *   )
+     * </code>
+     *
+     * @param string $columnName
+     *
+     * @return array
+     */
+    public function getColumnValues($columnName = 'PrimaryKey')
+    {
+        $ret = [];
+        $keyGetterMethod = 'get' . ucfirst($columnName);
+        foreach ($this as $obj) {
+            $ret[] = $obj->$keyGetterMethod();
+        }
+
+        return $ret;
+    }
+
+    /**
      * Makes an additional query to populate the objects related to the collection objects
      * by a certain relation
      *
