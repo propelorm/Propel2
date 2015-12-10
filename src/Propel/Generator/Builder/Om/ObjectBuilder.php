@@ -282,6 +282,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\Propel\Runtime\Map\TableMap'
         );
 
+        $baseClass = $this->getBaseClass();
+        if (strrpos($baseClass, '\\') !== false) {
+            $this->declareClasses($baseClass);
+        }
+
         $table = $this->getTable();
         if (!$table->isAlias()) {
             $this->addConstants($script);
