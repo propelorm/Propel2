@@ -859,6 +859,39 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookListRelQuery::create()->count(), 'One BookClubList has been remove');
     }
 
+    public function testSymfonyFormManyToOne()
+    {
+        BookQuery::create()->deleteAll();
+        AuthorQuery::create()->deleteAll();
+
+        // We create a simple book and a simple Author and simply link them to each other before reloading them
+        $book = new Book();
+        $book->setISBN('012345');
+        $book->setTitle('Propel Book');
+
+        $author = new Author();
+        $author->setFirstName('François');
+        $author->setLastName('Z');
+        $author->addBook($book);
+        $author->save();
+        $book->save();
+
+        $author->reload(true);
+        $book->reload(true);
+
+        // Symfony is cloning the book object in a ManyToOne form with by_reference = false
+        $book2 = clone $book;
+
+        $author->removeBook($book);
+        $author->addBook($book2);
+        $author->save();
+
+        $author->reload(true);
+
+        $books = $author->getBooks();
+        $this->assertCount(1, $books);
+    }
+
     public function testRemoveObjectOneToMany()
     {
         BookQuery::create()->deleteAll();

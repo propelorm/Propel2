@@ -3745,6 +3745,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $collName = $this->getRefFKCollVarName($refFK);
 
+        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = true)) . "ScheduledForDeletion";
+
         $script .= "
     /**
      * Method called to associate a $className object to this object
@@ -3762,6 +3764,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (!\$this->{$collName}->contains(\$l)) {
             \$this->doAdd" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(\$l);
+
+            if (\$this->{$scheduledForDeletion} and \$this->{$scheduledForDeletion}->contains(\$l)) {
+                \$this->{$scheduledForDeletion}->remove(\$this->{$scheduledForDeletion}->search(\$l));
+            }
         }
 
         return \$this;
