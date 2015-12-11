@@ -37,9 +37,8 @@ class ConfigurationManagerTest extends ConfigTestCase
 
     public function tearDown()
     {
-        $this->getFileSystem()->remove($this->fixturesDir);
-
         chdir($this->currentDir);
+        $this->getFileSystem()->remove($this->fixturesDir);
     }
 
     public function testLoadConfigFileInCurrentDirectory()

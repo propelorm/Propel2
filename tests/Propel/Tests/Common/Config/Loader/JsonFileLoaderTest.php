@@ -83,6 +83,7 @@ EOF;
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.json.
+     * @requires OS ^(?!Win.*)
      */
     public function testJsonFileNotReadableThrowsException()
     {
