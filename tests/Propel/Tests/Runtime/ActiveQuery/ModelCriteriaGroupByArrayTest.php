@@ -17,6 +17,21 @@ use Propel\Tests\Bookstore\AuthorQuery;
 
 class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @dataProvider dataForTestException
+     * @expectedException \Propel\Runtime\Exception\PropelException
+     */
+    public function testGroupByArrayThrowException($groupBy)
+    {
+        $authors = AuthorQuery::create()
+            ->leftJoinBook()
+            ->select(array('FirstName', 'LastName'))
+            ->withColumn('COUNT(Book.Id)', 'nbBooks')
+            ->groupBy($groupBy)
+            ->orderByLastName()
+            ->find();
+    }
+    
     public function testGroupByArray()
     {
         $stephenson = new Author();
@@ -72,5 +87,14 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
         
         $this->assertEquals('Neal', $authors[1]['FirstName']);
         $this->assertEquals(3, $authors[1]['nbBooks']);
+    }
+    
+    public function dataForTestException()
+    {
+        return array(
+            'empty string' => array(''),
+            'null' => array(null),
+            'array' => array(array())
+        );
     }
 }
