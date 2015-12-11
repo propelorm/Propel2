@@ -18,9 +18,10 @@ $finder->files()->name('*.php')->in(__DIR__.'/../src/Propel/Generator/Command')-
 
 $app = new Application('Propel', Propel::VERSION);
 
+$ns = '\\Propel\\Generator\\Command\\';
+
 foreach ($finder as $file) {
-    $ns = '\\Propel\\Generator\\Command';
-    $r  = new \ReflectionClass($ns.'\\'.$file->getBasename('.php'));
+    $r  = new \ReflectionClass($ns.$file->getBasename('.php'));
     if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
         $app->add($r->newInstance());
     }
