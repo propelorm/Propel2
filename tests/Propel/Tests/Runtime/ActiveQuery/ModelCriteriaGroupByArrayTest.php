@@ -15,6 +15,9 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 
+/**
+ * @group database
+ */
 class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
 {
     /**
