@@ -671,7 +671,7 @@ class Join
         $rightTableName = $this->getRightTableWithAlias();
 
         if ($this->isIdentifierQuotingEnabled()) {
-            $rightTableName = $this->getAdapter()->quoteIdentifierTable($rightTableName);
+            $rightTableName = $this->getAdapter()->quoteTableIdentifier($rightTableName);
         }
 
         return sprintf(

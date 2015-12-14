@@ -3,13 +3,8 @@
 
 namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
-use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
-use Propel\Generator\Builder\Om\Component\NamingTrait;
-use Propel\Generator\Builder\Om\Component\RelationTrait;
-use Propel\Generator\Model\CrossRelation;
-use Propel\Runtime\Session\DependencyGraph;
 
 /**
  * Adds persistDependenciesMethod method.
@@ -43,17 +38,33 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
 ";
         }
 
+        //Prevent add an entity twice
+        $alreadyAdded = array();
+
         foreach ($this->getEntity()->getReferrers() as $relation) {
+            $relationName = $this->getRefRelationVarName($relation);
+
             if ($relation->isLocalPrimaryKey()) {
-                $relationName = $this->getRefRelationVarName($relation);
                 $body .= "//ref one-to-one {$relation->getEntity()->getFullClassName()}
 if (\$relationEntity = \$reader(\$entity, '$relationName')) {
     \$session->persist(\$relationEntity, \$deep);
 }
 ";
             } else {
-                //one-to-many not for now
-                continue;
+                //one-to-many
+                $relationName = $this->getBuilder()->getPluralizer()->getPluralForm($relationName);
+
+                if (!in_array($relationName, $alreadyAdded)) {
+                    $body .= "
+//ref one-to-many {$relation->getEntity()->getFullClassName()}
+if (\$relationEntities = \$reader(\$entity, '$relationName')) {
+    foreach (\$relationEntities as \$relationEntity) {
+        \$session->persist(\$relationEntity, \$deep);
+    }
+}
+";
+                    $alreadyAdded[] = $relationName;
+                }
             }
         }
 

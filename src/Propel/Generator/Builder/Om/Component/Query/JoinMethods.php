@@ -41,7 +41,7 @@ class JoinMethods extends BuildComponent
             $queryClass = $this->getQueryClassName();
             $joinType = $this->getJoinType($relation);
 
-            $relationName = $this->getRefRelationPhpName($relation);
+            $relationName = $this->getRefRelationVarName($relation);
 
             $this->addJoin($relationName, $queryClass, $joinType, true);
         }
@@ -57,8 +57,6 @@ class JoinMethods extends BuildComponent
      */
     public function addJoin($relationName, $queryClass, $joinType, $referrer = false)
     {
-
-
         $body = <<<EOF
 \$entityMap = \$this->getEntityMap();
 \$relationMap = \$entityMap->getRelation('$relationName');

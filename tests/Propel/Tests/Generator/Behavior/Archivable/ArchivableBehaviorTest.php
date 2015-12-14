@@ -150,7 +150,7 @@ EOF;
 
     public function testCopiesIndices()
     {
-        $expected = "CREATE INDEX archivable_test1archive_i_6c947f ON archivable_test1archive (title,age);";
+        $expected = "CREATE INDEX archivable_test1_archive_i_6c947f ON archivable_test1_archive (title,age);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
