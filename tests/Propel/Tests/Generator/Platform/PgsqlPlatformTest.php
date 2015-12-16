@@ -429,6 +429,27 @@ EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    public function testGetAddTableDDLTimestampTzType()
+    {
+        $schema = <<<EOF
+<database name="test">
+    <table name="foo">
+        <column name="bar" type="TIMESTAMPTZ"/>
+    </table>
+</database>
+EOF;
+        $table = $this->getTableFromSchema($schema);
+        $expected = <<<EOF
+
+CREATE TABLE "foo"
+(
+    "bar" TIMESTAMPTZ
+);
+
+EOF;
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
+
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');

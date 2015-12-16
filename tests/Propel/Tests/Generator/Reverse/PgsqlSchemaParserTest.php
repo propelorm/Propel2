@@ -13,7 +13,9 @@ namespace Propel\Tests\Generator\Reverse;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\PgsqlPlatform;
 use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
@@ -86,5 +88,36 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         $this->assertEquals($expectedColumnDefaultValue, $defaultValue->getValue());
         $this->assertEquals($expectedSize, $columns[0]->getSize());
         $this->assertEquals($expectedScale, $columns[0]->getScale());
+    }
+
+    public function testParseTimestampDataProvider()
+    {
+        return [
+            ["my_column TIMESTAMP WITH TIME ZONE", "MyColumn", PropelTypes::TIMESTAMPTZ],
+            ["my_column timestamp with time zone", "MyColumn", PropelTypes::TIMESTAMPTZ],
+            ["my_column TIMESTAMPTZ", "MyColumn", PropelTypes::TIMESTAMPTZ],
+            ["my_column TIMESTAMP", "MyColumn", PropelTypes::TIMESTAMP]
+        ];
+    }
+
+    /**
+     * @dataProvider testParseTimestampDataProvider
+     */
+    public function testParseTimestampTzColumn($columnDDL, $expectedColumnPhpName, $expectedColumnPropelType)
+    {
+        $this->con->query("create table foo ( {$columnDDL} );");
+        $parser = new PgsqlSchemaParser($this->con);
+        $parser->setGeneratorConfig(new QuickGeneratorConfig());
+
+        $database = new Database();
+        $database->setPlatform(new PgsqlPlatform());
+
+        $this->assertGreaterThanOrEqual(1, $parser->parse($database), 'We parsed at least one table.');
+        $table = $database->getTable('foo');
+        $columns = $table->getColumns();
+        $this->assertEquals(1, count($columns));
+        $defaultValue = $columns[0]->getDefaultValue();
+        $this->assertEquals($expectedColumnPhpName, $columns[0]->getPhpName());
+        $this->assertEquals($expectedColumnPropelType, $columns[0]->getType());
     }
 }

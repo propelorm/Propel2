@@ -799,6 +799,27 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    public function testGetAddTableDDLTimestampTzTypeMysqlConsideredTimestamp()
+    {
+        $schema = <<<EOF
+<database name="test">
+    <table name="foo">
+        <column name="bar" type="TIMESTAMPTZ"/>
+    </table>
+</database>
+EOF;
+        $table = $this->getTableFromSchema($schema);
+        $expected = <<<EOF
+
+CREATE TABLE `foo`
+(
+    `bar` TIMESTAMP NULL
+) ENGINE=InnoDB;
+
+EOF;
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
+
     public function testVendorOptionsQuoting()
     {
 

@@ -41,19 +41,27 @@ class ObjectBuilderTest extends TestCase
         $col1->setDomain(new Domain('VARCHAR'));
         $col1->setDefaultValue(new ColumnDefaultValue('abc', ColumnDefaultValue::TYPE_VALUE));
         $val1 = "'abc'";
+
         $col2 = new Column('Bar');
         $col2->setDomain(new Domain('INTEGER'));
         $col2->setDefaultValue(new ColumnDefaultValue(1234, ColumnDefaultValue::TYPE_VALUE));
         $val2 = "1234";
+
         $col3 = new Column('Bar');
         $col3->setDomain(new Domain('DATE'));
         $col3->setDefaultValue(new ColumnDefaultValue('0000-00-00', ColumnDefaultValue::TYPE_VALUE));
         $val3 = "NULL";
 
+        $col4 = new Column('Bar');
+        $col4->setDomain(new Domain('TIMESTAMPTZ'));
+        $col4->setDefaultValue(new ColumnDefaultValue('0000-00-00 00:00:00', ColumnDefaultValue::TYPE_VALUE));
+        $val4 = "NULL";
+
         return [
             [$col1, $val1],
             [$col2, $val2],
             [$col3, $val3],
+            [$col4, $val4],
         ];
     }
 
