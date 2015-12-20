@@ -13,7 +13,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
+use Propel\Tests\Bookstore\Behavior\Map\Table1TsTableMap;
 
 /**
  * Test class for TableMapBuilder.
@@ -252,13 +252,13 @@ class TableMapBuilderTest extends BookstoreTestBase
             'getBehaviors() returns an empty array when no behaviors are registered'
         );
 
-        //this init tableMap for class 'Propel\Tests\Bookstore\Behavior\Table1'
-        Propel::getServiceContainer()->getDatabaseMap(Table1TableMap::DATABASE_NAME)->getTableByPhpName(
-            'Propel\Tests\Bookstore\Behavior\Table1'
+        //this init tableMap for class 'Propel\Tests\Bookstore\Behavior\Table1Ts'
+        Propel::getServiceContainer()->getDatabaseMap(Table1TsTableMap::DATABASE_NAME)->getTableByPhpName(
+            'Propel\Tests\Bookstore\Behavior\Table1Ts'
         );
 
-        $tmap = Propel::getServiceContainer()->getDatabaseMap(Table1TableMap::DATABASE_NAME)->getTable(
-            Table1TableMap::TABLE_NAME
+        $tmap = Propel::getServiceContainer()->getDatabaseMap(Table1TsTableMap::DATABASE_NAME)->getTable(
+            Table1TsTableMap::TABLE_NAME
         );
         $expectedBehaviorParams = [
             'timestampable' => [
