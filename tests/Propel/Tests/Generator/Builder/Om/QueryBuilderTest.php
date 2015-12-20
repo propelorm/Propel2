@@ -101,7 +101,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testBasePreSelect()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreSelect');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2TsQuery', 'basePreSelect');
         $this->assertEquals('Propel\Runtime\ActiveQuery\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreSelect() by default');
 
         $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreSelect');
@@ -110,7 +110,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testBasePreDelete()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreDelete');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2TsQuery', 'basePreDelete');
         $this->assertEquals('Propel\Runtime\ActiveQuery\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreDelete() by default');
 
         $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreDelete');
@@ -119,7 +119,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testBasePostDelete()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePostDelete');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2TsQuery', 'basePostDelete');
         $this->assertEquals('Propel\Runtime\ActiveQuery\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostDelete() by default');
 
         $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePostDelete');
@@ -128,7 +128,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testBasePreUpdate()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePreUpdate');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2TsQuery', 'basePreUpdate');
         $this->assertEquals('Propel\Runtime\ActiveQuery\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePreUpdate() by default');
 
         $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePreUpdate');
@@ -137,7 +137,7 @@ class QueryBuilderTest extends BookstoreTestBase
 
     public function testBasePostUpdate()
     {
-        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2Query', 'basePostUpdate');
+        $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table2TsQuery', 'basePostUpdate');
         $this->assertEquals('Propel\Runtime\ActiveQuery\ModelCriteria', $method->getDeclaringClass()->getName(), 'BaseQuery does not override basePostUpdate() by default');
 
         $method = new ReflectionMethod('\Propel\Tests\Bookstore\Behavior\Table3Query', 'basePostUpdate');
