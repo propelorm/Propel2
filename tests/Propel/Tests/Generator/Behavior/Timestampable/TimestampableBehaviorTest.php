@@ -13,11 +13,11 @@ namespace Propel\Tests\Generator\Behavior\Timestampable;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\Behavior\Table1;
-use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2;
-use Propel\Tests\Bookstore\Behavior\Map\Table2TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2Query;
+use Propel\Tests\Bookstore\Behavior\Table1Ts as Table1;
+use Propel\Tests\Bookstore\Behavior\Map\Table1TsTableMap as Table1TableMap;
+use Propel\Tests\Bookstore\Behavior\Table2Ts as Table2;
+use Propel\Tests\Bookstore\Behavior\Map\Table2TsTableMap as Table2TableMap;
+use Propel\Tests\Bookstore\Behavior\Table2TsQuery as Table2Query;
 
 use Propel\Runtime\Collection\ObjectCollection;
 
