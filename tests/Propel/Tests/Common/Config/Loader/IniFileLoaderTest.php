@@ -196,6 +196,7 @@ EOF;
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.ini.
+     * @requires OS ^(?!Win.*)
      */
     public function testIniFileNotReadableThrowsException()
     {

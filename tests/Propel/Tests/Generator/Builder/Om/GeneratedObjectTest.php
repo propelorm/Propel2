@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Propel;
@@ -155,7 +156,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
             $this->markTestSkipped("Cannot test default expressions with SQLite");
         }
         BookstoreEmployeeAccountTableMap::doDeleteAll();
@@ -200,7 +201,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
@@ -240,7 +241,7 @@ class GeneratedObjectTest extends BookstoreTestBase
      */
     public function testDefaultExpressions_ReloadOnInsert_Override()
     {
-        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof DBSqlite) {
+        if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
             $this->markTestSkipped("Cannot test default date expressions with SQLite");
         }
 
