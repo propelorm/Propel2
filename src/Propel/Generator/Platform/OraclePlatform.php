@@ -378,18 +378,19 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::getId().
      * Any code modification here must be ported there.
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
     {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }
         $snippet = "
 \$dataFetcher = %s->query('SELECT %s.nextval FROM dual');
-%s = \$dataFetcher->fetchColumn();";
+%s = %s\$dataFetcher->fetchColumn();";
         $script = sprintf($snippet,
             $connectionVariableName,
             $sequenceName,
-            $columnValueMutator
+            $columnValueMutator,
+            $phpType ? '('.$phpType.') ' : ''
         );
 
         return preg_replace('/^/m', $tab, $script);
