@@ -3,26 +3,68 @@
 namespace Propel\Runtime\Persister\SQL;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Persister\Exception\UniqueConstraintException;
 use Propel\Runtime\Persister\SqlPersister;
 
 class SQLitePersister extends SqlPersister
 {
     /**
+     * Return the next value of an autoincrement field.
+     *
+     * @see http://www.sqlite.org/fileformat2.html#seqtab
+     *
      * @param ConnectionInterface $connection
      *
      * @return string
      */
     protected function readAutoIncrement(ConnectionInterface $connection)
     {
-        $sql = <<<EOF
+
+        $autoIncrementField = current($this->entityMap->getPrimaryKeys());
+        $tableName = $autoIncrementField->getEntity()->getFQTableName();
+
+        $stmt = $connection->prepare("SELECT seq FROM sqlite_sequence WHERE name = '$tableName'");
+        $stmt->execute();
+        $value = (integer) $stmt->fetchColumn();
+
+        if ($value > 0) {
+            return $value + 1;
+        }
+
+        return $this->readAutoincrementWithoutSequenceTable($autoIncrementField, $connection);
+    }
+
+    protected function normalizePdoException(\PDOException $PDOException)
+    {
+        $message = $PDOException->getMessage();
+
+        if (false !== strpos($message, 'Integrity constraint violation:')) {
+            if(preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches)) {
+                return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
+            }
+        }
+
+        return parent::normalizePdoException($PDOException);
+    }
+
+    /**
+     * Return the next value of an autoincrement field, if the internal sqlite_sequence table entry,
+     * relative to the  field,  doesn't exists.
+     *
+     * @param FieldMap            $autoIncrementField
+     * @param ConnectionInterface $connection
+     *
+     * @return int
+     */
+    protected function readAutoincrementWithoutSequenceTable(FieldMap $autoIncrementField, ConnectionInterface $connection)
+    {
+          $sql = <<<EOF
     SELECT "%s"
     FROM  "%s"
     ORDER BY "%s" DESC
     LIMIT 1
 EOF;
-
-        $autoIncrementField = current($this->entityMap->getPrimaryKeys());
 
         $columnName = $autoIncrementField->getColumnName();
         $tableName = $autoIncrementField->getEntity()->getFQTableName();
@@ -38,17 +80,4 @@ EOF;
 
         return 1;
     }
-
-    protected function normalizePdoException(\PDOException $PDOException)
-    {
-        $message = $PDOException->getMessage();
-
-        if (false !== strpos($message, 'Integrity constraint violation:')) {
-            preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches);
-            return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
-        }
-
-        return parent::normalizePdoException($PDOException);
-    }
-
 }
