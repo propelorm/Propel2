@@ -3,13 +3,9 @@ composer.phar
 /composer.lock
 autoload.php
 phpunit.xml
-pom.xml
 php-cs-fixer.phar
 
-generated-classes/
-
 tests/Fixtures/namespaced/build/
-tests/Fixtures/nestedset/build/
 tests/Fixtures/schemas/build/
 tests/Fixtures/schemas/build/
 
@@ -28,6 +24,9 @@ tests/Fixtures/reverse/mysql/propel.yaml
 
 tests/Fixtures/reverse/pgsql/build/
 tests/Fixtures/reverse/pgsql/propel.yaml
+
+tests/Fixtures/quoting/build/
+tests/Fixtures/quoting/propel.yaml
 
 tests/Fixtures/migration/build/
 tests/Fixtures/migration/propel.yaml
