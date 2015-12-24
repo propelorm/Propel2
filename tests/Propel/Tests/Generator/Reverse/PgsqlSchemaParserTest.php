@@ -71,6 +71,7 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         $parser->setGeneratorConfig(new QuickGeneratorConfig());
 
         $database = new Database();
+        $database->setSchema('public');
         $database->setPlatform(new DefaultPlatform());
 
         // make sure our DDL insert produced exactly the SQL we inserted
