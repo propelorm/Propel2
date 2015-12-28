@@ -3727,7 +3727,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (null !== \$this->$collName && !\$overrideExisting) {
             return;
         }
-        \$this->$collName = new ObjectCollection();
+
+        \$collectionClassName = ".$this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable()))."::getTableMap()->getCollectionClassName();
+
+        \$this->{$collName} = new \$collectionClassName;
         \$this->{$collName}->setModel('" . $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), true) . "');
     }
 ";
@@ -4497,7 +4500,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 'relCol'   => $this->getCrossFKsPhpNameAffix($crossFKs, true),
                 'collName' => 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)),
                 'collectionClass' => 'ObjectCombinationCollection',
-                'relatedObjectClassName' => false
+                'relatedObjectClassName' => false,
+                'foreignTableMapName' => false,
             ];
         } else {
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
@@ -4507,13 +4511,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $this->getNewStubObjectBuilder($crossFK->getForeignTable()),
                     true
                 );
-                $collectionClass = 'ObjectCollection';
+
+                $foreignTableMapName = $this->getClassNameFromBuilder($this->getNewTableMapBuilder($crossFK->getTable()));
 
                 $inits[] = [
                     'relCol' => $relCol,
                     'collName' => $collName,
-                    'collectionClass' => $collectionClass,
-                    'relatedObjectClassName' => $relatedObjectClassName
+                    'collectionClass' => false,
+                    'relatedObjectClassName' => $relatedObjectClassName,
+                    'foreignTableMapName' => $foreignTableMapName,
                 ];
             }
         }
@@ -4523,6 +4529,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $collName = $init['collName'];
             $collectionClass = $init['collectionClass'];
             $relatedObjectClassName = $init['relatedObjectClassName'];
+            $foreignTableMapName = $init['foreignTableMapName'];
 
             $script .= "
     /**
@@ -4535,10 +4542,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @return void
      */
     public function init$relCol()
-    {
-        \$this->$collName = new $collectionClass();
-        \$this->{$collName}Partial = true;
-";
+    {";
+            if($collectionClass) {
+                $script .= "
+        \$this->$collName = new $collectionClass;";
+            } else {
+                $script .= "
+        \$collectionClassName = ".$foreignTableMapName."::getTableMap()->getCollectionClassName();
+
+        \$this->$collName = new \$collectionClassName;";
+            }
+
+            $script .= "
+        \$this->{$collName}Partial = true;";
             if ($relatedObjectClassName) {
                 $script .= "
         \$this->{$collName}->setModel('$relatedObjectClassName');";

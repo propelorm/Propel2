@@ -176,6 +176,9 @@ abstract class AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
 

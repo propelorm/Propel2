@@ -320,8 +320,12 @@ class ObjectCollection extends Collection
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection
-            $coll = new ObjectCollection();
-            $coll->setModel($relationMap->getRightTable()->getClassName());
+            $relationClassName = $relationMap->getRightTable()->getClassName();
+            $collectionClassName = $relationMap->getRightTable()->getCollectionClassName();
+
+            $coll = new $collectionClassName();
+            $coll->setModel($relationClassName);
+            $coll->setFormatter($this->getFormatter());
 
             return $coll;
         }

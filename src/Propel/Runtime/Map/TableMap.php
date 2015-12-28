@@ -269,6 +269,21 @@ class TableMap
     }
 
     /**
+     * Get the Collection ClassName to this table.
+     *
+     * @return string
+     */
+    public function getCollectionClassName()
+    {
+        $collectionClass = $this->getClassName().'Collection';
+        if (class_exists($collectionClass)) {
+            return $collectionClass;
+        }
+        
+        return '\Propel\Runtime\Collection\ObjectCollection';
+    }
+
+    /**
      * Set the Package of the Table
      *
      * @param string $package The Package

@@ -229,7 +229,17 @@ class TableMapTest extends TestCase
         $this->assertTrue($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns true after adding pkStr column.');
         $this->assertEquals($column, $this->tmap->getPrimaryStringColumn(), 'getPrimaryStringColumn() returns correct column.');
     }
+
+    public function testGetCollectionClassName()
+    {
+        $this->assertEquals('\Propel\Runtime\Collection\ObjectCollection', $this->tmap->getCollectionClassName());
+
+        $this->tmap->setClassName('Propel\Tests\Runtime\Map\Test');
+        $this->assertEquals('Propel\Tests\Runtime\Map\TestCollection', $this->tmap->getCollectionClassName());
+    }
 }
+
+class TestCollection extends \Propel\Runtime\Collection\ObjectCollection {}
 
 class TestableTableMap extends TableMap
 {
