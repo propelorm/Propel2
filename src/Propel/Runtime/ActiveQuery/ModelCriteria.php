@@ -329,7 +329,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Adds a LIMIT clause (or its subselect equivalent) to the query
-     * Alias for Criteria:::setLimit()
+     * Alias for Criteria::setLimit()
      *
      * @param int $limit Maximum number of results to return by the query
      *
