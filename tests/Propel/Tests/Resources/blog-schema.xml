@@ -45,6 +45,7 @@
         <parameter name="separator" value="-"/>
         <parameter name="permanent" value="false"/>
         <parameter name="scope_column" value=""/>
+        <parameter name="unique_constraint" value="true"/>
       </behavior>
     </table>
     <table name="blog_author" phpName="BlogAuthor" package="Acme.Blog" namespace="Acme\Model\Blog" baseClass="Acme\Model\ActiveRecord" description="The list of authors">
