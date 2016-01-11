@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\Sluggable;
 
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -26,6 +27,10 @@ class SluggableBehavior extends Behavior
      * @var ObjectBuilder
      */
     private $builder;
+    
+    /**
+     * @var array
+     */
     protected $parameters = [
         'slug_column'     => 'slug',
         'slug_pattern'    => '',
@@ -34,6 +39,7 @@ class SluggableBehavior extends Behavior
         'separator'       => '-',
         'permanent'       => 'false',
         'scope_column'    => '',
+        'unique_constraint' => 'true',
     ];
 
     /**
@@ -52,14 +58,26 @@ class SluggableBehavior extends Behavior
                 'required' => false,
             ]);
             // add a unique to column
-            $unique = new Unique($this->getColumnForParameter('slug_column'));
-            $unique->setName($table->getCommonName() . '_slug');
-            $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
-            if ($this->getParameter('scope_column')) {
-                $unique->addColumn($table->getColumn($this->getParameter('scope_column')));
+            if ('true' === $this->getParameter('unique_constraint')) {
+                $this->addUniqueConstraint($table);
             }
-            $table->addUnique($unique);
         }
+    }
+    
+    /**
+     * Adds a unique constraint to the table to enforce uniqueness of the slug_column
+     *
+     * @param Table $table
+     */
+    protected function addUniqueConstraint(Table $table)
+    {
+        $unique = new Unique($this->getColumnForParameter('slug_column'));
+        $unique->setName($table->getCommonName() . '_slug');
+        $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
+        if ($this->getParameter('scope_column')) {
+            $unique->addColumn($table->getColumn($this->getParameter('scope_column')));
+        }
+        $table->addUnique($unique);
     }
 
     /**
