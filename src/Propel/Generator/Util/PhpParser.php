@@ -36,6 +36,13 @@ class PhpParser
     protected $isAddPhp;
 
     /**
+     * methodName => methodCode
+     *
+     * @var string[]
+     */
+    private $knownMethodCache = array();
+
+    /**
      * Parser constructor
      *
      * @param string  $code     PHP code to parse
@@ -77,6 +84,10 @@ class PhpParser
      */
     public function findMethod($methodName)
     {
+        if (isset($this->knownMethodCache[$methodName])) {
+            return $this->knownMethodCache[$methodName];
+        }
+
         // Tokenize the source
         $tokens = token_get_all($this->code);
         $methodCode = '';
@@ -110,6 +121,8 @@ class PhpParser
                     $functionBracketBalance--;
                     if ($functionBracketBalance == 0) {
                         if (strpos($methodCode, 'function ' . $methodName . '(') !== false) {
+                            $this->knownMethodCache[$methodName] = $methodCode;
+
                             return $methodCode;
                         } else {
                             // If it's the closing bracket of the function, reset `$isInFunction`
@@ -142,6 +155,7 @@ class PhpParser
         }
 
         // method not found
+        $this->knownMethodCache[$methodName] = false;
         return false;
     }
 
@@ -156,6 +170,7 @@ class PhpParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, '', $this->code);
+            $this->knownMethodCache[$methodName] = false;
 
             return $methodCode;
         }
@@ -175,6 +190,7 @@ class PhpParser
     {
         if ($methodCode = $this->findMethod($methodName)) {
             $this->code = str_replace($methodCode, $newCode, $this->code);
+            $this->knownMethodCache[$methodName] = $newCode;
 
             return $methodCode;
         }
