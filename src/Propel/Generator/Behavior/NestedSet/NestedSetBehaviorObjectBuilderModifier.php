@@ -681,7 +681,9 @@ public function clearNestedSetChildren()
  */
 public function initNestedSetChildren()
 {
-    \$this->collNestedSetChildren = new ObjectCollection();
+    \$collectionClassName = ".$this->builder->getNewTableMapBuilder($this->table)->getFullyQualifiedClassName()."::getTableMap()->getCollectionClassName();
+
+    \$this->collNestedSetChildren = new \$collectionClassName;
     \$this->collNestedSetChildren->setModel('" . $this->builder->getNewStubObjectBuilder($this->table)->getFullyQualifiedClassName() . "');
 }
 ";
