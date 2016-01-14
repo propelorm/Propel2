@@ -47,6 +47,11 @@ class ObjectCollection extends Collection
         $this->rebuildIndex();
     }
 
+    public function setData($data) 
+    {
+        parent::setData($data);
+        $this->rebuildIndex();
+    }
     /**
      * Save all the elements in the collection
      *
