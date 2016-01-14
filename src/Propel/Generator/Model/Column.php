@@ -58,6 +58,13 @@ class Column extends MappingModel
     private $phpType;
 
     /**
+     * Allows you to define serialization and deserialization directly for
+     * a propel type, so it's retrieved as a specific data type and stored
+     * in the database in a specific way.
+     */
+    private $customType;
+
+    /**
      * @var Domain
      */
     private $domain;
@@ -188,6 +195,11 @@ class Column extends MappingModel
             $this->typeHint = $this->getAttribute('typeHint');
             $this->tableMapName = $this->getAttribute('tableMapName');
             $this->description = $this->getAttribute('description');
+            $this->customType = $this->getAttribute('customType', null);
+            if ($this->customType) {
+                $this->phpType = $this->customType;
+                $this->typeHint = $this->customType;
+            }
 
             /*
                 Retrieves the method for converting from specified name
@@ -434,8 +446,8 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the singular form of the name to use in PHP sources. 
-     * It will set & return a self-generated phpName from its name 
+     * Returns the singular form of the name to use in PHP sources.
+     * It will set & return a self-generated phpName from its name
      * if its not already set.
      *
      * @return string
@@ -467,7 +479,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Sets the singular forn of the name to use in PHP 
+     * Sets the singular forn of the name to use in PHP
      * sources.
      *
      * It will generate a phpName from its name if no
@@ -612,6 +624,18 @@ class Column extends MappingModel
     public function getPhpType()
     {
         return $this->phpType ? $this->phpType : $this->getPhpNative();
+    }
+
+    /**
+     * Returns the custom type to use in PHP sources.
+     *
+     * If no types has been specified, then return null
+     *
+     * @return string
+     */
+    public function getCustomType()
+    {
+        return $this->customType;
     }
 
     /**
@@ -1082,6 +1106,10 @@ class Column extends MappingModel
      */
     public function getPDOType()
     {
+        if ($this->isCustomType()) {
+            $customType = $this->getCustomType();
+            return $customType::__getPDOType();
+        }
         return PropelTypes::getPDOType($this->getType());
     }
 
@@ -1413,6 +1441,16 @@ class Column extends MappingModel
     public function isPhpPrimitiveNumericType()
     {
         return PropelTypes::isPhpPrimitiveNumericType($this->getPhpType());
+    }
+
+    /**
+     * Returns whether or not the column is a custom php type
+     *
+     * @return boolean
+     */
+    public function isCustomType()
+    {
+        return $this->getCustomType() !== null;
     }
 
     /**

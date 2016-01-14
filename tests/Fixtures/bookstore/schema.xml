@@ -400,4 +400,9 @@
         </foreign-key>
     </table>
 
+    <!-- Test custom phpType which is an object type -->
+    <table name="bookstore_custom_test">
+        <column name="id" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="test_datatype" type="VARCHAR" required="true" customType="Propel\Tests\Helpers\CustomDatabaseType"/>
+    </table>
 </database>

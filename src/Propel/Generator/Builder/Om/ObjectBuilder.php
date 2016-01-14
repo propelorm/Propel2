@@ -2135,6 +2135,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $script .= "
             \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
+                } elseif($col->isCustomType()) {
+                    $hydrateType = $this->declareClass($col->getCustomType());
+                    $script .= "
+            \$this->$clo = (null !== \$col) ? new $hydrateType(\$col) : null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
@@ -5689,7 +5693,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
                     case $columnNameCase:";
-            $script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . $column->getLowercasedName(), '                        ');
+
+            $bindValue = '$this->' . $column->getLowercasedName();
+            if ($column->isCustomType()) {
+                $bindValue = sprintf(
+                    '%s::__toDatabase(%s)',
+                    $this->declareClass($column->getCustomType()),
+                    $bindValue
+                );
+            }
+            $script .= $platform->getColumnBindingPHP($column, "\$identifier", $bindValue, '                        ');
             $script .= "
                         break;";
         }
