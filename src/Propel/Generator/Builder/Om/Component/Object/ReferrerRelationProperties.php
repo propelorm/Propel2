@@ -60,4 +60,4 @@ class ReferrerRelationProperties extends BuildComponent
             }
         }
     }
-} 
+}

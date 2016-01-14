@@ -245,7 +245,7 @@ abstract class PdoAdapter
      * separate schema names from entity names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $entity The entity name to quo
+     * @param  string $entity The entity name to quote
      * @return string The quoted entity name
      **/
     public function quoteTableIdentifier($entity)

@@ -43,9 +43,20 @@ class ReferrerRelationAddMethods extends BuildComponent
         $methodName = 'add' . ucfirst($varName);
         $colVarName = $this->getRefRelationCollVarName($refRelation);
         $relationClassName = $this->getClassNameFromEntity($refRelation->getEntity());
-//        $relationClassName = '\\' . $refRelation->getEntity()->getFullClassName();
+        $fullRelationClassName = '\\' . $refRelation->getEntity()->getFullClassName();
 
         $body = "
+if (null === \$this->{$colVarName}) {
+    \$this->{$colVarName} = new ObjectCollection();
+    \$this->{$colVarName}->setModel('{$fullRelationClassName}');
+}
+
+if (\$this->{$colVarName} instanceof $fullRelationClassName) {
+    \$inst = \$this->{$colVarName};
+    \$this->{$colVarName} = new ObjectCollection();
+    \$this->{$colVarName}[] = \$inst;
+}
+
 if (!\$this->{$colVarName}->contains(\${$varName})) {
     \$this->{$colVarName}[] = \${$varName};
     \${$varName}->set" . $this->getRelationPhpName($refRelation) . "(\$this);
@@ -53,14 +64,12 @@ if (!\$this->{$colVarName}->contains(\${$varName})) {
 
 return \$this;
 ";
+
         $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
-
-        $this->addConstructorBody("\$this->{$colVarName} = new ObjectCollection();");
-
         $this->addMethod($methodName)
             ->addSimpleParameter($varName, $relationClassName)
             ->setType($className . '|$this')
             ->setDescription("Associate a $relationClassName to this object")
             ->setBody($body);
     }
-} 
+}

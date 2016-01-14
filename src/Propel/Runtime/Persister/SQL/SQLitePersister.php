@@ -24,7 +24,8 @@ class SQLitePersister extends SqlPersister
         $autoIncrementField = current($this->entityMap->getPrimaryKeys());
         $tableName = $autoIncrementField->getEntity()->getFQTableName();
 
-        $stmt = $connection->prepare("SELECT seq FROM sqlite_sequence WHERE name = '$tableName'");
+        $stmt = $connection->prepare("SELECT seq FROM sqlite_sequence WHERE name = ?");
+        $stmt->bindValue(1, $tableName, \PDO::PARAM_STR);
         $stmt->execute();
         $value = (integer) $stmt->fetchColumn();
 

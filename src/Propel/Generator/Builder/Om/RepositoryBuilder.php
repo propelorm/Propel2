@@ -44,7 +44,6 @@ class RepositoryBuilder extends AbstractBuilder
         }
 
         $this->getDefinition()->declareUses(
-            '\Propel\Runtime\Propel',
             '\Propel\Runtime\Exception\PropelException'
         );
 

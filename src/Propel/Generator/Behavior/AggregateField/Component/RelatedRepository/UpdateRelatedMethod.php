@@ -104,7 +104,7 @@ foreach (\$relatedObjects as \$relatedObject) {
 
         $this->addMethod($name)
             ->setDescription("[AggregateField-related] Update the aggregate field in the related $relationName object.")
-            ->addSimpleParameter('entities', 'array')
+            ->addSimpleParameter('entities')
             ->setBody($body);
     }
 }

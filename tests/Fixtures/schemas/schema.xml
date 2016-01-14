@@ -79,7 +79,7 @@
             <reference local="customerId" foreign="id" />
         </relation>
         <relation target="BookstoreContest" onDelete="cascade">
-            <reference local="bookstoreId" foreign="bookstore.id" />
+<!--            <reference local="bookstoreId" foreign="bookstore.id" /> -->
             <reference local="contestId" foreign="id" />
         </relation>
     </entity>

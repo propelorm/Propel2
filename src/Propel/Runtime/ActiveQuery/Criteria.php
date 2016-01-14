@@ -1890,6 +1890,7 @@ class Criteria
             $sb = '';
             $criterion->appendPsTo($sb, $params);
             $this->replaceNames($sb);
+
             $whereClause[] = $sb;
         }
 
@@ -2046,11 +2047,11 @@ class Criteria
      */
     public function quoteIdentifier($string, $entityName = '')
     {
-        if ($this->isIdentifierQuotingEnabled()) {
+/*        if ($this->isIdentifierQuotingEnabled()) {
             $adapter = $this->getConfiguration()->getAdapter($this->getDbName());
 
             return $adapter->quote($string);
-        }
+        }*/
 
         $rightSide = '';
         //find entity name and ask entityMap if quoting is enabled

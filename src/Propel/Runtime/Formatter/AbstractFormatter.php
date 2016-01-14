@@ -13,6 +13,7 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\ActiveQuery\ModelWith;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
@@ -158,13 +159,13 @@ abstract class AbstractFormatter
     }
 
     /**
-     * Returns a Collection object or a simple array.
+     * Returns a Collection objects.
      *
      * @return Collection|array
      */
     protected function getCollection()
     {
-        $collection = array();
+        $collection = new ObjectCollection();
 
         if ($entityName = $this->getCollectionEntityNameName()) {
             /** @var Collection $collection */
@@ -187,7 +188,7 @@ abstract class AbstractFormatter
      *
      * @return ActiveRecordInterface The original record
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord($record = null)
     {
         return $record;
     }

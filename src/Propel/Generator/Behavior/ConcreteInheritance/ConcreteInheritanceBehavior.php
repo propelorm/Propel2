@@ -146,7 +146,6 @@ class ConcreteInheritanceBehavior extends Behavior
         if ($this->isCopyData()) {
 
             $getter = 'get' . $this->getParentEntity()->getName();
-            $setter = 'set' . $this->getParentEntity()->getName();
 
             $code = <<<EOF
 \$session = \$this->getConfiguration()->getSession();
@@ -165,7 +164,6 @@ EOF;
     public function preDelete(RepositoryBuilder $repositoryBuilder  )
     {
         if ($this->isCopyData()) {
-            $entityClass = $this->getParentEntity()->getFullClassName();
             $getter = 'get' . $this->getParentEntity()->getName();
 
             $code = <<<EOF
@@ -201,22 +199,4 @@ EOF;
             '\\' . $builder->getNewStubQueryBuilder($this->getParentEntity())->getFullClassName()
         );
     }
-
-//    public function repositoryBuilderModification(RepositoryBuilder $builder)
-//    {
-//        $builder->getDefinition()->setParentClassName(
-//            '\\' . $builder->getNewStubRepositoryBuilder($this->getParentEntity())->getFullClassName()
-//        );
-//
-//        if ($this->isCopyData()) {
-//            $this->applyComponent('CopyToParentMethod', $builder);
-//        }
-//    }
-//
-//    public function entityMapBuilderModification(EntityMapBuilder $builder)
-//    {
-//        $fullParentClassName = $builder->getNewEntityMapBuilder($this->getParentEntity())->getFullClassName();
-//        $parentClassName = $builder->getDefinition()->declareUse($fullParentClassName);
-//        $builder->getDefinition()->setParentClassName($parentClassName);
-//    }
 }

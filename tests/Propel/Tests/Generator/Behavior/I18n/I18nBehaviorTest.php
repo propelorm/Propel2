@@ -11,9 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\I18n\I18nBehavior;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -27,32 +24,32 @@ class I18nBehaviorTest extends TestCase
     public function testModifyDatabaseOverridesDefaultLocale()
     {
         $schema = <<<EOF
-<database name="i18n_behavior_test_0" tablePrefix="i18n_">
+<database name="i18n_behavior_test_0">
     <behavior name="i18n">
         <parameter name="default_locale" value="fr_FR" />
     </behavior>
-    <table name="behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="BehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n" />
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -66,30 +63,30 @@ EOF;
     <behavior name="i18n">
         <parameter name="default_locale" value="fr_FR" />
     </behavior>
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n">
             <parameter name="default_locale" value="pt_PT" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- i18n_behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'pt_PT' NOT NULL,
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -100,14 +97,14 @@ EOF;
     {
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+    <entity name="I18nBehaviorTest0" skipSql="true">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_fields" value="bar" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
@@ -120,35 +117,33 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_fields" value="bar" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
         <behavior name="i18n" />
-    </table>
-    <table name="i18n_behavior_test_0_i18n">
-        <column name="id" primaryKey="true" type="INTEGER" />
-        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
-        <column name="bar" type="VARCHAR" size="100" />
-        <foreign-key foreignTable="i18n_behavior_test_0">
-            <reference local="id" foreign="id" />
-        </foreign-key>
-    </table>
+    </entity>
+    <entity name="I18nBehaviorTest0I18n">
+        <field name="id" primaryKey="true" type="INTEGER" />
+        <field name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
+        <field name="bar" type="VARCHAR" size="100" />
+        <relation target="I18nBehaviorTest0" />
+    </entity>
 </database>
 EOF;
 
-        return array(array($schema1), array($schema2));
+        return array(array($schema1), array($schema1));
     }
 
     /**
@@ -160,12 +155,12 @@ EOF;
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- i18n_behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -178,7 +173,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
-FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -191,7 +186,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
@@ -207,14 +202,14 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     bar VARCHAR(100),
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -227,7 +222,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
-CREATE TABLE i18n_behavior_test_0
+CREATE TABLE i18n_behavior_test0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     foo INTEGER,
@@ -241,12 +236,12 @@ EOF;
     {
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n">
-            <parameter name="i18n_table" value="foo_table" />
+            <parameter name="i18n_entity" value="foo_table" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
@@ -264,7 +259,7 @@ CREATE TABLE foo_table
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -275,30 +270,30 @@ EOF;
     {
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n">
-            <parameter name="locale_column" value="culture" />
+            <parameter name="locale_field" value="culture" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- i18n_behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     culture VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,culture),
     UNIQUE (id,culture),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -309,30 +304,30 @@ EOF;
     {
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n">
             <parameter name="default_locale" value="fr_FR" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- i18n_behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'fr_FR' NOT NULL,
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -343,30 +338,30 @@ EOF;
     {
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
-    <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+    <entity name="I18nBehaviorTest0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <behavior name="i18n">
             <parameter name="locale_length" value="6" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_0_i18n
+-- i18n_behavior_test0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test0_i18n;
 
-CREATE TABLE i18n_behavior_test_0_i18n
+CREATE TABLE i18n_behavior_test0_i18n
 (
     id INTEGER NOT NULL,
     locale VARCHAR(6) DEFAULT 'en_US' NOT NULL,
     PRIMARY KEY (id,locale),
     UNIQUE (id,locale),
-    FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
+    FOREIGN KEY (id) REFERENCES i18n_behavior_test0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -377,32 +372,32 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="i18n_behavior_test_custom_pk_0">
-    <table name="i18n_behavior_test_custom_pk_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+    <entity name="I18nBehaviorTestCustomPk0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="i18n_pk_column" value="custom_id" />
+            <parameter name="i18n_fields" value="bar" />
+            <parameter name="i18n_relation_field" value="custom_id" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="i18n_behavior_test_custom_pk_0">
-    <table name="i18n_behavior_test_custom_pk_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
+    <entity name="I18nBehaviorTestCustomPk0">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
         <behavior name="i18n" />
-    </table>
-    <table name="i18n_behavior_test_custom_pk_0_i18n">
-        <column name="custom_id" primaryKey="true" type="INTEGER" />
-        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
-        <column name="bar" type="VARCHAR" size="100" />
-        <foreign-key foreignTable="i18n_behavior_test_custom_pk_0">
+    </entity>
+    <entity name="I18nBehaviorTestCustomPk0I18n">
+        <field name="custom_id" primaryKey="true" type="INTEGER" />
+        <field name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
+        <field name="bar" type="VARCHAR" size="100" />
+        <relation target="I18nBehaviorTestCustomPk0">
             <reference local="custom_id" foreign="id" />
-        </foreign-key>
-    </table>
+        </relation>
+    </entity>
 </database>
 EOF;
 
@@ -418,21 +413,20 @@ EOF;
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- i18n_behavior_test_custom_pk_0_i18n
+-- i18n_behavior_test_custom_pk0_i18n
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS i18n_behavior_test_custom_pk_0_i18n;
+DROP TABLE IF EXISTS i18n_behavior_test_custom_pk0_i18n;
 
-CREATE TABLE i18n_behavior_test_custom_pk_0_i18n
+CREATE TABLE i18n_behavior_test_custom_pk0_i18n
 (
     custom_id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     bar VARCHAR(100),
     PRIMARY KEY (custom_id,locale),
     UNIQUE (custom_id,locale),
-    FOREIGN KEY (custom_id) REFERENCES i18n_behavior_test_custom_pk_0 (id)
+    FOREIGN KEY (custom_id) REFERENCES i18n_behavior_test_custom_pk0 (id)
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
-
 }

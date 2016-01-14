@@ -52,7 +52,7 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
 ";
             } else {
                 //one-to-many
-                $relationName = $this->getBuilder()->getPluralizer()->getPluralForm($relationName);
+                $relationName = $this->getRefRelationVarName($relation, true);
 
                 if (!in_array($relationName, $alreadyAdded)) {
                     $body .= "
