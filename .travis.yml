@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.4
   - 5.5
   - 5.6
   - 7.0
@@ -27,10 +26,6 @@ script:
 
 matrix:
   include:
-    - php: 5.4
-      env: DB=mysql MARIADB=5.5
-      addons:
-        mariadb: 5.5
     - php: 5.5
       env: DB=mysql MARIADB=5.5
       addons:
@@ -44,10 +39,6 @@ matrix:
       addons:
         mariadb: 5.5
 
-    - php: 5.4
-      env: DB=mysql MARIADB=10.0
-      addons:
-        mariadb: 10.0
     - php: 5.5
       env: DB=mysql MARIADB=10.0
       addons:
@@ -61,10 +52,6 @@ matrix:
       addons:
         mariadb: 10.0
 
-    - php: 5.4
-      env: DB=mysql MARIADB=10.1
-      addons:
-        mariadb: 10.1
     - php: 5.5
       env: DB=mysql MARIADB=10.1
       addons:
@@ -78,10 +65,6 @@ matrix:
       addons:
         mariadb: 10.1
 
-    - php: 5.4
-      env: DB=pgsql POSTGRES=9.1
-      addons:
-       postgresql: 9.1
     - php: 5.5
       env: DB=pgsql POSTGRES=9.1
       addons:
@@ -95,10 +78,6 @@ matrix:
       addons:
         postgresql: 9.1
 
-    - php: 5.4
-      env: DB=pgsql POSTGRES=9.2
-      addons:
-       postgresql: 9.2
     - php: 5.5
       env: DB=pgsql POSTGRES=9.2
       addons:
@@ -112,10 +91,6 @@ matrix:
       addons:
         postgresql: 9.2
 
-    - php: 5.4
-      env: DB=pgsql POSTGRES=9.3
-      addons:
-       postgresql: 9.3
     - php: 5.5
       env: DB=pgsql POSTGRES=9.3
       addons:
@@ -129,10 +104,6 @@ matrix:
       addons:
         postgresql: 9.3
 
-    - php: 5.4
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-       postgresql: 9.4
     - php: 5.5
       env: DB=pgsql POSTGRES=9.4
       addons:
