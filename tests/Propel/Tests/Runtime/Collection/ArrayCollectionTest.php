@@ -178,9 +178,10 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     public function testToArrayCustomDatatype() {
-        $customDataTypeTest = new BookstoreCustomTest();
-        $customDataTypeTest->setTestDatatype(new CustomDatabaseType("FooBar"));
-        $customDataTypeTest->save($this->con);
+        $bookstoreCustomTest = new BookstoreCustomTest();
+        $bookstoreCustomTest->setTestDatatype(new CustomDatabaseType("FooBar"));
+        $bookstoreCustomTest->save($this->con);
+
         $bookstoreCustom = PropelQuery::from('Propel\Tests\Bookstore\BookstoreCustomTest')
             ->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
 

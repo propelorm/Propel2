@@ -2136,9 +2136,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
                 } elseif($col->isCustomType()) {
-                    $hydrateType = $this->declareClass($col->getCustomType());
+                    $customTypeInterface = $this->declareClass($col->getCustomType());
                     $script .= "
-            \$this->$clo = (null !== \$col) ? new $hydrateType(\$col) : null;";
+            \$this->$clo = (null !== \$col) ? $customTypeInterface::__deserializeFromDatabase(\$col) : null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
@@ -5697,7 +5697,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $bindValue = '$this->' . $column->getLowercasedName();
             if ($column->isCustomType()) {
                 $bindValue = sprintf(
-                    '%s::__toDatabase(%s)',
+                    '%s::__serializeToDatabase(%s)',
                     $this->declareClass($column->getCustomType()),
                     $bindValue
                 );

@@ -1013,6 +1013,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if (is_object(\$$variableName)) {
             \$$variableName = serialize(\$$variableName);
         }";
+        } elseif ($col->isCustomType()) {
+            $dataType = $this->declareClass($col->getCustomType());
+            $script .= "
+        \$$variableName = $dataType::__serializeFilterBy(\$$variableName);";
         } elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
             $script .= "
         \$key = \$this->getAliasedColName($qualifiedName);

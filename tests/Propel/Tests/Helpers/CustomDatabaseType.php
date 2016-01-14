@@ -8,16 +8,20 @@ class CustomDatabaseType implements \Propel\Runtime\CustomDataTypeInterface {
         $this->data = $data;
     }
 
-    public static function __toDatabase($instance) {
+    public static function __serializeToDatabase($instance) {
         // How the data will be bound as a PDO param
         return $instance->data;
     }
 
-    public static function __fromDatabase($data) {
-        return self::__construct($data);
+    public static function __deserializeFromDatabase($data) {
+        return new CustomDatabaseType($data);
     }
 
     public static function __getPdoType() {
         return \PDO::PARAM_STR;
+    }
+
+    public static function __serializeFilterBy($data = null, $comparison = null) {
+        return CustomDatabaseType::__serializeToDatabase($data);
     }
 }

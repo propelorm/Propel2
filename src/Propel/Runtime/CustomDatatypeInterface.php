@@ -18,18 +18,20 @@ interface CustomDataTypeInterface {
      * @param $instance - An instance of your custom type
      * @return mixed
      */
-    public static function __toDatabase($instance);
+    public static function __serializeToDatabase($instance);
 
     /**
      * @param $data - The database representation of your objet
      * @return mixed
      */
-    public static function __fromDatabase($data);
+    public static function __deserializeFromDatabase($data);
 
     /**
-     * The PDO type to bind your __toDatabase value as
+     * The PDO type to bind your __serializeToDatabase value as
      * http://php.net/manual/en/pdo.constants.php
      * @return integer - a PDO::PARAM_* constant
      */
     public static function __getPdoType();
+
+    public static function __serializeFilterBy($data = null, $comparison = null);
 }
