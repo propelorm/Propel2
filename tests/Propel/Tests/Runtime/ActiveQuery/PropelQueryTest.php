@@ -14,8 +14,10 @@ use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\CustomDatabaseType;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\TableWithCustomType;
 use Propel\Tests\Bookstore\Behavior\Table6;
 use Propel\Tests\Bookstore\Behavior\Table6Query;
 use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
@@ -70,7 +72,18 @@ class PropelQueryTest extends BookstoreTestBase
             ->findOne();
         $this->assertTrue($book instanceof Book);
         $this->assertEquals('Don Juan', $book->getTitle());
+    }
 
+    public function testFilterByCustomDataType() {
+        $expected = new CustomDatabaseType("FooBar");
+        $bookstoreCustomResult = PropelQuery::from('Propel\Tests\Bookstore\TableWithCustomType')
+            ->filterByColumnWithCustomType(new CustomDatabaseType("FooBar"))->findOne();
+
+        $this->assertTrue($bookstoreCustomResult instanceof TableWithCustomType);
+        $this->assertEquals(
+            $bookstoreCustomResult->getColumnWithCustomType(),
+            new CustomDatabaseType("FooBar")
+        );
     }
 
     /**

@@ -29,9 +29,10 @@ use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\ReaderFavorite;
 use Propel\Tests\Bookstore\Review;
-
 use Propel\Tests\Bookstore\RecordLabel;
 use Propel\Tests\Bookstore\ReleasePool;
+use Propel\Tests\Bookstore\TableWithCustomType;
+use Propel\Tests\Helpers\CustomDatabaseType;
 
 define('_LOB_SAMPLE_FILE_PATH', __DIR__ . '/../../../../Fixtures/etc/lob');
 
@@ -252,6 +253,10 @@ class BookstoreDataPopulator
         $pool->setRecordLabel($fade);
         $pool->save();
 
+        $bookstoreCustomTest = new TableWithCustomType();
+        $bookstoreCustomTest->setColumnWithCustomType(new CustomDatabaseType("FooBar"));
+        $bookstoreCustomTest->save($con);
+
         $con->commit();
     }
 
@@ -302,6 +307,7 @@ class BookstoreDataPopulator
             'Propel\Tests\Bookstore\Map\BookSummaryTableMap',
             'Propel\Tests\Bookstore\Map\RecordLabelTableMap',
             'Propel\Tests\Bookstore\Map\ReleasePoolTableMap',
+            'Propel\Tests\Bookstore\Map\TableWithCustomTypeTableMap'
         ];
         // free the memory from existing objects
         foreach ($tableMapClasses as $tableMapClass) {

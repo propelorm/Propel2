@@ -12,10 +12,12 @@ namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\TableWithCustomType;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Country;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\CustomDatabaseType;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\PropelException;
@@ -173,6 +175,17 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
             'Book_The Tin Drum'
         ];
         $this->assertEquals($keys, array_keys($booksArray));
+    }
+
+    public function testToArrayCustomDatatype() {
+        $bookstoreCustom = PropelQuery::from('Propel\Tests\Bookstore\TableWithCustomType')
+            ->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
+
+        $asArray = $bookstoreCustom->toArray();
+
+        $this->assertEquals(count($asArray), 1);
+        $this->assertTrue($asArray[0]['ColumnWithCustomType'] instanceof CustomDatabaseType);
+        $this->assertEquals($asArray[0]['ColumnWithCustomType']->data, 'FooBar');
     }
 
     public function testToArrayDeep()
