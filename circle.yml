@@ -3,7 +3,7 @@ machine:
     DB_USER: ubuntu
     DB_NAME: circle_test
   php:
-    version: 5.4.9
+    version: 5.5.9
 dependencies:
   pre:
     - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini

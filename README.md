@@ -1,6 +1,6 @@
 # Propel2 #
 
-Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.4.
+Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.
 
 [![Build Status](https://travis-ci.org/propelorm/Propel2.svg?branch=master)](https://travis-ci.org/propelorm/Propel2)
 [![Code Climate](https://codeclimate.com/github/propelorm/Propel2/badges/gpa.svg)](https://codeclimate.com/github/propelorm/Propel2)
@@ -20,7 +20,7 @@ Propel2 uses the following Symfony2 Components:
 Propel2 also relies on [**Composer**](https://github.com/composer/composer) to manage dependencies but you
 also can use [ClassLoader](https://github.com/symfony/ClassLoader) (see the `autoload.php.dist` file for instance).
 
-Propel2 is only supported on PHP 5.4 and up.
+Propel2 is only supported on PHP 5.5 and up.
 
 
 ## Installation ##
