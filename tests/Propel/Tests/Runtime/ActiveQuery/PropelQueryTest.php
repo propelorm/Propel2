@@ -17,7 +17,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\CustomDatabaseType;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstoreCustomTest;
+use Propel\Tests\Bookstore\TableWithCustomType;
 use Propel\Tests\Bookstore\Behavior\Table6;
 use Propel\Tests\Bookstore\Behavior\Table6Query;
 use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
@@ -75,18 +75,15 @@ class PropelQueryTest extends BookstoreTestBase
     }
 
     public function testFilterByCustomDataType() {
-        $bookstoreCustomTest = new BookstoreCustomTest();
-        $bookstoreCustomTest->setTestDatatype(new CustomDatabaseType("FooBar"));
-        $bookstoreCustomTest->save($this->con);
-
         $expected = new CustomDatabaseType("FooBar");
-        $bookstoreCustomResult = PropelQuery::from('Propel\Tests\Bookstore\BookstoreCustomTest')
-            ->filterByTestDatatype(new CustomDatabaseType("FooBar"))->findOne();
+        $bookstoreCustomResult = PropelQuery::from('Propel\Tests\Bookstore\TableWithCustomType')
+            ->filterByColumnWithCustomType(new CustomDatabaseType("FooBar"))->findOne();
 
-        $this->assertTrue($bookstoreCustomResult instanceof BookstoreCustomTest);
-        $this->assertEquals($bookstoreCustomResult->getTestDatatype(), new CustomDatabaseType("FooBar"));
-
-        $bookstoreCustomResult->delete();
+        $this->assertTrue($bookstoreCustomResult instanceof TableWithCustomType);
+        $this->assertEquals(
+            $bookstoreCustomResult->getColumnWithCustomType(),
+            new CustomDatabaseType("FooBar")
+        );
     }
 
     /**

@@ -16,13 +16,13 @@ namespace Propel\Runtime;
 interface CustomDataTypeInterface {
     /**
      * @param $instance - An instance of your custom type
-     * @return mixed
+     * @return mixed - Data to pass to PDO
      */
     public static function __serializeToDatabase($instance);
 
     /**
      * @param $data - The database representation of your objet
-     * @return mixed
+     * @return object - instance of your custom database type
      */
     public static function __deserializeFromDatabase($data);
 
@@ -33,5 +33,11 @@ interface CustomDataTypeInterface {
      */
     public static function __getPdoType();
 
+    /**
+     * Determine how filterBy<DataType> generates the data in a Where clause
+     * @param null $data - First argument to filterBy<DataType>
+     * @param null $comparison - SQL comparator (e.g. =, >)
+     * @return mixed - Way to represent data in the WHERE clause
+     */
     public static function __serializeFilterBy($data = null, $comparison = null);
 }
