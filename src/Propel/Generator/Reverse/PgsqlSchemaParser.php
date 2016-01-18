@@ -63,11 +63,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         //'year' => PropelTypes::YEAR,  PropelTypes::YEAR does not exist... does this need to be mapped to a different propel type?
         'datetime'    => PropelTypes::TIMESTAMP,
         'timestamp'   => PropelTypes::TIMESTAMP,
-        'timestamptz' => PropelTypes::TIMESTAMP,
+        'timestamptz' => PropelTypes::TIMESTAMPTZ,
         'bytea'       => PropelTypes::BLOB,
         'text'        => PropelTypes::LONGVARCHAR,
         'time without time zone' => PropelTypes::TIME,
         'timestamp without time zone' => PropelTypes::TIMESTAMP,
+        'timestamp with time zone' => PropelTypes::TIMESTAMPTZ,
         'double precision' => PropelTypes::DOUBLE,
     ];
 

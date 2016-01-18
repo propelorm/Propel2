@@ -323,6 +323,7 @@ class PropelConfiguration implements ConfigurationInterface
                                 ->booleanNode('useDateTimeClass')->defaultTrue()->end()
                                 ->scalarNode('dateTimeClass')->defaultValue('DateTime')->end()
                                 ->scalarNode('defaultTimeStampFormat')->end()
+                                ->scalarNode('defaultTimeStampTzFormat')->end()
                                 ->scalarNode('defaultTimeFormat')->end()
                                 ->scalarNode('defaultDateFormat')->end()
                             ->end()

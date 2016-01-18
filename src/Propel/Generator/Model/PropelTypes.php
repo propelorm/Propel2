@@ -42,6 +42,7 @@ class PropelTypes
     const DATE          = 'DATE';
     const TIME          = 'TIME';
     const TIMESTAMP     = 'TIMESTAMP';
+    const TIMESTAMPTZ   = 'TIMESTAMPTZ';
     const BU_DATE       = 'BU_DATE';
     const BU_TIMESTAMP  = 'BU_TIMESTAMP';
     const BOOLEAN       = 'BOOLEAN';
@@ -73,6 +74,7 @@ class PropelTypes
     const DATE_NATIVE_TYPE          = 'string';
     const TIME_NATIVE_TYPE          = 'string';
     const TIMESTAMP_NATIVE_TYPE     = 'string';
+    const TIMESTAMPTZ_NATIVE_TYPE   = 'string';
     const BU_TIMESTAMP_NATIVE_TYPE  = 'string';
     const BOOLEAN_NATIVE_TYPE       = 'boolean';
     const BOOLEAN_EMU_NATIVE_TYPE   = 'boolean';
@@ -107,6 +109,7 @@ class PropelTypes
         self::DATE,
         self::TIME,
         self::TIMESTAMP,
+        self::TIMESTAMPTZ,
         self::BOOLEAN,
         self::BOOLEAN_EMU,
         self::OBJECT,
@@ -148,6 +151,7 @@ class PropelTypes
         self::BU_DATE       => self::BU_DATE_NATIVE_TYPE,
         self::TIME          => self::TIME_NATIVE_TYPE,
         self::TIMESTAMP     => self::TIMESTAMP_NATIVE_TYPE,
+        self::TIMESTAMPTZ   => self::TIMESTAMPTZ_NATIVE_TYPE,
         self::BU_TIMESTAMP  => self::BU_TIMESTAMP_NATIVE_TYPE,
         self::BOOLEAN       => self::BOOLEAN_NATIVE_TYPE,
         self::BOOLEAN_EMU   => self::BOOLEAN_EMU_NATIVE_TYPE,
@@ -185,6 +189,7 @@ class PropelTypes
         self::DATE          => \PDO::PARAM_STR,
         self::TIME          => \PDO::PARAM_STR,
         self::TIMESTAMP     => \PDO::PARAM_STR,
+        self::TIMESTAMPTZ   => \PDO::PARAM_STR,
         self::BU_DATE       => \PDO::PARAM_STR,
         self::BU_TIMESTAMP  => \PDO::PARAM_STR,
         self::BOOLEAN       => \PDO::PARAM_BOOL,
@@ -263,6 +268,7 @@ class PropelTypes
             self::DATE,
             self::TIME,
             self::TIMESTAMP,
+            self::TIMESTAMPTZ,
             self::BU_DATE,
             self::BU_TIMESTAMP,
         ]);
@@ -284,6 +290,7 @@ class PropelTypes
             self::DATE,
             self::TIME,
             self::TIMESTAMP,
+            self::TIMESTAMPTZ,
             self::BU_DATE,
             self::BU_TIMESTAMP,
         ]);

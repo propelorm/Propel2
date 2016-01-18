@@ -90,7 +90,7 @@ PHP class or method name.
         | DATE   | TIME    | TIMESTAMP   | BINARY     | VARBINARY | LONGVARBINARY
         | NULL   | OTHER   | PHP_OBJECT  | DISTINCT   | STRUCT    | ARRAY
         | BLOB   | CLOB    | REF         | BOOLEANINT | BOOLEANCHAR
-        | DOUBLE | BOOLEAN | OBJECT      | ENUM
+        | DOUBLE | BOOLEAN | OBJECT      | ENUM       | TIMESTAMPTZ
     ) "VARCHAR"
   phpType CDATA #IMPLIED
   sqlType CDATA #IMPLIED

@@ -60,6 +60,7 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMPTZ, 'TIMESTAMPTZ'));
     }
 
     public function getNativeIdMethod()
@@ -693,6 +694,16 @@ DROP SEQUENCE %s CASCADE;
         );
 
         return preg_replace('/^/m', $tab, $script);
+    }
+
+    /**
+     * Gets the preferred timestamp formatter for setting date/time values.
+     * For postgres, this is an isodate
+     * @return string
+     */
+    public function getTimestampTzFormatter()
+    {
+        return 'c';
     }
 
 }

@@ -143,6 +143,8 @@ class ObjectBuilder extends AbstractObjectBuilder
             $fmt = $this->getPlatform()->getTimeFormatter();
         } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $fmt = $this->getPlatform()->getTimestampFormatter();
+        } elseif ($column->getType() === PropelTypes::TIMESTAMPTZ) {
+            $fmt = $this->getPlatform()->getTimestampTzFormatter();
         }
 
         return $fmt;
@@ -783,7 +785,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $handleMysqlDate = false;
         if ($this->getPlatform() instanceof MysqlPlatform) {
-            if ($column->getType() === PropelTypes::TIMESTAMP) {
+            if ($column->getType() === PropelTypes::TIMESTAMP || $column->getType() === PropelTypes::TIMESTAMPTZ) {
                 $handleMysqlDate = true;
                 $mysqlInvalidDateString = '0000-00-00 00:00:00';
             } elseif ($column->getType() === PropelTypes::DATE) {
@@ -827,6 +829,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeFormat');
         } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampFormat');
+        } elseif ($column->getType() === PropelTypes::TIMESTAMPTZ) {
+            $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampTzFormat');
         }
 
         if (empty($defaultfmt)) {
@@ -892,6 +896,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeFormat');
         } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampFormat');
+        } elseif ($column->getType() === PropelTypes::TIMESTAMPTZ) {
+            $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampTzFormat');
         }
 
         if (empty($defaultfmt)) {
@@ -1621,16 +1627,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
                  ) {";
         } else {
-            switch ($col->getType()) {
-                case 'DATE':
-                    $format = 'Y-m-d';
-                    break;
-                case 'TIME':
-                    $format = 'H:i:s';
-                    break;
-                default:
-                    $format = 'Y-m-d H:i:s';
-            }
+            $format =  $this->getTemporalFormatter($col);
             $script .= "
             if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";
         }

@@ -39,6 +39,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
             if (PropelTypes::DATE === $col->getType()
                 || PropelTypes::TIME === $col->getType()
                 || PropelTypes::TIMESTAMP === $col->getType()
+                || PropelTypes::TIMESTAMPTZ === $col->getType()
             ) {
                 $this->addTemporalAccessor($script, $col);
             } elseif (PropelTypes::OBJECT === $col->getType()) {
@@ -80,6 +81,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 PropelTypes::DATE === $col->getType()
                 || PropelTypes::TIME === $col->getType()
                 || PropelTypes::TIMESTAMP === $col->getType()
+                || PropelTypes::TIMESTAMPTZ === $col->getType()
             ) {
                 $this->addTemporalMutator($script, $col);
             } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
