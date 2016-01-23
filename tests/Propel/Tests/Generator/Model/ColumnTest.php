@@ -478,6 +478,27 @@ class ColumnTest extends ModelTestCase
         $this->assertContains('BAR', $column->getValueSet());
     }
 
+    public function testSetType()
+    {
+        $domain = $this->getDomainMock();
+        $domain
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue('SET'))
+        ;
+
+        $column = new Column();
+        $column->setDomain($domain);
+        $column->setType('SET');
+        $column->setValueSet(['FOO', 'BAR']);
+
+        $this->assertSame('int', $column->getPhpType());
+        $this->assertTrue($column->isPhpPrimitiveType());
+        $this->assertTrue($column->isSetType());
+        $this->assertContains('FOO', $column->getValueSet());
+        $this->assertContains('BAR', $column->getValueSet());
+    }
+
     public function testSetStringValueSet()
     {
         $column = new Column();

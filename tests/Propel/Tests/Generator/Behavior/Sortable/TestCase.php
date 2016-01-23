@@ -12,6 +12,7 @@ namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable14TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\SortableTable12;
@@ -21,6 +22,7 @@ use Propel\Tests\Bookstore\Behavior\SortableTable13Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable13TableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableTable14;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
@@ -142,6 +144,31 @@ class TestCase extends TestCaseFixturesDatabase
         $t4 = new SortableTable13();
         $t4->setTitle('row4');
         $t4->setStyle(SortableTable13TableMap::COL_STYLE_ESSAY);
+        $t4->save();
+    }
+
+    protected function populateTable14()
+    {
+        SortableTable14TableMap::doDeleteAll();
+
+        $t1 = new SortableTable14();
+        $t1->setTitle('row1');
+        $t1->setStyle2(SortableTable14TableMap::COL_STYLE2_NOVEL);
+        $t1->save();
+
+        $t2 = new SortableTable14();
+        $t2->setTitle('row2');
+        $t2->setStyle2(SortableTable14TableMap::COL_STYLE2_NOVEL);
+        $t2->save();
+
+        $t3 = new SortableTable14();
+        $t3->setTitle('row3');
+        $t3->setStyle2(SortableTable14TableMap::COL_STYLE2_ESSAY);
+        $t3->save();
+
+        $t4 = new SortableTable14();
+        $t4->setTitle('row4');
+        $t4->setStyle2(SortableTable14TableMap::COL_STYLE2_ESSAY);
         $t4->save();
     }
 

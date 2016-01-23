@@ -120,8 +120,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $script .= $this->addConstants();
 
         $this->addInheritanceColumnConstants($script);
-        if ($table->hasEnumColumns()) {
-            $this->addEnumColumnConstants($script);
+        if ($table->hasValueSetColumns()) {
+            $this->addValueSetColumnConstants($script);
         }
 
         // apply behaviors
@@ -133,8 +133,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         $script .= $this->addFieldsAttributes();
 
-        if ($table->hasEnumColumns()) {
-            $this->addEnumColumnAttributes($script);
+        if ($table->hasValueSetColumns()) {
+            $this->addValueSetColumnAttributes($script);
             $this->addGetValueSets($script);
             $this->addGetValueSet($script);
         }
@@ -213,18 +213,18 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 
     /**
-     * Adds the valueSet constants for ENUM columns.
+     * Adds the valueSet constants for ENUM and SET columns.
      * @param string &$script The script will be modified in this method.
      */
-    protected function addEnumColumnConstants(&$script)
+    protected function addValueSetColumnConstants(&$script)
     {
         foreach ($this->getTable()->getColumns() as $col) {
-            if ($col->isEnumType()) {
+            if ($col->isValueSetType()) {
                 $script .= "
     /** The enumerated values for the " . $col->getName() . " field */";
                 foreach ($col->getValueSet() as $value) {
                     $script .= "
-    const " . $col->getConstantName() . '_' . $this->getEnumValueConstant($value) . " = '" . $value . "';";
+    const " . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . " = '" . $value . "';";
                 }
                 $script .= "
 ";
@@ -236,18 +236,18 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Adds the valueSet attributes for ENUM columns.
      * @param string &$script The script will be modified in this method.
      */
-    protected function addEnumColumnAttributes(&$script)
+    protected function addValueSetColumnAttributes(&$script)
     {
         $script .= "
     /** The enumerated values for this table */
     protected static \$enumValueSets = array(";
         foreach ($this->getTable()->getColumns() as $col) {
-            if ($col->isEnumType()) {
+            if ($col->isValueSetType()) {
                 $script .= "
                 {$col->getFQConstantName()} => array(
                 ";
                 foreach ($col->getValueSet() as $value) {
-                    $script .= "            self::" . $col->getConstantName() . '_' . $this->getEnumValueConstant($value) . ",
+                    $script .= "            self::" . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . ",
 ";
                 }
                 $script .= "        ),";
@@ -266,7 +266,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
         $script .= "
     /**
-     * Gets the list of values for all ENUM columns
+     * Gets the list of values for all ENUM and SET columns
      * @return array
      */
     public static function getValueSets()
@@ -284,7 +284,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
         $script .= "
     /**
-     * Gets the list of values for an ENUM column
+     * Gets the list of values for an ENUM or SET column
      * @param string \$colname
      * @return array list of possible values for the column
      */
@@ -339,7 +339,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * @param  string $value
      * @return string
      */
-    protected function getEnumValueConstant($value)
+    protected function getValueSetConstant($value)
     {
         return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
     }
@@ -525,7 +525,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         \$this->addColumn('$columnName', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
                 }
             } // if col-is prim key
-            if ($col->isEnumType()) {
+            if ($col->isValueSetType()) {
                 $script .= "
         \$this->getColumn('$columnName')->setValueSet(" . var_export($col->getValueSet(), true). ");";
             }

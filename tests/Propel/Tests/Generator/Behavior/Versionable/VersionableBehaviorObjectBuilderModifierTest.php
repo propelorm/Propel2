@@ -83,6 +83,7 @@ EOF;
         <column name="FooBar" type="VARCHAR" size="100" />
 
         <column name="Style" type="ENUM" valueSet="novel, essay, poetry" />
+        <column name="Style2" type="SET" valueSet="novel, essay, poetry" />
 
         <behavior name="versionable">
             <parameter name="log_created_at" value="true" />
@@ -847,6 +848,25 @@ EOF;
 
         $this->assertEquals('novel', $o->getOneVersion(1)->getStyle(), 'First version is a novel');
         $this->assertEquals('essay', $o->getOneVersion(2)->getStyle(), 'Second version is an essay');
+    }
+
+    public function testSetField()
+    {
+        $o = new \VersionableBehaviorTest7();
+        $o->setStyle2(['novel', 'essay']);
+        $o->save();
+
+        $this->assertEquals(['novel', 'essay'], $o->getStyle2(), 'Set style to novel');
+        $this->assertEquals(1, $o->getVersion(), '');
+
+        $o->setStyle2(['essay']);
+        $o->save();
+
+        $this->assertEquals(['essay'], $o->getStyle2(), 'Set style to essay');
+        $this->assertEquals(2, $o->getVersion(), '');
+
+        $this->assertEquals(['novel', 'essay'], $o->getOneVersion(1)->getStyle2(), 'First version is a novel');
+        $this->assertEquals(['essay'], $o->getOneVersion(2)->getStyle2(), 'Second version is an essay');
     }
 
     public function testWithInheritance()

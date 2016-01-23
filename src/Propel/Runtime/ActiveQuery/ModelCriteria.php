@@ -10,6 +10,10 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Common\Exception\SetColumnConverterException;
+use Propel\Common\Util\SetColumnConverter;
+use Propel\Generator\Model\PropelTypes;
+use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Exception\EntityNotFoundException;
 use Propel\Runtime\Exception\RuntimeException;
@@ -1747,6 +1751,7 @@ class ModelCriteria extends BaseModelCriteria
         if ($this->replaceNames($clause)) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
+            /** @var ColumnMap $colMap */
             $colMap = $this->replacedColumns[0];
             $value = $this->convertValueForColumn($value, $colMap);
             $clauseLen = strlen($clause);
@@ -1754,7 +1759,18 @@ class ModelCriteria extends BaseModelCriteria
                 return new RawModelCriterion($this, $clause, $colMap, $value, $this->currentAlias, $bindingType);
             }
             if (stripos($clause, 'IN ?') == $clauseLen - 4) {
-                return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                if ($colMap->isSetType()) {
+                    if (stripos($clause, 'NOT IN ?') == $clauseLen - 8) {
+                        $clause = str_ireplace('NOT IN ?', '& ? = 0', $clause);
+                    } else {
+                        $clause = str_ireplace('IN ?', '& ?', $clause);
+                    }
+                } else {
+                    return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                }
+            }
+            if (stripos($clause, '& ?') !== false) {
+                return new BinaryModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
             }
             if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
                 return new LikeModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
@@ -1794,11 +1810,17 @@ class ModelCriteria extends BaseModelCriteria
             }
         } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif ('ENUM' === $colMap->getType() && !is_null($value)) {
+        } elseif (PropelTypes::ENUM === $colMap->getType() && !is_null($value)) {
             if (is_array($value)) {
                 $value = array_map([$colMap, 'getValueSetKey'], $value);
             } else {
                 $value = $colMap->getValueSetKey($value);
+            }
+        } elseif ($colMap->isSetType() && !is_null($value)) {
+            try {
+                $value = SetColumnConverter::convertToInt($value, $colMap->getValueSet());
+            } catch (SetColumnConverterException $e) {
+                throw new PropelException(sprintf('Value "%s" is not accepted in this set column', $e->getValue()), $e->getCode(), $e);
             }
         }
 

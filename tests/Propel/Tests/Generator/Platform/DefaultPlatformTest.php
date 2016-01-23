@@ -124,6 +124,16 @@ class DefaultPlatformTest extends TestCase
         return $column;
     }
 
+    public function createSetColumn($defaultValues, $defaultValue)
+    {
+        $column = new Column();
+        $column->setType(PropelTypes::SET);
+        $column->setValueSet($defaultValues);
+        $column->setDefaultValue($defaultValue);
+
+        return $column;
+    }
+
     public function getColumnDefaultValueDDLDataProvider()
     {
         return [
@@ -140,6 +150,9 @@ class DefaultPlatformTest extends TestCase
             [$this->createEnumColumn(['foo', 'bar', 'baz'], 'foo'), "DEFAULT 0"],
             [$this->createEnumColumn(['foo', 'bar', 'baz'], 'bar'), "DEFAULT 1"],
             [$this->createEnumColumn(['foo', 'bar', 'baz'], 'baz'), "DEFAULT 2"],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'foo'), "DEFAULT 1"],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'bar'), "DEFAULT 2"],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'baz'), "DEFAULT 4"],
         ];
     }
 

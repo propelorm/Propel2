@@ -1433,14 +1433,14 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not one of the columns is of type ENUM.
+     * Returns whether or not one of the columns is of type ENUM or SET.
      *
      * @return boolean
      */
-    public function hasEnumColumns()
+    public function hasValueSetColumns()
     {
         foreach ($this->columns as $col) {
-            if ($col->isEnumType()) {
+            if ($col->isValueSetType()) {
                 return true;
             }
         }

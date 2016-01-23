@@ -49,6 +49,7 @@ class PropelTypes
     const OBJECT        = 'OBJECT';
     const PHP_ARRAY     = 'ARRAY';
     const ENUM          = 'ENUM';
+    const SET           = 'SET';
     const GEOMETRY      = 'GEOMETRY';
 
     const CHAR_NATIVE_TYPE          = 'string';
@@ -79,6 +80,7 @@ class PropelTypes
     const OBJECT_NATIVE_TYPE        = '';
     const PHP_ARRAY_NATIVE_TYPE     = 'array';
     const ENUM_NATIVE_TYPE          = 'int';
+    const SET_NATIVE_TYPE           = 'int';
     const GEOMETRY_NATIVE_TYPE      = 'resource';
 
     /**
@@ -118,6 +120,7 @@ class PropelTypes
         // even numeric timestamps on Windows.
         self::BU_DATE,
         self::BU_TIMESTAMP,
+        self::SET,
     ];
 
     /**
@@ -154,6 +157,7 @@ class PropelTypes
         self::OBJECT        => self::OBJECT_NATIVE_TYPE,
         self::PHP_ARRAY     => self::PHP_ARRAY_NATIVE_TYPE,
         self::ENUM          => self::ENUM_NATIVE_TYPE,
+        self::SET           => self::SET_NATIVE_TYPE,
         self::GEOMETRY      => self::GEOMETRY,
     ];
 
@@ -192,6 +196,7 @@ class PropelTypes
         self::OBJECT        => \PDO::PARAM_LOB,
         self::PHP_ARRAY     => \PDO::PARAM_STR,
         self::ENUM          => \PDO::PARAM_INT,
+        self::SET           => \PDO::PARAM_INT,
         self::GEOMETRY      => \PDO::PARAM_LOB,
 
         // These are pre-epoch dates, which we need to map to String type

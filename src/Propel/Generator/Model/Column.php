@@ -1159,6 +1159,16 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns whether or not this column is an ENUM or SET column.
+     *
+     * @return boolean
+     */
+    public function isValueSetType()
+    {
+        return ($this->isEnumType() || $this->isSetType());
+    }
+
+    /**
      * Returns whether or not this column is an ENUM column.
      *
      * @return boolean
@@ -1169,7 +1179,17 @@ class Column extends MappingModel
     }
 
     /**
-     * Sets the list of possible values for an ENUM column.
+     * Returns whether or not this column is a SET column.
+     *
+     * @return boolean
+     */
+    public function isSetType()
+    {
+        return $this->getType() === PropelTypes::SET;
+    }
+
+    /**
+     * Sets the list of possible values for an ENUM or SET column.
      *
      * @param array|string
      */
@@ -1184,7 +1204,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the list of possible values for an ENUM column.
+     * Returns the list of possible values for an ENUM or SET column.
      *
      * @return array
      */

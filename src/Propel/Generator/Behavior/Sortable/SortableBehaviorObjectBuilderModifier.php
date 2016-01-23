@@ -318,6 +318,15 @@ public function getScopeValue(\$returnNulls = true)
             $script .= "
     return array_search(\$this->{$this->getColumnGetter('scope_column')}(), {$this->tableMapClassName}::getValueSet({$this->tableMapClassName}::COL_{$columnConstant}));
             ";
+        } else if ($this->behavior->getColumnForParameter('scope_column')->isSetType()){
+            $columnConstant = strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $this->getColumnAttribute('scope_column')));
+            $script .= "
+    try {
+        return SetColumnConverter::convertToInt(\$this->{$this->getColumnGetter('scope_column')}(), {$this->tableMapClassName}::getValueSet({$this->tableMapClassName}::COL_{$columnConstant}));
+    } catch (SetColumnConverterException \$e) {
+        throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
+    }
+            ";
         } else {
 
             $script .= "

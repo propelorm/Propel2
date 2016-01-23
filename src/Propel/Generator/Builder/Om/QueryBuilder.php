@@ -254,9 +254,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $this->addFilterByPrimaryKeys($script);
         foreach ($this->getTable()->getColumns() as $col) {
             $this->addFilterByCol($script, $col);
-            if ($col->getType() === PropelTypes::PHP_ARRAY && $col->isNamePlural()) {
-                $this->addFilterByArrayCol($script, $col);
+            if ($col->isNamePlural()) {
+                if ($col->getType() === PropelTypes::PHP_ARRAY) {
+                    $this->addFilterByArrayCol($script, $col);
+                } elseif ($col->isSetType()) {
+                    $this->addFilterBySetCol($script, $col);
+                }
             }
+            
         }
         foreach ($this->getTable()->getForeignKeys() as $fk) {
             $this->addFilterByFK($script, $fk);
@@ -1051,6 +1056,37 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
             return \$this;
         }";
+        } elseif ($col->isSetType()) {
+            $this->declareClasses(
+                'Propel\Common\Util\SetColumnConverter',
+                'Propel\Common\Exception\SetColumnConverterException'
+            );
+            $script .= "
+        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+        try {
+            \${$variableName} = SetColumnConverter::convertToInt(\$$variableName, \$valueSet);
+        } catch (SetColumnConverterException \$e) {
+            throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
+        }
+        if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
+            if (\${$variableName} === '0') {
+                return \$this;
+            }
+            \$comparison = Criteria::BINARY_ALL;
+        } elseif (\$comparison == Criteria::CONTAINS_SOME || \$comparison == Criteria::IN) {
+            if (\${$variableName} === '0') {
+                return \$this;
+            }
+            \$comparison = Criteria::BINARY_AND;
+        } elseif (\$comparison == Criteria::CONTAINS_NONE) {
+            \$key = \$this->getAliasedColName($qualifiedName);
+            if (\${$variableName} !== '0') {
+                \$this->add(\$key, \${$variableName}, Criteria::BINARY_NONE);
+            }
+            \$this->addOr(\$key, null, Criteria::ISNULL);
+            
+            return \$this;
+        }";
         } elseif ($col->getType() == PropelTypes::ENUM) {
             $script .= "
         \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
@@ -1137,6 +1173,33 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         }
 
         return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+    }
+";
+    }
+
+    /**
+     * Adds the singular filterByCol method for an Array column.
+     * 
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col
+     */
+    protected function addFilterBySetCol(&$script, Column $col)
+    {
+        $colPhpName = $col->getPhpName();
+        $singularPhpName = $col->getPhpSingularName();
+        $colName = $col->getName();
+        $variableName = $col->getCamelCaseName();
+        $script .= "
+    /**
+     * Filter the query on the $colName column
+     * @param     mixed \$$variableName The value to use as filter
+     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     */
+    public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
+    {
+        return \$this->filterBy$colPhpName(\$$variableName, \$comparison);
     }
 ";
     }

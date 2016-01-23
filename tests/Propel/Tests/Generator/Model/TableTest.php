@@ -451,30 +451,30 @@ class TableTest extends ModelTestCase
         $this->assertSame(2, $table->getNumLazyLoadColumns());
     }
 
-    public function testHasEnumColumns()
+    public function testHasValueSetColumns()
     {
         $column1 = $this->getColumnMock('created_at');
         $column2 = $this->getColumnMock('updated_at');
 
         $column1
             ->expects($this->any())
-            ->method('isEnumType')
+            ->method('isValueSetType')
             ->will($this->returnValue(false))
         ;
 
         $column2
             ->expects($this->any())
-            ->method('isEnumType')
+            ->method('isValueSetType')
             ->will($this->returnValue(true))
         ;
 
         $table = new Table('books');
 
         $table->addColumn($column1);
-        $this->assertFalse($table->hasEnumColumns());
+        $this->assertFalse($table->hasValueSetColumns());
 
         $table->addColumn($column2);
-        $this->assertTrue($table->hasEnumColumns());
+        $this->assertTrue($table->hasValueSetColumns());
     }
 
     public function testCantGetColumn()
