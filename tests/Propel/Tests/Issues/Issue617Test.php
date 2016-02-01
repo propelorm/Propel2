@@ -153,11 +153,11 @@ CREATE TABLE `issue617_group`
         $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
 
         $expected = '
-ALTER TABLE `issue617_user` DROP FOREIGN KEY `issue617_user_fk_5936b3`;
-
-DROP INDEX `issue617_user_fi_5936b3` ON `issue617_user`;
-
 ALTER TABLE `issue617_user`
+
+  DROP FOREIGN KEY `issue617_user_fk_5936b3`,
+
+  DROP INDEX `issue617_user_fi_5936b3`,
 
   DROP `group_id`;
 ';

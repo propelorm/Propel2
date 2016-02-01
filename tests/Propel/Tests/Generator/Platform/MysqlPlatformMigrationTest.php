@@ -119,29 +119,29 @@ RENAME TABLE `foo1` TO `foo2`;
     public function testGetModifyTableDDL($tableDiff)
     {
         $expected = "
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_fk_2`;
-
-ALTER TABLE `foo` DROP FOREIGN KEY `foo1_fk_1`;
-
-DROP INDEX `bar_baz_fk` ON `foo`;
-
-DROP INDEX `foo1_fi_2` ON `foo`;
-
-DROP INDEX `bar_fk` ON `foo`;
-
 ALTER TABLE `foo`
+
+  DROP FOREIGN KEY `foo1_fk_2`,
+
+  DROP FOREIGN KEY `foo1_fk_1`,
+
+  DROP INDEX `bar_baz_fk`,
+
+  DROP INDEX `foo1_fi_2`,
+
+  DROP INDEX `bar_fk`,
 
   CHANGE `bar` `bar1` INTEGER,
 
   CHANGE `baz` `baz` VARCHAR(12),
 
-  ADD `baz3` TEXT AFTER `baz`;
+  ADD `baz3` TEXT AFTER `baz`,
 
-CREATE INDEX `bar_fk` ON `foo` (`bar1`);
+  ADD INDEX `bar_fk` (`bar1`),
 
-CREATE INDEX `baz_fk` ON `foo` (`baz3`);
+  ADD INDEX `baz_fk` (`baz3`),
 
-ALTER TABLE `foo` ADD CONSTRAINT `foo1_fk_1`
+  ADD CONSTRAINT `foo1_fk_1`
     FOREIGN KEY (`bar1`)
     REFERENCES `foo2` (`bar`);
 ";
@@ -182,13 +182,13 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
         $expected = "
-DROP INDEX `bar_fk` ON `foo`;
+ALTER TABLE `foo` DROP INDEX `bar_fk`;
 
-CREATE INDEX `baz_fk` ON `foo` (`baz`);
+ALTER TABLE `foo` ADD INDEX `baz_fk` (`baz`);
 
-DROP INDEX `bar_baz_fk` ON `foo`;
+ALTER TABLE `foo` DROP INDEX `bar_baz_fk`;
 
-CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
+ALTER TABLE `foo` ADD INDEX `bar_baz_fk` (`id`, `bar`, `baz`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
     }

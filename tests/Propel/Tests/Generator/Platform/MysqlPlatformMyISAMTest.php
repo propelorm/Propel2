@@ -546,9 +546,9 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`bar`);
     public function testAddIndicesDDL($table)
     {
         $expected = "
-CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
+ALTER TABLE `foo` ADD INDEX `babar` (`bar1`, `bar2`);
 
-CREATE INDEX `foo_index` ON `foo` (`bar1`);
+ALTER TABLE `foo` ADD INDEX `foo_index` (`bar1`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddIndicesDDL($table));
     }
@@ -559,7 +559,7 @@ CREATE INDEX `foo_index` ON `foo` (`bar1`);
     public function testAddIndexDDL($index)
     {
         $expected = "
-CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
+ALTER TABLE `foo` ADD INDEX `babar` (`bar1`, `bar2`);
 ";
         $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
     }
@@ -570,7 +570,7 @@ CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
     public function testDropIndexDDL($index)
     {
         $expected = "
-DROP INDEX `babar` ON `foo`;
+ALTER TABLE `foo` DROP INDEX `babar`;
 ";
         $this->assertEquals($expected, $this->getPlatform()->getDropIndexDDL($index));
     }
