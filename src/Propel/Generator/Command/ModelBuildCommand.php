@@ -69,7 +69,7 @@ class ModelBuildCommand extends AbstractCommand
                     case 'output-dir':
                         $configOptions['propel']['paths']['phpDir'] = $option;
                         break;
-                    case 'objects-class':
+                    case 'object-class':
                         $configOptions['propel']['generator']['objectModel']['builders']['object'] = $option;
                         break;
                     case 'object-stub-class':
