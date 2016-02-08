@@ -1064,7 +1064,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             $script .= "
         \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
         try {
-            \${$variableName} = SetColumnConverter::convertToInt(\$$variableName, \$valueSet);
+            \${$variableName} = SetColumnConverter::convertToInt(\${$variableName}, \$valueSet);
         } catch (SetColumnConverterException \$e) {
             throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
         }

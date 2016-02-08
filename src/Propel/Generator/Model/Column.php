@@ -1175,7 +1175,7 @@ class Column extends MappingModel
      */
     public function isEnumType()
     {
-        return $this->getType() === PropelTypes::ENUM;
+        return PropelTypes::ENUM === $this->getType();
     }
 
     /**
@@ -1185,7 +1185,7 @@ class Column extends MappingModel
      */
     public function isSetType()
     {
-        return $this->getType() === PropelTypes::SET;
+        return PropelTypes::SET === $this->getType();
     }
 
     /**
