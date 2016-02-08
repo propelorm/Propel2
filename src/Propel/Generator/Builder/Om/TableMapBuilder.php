@@ -246,8 +246,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 $script .= "
                 {$col->getFQConstantName()} => array(
                 ";
-                foreach ($col->getValueSet() as $value) {
-                    $script .= "            self::" . $col->getConstantName() . '_' . $this->getEnumValueConstant($value) . ",
+                foreach ($col->getValueSet() as $key => $value) {
+					$value = "self::" . $col->getConstantName() . '_' . $this->getEnumValueConstant($value);
+					$key = $col->getPhpType() === 'string' ? $value . " => " : '';
+                    $script .= "            ".$key.$value . ",
 ";
                 }
                 $script .= "        ),";

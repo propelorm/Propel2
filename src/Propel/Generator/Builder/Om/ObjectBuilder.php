@@ -185,6 +185,8 @@ class ObjectBuilder extends AbstractObjectBuilder
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
+            settype($defaultValue, $column->getPhpType());
+            $defaultValue = var_export($defaultValue, true);
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
@@ -1810,8 +1812,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$v !== null) {
+            \$v = (string) \$v;
             \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
-            if (!in_array(\$v, \$valueSet)) {
+            if (!in_array(\$v, \$valueSet, true)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
             }
             \$v = array_search(\$v, \$valueSet);
