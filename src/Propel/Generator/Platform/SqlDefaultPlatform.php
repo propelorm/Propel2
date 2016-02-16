@@ -15,6 +15,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
@@ -95,7 +96,7 @@ class SqlDefaultPlatform implements PlatformInterface
     }
 
     protected function toUnderscore($v) {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $v));
+        return NamingTool::toUnderscore($v);
     }
 
     public function getRepositoryBuilder(Entity $entity)

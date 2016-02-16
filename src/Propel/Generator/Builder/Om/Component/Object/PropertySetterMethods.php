@@ -2,12 +2,10 @@
 
 namespace Propel\Generator\Builder\Om\Component\Object;
 
-use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
-use Propel\Generator\Builder\Om\Component\ComponentHelperTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\Field;
-use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Adds all setter methods for all entity fields. Excludes fields marked as implementationDetail.
@@ -75,7 +73,7 @@ if (!is_resource(\$$varName) && \$$varName !== null) {
 \$this->$varName = \$$varName;
 return \$this;";
 
-        $methodName = 'set' . ucfirst($field->getName());
+        $methodName = 'set' . NamingTool::toUpperCamelCase($field->getName());
 
         $method = $this->addMethod($methodName, $visibility)
             ->setType($className . '|$this')

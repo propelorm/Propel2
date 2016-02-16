@@ -61,7 +61,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //columnName
 ";
         foreach ($camelNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $camelNames[$idx];
             $body .= "
     \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
         }
@@ -71,7 +71,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //column_name
 ";
         foreach ($columnNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $columnNames[$idx];
             $body .= "
     \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
         }
@@ -81,7 +81,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //book.column_name
 ";
         foreach ($fullColumnNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $fullColumnNames[$idx];
             $body .= "
     \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
         }
@@ -101,8 +101,6 @@ if (\$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLev
     return \$object;
 }
 ";
-
-
 
         $body .= "
 \$writer = \$this->getPropWriter();
@@ -155,7 +153,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //columnName
 ";
         foreach ($camelNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $camelNames[$idx];
             $body .= "
     \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
@@ -169,7 +167,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //column_name
 ";
         foreach ($columnNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $columnNames[$idx];
             $body .= "
     \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
@@ -183,7 +181,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //book.column_name
 ";
         foreach ($fullColumnNames as $idx => $fieldName) {
-            $propName = $fieldNames[$idx];
+            $propName = $fullColumnNames[$idx];
             $body .= "
     \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
@@ -234,11 +232,11 @@ if (\$exist) {
 ";
         }
 
-
         $body .= "
 \$this->getConfiguration()->getSession()->setLastKnownValues(\$obj, \$originalValues);
 \$offset = \$offset + $fieldCount;
 unset(\$obj->__duringInitializing__);
+
 return \$obj;
 ";
 

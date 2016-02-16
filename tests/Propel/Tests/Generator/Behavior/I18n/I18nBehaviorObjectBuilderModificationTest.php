@@ -1,7 +1,6 @@
 <?php
 
 /*
- *	$Id: VersionableBehaviorTest.php 1460 2010-01-17 22:36:48Z francois $
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,8 +14,6 @@ use Propel\Tests\Bookstore\Behavior\Movie;
 use Propel\Tests\Bookstore\Behavior\MovieQuery;
 use Propel\Tests\Bookstore\Behavior\MovieI18nQuery;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\I18n\I18nBehavior;
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -25,73 +22,68 @@ use Propel\Tests\TestCase;
  * @author François Zaninotto
  * @group skip
  */
-class I18nBehaviorObjectBuilderModifierTest extends TestCase
+class I18nBehaviorObjectBuilderModificationTest extends TestCase
 {
     public function setUp()
     {
         if (!class_exists('\I18nBehaviorTest1')) {
             $schema = <<<EOF
-<database name="i18n_behavior_test_1">
-    <table name="i18n_behavior_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+<database name="i18n_behavior_test_1" activeRecord="true">
+    <entity name="I18nBehaviorTest1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_fields" value="bar" />
         </behavior>
-    </table>
-    <table name="i18n_behavior_test_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar1" type="VARCHAR" size="100" />
-        <column name="bar2" type="LONGVARCHAR" lazyLoad="true" />
-        <column name="bar3" type="TIMESTAMP" />
-        <column name="bar4" type="LONGVARCHAR" description="This is the Bar4 column" />
+    </entity>
+    <entity name="I18nBehaviorTest2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar1" type="VARCHAR" size="100" />
+        <field name="bar2" type="LONGVARCHAR" lazyLoad="true" />
+        <field name="bar3" type="TIMESTAMP" />
+        <field name="bar4" type="LONGVARCHAR" description="This is the Bar4 column" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar1,bar2,bar3,bar4" />
+            <parameter name="i18n_fileds" value="bar1,bar2,bar3,bar4" />
             <parameter name="default_locale" value="fr_FR" />
             <parameter name="locale_alias" value="culture" />
         </behavior>
-    </table>
-
-    <table name="movie">
-        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
-        <column name="director" type="varchar" size="255" />
-        <column name="title" type="varchar" primaryString="true" />
+    </entity>
+    <entity name="Movie">
+        <field name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
+        <field name="director" type="varchar" size="255" />
+        <field name="title" type="varchar" primaryString="true" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="title" />
+            <parameter name="i18n_fields" value="title" />
             <parameter name="locale_alias" value="culture" />
         </behavior>
-    </table>
-    <table name="toy">
-        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
-        <column name="ref" type="varchar" size="255" />
-        <column name="name" type="varchar" size="255" />
+    </entity>
+    <entity name="Toy">
+        <field name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
+        <field name="ref" type="varchar" size="255" />
+        <field name="name" type="varchar" size="255" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="name" />
+            <parameter name="i18n_fields" value="name" />
             <parameter name="locale_alias" value="culture" />
         </behavior>
-        <column name="movie_id" type="integer" />
-        <foreign-key foreignTable="movie" onDelete="cascade">
-            <reference local="movie_id" foreign="id" />
-        </foreign-key>
-    </table>
-
-    <table name="i18n_behavior_test_local_column">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <relation target="Movie" onDelete="cascade" />
+    </entity>
+    <entity name="I18nBehaviorTestLocalColumn">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="locale_column" value="my_lang" />
+            <parameter name="i18n_fields" value="bar" />
+            <parameter name="locale_field" value="my_lang" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
-            $this->con = QuickBuilder::buildSchema($schema);
+            QuickBuilder::buildSchema($schema);
         }
     }
-
+    
     public function testPostDeleteEmulatesOnDeleteCascade()
     {
         \I18nBehaviorTest1Query::create()->deleteAll();
@@ -103,8 +95,13 @@ EOF;
         $o->setLocale('fr_FR');
         $o->setBar('bonjour');
         $o->save();
+
         $this->assertEquals(2, \I18nBehaviorTest1I18nQuery::create()->count());
-        $o->clearI18nBehaviorTest1I18ns();
+
+        $refl = new \ReflectionObject($o);
+        $refl->getProperty('i18nBehaviorTest1I18ns')->setAccessible(true);
+        $o->i18nTest1I18ns = null;
+
         $o->delete();
         $this->assertEquals(0, \I18nBehaviorTest1I18nQuery::create()->count());
     }
@@ -135,8 +132,10 @@ EOF;
     {
         $o = new \I18nBehaviorTest1();
         $translation = new \I18nBehaviorTest1I18n();
+        $translation->setLocale('en_US');
         $o->addI18nBehaviorTest1I18n($translation);
         $o->save();
+
         $translation = $o->getTranslation();
         $this->assertFalse($translation->isNew());
     }
@@ -310,19 +309,6 @@ EOF;
         $this->assertEquals(2, $count);
     }
 
-    public function testClearRemovesExistingTranslations()
-    {
-        $o = new \I18nBehaviorTest1();
-        $translation1 = new \I18nBehaviorTest1I18n();
-        $translation1->setBar('baz');
-        $translation1->setLocale('fr_FR');
-        $o->addI18nBehaviorTest1I18n($translation1);
-        $o->clear();
-        $this->assertEquals('en_US', $o->getLocale());
-        $t1 = $o->getTranslation('fr_FR');
-        $this->assertEquals('', $t1->getBar());
-    }
-
     public function testI18nWithRelations()
     {
         \MovieQuery::create()->deleteAll();
@@ -355,6 +341,7 @@ EOF;
         $count = \ToyQuery::create()->count();
         $this->assertEquals(1, $count, '1 toy');
         $count = \MovieI18nQuery::create()->count();
+
         $this->assertEquals(2, $count, '2 i18n movies');
         $count = \ToyI18nQuery::create()->count();
         $this->assertEquals(0, $count, '0 i18n toys');
@@ -393,10 +380,13 @@ EOF;
 
         $count = \MovieQuery::create()->count();
         $this->assertEquals(1, $count, '1 movie');
+
         $count = \ToyQuery::create()->count();
         $this->assertEquals(1, $count, '1 toy');
+
         $count = \ToyI18nQuery::create()->count();
         $this->assertEquals(2, $count, '2 i18n toys');
+
         $count = \MovieI18nQuery::create()->count();
         $this->assertEquals(0, $count, '0 i18n movies');
     }
@@ -415,3 +405,4 @@ EOF;
         $this->assertEquals($translation2, $o->getTranslation('fr_FR'));
     }
 }
+

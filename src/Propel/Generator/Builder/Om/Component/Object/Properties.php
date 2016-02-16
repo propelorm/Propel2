@@ -62,7 +62,7 @@ class Properties extends BuildComponent
         }
         $clo = $field->getName();
 
-        $description[] = 'The value for the $clo field.';
+        $description[] = "The value for the $clo field.";
 
         if ($field->getDefaultValue()) {
             if ($field->getDefaultValue()->isExpression()) {

@@ -11,8 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\I18n\I18nBehavior;
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCase;
 
@@ -22,35 +20,34 @@ use Propel\Tests\TestCase;
  * @author François Zaninotto
  * @group skip
  */
-class I18nBehaviorQueryBuilderModifierTest extends TestCase
+class I18nBehaviorQueryBuilderModificationTest extends TestCase
 {
-
     public function setUp()
     {
         if (!class_exists('\I18nBehaviorTest11')) {
             $schema = <<<EOF
-<database name="i18n_behavior_test_10" identifierQuoting="true">
-    <table name="i18n_behavior_test_11">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+<database name="i18n_behavior_test_10" identifierQuoting="true" activeRecord="true">
+    <entity name="I18nBehaviorTest11">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_fields" value="bar" />
         </behavior>
-    </table>
-    <table name="i18n_behavior_test_12">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar1" type="VARCHAR" size="100" />
-        <column name="bar2" type="LONGVARCHAR" lazyLoad="true" />
-        <column name="bar3" type="TIMESTAMP" />
-        <column name="bar4" type="LONGVARCHAR" description="This is the Bar4 column" />
+    </entity>
+    <entity name="I18nBehaviorTest12">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar1" type="VARCHAR" size="100" />
+        <field name="bar2" type="LONGVARCHAR" lazyLoad="true" />
+        <field name="bar3" type="TIMESTAMP" />
+        <field name="bar4" type="LONGVARCHAR" description="This is the Bar4 field" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar1,bar2,bar3,bar4" />
+            <parameter name="i18n_fields" value="bar1,bar2,bar3,bar4" />
             <parameter name="default_locale" value="fr_FR" />
             <parameter name="locale_alias" value="culture" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
@@ -60,11 +57,12 @@ EOF;
     public function testJoinI18nUsesDefaultLocaleInJoinCondition()
     {
         $q = \I18nBehaviorTest11Query::create();
+        $q->setIdentifierQuoting(true);
 
         $q->joinI18n();
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = :p1)');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = :p1)');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_US', $params[0]['value']);
     }
@@ -73,9 +71,11 @@ EOF;
     {
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('fr_FR');
+        $q->setIdentifierQuoting(true);
+
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = :p1)');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = :p1)');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
     }
@@ -84,9 +84,11 @@ EOF;
     {
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('en_US', 'I18n');
+        $q->setIdentifierQuoting(true);
+
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` `I18n` ON (`i18n_behavior_test_11`.`id`=`I18n`.`id` AND `I18n`.`locale` = :p1)');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` `I18n` ON (`i18n_behavior_test11`.`id`=`I18n`.`id` AND `I18n`.`locale` = :p1)');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_US', $params[0]['value']);
     }
@@ -95,34 +97,36 @@ EOF;
     {
         $q = \I18nBehaviorTest11Query::create()
             ->joinI18n('en_US', null, Criteria::INNER_JOIN);
+        $q->setIdentifierQuoting(true);
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` INNER JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = :p1)');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` INNER JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = :p1)');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_US', $params[0]['value']);
     }
 
     public function testJoinI18nCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
+        $con = QuickBuilder::$configuration
+            ->getConnectionManager(\Map\I18nBehaviorTest11EntityMap::DATABASE_NAME)
+            ->getReadConnection();
         $con->useDebug(true);
-        \I18nBehaviorTest11Query::create()
-            ->joinI18n('fr_FR')
-            ->find($con);
-        $expected = $this->getSql("SELECT `i18n_behavior_test_11`.`id`, `i18n_behavior_test_11`.`foo` FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = 'fr_FR')");
+        $q = \I18nBehaviorTest11Query::create();
+        $q->setIdentifierQuoting(true);
+        $q->joinI18n('fr_FR')->find($con);
+        $expected = $this->getSql("SELECT `i18n_behavior_test11`.`id`, `i18n_behavior_test11`.`foo` FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = 'fr_FR')");
         $this->assertEquals($expected, $con->getLastExecutedQuery());
         $con->useDebug(false);
     }
 
     public function testUseI18nQueryAddsTheProperJoin()
     {
-        $q = \I18nBehaviorTest11Query::create()
-            ->useI18nQuery('fr_FR')
-                ->filterByBar('bar')
-            ->endUse();
+        $q = \I18nBehaviorTest11Query::create();
+        $q->setIdentifierQuoting(true);
+        $q->useI18nQuery('fr_FR')->filterByBar('bar')->endUse();
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = :p1) WHERE `i18n_behavior_test_11_i18n`.`bar`=:p2');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = :p1) WHERE `i18n_behavior_test11_i18n`.`bar`=:p2');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
         $this->assertEquals('bar', $params[1]['value']);
@@ -130,13 +134,14 @@ EOF;
 
     public function testUseI18nQueryAcceptsARelationAlias()
     {
-        $q = \I18nBehaviorTest11Query::create()
-            ->useI18nQuery('fr_FR', 'I18n')
+        $q = \I18nBehaviorTest11Query::create();
+        $q->setIdentifierQuoting(true);
+        $q->useI18nQuery('fr_FR', 'I18n')
                 ->filterByBar('bar')
             ->endUse();
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` `I18n` ON (`i18n_behavior_test_11`.`id`=`I18n`.`id` AND `I18n`.`locale` = :p1) WHERE `I18n`.`bar`=:p2');
+        $expectedSQL = $this->getSql('SELECT  FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` `I18n` ON (`i18n_behavior_test11`.`id`=`I18n`.`id` AND `I18n`.`locale` = :p1) WHERE `I18n`.`bar`=:p2');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('fr_FR', $params[0]['value']);
         $this->assertEquals('bar', $params[1]['value']);
@@ -144,14 +149,17 @@ EOF;
 
     public function testUseI18nQueryCreatesACorrectQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
+        $con = QuickBuilder::$configuration
+            ->getConnectionManager(\Map\I18nBehaviorTest11EntityMap::DATABASE_NAME)
+            ->getReadConnection();
         $con->useDebug(true);
-        \I18nBehaviorTest11Query::create()
-            ->useI18nQuery('fr_FR')
+        $q = \I18nBehaviorTest11Query::create();
+        $q->setIdentifierQuoting(true);
+        $q->useI18nQuery('fr_FR')
                 ->filterByBar('bar')
             ->endUse()
-            ->find($con);
-        $expected = $this->getSql("SELECT `i18n_behavior_test_11`.`id`, `i18n_behavior_test_11`.`foo` FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = 'fr_FR') WHERE `i18n_behavior_test_11_i18n`.`bar`='bar'");
+        ->find($con);
+        $expected = $this->getSql("SELECT `i18n_behavior_test11`.`id`, `i18n_behavior_test11`.`foo` FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = 'fr_FR') WHERE `i18n_behavior_test11_i18n`.`bar`='bar'");
         $this->assertEquals($expected, $con->getLastExecutedQuery());
         $con->useDebug(false);
     }
@@ -160,9 +168,10 @@ EOF;
     {
         $q = \I18nBehaviorTest11Query::create()
             ->joinWithI18n();
+        $q->setIdentifierQuoting(true);
         $params = array();
         $sql = $q->createSelectSQL($params);
-        $expectedSQL = $this->getSql('SELECT `i18n_behavior_test_11`.`id`, `i18n_behavior_test_11`.`foo`, `i18n_behavior_test_11_i18n`.`id`, `i18n_behavior_test_11_i18n`.`locale`, `i18n_behavior_test_11_i18n`.`bar` FROM `i18n_behavior_test_11` LEFT JOIN `i18n_behavior_test_11_i18n` ON (`i18n_behavior_test_11`.`id`=`i18n_behavior_test_11_i18n`.`id` AND `i18n_behavior_test_11_i18n`.`locale` = :p1)');
+        $expectedSQL = $this->getSql('SELECT `i18n_behavior_test11`.`id`, `i18n_behavior_test11`.`foo`, `i18n_behavior_test11_i18n`.`id`, `i18n_behavior_test11_i18n`.`locale`, `i18n_behavior_test11_i18n`.`bar` FROM `i18n_behavior_test11` LEFT JOIN `i18n_behavior_test11_i18n` ON (`i18n_behavior_test11`.`id`=`i18n_behavior_test11_i18n`.`id` AND `i18n_behavior_test11_i18n`.`locale` = :p1)');
         $this->assertEquals($expectedSQL, $sql);
         $this->assertEquals('en_US', $params[0]['value']);
     }
@@ -195,7 +204,9 @@ EOF;
 
     public function testJoinWithI18nHydratesRelatedObject()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
+        $con = QuickBuilder::$configuration
+            ->getConnectionManager(\Map\I18nBehaviorTest11EntityMap::DATABASE_NAME)
+            ->getReadConnection();
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
@@ -206,13 +217,12 @@ EOF;
         $o->setLocale('fr_FR');
         $o->setBar('bonjour');
         $o->save();
-        \Map\I18nBehaviorTest11TableMap::clearInstancePool();
-        \Map\I18nBehaviorTest11I18nTableMap::clearInstancePool();
-        $o = \I18nBehaviorTest11Query::create()
+
+        $o2 = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_US')
             ->findOne($con);
         $count = $con->getQueryCount();
-        $translation = $o->getTranslation('en_US', $con);
+        $translation = $o2->getTranslation('en_US', $con);
         $this->assertEquals($count, $con->getQueryCount());
         $this->assertEquals('hello', $translation->getBar());
     }
@@ -228,10 +238,12 @@ EOF;
         $o->setLocale('fr_FR');
         $o->setBar('bonjour');
         $o->save();
+
         $o1 = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_US')
             ->findOne();
         $this->assertEquals('en_US', $o1->getLocale());
+
         $o2 = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('fr_FR')
             ->findOne();
@@ -258,20 +270,23 @@ EOF;
     // $t2 = $o->getTranslation('fr_FR'); // we MUST issue a query here
     public function testJoinWithI18nDoesNotExecuteAdditionalQueryWhenNoTranslationIsFound()
     {
-        $this->markTestSkipped();
-
-        $con = Propel::getServiceContainer()->getConnection(\Map\I18nBehaviorTest11TableMap::DATABASE_NAME);
+        $con = QuickBuilder::$configuration
+            ->getConnectionManager(\Map\I18nBehaviorTest11EntityMap::DATABASE_NAME)
+            ->getReadConnection();
         $con->useDebug(true);
         \I18nBehaviorTest11Query::create()->deleteAll();
         \I18nBehaviorTest11I18nQuery::create()->deleteAll();
         $o = new \I18nBehaviorTest11();
         $o->save();
+
         $o = \I18nBehaviorTest11Query::create()
             ->joinWithI18n('en_US')
             ->findOne($con);
-        $count = $con->getQueryCount();
-        $translation = $o->getTranslation('en_US', $con);
-        $this->assertEquals($count, $con->getQueryCount());
-    }
 
+        $count = $con->getQueryCount();
+
+        //getTranslation() method performs a query
+        $translation = $o->getTranslation('en_US', $con);
+        $this->assertEquals($count+1, $con->getQueryCount());
+    }
 }

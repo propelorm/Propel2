@@ -42,7 +42,6 @@ class EntityMapBuilder extends AbstractBuilder
     public function buildClass()
     {
         $this->getDefinition()->declareUses(
-            '\Propel\Runtime\Propel',
             '\Propel\Runtime\EntityMap'
         );
         $this->getDefinition()->setParentClassName('\Propel\Runtime\Map\EntityMap');

@@ -4,7 +4,7 @@ namespace Propel\Generator\Builder\Om\Component\Object;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Model\Field;
-use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Adds all getter methods for all entity fields. Excludes fields marked as implementationDetail.
@@ -37,7 +37,8 @@ class PropertyGetterMethods extends BuildComponent
     {
         $varName = $field->getName();
         $visibility = $field->getAccessorVisibility();
-        $methodName = 'get' . ucfirst($field->getName());
+        $methodName = 'get' . NamingTool::toUpperCamelCase($field->getName());
+
         $method = $this->addMethod($methodName, $visibility);
 
         $body = '';

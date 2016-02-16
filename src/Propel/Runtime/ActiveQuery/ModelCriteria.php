@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\SaveEvent;
@@ -659,7 +660,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function with($relation)
     {
-        $relation = strtolower($relation);
+        //$relation = strtolower($relation);
 
         if (!isset($this->joins[$relation])) {
             throw new UnknownRelationException('Unknown relation name or alias ' . $relation);
@@ -890,7 +891,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function addRelationSelectFields($relation)
     {
-        $relation = strtolower($relation);
+        //$relation = strtolower($relation);
 
         $join = $this->joins[$relation];
         $join->getEntityMap()->addSelectFields($this, $join->getRelationAlias());
@@ -1040,7 +1041,7 @@ class ModelCriteria extends BaseModelCriteria
             $class = $this->getEntityName();
             $obj = new $class();
             foreach ($this->keys() as $key) {
-                $obj->setByName($key, $this->getValue($key), EntityMap::TYPE_FULLCOLNAME);
+                $obj->setByName(NamingTool::toUnderscore($key), $this->getValue($key), EntityMap::TYPE_FULLCOLNAME);
             }
             $ret = $this->getFormatter()->formatRecord($obj);
         }
@@ -1811,6 +1812,7 @@ class ModelCriteria extends BaseModelCriteria
 
         // Add requested fields which are not withFields
         $fieldNames = is_array($this->select) ? $this->select : array($this->select);
+
         foreach ($fieldNames as $fieldName) {
             // check if the field was added by a withField, if not add it
             if (!array_key_exists($fieldName, $this->getAsFields())) {
@@ -1916,9 +1918,9 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return $this|ModelCriteria A modified Criteria object.
      */
-    public function addUsingAlias($p1, $value = null, $operator = null)
+    public function addUsingAlias($field, $value = null, $operator = null)
     {
-        return $this->addUsingOperator($this->getAliasedColName($p1), $value, $operator);
+        return $this->addUsingOperator($this->getAliasedColName($field), $value, $operator);
     }
 
     /**

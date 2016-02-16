@@ -389,7 +389,7 @@ class Field extends MappingModel
      */
     public function getUnderscoreName()
     {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $this->name));
+        return NamingTool::toUnderscore($this->name);
     }
 
     /**

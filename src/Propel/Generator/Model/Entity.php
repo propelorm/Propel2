@@ -14,7 +14,6 @@ use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
-use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
 
@@ -198,7 +197,7 @@ class Entity extends ScopedMappingModel implements IdMethod
 
         $names = explode('\\', $this->name);
         $shortName = array_pop($names);
-        $this->tableName = $this->getAttribute('tableName') ?: strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $shortName));
+        $this->tableName = $this->getAttribute('tableName') ?: NamingTool::toUnderscore($shortName);
 
         if ($this->getAttribute('activeRecord')) {
             $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
@@ -525,7 +524,7 @@ class Entity extends ScopedMappingModel implements IdMethod
         $position = false;
         $nbFields = $this->getNumFields();
         for ($pos = 0; $pos < $nbFields; $pos++) {
-            if ($this->fields[$pos]->getName() === $field) {
+            if ($this->fields[$pos]->getName() === $field->getName()) {
                 $position = $pos;
             }
         }

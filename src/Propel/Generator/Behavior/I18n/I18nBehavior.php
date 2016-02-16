@@ -10,9 +10,14 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
 
@@ -24,14 +29,15 @@ use Propel\Generator\Behavior\Validate\ValidateBehavior;
  */
 class I18nBehavior extends Behavior
 {
+    use ComponentTrait;
+
     const DEFAULT_LOCALE = 'en_US';
 
     // default parameters value
     protected $parameters = array(
-        'i18n_table'        => '%TABLE%_i18n',
-        'i18n_phpname'      => '%PHPNAME%I18n',
+        'i18n_entity'      => '%ENTITYNAME%I18n',
         'i18n_fields'      => '',
-        'i18n_pk_field'    => null,
+        'i18n_relation_field' => null,
         'locale_field'     => 'locale',
         'locale_length'     => 5,
         'default_locale'    => null,
@@ -40,17 +46,16 @@ class I18nBehavior extends Behavior
 
     protected $tableModificationOrder = 70;
 
-    protected $objectBuilderModifier;
-
-    protected $queryBuilderModifier;
-
+    /**
+     * @var \Propel\Generator\Model\Entity
+     */
     protected $i18nEntity;
 
     public function modifyDatabase()
     {
-        foreach ($this->getDatabase()->getEntities() as $table) {
-            if ($table->hasBehavior('i18n') && !$table->getBehavior('i18n')->getParameter('default_locale')) {
-                $table->getBehavior('i18n')->addParameter(array(
+        foreach ($this->getDatabase()->getEntities() as $entity) {
+            if ($entity->hasBehavior('i18n') && !$entity->getBehavior('i18n')->getParameter('default_locale')) {
+                $entity->getBehavior('i18n')->addParameter(array(
                     'name'  => 'default_locale',
                     'value' => $this->getParameter('default_locale'),
                 ));
@@ -72,11 +77,11 @@ class I18nBehavior extends Behavior
         return $this->i18nEntity;
     }
 
-    public function getI18nForeignKey()
+    public function getI18nRelation()
     {
-        foreach ($this->i18nEntity->getForeignKeys() as $fk) {
-            if ($fk->getForeignEntityName() == $this->table->getName()) {
-                return $fk;
+        foreach ($this->i18nEntity->getRelations() as $relation) {
+            if ($relation->getForeignEntityName() == $this->entity->getName()) {
+                return $relation;
             }
         }
     }
@@ -111,37 +116,39 @@ class I18nBehavior extends Behavior
 
     public function replaceTokens($string)
     {
-        $table = $this->getEntity();
+        $entity = $this->getEntity();
 
         return strtr($string, array(
-            '%TABLE%'   => $table->getOriginCommonName(),
-            '%PHPNAME%' => $table->getName(),
+            '%ENTITYNAME%' => $entity->getName(),
         ));
     }
 
-    public function getObjectBuilderModifier()
+    public function PostDelete(RepositoryBuilder $repositoryBuilder)
     {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new I18nBehaviorObjectBuilderModifier($this);
+        if (!$repositoryBuilder->getDatabase()->getPlatform()->supportsNativeDeleteTrigger() &&
+            !$repositoryBuilder->getGeneratorConfig()->get()['generator']['objectModel']['emulateForeignKeyConstraints']) {
+            return $this->applyComponent('PostDelete', $repositoryBuilder, $this);
         }
-
-        return $this->objectBuilderModifier;
     }
 
-    public function getQueryBuilderModifier()
+    public function objectBuilderModification(ObjectBuilder $builder)
     {
-        if (null === $this->queryBuilderModifier) {
-            $this->queryBuilderModifier = new I18nBehaviorQueryBuilderModifier($this);
-        }
-
-        return $this->queryBuilderModifier;
+        $this->applyComponent('Attributes', $builder);
+        $this->applyComponent('Setters', $builder);
+        $this->applyComponent('Getters', $builder);
+        $this->applyComponent('RemoveTranslation', $builder);
+        $this->applyComponent('ModifyAdder', $builder);
     }
 
-    public function staticAttributes($builder)
+    public function queryBuilderModification(QueryBuilder $builder)
     {
-        return $this->renderTemplate('staticAttributes', array(
-            'defaultLocale' => $this->getDefaultLocale(),
-        ));
+        $this->applyComponent('Query\Join', $builder);
+        $this->applyComponent('Query\UseI18n', $builder);
+    }
+
+    public function entityMapBuilderModification(EntityMapBuilder $builder)
+    {
+        $this->applyComponent('EntityMap\PopulateObject', $builder);
     }
 
     public function modifyEntity()
@@ -154,8 +161,8 @@ class I18nBehavior extends Behavior
 
     protected function addI18nEntity()
     {
-        $table         = $this->getEntity();
-        $database      = $table->getDatabase();
+        $entity         = $this->getEntity();
+        $database       = $entity->getDatabase();
         $i18nEntityName = $this->getI18nEntityName();
 
         if ($database->hasEntity($i18nEntityName)) {
@@ -163,12 +170,11 @@ class I18nBehavior extends Behavior
         } else {
             $this->i18nEntity = $database->addEntity(array(
                 'name'      => $i18nEntityName,
-                'phpName'   => $this->getI18nEntityPhpName(),
-                'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
-                'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-                'skipSql'   => $table->isSkipSql(),
-                'identifierQuoting' => $table->getIdentifierQuoting()
+                'package'   => $entity->getPackage(),
+                'schema'    => $entity->getSchema(),
+                'namespace' => $entity->getNamespace() ? '\\' . $entity->getNamespace() : null,
+                'skipSql'   => $entity->isSkipSql(),
+                'identifierQuoting' => $entity->getIdentifierQuoting()
             ));
 
             // every behavior adding a table should re-execute database behaviors
@@ -180,7 +186,7 @@ class I18nBehavior extends Behavior
 
     protected function relateI18nEntityToMainEntity()
     {
-        $table     = $this->getEntity();
+        $entity     = $this->getEntity();
         $i18nEntity = $this->i18nEntity;
         $pks       = $this->getEntity()->getPrimaryKey();
 
@@ -191,10 +197,10 @@ class I18nBehavior extends Behavior
         $field = $pks[0];
         $i18nField = clone $field;
 
-        if ($this->getParameter('i18n_pk_field')) {
+        if ($this->getParameter('i18n_relation_field')) {
             // custom i18n table pk name
-            $i18nField->setName($this->getParameter('i18n_pk_field'));
-        } else if (in_array($table->getName(), $i18nEntity->getForeignEntityNames())) {
+            $i18nField->setName($this->getParameter('i18n_relation_field'));
+        } else if (in_array($entity->getName(), $i18nEntity->getForeignEntityNames())) {
             // custom i18n table pk name not set, but some fk already exists
             return;
         }
@@ -204,28 +210,29 @@ class I18nBehavior extends Behavior
             $i18nEntity->addField($i18nField);
         }
 
-        $fk = new ForeignKey();
-        $fk->setForeignEntityCommonName($table->getCommonName());
-        $fk->setForeignSchemaName($table->getSchema());
-        $fk->setDefaultJoin('LEFT JOIN');
-        $fk->setOnDelete(ForeignKey::CASCADE);
-        $fk->setOnUpdate(ForeignKey::NONE);
-        $fk->addReference($i18nField->getName(), $field->getName());
+        $relation = new Relation();
+        $relation->setForeignEntityName($entity->getName());
+        $relation->setDefaultJoin('LEFT JOIN');
+        $relation->setOnDelete(Relation::CASCADE);
+        $relation->setOnUpdate(Relation::NONE);
+        $relation->addReference($i18nField->getName(), $field->getName());
 
-        $i18nEntity->addForeignKey($fk);
+        $i18nEntity->addRelation($relation);
+
+        $this->relation = $relation;
     }
 
     protected function addLocaleFieldToI18n()
     {
         $localeFieldName = $this->getLocaleFieldName();
 
-        if (! $this->i18nEntity->hasField($localeFieldName)) {
+        if (!$this->i18nEntity->hasField($localeFieldName)) {
             $this->i18nEntity->addField(array(
                 'name'       => $localeFieldName,
                 'type'       => PropelTypes::VARCHAR,
                 'size'       => $this->getParameter('locale_length') ? (int) $this->getParameter('locale_length') : 5,
                 'default'    => $this->getDefaultLocale(),
-                'primaryKey' => 'true',
+                'primaryKey' => true
             ));
         }
     }
@@ -235,22 +242,22 @@ class I18nBehavior extends Behavior
      */
     protected function moveI18nFields()
     {
-        $table     = $this->getEntity();
+        $entity     = $this->getEntity();
         $i18nEntity = $this->i18nEntity;
 
         $i18nValidateParams = array();
         foreach ($this->getI18nFieldNamesFromConfig() as $fieldName) {
             if (!$i18nEntity->hasField($fieldName)) {
-                if (!$table->hasField($fieldName)) {
-                    throw new EngineException(sprintf('No field named %s found in table %s', $fieldName, $table->getName()));
+                if (!$entity->hasField($fieldName)) {
+                    throw new EngineException(sprintf('No field named %s found in table %s', $fieldName, $entity->getName()));
                 }
 
-                $field = $table->getField($fieldName);
+                $field = $entity->getField($fieldName);
                 $i18nEntity->addField(clone $field);
 
                 // validate behavior: move rules associated to the field
-                if ($table->hasBehavior('validate')) {
-                    $validateBehavior = $table->getBehavior('validate');
+                if ($entity->hasBehavior('validate')) {
+                    $validateBehavior = $entity->getBehavior('validate');
                     $params = $validateBehavior->getParametersFromFieldName($fieldName);
                     $i18nValidateParams = array_merge($i18nValidateParams, $params);
                     $validateBehavior->removeParametersFromFieldName($fieldName);
@@ -258,8 +265,8 @@ class I18nBehavior extends Behavior
                 // FIXME: also move FKs, and indices on this field
             }
 
-            if ($table->hasField($fieldName)) {
-                $table->removeField($fieldName);
+            if ($entity->hasField($fieldName)) {
+                $entity->removeField($fieldName);
             }
         }
 
@@ -271,19 +278,14 @@ class I18nBehavior extends Behavior
             $i18nEntity->addBehavior($i18nVbehavior);
 
             // current table must have almost 1 validation rule
-            $validate = $table->getBehavior('validate');
+            $validate = $entity->getBehavior('validate');
             $validate->addRuleOnPk();
         }
     }
 
     protected function getI18nEntityName()
     {
-        return $this->replaceTokens($this->getParameter('i18n_table'));
-    }
-
-    protected function getI18nEntityPhpName()
-    {
-        return $this->replaceTokens($this->getParameter('i18n_phpname'));
+        return $this->replaceTokens($this->getParameter('i18n_entity'));
     }
 
     protected function getLocaleFieldName()
@@ -291,7 +293,7 @@ class I18nBehavior extends Behavior
         return $this->replaceTokens($this->getParameter('locale_field'));
     }
 
-    protected function getI18nFieldNamesFromConfig()
+    public function getI18nFieldNamesFromConfig()
     {
         $fieldNames = explode(',', $this->getParameter('i18n_fields'));
         foreach ($fieldNames as $key => $fieldName) {
