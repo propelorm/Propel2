@@ -84,6 +84,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private $alias;
     private $interface;
     private $baseClass;
+    private $baseQueryClass;
     private $columnsByName;
     private $columnsByLowercaseName;
     private $columnsByPhpName;
@@ -200,6 +201,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $this->isAbstract = $this->booleanValue($this->getAttribute('abstract'));
         $this->baseClass = $this->getAttribute('baseClass');
+        $this->baseQueryClass = $this->getAttribute('baseQueryClass');
         $this->alias = $this->getAttribute('alias');
 
         $this->heavyIndexing = (
@@ -477,6 +479,21 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Returns the name of the base query class used for superclass of all query objects
+     * of this table.
+     *
+     * @return string
+     */
+    public function getBaseQueryClass()
+    {
+        if (null === $this->baseQueryClass) {
+            return $this->database->getBaseQueryClass();
+        }
+
+        return $this->baseQueryClass;
+    }
+
+    /**
      * Sets the base class name.
      *
      * @param string $class
@@ -484,6 +501,16 @@ class Table extends ScopedMappingModel implements IdMethod
     public function setBaseClass($class)
     {
         $this->baseClass = $class;
+    }
+
+    /**
+     * Sets the base query class name.
+     *
+     * @param string $class
+     */
+    public function setBaseQueryClass($class)
+    {
+        $this->baseQueryClass = $class;
     }
 
     /**

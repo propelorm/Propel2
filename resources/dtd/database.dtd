@@ -29,6 +29,7 @@ PHP class or method name.
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
+  baseQueryClass CDATA #IMPLIED
   defaultPhpNamingMethod (nochange|underscore|phpname) "underscore"
   heavyIndexing (true|false) "false"
   identifierQuoting (true|false) "false"
@@ -61,6 +62,7 @@ PHP class or method name.
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
+  baseQueryClass CDATA #IMPLIED
   alias CDATA #IMPLIED
   interface CDATA #IMPLIED
   phpNamingMethod (nochange|underscore|phpname) #IMPLIED

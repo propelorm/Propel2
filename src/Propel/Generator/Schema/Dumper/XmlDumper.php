@@ -112,6 +112,10 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('baseClass', $baseClass);
         }
 
+        if ($baseQueryClass = $database->getBaseQueryClass()) {
+            $databaseNode->setAttribute('baseQueryClass', $baseQueryClass);
+        }
+
         if ($defaultNamingMethod = $database->getDefaultPhpNamingMethod()) {
             $databaseNode->setAttribute('defaultPhpNamingMethod', $defaultNamingMethod);
         }
@@ -237,6 +241,10 @@ class XmlDumper implements DumperInterface
 
         if ($baseClass = $table->getBaseClass()) {
             $tableNode->setAttribute('baseClass', $baseClass);
+        }
+
+        if ($baseQueryClass = $table->getBaseQueryClass()) {
+            $tableNode->setAttribute('baseQueryClass', $baseQueryClass);
         }
 
         if ($table->isReadOnly()) {
