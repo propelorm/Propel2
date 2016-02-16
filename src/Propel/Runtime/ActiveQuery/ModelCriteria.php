@@ -270,18 +270,32 @@ class ModelCriteria extends BaseModelCriteria
      *   $c->groupBy('Book.AuthorId')
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
      *
-     * @param string $columnName The column to group by
+     *   $c->groupBy(array('Book.AuthorId', 'Book.AuthorName'))
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
+     *    => $c->addGroupByColumn(BookTableMap::AUTHOR_NAME)
+     * 
+     * @param mixed $columnName an array of columns name (e.g. array('Book.AuthorId', 'Book.AuthorName')) or a single column name (e.g. 'Book.AuthorId')
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function groupBy($columnName)
     {
-        list(, $realColumnName) = $this->getColumnFromName($columnName, false);
-        $this->addGroupByColumn($realColumnName);
-
+        if (empty($columnName)) {
+            throw new PropelException('You must ask for at least one column');
+        }
+        
+        if (!is_array($columnName)) {
+            $columnName = array($columnName);
+        }
+        
+        foreach ($columnName as $column) {
+            list(, $realColumnName) = $this->getColumnFromName($column, false);
+            $this->addGroupByColumn($realColumnName);
+        }
+        
         return $this;
     }
-
+    
     /**
      * Adds a GROUP BY clause for all columns of a model to the query
      * Examples:
