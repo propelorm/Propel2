@@ -50,6 +50,11 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 }
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
+            } elseif ($col->isSetType()) {
+                $this->addSetAccessor($script, $col);
+                if ($col->isNamePlural()) {
+                    $this->addHasArrayElement($script, $col);
+                }
             } elseif ($col->isBooleanType()) {
                 $this->addDefaultAccessor($script, $col);
                 $this->addBooleanAccessor($script, $col);
@@ -90,6 +95,12 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 }
             } elseif ($col->isEnumType()) {
                 $this->addEnumMutator($script, $col);
+            } elseif ($col->isSetType()) {
+                $this->addSetMutator($script, $col);
+                if ($col->isNamePlural()) {
+                    $this->addAddArrayElement($script, $col);
+                    $this->addRemoveArrayElement($script, $col);
+                }
             } elseif ($col->isBooleanType()) {
                 $this->addBooleanMutator($script, $col);
             } else {

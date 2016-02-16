@@ -51,6 +51,7 @@
             <xs:enumeration value="OBJECT"/>
             <xs:enumeration value="ARRAY"/>
             <xs:enumeration value="ENUM"/>
+            <xs:enumeration value="SET"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -461,7 +462,7 @@
         <xs:attribute name="valueSet" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The list of values for an ENUM column, separated by commas
+                    The list of values for an ENUM or SET column, separated by commas
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

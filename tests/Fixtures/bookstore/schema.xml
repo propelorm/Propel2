@@ -345,6 +345,7 @@
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="title" type="VARCHAR" />
         <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
+        <column name="style2" type="SET" valueSet="novel, essay, poetry" />
         <column name="tags" type="ARRAY" />
     </table>
 

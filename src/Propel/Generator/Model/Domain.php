@@ -284,6 +284,9 @@ class Domain extends MappingModel
         if (PropelTypes::PHP_ARRAY === $this->mappingType) {
             return $this->getDefaultValueForArray($this->defaultValue->getValue());
         }
+        if (PropelTypes::SET === $this->mappingType) {
+            return $this->getDefaultValueForSet($this->defaultValue->getValue());
+        }
 
         return $this->defaultValue->getValue();
     }

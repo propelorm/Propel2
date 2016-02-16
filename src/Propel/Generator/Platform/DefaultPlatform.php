@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Platform;
 
+use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
@@ -406,6 +407,13 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
+                } elseif ($col->isSetType()) {
+                    $val = trim($defaultValue->getValue());
+                    $values = [];
+                    foreach (explode(',', $val) as $v) {
+                        $values[] = trim($v);
+                    }
+                    $default .= SetColumnConverter::convertToInt($values, $col->getValueSet());
                 } elseif ($col->isPhpArrayType()) {
                     $value = $this->getPhpArrayString($defaultValue->getValue());
                     if (null === $value) {

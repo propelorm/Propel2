@@ -23,6 +23,7 @@ use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
 
 /**
  * This is a utility class for holding criteria information for a query.
@@ -110,6 +111,12 @@ class Criteria
 
     /** Binary math operator: OR */
     const BINARY_OR = '|';
+
+    /** Binary pseudo operator: ALL */
+    const BINARY_ALL = 'BINARY_ALL';
+
+    /** Binary pseudo operator: NOT IN */
+    const BINARY_NONE = 'BINARY_NONE';
 
     /** 'Order by' qualifier - ascending */
     const ASC = 'ASC';
@@ -574,7 +581,11 @@ class Criteria
                 // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
                 // something like $c->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
                 return new LikeCriterion($this, $column, $value, $comparison);
-                break;
+            case Criteria::BINARY_NONE:
+            case Criteria::BINARY_ALL:
+                // table.column & ? = 0 (Similar to  "NOT IN")
+                // something like $c->add(BookTableMap::SOME_ARRAY_VAR, 26, Criteria::BINARY_NONE);
+                return new BinaryCriterion($this, $column, $value, $comparison);
             default:
                 // simple comparison
                 // something like $c->add(BookTableMap::PRICE, 12, Criteria::GREATER_THAN);

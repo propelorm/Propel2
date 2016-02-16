@@ -84,7 +84,7 @@ class ColumnMap
     protected $phpName;
 
     /**
-     * The allowed values for an ENUM column
+     * The allowed values for an ENUM or SET column
      *
      * @var array
      */
@@ -247,6 +247,16 @@ class ColumnMap
             PropelTypes::FLOAT,
             PropelTypes::DOUBLE,
         ]);
+    }
+
+    /**
+     * Whether this column is of type set.
+     * 
+     * @return bool
+     */
+    public function isSetType()
+    {
+        return $this->type === PropelTypes::SET;
     }
 
     /**
@@ -446,7 +456,7 @@ class ColumnMap
     }
 
     /**
-     * Set the valueSet of this column (only valid for ENUM columns).
+     * Set the valueSet of this column (only valid for ENUM and SET columns).
      *
      * @param array $values A list of allowed values
      */
@@ -456,7 +466,7 @@ class ColumnMap
     }
 
     /**
-     * Get the valueSet of this column (only valid for ENUM columns).
+     * Get the valueSet of this column (only valid for ENUM and SET columns).
      *
      * @return array A list of allowed values
      */

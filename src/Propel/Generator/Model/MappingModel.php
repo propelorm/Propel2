@@ -136,6 +136,31 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
+     * Converts the default string for set columns to an array. 
+     * 
+     * @param string $stringValue
+     * 
+     * @return array|null
+     */
+    protected function getDefaultValueForSet($stringValue)
+    {
+        $stringValue = trim($stringValue);
+
+        if (empty($stringValue)) {
+            return null;
+        }
+
+        $values = [];
+        foreach (explode(',', $stringValue) as $v) {
+            $values[] = trim($v);
+        }
+        if (count($values) === 0) {
+            return null;
+        }
+        return $values;
+    }
+
+    /**
      * Adds a new VendorInfo instance to this current model object.
      *
      * @param  VendorInfo|array $vendor

@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\CrossForeignKeys;
@@ -185,6 +186,8 @@ class ObjectBuilder extends AbstractObjectBuilder
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
+        } elseif ($column->isSetType()) {
+            $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
@@ -451,6 +454,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $this->addColumnAttributeUnserializedComment($script, $col);
                 $this->addColumnAttributeUnserializedDeclaration($script, $col);
             }
+            if ($col->isSetType()) {
+                $this->addColumnAttributeConvertedDeclaration($script, $col);
+            }
         }
     }
 
@@ -563,6 +569,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addColumnAttributeUnserializedDeclaration(&$script, Column $column)
     {
         $clo = $column->getLowercasedName() . "_unserialized";
+        $script .= "
+    protected \$" . $clo . ";
+";
+    }
+
+    /**
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addColumnAttributeConvertedDeclaration(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName() . "_converted";
         $script .= "
     protected \$" . $clo . ";
 ";
@@ -1122,6 +1140,79 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
+     * Adds a SET column getter method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addSetAccessor(&$script, Column $column)
+    {
+        $this->addSetAccessorComment($script, $column);
+        $this->addDefaultAccessorOpen($script, $column);
+        $this->addSetAccessorBody($script, $column);
+        $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Add the comment for a SET column accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addSetAccessorComment(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName();
+
+        $script .= "
+    /**
+     * Get the [$clo] column value.
+     * " . $column->getDescription();
+        if ($column->isLazyLoad()) {
+            $script .= "
+     * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+        }
+        $script .= "
+     * @return array|null
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
+     */";
+    }
+
+    /**
+     * Adds the function body for a SET column accessor method.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addSetAccessorBody(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName();
+        $cloConverted = $clo . '_converted';
+        if ($column->isLazyLoad()) {
+            $script .= $this->getAccessorLazyLoadSnippet($column);
+        }
+        $this->declareClasses(
+            'Propel\Common\Util\SetColumnConverter',
+            'Propel\Common\Exception\SetColumnConverterException'
+        );
+
+        $script .= "
+        if (null === \$this->$cloConverted) {
+            \$this->$cloConverted = array();
+        }
+        if (!\$this->$cloConverted && null !== \$this->$clo) {
+            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+            try {
+                \$this->$cloConverted = SetColumnConverter::convertIntToArray(\$this->$clo, \$valueSet);
+            } catch (SetColumnConverterException \$e) {
+                throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
+            }
+        }
+        
+        return \$this->$cloConverted;";
+    }
+
+
+    /**
      * Adds a tester method for an array column.
      *
      * @param string &$script
@@ -1133,9 +1224,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
         $singularPhpName = $column->getPhpSingularName();
+        $columnType = ($column->getType() === PropelTypes::PHP_ARRAY) ? 'array' : 'set';
         $script .= "
     /**
-     * Test the presence of a value in the [$clo] array column value.
+     * Test the presence of a value in the [$clo] $columnType column value.
      * @param      mixed \$value
      * ".$column->getDescription();
         if ($column->isLazyLoad()) {
@@ -1715,9 +1807,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
         $singularPhpName = $col->getPhpSingularName();
+        $columnType = ($col->getType() === PropelTypes::PHP_ARRAY) ? 'array' : 'set';
         $script .= "
     /**
-     * Adds a value to the [$clo] array column value.
+     * Adds a value to the [$clo] $columnType column value.
      * @param  mixed \$value
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
@@ -1759,9 +1852,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $col->getPhpName();
         $visibility = $col->getAccessorVisibility();
         $singularPhpName = $col->getPhpSingularName();
+        $columnType = ($col->getType() === PropelTypes::PHP_ARRAY) ? 'array' : 'set';
         $script .= "
     /**
-     * Removes a value from the [$clo] array column value.
+     * Removes a value from the [$clo] $columnType column value.
      * @param  mixed \$value
      * ".$col->getDescription();
         if ($col->isLazyLoad()) {
@@ -1839,6 +1933,63 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
      * @param  string \$v new value
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @throws \\Propel\\Runtime\\Exception\\PropelException
+     */";
+    }
+
+    /**
+     * Adds a setter for SET column mutator.
+     * 
+     * @param string &$script The script will be modified in this method.
+     * @param Column $col     The current column.
+     * @see parent::addColumnMutators()
+     */
+    protected function addSetMutator(&$script, Column $col)
+    {
+        $clo = $col->getLowercasedName();
+        $this->addSetMutatorComment($script, $col);
+        $this->addMutatorOpenOpen($script, $col);
+        $this->addMutatorOpenBody($script, $col);
+        $cloConverted = $clo . '_converted';
+
+        $this->declareClasses(
+            'Propel\Common\Util\SetColumnConverter',
+            'Propel\Common\Exception\SetColumnConverterException'
+        );
+
+        $script .= "
+        if (\$this->$cloConverted === null || count(array_diff(\$this->$cloConverted, \$v)) > 0 || count(array_diff(\$v, \$this->$cloConverted)) > 0) {
+            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+            try {
+                \$v = SetColumnConverter::convertToInt(\$v, \$valueSet);
+            } catch (SetColumnConverterException \$e) {
+                throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
+            }
+            if (\$this->$clo !== \$v) {
+                \$this->$cloConverted = null;
+                \$this->$clo = \$v;
+                \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            }
+        }
+";
+        $this->addMutatorClose($script, $col);
+    }
+
+    /**
+     * Adds the comment for a SET column mutator.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addSetMutatorComment(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName();
+        $script .= "
+    /**
+     * Set the value of [$clo] column.
+     * ".$column->getDescription()."
+     * @param  array \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
@@ -2135,6 +2286,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $script .= "
             \$this->$clo = \$col;
             \$this->$cloUnserialized = null;";
+                } elseif ($col->isSetType()) {
+                    $cloConverted = $clo . '_converted';
+                    $script .= "
+            \$this->$clo = \$col;
+            \$this->$cloConverted = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
@@ -2673,6 +2829,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 if (isset(\$valueSet[\$value])) {
                     \$value = \$valueSet[\$value];
                 }";
+            } elseif ($col->isSetType()) {
+                $this->declareClasses(
+                    'Propel\Common\Util\SetColumnConverter',
+                    'Propel\Common\Exception\SetColumnConverterException'
+                );
+                $script .= "
+                \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+                try {
+                    \$value = SetColumnConverter::convertIntToArray(\$value, \$valueSet);
+                } catch (SetColumnConverterException \$e) {
+                    throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
+                }
+                ";
             } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
                 $script .= "
                 if (!is_array(\$value)) {
@@ -6186,6 +6355,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
                 $script .="
         \$this->$cloUnserialized = null;";
+            }
+            if ($col->isSetType()) {
+                $cloConverted = $clo . '_converted';
+
+                $script .="
+        \$this->$cloConverted = null;";
             }
         }
 
