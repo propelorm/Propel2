@@ -924,7 +924,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$format === null) {
             return \$this->$clo;
         } else {
-            return \$this->$clo instanceof \DateTime ? \$this->{$clo}->format(\$format) : null;
+            return \$this->$clo instanceof \DateTimeInterface ? \$this->{$clo}->format(\$format) : null;
         }";
     }
 
@@ -1744,7 +1744,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * ".$col->getDescription()."
-     * @param  mixed \$v string, integer (timestamp), or \DateTime value.
+     * @param  mixed \$v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";

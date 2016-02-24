@@ -120,7 +120,7 @@ class XmlParser extends AbstractParser
                 $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
                 $child = $element->ownerDocument->createCDATASection($value);
                 $element->appendChild($child);
-            } elseif ($value instanceof \DateTime) {
+            } elseif ($value instanceof \DateTimeInterface) {
                 $element->setAttribute('type', 'xsd:dateTime');
                 $child = $element->ownerDocument->createTextNode($value->format(\DateTime::ISO8601));
                 $element->appendChild($child);
