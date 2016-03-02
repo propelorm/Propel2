@@ -431,10 +431,12 @@ class ObjectCollection extends Collection
             return;
         }
 
-        $pos = count($this->data);
+        $this->data[] = $value;
+        end($this->data);
+        $pos = key($this->data);
+
         $this->index[$value->hashCode()] = $pos;
         $this->indexSplHash[spl_object_hash($value)] = $value->hashCode();
-        $this->data[] = $value;
     }
 
     /**
@@ -451,9 +453,12 @@ class ObjectCollection extends Collection
         $hashCode = $value->hashCode();
 
         if (is_null($offset)) {
-            $this->index[$hashCode] = count($this->data);
-            $this->indexSplHash[spl_object_hash($value)] = $hashCode;
             $this->data[] = $value;
+            end($this->data);
+            $pos = key($this->data);
+
+            $this->index[$hashCode] = $pos;
+            $this->indexSplHash[spl_object_hash($value)] = $hashCode;
         } else {
             if (isset($this->data[$offset])) {
                 unset($this->indexSplHash[spl_object_hash($this->data[$offset])]);
