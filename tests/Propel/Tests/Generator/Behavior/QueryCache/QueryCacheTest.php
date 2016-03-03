@@ -10,8 +10,8 @@
 
 namespace Propel\Tests\Generator\Behavior\QueryCache;
 
-use Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\TestCase;
 
 /**
  * Class QueryCacheTest
@@ -21,46 +21,74 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  * @group database
  * @group skip
  */
-class QueryCacheTest extends BookstoreTestBase
+class QueryCacheTest extends TestCase
 {
     protected function setUp()
     {
-        //prevent issue DSN not Found
-        self::$isInitialized = false;
-        parent::setUp();
+        if (!class_exists('\QuerycacheEntity1')) {
+            $schema = <<<XML
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" activeRecord="true">
+
+    <entity name="QuerycacheEntity1">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="query_cache">
+            <parameter name="backend" value="array" />
+        </behavior>
+    </entity>
+
+</database>            
+XML;
+            QuickBuilder::buildSchema($schema);
+        }
     }
 
     public function testExistingKey()
     {
-        $cacheTest = QuerycacheTable1Query::create()
+        $cacheTest = \QuerycacheEntity1Query::create()
             ->setQueryKey('test')
             ->filterByTitle('foo')
             ->find();
 
-        $this->assertTrue(QuerycacheTable1Query::create()->cacheContains('test'), ' cache contains "test" key');
+       $this->assertTrue(\QuerycacheEntity1Query::create()->cacheContains('test'), ' cache contains "test" key');
     }
 
     public function testPublicApiExists()
     {
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query', 'setQueryKey'), 'setQueryKey method exists');
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query', 'getQueryKey'), 'getQueryKey method exists');
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query', 'cacheContains'), 'cacheContains method exists');
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query', 'cacheFetch'), 'cacheFetch method exists');
-        $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query', 'cacheStore'), 'cacheStore method exists');
+        $this->assertTrue(method_exists('\QuerycacheEntity1Query', 'setQueryKey'), 'setQueryKey method exists');
+        $this->assertTrue(method_exists('\QuerycacheEntity1Query', 'getQueryKey'), 'getQueryKey method exists');
+        $this->assertTrue(method_exists('\QuerycacheEntity1Query', 'cacheContains'), 'cacheContains method exists');
+        $this->assertTrue(method_exists('\QuerycacheEntity1Query', 'cacheFetch'), 'cacheFetch method exists');
+        $this->assertTrue(method_exists('\QuerycacheEntity1Query', 'cacheStore'), 'cacheStore method exists');
     }
 
     public function testCacheGeneratedSql()
     {
-        $q = QuerycacheTable1Query::create()
+        $q = \QuerycacheEntity1Query::create()
             ->setQueryKey('test2')
             ->filterByTitle('bar')
         ;
         $exec = $q->find();
 
-        $expectedSql = $this->getSql("SELECT querycache_table1.id, querycache_table1.title FROM querycache_table1 WHERE querycache_table1.title=:p1");
+        $expectedSql = $this->getSql("SELECT querycache_entity1.id, querycache_entity1.title FROM querycache_entity1 WHERE querycache_entity1.title=:p1");
 
-        $params = array();
-        $this->assertTrue(QuerycacheTable1Query::create()->cacheContains('test2'), ' cache contains "test2" key');
+        $this->assertTrue(\QuerycacheEntity1Query::create()->cacheContains('test2'), ' cache contains "test2" key');
         $this->assertEquals($expectedSql, $q->cacheFetch('test2'));
+    }
+
+    public function testDoCount()
+    {
+        $q = \QuerycacheEntity1Query::create()
+            ->setQueryKey('test3')
+            ->filterByTitle('bar')
+        ;
+        $exec = $q->count();
+
+        $expectedSql = $this->getSql("SELECT COUNT(*) FROM querycache_entity1 WHERE querycache_entity1.title=:p1");
+
+        $this->assertTrue(\QuerycacheEntity1Query::create()->cacheContains('test3'), ' cache contains "test3" key');
+        $this->assertEquals($expectedSql, $q->cacheFetch('test3'));
     }
 }

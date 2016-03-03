@@ -2517,7 +2517,7 @@ class Criteria
             $db->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            $this->getConfiguration()->log($e->getMessage(), Configuration::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql));
         }
 
