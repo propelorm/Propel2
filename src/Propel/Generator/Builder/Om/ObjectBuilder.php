@@ -469,10 +469,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addColumnAttributeComment(&$script, Column $column)
     {
         if ($column->isTemporalType()) {
-            $cptype = $this->getBuildProperty('dateTimeClass');
-            if (!$cptype) {
-                $cptype = '\DateTime';
-            }
+            $cptype = $this->getDateTimeClass($column);
         } else {
             $cptype = $column->getPhpType();
         }
@@ -745,10 +742,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $clo = $column->getLowercasedName();
             $defaultValue = $this->getDefaultValueString($column);
             if ($column->isTemporalType()) {
-                $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
-                if (!$dateTimeClass) {
-                    $dateTimeClass = '\DateTime';
-                }
+                $dateTimeClass = $this->getDateTimeClass($column);
                 $script .= "
         \$this->".$clo." = PropelDateTime::newInstance($defaultValue, null, '$dateTimeClass');";
             } else {
@@ -794,10 +788,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo = $column->getLowercasedName();
 
-        $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
+        $dateTimeClass = $this->getDateTimeClass($column);
 
         $handleMysqlDate = false;
         if ($this->getPlatform() instanceof MysqlPlatform) {
@@ -896,10 +887,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo = $column->getLowercasedName();
 
-        $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
+        $dateTimeClass = $this->getDateTimeClass($column);
+
         $this->declareClasses($dateTimeClass);
         $defaultfmt = null;
 
@@ -924,7 +913,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$format === null) {
             return \$this->$clo;
         } else {
-            return \$this->$clo instanceof \DateTime ? \$this->{$clo}->format(\$format) : null;
+            return \$this->$clo instanceof \DateTimeInterface ? \$this->{$clo}->format(\$format) : null;
         }";
     }
 
@@ -1690,10 +1679,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo = $col->getLowercasedName();
 
-        $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
-        if (!$dateTimeClass) {
-            $dateTimeClass = '\DateTime';
-        }
+        $dateTimeClass = $this->getDateTimeClass($col);
+
         $this->declareClasses($dateTimeClass, '\Propel\Runtime\Util\PropelDateTime');
 
         $this->addTemporalMutatorComment($script, $col);
@@ -1744,7 +1731,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * ".$col->getDescription()."
-     * @param  mixed \$v string, integer (timestamp), or \DateTime value.
+     * @param  mixed \$v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
@@ -2252,10 +2239,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$this->$clo = null;
             }";
                 } elseif ($col->isTemporalType()) {
-                    $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
-                    if (!$dateTimeClass) {
-                        $dateTimeClass = '\DateTime';
-                    }
+                    $dateTimeClass = $this->getDateTimeClass($col);
                     $handleMysqlDate = false;
                     if ($this->getPlatform() instanceof MysqlPlatform) {
                         if ($col->getType() === PropelTypes::TIMESTAMP) {
@@ -6507,5 +6491,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $this->renderTemplate('baseObjectMethodMagicCall', [
                 'behaviorCallScript' => $behaviorCallScript
                 ]);
+    }
+
+    protected function getDateTimeClass(Column $column)
+    {
+        if (PropelTypes::isPhpObjectType($column->getPhpType())) {
+            return $column->getPhpType();
+        }
+
+        $dateTimeClass = $this->getBuildProperty('generator.dateTime.dateTimeClass');
+        if (!$dateTimeClass) {
+            $dateTimeClass = '\DateTime';
+        }
+
+        return $dateTimeClass;
     }
 }
