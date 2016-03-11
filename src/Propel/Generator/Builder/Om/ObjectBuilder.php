@@ -2551,7 +2551,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             foreach ($fks as $fk) {
                 $script .= "
             if (null !== \$this->" . $this->getFKVarName($fk) . ") {
-                {$this->addToArrayKeyLookUp($fk->getForeignTable(), false)}
+                {$this->addToArrayKeyLookUp($fk->getPhpName(), $fk->getForeignTable(), false)}
                 \$result[\$key] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
             }";
             }
@@ -2559,13 +2559,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 if ($fk->isLocalPrimaryKey()) {
                     $script .= "
             if (null !== \$this->" . $this->getPKRefFKVarName($fk) . ") {
-                {$this->addToArrayKeyLookUp($fk->getTable(), false)}
+                {$this->addToArrayKeyLookUp($fk->getRefPhpName(), $fk->getTable(), false)}
                 \$result[\$key] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
             }";
                 } else {
                     $script .= "
             if (null !== \$this->" . $this->getRefFKCollVarName($fk) . ") {
-                {$this->addToArrayKeyLookUp($fk->getTable(), true)}
+                {$this->addToArrayKeyLookUp($fk->getRefPhpName(), $fk->getTable(), true)}
                 \$result[\$key] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, false, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
             }";
                 }
@@ -2584,9 +2584,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the switch-statement for looking up the array-key name for toArray
      * @see toArray
      */
-    protected function addToArrayKeyLookUp(Table $table, $plural)
+    protected function addToArrayKeyLookUp($phpName, Table $table, $plural)
     {
-        $phpName = $table->getPhpName();
+        if($phpName == "") {
+            $phpName = $table->getPhpName();  
+        }
+        
         $camelCaseName = $table->getCamelCaseName();
         $fieldName = $table->getName();
 
