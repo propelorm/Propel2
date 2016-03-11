@@ -96,7 +96,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         $this->con = $con;
         $hasMaxRecordLimit = false !== $this->getMaxRecordLimit();
         $maxRecordLimit = $this->getMaxRecordLimit();
-
+        
         $qForCount = clone $this->getQuery();
         $count = $qForCount
             ->offset(0)
@@ -140,6 +140,12 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     public function getResults()
     {
         if (null === $this->results) {
+            $queryKey = method_exists($this->getQuery(), 'getQueryKey') ? $this->getQuery()->getQueryKey() : null;
+            if ($queryKey) {
+                $newQueryKey = sprintf('%s offset %s limit %s', $queryKey, $this->getQuery()->getOffset(), $this->getQuery()->getLimit());
+                $this->getQuery()->setQueryKey($newQueryKey);
+            }
+            
             $this->results = $this->getQuery()
                 ->find($this->con)
             ;

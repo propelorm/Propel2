@@ -10,6 +10,9 @@
 
 namespace Propel\Tests\Generator\Behavior\QueryCache;
 
+use Propel\Runtime\Util\PropelModelPager;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Tests\Bookstore\Behavior\QuerycacheTable1;
 use Propel\Tests\Bookstore\Behavior\QuerycacheTable1Query;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
@@ -75,5 +78,49 @@ class QueryCacheTest extends BookstoreTestBase
         $renderedSql = \Propel\Runtime\Propel::getConnection()->getLastExecutedQuery();
 
         $this->assertEquals($expectedSql, $renderedSql);
+    }
+    
+    public function testWithPaginate()
+    {
+        QuerycacheTable1Query::create()->deleteAll();
+        $coll = new ObjectCollection();
+        $coll->setModel('\Propel\Tests\Bookstore\Behavior\QuerycacheTable1');
+        for ($i=0; $i < 5; $i++) {
+            $b = new QuerycacheTable1();
+            $b->setTitle('Title' . $i);
+
+            $coll[]= $b;
+        }
+        $coll->save();
+        
+        $pager = $this->getPager(2, 1);
+        $this->assertEquals(5, $pager->getNbResults());
+        
+        $results = $pager->getResults();
+        $this->assertEquals('query cache with paginate offset 0 limit 2', $pager->getQuery()->getQueryKey());
+        $this->assertEquals(2, count($results));
+        $this->assertEquals('Title1', $results[1]->getTitle());
+        
+        //jump to page 3
+        $pager = $this->getPager(2, 3);
+        $this->assertEquals(5, $pager->getNbResults());
+        
+        $results = $pager->getResults();
+        $this->assertEquals('query cache with paginate offset 4 limit 2', $pager->getQuery()->getQueryKey());
+        $this->assertEquals(1, count($results));
+        $this->assertEquals('Title4', $results[0]->getTitle());
+    }
+    
+    protected function getPager($maxPerPage, $page = 1)
+    {
+        $query = QuerycacheTable1Query::create()
+            ->setQueryKey('query cache with paginate')
+            ->orderByTitle();
+        
+        $pager = new PropelModelPager($query, $maxPerPage);
+        $pager->setPage($page);
+        $pager->init();
+
+        return $pager;
     }
 }
