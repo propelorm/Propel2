@@ -1344,15 +1344,16 @@ if (is_resource($columnValueAccessor)) {
      * $this->id = $con->lastInsertId();
      * </code>
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ")
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
     {
         return sprintf(
             "
-%s%s = %s->lastInsertId(%s);",
+%s%s = %s%s->lastInsertId(%s);",
             $tab,
             $columnValueMutator,
             $connectionVariableName,
-            $sequenceName ? ("'" . $sequenceName . "'") : ''
+            $sequenceName ? ("'" . $sequenceName . "'") : '',
+            $phpType ? '('.$phpType.') ' : ''
         );
     }
 
