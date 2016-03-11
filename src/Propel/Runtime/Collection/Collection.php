@@ -164,7 +164,12 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     {
         return new CollectionIterator($this);
     }
-
+    
+    /**
+     * Count elements in the collection
+     * 
+     * @return int
+     */
     public function count()
     {
         return count($this->data);
