@@ -166,6 +166,9 @@ class MigrationDiffCommand extends AbstractCommand
         $migrationsDown = [];
         $removeTable = !$input->getOption('skip-removed-table');
         $excludedTables = $input->getOption('skip-tables');
+        $configManager = new ConfigurationManager($input->getOption('config-dir'));
+        $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
+        
         foreach ($reversedSchema->getDatabases() as $database) {
             $name = $database->getName();
 
@@ -177,9 +180,6 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
                 continue;
             }
-
-            $configManager = new ConfigurationManager();
-            $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
 
             $databaseDiff = DatabaseComparator::computeDiff($database, $appDataDatabase, false, $tableRenaming, $removeTable, $excludedTables);
 
