@@ -7,7 +7,7 @@ return [
                     'adapter' => '<?php echo $rdbms ?>',
                     'dsn' => '<?php echo $dsn ?>',
                     'user' => '<?php echo $user ?>',
-                    'password' => '',
+                    'password' => '<?php echo $password ?>',
                     'settings' => [
                         'charset' => '<?php echo $charset ?>'
                     ]

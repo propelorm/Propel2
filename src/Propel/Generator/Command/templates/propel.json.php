@@ -6,7 +6,7 @@
                     'adapter' => $rdbms,
                     'dsn' => $dsn,
                     'user' => $user,
-                    'password' => '',
+                    'password' => $password,
                     'settings' => [
                         'charset' => $charset
                     ]
