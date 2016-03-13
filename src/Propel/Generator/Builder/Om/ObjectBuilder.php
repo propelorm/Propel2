@@ -6024,13 +6024,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
 
-        return \$con->transaction(function () use (\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").") {
-            \$isInsert = \$this->isNew();";
+        return \$con->transaction(function () use (\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").") {";
 
         if ($this->getBuildProperty('generator.objectModel.addHooks')) {
             // save with runtime hooks
             $script .= "
-            \$ret = \$this->preSave(\$con);";
+            \$ret = \$this->preSave(\$con);
+            \$isInsert = \$this->isNew();";
             $this->applyBehaviorModifier('preSave', $script, "            ");
             $script .= "
             if (\$isInsert) {
@@ -6064,6 +6064,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             return \$affectedRows;";
         } else {
             // save without runtime hooks
+            $script .= "
+            \$isInsert = \$this->isNew();";
             $this->applyBehaviorModifier('preSave', $script, "            ");
             if ($this->hasBehaviorModifier('preUpdate')) {
                 $script .= "
