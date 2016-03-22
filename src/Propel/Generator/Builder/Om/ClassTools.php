@@ -121,4 +121,11 @@ class ClassTools
             'throw', 'this', 'namespace'
         ];
     }
+
+    public static function getPropelReservedMethods()
+    {
+        return [
+            'isModified', 'isColumnModified', 'isNew', 'isDeleted',
+        ];
+    }
 }

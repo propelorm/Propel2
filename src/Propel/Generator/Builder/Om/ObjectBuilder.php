@@ -1015,6 +1015,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addBooleanAccessor(&$script, Column $column)
     {
+        $name = $column->getCamelCaseName();
+        if (in_array($name, ClassTools::getPropelReservedMethods())) {
+            return; // Skip boolean accessors for reserved names
+        }
         $this->addDefaultAccessorComment($script, $column);
         $this->addBooleanAccessorOpen($script, $column);
         $this->addBooleanAccessorBody($script, $column);
