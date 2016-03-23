@@ -1017,6 +1017,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $name = self::getBooleanAccessorName($column);
         if (in_array($name, ClassTools::getPropelReservedMethods())) {
+            //TODO: Issue a warning telling the user to use default accessors
             return; // Skip boolean accessors for reserved names
         }
         $this->addDefaultAccessorComment($script, $column);
