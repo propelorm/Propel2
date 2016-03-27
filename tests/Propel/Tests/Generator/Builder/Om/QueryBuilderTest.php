@@ -247,6 +247,20 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
+    public function testFindPkNotUsesInstancePoolingForNonEmptyQueries()
+    {
+        $b = new Book();
+        $b->setTitle('foo');
+        $b->setISBN('FA404');
+        $b->save($this->con);
+
+        $book = BookQuery::create()->select(['Book.Title', 'Book.ISBN'])->findPk($b->getId(), $this->con);
+        $this->assertInternalType('array', $book);
+
+        $book = BookQuery::create()->filterByTitle('bar')->findPk($b->getId(), $this->con);
+        $this->assertNull($book);
+    }
+
     public function testFindPkComplexAddsObjectToInstancePool()
     {
         $b = new Book();
@@ -269,19 +283,6 @@ class QueryBuilderTest extends BookstoreTestBase
         $this->assertFalse($q::$preSelectWasCalled);
         $q->findPk(123);
         $this->assertTrue($q::$preSelectWasCalled);
-    }
-
-    public function testFindPkDoesNotCallPreSelectWhenUsingInstancePool()
-    {
-        $b = new Book();
-        $b->setTitle('foo');
-        $b->setISBN('FA404');
-        $b->save();
-
-        $q = new mySecondBookQuery();
-        $this->assertFalse($q::$preSelectWasCalled);
-        $q->findPk($b->getId());
-        $this->assertFalse($q::$preSelectWasCalled);
     }
 
     public function testFindPks()
