@@ -1015,10 +1015,30 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addBooleanAccessor(&$script, Column $column)
     {
+        $name = self::getBooleanAccessorName($column);
+        if (in_array($name, ClassTools::getPropelReservedMethods())) {
+            //TODO: Issue a warning telling the user to use default accessors
+            return; // Skip boolean accessors for reserved names
+        }
         $this->addDefaultAccessorComment($script, $column);
         $this->addBooleanAccessorOpen($script, $column);
         $this->addBooleanAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Returns the name to be used as boolean accessor name
+     *
+     * @param Column $column
+     * @return string
+     */
+    protected static function getBooleanAccessorName(Column $column)
+    {
+        $name = $column->getCamelCaseName();
+        if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
+            $name = 'is' . ucfirst($name);
+        }
+        return $name;
     }
 
     /**
@@ -1029,10 +1049,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
     {
-        $name = $column->getCamelCaseName();
-        if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
-            $name = 'is' . ucfirst($name);
-        }
+        $name = self::getBooleanAccessorName($column);
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
