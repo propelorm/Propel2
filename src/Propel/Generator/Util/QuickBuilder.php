@@ -383,8 +383,19 @@ class QuickBuilder
                         file_put_contents($tempFile, "<?php\n" . $code);
                         $includes[] = $tempFile;
                 }
+                if ($entity->hasAdditionalBuilders()) {
+                    $code = $this->getClassesFromAdditionalBuilders($entity);
+                    $tempFile = $dir
+                        . str_replace('\\', '-', $entity->getName())
+                        . 'additional.php';
+                    file_put_contents($tempFile, "<?php\n" . $code);
+                    $includes[] = $tempFile;
+                }
             } else {
                 $code = $this->getClassesForEntity($entity, $classes);
+                if ($entity->hasAdditionalBuilders()) {
+                    $code .= $this->getClassesFromAdditionalBuilders($entity);
+                }
                 $allCode .= $code;
             }
         }
@@ -455,14 +466,6 @@ class QuickBuilder
                         }
                     }
                 }
-            }
-        }
-
-        if ($entity->hasAdditionalBuilders()) {
-            foreach ($entity->getAdditionalBuilders() as $builderClass) {
-                $builder = new $builderClass($entity);
-                $class = $builder->build();
-                $script .= $this->fixNamespaceDeclarations($class);
             }
         }
 
@@ -564,4 +567,22 @@ class QuickBuilder
         $this->identifierQuoting = $identifierQuoting;
     }
 
+    /**
+     * @param $entity
+     *
+     * @return string
+     */
+    protected function getClassesFromAdditionalBuilders($entity)
+    {
+        if ($entity->hasAdditionalBuilders()) {
+            foreach ($entity->getAdditionalBuilders() as $builderClass) {
+                $builder = new $builderClass($entity);
+                $builder->setGeneratorConfig($this->getConfig());
+                $code = $builder->build();
+                $code = str_replace('<?php', '', $code);
+
+                return $this->fixNamespaceDeclarations($code);
+            }
+        }
+    }
 }

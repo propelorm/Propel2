@@ -1166,7 +1166,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see filterBy()
      * @see findOne()
      *
-     * @param mixed               $field A string representing thefield phpName, e.g. 'AuthorId'
+     * @param mixed               $field A string representing the field phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
      *
      * @return mixed the result, formatted by the current formatter
