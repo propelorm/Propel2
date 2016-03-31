@@ -125,8 +125,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setISBN('1234');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
         $book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
         $publisher2 = $book2->getNamespacedPublisher();
         $this->assertEquals($publisher->getId(), $publisher2->getId());
@@ -144,8 +142,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setISBN('1235');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()->findPk($author->getId());
         $book2 = $author2->getNamespacedBooks()->getFirst();
         $this->assertEquals($book->getId(), $book2->getId());
@@ -161,8 +157,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setISBN('something');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
         $book2 = \Foo\Bar\NamespacedBookQuery::create()
             ->joinWith('NamespacedPublisher')
             ->findPk($book->getId());
@@ -182,8 +176,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setISBN('something');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()
             ->joinWith('NamespacedBook')
             ->findPk($author->getId());

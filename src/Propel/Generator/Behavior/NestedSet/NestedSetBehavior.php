@@ -10,15 +10,24 @@
 
 namespace Propel\Generator\Behavior\NestedSet;
 
+use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
+use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
+use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
  * Behavior to adds nested set tree structure fields and abilities
  *
  * @author François Zaninotto
+ * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
 class NestedSetBehavior extends Behavior
 {
+    use ComponentTrait;
+    
     // default parameters value
     protected $parameters = array(
         'left_field'       => 'tree_left',
@@ -29,62 +38,52 @@ class NestedSetBehavior extends Behavior
         'method_proxies'    => 'false'
     );
 
-    protected $objectBuilderModifier;
+    public function __construct()
+    {
+        $this->additionalBuilders[] = '\Propel\Generator\Behavior\NestedSet\NestedManagerBuilder';
 
-    protected $queryBuilderModifier;
+        parent::__construct();
+    }
 
     /**
-     * Add the left, right and scope to the current table
+     * Add the left, right, level and scope properties to the current entity
      */
     public function modifyEntity()
     {
-        $table = $this->getEntity();
+        $entity = $this->getEntity();
 
-        if (!$table->hasField($this->getParameter('left_field'))) {
-            $table->addField(array(
+        if (!$entity->hasField($this->getParameter('left_field'))) {
+            $entity->addField(array(
                 'name' => $this->getParameter('left_field'),
                 'type' => 'INTEGER'
             ));
         }
 
-        if (!$table->hasField($this->getParameter('right_field'))) {
-            $table->addField(array(
+        if (!$entity->hasField($this->getParameter('right_field'))) {
+            $entity->addField(array(
                 'name' => $this->getParameter('right_field'),
                 'type' => 'INTEGER'
             ));
         }
 
-        if (!$table->hasField($this->getParameter('level_field'))) {
-            $table->addField(array(
+        if (!$entity->hasField($this->getParameter('level_field'))) {
+            $entity->addField(array(
                 'name' => $this->getParameter('level_field'),
                 'type' => 'INTEGER'
             ));
         }
 
-        if ('true' === $this->getParameter('use_scope') && !$table->hasField($this->getParameter('scope_field'))) {
-            $table->addField(array(
+        if ('true' === $this->getParameter('use_scope') && !$entity->hasField($this->getParameter('scope_field'))) {
+            $entity->addField(array(
                 'name' => $this->getParameter('scope_field'),
                 'type' => 'INTEGER'
             ));
         }
     }
 
-    public function getObjectBuilderModifier()
+    public function getFieldAttribute($name)
     {
-        if (null === $this->objectBuilderModifier) {
-            $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
-        }
-
-        return $this->objectBuilderModifier;
-    }
-
-    public function getQueryBuilderModifier()
-    {
-        if (null === $this->queryBuilderModifier) {
-            $this->queryBuilderModifier = new NestedSetBehaviorQueryBuilderModifier($this);
-        }
-
-        return $this->queryBuilderModifier;
+        return strtolower($this->getFieldForParameter($name)->getName());
     }
 
     public function useScope()
@@ -92,13 +91,75 @@ class NestedSetBehavior extends Behavior
         return 'true' === $this->getParameter('use_scope');
     }
 
-    public function getFieldConstant($fieldName)
+    public function objectBuilderModification(ObjectBuilder $builder)
     {
-        return $this->getField($fieldName)->getName();
+        $this->applyComponent('Getters', $builder);
+        $this->applyComponent('Setters', $builder);
     }
 
-    public function getField($fieldName)
+    public function queryBuilderModification(QueryBuilder $builder)
     {
-        return $this->getFieldForParameter($fieldName);
+        $this->applyComponent('Query\Filters', $builder);
+        $this->applyComponent('Query\Orders', $builder);
+        $this->applyComponent('Query\Terminations', $builder);
+        $this->applyComponent('Query\UseStatements', $builder);
+    }
+
+    public function repositoryBuilderModification(RepositoryBuilder $builder)
+    {
+        $this->applyComponent('Repository\AddNestedSetQueryMethod', $builder);
+        $this->applyComponent('Repository\Attributes', $builder);
+        $this->applyComponent('Repository\FixLevelsMethod', $builder);
+        $this->applyComponent('Repository\MakeRoomForLeafMethod', $builder);
+        $this->applyComponent('Repository\NestedSetEntityPoolMethods', $builder);
+        $this->applyComponent('Repository\ProcessNestedSetQueriesMethod', $builder);
+        $this->applyComponent('Repository\ShiftLevelMethod', $builder);
+        $this->applyComponent('Repository\ShiftLRValuesMethod', $builder);
+        $this->applyComponent('Repository\ShiftLevelMethod', $builder);
+        $this->applyComponent('Repository\UpdateLoadedNodesMethod', $builder);
+        $this->applyComponent('Repository\UseStatements', $builder);
+
+        if($this->useScope()) {
+            $this->applyComponent('Repository\SetNegativeScopeMethod', $builder);
+        }
+    }
+
+    public function activeRecordTraitBuilderModification(ActiveRecordTraitBuilder $builder)
+    {
+        $this->applyComponent('ActiveRecordTrait\Counters', $builder);
+        $this->applyComponent('ActiveRecordTrait\DeleteDescendantsMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\Getters', $builder);
+        $this->applyComponent('ActiveRecordTrait\GetIteratorMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\Hassers', $builder);
+        $this->applyComponent('ActiveRecordTrait\Inserts', $builder);
+        $this->applyComponent('ActiveRecordTrait\Issers', $builder);
+        $this->applyComponent('ActiveRecordTrait\MakeRootMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\Movers', $builder);
+        $this->applyComponent('ActiveRecordTrait\UseStatements', $builder);
+    }
+
+    public function entityMapBuilderModification(EntityMapBuilder $builder)
+    {
+        $this->applyComponent('EntityMap\Constants', $builder);
+    }
+
+    public function preSave(RepositoryBuilder $builder)
+    {
+        return $this->applyComponent('Repository\PreSave', $builder);
+    }
+
+    public function postSave(RepositoryBuilder $builder)
+    {
+        return $this->applyComponent('Repository\PostSave', $builder);
+    }
+
+    public function preDelete(RepositoryBuilder $builder)
+    {
+        return $this->applyComponent('Repository\PreDelete', $builder);
+    }
+
+    public function postDelete(RepositoryBuilder $builder)
+    {
+        return $this->applyComponent('Repository\PostDelete', $builder);
     }
 }

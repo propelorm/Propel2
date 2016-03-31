@@ -40,8 +40,6 @@ class OnDemandIterator implements \Iterator
 
     protected $isValid;
 
-    protected $enableInstancePoolingOnFinish;
-
     /**
      * @param AbstractFormatter    $formatter
      * @param DataFetcherInterface $dataFetcher
@@ -51,15 +49,11 @@ class OnDemandIterator implements \Iterator
         $this->currentKey = -1;
         $this->formatter = $formatter;
         $this->dataFetcher = $dataFetcher;
-        $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
     }
 
     public function closeCursor()
     {
         $this->dataFetcher->close();
-        if ($this->enableInstancePoolingOnFinish) {
-            Propel::enableInstancePooling();
-        }
     }
 
     /**

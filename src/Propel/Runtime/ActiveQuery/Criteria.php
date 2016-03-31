@@ -2417,10 +2417,11 @@ class Criteria
                         }
                     }
                 }
+                //remove the comma from the last condition
+                $sql = substr($sql, 0, -2) . ' ';
 
                 $params = $this->buildParams($updateEntitiesFields[$entityName], $updateValues);
 
-                $sql = substr($sql, 0, -2);
                 if (!empty($fields)) {
                     foreach ($fields as $colName) {
                         $sb = '';
@@ -2438,10 +2439,11 @@ class Criteria
                         return var_export(array_shift($paramsReplace), true);
                     }, $sql);
                 $this->getConfiguration()->debug("sql-update: $readable");
+
                 $stmt = $con->prepare($sql);
 
                 // Replace ':p?' with the actual values
-                $db->bindValues($stmt, $params, $dbMap, $db);
+                $db->bindValues($stmt, $params, $dbMap);
 
                 $stmt->execute();
 

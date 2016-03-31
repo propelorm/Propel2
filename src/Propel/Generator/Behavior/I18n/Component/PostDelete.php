@@ -34,7 +34,7 @@ class PostDelete extends BuildComponent
 /** @var {$this->getRepositoryClassNameForEntity($i18nEntity, true)} \$i18nRepository */
 \$i18nRepository = \$this->getConfiguration()->getRepository('{$i18nEntity->getFullClassName()}');
 
-foreach (\$event->getEntities()as \$entity) {
+foreach (\$event->getEntities() as \$entity) {
     if (\$entity instanceof {$i18nEntity->getFullClassName()}) {
         \$i18nRepository->createQuery()
             ->filterBy{$this->getObjectClassName($behavior->getEntity()->getFullClassName())}(\$entity)

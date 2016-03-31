@@ -101,7 +101,6 @@ EOF;
         $e = new ComplexColumnTypeEntity2();
         $e->save();
 
-        ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
         $this->assertEquals(array('FOO'), $e->getDefaults());
@@ -112,7 +111,6 @@ EOF;
         $e = new ComplexColumnTypeEntity2();
         $e->save();
 
-        ComplexColumnTypeEntity2TableMap::clearInstancePool();
         $e = ComplexColumnTypeEntity2Query::create()->findOne();
 
         $this->assertEquals(array('FOO', 'BAR', 'BAZ'), $e->getMultipleDefaults());

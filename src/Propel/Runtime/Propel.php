@@ -10,12 +10,6 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
-use Propel\Runtime\ServiceContainer\StandardServiceContainer;
-use Psr\Log\LoggerInterface;
-
 /**
  * Propel class.
  */

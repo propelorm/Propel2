@@ -267,9 +267,6 @@ class ObjectCollection extends Collection
      */
     public function populateRelation($relation, $criteria = null, $con = null)
     {
-        if (!Propel::isInstancePoolingEnabled()) {
-            throw new RuntimeException(__METHOD__ .' needs instance pooling to be enabled prior to populating the collection');
-        }
         $relationMap = $this->getFormatter()->getEntityMap()->getRelation($relation);
         if ($this->isEmpty()) {
             // save a useless query and return an empty collection

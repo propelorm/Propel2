@@ -84,10 +84,18 @@ trait NamingTrait
      */
     protected function getRepositoryGetter(Entity $entity)
     {
+        $builder = $this->getBuilder();
+
         $info = $this->declareRepository($entity);
         $entityClassName = $info['entityClassName'];
 
-        return "\$this->getPropelConfiguration()->getRepository('$entityClassName')";
+        if ($builder->getEntity()->isActiveRecord() && (($builder instanceof ActiveRecordTraitbuilder) || ($builder instanceof ObjectBuilder))) {
+                $getConfiguration = "\$this->getPropelConfiguration()";
+        } else {
+            $getConfiguration = "\\Propel\\Runtime\\Configuration::getCurrentConfiguration()";
+        }
+
+        return $getConfiguration . "->getRepository('$entityClassName')";
     }
 
     /**
@@ -280,4 +288,3 @@ trait NamingTrait
         return $this->getClassNameFromBuilder($this->getBuilder()->getNewStubRepositoryBuilder($entity), $fqcn);
     }
 }
-

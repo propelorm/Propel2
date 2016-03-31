@@ -518,7 +518,7 @@ class Field extends MappingModel
      */
     public function getCamelCaseName()
     {
-        return lcfirst($this->getName());
+        return NamingTool::toCamelCase($this->getName());
     }
 
     /**
