@@ -48,7 +48,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
-            } elseif ($col->isEnumType()) {
+            } elseif ($col->isEnumType() || $col->isNativeEnumType()) {
                 $this->addEnumAccessor($script, $col);
             } elseif ($col->isSetType()) {
                 $this->addSetAccessor($script, $col);
@@ -93,7 +93,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                     $this->addAddArrayElement($script, $col);
                     $this->addRemoveArrayElement($script, $col);
                 }
-            } elseif ($col->isEnumType()) {
+            } elseif ($col->isEnumType() || $col->isNativeEnumType()) {
                 $this->addEnumMutator($script, $col);
             } elseif ($col->isSetType()) {
                 $this->addSetMutator($script, $col);

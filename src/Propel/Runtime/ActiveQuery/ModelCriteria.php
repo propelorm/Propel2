@@ -1830,6 +1830,8 @@ class ModelCriteria extends BaseModelCriteria
             } else {
                 $value = $colMap->getValueSetKey($value);
             }
+        } elseif (PropelTypes::NENUM === $colMap->getType() && !is_null($value)) {
+            // native enum should have original $value
         } elseif ($colMap->isSetType() && !is_null($value)) {
             try {
                 $value = SetColumnConverter::convertToInt($value, $colMap->getValueSet());

@@ -52,6 +52,7 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'MEDIUMBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::NENUM, 'ENUM'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
@@ -365,6 +366,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             $ddl[] = $sqlType . $col->getSizeDefinition();
         } else {
             $ddl[] = $sqlType;
+        }
+        if ($sqlType == "ENUM") {
+            $ddl[] = "(\"".implode("\",\"", $col->getValueSet())."\")";
         }
         $colinfo = $col->getVendorInfoForType($this->getDatabaseType());
         if ($colinfo->hasParameter('Charset')) {

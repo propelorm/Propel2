@@ -49,6 +49,7 @@ class PropelTypes
     const OBJECT        = 'OBJECT';
     const PHP_ARRAY     = 'ARRAY';
     const ENUM          = 'ENUM';
+    const NENUM         = 'NENUM';
     const SET           = 'SET';
     const GEOMETRY      = 'GEOMETRY';
 
@@ -80,6 +81,7 @@ class PropelTypes
     const OBJECT_NATIVE_TYPE        = '';
     const PHP_ARRAY_NATIVE_TYPE     = 'array';
     const ENUM_NATIVE_TYPE          = 'int';
+    const NENUM_NATIVE_TYPE         = 'string';
     const SET_NATIVE_TYPE           = 'int';
     const GEOMETRY_NATIVE_TYPE      = 'resource';
 
@@ -114,6 +116,7 @@ class PropelTypes
         self::OBJECT,
         self::PHP_ARRAY,
         self::ENUM,
+        self::NENUM,
         self::GEOMETRY,
         // These are pre-epoch dates, which we need to map to String type
         // since they cannot be properly handled using strtotime() -- or
@@ -157,6 +160,7 @@ class PropelTypes
         self::OBJECT        => self::OBJECT_NATIVE_TYPE,
         self::PHP_ARRAY     => self::PHP_ARRAY_NATIVE_TYPE,
         self::ENUM          => self::ENUM_NATIVE_TYPE,
+        self::NENUM         => self::NENUM_NATIVE_TYPE,
         self::SET           => self::SET_NATIVE_TYPE,
         self::GEOMETRY      => self::GEOMETRY,
     ];
@@ -196,6 +200,7 @@ class PropelTypes
         self::OBJECT        => \PDO::PARAM_LOB,
         self::PHP_ARRAY     => \PDO::PARAM_STR,
         self::ENUM          => \PDO::PARAM_INT,
+        self::NENUM         => \PDO::PARAM_STR,
         self::SET           => \PDO::PARAM_INT,
         self::GEOMETRY      => \PDO::PARAM_LOB,
 
