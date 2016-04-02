@@ -32,7 +32,7 @@ class GeneratedQueryEnumColumnTypeNativeTest extends BookstoreTestBase
             $this->markTestSkipped('SQLite does not support native Enum');
         }
         
-        parent::setUp();
+        //parent::setUp();
     }
 
     public function testColumnHydration()
