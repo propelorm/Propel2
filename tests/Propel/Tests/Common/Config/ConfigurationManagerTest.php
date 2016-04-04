@@ -759,8 +759,7 @@ EOF;
                 'user' => 'root',
                 'password' => '',
                 'model_paths' => [
-                    'src',
-                    'vendor'
+                    'src'
                 ]
             ]
         ];
