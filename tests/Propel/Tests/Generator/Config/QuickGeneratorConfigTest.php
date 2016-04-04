@@ -69,7 +69,11 @@ class QuickGeneratorConfigTest extends TestCase
                             'adapter' => 'sqlite',
                             'dsn' => 'sqlite:fakeDb.sqlite',
                             'user'=> '',
-                            'password' => ''
+                            'password' => '',
+                            'model_paths' => [
+                                'src',
+                                'vendor'
+                            ]
                         ]
                     ]
                 ],
