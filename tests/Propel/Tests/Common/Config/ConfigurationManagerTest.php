@@ -757,7 +757,7 @@ EOF;
                 'classname' => 'Propel\Runtime\Connection\DebugPDO',
                 'dsn' => 'mysql:host=localhost;dbname=mydb',
                 'user' => 'root',
-                'password' => ''
+                'password' => '',
                 'model_paths' => [
                     'src',
                     'vendor'
