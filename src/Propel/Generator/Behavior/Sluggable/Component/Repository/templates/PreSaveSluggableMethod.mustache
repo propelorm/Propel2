@@ -1,25 +1,113 @@
-$reader = $this->getEntityMap()->getPropReader();
-$writer = $this->getEntityMap()->getPropWriter();
+$slugField = '{{slugFiled}}';
+$primaryStringField = '{{primaryStringField}}';
 
-$slugField = 'slug';
+$incrementSlug = function($slug, $separator = '{{separator}}') {
+    $pieces = explode($separator, $slug);
+    $last = $pieces[count($pieces) - 1];
 
-$incrementSlug = function($slug, $replacement = '-') {
-    $pieces = explode($replacement, $slug);
+    if (is_numeric($last)) {
+        array_pop($pieces);
+        $last++;
+        return implode($separator, $pieces) . $separator . $last;
+    } else {
+        return implode($separator, $pieces) . $separator . '1';
+    }
+};
+
+$cleanupSlugPart = function($slug, $replacement = '{{replacement}}') {
+    // transliterate
+    if (function_exists('iconv')) {
+      $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+    }
+
+    // lowercase
+    if (function_exists('mb_strtolower')) {
+        $slug = mb_strtolower($slug);
+    } else {
+        $slug = strtolower($slug);
+    }
+    // remove accents resulting from OSX's iconv
+    $slug = str_replace(array('\'', '`', '^'), '', $slug);
+
+    // replace non letter or digits with separator
+    $slug = preg_replace('{{replacePattern}}', $replacement, $slug);
+
+    // trim
+    $slug = trim($slug, $replacement);
+
+    if (empty($slug)) {
+        return 'n-a';
+    }
+
+    return $slug;
+};
+
+$makeSlugUnique =
+function($slug, $separator = '{{separator}}', $alreadyExists = false{{#scopeField}}, $scope{{/scopeField}}) use (&$makeSlugUnique, $incrementSlug, $slugField) {
+    $pieces = explode($separator, $slug);
     $last = array_pop($pieces);
 
     if (is_numeric($last)) {
-        $last++;
-        return implode($replacement, $pieces) . $replacement . $last;
+        $cleanedSlug = implode($separator, $pieces) . $separator;
+        $whereClause = '^' . $cleanedSlug . '[0-9]+$';
     } else {
-        return implode($replacement, $pieces) . $replacement . '2';
+        $whereClause = $slug;
     }
+
+    $query = $this->createQuery()->select($slugField)->orderBySlug('desc');
+    {{#scopeField}}
+    $query->filterBy('{{scopeField}}', $scope);
+    {{/scopeField}}
+
+    if(!$alreadyExists) {
+        $count = $query->filterBySlug($slug)->count();
+        if ($count > 0) {
+            return $makeSlugUnique($incrementSlug($slug), $separator, true{{#scopeField}}, $scope{{/scopeField}});
+        }
+
+        return $slug;
+    }
+
+    $adapter = $this->getEntityMap()->getAdapter();
+    $maxReservedSlug = $query->where($adapter->compareRegex({{slugColumn}}, '?'), $whereClause)->findOne();
+    if (null == $maxReservedSlug) {
+        return $slug;
+    }
+
+    return $incrementSlug($maxReservedSlug);
+};
+
+$limitSlugSize = function($slug, $reservedSpaces = 3) {
+    if (strlen($slug) > ({{fieldSize}} - $reservedSpaces)) {
+        $slug = substr($slug, 0, {{fieldSize}} - $reservedSpaces);
+    }
+
+    return $slug;
+};
+
+$createSlug = function($entity) use ($makeSlugUnique, $cleanupSlugPart, $limitSlugSize) {
+    $slug = {{{createSlugFunction}}};
+    {{#pattern}}
+        $slug = str_replace('//', '/n-a/', $slug);
+    {{/pattern}}
+    $slug = $cleanupSlugPart($slug);
+    $slug = $limitSlugSize($slug);
+    $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
+
+    return $slug;
 };
 
 $slugs = [];
 foreach ($event->getEntitiesToInsert() as $entity) {
+    $slug = $entity->getSlug();
+    if (null === $slug || '' === $slug) {
+        $slug = $createSlug($entity);
+    } else {
+        $slug = $cleanupSlugPart($slug);
+        $slug = $limitSlugSize($slug);
+        $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
+    }
 
-    $slug = $reader($entity, $slugField);
-    $slug = $this->cleanupSlugPart($slug);
     while (true) {
         if (!isset($slugs[$slug])) {
             $slugs[$slug] = $entity;
@@ -27,17 +115,32 @@ foreach ($event->getEntitiesToInsert() as $entity) {
         }
 
         //create another slug
-        $slug = $incrementSlug($slug);
+        $slug = $incrementSlug($slug{{#pattern}}, '/'{{/pattern}});
     }
 
     $slugs[$slug] = $entity;
 }
 
+
 //updates
 foreach ($event->getEntitiesToUpdate() as $entity) {
-    $slugModified = $event->getSession()->isFieldModified($entity, $slugField);
+    $slugModified = $this->isFieldModified($entity, $slugField);
+    {{#notPermanent}}
+    if ($this->isFieldModified($entity, $primaryStringField) && !$slugModified) {
+        $entity->setSlug($createSlug($entity));
+    }
+    {{/notPermanent}}
+
     if ($slugModified) {
-        $slug = $reader($entity, $slugField);
+        $slug = $entity->getSlug();
+        if (null === $slug || '' === $slug) {
+            $slug = $createSlug($entity);
+        } else {
+            $slug = $cleanupSlugPart($slug);
+            $slug = $limitSlugSize($slug);
+            $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
+        }
+
         while (true) {
             if (!isset($slugs[$slug])) {
                 $slugs[$slug] = $entity;
@@ -45,32 +148,12 @@ foreach ($event->getEntitiesToUpdate() as $entity) {
             }
 
             //create another slug
-            $slug = $incrementSlug($slug);
+            $slug = $incrementSlug($slug{{#pattern}}, '/'{{/pattern}});
         }
-    }
-}
-
-//search for already reserved slugs and change its value then.
-$slugReservedItems = {{queryClass}}::create()
-    ->select([$slugField])
-    ->filterBySlug(array_keys($slugs), Criteria::IN)
-    ->find();
-
-foreach ($slugReservedItems as $reservedSlug) {
-    $slug = $reservedSlug;
-    while (true) {
-        if (!isset($slugs[$slug])) {
-            $slugs[$slug] = $slugs[$reservedSlug]; //add new
-            unset($slugs[$reservedSlug]); //remove old
-            break;
-        }
-
-        //create another slug
-        $slug = $this->incrementSlug($slug);
     }
 }
 
 //update the actual field in the entity
 foreach ($slugs as $slug => $entity) {
-    $writer($entity, $slugField, $slug);
+    $entity->setSlug($slug);
 }

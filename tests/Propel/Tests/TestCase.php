@@ -10,8 +10,6 @@
 
 namespace Propel\Tests;
 
-
-use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Configuration;
 
 class TestCase extends \PHPUnit_Framework_TestCase
