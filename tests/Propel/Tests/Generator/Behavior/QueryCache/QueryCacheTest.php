@@ -18,8 +18,6 @@ use Propel\Tests\TestCase;
  *
  * @author Manuel Raynaud <mraynaud@openstudio.fr>
  *
- * @group database
- * @group skip
  */
 class QueryCacheTest extends TestCase
 {
@@ -90,5 +88,18 @@ XML;
 
         $this->assertTrue(\QuerycacheEntity1Query::create()->cacheContains('test3'), ' cache contains "test3" key');
         $this->assertEquals($expectedSql, $q->cacheFetch('test3'));
+    }
+
+    public function testQueryIsNotCachedIfExceptionIsThrown()
+    {
+        $q = \QuerycacheEntity1Query::create()->setQueryKey('test4')->filterByTitle('bar');
+
+        try {
+            $q->withField('wrongField')->find();
+        } catch (\Exception $e) {
+            $this->assertTrue(true, 'The exception is correctly thrown');
+        }
+
+        $this->assertNull($q->cacheFetch('test4'), 'The query is not cached,  if it has thrown exception');
     }
 }
