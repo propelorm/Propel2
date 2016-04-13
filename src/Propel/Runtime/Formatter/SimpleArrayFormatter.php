@@ -81,7 +81,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @return array The original record turned into an array
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord($record = null)
     {
         return $record ? $record->toArray() : array();
     }

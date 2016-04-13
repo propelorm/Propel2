@@ -10,11 +10,11 @@
 
 namespace Propel\Generator\Behavior\Sluggable;
 
-use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
-use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
+use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Unique;
 
@@ -45,6 +45,12 @@ class SluggableBehavior extends Behavior
     {
         $entity = $this->getEntity();
 
+        //Search a primary string
+
+        if (null === $this->getPrimaryStringFieldName() && '' === $this->getParameter('slug_pattern')) {
+            throw new BuildException('Sluggable behavior requires the entity has one primary string at least, to calculate the slug.');
+        }
+
         if (!$entity->hasField($this->getParameter('slug_field'))) {
             $entity->addField(
                 [
@@ -73,21 +79,38 @@ $this->preSaveSluggable($event);
 EOF;
     }
 
+    public function objectBuilderModification(ObjectBuilder $builder)
+    {
+        if ('slug' !== $this->getParameter('slug_field')) {
+            $this->applyComponent('GetSlugMethod', $builder);
+            $this->applyComponent('SetSlugMethod', $builder);
+        }
+    }
+
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-        $this->applyComponent('Repository\\CleanupSlugPartMethod', $builder);
         $this->applyComponent('Repository\\PreSaveSluggableMethod', $builder);
     }
 
     public function queryBuilderModification(QueryBuilder $builder)
     {
-        $script = '';
-
         if ($this->getParameter('slug_field') != 'slug') {
             $this->applyComponent('Query\\FilterBySlugMethod', $builder);
             $this->applyComponent('Query\\FindOneBySlugMethod', $builder);
+            $this->applyComponent('Query\\OrderBySlugMethod', $builder);
+        } elseif ($this->getParameter('scope_field') != '') {
+            $this->applyComponent('Query\\FindOneBySlugMethod', $builder);
+        }
+    }
+
+    public function getPrimaryStringFieldName()
+    {
+        foreach ($this->getEntity()->getFields() as $field) {
+            if ($field->isPrimaryString()) {
+                return $field->getName();
+            }
         }
 
-        return $script;
+        return null;
     }
 }

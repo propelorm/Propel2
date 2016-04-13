@@ -13,16 +13,12 @@ class FilterBySlugMethod extends BuildComponent
 
     public function process()
     {
-        $fieldName = $this->getBehavior()->getParameter('slug_field');
-        $this->getDefinition()->declareUse($this->getQueryClassName(true));
-        $fieldConstant = $this->getEntity()->getField($fieldName)->getConstantName();
-
         $body = "
-return \$this->addUsingAlias($fieldConstant, \$slug, Criteria::EQUAL);
+return \$this->filterBy{$this->getBehavior()->getFieldForParameter('slug_field')->getName()}(\$slug);
 ";
 
         $this->addMethod('filterBySlug')
-            ->addSimpleParameter('slug', 'string', 'The value to use as filter')
+            ->addSimpleParameter('slug','mixed', 'The value, or the array of values, to use as filter')
             ->setDescription('Filter the query on the slug field')
             ->setType('$this|' . $this->getQueryClassName())
             ->setTypeDescription('The current query, for fluid interface')
