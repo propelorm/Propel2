@@ -36,7 +36,7 @@ class QueryCacheBehavior extends Behavior
         $this->applyComponent('Attributes', $builder);
         $this->applyComponent('QueryKeyManipulation', $builder);
         $this->applyComponent('CacheManipulation', $builder);
-        $this->applyComponent('doSelectMethod', $builder);
-        $this->applyComponent('doCountMethod', $builder);
+        $this->applyComponent('DoSelectMethod', $builder);
+        $this->applyComponent('DoCountMethod', $builder);
     }
 }
