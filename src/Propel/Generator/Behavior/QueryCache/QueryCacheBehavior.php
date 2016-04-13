@@ -187,9 +187,6 @@ public function doSelect(ConnectionInterface \$con = null)
     } else {
         \$params = array();
         \$sql = \$this->createSelectSql(\$params);
-        if (\$key) {
-            \$this->cacheStore(\$key, \$sql);
-        }
     }
 
     try {
@@ -200,6 +197,10 @@ public function doSelect(ConnectionInterface \$con = null)
             Propel::log(\$e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
+        
+    if (\$key && !\$this->cacheContains(\$key)) {
+            \$this->cacheStore(\$key, \$sql);
+    }
 
     return \$con->getDataFetcher(\$stmt);
 }
@@ -249,10 +250,6 @@ public function doCount(ConnectionInterface \$con = null)
             \$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
             \$sql = \$this->createSelectSql(\$params);
         }
-
-        if (\$key) {
-            \$this->cacheStore(\$key, \$sql);
-        }
     }
 
     try {
@@ -263,6 +260,11 @@ public function doCount(ConnectionInterface \$con = null)
         Propel::log(\$e->getMessage(), Propel::LOG_ERR);
         throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', \$sql), 0, \$e);
     }
+    
+    if (\$key && !\$this->cacheContains(\$key)) {
+            \$this->cacheStore(\$key, \$sql);
+    }
+
 
     return \$con->getDataFetcher(\$stmt);
 }
