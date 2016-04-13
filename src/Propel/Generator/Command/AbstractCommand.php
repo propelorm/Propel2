@@ -129,7 +129,7 @@ abstract class AbstractCommand extends Command
             $parts = preg_split('/=/', $element);
 
             if (2 === count($parts)) {
-                $extras[strtolower($parts[0])] = $parts[1];
+                $extras[strtolower($parts[0])] = urldecode($parts[1]);
             }
         }
         $extras['adapter'] = $adapter;
