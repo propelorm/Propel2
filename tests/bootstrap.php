@@ -2,6 +2,12 @@
 
 require_once __DIR__.'/../autoload.php.dist';
 
+// check if user is root and 
+if (function_exists("posix_getuid")) {
+    if (posix_getuid() == 0)
+        die("You must run tests suite with an unprivileged user.");
+}
+
 echo sprintf("Tests started in temp %s.\n", sys_get_temp_dir());
 /**
  * fix var_export behavior with floating number precision since PHP 5.4.22
@@ -11,4 +17,4 @@ echo sprintf("Tests started in temp %s.\n", sys_get_temp_dir());
  */
 ini_set('precision', 14);
 ini_set('serialize_precision', 14);
-setlocale(LC_ALL, 'en_GB.utf8'); //fixed issues with hhvm and iconv
+setlocale(LC_ALL, 'en_US.utf8'); //fixed issues with hhvm and iconv
