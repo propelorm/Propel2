@@ -34,8 +34,7 @@ class SluggableBehavior extends Behavior
         'replace_pattern' => '/\W+/',
         'replacement' => '-',
         'separator' => '-',
-        'permanent' => 'false',
-        'scope_field' => '',
+        //'scope_field' => '', //not yet implemented
     ];
 
     /**
@@ -77,17 +76,5 @@ EOF;
     {
         $this->applyComponent('Repository\\CleanupSlugPartMethod', $builder);
         $this->applyComponent('Repository\\PreSaveSluggableMethod', $builder);
-    }
-
-    public function queryBuilderModification(QueryBuilder $builder)
-    {
-        $script = '';
-
-        if ($this->getParameter('slug_field') != 'slug') {
-            $this->applyComponent('Query\\FilterBySlugMethod', $builder);
-            $this->applyComponent('Query\\FindOneBySlugMethod', $builder);
-        }
-
-        return $script;
     }
 }

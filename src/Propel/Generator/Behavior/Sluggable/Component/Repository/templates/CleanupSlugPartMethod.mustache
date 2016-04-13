@@ -14,13 +14,20 @@ if (function_exists('mb_strtolower')) {
 $slug = str_replace(array('\'', '`', '^'), '', $slug);
 
 // replace non letter or digits with separator
-$slug = preg_replace('" . $this->getBehavior()->getParameter('replace_pattern') . "', $replacement, $slug);
+$slug = preg_replace({{replacePattern}}, $replacement, $slug);
 
 // trim
 $slug = trim($slug, $replacement);
 
+// check length, as suffix could put it over maximum
+$incrementReservedSpace = 3;
+$maxSize = {{maxSize}};
+if (strlen($slug) > ($maxSize - $incrementReservedSpace)) {
+    $slug = substr($slug, 0, $maxSize - $incrementReservedSpace);
+}
+
 if (empty($slug)) {
-    return 'n-a';
+    return '';
 }
 
 return $slug;

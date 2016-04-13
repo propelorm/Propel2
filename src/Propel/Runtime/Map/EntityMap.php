@@ -195,6 +195,8 @@ abstract class EntityMap
         $this->initialize();
     }
 
+    abstract public function fromArray($entity, array $arr, $keyType = EntityMap::TYPE_FIELDNAME);
+
     /**
      * Active-Record like access to this entityMap. Primarily for prototyping usages.
      *

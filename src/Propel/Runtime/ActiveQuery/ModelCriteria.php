@@ -1038,12 +1038,15 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if (!$ret = $this->findOne()) {
-            $class = $this->getEntityName();
-            $obj = new $class();
+            $object = $this->getEntityMap()->getRepository()->createObject();
+
+            $array = [];
             foreach ($this->keys() as $key) {
-                $obj->setByName(NamingTool::toUnderscore($key), $this->getValue($key), EntityMap::TYPE_FULLCOLNAME);
+                $array[NamingTool::toUnderscore($key)] = $this->getValue($key);
             }
-            $ret = $this->getFormatter()->formatRecord($obj);
+
+            $this->getEntityMap()->fromArray($object, $array, EntityMap::TYPE_FULLCOLNAME);
+            return $object;
         }
 
         return $ret;

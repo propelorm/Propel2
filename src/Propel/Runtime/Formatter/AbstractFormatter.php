@@ -181,18 +181,6 @@ abstract class AbstractFormatter
     {
     }
 
-    /**
-     * Formats an ActiveRecord object
-     *
-     * @param ActiveRecordInterface $record the object to format
-     *
-     * @return ActiveRecordInterface The original record
-     */
-    public function formatRecord($record = null)
-    {
-        return $record;
-    }
-
     abstract public function format(DataFetcherInterface $dataFetcher = null);
 
     abstract public function formatOne(DataFetcherInterface $dataFetcher = null);

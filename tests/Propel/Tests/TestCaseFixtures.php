@@ -12,6 +12,7 @@ namespace Propel\Tests;
 
 use Propel\Generator\Command\TestPrepareCommand;
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Propel;
 use Symfony\Component\Console\Application;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -144,6 +145,23 @@ class TestCaseFixtures extends TestCase
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entitiesToInsert
+     * @param array $entitiesToUpdate
+     *
+     * @return SaveEvent
+     */
+    public function getNewSaveEvent($entityClass, $entitiesToInsert, $entitiesToUpdate)
+    {
+        return new SaveEvent(
+            $this->getConfiguration()->getSession(),
+            $this->getConfiguration()->getEntityMap($entityClass),
+            $entitiesToInsert,
+            $entitiesToUpdate
+            );
     }
 
     protected function getLastBuildMode()

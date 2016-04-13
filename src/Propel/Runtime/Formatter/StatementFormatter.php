@@ -44,11 +44,6 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
-    public function formatRecord($record = null)
-    {
-        throw new PropelException('The Statement formatter cannot transform a record into a statement');
-    }
-
     public function isObjectFormatter()
     {
         return false;

@@ -10,7 +10,6 @@ use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
 
 /**
  *
- *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
 class CleanupSlugPartMethod extends BuildComponent
@@ -21,7 +20,10 @@ class CleanupSlugPartMethod extends BuildComponent
 
     public function process()
     {
-        $body = $this->renderTemplate();
+        $body = $this->renderTemplate([
+            'replacePattern' => var_export($this->getBehavior()->getParameter('replace_pattern'), true),
+            'maxSize' => $this->getBehavior()->getFieldForParameter('slug_field')->getSize() ?: 255
+        ]);
 
         $this->addMethod('cleanupSlugPart')
             ->addSimpleParameter('slug', 'string')

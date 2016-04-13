@@ -1,6 +1,5 @@
 vendor/
 composer.phar
-/composer.lock
 autoload.php
 phpunit.xml
 php-cs-fixer.phar

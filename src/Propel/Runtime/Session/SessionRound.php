@@ -114,14 +114,10 @@ class SessionRound
                 }
             }
 
-//            if ($this->getSession()->isNew($entity) || $this->getSession()->isChanged($entity)) {
             $event = new PersistEvent($this->getSession(), $entityMap, $entity);
             $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
             $this->persistQueue[$id] = $entity;
             $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PERSIST, $event);
-//            } else {
-//                var_dump('fitz');
-//            }
 
             if ($deep) {
                 $entityMap->persistDependencies($this->getSession(), $entity, true);

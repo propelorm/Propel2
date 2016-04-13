@@ -195,8 +195,6 @@ class Configuration extends GeneratorConfig
 
         if (!static::$globalConfiguration) {
             static::$globalConfiguration = $this;
-        } else {
-            xdebug_break();
         }
     }
 

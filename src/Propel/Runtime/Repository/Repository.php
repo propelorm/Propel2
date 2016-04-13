@@ -122,6 +122,11 @@ abstract class Repository
     }
 
     /**
+     * @return mixed
+     */
+    abstract function createObject();
+
+    /**
      * @return EntityMap
      */
     public function getEntityMap()

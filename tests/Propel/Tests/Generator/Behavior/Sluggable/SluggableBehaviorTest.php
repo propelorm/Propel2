@@ -11,18 +11,21 @@
 namespace Propel\Tests\Generator\Behavior\Sluggable;
 
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
+use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Propel;
-use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Behavior\Base\BaseEntity13Repository;
+use Propel\Tests\Bookstore\Behavior\Base\BaseEntity14Repository;
+use Propel\Tests\Bookstore\Behavior\Entity13;
+use Propel\Tests\Bookstore\Behavior\Entity14;
+use Propel\Tests\Bookstore\Map\BookEntityMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\Behavior\Table13;
-use Propel\Tests\Bookstore\Behavior\Table13Query;
-use Propel\Tests\Bookstore\Behavior\Map\Table13TableMap;
-use Propel\Tests\Bookstore\Behavior\Table14;
-use Propel\Tests\Bookstore\Behavior\Table14Query;
-use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
-use Propel\Tests\Bookstore\Behavior\TableWithScope;
-use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
+use Propel\Tests\Bookstore\Behavior\Entity13Query;
+use Propel\Tests\Bookstore\Behavior\Map\Entity13EntityMap;
+use Propel\Tests\Bookstore\Behavior\Entity14Query;
+use Propel\Tests\Bookstore\Behavior\Map\Entity14EntityMap;
+use Propel\Tests\Bookstore\Behavior\EntityWithScope;
+use Propel\Tests\Bookstore\Behavior\EntityWithScopeQuery;
 
 /**
  * Tests for SluggableBehavior class
@@ -36,65 +39,38 @@ class SluggableBehaviorTest extends BookstoreTestBase
 {
     protected function setUp()
     {
-        //prevent issue DSN not Found
-        self::$isInitialized = false;
         parent::setUp();
-        include_once(__DIR__.'/SluggableBehaviorTestClasses.php');
     }
 
 
     public function testParameters()
     {
-        $table13 = Table13TableMap::getTableMap();
-        $this->assertEquals(count($table13->getColumns()), 3, 'Sluggable adds one columns by default');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13', 'getSlug'), 'Sluggable adds a slug column by default');
-        $table14 = Table14TableMap::getTableMap();
-        $this->assertEquals(count($table14->getColumns()), 3, 'Sluggable does not add a column when it already exists');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14', 'getUrl'), 'Sluggable allows customization of slug_column name');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14', 'getSlug'), 'Sluggable adds a standard getter for the slug column');
+        $table13 = $this->getConfiguration()->getEntityMap(Entity13::class);
+        $this->assertEquals(count($table13->getFields()), 3, 'Sluggable adds one columns by default');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity13', 'getSlug'), 'Sluggable adds a slug column by default');
+
+        $table14 = $this->getConfiguration()->getEntityMap(Entity14::class);
+        $this->assertEquals(count($table14->getFields()), 4, 'Sluggable does not add a column when it already exists');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity14', 'getUrl'), 'Sluggable allows customization of slug_column name');
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity14', 'setUrl'), 'Sluggable allows customization of slug_column name');
     }
 
     public function testObjectGetter()
     {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13', 'getSlug'), 'Sluggable adds a getter for the slug column');
-        $t = new Table13();
+        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Entity13', 'getSlug'), 'Sluggable adds a getter for the slug column');
+        $t = new Entity13();
         $t->setSlug('foo');
         $this->assertEquals('foo', $t->getSlug(), 'getSlug() returns the object slug');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14', 'getSlug'), 'Sluggable adds a getter for the slug column, even if the column does not have the default name');
-        $t = new Table14();
+        $t = new Entity14();
         $t->setUrl('foo');
-        $this->assertEquals('foo', $t->getSlug(), 'getSlug() returns the object slug');
-    }
-
-    public function testObjectSetter()
-    {
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13', 'setSlug'), 'Sluggable adds a setter for the slug column');
-        $t = new Table13();
-        $t->setSlug('foo');
-        $this->assertEquals('foo', $t->getSlug(), 'setSlug() sets the object slug');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14', 'setSlug'), 'Sluggable adds a setter for the slug column, even if the column does not have the default name');
-        $t = new Table14();
-        $t->setSlug('foo');
-        $this->assertEquals('foo', $t->getUrl(), 'setSlug() sets the object slug');
-    }
-
-    public function testObjectCreateRawSlug()
-    {
-        $t = new TestableTable13();
-        $this->assertEquals('n-a', $t->createRawSlug(), 'createRawSlug() returns an empty string for an empty object with no pattern');
-        $t->setTitle('Hello, World');
-        $this->assertEquals('hello-world', $t->createRawSlug(), 'createRawSlug() returns the cleaned up object string representation by default');
-
-        $t = new TestableTable14();
-        $this->assertEquals('/foo/n-a/bar', $t->createRawSlug(), 'createRawSlug() returns a slug for an empty object with a pattern');
-        $t->setTitle('Hello, World');
-        $this->assertEquals('/foo/hello-world/bar', $t->createRawSlug(), 'createRawSlug() returns a slug based on a pattern');
+        $this->assertEquals('foo', $t->getUrl(), 'getSlug() returns the object slug');
     }
 
     public static function cleanupSlugProvider()
     {
         return array(
-            array('', 'n-a'),
+            array('', ''),
+            array(null, ''),
             array('foo', 'foo'),
             array('foo bar', 'foo-bar'),
             array('foo  bar', 'foo-bar'),
@@ -111,8 +87,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
      */
     public function testObjectCleanupSlugPart($in, $out)
     {
-        $t = new TestableTable13();
-        $this->assertEquals($out, $t->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
+        /** @var BaseEntity13Repository $entity13Repository */
+        $entity13Repository = $this->getConfiguration()->getRepository(Entity13::class);
+        $this->assertEquals($out, $entity13Repository->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
     }
 
     public static function limitSlugSizeProvider()
@@ -133,264 +110,78 @@ class SluggableBehaviorTest extends BookstoreTestBase
      */
     public function testObjectLimitSlugSize($in, $out)
     {
-        $t = new TestableTable14();
-        $this->assertEquals($out, $t->limitSlugSize($in), 'limitSlugsize() limits the slug size');
+        /** @var BaseEntity14Repository $entity14Repository */
+        $entity14Repository = $this->getConfiguration()->getRepository(Entity14::class);
+        $this->assertEquals($out, $entity14Repository->cleanupSlugPart($in), 'limitSlugsize() limits the slug size');
     }
 
-    public function testObjectMakeSlugUnique()
+    /**
+     * Entity 14 has slug_pattern=/foo/{category}/bar/{Title} and separator=/ defined
+     *
+     * -> tests/Fixtures/bookstore/behavior-sluggable-schema.xml:16
+     */
+    public function testSlugPattern()
     {
-        Table13Query::create()->deleteAll();
-        $t = new TestableTable13();
-        $this->assertEquals('', $t->makeSlugUnique(''), 'makeSlugUnique() returns the input slug when the input is empty');
-        $this->assertEquals('foo', $t->makeSlugUnique('foo'), 'makeSlugUnique() returns the input slug when the table is empty');
-        $t->setSlug('foo');
-        $t->save();
-        $t = new TestableTable13();
-        $this->assertEquals('bar', $t->makeSlugUnique('bar'), 'makeSlugUnique() returns the input slug when the table does not contain a similar slug');
-        $t->save();
-        $t = new TestableTable13();
-        $this->assertEquals('foo-1', $t->makeSlugUnique('foo'), 'makeSlugUnique() returns an incremented input when it already exists');
-        $t->setSlug('foo-1');
-        $t->save();
-        $t = new TestableTable13();
-        $this->assertEquals('foo-2', $t->makeSlugUnique('foo'), 'makeSlugUnique() returns an incremented input when it already exists');
+        Entity14Query::create()->deleteAll();
+
+        $entity = new Entity14;
+        $entity->setTitle('My Supi title');
+        $entity->setCategory('cool');
+        $entitiesToInsert = [$entity];
+        $entity->save();
+        $this->assertEquals('/foo/cool/bar/my-supi-title', $entity->getUrl(), 'slug_pattern of /foo/{category}/bar/{Title} should be correctly replaced');
+
+        $entity2 = clone $entity;
+        $entity2->setId(null);
+        $entity2->setUrl(null);
+        $entity2->save();
+        $this->assertEquals('/foo/cool/bar/my-supi-title/2', $entity2->getUrl(), 'slug_pattern of /foo/{category}/bar/{Title} should be correctly incremented');
+
+        $entity3 = clone $entity2;
+        $entity3->setId(null);
+        $entity3->setUrl(null);
+        $entity3->save();
+        $this->assertEquals('/foo/cool/bar/my-supi-title/3', $entity3->getUrl(), 'slug_pattern of /foo/{category}/bar/{Title} should be correctly incremented');
+
+        $entity3->setTitle('My');
+        $entity3->save();
+        $this->assertEquals('/foo/cool/bar/my', $entity3->getUrl(), 'slug_pattern of /foo/{category}/bar/{Title} should be correctly replaced');
+
+        $entity3->setTitle('My Supi title');
+        $entity3->save();
+        $this->assertEquals('/foo/cool/bar/my-supi-title/3', $entity3->getUrl(), 'slug_pattern of /foo/{category}/bar/{Title} should be correctly replaced');
     }
 
-    public function testObjectCreateSlug()
+    public function testBiggerChangeSet()
     {
-        Table13Query::create()->deleteAll();
-        $t = new TestableTable13();
-        $this->assertEquals('n-a', $t->createSlug(), 'createSlug() returns n-a for an empty object');
-        $t->setTitle('Hello, World!');
-        $this->assertEquals('hello-world', $t->createSlug(), 'createSlug() returns a cleaned up slug');
-        $t->setSlug('hello-world');
-        $t->save();
-        $t = new TestableTable13();
-        $t->setTitle('Hello; wOrld');
-        $this->assertEquals('hello-world-1', $t->createSlug(), 'createSlug() returns a unique slug');
+        Entity14Query::create()->deleteAll();
+        $entity = new Entity14;
+        $entity->setTitle('My Supi');
+        $entity->setCategory('cool');
+        $this->getConfiguration()->getSession()->persist($entity);
+        $this->getConfiguration()->getSession()->commit();
 
-        Table14Query::create()->deleteAll();
-        $t = new TestableTable14();
-        $this->assertEquals('/foo/n-a/bar', $t->createSlug(), 'createSlug() returns a slug for an empty object with a pattern');
-        $t->setTitle('Hello, World!');
-        $this->assertEquals('/foo/hello-world/bar', $t->createSlug(), 'createSlug() returns a cleaned up slug');
-        $t->setSlug('/foo/hello-world/bar');
-        $t->save();
-        $t = new TestableTable14();
-        $t->setTitle('Hello; wOrld:');
-        $this->assertEquals('/foo/hello-world/bar/1', $t->createSlug(), 'createSlug() returns a unique slug');
-    }
+        $this->assertEquals('/foo/cool/bar/my-supi', $entity->getUrl());
+        $entity->setTitle('My Supi title');
 
-    public function testObjectPreSave()
-    {
-        Table14Query::create()->deleteAll();
-        $t = new Table14();
-        $t->save();
-        $this->assertEquals('/foo/n-a/bar', $t->getSlug(), 'preSave() sets a default slug for empty objects');
-        $t = new Table14();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() sets a cleaned up slug for objects');
-        $t = new Table14();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('/foo/hello-world/bar/1', $t->getSlug(), 'preSave() sets a unique slug for objects');
-        $t = new Table14();
-        $t->setTitle('Hello, World');
-        $t->setSlug('/foo/custom/bar');
-        $t->save();
-        $this->assertEquals('/foo/custom/bar', $t->getSlug(), 'preSave() uses the given slug if it exists');
-        $t = new Table14();
-        $t->setTitle('Hello, World');
-        $t->setSlug('/foo/custom/bar');
-        $t->save();
-        $this->assertEquals('/foo/custom/bar/1', $t->getSlug(), 'preSave() uses the given slug if it exists and makes it unique');
-    }
 
-    public function testObjectSlugLifecycle()
-    {
-        Table13Query::create()->deleteAll();
-        $t = new Table13();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('hello-world', $t->getSlug(), 'preSave() creates a slug for new objects');
-        $t->setSlug('hello-bar');
-        $t->save();
-        $this->assertEquals('hello-bar', $t->getSlug(), 'setSlug() allows to override default slug');
-        $t->setSlug('');
-        $t->save();
-        $this->assertEquals('hello-world', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
+        $entity2 = new Entity14;
+        $entity2->setTitle('My Supi title');
+        $entity2->setCategory('cool');
 
-        Table14Query::create()->deleteAll();
-        $t = new Table14();
-        $t->setTitle('Hello, World2');
-        $t->setSlug('hello-bar2');
-        $t->save();
-        $this->assertEquals('hello-bar2', $t->getSlug(), 'setSlug() allows to override default slug, even before save');
-        $t->setSlug('');
-        $t->save();
-        $this->assertEquals('/foo/hello-world2/bar', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
-    }
+        $entity3 = new Entity14;
+        $entity3->setTitle('My Supi title');
+        $entity3->setCategory('cool');
 
-    public function testObjectSlugAutoUpdate()
-    {
-        Table13Query::create()->deleteAll();
-        $t = new Table13();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('hello-world', $t->getSlug(), 'preSave() creates a slug for new objects');
-        $t->setTitle('Hello, My World');
-        $t->save();
-        $this->assertEquals('hello-my-world', $t->getSlug(), 'preSave() autoupdates slug on object change');
-        $t->setTitle('Hello, My Whole New World');
-        $t->setSlug('hello-bar');
-        $t->save();
-        $this->assertEquals('hello-bar', $t->getSlug(), 'preSave() does not autoupdate slug when it was set by the user');
-    }
 
-    public function testObjectSlugAutoUpdatePermanent()
-    {
-        Table14Query::create()->deleteAll();
-        $t = new Table14();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() creates a slug for new objects');
-        $t->setTitle('Hello, My World');
-        $t->save();
-        $this->assertEquals('/foo/hello-world/bar', $t->getSlug(), 'preSave() does not autoupdate slug on object change for permanent slugs');
-        $t->setSlug('hello-bar');
-        $t->save();
-        $this->assertEquals('hello-bar', $t->getSlug(), 'setSlug() still works for permanent slugs');
-    }
+        //all three should now have the same slug. first should get the one without incrementation
+        $this->getConfiguration()->getSession()->persist($entity);
+        $this->getConfiguration()->getSession()->persist($entity2);
+        $this->getConfiguration()->getSession()->persist($entity3);
+        $this->getConfiguration()->getSession()->commit();
 
-    public function testQueryFindOneBySlug()
-    {
-        $this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query does not provide a findOneBySlug() method if the slug column is "slug".');
-        $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14Query', 'findOneBySlug'), 'The generated query provides a findOneBySlug() method even if the slug column doesn\'t have the default name');
-
-        Table14Query::create()->deleteAll();
-        $t1 = new Table14();
-        $t1->setTitle('Hello, World');
-        $t1->save();
-        $t2 = new Table14();
-        $t2->setTitle('Hello, Cruel World');
-        $t2->save();
-        $t = Table14Query::create()->findOneBySlug('/foo/hello-world/bar');
-        $this->assertEquals($t1, $t, 'findOneBySlug() returns a single object matching the slug');
-    }
-
-    public function testUniqueViolationWithoutScope()
-    {
-        $this->markTestSkipped('Skipping...');
-
-        TableWithScopeQuery::create()->deleteAll();
-        $t = new TableWithScope();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('hello-world', $t->getSlug());
-
-        $this->setExpectedException('Propel\Runtime\Exception\PropelException');
-
-        $t = new TableWithScope();
-        $t->setTitle('Hello, World');
-        $t->save();
-
-    }
-
-    public function testNoUniqueViolationWithScope()
-    {
-        TableWithScopeQuery::create()->deleteAll();
-        $t = new TableWithScope();
-        $t->setTitle('Hello, World');
-        $t->save();
-        $this->assertEquals('hello-world', $t->getSlug());
-
-        try {
-            $t = new TableWithScope();
-            $t->setTitle('Hello, World');
-            $t->setScope(1);
-            $t->save();
-
-            $this->assertEquals('hello-world', $t->getSlug());
-        } catch (\Exception $e) {
-            $this->fail($e->getMessage());
-        }
-    }
-
-    public function testNumberOfQueriesForMakeUniqSlug()
-    {
-        Table13Query::create()->deleteAll();
-        $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
-        $adapter = Propel::getAdapter(Table13TableMap::DATABASE_NAME);
-
-        $expectedCount = 4;
-        if ($adapter instanceof PgsqlAdapter) {
-            $expectedCount++; //because of the SELECT nextval(...) query
-        }
-
-        for ($i=0; $i < 5; $i++) {
-            $nbQuery = $con->getQueryCount();
-
-            $t = new Table13();
-            $t->setTitle('Hello, World');
-            $t->save($con);
-
-            $this->assertLessThanOrEqual($expectedCount, $con->getQueryCount() - $nbQuery, "no more than $expectedCount query to get a slug when it already exist");
-        }
-    }
-
-    public function testSlugRegexp()
-    {
-        Table13Query::create()->deleteAll();
-        $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
-
-        for ($i=0; $i < 3; $i++) {
-            $t = new Table13();
-            $t->setTitle('Hello, World');
-            $t->save($con);
-        }
-        $this->assertEquals('hello-world-2', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World');
-        $t->save($con);
-
-        $this->assertEquals('world', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World');
-        $t->save($con);
-
-        $this->assertEquals('world-1', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('Hello, World');
-        $t->save($con);
-
-        $this->assertEquals('hello-world-3', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World');
-        $t->save($con);
-
-        $this->assertEquals('world-2', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World 000');
-        $t->save($con);
-
-        $this->assertEquals('world-000', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World');
-        $t->save($con);
-
-        $this->assertEquals('world-101', $t->getSlug());
-
-        $t = new Table13();
-        $t->setTitle('World');
-        $t->save($con);
-
-        $this->assertEquals('world-102', $t->getSlug());
+        $this->assertEquals('/foo/cool/bar/my-supi-title', $entity->getUrl());
+        $this->assertEquals('/foo/cool/bar/my-supi-title/2', $entity2->getUrl());
+        $this->assertEquals('/foo/cool/bar/my-supi-title/3', $entity3->getUrl());
     }
 }
