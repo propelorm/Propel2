@@ -11,11 +11,9 @@ env:
   - DB=mysql
   - DB=sqlite
 
-before_install:
-  - travis_retry composer self-update
-
 install:
-  - travis_retry composer install --prefer-dist --no-interaction
+  - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - composer install
 
 before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
