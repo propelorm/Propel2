@@ -110,6 +110,7 @@ class NestedSetBehavior extends Behavior
         $this->applyComponent('Repository\AddNestedSetQueryMethod', $builder);
         $this->applyComponent('Repository\Attributes', $builder);
         $this->applyComponent('Repository\FixLevelsMethod', $builder);
+        $this->applyComponent('Repository\GetNestedManagerMethod', $builder);
         $this->applyComponent('Repository\MakeRoomForLeafMethod', $builder);
         $this->applyComponent('Repository\NestedSetEntityPoolMethods', $builder);
         $this->applyComponent('Repository\ProcessNestedSetQueriesMethod', $builder);

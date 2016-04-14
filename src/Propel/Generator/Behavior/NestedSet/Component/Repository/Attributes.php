@@ -18,6 +18,9 @@ class Attributes extends BuildComponent
 {
     public function process()
     {
+        $this->addProperty('nestedManager', null)
+            ->setType('NestedManagerInterface')
+            ->setDescription('Instance of NestedManagerInterface');
         $this->addProperty('nestedSetQueries', array())
             ->setDescription('Queries to be executed in the save transaction');
         $this->addProperty('nestedSetEntityPool', array())

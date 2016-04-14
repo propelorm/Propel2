@@ -34,7 +34,7 @@ foreach (\$event->getEntities() as \$entity) {
     //remove the entity from the Nested Set Entity Pool
     \$this->removeEntityFromPool(\$entity);
 
-    \$manager = \$this->getConfiguration()->getNestedManager(\$entity);
+    \$manager = \$this->getNestedManager();
 
     if (\$manager->isInTree(\$entity)) {
         // fill up the room that was used by the node

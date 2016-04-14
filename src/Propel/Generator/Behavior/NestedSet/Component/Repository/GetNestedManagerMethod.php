@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
@@ -8,7 +7,7 @@
  * @license MIT License
  */
 
-namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
+namespace Propel\Generator\Behavior\NestedSet\Component\Repository;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
@@ -16,21 +15,23 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class MakeRootMethod extends BuildComponent
+class GetNestedManagerMethod extends BuildComponent
 {
     use NamingTrait;
-    
+
     public function process()
     {
-        $body = "
-\$this->getRepository()->getNestedManager()->makeRoot(\$this);
+        $body = <<<EOF
+if (!isset(\$this->nestedManager)) {
+    \$this->nestedManager = new \\{$this->getObjectClassName(true)}NestedManager();
+}
 
-return \$this;
-";
+return \$this->nestedManager;
+EOF;
 
-        $this->addMethod('makeRoot')
-            ->setDescription('Creates the supplied node as the root node.')
-            ->setType("\$this|{$this->getObjectClassName()}", 'The current object (for fluent API support)')
+        $this->addMethod('getNestedManager')
+            ->setDescription('Return the nested set entity manager object')
+            ->setType('\Propel\Runtime\EntityManager\NestedManagerInterface')
             ->setBody($body)
         ;
     }

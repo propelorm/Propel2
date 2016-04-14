@@ -173,11 +173,6 @@ class Configuration extends GeneratorConfig
     protected $typeMaps = [];
 
     /**
-     * @var array NestedManager classes, while NestedSetBehavior is enabled
-     */
-    protected $nestedManagers = [];
-
-    /**
      * @param string $filename
      * @param array  $extraConf
      */
@@ -403,52 +398,6 @@ class Configuration extends GeneratorConfig
         $this->entityMaps[$fullEntityClassName] = $map;
 
         return $map;
-    }
-
-    /**
-     * Return an instance of the NestedManager class, while using NestedSetBehavior.
-     *
-     * @param string|object $entity The entity or the full entity class name
-     *
-     * @return NestedManager
-     *
-     * @throws \Propel\Runtime\RuntimeException If the manager not found
-     */
-    public function getNestedManager($entity)
-    {
-        $fullEntityClassName = $entity;
-
-        if (is_object($entity)) {
-            if (!method_exists($entity, 'getFullClassName')) {
-                throw new RuntimeException(
-                    'NestedManager class for entity ' . get_class($entity) . ' not found. Did you enable Nested Set Behavior in your \'schema.xml\' before generating your model?'
-                );
-            }
-            $fullEntityClassName = $entity->getFullClassName();
-        }
-
-        $fullEntityClassName = trim($fullEntityClassName, '\\');
-
-        if (isset($this->nestedManagers[$fullEntityClassName])) {
-            return $this->nestedManagers[$fullEntityClassName];
-        }
-
-        $namespaces = explode('\\', $fullEntityClassName);
-        $className = array_pop($namespaces);
-
-        $nestedManagerClass = implode('\\', $namespaces) . '\\' . $className . 'NestedManager';
-
-        if (!class_exists($nestedManagerClass)) {
-            throw new RuntimeException(
-                sprintf('NestedManager class `%s` for entity `%s` not found. Did you enable Nested Set Behavior in your
-                \'schema.xml\' before generating your model?', $nestedManagerClass, $fullEntityClassName)
-            );
-        }
-
-        $manager = new $nestedManagerClass();
-        $this->nestedManagers[$fullEntityClassName] = $manager;
-
-        return $manager;
     }
 
     public function reset()

@@ -31,8 +31,7 @@ class NestedSetEntityPoolMethods extends BuildComponent
     {
         $body = <<<EOF
 if (null === \$key) {
-    \$manager = \$this->getConfiguration()->getNestedManager('{$this->getObjectClassName(true)}');
-    \$key = \$manager->getPk(\$object);
+    \$key = \$this->getNestedManager()->getPk(\$object);
 }
 
 if (!isset(\$this->nestedSetEntityPool[\$key])) {
@@ -53,7 +52,7 @@ EOF;
 if (null === \$object) {
     return;
 }
-\$manager = \$this->getConfiguration()->getNestedManager('{$this->getObjectClassName(true)}');
+\$manager = \$this->getNestedManager();
 
 unset(\$this->nestedSetEntityPool[\$manager->getPk(\$object)]);
 EOF;

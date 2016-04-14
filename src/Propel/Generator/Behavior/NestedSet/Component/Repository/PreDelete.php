@@ -31,7 +31,7 @@ foreach (\$event->getEntities() as \$entity) {
         continue;
     }
 
-    \$manager = \$this->getConfiguration()->getNestedManager(\$entity);
+    \$manager = \$this->getNestedManager();
 
     if (\$manager->isRoot(\$entity)) {
         throw new PropelException('Deletion of a root node is disabled for nested sets. Use "

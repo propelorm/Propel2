@@ -347,7 +347,7 @@ class NestedSetBehaviorQueryTest extends TestCase
     public function testOrderByBranch()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $manager = $this->getConfiguration()->getNestedManager('\NestedSetEntity9');
+        $manager = $this->getConfiguration()->getRepository('\NestedSetEntity9')->getNestedManager();
         $manager->moveToPrevSiblingOf($t5, $t4);
         /* Results in
          t1
@@ -372,7 +372,7 @@ class NestedSetBehaviorQueryTest extends TestCase
     public function testOrderByLevel()
     {
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
-        $manager = $this->getConfiguration()->getNestedManager('\NestedSetEntity9');
+        $manager = $this->getConfiguration()->getRepository('\NestedSetEntity9')->getNestedManager();
         $manager->moveToPrevSiblingOf($t5, $t4);
         /* Results in
          t1

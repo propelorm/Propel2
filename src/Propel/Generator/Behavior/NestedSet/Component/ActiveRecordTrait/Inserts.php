@@ -10,11 +10,16 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class Inserts extends NestedSetBuildComponent
+class Inserts extends BuildComponent
 {
+    use NamingTrait;
+    
     public function process()
     {
         $this->addAddChild();
@@ -29,8 +34,7 @@ class Inserts extends NestedSetBuildComponent
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->addChild(\$this, \$child);
+\$this->getRepository()->getNestedManager()->addChild(\$this, \$child);
 
 return \$this;
 ";
@@ -47,8 +51,7 @@ are not persisted until the child object is saved.')
     protected function addInsertAsFirstChildOf()
     {
         $body= "
-{$this->getNestedManagerAssignment()}
-\$manager->insertAsFirstChildOf(\$this, \$parent);
+\$this->getRepository()->getNestedManager()->insertAsFirstChildOf(\$this, \$parent);
 
 return \$this;
 ";
@@ -67,8 +70,7 @@ are not persisted until the current object is saved.')
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->insertAsLastChildOf(\$this, \$parent);
+\$this->getRepository()->getNestedManager()->insertAsLastChildOf(\$this, \$parent);
 
 return \$this;
 ";
@@ -87,8 +89,8 @@ are not persisted until the current object is saved.
     {
         $objectClassName = $this->getObjectClassName();
 
-        $body = "{$this->getNestedManagerAssignment()}
-\$manager->insertAsPrevSiblingOf(\$this, \$sibling);
+        $body = "
+\$this->getRepository()->getNestedManager()->insertAsPrevSiblingOf(\$this, \$sibling);
 
 return \$this;
 ";
@@ -107,8 +109,7 @@ are not persisted until the current object is saved.')
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->insertAsNextSiblingOf(\$this, \$sibling);
+\$this->getRepository()->getNestedManager()->insertAsNextSiblingOf(\$this, \$sibling);
 
 return \$this;
 ";

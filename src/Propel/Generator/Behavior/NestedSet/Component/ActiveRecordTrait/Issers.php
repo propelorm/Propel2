@@ -10,11 +10,16 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class Issers extends NestedSetBuildComponent
+class Issers extends BuildComponent
 {
+    use NamingTrait;
+    
     public function process()
     {
         $this->addIsInTree();
@@ -54,9 +59,7 @@ class Issers extends NestedSetBuildComponent
     protected function addIsDescendantOf()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->isDescendantOf(\$this, \$parent);
+return \$this->getRepository()->getNestedManager()->isDescendantOf(\$this, \$parent);
 ";
 
         $this->addMethod('isDescendantOf')
@@ -69,9 +72,7 @@ return \$manager->isDescendantOf(\$this, \$parent);
     protected function addIsAncestorOf()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->isAncestorOf(\$this, \$child);
+return \$this->getRepository()->getNestedManager()->isAncestorOf(\$this, \$child);
 ";
 
         $this->addMethod('isAncestorOf')

@@ -9,10 +9,12 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class Counters extends NestedSetBuildComponent
+class Counters extends BuildComponent
 {
     public function process()
     {
@@ -23,9 +25,7 @@ class Counters extends NestedSetBuildComponent
     protected function addCountChildren()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->countChildren(\$this, \$criteria, \$con);
+return \$this->getRepository()->getNestedManager()->countChildren(\$this, \$criteria, \$con);
 ";
         $this->addMethod('countChildren')
             ->setDescription('Gets number of children for the given node.')
@@ -39,9 +39,7 @@ return \$manager->countChildren(\$this, \$criteria, \$con);
     protected function addCountDescendants()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->countDescendants(\$this, \$criteria, \$con);
+return \$this->getRepository()->getNestedManager()->countDescendants(\$this, \$criteria, \$con);
 ";
 
         $this->addMethod('countDescendants')

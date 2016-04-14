@@ -2112,12 +2112,12 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     protected function getManager()
     {
-        return $this->getConfiguration()->getNestedManager('\NestedSetEntity9');
+        return $this->getConfiguration()->getRepository('\NestedSetEntity9')->getNestedManager();
     }
 
     protected function getManagerWithScope()
     {
-        return $this->getConfiguration()->getNestedManager('\NestedSetEntity10');
+        return $this->getConfiguration()->getRepository('\NestedSetEntity10')->getNestedManager();
     }
 
     protected function getByTitle($title)

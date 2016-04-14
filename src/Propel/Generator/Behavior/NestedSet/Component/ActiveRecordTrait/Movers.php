@@ -9,11 +9,16 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class Movers extends NestedSetBuildComponent
+class Movers extends BuildComponent
 {
+    use NamingTrait;
+
     public function process()
     {
         $this->addMoveToFirstChildOf();
@@ -28,8 +33,7 @@ class Movers extends NestedSetBuildComponent
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->moveToFirstChildOf(\$this, \$parent, \$con);
+\$this->getRepository()->getNestedManager()->moveToFirstChildOf(\$this, \$parent, \$con);
 
 return \$this;
 ";
@@ -48,8 +52,7 @@ The modifications in the current object and the tree are immediate')
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->moveToLastChildOf(\$this, \$parent, \$con);
+\$this->getRepository()->getNestedManager()->moveToLastChildOf(\$this, \$parent, \$con);
 
 return \$this;
 ";
@@ -69,8 +72,7 @@ The modifications in the current object and the tree are immediate')
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->moveToPrevSiblingOf(\$this, \$sibling, \$con);
+\$this->getRepository()->getNestedManager()->moveToPrevSiblingOf(\$this, \$sibling, \$con);
 
 return \$this;
 ";
@@ -90,8 +92,7 @@ The modifications in the current object and the tree are immediate')
         $objectClassName = $this->getObjectClassName();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->moveToNextSiblingOf(\$this, \$sibling, \$con);
+\$this->getRepository()->getNestedManager()->moveToNextSiblingOf(\$this, \$sibling, \$con);
 
 return \$this;
 ";
@@ -111,8 +112,7 @@ The modifications in the current object and the tree are immediate')
         $useScope = $this->getBehavior()->useScope();
 
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->moveSubtreeTo(\$this, \$destLeft, \$levelDelta, \$con";
+\$this->getRepository()->getNestedManager()->moveSubtreeTo(\$this, \$destLeft, \$levelDelta, \$con";
         if ($useScope) {
             $body .= ", \$targetScope";
         }

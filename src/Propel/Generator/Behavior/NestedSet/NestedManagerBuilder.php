@@ -38,6 +38,7 @@ class NestedManagerBuilder extends AbstractBuilder
     public function buildClass()
     {
         $behavior = $this->getEntity()->getBehavior('nested_set');
+        $this->getDefinition()->addInterface('\Propel\Runtime\EntityManager\NestedManagerInterface');
         $this->applyComponent('NestedManager\Counters', $this, $behavior);
         $this->applyComponent('NestedManager\DeleteDescendantsMethod', $this, $behavior);
         $this->applyComponent('NestedManager\Getters', $this, $behavior);

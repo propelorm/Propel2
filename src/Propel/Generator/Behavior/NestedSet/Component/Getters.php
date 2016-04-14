@@ -34,8 +34,6 @@ class Getters extends BuildComponent
             && 'ScopeValue' !== $this->getBehavior()->getFieldForParameter('scope_field')) {
             $this->addGetScope();
         }
-
-        $this->addGetFullClassName();
     }
 
     protected function addGetLeft()
@@ -76,17 +74,5 @@ It provides a generic way to get the value, whatever the actual column name is."
 It provides a generic way to get the value, whatever the actual column name is.")
             ->setBody("return \$this->{$this->getBehavior()->getFieldAttribute('scope_field')};")
         ;
-    }
-
-    /**
-     * Useful method to avoid reflection in Propel\Runtime\Configuration::getNestedManager()
-     */
-    protected function addGetFullClassName()
-    {
-        $this->addMethod('getFullClassName')
-            ->setDescription("Get the full entity class name.
-This method is useful in Propel\\Runtime\\Configuration class to return the NestedManager for the entity, without using Reflection.")
-            ->setType('string', 'The full entity class name.')
-            ->setBody("return \"{$this->getObjectClassName(true)}\";");
     }
 }
