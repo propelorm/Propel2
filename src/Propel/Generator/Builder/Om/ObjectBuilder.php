@@ -34,6 +34,7 @@ class ObjectBuilder extends AbstractBuilder
         }
 
         $this->applyComponent('Object\\Properties');
+        $this->applyComponent('Object\\MagicToStringMethod');
         $this->applyComponent('Object\\RelationProperties');
         $this->applyComponent('Object\\ReferrerRelationProperties');
         $this->applyComponent('Object\\CrossRelationProperties');

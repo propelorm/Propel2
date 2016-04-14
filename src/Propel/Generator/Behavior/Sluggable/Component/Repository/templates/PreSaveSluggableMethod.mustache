@@ -1,123 +1,159 @@
-$reader = $this->getEntityMap()->getPropReader();
-$writer = $this->getEntityMap()->getPropWriter();
+$slugField = '{{slugFiled}}';
+$primaryStringField = '{{primaryStringField}}';
 
-$slugField = {{slugField}};
-$separator = {{separator}};
-
-$incrementSlug = function($slug, $separator = {{separator}}) {
+$incrementSlug = function($slug, $separator = '{{separator}}') {
     $pieces = explode($separator, $slug);
-    $last = end($pieces);
+    $last = $pieces[count($pieces) - 1];
 
     if (is_numeric($last)) {
+        array_pop($pieces);
         $last++;
-        array_pop($pieces); //remove last item, since we want to replace it
         return implode($separator, $pieces) . $separator . $last;
     } else {
-        return implode($separator, $pieces) . $separator . '2';
+        return implode($separator, $pieces) . $separator . '1';
     }
 };
 
-$slugsToReserve = []; //slugs to reserve in this change set
-$rawSlugs = []; //all slugs without incremention
-
-$searchNewSlug = function($entity, $slug) use (&$slugsToReserve, &$rawSlugs, $incrementSlug) {
-    $rawSlugs[$slug] = $entity;
-
-    while (isset($slugsToReserve[$slug]) && $slugsToReserve[$slug] !== $entity) {
-        //search until free slug found for this change set
-        $slug = $incrementSlug($slug);
+$cleanupSlugPart = function($slug, $replacement = '{{replacement}}') {
+    // transliterate
+    if (function_exists('iconv')) {
+      $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
     }
 
-    $slugsToReserve[$slug] = $entity;
+    // lowercase
+    if (function_exists('mb_strtolower')) {
+        $slug = mb_strtolower($slug);
+    } else {
+        $slug = strtolower($slug);
+    }
+    // remove accents resulting from OSX's iconv
+    $slug = str_replace(array('\'', '`', '^'), '', $slug);
+
+    // replace non letter or digits with separator
+    $slug = preg_replace('{{replacePattern}}', $replacement, $slug);
+
+    // trim
+    $slug = trim($slug, $replacement);
+
+    if (empty($slug)) {
+        return 'n-a';
+    }
+
+    return $slug;
 };
+
+$makeSlugUnique =
+function($slug, $separator = '{{separator}}', $alreadyExists = false{{#scopeField}}, $scope{{/scopeField}}) use (&$makeSlugUnique, $incrementSlug, $slugField) {
+    $pieces = explode($separator, $slug);
+    $last = array_pop($pieces);
+
+    if (is_numeric($last)) {
+        $cleanedSlug = implode($separator, $pieces) . $separator;
+        $whereClause = '^' . $cleanedSlug . '[0-9]+$';
+    } else {
+        $whereClause = $slug;
+    }
+
+    $query = $this->createQuery()->select($slugField)->orderBySlug('desc');
+    {{#scopeField}}
+    $query->filterBy('{{scopeField}}', $scope);
+    {{/scopeField}}
+
+    if(!$alreadyExists) {
+        $count = $query->filterBySlug($slug)->count();
+        if ($count > 0) {
+            return $makeSlugUnique($incrementSlug($slug), $separator, true{{#scopeField}}, $scope{{/scopeField}});
+        }
+
+        return $slug;
+    }
+
+    $adapter = $this->getEntityMap()->getAdapter();
+    $maxReservedSlug = $query->where($adapter->compareRegex({{slugColumn}}, '?'), $whereClause)->findOne();
+    if (null == $maxReservedSlug) {
+        return $slug;
+    }
+
+    return $incrementSlug($maxReservedSlug);
+};
+
+$limitSlugSize = function($slug, $reservedSpaces = 3) {
+    if (strlen($slug) > ({{fieldSize}} - $reservedSpaces)) {
+        $slug = substr($slug, 0, {{fieldSize}} - $reservedSpaces);
+    }
+
+    return $slug;
+};
+
+$createSlug = function($entity) use ($makeSlugUnique, $cleanupSlugPart, $limitSlugSize) {
+    $slug = {{{createSlugFunction}}};
+    {{#pattern}}
+        $slug = str_replace('//', '/n-a/', $slug);
+    {{/pattern}}
+    $slug = $cleanupSlugPart($slug);
+    $slug = $limitSlugSize($slug);
+    $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
+
+    return $slug;
+};
+
+$slugs = [];
+foreach ($event->getEntitiesToInsert() as $entity) {
+    $slug = $entity->getSlug();
+    if (null === $slug || '' === $slug) {
+        $slug = $createSlug($entity);
+    } else {
+        $slug = $cleanupSlugPart($slug);
+        $slug = $limitSlugSize($slug);
+        $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
+    }
+
+    while (true) {
+        if (!isset($slugs[$slug])) {
+            $slugs[$slug] = $entity;
+            break;
+        }
+
+        //create another slug
+        $slug = $incrementSlug($slug{{#pattern}}, '/'{{/pattern}});
+    }
+
+    $slugs[$slug] = $entity;
+}
+
 
 //updates
 foreach ($event->getEntitiesToUpdate() as $entity) {
     $slugModified = $this->isFieldModified($entity, $slugField);
+    {{#notPermanent}}
+    if ($this->isFieldModified($entity, $primaryStringField) && !$slugModified) {
+        $entity->setSlug($createSlug($entity));
+    }
+    {{/notPermanent}}
+
     if ($slugModified) {
-        //the slug field itself has manually been changed, so ignore it.
-        continue;
-    } else {
-        {{#withSlugPattern}}
-            {{{replaceSlugPattern}}}
-        {{/withSlugPattern}}
-        {{^withSlugPattern}}
-            $slug = $this->cleanupSlugPart($entity->__toString());
-        {{/withSlugPattern}}
-
-        $oldSlug = $reader($entity, $slugField);
-        if ($oldSlug !== $slug) {
-            //something changed the slug, so check if the new is available
-            $searchNewSlug($entity, $slug);
-        }
-    }
-}
-
-//inserts
-foreach ($event->getEntitiesToInsert() as $entity) {
-    if (null !== $reader($entity, $slugField)) {
-        //the slug field has manually been set. I guess he knows what he's doing ;) Ignore this one,
-        //hopefully he does not hit a unique key constraint.
-        continue;
-    }
-
-    {{#withSlugPattern}}
-        {{{replaceSlugPattern}}}
-    {{/withSlugPattern}}
-    {{^withSlugPattern}}
-        $slug = $this->cleanupSlugPart($entity->__toString());
-    {{/withSlugPattern}}
-
-    $searchNewSlug($entity, $slug);
-}
-
-//now we have in $reservedSlugs all slugs, that we want to reserve. Current change set is already checked against each other
-//check now against the database and adjust its value so we can safe it into the database.
-//we load also all 'slug LIKE $slugs%' because in the database can also be some incremeneted slugs, we need
-//to check as well.
-//note:
-//  this can be slow, when there is much data in it or many incremented values, but sluggable behavior is meant
-//  for huge tables. If it gets slow, one should implement the sluggable object on its own with better techniques.
-//note 2:
-//   since in $rawSlugs is never a incremented slug, we can search LIKE $rawSlug + % to find all incremented slugs
-
-$databaseSlugsQuery = $this->createQuery('SlugEntity')
-    ->select([$slugField]);
-
-foreach ($rawSlugs as $slug => $entity) {
-    $databaseSlugsQuery->_or();
-    $databaseSlugsQuery->where("SlugEntity.$slugField = ?", $slug);
-    $databaseSlugsQuery->_or();
-    $databaseSlugsQuery->where("SlugEntity.$slugField LIKE ?", $slug . $separator . '%');
-}
-
-$databaseSlugs = $databaseSlugsQuery->find();
-
-//flip array so we can access all slugs as hash map, which is faster
-$databaseSlugsIndexed = array_flip($databaseSlugs->getData());
-
-$finalSlugs = []; //unique slugs across current change set and database state
-
-foreach ($slugsToReserve as $slug => $entity) {
-    if (isset($databaseSlugsIndexed[$slug])) {
-
-        //this slug is already in the database in current change set or in $finalSlugs, so we need to increment it
-        while (
-            isset($databaseSlugsIndexed[$slug]) ||
-            (isset($finalSlugs[$slug]) && $finalSlugs[$slug] !== $entity) ||
-            (isset($slugsToReserve[$slug]) && $slugsToReserve[$slug] !== $entity)) {
-            $slug = $incrementSlug($slug);
+        $slug = $entity->getSlug();
+        if (null === $slug || '' === $slug) {
+            $slug = $createSlug($entity);
+        } else {
+            $slug = $cleanupSlugPart($slug);
+            $slug = $limitSlugSize($slug);
+            $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
         }
 
-        //we finally found a free slug, lets set it
-        $finalSlugs[$slug] = $entity;
-    } else {
-        //everyting is good, ready to set
-        $finalSlugs[$slug] = $entity;
+        while (true) {
+            if (!isset($slugs[$slug])) {
+                $slugs[$slug] = $entity;
+                break;
+            }
+
+            //create another slug
+            $slug = $incrementSlug($slug{{#pattern}}, '/'{{/pattern}});
+        }
     }
 }
 
 //update the actual field in the entity
-foreach ($finalSlugs as $slug => $entity) {
-    $writer($entity, $slugField, $slug);
+foreach ($slugs as $slug => $entity) {
+    $entity->setSlug($slug);
 }
