@@ -35,7 +35,7 @@ class GetSnapshotMethod extends BuildComponent
             }
 
             $fieldName = $field->getName();
-            $body .= "\$snapshot['$fieldName'] = \$this->prepareReadingValue(\$reader(\$entity, '$fieldName'), '$fieldName');\n";
+            $body .= "\$snapshot['$fieldName'] = \$this->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');\n";
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {

@@ -7,17 +7,17 @@ use Propel\Runtime\Map\FieldMap;
 
 class VarcharType extends AbstractType
 {
-    public function convertToPHPValue($value, FieldMap $fieldMap)
+//    public function convertToPHPValue($value, FieldMap $fieldMap)
+//    {
+//        return (string) $value;
+//    }
+
+    public function databaseToProperty($value, FieldMap $fieldMap)
     {
         return (string) $value;
     }
 
-    public function snapshotPHPValue($value, FieldMap $fieldMap)
-    {
-        return (string) $value;
-    }
-
-    public function convertToDatabaseValue($value, FieldMap $fieldMap)
+    public function propertyToDatabase($value, FieldMap $fieldMap)
     {
         return (string) $value;
     }

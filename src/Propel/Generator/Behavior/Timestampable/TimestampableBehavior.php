@@ -91,10 +91,9 @@ foreach (\$event->getEntities() as \$entity) {
 foreach (\$event->getEntities() as \$entity) {
 ";
 
-        $createdAtField = $this->getEntity()->getField($this->getParameter('create_field'))->getName();
-        $updatedAtField = $this->getEntity()->getField($this->getParameter('update_field'))->getName();
 
         if ($this->withCreatedAt()) {
+            $createdAtField = $this->getEntity()->getField($this->getParameter('create_field'))->getName();
             $script .= "
     if (!\$this->isFieldModified(\$entity, '$createdAtField')) {
         \$writer(\$entity, '$createdAtField', time());
@@ -102,6 +101,7 @@ foreach (\$event->getEntities() as \$entity) {
         }
 
         if ($this->withUpdatedAt()) {
+            $updatedAtField = $this->getEntity()->getField($this->getParameter('update_field'))->getName();
             $script .= "
     if (!\$this->isFieldModified(\$entity, '$updatedAtField')) {
         \$writer(\$entity, '$updatedAtField', time());

@@ -28,81 +28,40 @@ class ArrayCollection extends Collection
     protected $workerObject;
 
     /**
-     * Save all the elements in the collection
+     * Save all the elements in the collection.
      *
-     * @param ConnectionInterface $con
+     * Only works with ActiveRecord activated.
      *
      * @throws ReadOnlyModelException
      * @throws PropelException
      */
-    public function save($con = null)
+    public function save()
     {
-        if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
-            throw new ReadOnlyModelException('Cannot save objects on a read-only model');
+        foreach ($this as $element) {
+            $element->save();
         }
-        if (null === $con) {
-            $con = $this->getWriteConnection();
-        }
-        $con->transaction(function () use ($con) {
-            $obj = $this->getWorkerObject();
-            foreach ($this as $element) {
-                $obj->clear();
-                $obj->fromArray($element);
-                $obj->setNew($obj->isPrimaryKeyNull());
-                $obj->save($con);
-            }
-        });
     }
 
     /**
      * Delete all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * Only works with ActiveRecord activated.
      *
-     * @throws ReadOnlyModelException
      * @throws PropelException
      */
     public function delete($con = null)
     {
-        if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
-            throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
+        foreach ($this as $element) {
+            $element->delete();
         }
-        if (null === $con) {
-            $con = $this->getWriteConnection();
-        }
-        $con->transaction(function () use ($con) {
-            foreach ($this as $element) {
-                $obj = $this->getWorkerObject();
-                $obj->setDeleted(false);
-                $obj->fromArray($element);
-                $obj->delete($con);
-            }
-        });
-    }
-
-    /**
-     * Get an array of the primary keys of all the objects in the collection
-     *
-     * @param  boolean $usePrefix
-     * @return array   The list of the primary keys of the collection
-     */
-    public function getPrimaryKeys($usePrefix = true)
-    {
-        $ret      = array();
-        $callable = array($this->getEntityMapClass(), 'getPrimaryKeyFromRow');
-
-        foreach ($this as $key => $element) {
-            $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = call_user_func($callable, array_values($element));
-        }
-
-        return $ret;
     }
 
     /**
      * Populates the collection from an array
      * Uses the object model to force the field types
      * Does not empty the collection before adding the data from the array
+     *
+     * Only works with ActiveRecord activated.
      *
      * @param array $arr
      */

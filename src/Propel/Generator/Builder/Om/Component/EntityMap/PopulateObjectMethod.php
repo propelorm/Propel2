@@ -53,7 +53,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
         }
 
         $body .= "
@@ -63,7 +63,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($camelNames as $idx => $fieldName) {
             $propName = $camelNames[$idx];
             $body .= "
-    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
         }
 
         $body .= "
@@ -73,7 +73,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($columnNames as $idx => $fieldName) {
             $propName = $columnNames[$idx];
             $body .= "
-    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
         }
 
         $body .= "
@@ -83,7 +83,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fullColumnNames as $idx => $fieldName) {
             $propName = $fullColumnNames[$idx];
             $body .= "
-    \$pk[] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
         }
 
         $body .= "
@@ -141,7 +141,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -155,7 +155,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($camelNames as $idx => $fieldName) {
             $propName = $camelNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -169,7 +169,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($columnNames as $idx => $fieldName) {
             $propName = $columnNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -183,7 +183,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fullColumnNames as $idx => $fieldName) {
             $propName = $fullColumnNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->prepareWritingValue(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";

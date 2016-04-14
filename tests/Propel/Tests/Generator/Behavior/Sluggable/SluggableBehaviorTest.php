@@ -33,7 +33,6 @@ use Propel\Tests\Bookstore\Behavior\EntityWithScopeQuery;
  * @author François Zaninotto
  *
  * @group database
- * @group skip
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {

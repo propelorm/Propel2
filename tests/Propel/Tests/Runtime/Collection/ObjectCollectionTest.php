@@ -138,24 +138,6 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertEquals($expected, $coll->toArray());
     }
 
-    public function testPopulateRelationOneToManyWithEmptyCollection()
-    {
-        $author = new Author();
-        $author->setFirstName('Chuck');
-        $author->setLastName('Norris');
-        $author->save($this->con);
-        AuthorTableMap::clearInstancePool();
-        BookTableMap::clearInstancePool();
-        $coll = new ObjectCollection();
-        $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, '\Propel\Tests\Bookstore\Author')));
-        $coll []= $author;
-        $books = $coll->populateRelation('Book', null, $this->con);
-        $this->assertEquals(0, $books->count());
-        $count = $this->con->getQueryCount();
-        $this->assertEquals(0, $author->countBooks());
-        $this->assertEquals($count, $this->con->getQueryCount());
-    }
-
     public function testContainsWithNoPersistentElements()
     {
         $col = new ObjectCollection();

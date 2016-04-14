@@ -29,51 +29,36 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 class ObjectCollection extends Collection
 {
     /**
-     * Save all the elements in the collection
+     * Save all the elements in the collection.
      *
-     * @param ConnectionInterface $con
+     * Only works with ActiveRecord activated.
      */
     public function save($con = null)
     {
-        if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
-            throw new ReadOnlyModelException('Cannot save objects on a read-only model');
+        foreach ($this as $element) {
+            $element->save($con);
         }
-        if (null === $con) {
-            $con = $this->getWriteConnection();
-        }
-        $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
-            foreach ($this as $element) {
-                $element->save($con);
-            }
-        });
     }
 
     /**
      * Delete all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * Only works with ActiveRecord activated.
      */
     public function delete($con = null)
     {
-        if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
-            throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
+        foreach ($this as $element) {
+            $element->delete($con);
         }
-        if (null === $con) {
-            $con = $this->getWriteConnection();
-        }
-        $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
-            foreach ($this as $element) {
-                $element->delete($con);
-            }
-        });
     }
 
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
+     * Only works with ActiveRecord activated.
+     *
      * @param  boolean $usePrefix
+     *
      * @return array   The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
@@ -94,6 +79,8 @@ class ObjectCollection extends Collection
      * Each object is populated from an array and the result is stored
      * Does not empty the collection before adding the data from the array
      *
+     * Only works with ActiveRecord activated.
+     *
      * @param array $arr
      */
     public function fromArray($arr)
@@ -110,6 +97,8 @@ class ObjectCollection extends Collection
     /**
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
+     *
+     * Only works with ActiveRecord activated.
      *
      * @param string  $keyField              If null, the returned array uses an incremental index.
      *                                        Otherwise, the array is indexed using the specified field
@@ -256,62 +245,6 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * Makes an additional query to populate the objects related to the collection objects
-     * by a certain relation
-     *
-     * @param string              $relation Relation name (e.g. 'Book')
-     * @param Criteria            $criteria Optional Criteria object to filter the related object collection
-     * @param ConnectionInterface $con      Optional connection object
-     *
-     * @return ObjectCollection The list of related objects
-     */
-    public function populateRelation($relation, $criteria = null, $con = null)
-    {
-        $relationMap = $this->getFormatter()->getEntityMap()->getRelation($relation);
-        if ($this->isEmpty()) {
-            // save a useless query and return an empty collection
-            $coll = new ObjectCollection();
-            $coll->setModel($relationMap->getRightEntity()->getClassName());
-
-            return $coll;
-        }
-        $symRelationMap = $relationMap->getSymmetricalRelation();
-
-        $query = PropelQuery::from($relationMap->getRightEntity()->getClassName());
-        if (null !== $criteria) {
-            $query->mergeWith($criteria);
-        }
-        // query the db for the related objects
-        $filterMethod = 'filterBy' . $symRelationMap->getName();
-        $relatedObjects = $query
-            ->$filterMethod($this)
-            ->find($con)
-        ;
-
-        if (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
-            // initialize the embedded collections of the main objects
-            $relationName = $relationMap->getName();
-            foreach ($this as $mainObj) {
-                $mainObj->initRelation($relationName);
-            }
-            // associate the related objects to the main objects
-            $getMethod = 'get' . $symRelationMap->getName();
-            $addMethod = 'add' . $relationName;
-            foreach ($relatedObjects as $object) {
-                $mainObj = $object->$getMethod();  // instance pool is used here to avoid a query
-                $mainObj->$addMethod($object);
-            }
-        } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType()) {
-            // nothing to do; the instance pool will catch all calls to getRelatedObject()
-            // and return the object in memory
-        } else {
-            throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
-        }
-
-        return $relatedObjects;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function search($element)
@@ -328,6 +261,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param $instance
+     * 
      * @return mixed
      */
     protected function getHashCode($instance)

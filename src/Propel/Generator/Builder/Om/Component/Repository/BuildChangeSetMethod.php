@@ -55,10 +55,9 @@ if (false === \$lazyLastLoaded && false === \$lazyNowLoaded) {
 ";
             }
 
-
             $body .= "
 if (null === \$different) {
-    \$currentValue = \$this->getEntityMap()->prepareReadingValue(\$reader(\$entity, '$fieldName'), '$fieldName');
+    \$currentValue = \$this->getEntityMap()->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');
     if (!isset(\$originValues['$fieldName'])) {
         \$lastValue = null;
     } else {
@@ -67,7 +66,7 @@ if (null === \$different) {
     \$different = \$lastValue !== \$currentValue;
 }
 if (\$different) {
-    \$changes['$fieldName'] = \$currentValue;
+    \$changes['$fieldName'] = \$this->getEntityMap()->propertyToDatabase(\$reader(\$entity, '$fieldName'), '$fieldName');
     \$changed = true;
 }
 ";

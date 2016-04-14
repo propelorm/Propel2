@@ -361,7 +361,7 @@ EOF;
 
                 foreach ($this->entityMap->getPrimaryKeys() as $pk) {
                     $fieldName = $pk->getName();
-                    $params[] = $originValues[$fieldName];
+                    $params[] = $this->entityMap->snapshotToProperty($originValues[$fieldName], $fieldName);
                 }
 
                 $query = $sqlStart . ' SET ' . implode(', ', $sets).$where;

@@ -12,12 +12,12 @@ class DoubleType extends AbstractType
         return (double) $value;
     }
 
-    public function snapshotPHPValue($value, FieldMap $fieldMap)
+    public function databaseToProperty($value, FieldMap $fieldMap)
     {
         return (double) $value;
     }
 
-    public function convertToDatabaseValue($value, FieldMap $fieldMap)
+    public function propertyToDatabase($value, FieldMap $fieldMap)
     {
         return (double) $value;
     }

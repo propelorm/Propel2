@@ -224,26 +224,6 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals($col, $col2, 'Collection is serializable');
     }
 
-    /**
-     * @database
-     */
-    public function testGetWriteConnection()
-    {
-        $col = new Collection();
-        $col->setModel('\Propel\Tests\Bookstore\Book');
-        $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
-        $this->assertEquals($con, $col->getWriteConnection(), 'getWriteConnection() returns a write connection for the collection model');
-    }
-
-    /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     */
-    public function testGetConnectionNoModel()
-    {
-        $col = new Collection();
-        $col->getConnection();
-    }
-
     public function testDiffWithEmptyCollectionReturnsCurrentCollection()
     {
         $col1 = new Collection();

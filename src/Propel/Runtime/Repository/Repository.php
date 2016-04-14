@@ -118,7 +118,7 @@ abstract class Repository
 
         $oldValues = $this->getLastKnownValues($entity);
 
-        return $currentValue !== $oldValues[$fieldName];
+        return $this->getEntityMap()->propertyToSnapshot($currentValue, $fieldName) !== $oldValues[$fieldName];
     }
 
     /**

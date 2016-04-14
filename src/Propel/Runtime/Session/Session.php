@@ -39,6 +39,8 @@ class Session
     protected $knownEntities = [];
 
     /**
+     * Array of last known values. This is based on values from propertyToSnapshot.
+     *
      * @var array[]
      */
     protected $lastKnownValues = [];
@@ -374,7 +376,7 @@ class Session
         }
 
         if (!isset($this->lastKnownValues[$id])) {
-            throw new \InvalidARgumentException(
+            throw new \InvalidArgumentException(
                 'Given id does not exists in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().'
             );
         }

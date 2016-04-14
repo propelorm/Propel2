@@ -34,7 +34,7 @@ class SluggableBehavior extends Behavior
         'replace_pattern' => '/\W+/',
         'replacement' => '-',
         'separator' => '-',
-        //'scope_field' => '', //not yet implemented
+        'scope_field' => '', //not yet implemented
     ];
 
     /**

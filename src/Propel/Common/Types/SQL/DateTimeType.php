@@ -10,20 +10,6 @@ use Propel\Runtime\Map\FieldMap;
 
 class DateTimeType extends AbstractType
 {
-    public function convertToPHPValue($value, FieldMap $fieldMap)
-    {
-        if ($value instanceof \DateTime) {
-            return $value;
-        }
-
-        return new \DateTime($value);
-    }
-
-    public function getPHPType(Field $field)
-    {
-        return '\DateTime';
-    }
-
     public function decorateGetterMethod(PhpMethod $method, Field $field)
     {
         $varName = $field->getName();
@@ -39,7 +25,7 @@ EOF;
         $method->setBody($body);
     }
 
-    public function snapshotPHPValue($value, FieldMap $fieldMap)
+    public function databaseToProperty($value, FieldMap $fieldMap)
     {
         if ($value instanceof \DateTime) {
             $format = 'U';
@@ -57,11 +43,11 @@ EOF;
             return $value->format($format);
         }
 
-        return null;
+        return $value;
     }
 
-    public function convertToDatabaseValue($value, FieldMap $fieldMap)
+    public function propertyToDatabase($value, FieldMap $fieldMap)
     {
-        return $this->snapshotPHPValue($value, $fieldMap);
+        return $this->databaseToProperty($value, $fieldMap);
     }
 }

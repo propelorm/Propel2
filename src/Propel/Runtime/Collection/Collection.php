@@ -438,6 +438,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         return $this->fullyQualifiedModel;
     }
 
+    /**
+     * @return string
+     */
     public function getEntityMapClass()
     {
         $model = $this->getModel();
@@ -446,7 +449,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
-        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
+        return $this->getFullyQualifiedModel() . '\\Base\\EntityMap';
     }
 
     /**
@@ -463,18 +466,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     public function getFormatter()
     {
         return $this->formatter;
-    }
-
-    /**
-     * Get a write connection object for the database containing the elements of the collection
-     *
-     * @return ConnectionInterface A ConnectionInterface connection object
-     */
-    public function getWriteConnection()
-    {
-        $databaseName = constant($this->getEntityMapClass() . '::DATABASE_NAME');
-
-        return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
 
     /**
@@ -562,18 +553,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             return call_user_func_array([$this->lastIterator, $name], $params);
         }
         throw new BadMethodCallException('Call to undefined method: ' . $name);
-    }
-
-    /**
-     * Returns a string representation of the current collection.
-     * Based on the string representation of the underlying objects, defined in
-     * the EntityMap::DEFAULT_STRING_FORMAT constant
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->exportTo(constant($this->getEntityMapClass() . '::DEFAULT_STRING_FORMAT'), false);
     }
 
     /**

@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Common\Types\AbstractType;
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\Exception\FieldNotFoundException;
@@ -235,6 +237,58 @@ abstract class EntityMap
     {
         $field = $this->getField($fieldName);
         return $this->getConfiguration()->getFieldType($field->getType());
+    }
+
+    /**
+     * @see FieldTypeInterface::propertyToSnapshot
+     *
+     * @param mixed $value
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function propertyToSnapshot($value, $fieldName)
+    {
+        $fieldType = $this->getFieldType($fieldName);
+        return $fieldType->propertyToSnapshot($value, $this->getField($fieldName));
+    }
+
+    /**
+     * @see FieldTypeInterface::snapshotToProperty
+     *
+     * @param mixed $value
+     * @param string $fieldName
+     */
+    public function snapshotToProperty($value, $fieldName)
+    {
+        $fieldType = $this->getFieldType($fieldName);
+        return $fieldType->snapshotToProperty($value, $this->getField($fieldName));
+    }
+
+    /**
+     * @see FieldTypeInterface::propertyToDatabase
+     *
+     * @param mixed $value
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    public function propertyToDatabase($value, $fieldName)
+    {
+        $fieldType = $this->getFieldType($fieldName);
+        return $fieldType->propertyToDatabase($value, $this->getField($fieldName));
+    }
+
+    /**
+     * @see FieldTypeInterface::databaseToProperty
+     *
+     * @param mixed $value
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function databaseToProperty($value, $fieldName)
+    {
+        $fieldType = $this->getFieldType($fieldName);
+        return $fieldType->propertyToDatabase($value, $this->getField($fieldName));
     }
 
     /**
@@ -590,15 +644,15 @@ abstract class EntityMap
     /**
      * Add a field to the entity.
      *
-     * @param  string  $name         A String with the field name.
-     * @param  string  $phpName      A string representing the PHP name.
-     * @param  string  $type         A string specifying the Propel type.
-     * @param  boolean $isNotNull    Whether field does not allow NULL values.
-     * @param  int     $size         An int specifying the size.
-     * @param  boolean $pk           True if field is a primary key.
-     * @param  string  $fkEntity     A String with the foreign key entity name.
-     * @param  string  $fkField      A String with the foreign key field name.
-     * @param  string  $defaultValue The default value for this field.
+     * @param  string $name A String with the field name.
+     * @param  string $phpName A string representing the PHP name.
+     * @param  string $type A string specifying the Propel type.
+     * @param  boolean $isNotNull Whether field does not allow NULL values.
+     * @param  int $size An int specifying the size.
+     * @param  boolean $pk True if field is a primary key.
+     * @param  string $fkEntity A String with the foreign key entity name.
+     * @param  string $fkField A String with the foreign key field name.
+     * @param  string $defaultValue The default value for this field.
      *
      * @return \Propel\Runtime\Map\FieldMap The newly created field.
      */
@@ -612,7 +666,8 @@ abstract class EntityMap
         $implementationDetail = false,
         $fkEntity = null,
         $fkField = null
-    ) {
+    )
+    {
         $field = new FieldMap($name, $this);
         $field->setType($type);
         $field->setSize($size);
@@ -655,7 +710,7 @@ abstract class EntityMap
     /**
      * Does this entity contain the specified field?
      *
-     * @param  mixed   $name      name of the field or FieldMap instance
+     * @param  mixed $name name of the field or FieldMap instance
      * @param  boolean $normalize Normalize the field name (if field name not like FIRST_NAME)
      *
      * @return boolean True if the entity contains the field.
@@ -674,7 +729,7 @@ abstract class EntityMap
     /**
      * Get a FieldMap for the entity.
      *
-     * @param  string  $name      A String with the name of the entity.
+     * @param  string $name A String with the name of the entity.
      * @param  boolean $normalize Normalize the field name (if field name not like FIRST_NAME)
      *
      * @return \Propel\Runtime\Map\FieldMap                         A FieldMap.
@@ -709,11 +764,11 @@ abstract class EntityMap
     /**
      * Add a primary key field to this Entity.
      *
-     * @param  string  $fieldName    A String with the field name.
-     * @param  string  $type         A string specifying the Propel type.
-     * @param  boolean $isNotNull    Whether field does not allow NULL values.
-     * @param  int     $size         An int specifying the size.
-     * @param  string  $defaultValue The default value for this field.
+     * @param  string $fieldName A String with the field name.
+     * @param  string $type A string specifying the Propel type.
+     * @param  boolean $isNotNull Whether field does not allow NULL values.
+     * @param  int $size An int specifying the size.
+     * @param  string $defaultValue The default value for this field.
      *
      * @return \Propel\Runtime\Map\FieldMap Newly added PrimaryKey field.
      */
@@ -724,7 +779,8 @@ abstract class EntityMap
         $size = null,
         $defaultValue = null,
         $implementationDetail = false
-    ) {
+    )
+    {
         return $this->addField(
             $fieldName,
             $type,
@@ -741,13 +797,13 @@ abstract class EntityMap
     /**
      * Add a foreign key field to the entity.
      *
-     * @param  string  $fieldName    A String with the field name.
-     * @param  string  $type         A string specifying the Propel type.
-     * @param  string  $fkEntity     A String with the foreign key entity name.
-     * @param  string  $fkField      A String with the foreign key field name.
-     * @param  boolean $isNotNull    Whether field does not allow NULL values.
-     * @param  int     $size         An int specifying the size.
-     * @param  string  $defaultValue The default value for this field.
+     * @param  string $fieldName A String with the field name.
+     * @param  string $type A string specifying the Propel type.
+     * @param  string $fkEntity A String with the foreign key entity name.
+     * @param  string $fkField A String with the foreign key field name.
+     * @param  boolean $isNotNull Whether field does not allow NULL values.
+     * @param  int $size An int specifying the size.
+     * @param  string $defaultValue The default value for this field.
      *
      * @return \Propel\Runtime\Map\FieldMap Newly added ForeignKey field.
      */
@@ -759,7 +815,8 @@ abstract class EntityMap
         $isNotNull = false,
         $size = 0,
         $defaultValue = null
-    ) {
+    )
+    {
         return $this->addField(
             $fieldName,
             $type,
@@ -776,13 +833,13 @@ abstract class EntityMap
     /**
      * Add a foreign primary key field to the entity.
      *
-     * @param  string  $fieldName    A String with the field name.
-     * @param  string  $type         A string specifying the Propel type.
-     * @param  string  $fkEntity     A String with the foreign key entity name.
-     * @param  string  $fkField      A String with the foreign key field name.
-     * @param  boolean $isNotNull    Whether field does not allow NULL values.
-     * @param  int     $size         An int specifying the size.
-     * @param  string  $defaultValue The default value for this field.
+     * @param  string $fieldName A String with the field name.
+     * @param  string $type A string specifying the Propel type.
+     * @param  string $fkEntity A String with the foreign key entity name.
+     * @param  string $fkField A String with the foreign key field name.
+     * @param  boolean $isNotNull Whether field does not allow NULL values.
+     * @param  int $size An int specifying the size.
+     * @param  string $defaultValue The default value for this field.
      *
      * @return \Propel\Runtime\Map\FieldMap Newly created foreign pkey field.
      */
@@ -794,7 +851,8 @@ abstract class EntityMap
         $isNotNull = false,
         $size = 0,
         $defaultValue = null
-    ) {
+    )
+    {
         return $this->addField(
             $fieldName,
             $type,
@@ -871,14 +929,14 @@ abstract class EntityMap
     /**
      * Adds a RelationMap to the entity
      *
-     * @param  string  $name              The relation name
-     * @param  string  $foreignEntityName The related entity name
-     * @param  integer $type              The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY,
+     * @param  string $name The relation name
+     * @param  string $foreignEntityName The related entity name
+     * @param  integer $type The relation type (either RelationMap::MANY_TO_ONE, RelationMap::ONE_TO_MANY,
      *                                    or RelationMAp::ONE_TO_ONE)
-     * @param  array   $fieldMapping      An associative array mapping field names (local => foreign)
-     * @param  string  $onDelete          SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
-     * @param  string  $onUpdate          SQL behavior upon update ('SET NULL', 'CASCADE', ...)
-     * @param  string  $pluralName        Optional plural name for *_TO_MANY relationships
+     * @param  array $fieldMapping An associative array mapping field names (local => foreign)
+     * @param  string $onDelete SQL behavior upon deletion ('SET NULL', 'CASCADE', ...)
+     * @param  string $onUpdate SQL behavior upon update ('SET NULL', 'CASCADE', ...)
+     * @param  string $pluralName Optional plural name for *_TO_MANY relationships
      *
      * @return \Propel\Runtime\Map\RelationMap the built RelationMap object
      */
@@ -890,7 +948,8 @@ abstract class EntityMap
         $onDelete = null,
         $onUpdate = null,
         $pluralName = null
-    ) {
+    )
+    {
         $relation = new RelationMap($name);
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
@@ -1063,7 +1122,7 @@ abstract class EntityMap
     /**
      * Returns an array of field names.
      *
-     * @param  string $type          The type of fieldnames to return:
+     * @param  string $type The type of fieldnames to return:
      *                               One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME
      *                               TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
@@ -1084,11 +1143,11 @@ abstract class EntityMap
     /**
      * Translates a fieldname to another type
      *
-     * @param  string $name              field name
-     * @param  string $fromType          One of the class type constants TableMap::TYPE_PHPNAME,
+     * @param  string $name field name
+     * @param  string $fromType One of the class type constants TableMap::TYPE_PHPNAME,
      *                                   TableMap::TYPE_COLNAME TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME,
      *                                   TableMap::TYPE_NUM
-     * @param  string $toType            One of the class type constants
+     * @param  string $toType One of the class type constants
      *
      * @return string          translated name of the field.
      * @throws PropelException - if the specified name could not be found in the fieldname mappings.
@@ -1134,7 +1193,7 @@ abstract class EntityMap
      *        TableTableMap::PRIMARY_KEY_COLUMN);
      * </code>
      *
-     * @param  string $alias  The alias for the current table.
+     * @param  string $alias The alias for the current table.
      * @param  string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
      *
      * @return string
