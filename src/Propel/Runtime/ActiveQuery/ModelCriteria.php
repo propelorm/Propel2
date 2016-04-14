@@ -1057,10 +1057,11 @@ class ModelCriteria extends BaseModelCriteria
      * Behaves differently if the model has simple or composite primary key
      * <code>
      * // simple primary key
-     * $book  = $c->findPk(12, $con);
+     * $book  = $c->findPk(12);
      * // composite primary key
-     * $bookOpinion = $c->findPk(array(34, 634), $con);
+     * $bookOpinion = $c->findPk(array(34, 634));
      * </code>
+     * 
      * @param mixed               $key Primary key to use for the query
      *
      * @return mixed the result, formatted by the current formatter
@@ -1070,16 +1071,19 @@ class ModelCriteria extends BaseModelCriteria
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect();
         $criteria = $this->isKeepQuery() ? clone $this : $this;
+
+        /** @var FieldMap[] $pkCols */
         $pkCols = array_values($this->getEntityMap()->getPrimaryKeys());
+
         if (1 === count($pkCols)) {
             // simple primary key
             $pkCol = $pkCols[0];
-            $criteria->add($pkCol->getFullyQualifiedName(), $key);
+            $criteria->add($pkCol->getColumnName(), $key);
         } else {
             // composite primary key
             foreach ($pkCols as $pkCol) {
                 $keyPart = array_shift($key);
-                $criteria->add($pkCol->getFullyQualifiedName(), $keyPart);
+                $criteria->add($pkCol->getColumnName(), $keyPart);
             }
         }
         $dataFetcher = $criteria->doSelect();

@@ -140,6 +140,7 @@ class SqlPersister implements PersisterInterface
 
         $this->getConfiguration()->debug(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
         $this->getConfiguration()->debug(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
+
         if ($inserts) {
             $this->doInsert($inserts);
         }
@@ -270,9 +271,6 @@ EOF;
         }
 
         $paramsReplace = $params;
-        $paramsReplace = array_map(function($v) {
-            return json_encode($v);
-        }, $paramsReplace);
 
         $paramsReplaceReadable = $paramsReplace;
         $readable = preg_replace_callback('/\?/', function() use (&$paramsReplaceReadable) {
@@ -293,6 +291,10 @@ EOF;
                     throw $normalizedException;
                 }
             }
+
+            $paramsReplace = array_map(function($v) {
+                return json_encode($v);
+            }, $paramsReplace);
 
             throw new RuntimeException(sprintf(
                 'Can not execute INSERT query for entity %s: %s [%s]',

@@ -54,7 +54,9 @@ class PdoStatement extends BasePdoStatement implements StatementInterface
      */
     public function execute($parameters = null)
     {
-        return parent::execute($parameters);
+        if (!parent::execute($parameters)) {
+            throw new \PDOException($this->errorCode() . ': '. implode(' ', $this->errorInfo()));
+        }
     }
 
     /**

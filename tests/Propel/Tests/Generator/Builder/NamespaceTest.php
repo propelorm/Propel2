@@ -21,18 +21,6 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class NamespaceTest extends TestCaseFixturesDatabase
 {
-//    protected function setUp()
-//    {
-//        parent::setUp();
-//        Propel::init(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
-//    }
-//
-//    protected function tearDown()
-//    {
-//        parent::tearDown();
-//        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-//    }
-
     public function testInsert()
     {
         $book = new \Foo\Bar\NamespacedBook();
@@ -42,13 +30,13 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($book->isNew());
 
         $publisher = new \Baz\NamespacedPublisher();
+        $publisher->setName('pub');
         $publisher->save();
         $this->assertFalse($publisher->isNew());
     }
 
     public function testUpdate()
     {
-        \Foo\Bar\Map\NamespacedBookTableMap::getTableMap();
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('foo');
         $book->setISBN('something');
@@ -83,6 +71,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($author->isNew());
 
         $publisher = new \Baz\NamespacedPublisher();
+        $publisher->setName('pub');
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('Där vi en gång gått');
         $book->setISBN('1234');
@@ -120,6 +109,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
         \Baz\NamespacedPublisherQuery::create()->deleteAll();
         $publisher = new \Baz\NamespacedPublisher();
+        $publisher->setName('pub');
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('Something');
         $book->setISBN('1234');
@@ -137,11 +127,13 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $author = new \Foo\Bar\NamespacedAuthor();
         $author->setFirstName('Foo');
         $author->setLastName('Bar');
+
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('Quux');
         $book->setISBN('1235');
         $book->setNamespacedAuthor($author);
         $book->save();
+
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()->findPk($author->getId());
         $book2 = $author2->getNamespacedBooks()->getFirst();
         $this->assertEquals($book->getId(), $book2->getId());

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore_namespaced" defaultIdMethod="native"
   tablePrefix="namespaced_"
+          activeRecord="true"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="../../../resources/xsd/database.xsd">
 
@@ -11,7 +12,7 @@
         <field name="price" required="false" type="FLOAT" description="Price of the book." />
         <field name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
         <field name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
-        <relation target="Publisher" onDelete="setnull">
+        <relation target="NamespacedPublisher" onDelete="setnull">
             <reference local="publisher_id" foreign="id" />
         </relation>
         <relation target="NamespacedAuthor" onDelete="setnull" onUpdate="cascade">
@@ -19,7 +20,7 @@
         </relation>
     </entity>
 
-    <entity name="Publisher" description="Publisher Table" namespace="Baz">
+    <entity name="NamespacedPublisher" description="Publisher Table" namespace="Baz">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Publisher Id" />
         <field name="name" required="true" type="VARCHAR" size="128" default="Penguin" description="Publisher Name" />
     </entity>

@@ -32,7 +32,8 @@ class RelationGetterMethods extends BuildComponent
     protected function addRelationGetter(Relation $relation)
     {
         $varName = $this->getRelationVarName($relation);
-        $foreignClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
+
+        $foreignClassName = $this->getBuilder()->getDefinition()->declareUse($relation->getForeignEntity()->getFullClassName());
 
         $body = "
 return \$this->$varName;
