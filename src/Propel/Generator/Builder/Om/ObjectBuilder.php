@@ -1722,10 +1722,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $format = 'Y-m-d';
                     break;
                 case 'TIME':
-                    $format = 'H:i:s';
+                    $format = 'H:i:s.u';
                     break;
                 default:
-                    $format = 'Y-m-d H:i:s';
+                    $format = 'Y-m-d H:i:s.u';
             }
             $script .= "
             if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";

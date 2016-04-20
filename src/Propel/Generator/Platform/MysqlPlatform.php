@@ -791,11 +791,6 @@ ALTER TABLE %s ADD %s %s;
         return '`' . strtr($text, ['.' => '`.`']) . '`';
     }
 
-    public function getTimestampFormatter()
-    {
-        return 'Y-m-d H:i:s';
-    }
-
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
