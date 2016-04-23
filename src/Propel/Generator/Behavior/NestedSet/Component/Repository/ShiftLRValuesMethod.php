@@ -67,6 +67,5 @@ class ShiftLRValuesMethod extends BuildComponent
         if ($useScope) {
             $method->addSimpleDescParameter('scope', 'int', 'Scope to determine which root node to return', null);
         }
-        $method->addSimpleDescParameter('con', 'ConnectionInterface', 'Connection to use', null);
     }
 }

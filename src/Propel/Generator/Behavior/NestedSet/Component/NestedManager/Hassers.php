@@ -77,7 +77,7 @@ if (!\$this->isValid(\$node)) {
 {$this->getRepositoryAssignment()}
 
 return \$repository->createQuery()
-    ->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getName()}(\$node->getRightValue() + 1)";
+    ->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(\$node->getRightValue() + 1)";
 
         if ($this->getBehavior()->useScope()) {
             $body .= "
