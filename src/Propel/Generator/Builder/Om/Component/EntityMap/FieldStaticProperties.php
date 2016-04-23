@@ -9,6 +9,7 @@ use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Map\EntityMap;
@@ -30,7 +31,7 @@ class FieldStaticProperties extends BuildComponent
         $phpNames = $fullColNames = $colNames = $fieldNames = $nums = $numStrings = [];
 
         foreach ($entity->getFields() as $idx => $field) {
-            $phpNames[] = ucfirst($field->getName());
+            $phpNames[] = NamingTool::toUpperCamelCase($field->getName());
             $colNames[] = $field->getColumnName();
             $fullColNames[] = $entity->getTableName() . '.' . $field->getColumnName();
             $fieldNames[] = $field->getName();

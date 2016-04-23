@@ -10,13 +10,11 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Common\Types\AbstractType;
-use Propel\Common\Types\FieldTypeInterface;
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\Exception\FieldNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Session\DependencyGraph;
 use Propel\Runtime\Session\Session;
@@ -723,7 +721,13 @@ abstract class EntityMap
             $name = FieldMap::normalizeName($name);
         }
 
-        return isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)]);
+        if(isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)])) {
+            return true;
+        }
+        //Maybe it's phpName
+        $name = NamingTool::toUnderscore($name);
+
+        return isset($this->fields[$name]);
     }
 
     /**
@@ -746,9 +750,15 @@ abstract class EntityMap
 
         if (isset($this->fields[$name])) {
             return $this->fields[$name];
-        } else {
+        }
+
+        if (isset($this->fieldsByLowercaseName[strtolower($name)])) {
             return $this->fieldsByLowercaseName[strtolower($name)];
         }
+
+        $name = NamingTool::toUnderscore($name);
+
+        return $this->fields[$name];
     }
 
     /**
