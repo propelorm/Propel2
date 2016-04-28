@@ -191,4 +191,81 @@ EOF;
         $builder->setSchema($schema);
         $builder->getSQL();
     }
+
+    public function tablePrefixDataProvider()
+    {
+        $schema = <<<XML
+<database name="archivable_behavior_test_0" tablePrefix="foo_">
+    <table name="bar_prefix_test_1">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <behavior name="archivable" />
+    </table>
+</database>
+XML;
+        $sql = <<<SQL
+
+-----------------------------------------------------------------------
+-- foo_bar_prefix_test_1
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS foo_bar_prefix_test_1;
+
+CREATE TABLE foo_bar_prefix_test_1
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(100),
+    UNIQUE (id)
+);
+
+-----------------------------------------------------------------------
+-- foo_bar_prefix_test_1_archive
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS foo_bar_prefix_test_1_archive;
+
+CREATE TABLE foo_bar_prefix_test_1_archive
+(
+    id INTEGER NOT NULL,
+    title VARCHAR(100),
+    archived_at TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE (id)
+);
+
+SQL;
+        $classes = ['Base\\BarPrefixTest1Archive', 'Base\\BarPrefixTest1ArchiveQuery', 'Map\\BarPrefixTest1ArchiveTableMap'];
+
+        return [[$schema, $sql, $classes]];
+    }
+
+    /**
+     * @dataProvider tablePrefixDataProvider
+     */
+    public function testGeneratedSqlWithTablePrefix($schema, $expectSQL, $expectClasses)
+    {
+        $builder = new QuickBuilder();
+
+        $builder->setSchema($schema);
+
+        $actualSQL = $builder->getSQL();
+
+        $this->assertEquals($expectSQL, $actualSQL);
+    }
+
+    /**
+     * @dataProvider tablePrefixDataProvider
+     */
+    public function testGeneratedClassesWithTablePrefix($schema, $expectSQL, $expectClasses)
+    {
+        $builder = new QuickBuilder();
+
+        $builder->setSchema($schema);
+        $builder->buildClasses();
+
+        foreach ($expectClasses as $expectClass)
+        {
+            $this->assertTrue(class_exists($expectClass), sprintf('expect class "%s" is not exists', $expectClass));
+        }
+    }
 }
