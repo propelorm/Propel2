@@ -244,6 +244,7 @@ class PropelConfiguration implements ConfigurationInterface
                                 ->children()
                                     ->scalarNode('type')->end()
                                     ->scalarNode('facility')->end()
+                                    ->scalarNode('ident')->end()
                                     ->scalarNode('path')->end()
                                     ->enumNode('level')->values([100, 200, 250, 300, 400, 500, 550, 600])->end()
                                 ->end()
