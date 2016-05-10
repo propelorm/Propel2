@@ -216,7 +216,7 @@ class Domain extends MappingModel
     public function replaceSize($size)
     {
         if (null !== $size) {
-            $this->size = $size;
+            $this->size = (int) $size;
         }
     }
 
