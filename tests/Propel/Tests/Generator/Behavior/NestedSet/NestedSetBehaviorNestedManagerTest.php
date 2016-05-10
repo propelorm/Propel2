@@ -277,7 +277,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
             |   | \
             t4  t6 t7
         */
-        $this->assertEquals(0, count($manager->getSiblings($t4)), 'getSiblings() returns an empty colleciton for lone children');
+        $this->assertEquals(0, count($manager->getSiblings($t4)), 'getSiblings() returns an empty collection for lone children');
         $siblings = $manager->getSiblings($t3);
         $expected = array(
             't2' => array(2, 3, 1),
@@ -2112,12 +2112,12 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     protected function getManager()
     {
-        return $this->getConfiguration()->getNestedManager('\NestedSetEntity9');
+        return $this->getConfiguration()->getRepository('\NestedSetEntity9')->getNestedManager();
     }
 
     protected function getManagerWithScope()
     {
-        return $this->getConfiguration()->getNestedManager('\NestedSetEntity10');
+        return $this->getConfiguration()->getRepository('\NestedSetEntity10')->getNestedManager();
     }
 
     protected function getByTitle($title)

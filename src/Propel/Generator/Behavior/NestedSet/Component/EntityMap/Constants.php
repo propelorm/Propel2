@@ -23,22 +23,24 @@ class Constants extends BuildComponent
 
     public function process()
     {
+        $entityName = $this->getEntity()->getFullClassName();
+
         $this->getDefinition()
             ->setConstant(PhpConstant::create(
-                'LEFT_COL', $this->getEntity()->getFullClassName() . '.' . $this->getBehavior()->getFieldForParameter('left_field')->getName())
+                'LEFT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('left_field')->getName())
                 ->setDescription('Left field for the set'))
             ->setConstant(PhpConstant::create(
-                'RIGHT_COL', $this->getEntity()->getFullClassName() . '.' . $this->getBehavior()->getFieldForParameter('right_field')->getName())
+                'RIGHT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('right_field')->getName())
                 ->setDescription('Right field for the set'))
             ->setConstant(PhpConstant::create(
-                'LEVEL_COL', $this->getEntity()->getFullClassName() . '.' . $this->getBehavior()->getFieldForParameter('level_field')->getName())
+                'LEVEL_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('level_field')->getName())
                 ->setDescription('Level field for the set'))
         ;
 
         if ($this->getBehavior()->useScope()) {
             $this->getDefinition()
                 ->setConstant(PhpConstant::create(
-                    'SCOPE_COL', $this->getEntity()->getFullClassName() . '.' . $this->getBehavior()->getFieldForParameter('scope_field')->getName())
+                    'SCOPE_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('scope_field')->getName())
                     ->setDescription('Scope field for the set'))
             ;
         }

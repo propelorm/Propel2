@@ -341,7 +341,7 @@ class Field extends MappingModel
      */
     public function getMethodName()
     {
-        return ucfirst($this->getName());
+        return NamingTool::toUpperCamelCase($this->getName());
     }
 
     /**

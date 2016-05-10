@@ -123,7 +123,7 @@ if (null !== \$criteria) {
     \$this->mergeWith(\$criteria);
 }
 
-return \$this->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getName()}(1)->find(\$con);
+return \$this->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(1)->find(\$con);
 ";
         $this->addMethod('retrieveRoots')
             ->setType('ObjectCollection|' . $this->getObjectClassName(), 'Propel objects for root node')
@@ -141,10 +141,10 @@ return \$this->filterBy{$this->getBehavior()->getFieldForParameter('left_field')
         $body = "return \$this->";
 
         if ($useScope) {
-            $body .= "filterBy{$this->getBehavior()->getFieldForParameter('scope_field')->getName()}(\$scope)->";
+            $body .= "filterBy{$this->getBehavior()->getFieldForParameter('scope_field')->getMethodName()}(\$scope)->";
         }
 
-        $body .= "filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getName()}(1)->findOne(\$con);";
+        $body .= "filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(1)->findOne(\$con);";
         $method = $this->addMethod('retrieveRoot')
             ->setType($this->getObjectClassName(), 'Propel objects for root node')
             ->setDescription("Return the root node for the given scope")
@@ -166,9 +166,9 @@ return \$this->filterBy{$this->getBehavior()->getFieldForParameter('left_field')
             \$this->mergeWith(\$criteria);
         }
 
-        return \$this->orderBy{$this->getBehavior()->getFieldForParameter('left_field')->getName()}()";
+        return \$this->orderBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}()";
         if ($useScope) {
-            $body .= "->filterBy{$this->getBehavior()->getFieldForParameter('scope_field')->getName()}(\$scope)";
+            $body .= "->filterBy{$this->getBehavior()->getFieldForParameter('scope_field')->getMethodName()}(\$scope)";
         }
         $body .= "->find(\$con);";
 

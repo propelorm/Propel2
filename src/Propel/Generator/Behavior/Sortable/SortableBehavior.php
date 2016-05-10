@@ -11,12 +11,13 @@
 namespace Propel\Generator\Behavior\Sortable;
 
 use gossi\codegen\model\PhpParameter;
+use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
+use Propel\Generator\Builder\Om\EntityMapBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Gives a model class the ability to be ordered
@@ -36,9 +37,12 @@ class SortableBehavior extends Behavior
         'scope_field' => '',
     );
 
-    protected $objectBuilderModifier;
-    protected $queryBuilderModifier;
-    protected $tableMapBuilderModifier;
+    public function __construct()
+    {
+        $this->additionalBuilders[] = '\Propel\Generator\Behavior\Sortable\SortableManagerBuilder';
+
+        parent::__construct();
+    }
 
     /**
      * Add the rank_field to the current table
@@ -76,68 +80,36 @@ class SortableBehavior extends Behavior
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getRankVarName()
-    {
-        return $this->getFieldForParameter('rank_field')->getName();
-    }
-
     public function queryBuilderModification(QueryBuilder $builder)
     {
         if ('rank' !== $this->getParameter('rank_field')) {
-            $this->applyComponent('Query\\FilterByRankMethod', $builder);
-            $this->applyComponent('Query\\OrderByRankMethod', $builder);
+            $this->applyComponent('Query\FilterByRankMethod', $builder);
+            $this->applyComponent('Query\OrderByRankMethod', $builder);
         }
 
         if ('rank' !== $this->getParameter('rank_field') || $this->useScope()) {
-            $this->applyComponent('Query\\FindOneByRankMethod', $builder);
+            $this->applyComponent('Query\FindOneByRankMethod', $builder);
         }
 
-        $this->applyComponent('Query\\FindListMethod', $builder);
+        $this->applyComponent('Query\FindListMethod', $builder);
 
         // utilities
-        $this->applyComponent('Query\\GetMaxRankMethod', $builder);
-        $this->applyComponent('Query\\GetMaxRankArrayMethod', $builder);
-//        $this->addRetrieveByRank($script); redundant to findOneByRank
-//        $this->addReorder($script); not in use
-//        $this->addDoSelectOrderByRank($script); redundant to orderByRank()->find()
+        $this->applyComponent('Query\GetMaxRankMethod', $builder);
+        $this->applyComponent('Query\GetMaxRankArrayMethod', $builder);
 
         if ($this->useScope()) {
-//            $this->addRetrieveList($script); not in use, redundant to findList()
-//            $this->addCountList($script); redundant to inList()->count
-//            $this->addDeleteList($script);  redundant to inList()->delete, move to repository
-            $this->applyComponent('Query\\InListMethod', $builder);
-            $this->applyComponent('Query\\FilterByNormalizedListScopeMethod', $builder);
+            $this->applyComponent('Query\InListMethod', $builder);
+            $this->applyComponent('Query\FilterByNormalizedListScopeMethod', $builder);
         }
     }
 
     public function repositoryBuilderModification(RepositoryBuilder $builder)
     {
-        $this->applyComponent('Repository\\SortableShiftRankMethod', $builder);
-        $this->applyComponent('Repository\\IsFirstMethod', $builder);
-        $this->applyComponent('Repository\\IsLastMethod', $builder);
-        $this->applyComponent('Repository\\GetNextMethod', $builder);
-        $this->applyComponent('Repository\\GetPreviousMethod', $builder);
-
-        $this->applyComponent('Repository\\InsertAtRankMethod', $builder);
-        $this->applyComponent('Repository\\InsertAtBottomMethod', $builder);
-        $this->applyComponent('Repository\\InsertAtTopMethod', $builder);
-
-        $this->applyComponent('Repository\\ProcessSortableQueriesMethod', $builder);
-
-//        $this->addInsertAtRank($script);
-//        $this->addInsertAtBottom($script);
-//        $this->addInsertAtTop($script);
-//        $this->addMoveToRank($script);
-//        $this->addSwapWith($script);
-//        $this->addMoveUp($script);
-//        $this->addMoveDown($script);
-//        $this->addMoveToTop($script);
-//        $this->addMoveToBottom($script);
-//        $this->addRemoveFromList($script);
-//        $this->addProcessSortableQueries($script);
+        $this->applyComponent('Repository\AddSortableQueryMethod', $builder);
+        $this->applyComponent('Repository\Attributes', $builder);
+        $this->applyComponent('Repository\GetSortableManagerMethod', $builder);
+        $this->applyComponent('Repository\ProcessSortableQueriesMethod', $builder);
+        $this->applyComponent('Repository\SortableShiftRankMethod', $builder);
     }
 
     public function preSave(RepositoryBuilder $repositoryBuilder)
@@ -145,15 +117,60 @@ class SortableBehavior extends Behavior
         return "\$this->processSortableQueries();";
     }
 
+    public function preInsert(RepositoryBuilder $repositoryBuilder)
+    {
+        return $this->applyComponent('Repository\PreInsertMethod', $repositoryBuilder);
+    }
+
+    public function preDelete(RepositoryBuilder $repositoryBuilder)
+    {
+        return $this->applyComponent('Repository\PreDeleteMethod', $repositoryBuilder);
+    }
+
+    public function preUpdate(RepositoryBuilder $repositoryBuilder)
+    {
+        if ($this->useScope()) {
+            return $this->applyComponent('Repository\PreUpdateMethod', $repositoryBuilder);
+        }
+    }
+
     public function objectBuilderModification(ObjectBuilder $builder)
     {
         if ('rank' !== $this->getParameter('rank_field')) {
-            $this->applyComponent('Object\\RankAccessorMethod', $builder);
+            $this->applyComponent('Object\RankAccessorMethod', $builder);
         }
 
-        if ($this->useScope() && 'scope_value' !== $this->getParameter('rank_field')) {
-            $this->applyComponent('Object\\ScopeAccessorMethod', $builder);
+        if ($this->useScope()) {
+            $this->applyComponent('Object\OldScope', $builder);
+            
+            if ('scope_value' !== $this->getParameter('scope_field')) {
+                $this->applyComponent('Object\ScopeAccessorMethod', $builder);
+            }
         }
+    }
+
+    public function entityMapBuilderModification(EntityMapBuilder $builder)
+    {
+        $this->applyComponent('EntityMap\Constants', $builder);
+    }
+
+    public function activeRecordTraitBuilderModification(ActiveRecordTraitBuilder $builder)
+    {
+        $this->applyComponent('ActiveRecordTrait\IsFirstMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\IsLastMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\GetNextMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\GetPreviousMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\InsertAtRankMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\InsertAtBottomMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\InsertAtTopMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\MoveDownMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\MoveToBottomMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\MoveToRankMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\MoveToTopMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\MoveUpMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\RemoveFromListMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\SwapWithMethod', $builder);
+        $this->applyComponent('ActiveRecordTrait\UseStatements', $builder);
     }
 
     public function useScope()
@@ -169,14 +186,14 @@ class SortableBehavior extends Behavior
      */
     public function generateScopePhp()
     {
-        $methodSignature = array();
+        $methodSignature = [];
         $buildScope      = '';
         $buildScopeVars  = '';
 
         if ($this->hasMultipleScopes()) {
 
-            $methodSignature = array();
-            $buildScope      = array();
+            $methodSignature = [];
+            $buildScope      = [];
 
             foreach ($this->getScopes() as $idx => $scope) {
 
@@ -212,37 +229,7 @@ class SortableBehavior extends Behavior
             $methodSignature[] = $paramName;
         }
 
-        return array($methodSignature, $buildScope, $buildScopeVars);
-    }
-
-    /**
-     * Returns the getter method name.
-     *
-     * @param  string $name
-     * @return string
-     */
-    public function getFieldGetter($name = null)
-    {
-        if (null === $name) {
-            $name = $this->getParameter('rank_field');
-        }
-
-        return 'get' . $this->getEntity()->getField($name)->getName();
-    }
-
-    /**
-     * Returns the setter method name.
-     *
-     * @param  string $name
-     * @return string
-     */
-    public function getFieldSetter($name = null)
-    {
-        if (null === $name) {
-            $name = $this->getParameter('rank_field');
-        }
-
-        return 'set' . $this->getEntity()->getField($name)->getName();
+        return [$methodSignature, $buildScope, $buildScopeVars];
     }
 
     /**

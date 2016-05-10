@@ -10,6 +10,7 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 
@@ -43,7 +44,7 @@ class FilterByFieldMethods extends BuildComponent
      */
     protected function addFilterByCol(Field $field)
     {
-        $fieldPhpName = ucfirst($field->getName());
+        $fieldPhpName = NamingTool::toUpperCamelCase($field->getName());
         $fieldName = $field->getName();
         $variableName = $field->getCamelCaseName();
         $qualifiedName = $field->getFQConstantName();

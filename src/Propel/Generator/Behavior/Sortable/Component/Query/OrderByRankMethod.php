@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Query;
 
@@ -22,10 +29,10 @@ class OrderByRankMethod extends BuildComponent
 \$order = strtoupper(\$order);
     switch (\$order) {
         case Criteria::ASC:
-            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName({$this->getEntityMapClassName()}::RANK_COL));
+            return \$this->addAscendingOrderByField(\$this->getAliasedColName({$this->getEntityMapClassName()}::RANK_COL));
             break;
         case Criteria::DESC:
-            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName({$this->getEntityMapClassName()}::RANK_COL));
+            return \$this->addDescendingOrderByField(\$this->getAliasedColName({$this->getEntityMapClassName()}::RANK_COL));
             break;
         default:
             throw new \\Propel\\Runtime\\Exception\\PropelException('{$this->getQueryClassName()}::orderBy() only accepts \"asc\" or \"desc\" as argument');
@@ -39,6 +46,5 @@ class OrderByRankMethod extends BuildComponent
             ->setType('$this|' . $this->getQueryClassName())
             ->setBody($body)
         ;
-
     }
 }

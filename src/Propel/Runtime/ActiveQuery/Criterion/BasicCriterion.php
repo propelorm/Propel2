@@ -88,7 +88,6 @@ class BasicCriterion extends AbstractCriterion
 
             }
         } else {
-
             // value is null, which means it was either not specified or specifically
             // set to null.
             if (Criteria::EQUAL === $this->comparison || Criteria::ISNULL === $this->comparison) {
@@ -101,5 +100,4 @@ class BasicCriterion extends AbstractCriterion
             }
         }
     }
-
 }

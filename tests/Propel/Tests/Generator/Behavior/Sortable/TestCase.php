@@ -10,49 +10,121 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Generator\Util\QuickBuilder;
 
-use Propel\Tests\Bookstore\Behavior\SortableTable11;
-use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
-use Propel\Tests\Bookstore\Behavior\SortableTable12;
-use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
-use Propel\Tests\TestCaseFixturesDatabase;
+use Propel\Runtime\Configuration;
+use Propel\Tests\TestCase as BaseTestCase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
- * @group skip
+ * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class TestCase extends TestCaseFixturesDatabase
+class TestCase extends BaseTestCase
 {
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
 
-    protected function populateTable11()
+    public function setUp()
     {
-        SortableTable11TableMap::doDeleteAll();
+        parent::setUp();
 
-        $t1 = new SortableTable11();
-        $t1->setRank(1);
-        $t1->setTitle('row1');
-        $t1->save();
+        if (!class_exists('\SortableEntity11')) {
+            $schema = <<<XML
+<database name="bookstore-behavior" defaultIdMethod="native">
 
-        $t2 = new SortableTable11();
-        $t2->setRank(4);
-        $t2->setTitle('row4');
-        $t2->save();
+    <entity name="SortableEntity11">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
 
-        $t3 = new SortableTable11();
-        $t3->setRank(2);
-        $t3->setTitle('row2');
-        $t3->save();
+        <behavior name="sortable" />
+    </entity>
 
-        $t4 = new SortableTable11();
-        $t4->setRank(3);
-        $t4->setTitle('row3');
-        $t4->save();
+    <entity name="SortableEntity12">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="position" type="INTEGER" />
+
+        <behavior name="sortable">
+            <parameter name="rank_field" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_field" value="my_scope_field" />
+        </behavior>
+    </entity>
+
+    <entity name="SortableMultiScopes">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="categoryId" required="true" type="INTEGER" />
+        <field name="subCategoryId" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="position" type="INTEGER" />
+        <behavior name="sortable">
+            <parameter name="rank_field" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_field" value="categoryId" />
+            <parameter name="scope_field" value="subCategoryId" />
+        </behavior>
+    </entity>
+
+    <entity name="SortableMultiCommaScopes">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="categoryId" required="true" type="INTEGER" />
+        <field name="subCategoryId" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="position" type="INTEGER" />
+        <behavior name="sortable">
+            <parameter name="rank_field" value="position" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_field" value="categoryId, subCategoryId" />
+        </behavior>
+    </entity>
+
+</database>
+XML;
+            $this->configuration = QuickBuilder::buildSchema($schema);
+        } else {
+            $this->configuration = Configuration::getCurrentConfiguration();
+        }
+    }
+    
+    public function getConfiguration()
+    {
+        return $this->configuration;
     }
 
-    protected function populateTable12()
+    public function getRepository($entityName)
+    {
+        return $this->getConfiguration()->getRepository($entityName);
+    }
+
+    protected function populateEntity11()
+    {
+        $repository = $this->getRepository('\SortableEntity11');
+        $repository->deleteAll();
+
+        $t1 = new \SortableEntity11();
+        $t1->setRank(1);
+        $t1->setTitle('row1');
+        $repository->save($t1);
+
+        $t2 = new \SortableEntity11();
+        $t2->setRank(4);
+        $t2->setTitle('row4');
+        $repository->save($t2);
+
+        $t3 = new \SortableEntity11();
+        $t3->setRank(2);
+        $t3->setTitle('row2');
+        $repository->save($t3);
+
+        $t4 = new \SortableEntity11();
+        $t4->setRank(3);
+        $t4->setTitle('row3');
+        $repository->save($t4);
+    }
+
+    protected function populateEntity12()
     {
         /* List used for tests
          scope=1   scope=2   scope=null
@@ -62,65 +134,69 @@ class TestCase extends TestCaseFixturesDatabase
          row4                row10
         */
 
-        SortableTable12TableMap::doDeleteAll();
+        $repository = $this->getRepository('\SortableEntity12');
+        $repository->deleteAll();
 
-        $t1 = new SortableTable12();
+        $t1 = new \SortableEntity12();
         $t1->setRank(1);
         $t1->setScopeValue(1);
         $t1->setTitle('row1');
-        $t1->save();
+        $repository->save($t1);
 
-        $t2 = new SortableTable12();
+        $t2 = new \SortableEntity12();
         $t2->setRank(4);
         $t2->setScopeValue(1);
         $t2->setTitle('row4');
-        $t2->save();
+        $repository->save($t2);
 
-        $t3 = new SortableTable12();
+        $t3 = new \SortableEntity12();
         $t3->setRank(2);
         $t3->setScopeValue(1);
         $t3->setTitle('row2');
-        $t3->save();
+        $repository->save($t3);
 
-        $t4 = new SortableTable12();
+        $t4 = new \SortableEntity12();
         $t4->setRank(1);
         $t4->setScopeValue(2);
         $t4->setTitle('row5');
-        $t4->save();
+        $repository->save($t4);
 
-        $t5 = new SortableTable12();
+        $t5 = new \SortableEntity12();
         $t5->setRank(3);
         $t5->setScopeValue(1);
         $t5->setTitle('row3');
-        $t5->save();
+        $repository->save($t5);
 
-        $t6 = new SortableTable12();
+        $t6 = new \SortableEntity12();
         $t6->setRank(2);
         $t6->setScopeValue(2);
         $t6->setTitle('row6');
-        $t6->save();
+        $repository->save($t6);
 
-        $t7 = new SortableTable12();
+        $t7 = new \SortableEntity12();
         $t7->setRank(1);
         $t7->setTitle('row7');
-        $t7->save();
-        $t8 = new SortableTable12();
+        $repository->save($t7);
+
+        $t8 = new \SortableEntity12();
         $t8->setRank(2);
         $t8->setTitle('row8');
-        $t8->save();
-        $t9 = new SortableTable12();
+        $repository->save($t8);
+
+        $t9 = new \SortableEntity12();
         $t9->setRank(3);
         $t9->setTitle('row9');
-        $t9->save();
-        $t10 = new SortableTable12();
+        $repository->save($t9);
+
+        $t10 = new \SortableEntity12();
         $t10->setRank(4);
         $t10->setTitle('row10');
-        $t10->save();
+        $repository->save($t10);
     }
 
     protected function getFixturesArray()
     {
-        $ts = SortableTable11Query::create()->orderByRank()->find();
+        $ts = \SortableEntity11Query::create()->orderByRank()->find();
         $ret = array();
         foreach ($ts as $t) {
             $ret[$t->getRank()] = $t->getTitle();
@@ -131,11 +207,13 @@ class TestCase extends TestCaseFixturesDatabase
 
     protected function getFixturesArrayWithScope($scope = null)
     {
-        $c = new Criteria();
-        $c->add(SortableTable12TableMap::SCOPE_COL, $scope);
-        $ts  = SortableTable12Query::create(null, $c)->orderByPosition()->find();
-        $ret = array();
+        //FIXME: this isn't a correct behavior: null should not be treated as string
+        if (null === $scope) {
+            $scope = 'NULL';
+        }
 
+        $ts  = \SortableEntity12Query::create()->filterByMyScopeField($scope)->orderByPosition()->find();
+        $ret = array();
         foreach ($ts as $t) {
             $ret[$t->getRank()] = $t->getTitle();
         }

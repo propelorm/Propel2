@@ -1,8 +1,14 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Repository;
 
-use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
@@ -16,24 +22,16 @@ class ProcessSortableQueriesMethod extends BuildComponent
 
     public function process()
     {
-        /** @var SortableBehavior $behavior */
-        $behavior = $this->getBehavior();
-
         $body = "
 foreach (\$this->sortableQueries as \$query) {
     \$query['arguments'][] = \$con;
-    call_user_func_array(\$query['callable'], \$query['arguments']);
+    call_user_func_array([\$this, \$query['callable']], \$query['arguments']);
 }
-\$this->sortableQueries = array();
-
-return \$this;
+\$this->sortableQueries = [];
 ";
-
         $this->addMethod('processSortableQueries')
-            ->addSimpleParameter('con', null, null)
             ->setDescription('Execute queries that were saved to be run inside the save transaction.')
-            ->setTypeDescription('The current repository, for fluid interface')
-            ->setType('$this|' . $this->getRepositoryClassName())
+            ->addSimpleDescParameter('con', 'ConnectionInterface', 'Connection object', null)
             ->setBody($body)
         ;
     }

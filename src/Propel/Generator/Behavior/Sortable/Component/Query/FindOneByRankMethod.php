@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Query;
 
@@ -24,6 +31,10 @@ class FindOneByRankMethod extends BuildComponent
         list($methodSignature) = $behavior->generateScopePhp();
         $listSignature = $this->parameterToString($methodSignature);
 
+        if ($useScope) {
+            $listSignature = str_replace(' = null', '', $listSignature);
+        }
+
         $body = "
 return \$this
     ->filterByRank(\$rank" . ($useScope ? ", $listSignature" : "") . ")
@@ -33,12 +44,11 @@ return \$this
         $rankParam = PhpParameter::create('rank')->setType('integer');
         array_unshift($methodSignature, $rankParam);
 
-        $this->addMethod('findByRank')
+        $this->addMethod('findOneByRank')
             ->setParameters($methodSignature)
             ->setDescription("Get an item from the list based on its rank")
             ->setType($this->getObjectClassName())
             ->setBody($body)
         ;
-
     }
 }

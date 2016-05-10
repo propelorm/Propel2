@@ -10,16 +10,20 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class MakeRootMethod extends NestedSetBuildComponent
+class MakeRootMethod extends BuildComponent
 {
+    use NamingTrait;
+    
     public function process()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-\$manager->makeRoot(\$this);
+\$this->getRepository()->getNestedManager()->makeRoot(\$this);
 
 return \$this;
 ";

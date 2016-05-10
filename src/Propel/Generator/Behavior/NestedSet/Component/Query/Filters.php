@@ -121,7 +121,7 @@ return \$this
     {
         $objectName = '$' . $this->getEntity()->getCamelCaseName();
         $body = "
-\$manager = \$this->getConfiguration()->getNestedManager('{$this->getObjectClassName(true)}');
+\$manager = \$this->getConfiguration()->getRepository('{$this->getObjectClassName(true)}')->getNestedManager();
 if (\$manager->isRoot({$objectName})) {
     return \$this->
         add({$this->getEntityMapClassName()}::LEVEL_COL, '1<>1', Criteria::CUSTOM);

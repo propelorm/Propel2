@@ -22,7 +22,7 @@ class UpdateLoadedNodesMethod extends BuildComponent
     public function process()
     {
         $body = "
-\$manager = \$this->getConfiguration()->getNestedManager('{$this->getObjectClassName(true)}');
+\$manager = \$this->getNestedManager();
 
 \$pks = array_keys(\$this->nestedSetEntityPool);
 if (null !== \$prune) {

@@ -32,8 +32,7 @@ foreach (\$event->getEntities() as \$entity) {
         continue;
     }
 
-    \$manager = \$this->getConfiguration()->getNestedManager(\$entity);
-    if (\$this->getConfiguration()->getSession()->isNew(\$entity) && \$manager->isRoot(\$entity)) {
+    if (\$this->getConfiguration()->getSession()->isNew(\$entity) && \$this->getNestedManager()->isRoot(\$entity)) {
         // check if no other root exist in, the tree
 
         \$nbRoots = \$this->createQuery()

@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Query;
 
@@ -20,17 +27,25 @@ class FilterByNormalizedListScopeMethod extends BuildComponent
         /** @var SortableBehavior $behavior */
         $behavior = $this->getBehavior();
 
-        $body = '';
+        $body = "";
 
         if ($behavior->hasMultipleScopes()) {
             foreach ($behavior->getScopes() as $idx => $scope) {
                 $body .= "
-    \$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
+//FIXME: this isn't a correct behavior: null should not be treated as string
+if (null === \$scope[$idx]) {
+    \$scope[$idx] = 'NULL';
+}
+\$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
 ";
             }
         } else {
             $body .= "
-    \$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper(current($behavior->getScopes())).", \$scope, Criteria::EQUAL);
+//FIXME: this isn't a correct behavior: null should not be treated as string
+if (null === \$scope) {
+    \$scope = 'NULL';
+}
+\$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper(current($behavior->getScopes())).", \$scope, Criteria::EQUAL);
 ";
         }
 
@@ -46,6 +61,5 @@ return \$this;
             ->setType('$this|' . $this->getQueryClassName())
             ->setBody($body)
         ;
-
     }
 }

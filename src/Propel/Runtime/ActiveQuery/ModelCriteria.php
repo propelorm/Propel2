@@ -131,7 +131,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see Criteria::add()
      *
-     * @param string $field     A string representing thefield phpName, e.g. 'AuthorId'
+     * @param string $field     A string representing the field phpName, e.g. 'AuthorId'
      * @param mixed  $value      A value for the condition
      * @param string $comparison What to use for the field comparison, defaults to Criteria::EQUAL
      *

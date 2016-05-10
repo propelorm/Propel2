@@ -174,6 +174,6 @@ XML;
 
     protected function dumpTreeWithScope($scope)
     {
-        return $this->dumpNodes(\NestedSetEntity10Query::create()->filterByMy_Scope_Field($scope)->orderByTitle()->find());
+        return $this->dumpNodes(\NestedSetEntity10Query::create()->filterByMyScopeField($scope)->orderByTitle()->find());
     }
 }

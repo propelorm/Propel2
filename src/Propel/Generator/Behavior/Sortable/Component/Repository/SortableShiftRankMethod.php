@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Repository;
 
@@ -21,7 +28,7 @@ class SortableShiftRankMethod extends BuildComponent
         $useScope = $behavior->useScope();
 
         $body = "
-\$whereCriteria = \$this->newQuery();
+\$whereCriteria = \$this->createQuery();
 \$criterion = \$whereCriteria->getNewCriterion({$this->getEntityMapClassName()}::RANK_COL, \$first, Criteria::GREATER_EQUAL);
 if (null !== \$last) {
     \$criterion->addAnd(\$whereCriteria->getNewCriterion({$this->getEntityMapClassName()}::RANK_COL, \$last, Criteria::LESS_EQUAL));
@@ -33,11 +40,11 @@ if (null !== \$last) {
     }
 
         $body .= "
-\$valuesCriteria = \$this->newQuery();
-\$valuesCriteria->add({$this->getEntityMapClassName()}::RANK_COL, array('raw' => {$this->getEntityMapClassName()}::RANK_COL . ' + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+\$valuesCriteria = \$this->createQuery();
+\$valuesCriteria->add({$this->getEntityMapClassName()}::RANK_COL, array('raw' => '{$behavior->getFieldForParameter('rank_field')->getColumnName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
-\$whereCriteria->doUpdate(\$valuesCriteria, \$con);
-\$this->clearFirstLevelCache();
+\$whereCriteria->doUpdate(\$valuesCriteria);
+\$this->getConfiguration()->getSession()->clearFirstLevelCache();
 ";
 
         $method = $this->addMethod('sortableShiftRank')
@@ -53,6 +60,5 @@ if (null !== \$last) {
         if ($useScope) {
             $method->addSimpleParameter('scope', 'mixed', null);
         }
-
     }
 }

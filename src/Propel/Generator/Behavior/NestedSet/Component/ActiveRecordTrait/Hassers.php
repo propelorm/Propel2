@@ -10,10 +10,12 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class Hassers extends NestedSetBuildComponent
+class Hassers extends BuildComponent
 {
     public function process()
     {
@@ -34,9 +36,7 @@ class Hassers extends NestedSetBuildComponent
     protected function addHasPrevSibling()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->hasPrevSibling(\$this, \$con);
+return \$this->getRepository()->getNestedManager()->hasPrevSibling(\$this, \$con);
 ";
         $this->addMethod('hasPrevSibling')
             ->setType('bool')
@@ -49,9 +49,7 @@ return \$manager->hasPrevSibling(\$this, \$con);
     protected function addHasNextSibling()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->hasNextSibling(\$this, \$con);
+return \$this->getRepository()->getNestedManager()->hasNextSibling(\$this, \$con);
 ";
         $this->addMethod('hasNextSibling')
             ->setDescription('Determines if the node has next sibling.')

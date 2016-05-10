@@ -10,17 +10,20 @@
 
 namespace Propel\Generator\Behavior\NestedSet\Component\ActiveRecordTrait;
 
+use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\NamingTrait;
+
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class DeleteDescendantsMethod extends NestedSetBuildComponent
+class DeleteDescendantsMethod extends BuildComponent
 {
+    use NamingTrait;
+    
     public function process()
     {
         $body = "
-{$this->getNestedManagerAssignment()}
-
-return \$manager->deleteDescendants(\$this, \$con);
+return \$this->getRepository()->getNestedManager()->deleteDescendants(\$this, \$con);
 ";
         $this->addMethod('deleteDescendants')
             ->setDescription("Deletes all descendants for the given node.

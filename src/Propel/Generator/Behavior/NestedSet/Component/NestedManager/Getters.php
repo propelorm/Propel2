@@ -90,7 +90,7 @@ if (\$this->hasParent(\$node)) {
 {$this->getRepositoryAssignment()}
 
 return \$repository->createQuery()
-    ->filterBy{$this->getBehavior()->getFieldForParameter('right_field')->getName()}(\$node->getLeftValue() - 1)";
+    ->filterBy{$this->getBehavior()->getFieldForParameter('right_field')->getMethodName()}(\$node->getLeftValue() - 1)";
 
         if ($this->behavior->useScope()) {
             $body .= "
@@ -115,7 +115,7 @@ return \$repository->createQuery()
 {$this->getRepositoryAssignment()}
 
 return \$repository->createQuery()
-    ->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getName()}(\$node->getRightValue() + 1)";
+    ->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(\$node->getRightValue() + 1)";
 
         if ($this->getBehavior()->useScope()) {
             $body .= "
