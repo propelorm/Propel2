@@ -1,8 +1,14 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
-namespace Propel\Generator\Behavior\Sortable\Component\Repository;
+namespace Propel\Generator\Behavior\Sortable\Component\SortableManager;
 
-use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
@@ -18,16 +24,12 @@ class InsertAtTopMethod extends BuildComponent
     {
         $body = "
 \$this->insertAtRank(\$entity, 1);
-
-return \$this;
 ";
 
         $this->addMethod('insertAtTop')
             ->addSimpleParameter('entity', 'object')
             ->setDescription('Insert in the first rank. The modifications are not persisted until the object is saved.')
-            ->setType('$this|' . $this->getRepositoryClassName())
             ->setBody($body)
         ;
-
     }
 }

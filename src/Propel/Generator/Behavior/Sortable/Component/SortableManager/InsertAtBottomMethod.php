@@ -1,8 +1,15 @@
 <?php
 
-namespace Propel\Generator\Behavior\Sortable\Component\Repository;
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
-use Propel\Generator\Behavior\Sortable\SortableBehavior;
+namespace Propel\Generator\Behavior\Sortable\Component\SortableManager;
+
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
@@ -16,22 +23,17 @@ class InsertAtBottomMethod extends BuildComponent
 
     public function process()
     {
-        /** @var SortableBehavior $behavior */
-        $behavior = $this->getBehavior();
-        $useScope = $behavior->useScope();
+        $useScope = $this->getBehavior()->useScope();
 
         $body = "
-\$this->{$behavior->getFieldSetter()}(\$this->createQuery()->getMaxRankArray(" . ($useScope ? "\$entity->getScopeValue()" : '') . ") + 1);
-
-return \$this;
+{$this->getRepositoryAssignment()}
+\$entity->setRank(\$repository->createQuery()->getMaxRank(" . ($useScope ? "\$entity->getScopeValue()" : '') . ") + 1);
 ";
 
         $this->addMethod('insertAtBottom')
             ->addSimpleParameter('entity', 'object')
             ->setDescription('Insert in the last rank. The modifications are not persisted until the object is saved.')
-            ->setType('$this|' . $this->getRepositoryClassName())
             ->setBody($body)
         ;
-
     }
 }

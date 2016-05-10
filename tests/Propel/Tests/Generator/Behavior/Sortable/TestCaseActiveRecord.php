@@ -19,7 +19,7 @@ use Propel\Tests\TestCase as BaseTestCase;
  * @author William Durand <william.durand1@gmail.com>
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class TestCase extends BaseTestCase
+class TestCaseActiveRecord extends BaseTestCase
 {
     /**
      * @var Configuration
@@ -32,7 +32,7 @@ class TestCase extends BaseTestCase
 
         if (!class_exists('\SortableEntity11')) {
             $schema = <<<XML
-<database name="bookstore-behavior" defaultIdMethod="native">
+<database name="bookstore-behavior" defaultIdMethod="native" activeRecord="true">
 
     <entity name="SortableEntity11">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -100,28 +100,27 @@ XML;
 
     protected function populateEntity11()
     {
-        $repository = $this->getRepository('\SortableEntity11');
-        $repository->deleteAll();
+        $this->getRepository('\SortableEntity11')->deleteAll();
 
         $t1 = new \SortableEntity11();
         $t1->setRank(1);
         $t1->setTitle('row1');
-        $repository->save($t1);
+        $t1->save();
 
         $t2 = new \SortableEntity11();
         $t2->setRank(4);
         $t2->setTitle('row4');
-        $repository->save($t2);
-
+        $t2->save();
+        
         $t3 = new \SortableEntity11();
         $t3->setRank(2);
         $t3->setTitle('row2');
-        $repository->save($t3);
+        $t3->save();
 
         $t4 = new \SortableEntity11();
         $t4->setRank(3);
         $t4->setTitle('row3');
-        $repository->save($t4);
+        $t4->save();
     }
 
     protected function populateEntity12()
@@ -134,64 +133,63 @@ XML;
          row4                row10
         */
 
-        $repository = $this->getRepository('\SortableEntity12');
-        $repository->deleteAll();
+        $this->getRepository('\SortableEntity12')->deleteAll();
 
         $t1 = new \SortableEntity12();
         $t1->setRank(1);
         $t1->setScopeValue(1);
         $t1->setTitle('row1');
-        $repository->save($t1);
+        $t1->save();
 
         $t2 = new \SortableEntity12();
         $t2->setRank(4);
         $t2->setScopeValue(1);
         $t2->setTitle('row4');
-        $repository->save($t2);
+        $t2->save();
 
         $t3 = new \SortableEntity12();
         $t3->setRank(2);
         $t3->setScopeValue(1);
         $t3->setTitle('row2');
-        $repository->save($t3);
+        $t3->save();
 
         $t4 = new \SortableEntity12();
         $t4->setRank(1);
         $t4->setScopeValue(2);
         $t4->setTitle('row5');
-        $repository->save($t4);
+        $t4->save();
 
         $t5 = new \SortableEntity12();
         $t5->setRank(3);
         $t5->setScopeValue(1);
         $t5->setTitle('row3');
-        $repository->save($t5);
+        $t5->save();
 
         $t6 = new \SortableEntity12();
         $t6->setRank(2);
         $t6->setScopeValue(2);
         $t6->setTitle('row6');
-        $repository->save($t6);
+        $t6->save();
 
         $t7 = new \SortableEntity12();
         $t7->setRank(1);
         $t7->setTitle('row7');
-        $repository->save($t7);
+        $t7->save();
 
         $t8 = new \SortableEntity12();
         $t8->setRank(2);
         $t8->setTitle('row8');
-        $repository->save($t8);
+        $t8->save();
 
         $t9 = new \SortableEntity12();
         $t9->setRank(3);
         $t9->setTitle('row9');
-        $repository->save($t9);
+        $t9->save();
 
         $t10 = new \SortableEntity12();
         $t10->setRank(4);
         $t10->setTitle('row10');
-        $repository->save($t10);
+        $t10->save();
     }
 
     protected function getFixturesArray()

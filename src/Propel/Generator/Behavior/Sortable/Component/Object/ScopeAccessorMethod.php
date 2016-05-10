@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Object;
 
@@ -46,7 +53,7 @@ return \$onlyNulls && \$returnNulls ? null : \$result;
 
             $body .= "
 
-return \$this->{$behavior->getFieldForParameter('scope_field')->getName()}();
+    return \$this->get{$behavior->getFieldForParameter('scope_field')->getMethodName()}();
 ";
         }
 
@@ -72,20 +79,22 @@ return \$this->{$behavior->getFieldForParameter('scope_field')->getName()}();
 
             foreach ($behavior->getScopes() as $idx => $scopeField) {
                 $body .= "
-\$this->{$scopeField} = \$v === null ? null : \$v[$idx];
+\$this->set{$behavior->getEntity()->getField($scopeField)->getMethodName()}(null ? null : \$v[$idx]);
 ";
             }
-
         } else {
             $body .= "
-\$this->{$behavior->getFieldForParameter('scope_field')->getName()} = \$v;
+\$this->set{$behavior->getFieldForParameter('scope_field')->getMethodName()}(\$v);
 ";
         }
 
-        $body .= "return \$this;";
+        $body .= "
+
+return \$this;
+";
 
         $this->addMethod('setScopeValue')
-            ->addSimpleDescParameter('v')
+            ->addSimpleParameter('v')
             ->setDescription("Wrap the setter for scope value")
             ->setType('$this|' . $this->getObjectClassName())
             ->setBody($body);

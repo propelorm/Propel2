@@ -1,4 +1,11 @@
 <?php
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Behavior\Sortable\Component\Query;
 
@@ -22,7 +29,7 @@ class GetMaxRankArrayMethod extends BuildComponent
         $useScope = $behavior->useScope();
 
         $body = "
-\$this->addSelectColumn('MAX(' . {$this->getEntityMapClassName()}::RANK_COL . ')');";
+\$this->addSelectField('MAX(' . {$this->getEntityMapClassName()}::RANK_COL . ')');";
         if ($useScope) {
             $body .= "
 \$this->filterByNormalizedListScope(\$scope);";
@@ -31,7 +38,7 @@ class GetMaxRankArrayMethod extends BuildComponent
         $body .= "
 \$dataFetcher = \$this->doSelect();
 
-return \$dataFetcher->fetchColumn();
+return (int) \$dataFetcher->fetchField();
 ";
         $methodSignature = [];
         if ($useScope) {
@@ -45,6 +52,5 @@ return \$dataFetcher->fetchColumn();
             ->setTypeDescription("Highest position")
             ->setBody($body)
         ;
-
     }
 }

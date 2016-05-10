@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Behavior\Sortable\Component\Repository;
+namespace Propel\Generator\Behavior\Sortable\Component\SortableManager;
 
 use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
@@ -10,7 +10,7 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class GetNextMethod extends BuildComponent
+class GetPreviousMethod extends BuildComponent
 {
     use NamingTrait;
 
@@ -22,36 +22,34 @@ class GetNextMethod extends BuildComponent
         list($methodSignature, $buildScope, $buildScopeVars) = $behavior->generateScopePhp();
 
         $body = "
-\$reader = \$this->getEntityMap()->getPropReader();
-\$query = \$this->createQuery();
+{$this->getRepositoryAssignment()}
+\$query = \$repository->createQuery();
 ";
 
         if ($useScope) {
             $params = $this->parameterToString($methodSignature);
 
             $body .= "
-\$scope = \$this->getScopeValue(\$entity);
+\$scope = \$entity->getScopeValue();
 $buildScopeVars
-\$query->filterByRank(\$reader(\$entity, '{$behavior->getRankVarName()}') + 1, $params);
+\$query->filterByRank(\$entity->getRank() - 1, $params);
 ";
         } else {
 
             $body .= "
-\$query->filterByRank(\$reader(\$entity, '{$behavior->getRankVarName()}') + 1);
+\$query->filterByRank(\$entity->getRank() - 1);
 ";
         }
 
         $body .= "
 
-return \$query->findOne(\$con);
-}
+return \$query->findOne();
 ";
 
-        $this->addMethod('getNext')
+        $this->addMethod('getPrevious')
             ->addSimpleParameter('entity', 'object')
-            ->setDescription('Get the next item in the list, i.e. the one for which rank is immediately higher')
+            ->setDescription('Get the previous item in the list, i.e. the one for which rank is immediately lower')
             ->setBody($body)
         ;
-
     }
 }
