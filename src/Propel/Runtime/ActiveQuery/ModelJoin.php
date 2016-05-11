@@ -32,10 +32,11 @@ class ModelJoin extends Join
         $leftCols = $relationMap->getLeftFields();
         $rightCols = $relationMap->getRightFields();
         $nbFields = $relationMap->countFieldMappings();
-        for ($i=0; $i < $nbFields; $i++) {
+
+        for ($i = 0; $i < $nbFields; $i++) {
             $this->addExplicitCondition(
-                $leftCols[$i]->getEntityName(), $leftCols[$i]->getColumnName(), $leftEntityAlias,
-                $rightCols[$i]->getEntityName(), $rightCols[$i]->getColumnName(), $relationAlias,
+                $relationMap->getLeftEntity()->getTableName(), $leftCols[$i]->getColumnName(), $leftEntityAlias,
+                $relationMap->getRightEntity()->getTableName(), $rightCols[$i]->getColumnName(), $relationAlias,
                 Criteria::EQUAL);
         }
         $this->relationMap = $relationMap;
@@ -190,18 +191,17 @@ class ModelJoin extends Join
         /** @var ModelJoin $join */
 
         return parent::equals($join)
-            && $this->relationMap == $join->getRelationMap()
-            && $this->previousJoin == $join->getPreviousJoin()
-            && $this->rightTableAlias == $join->getRightTableAlias()
-        ;
+        && $this->relationMap == $join->getRelationMap()
+        && $this->previousJoin == $join->getPreviousJoin()
+        && $this->rightTableAlias == $join->getRightTableAlias();
     }
 
     public function __toString()
     {
         return parent::toString()
-            . ' entityMap: ' . ($this->entityMap ? get_class($this->entityMap) : 'null')
-            . ' relationMap: ' . $this->relationMap->getName()
-            . ' previousJoin: ' . ($this->previousJoin ? '(' . $this->previousJoin . ')' : 'null')
-            . ' relationAlias: ' . $this->rightTableAlias;
+        . ' entityMap: ' . ($this->entityMap ? get_class($this->entityMap) : 'null')
+        . ' relationMap: ' . $this->relationMap->getName()
+        . ' previousJoin: ' . ($this->previousJoin ? '(' . $this->previousJoin . ')' : 'null')
+        . ' relationAlias: ' . $this->rightTableAlias;
     }
 }

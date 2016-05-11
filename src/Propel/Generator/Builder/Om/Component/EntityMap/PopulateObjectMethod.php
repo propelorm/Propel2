@@ -24,7 +24,15 @@ class PopulateObjectMethod extends BuildComponent
     public function process()
     {
         $this->getDefinition()->declareUse('Propel\Runtime\Map\EntityMap');
-        $body = "";
+
+        $fields = array_filter($this->getEntity()->getFields(), function($field) {
+            return !$field->isLazyLoad();
+        });
+
+        $fieldCount = count($fields);
+
+        $body = "
+";
 
         //first check primary key and first level cache
         $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
@@ -61,9 +69,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //columnName
 ";
         foreach ($camelNames as $idx => $fieldName) {
-            $propName = $camelNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
         }
 
         $body .= "
@@ -71,9 +79,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //column_name
 ";
         foreach ($columnNames as $idx => $fieldName) {
-            $propName = $columnNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row['{$columnNames[$idx]}'], '$propName');";
         }
 
         $body .= "
@@ -81,9 +89,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //book.column_name
 ";
         foreach ($fullColumnNames as $idx => $fieldName) {
-            $propName = $fullColumnNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$pk[] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row['{$fullColumnNames[$idx]}'], '$propName');";
         }
 
         $body .= "
@@ -98,6 +106,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         $body .= "
 \$hashcode = json_encode(\$pk);
 if (\$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLevelCache('{$this->getEntity()->getFullClassName()}', \$hashcode)) {
+    \$offset += $fieldCount;
     return \$object;
 }
 ";
@@ -115,13 +124,10 @@ if (\$entity) {
 
         $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
         $implementationDetail = [];
-        $fieldCount = 0;
         foreach ($this->getEntity()->getFields() as $field) {
             if ($field->isLazyLoad()) {
                 continue;
             }
-
-            $fieldCount++;
 
             if ($field->isImplementationDetail()) {
                 $implementationDetail[$field->getName()] = true;
@@ -153,9 +159,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //columnName
 ";
         foreach ($camelNames as $idx => $fieldName) {
-            $propName = $camelNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -167,9 +173,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //column_name
 ";
         foreach ($columnNames as $idx => $fieldName) {
-            $propName = $columnNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$columnNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -181,9 +187,9 @@ if (EntityMap::TYPE_NUM === \$indexType) {
     //book.column_name
 ";
         foreach ($fullColumnNames as $idx => $fieldName) {
-            $propName = $fullColumnNames[$idx];
+            $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$fullColumnNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";
@@ -234,8 +240,8 @@ if (\$exist) {
 
         $body .= "
 \$this->getConfiguration()->getSession()->setLastKnownValues(\$obj, \$originalValues);
-\$offset = \$offset + $fieldCount;
 unset(\$obj->__duringInitializing__);
+\$offset += $fieldCount;
 
 return \$obj;
 ";

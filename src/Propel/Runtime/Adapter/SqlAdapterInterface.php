@@ -79,12 +79,11 @@ interface SqlAdapterInterface extends AdapterInterface
      * taking into account select fields and 'as' fields (i.e. fields aliases)
      *
      * @param Criteria $criteria
-     * @param array    $fromClause
      * @param boolean  $aliasAll
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
+    public function createSelectSqlPart(Criteria $criteria, $aliasAll = false);
 
     /**
      * Ensures uniqueness of select field names by turning them all into aliases

@@ -154,7 +154,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- Visibility for column accessor and mutator methods -->
+    <!-- Visibility for field accessor and mutator methods -->
     <xs:simpleType name="visibility">
         <xs:restriction base="xs:string">
             <xs:enumeration value="public"/>
@@ -163,8 +163,8 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- Restrict column name to letters (upper- and lowercase), numbers and the _ -->
-    <xs:simpleType name="column_name">
+    <!-- Restrict field name to letters (upper- and lowercase), numbers and the _ -->
+    <xs:simpleType name="field_name">
         <xs:restriction base="xs:string">
             <xs:pattern value="[\w_]+"/>
         </xs:restriction>
@@ -212,7 +212,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- Restrict foreign column name to letters (upper- and lowercase), numbers and the _ -->
+    <!-- Restrict foreign field name to letters (upper- and lowercase), numbers and the _ -->
     <xs:simpleType name="foreign_name">
         <xs:restriction base="xs:string">
             <xs:pattern value="[\w_]+"/>
@@ -228,7 +228,7 @@
         <xs:sequence>
             <xs:element name="rule" type="rule" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="column" type="column_name" use="required"/>
+        <xs:attribute name="field" type="field_name" use="required"/>
         <xs:attribute name="translate" type="xs:string" use="optional"/>
     </xs:complexType>
 
@@ -254,7 +254,7 @@
 
     <xs:complexType name="index">
         <xs:choice maxOccurs="unbounded">
-            <xs:element name="index-column" type="index-column" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="index-field" type="index-field" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
         <xs:attribute name="name" type="index_name" use="optional"/>
@@ -262,25 +262,25 @@
 
     <xs:complexType name="unique">
         <xs:choice maxOccurs="unbounded">
-            <xs:element name="unique-column" type="unique-column" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="unique-field" type="unique-field" minOccurs="1" maxOccurs="unbounded"/>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
         <xs:attribute name="name" type="index_name" use="optional"/>
     </xs:complexType>
 
-    <xs:complexType name="index-column">
+    <xs:complexType name="index-field">
         <xs:sequence>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="name" type="column_name" use="required"/>
+        <xs:attribute name="name" type="field_name" use="required"/>
         <xs:attribute name="size" type="xs:positiveInteger" use="optional"/>
     </xs:complexType>
 
-    <xs:complexType name="unique-column">
+    <xs:complexType name="unique-field">
         <xs:sequence>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="name" type="column_name" use="required"/>
+        <xs:attribute name="name" type="field_name" use="required"/>
         <xs:attribute name="size" type="xs:positiveInteger" use="optional"/>
     </xs:complexType>
 
@@ -292,8 +292,8 @@
     </xs:complexType>
 
     <xs:complexType name="reference">
-        <xs:attribute name="local" type="column_name" use="required"/>
-        <xs:attribute name="foreign" type="column_name" use="required"/>
+        <xs:attribute name="local" type="field_name" use="required"/>
+        <xs:attribute name="foreign" type="field_name" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="behavior">
@@ -303,58 +303,58 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="column">
+    <xs:complexType name="field">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="inheritance" type="inheritance" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
-        <xs:attribute name="name" type="column_name" use="required">
+        <xs:attribute name="name" type="field_name" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The name of the column as it appears in the database.
+                    The name of the field as it appears in the database.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="phpName" type="php_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used in PHP code to reference this column (in getters, setters, etc.). Defaults to the name transformed by the phpNamingMethod, which defaults to a CamelCase converter. So by default, a column named 'author_id' receives 'AuthorId' as phpName.
+                    Name used in PHP code to reference this field (in getters, setters, etc.). Defaults to the name transformed by the phpNamingMethod, which defaults to a CamelCase converter. So by default, a field named 'author_id' receives 'AuthorId' as phpName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="phpSingularName" type="php_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used in PHP code to reference the singular form of this column (in getters, setters, etc.). Defaults to an auto-generated value based on the column's phpName.
+                    Name used in PHP code to reference the singular form of this field (in getters, setters, etc.). Defaults to an auto-generated value based on the field's phpName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="tableMapName" type="php_class" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used for the class constant corresponding to this column in PHP code. Defaults to the uppercase name, so a column named 'author_id' receives 'AUTHOR_ID' as tableMapName.
+                    Name used for the class constant corresponding to this field in PHP code. Defaults to the uppercase name, so a field named 'author_id' receives 'AUTHOR_ID' as tableMapName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="prefix" type="column_name" use="optional"/>
+        <xs:attribute name="prefix" type="field_name" use="optional"/>
         <xs:attribute name="accessorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Visibility for the column accessor method. 'public' by default, also accepts 'protected' and 'private'.
+                    Visibility for the field accessor method. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="mutatorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Visibility for the column mutator method. 'public' by default, also accepts 'protected' and 'private'.
+                    Visibility for the field mutator method. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="primaryKey" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Set to true to add a primary key on this column.
+                    Set to true to add a primary key on this field.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -375,21 +375,21 @@
         <xs:attribute name="sqlType" type="sql_type" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Native database column type.
+                    Native database field type.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="phpType" type="php_type" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    PHP type for te column in PHP code. This column's setter uses type casting with the set php_type; besides, generated phpDoc in the model classes use this attribute for code completion.
+                    PHP type for te field in PHP code. This field's setter uses type casting with the set php_type; besides, generated phpDoc in the model classes use this attribute for code completion.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="size" type="xs:nonNegativeInteger" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Numeric length of the column.
+                    Numeric length of the field.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -410,14 +410,14 @@
         <xs:attribute name="defaultValue" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The default value that the object will have for this column in the PHP instance after creating a "new Object". This value is always interpreted as a string. See defaultExpr for setting an SQL function as a default value.
+                    The default value that the object will have for this field in the PHP instance after creating a "new Object". This value is always interpreted as a string. See defaultExpr for setting an SQL function as a default value.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="defaultExpr" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The default value for this column as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the column.
+                    The default value for this field as expressed in SQL. This value is used solely for the "sql" target which builds your database from the schema.xml file. The defaultExpr is the SQL expression used as the "default" for the field.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -426,52 +426,52 @@
         <xs:attribute name="phpNamingMethod" type="phpnamingmethod" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name of the method used to transform the column name into a phpName. Defaults to 'clean', which Removes any character that is not a letter or a number and capitilizes the first letter of the name, the first letter of each alphanumeric block, and converts the rest of the letters to lowercase. Possible values: any of the PhpNameGenerator CONV_METHOD_XXX constants (clean, underscore, phpName, nochange).
+                    Name of the method used to transform the field name into a phpName. Defaults to 'clean', which Removes any character that is not a letter or a number and capitilizes the first letter of the name, the first letter of each alphanumeric block, and converts the rest of the letters to lowercase. Possible values: any of the PhpNameGenerator CONV_METHOD_XXX constants (clean, underscore, phpName, nochange).
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="description" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    A text description of the column. It gets added to the SQL CREATE table as a comment, and appears in the phpDoc bloc of the related getter and setter methods in the ActiveRecord class.
+                    A text description of the field. It gets added to the SQL CREATE table as a comment, and appears in the phpDoc bloc of the related getter and setter methods in the ActiveRecord class.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="lazyLoad" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Set to true to skip this column by default during hydration. That means that this column will be hydrated on demand, using a supplementary query. Mostly useful for LOB columns.
+                    Set to true to skip this field by default during hydration. That means that this field will be hydrated on demand, using a supplementary query. Mostly useful for LOB fields.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="primaryString" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    A column defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
+                    A field defined as primary string serves as default value for a `__toString()` method in the generated Propel object.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="valueSet" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The list of values for an ENUM column, separated by commas
+                    The list of values for an ENUM field, separated by commas
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="foreign-key">
+    <xs:complexType name="relation">
         <xs:choice maxOccurs="unbounded">
             <xs:element name="reference" type="reference" minOccurs="1" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        A reference between a local and a foreign column. Composite foreign keys can have several references.
+                        A reference between a local and a foreign field. Composite foreign keys can have several references.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element ref="vendor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
-        <xs:attribute name="foreignTable" type="table_name" use="required">
+        <xs:attribute name="target" type="php_class" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     The other table name
@@ -485,21 +485,14 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="name" type="foreign_name" use="optional">
+        <xs:attribute name="field" type="foreign_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name for this foreign key
+                    Name for this relation
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="phpName" type="php_name" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Name for the foreign object in methods generated in this class.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="refPhpName" type="php_name" use="optional">
+        <xs:attribute name="refField" type="php_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Name for this object in methods generated in the foreign class
@@ -509,7 +502,7 @@
         <xs:attribute name="defaultJoin" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required column, and a LEFT JOIN for foreign keys attached to a non-required column, but you can override this in the foreign key element.
+                    This affects the default join type used in the generated `joinXXX()` methods in the model query class. Propel uses an INNER JOIN for foreign keys attached to a required field, and a LEFT JOIN for foreign keys attached to a non-required field, but you can override this in the foreign key element.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -534,21 +527,21 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="table">
+    <xs:complexType name="entity">
         <xs:choice maxOccurs="unbounded">
 
-            <xs:element name="column" type="column" maxOccurs="unbounded">
+            <xs:element name="field" type="field" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        A column of the table
+                        A field of the table
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
 
-            <xs:element name="foreign-key" type="foreign-key" minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="relation" type="relation" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        A foreign key on one or several columns in this table, referencing a foreign table
+                        A foreign key on one or several fields in this table, referencing a foreign table
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -557,7 +550,7 @@
             <xs:element name="index" type="index" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        An index on one or several columns of the current table
+                        An index on one or several fields of the current table
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -566,7 +559,7 @@
             <xs:element name="unique" type="unique" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        A unique index on one or several columns of the current table
+                        A unique index on one or several fields of the current table
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -574,7 +567,7 @@
             <xs:element name="id-method-parameter" type="id-method-parameter" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        If you are using a database that uses sequences for auto-increment columns (e.g. PostgreSQL or Oracle), you can customize the name of the sequence using this tag
+                        If you are using a database that uses sequences for auto-increment fields (e.g. PostgreSQL or Oracle), you can customize the name of the sequence using this tag
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -583,7 +576,7 @@
             <xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        A validator to be executed on a given column at runtime
+                        A validator to be executed on a given field at runtime
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -634,25 +627,25 @@
             </xs:annotation>
         </xs:attribute>
         <!-- TODO: to be removed? Is this really supported? -->
-        <xs:attribute name="columnPrefix" type="column_name" use="optional"/>
+        <xs:attribute name="fieldPrefix" type="field_name" use="optional"/>
         <xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Default visibility for column accessor methods. 'public' by default, also accepts 'protected' and 'private'.
+                    Default visibility for field accessor methods. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="defaultMutatorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Default visibility for column mutator methods. 'public' by default, also accepts 'protected' and 'private'.
+                    Default visibility for field mutator methods. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="idMethod" type="idmethod" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Id method to use for auto-increment columns.
+                    Id method to use for auto-increment fields.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -731,14 +724,14 @@
         <xs:attribute name="reloadOnInsert" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Indicate that the object should be reloaded from the database when an INSERT is performed.  This is useful if you have triggers (or other server-side functionality like column default expressions) that alters the database row on INSERT.
+                    Indicate that the object should be reloaded from the database when an INSERT is performed.  This is useful if you have triggers (or other server-side functionality like field default expressions) that alters the database row on INSERT.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="reloadOnUpdate" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Indicate that the object should be reloaded from the database when an UPDATE is performed.  This is useful if you have triggers (or other server-side functionality like column default expressions) that alters the database row on UPDATE.
+                    Indicate that the object should be reloaded from the database when an UPDATE is performed.  This is useful if you have triggers (or other server-side functionality like field default expressions) that alters the database row on UPDATE.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -767,7 +760,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="table" type="table" minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="entity" type="entity" minOccurs="1" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
                         A table using the database connection.
@@ -792,21 +785,21 @@
         <xs:attribute name="defaultIdMethod" type="dbidmethod" default="none">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Default id method to use for auto-increment columns
+                    Default id method to use for auto-increment fields
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Default visibility for column accessor methods. 'public' by default, also accepts 'protected' and 'private'.
+                    Default visibility for field accessor methods. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="defaultMutatorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Default visibility for column mutator methods. 'public' by default, also accepts 'protected' and 'private'.
+                    Default visibility for field mutator methods. 'public' by default, also accepts 'protected' and 'private'.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -863,6 +856,13 @@
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Adds a prefix to all the SQL table names
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="activeRecord" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    Whether this entity gets some active record functionality.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

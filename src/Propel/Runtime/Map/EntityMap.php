@@ -1023,7 +1023,7 @@ abstract class EntityMap
         }
 
         if (!isset($this->relations[$name])) {
-            throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s.', $name));
+            throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s. [%s]', $name, implode(',', array_keys($this->relations))));
         }
 
         return $this->relations[$name];

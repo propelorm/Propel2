@@ -894,7 +894,7 @@ class ModelCriteria extends BaseModelCriteria
         //$relation = strtolower($relation);
 
         $join = $this->joins[$relation];
-        $join->getEntityMap()->addSelectFields($this, $join->getRelationAlias());
+        $join->getEntityMap()->addSelectFields($this, $join->getRelationAlias() ?: $relation);
 
         return $this;
     }
@@ -1078,12 +1078,12 @@ class ModelCriteria extends BaseModelCriteria
         if (1 === count($pkCols)) {
             // simple primary key
             $pkCol = $pkCols[0];
-            $criteria->add($pkCol->getColumnName(), $key);
+            $criteria->add($pkCol->getFullyQualifiedName(), $key);
         } else {
             // composite primary key
             foreach ($pkCols as $pkCol) {
                 $keyPart = array_shift($key);
-                $criteria->add($pkCol->getColumnName(), $keyPart);
+                $criteria->add($pkCol->getFullyQualifiedName(), $keyPart);
             }
         }
         $dataFetcher = $criteria->doSelect();
@@ -1721,7 +1721,7 @@ class ModelCriteria extends BaseModelCriteria
             list($prefix, $phpName) = explode('.', $phpName);
         }
 
-        $joinName = strtolower($prefix);
+        $joinName = $prefix;
         $shortClass = self::getShortName($joinName);
 
         if ($prefix === $this->getModelAliasOrName()) {

@@ -699,7 +699,7 @@ class Criteria
      * any SELECT fields or WHERE fields.  This must be explicitly
      * set, of course, in order to be useful.
      *
-     * @param string $v
+     * @param string $entityName
      */
     public function setPrimaryEntityName($entityName)
     {
@@ -1840,8 +1840,16 @@ class Criteria
         $orderBy = $this->getOrderByFields();
 
         // get the first part of the SQL statement, the SELECT part
-        $selectSql = $adapter->createSelectSqlPart($this, $fromClause);
+        $selectSql = $adapter->createSelectSqlPart($this);
         $this->replaceNames($selectSql);
+
+        if ($this->getPrimaryEntityName()) {
+            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
+        } else {
+            if ($this instanceof BaseModelCriteria) {
+                $fromClause[] = $this->getTableName($this->getEntityName());
+            }
+        }
 
         // Handle joins
         // joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
@@ -1849,10 +1857,7 @@ class Criteria
         foreach ($this->getJoins() as $join) {
             $join->setAdapter($adapter);
 
-            // add 'em to the queues..
-            if (!$fromClause) {
-                $fromClause[] = $join->getLeftTableWithAlias();
-            }
+            $fromClause[] = $join->getLeftTableWithAlias();
             $joinEntities[] = $join->getRightTableWithAlias();
             $joinClauseString = $join->getClause($params);
             $this->replaceNames($joinClauseString);

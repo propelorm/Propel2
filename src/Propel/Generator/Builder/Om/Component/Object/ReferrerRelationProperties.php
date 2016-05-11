@@ -39,7 +39,7 @@ class ReferrerRelationProperties extends BuildComponent
 
             $this->addProperty($this->getPKRefRelationVarName($refRelation))
                 ->setType($className)
-                ->setTypeDescription("one-to-one related $className object");
+                ->setTypeDescription("one-to-one related $className object. (referrer relation)");
 
 //            if ($refRelation->getEntity()->isActiveRecord()) {
 //                $this->addProperty($this->getPKRefRelationVarName($refRelation).'Partial')
@@ -51,8 +51,7 @@ class ReferrerRelationProperties extends BuildComponent
 
             $this->addProperty($this->getRefRelationCollVarName($refRelation))
                 ->setType("$collection|{$className}[]")
-                ->setTypeDescription("Collection to store aggregation of $className objects");
-
+                ->setTypeDescription("Collection of $className. (referrer relation)");
 
             if ($refRelation->getEntity()->isActiveRecord()) {
                 $this->addProperty($this->getRefRelationCollVarName($refRelation).'Partial')

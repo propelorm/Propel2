@@ -39,25 +39,21 @@ class ObjectBuilder extends AbstractBuilder
         $this->applyComponent('Object\\ReferrerRelationProperties');
         $this->applyComponent('Object\\CrossRelationProperties');
 
-        if ($this->isAddAccessors()) {
-            $this->applyComponent('Object\\PropertyGetterMethods');
-            $this->applyComponent('Object\\RelationGetterMethods');
-            $this->applyComponent('Object\\CrossRelationGetterMethods');
+        $this->applyComponent('Object\\PropertyGetterMethods');
+        $this->applyComponent('Object\\RelationGetterMethods');
+        $this->applyComponent('Object\\CrossRelationGetterMethods');
 
-            if ($this->getEntity()->isActiveRecord()) {
-                $this->applyComponent('Object\\CrossRelationCountMethods');
-                $this->applyComponent('Object\\ReferrerRelationCountMethods');
-            }
+        if ($this->getEntity()->isActiveRecord()) {
+            $this->applyComponent('Object\\CrossRelationCountMethods');
+            $this->applyComponent('Object\\ReferrerRelationCountMethods');
         }
 
-        if ($this->isAddMutators()) {
-            $this->applyComponent('Object\\PropertySetterMethods');
-            $this->applyComponent('Object\\RelationSetterMethods');
-            $this->applyComponent('Object\\ReferrerRelationAddMethods');
-            $this->applyComponent('Object\\ReferrerRelationGetMethods');
-            $this->applyComponent('Object\\ReferrerRelationSetMethods');
-            $this->applyComponent('Object\\CrossRelationAdderMethods');
-        }
+        $this->applyComponent('Object\\PropertySetterMethods');
+        $this->applyComponent('Object\\RelationSetterMethods');
+        $this->applyComponent('Object\\ReferrerRelationAddMethods');
+        $this->applyComponent('Object\\ReferrerRelationGetMethods');
+        $this->applyComponent('Object\\ReferrerRelationSetMethods');
+        $this->applyComponent('Object\\CrossRelationAdderMethods');
 
         $this->applyComponent('Object\\ConstructorMethod');
     }

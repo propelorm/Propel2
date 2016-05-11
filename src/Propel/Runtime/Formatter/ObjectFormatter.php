@@ -140,8 +140,15 @@ class ObjectFormatter extends AbstractFormatter
                 $hydrationChain = array($modelWith->getRightName() => $joinedObject);
             }
 
-            $writer = $this->getEntityMap()->getPropWriter();
-            $writer($obj, $modelWith->getRelationName(), $joinedObject);
+
+            if ($modelWith->isAdd()) {
+                $reader = $this->getEntityMap()->getPropReader();
+                $joinedObjects = $reader($obj, $modelWith->getRelationName());
+                $joinedObjects[] = $joinedObject;
+            } else {
+                $writer = $this->getEntityMap()->getPropWriter();
+                $writer($obj, $modelWith->getRelationName(), $joinedObject);
+            }
 
 //            call_user_func(array($startObject, $modelWith->getRelationMethod()), $joinedObject);
 

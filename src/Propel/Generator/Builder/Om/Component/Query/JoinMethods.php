@@ -32,7 +32,7 @@ class JoinMethods extends BuildComponent
             $queryClass = $this->getQueryClassName();
             $joinType = $this->getJoinType($relation);
 
-            $relationName = $this->getRelationPhpName($relation);
+            $relationName = lcfirst($this->getRelationPhpName($relation));
 
             $this->addJoin($relationName, $queryClass, $joinType);
         }
@@ -82,7 +82,7 @@ EOF;
 
         $relationType = $referrer ? 'Referrer relation' : '';
 
-        return $this->addMethod('join' . $relationName)
+        return $this->addMethod('join' . ucfirst($relationName))
             ->addSimpleDescParameter('relationAlias', 'string', 'optional alias for the relation', null)
             ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'", $joinType)
             ->setDescription("Adds a JOIN clause to the query using the $relationName relation. $relationType")

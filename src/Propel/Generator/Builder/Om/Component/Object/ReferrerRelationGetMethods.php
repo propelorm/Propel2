@@ -25,8 +25,34 @@ class ReferrerRelationGetMethods extends BuildComponent
             if ($refRelation->isLocalPrimaryKey()) {
                 //one-to-one
                 $this->addRefGetMethod($refRelation);
+            } else {
+                //one-to-many
+                $this->addRefGetCollectionMethod($refRelation);
             }
         }
+    }
+
+    /**
+     * Adds the accessor (getter) method for getting an related object collection.
+     *
+     * @param Relation $relation
+     */
+    protected function addRefGetCollectionMethod(Relation $relation)
+    {
+        $varName = $this->getRefRelationCollVarName($relation);
+        $foreignClassName = $this->getClassNameFromEntity($relation->getEntity());
+
+        $body = "
+return \$this->$varName;
+";
+
+        $internal = "\nMapped by fields " . implode(', ', $relation->getForeignFields());
+
+        $methodName = 'get' . ucfirst($this->getRefRelationCollVarName($relation));
+        $this->addMethod($methodName)
+            ->setType("null|{$foreignClassName}[]")
+            ->setTypeDescription("Collection of $foreignClassName objects.$internal")
+            ->setBody($body);
     }
 
     /**

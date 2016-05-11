@@ -292,7 +292,7 @@ trait CrossRelationTrait
     {
         if ($relation instanceof Relation) {
             $crossObjectName = '$' . lcfirst($this->getRelationPhpName($relation));
-            $crossObjectClassName = $this->getClassNameFromEntity($relation->getEntity());
+            $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
 
             $parameter = new PhpParameter(lcfirst($this->getRelationPhpName($relation)));
             $parameter->setType($crossObjectClassName);

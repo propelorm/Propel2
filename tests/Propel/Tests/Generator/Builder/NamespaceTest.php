@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder;
 
+use Foo\Bar\NamespacedAuthor;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
 
@@ -134,8 +135,9 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setNamespacedAuthor($author);
         $book->save();
 
+        /** @var NamespacedAuthor $author2 */
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()->findPk($author->getId());
-        $book2 = $author2->getNamespacedBooks()->getFirst();
+        $book2 = $author2->getNamespacedBooks()[0];
         $this->assertEquals($book->getId(), $book2->getId());
     }
 
@@ -144,18 +146,24 @@ class NamespaceTest extends TestCaseFixturesDatabase
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
         \Baz\NamespacedPublisherQuery::create()->deleteAll();
         $publisher = new \Baz\NamespacedPublisher();
+        $publisher->setName('TestName');
+        $publisher->save();
+
         $book = new \Foo\Bar\NamespacedBook();
         $book->setTitle('asdf');
         $book->setISBN('something');
         $book->setNamespacedPublisher($publisher);
         $book->save();
         $book2 = \Foo\Bar\NamespacedBookQuery::create()
-            ->joinWith('NamespacedPublisher')
+            ->joinWith('namespacedPublisher')
             ->findPk($book->getId());
         $publisher2 = $book2->getNamespacedPublisher();
         $this->assertEquals($publisher->getId(), $publisher2->getId());
     }
 
+    /**
+     * @group test
+     */
     public function testFindWithOneToMany()
     {
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
@@ -169,34 +177,10 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book->setNamespacedAuthor($author);
         $book->save();
         $author2 = \Foo\Bar\NamespacedAuthorQuery::create()
-            ->joinWith('NamespacedBook')
+            ->joinWith('namespacedBook')
             ->findPk($author->getId());
-        $book2 = $author2->getNamespacedBooks()->getFirst();
+        $book2 = $author2->getNamespacedBooks()[0];
         $this->assertEquals($book->getId(), $book2->getId());
-    }
-
-    public function testSingleTableInheritance()
-    {
-        \Foo\Bar\NamespacedBookstoreEmployeeQuery::create()->deleteAll();
-        $emp = new \Foo\Bar\NamespacedBookstoreEmployee();
-        $emp->setName('Henry');
-        $emp->save();
-        $man = new \Foo\Bar\NamespacedBookstoreManager();
-        $man->setName('John');
-        $man->save();
-        $cas = new \Foo\Bar\NamespacedBookstoreCashier();
-        $cas->setName('William');
-        $cas->save();
-        $emps = \Foo\Bar\NamespacedBookstoreEmployeeQuery::create()
-            ->orderByName()
-            ->find();
-        $this->assertEquals(3, count($emps));
-        $this->assertTrue($emps[0] instanceof \Foo\Bar\NamespacedBookstoreEmployee);
-        $this->assertTrue($emps[1] instanceof \Foo\Bar\NamespacedBookstoreManager);
-        $this->assertTrue($emps[2] instanceof \Foo\Bar\NamespacedBookstoreCashier);
-        $nbMan = \Foo\Bar\NamespacedBookstoreManagerQuery::create()
-            ->count();
-        $this->assertEquals(1, $nbMan);
     }
 
     public function testManyToMany()
@@ -225,12 +209,11 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
         $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
-        $con = Propel::getServiceContainer()->getConnection(\Baz\Map\NamespacedBookListRelTableMap::DATABASE_NAME);
         $books = \Foo\Bar\NamespacedBookQuery::create()
             ->orderByTitle()
             ->joinWith('NamespacedBookListRel')
             ->joinWith('NamespacedBookListRel.NamespacedBookClub')
-            ->find($con);
+            ->find();
     }
 
     public function testUseQuery()

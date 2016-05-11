@@ -10,13 +10,13 @@
         <field name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
         <field name="ISBN" required="true" type="VARCHAR" size="24" description="ISBN Number" />
         <field name="price" required="false" type="FLOAT" description="Price of the book." />
-        <field name="publisher_id" required="false" type="INTEGER" description="Foreign Key Publisher" />
-        <field name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
+        <field name="publisherId" required="false" type="INTEGER" description="Foreign Key Publisher" />
+        <field name="authorId" required="false" type="INTEGER" description="Foreign Key Author" />
         <relation target="NamespacedPublisher" onDelete="setnull">
-            <reference local="publisher_id" foreign="id" />
+            <reference local="publisherId" foreign="id" />
         </relation>
         <relation target="NamespacedAuthor" onDelete="setnull" onUpdate="cascade">
-            <reference local="author_id" foreign="id" />
+            <reference local="authorId" foreign="id" />
         </relation>
     </entity>
 
@@ -27,8 +27,8 @@
 
     <entity name="NamespacedAuthor" description="Author Table" namespace="Foo\Bar">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Author Id" />
-        <field name="first_name" required="true" type="VARCHAR" size="128" description="First Name" />
-        <field name="last_name" required="true" type="VARCHAR" size="128" description="Last Name" />
+        <field name="firstName" required="true" type="VARCHAR" size="128" description="First Name" />
+        <field name="lastName" required="true" type="VARCHAR" size="128" description="Last Name" />
         <field name="email" type="VARCHAR" size="128" description="E-Mail Address" />
         <field name="age" type="INTEGER" description="The authors age" />
     </entity>
@@ -36,36 +36,36 @@
     <!-- test many-to-many relationships -->
     <entity name="NamespacedBookClub" namespace="Baz">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <field name="group_leader" required="true" type="VARCHAR" size="100" />
+        <field name="groupLeader" required="true" type="VARCHAR" size="100" />
         <field name="theme" required="false" type="VARCHAR" size="50" />
-        <field name="created_at" required="false" type="TIMESTAMP" />
+        <field name="createdAt" required="false" type="TIMESTAMP" />
     </entity>
 
     <entity name="NamespacedBookListRel" isCrossRef="true" namespace="Baz">
-        <field name="book_id" primaryKey="true" type="INTEGER" />
-        <field name="book_club_list_id" primaryKey="true" type="INTEGER" />
+        <field name="bookId" primaryKey="true" type="INTEGER" />
+        <field name="bookClubListId" primaryKey="true" type="INTEGER" />
         <relation target="NamespacedBook" onDelete="cascade">
-            <reference local="book_id" foreign="id" />
+            <reference local="bookId" foreign="id" />
         </relation>
         <relation target="NamespacedBookClub" onDelete="cascade">
-            <reference local="book_club_list_id" foreign="id" />
+            <reference local="bookClubListId" foreign="id" />
         </relation>
     </entity>
 
     <!-- test self-referencing foreign keys and inheritance-->
     <entity name="NamespacedBookstoreEmployee" namespace="Foo\Bar">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <field name="class_key" type="INTEGER" required="true" default="0" inheritance="single">
+        <field name="classKey" type="INTEGER" required="true" default="0" inheritance="single">
             <inheritance key="0" class="NamespacedBookstoreEmployee" />
             <inheritance key="1" class="NamespacedBookstoreManager" extends="NamespacedBookstoreEmployee" />
             <inheritance key="2" class="NamespacedBookstoreCashier" extends="NamespacedBookstoreEmployee" />
         </field>
         <field name="name" type="VARCHAR" size="32" />
-        <field name="job_title" type="VARCHAR" size="32" />
-        <field name="supervisor_id" type="INTEGER" />
+        <field name="jobTitle" type="VARCHAR" size="32" />
+        <field name="supervisorId" type="INTEGER" />
         <field name="photo" type="BLOB" lazyLoad="true" />
         <relation field="supervisor" target="NamespacedBookstoreEmployee" refField="subordinate" onDelete="setnull">
-            <reference local="supervisor_id" foreign="id" />
+            <reference local="supervisorId" foreign="id" />
         </relation>
     </entity>
 

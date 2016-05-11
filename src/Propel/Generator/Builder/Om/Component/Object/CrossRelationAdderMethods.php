@@ -66,7 +66,7 @@ EOF;
 
             $method = $this->addMethod('add' . $relatedObjectClassName)
                 ->setDescription($description)
-                ->setType($this->getObjectClassname())
+                ->setType($this->getObjectClassName())
                 ->setTypeDescription("The current object (for fluent API support)")
                 ->setBody($body)
             ;

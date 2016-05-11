@@ -412,57 +412,21 @@ abstract class PdoAdapter
      * taking into account select fields and 'as' fields (i.e. fields aliases)
      *
      * @param Criteria $criteria
-     * @param array    $fromClause
      * @param boolean  $aliasAll
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
+    public function createSelectSqlPart(Criteria $criteria, $aliasAll = false)
     {
         $selectClause = array();
 
         if ($aliasAll) {
             $this->turnSelectFieldsToAliases($criteria);
             // no select fields after that, they are all aliases
+
         } else {
             foreach ($criteria->getSelectFields() as $fieldName) {
-
-                // expect every field to be of "entity.field" formation
-                // it could be a function:  e.g. MAX(books.price)
-                $entityName = null;
-
-                $selectClause[] = $fieldName; // the full field name: e.g. MAX(books.price)
-
-                $parenPos = strrpos($fieldName, '(');
-                $dotPos = strrpos($fieldName, '.', ($parenPos !== false ? $parenPos : 0));
-
-                if (false !== $dotPos) {
-                    if (false === $parenPos) { // entity.field
-                        $entityName = substr($fieldName, 0, $dotPos);
-                    } else { // FUNC(entity.field)
-                        // functions may contain qualifiers so only take the last
-                        // word as the entity name.
-                        // COUNT(DISTINCT books.price)
-                        $entityName = substr($fieldName, $parenPos + 1, $dotPos - ($parenPos + 1));
-                        $lastSpace = strrpos($entityName, ' ');
-                        if (false !== $lastSpace) { // COUNT(DISTINCT books.price)
-                            $entityName = substr($entityName, $lastSpace + 1);
-                        }
-                    }
-
-                    // is it a entity alias?
-                    $entityForAlias = $criteria->getEntityForAlias($entityName);
-                    if ($criteria->getConfiguration()->hasEntityMap($entityName)) {
-                        $entityTableName = $criteria->getConfiguration()->getEntityMap($entityName)->getFQTableName();
-                    } else {
-                        $entityTableName = $entityName;
-                    }
-                    if ($entityForAlias !== null) {
-                        $fromClause[] = $entityForAlias . ' ' . $entityTableName;
-                    } else {
-                        $fromClause[] = $entityTableName;
-                    }
-                }
+                $selectClause[] = $fieldName;
             }
         }
 
