@@ -48,14 +48,13 @@ class ReferrerRelationAddMethods extends BuildComponent
         $body = "
 if (null === \$this->{$colVarName}) {
     \$this->{$colVarName} = new ObjectCollection();
-    \$this->{$colVarName}->setModel('{$fullRelationClassName}');
 }
 
-if (\$this->{$colVarName} instanceof $fullRelationClassName) {
-    \$inst = \$this->{$colVarName};
-    \$this->{$colVarName} = new ObjectCollection();
-    \$this->{$colVarName}[] = \$inst;
-}
+//if (\$this->{$colVarName} instanceof $fullRelationClassName) {
+//    \$inst = \$this->{$colVarName};
+//    \$this->{$colVarName} = new ObjectCollection();
+//    \$this->{$colVarName}[] = \$inst;
+//}
 
 if (!\$this->{$colVarName}->contains(\${$varName})) {
     \$this->{$colVarName}[] = \${$varName};

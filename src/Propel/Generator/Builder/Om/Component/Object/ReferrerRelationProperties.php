@@ -37,7 +37,8 @@ class ReferrerRelationProperties extends BuildComponent
 
         if ($refRelation->isLocalPrimaryKey()) {
 
-            $this->addProperty($this->getPKRefRelationVarName($refRelation))
+            $varName = $this->getPKRefRelationVarName($refRelation);
+            $this->addProperty($varName)
                 ->setType($className)
                 ->setTypeDescription("one-to-one related $className object. (referrer relation)");
 
@@ -49,9 +50,12 @@ class ReferrerRelationProperties extends BuildComponent
         } else {
             $collection = $this->getDefinition()->declareUse('Propel\Runtime\Collection\Collection');
 
+            $varName = $this->getRefRelationCollVarName($refRelation);
             $this->addProperty($this->getRefRelationCollVarName($refRelation))
                 ->setType("$collection|{$className}[]")
                 ->setTypeDescription("Collection of $className. (referrer relation)");
+
+            $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
 
             if ($refRelation->getEntity()->isActiveRecord()) {
                 $this->addProperty($this->getRefRelationCollVarName($refRelation).'Partial')

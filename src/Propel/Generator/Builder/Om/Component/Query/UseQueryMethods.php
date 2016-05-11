@@ -69,11 +69,12 @@ class UseQueryMethods extends BuildComponent
     protected function addUseQueryMethod($relationName, $queryClass, Relation $relation)
     {
         $methodName = "use{$relationName}Query";
+        $relationVarName = lcfirst($relationName);
 
         $body = "
 return \$this
     ->join" . $relationName . "(\$relationAlias, \$joinType)
-    ->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '{$relation->getEntity()->getFullClassName()}');
+    ->useQuery(\$relationAlias ? \$relationAlias : '$relationVarName');
 ";
 
         $joinType = $this->getJoinType($relation);
@@ -81,7 +82,7 @@ return \$this
         $this->addMethod($methodName)
             ->addSimpleDescParameter('relationAlias', 'string', 'optional alias for the relation, to be used as main alias in the secondary query', null)
             ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'", $joinType)
-            ->setDescription("Use the $relationName relation " . $relation->getForeignEntity()->getName() . " object
+            ->setDescription("Use the $relationVarName relation " . $relation->getForeignEntity()->getName() . " object
 
 @see useQuery()")
             ->setType($queryClass)

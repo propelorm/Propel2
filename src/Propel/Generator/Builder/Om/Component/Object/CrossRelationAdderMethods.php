@@ -50,7 +50,8 @@ class CrossRelationAdderMethods extends BuildComponent
             $body = <<<EOF
 if (!\$this->get{$relNamePlural}()->contains({$normalizedShortSignature})) {
     \$this->{$collName}->push({$normalizedShortSignature});
-    \$this->doAdd{$relName}($normalizedShortSignature);
+    
+    \$this->doAdd{$relName}($normalizedShortSignature); //add actual cross object
 }
 
 return \$this;
@@ -100,13 +101,13 @@ EOF;
                 $relatedObjectClassName = $this->getRelationPhpName($relation, $plural = false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
                 $body .= "
-        {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
+    {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
             }
 
             foreach ($crossRelation->getUnclassifiedPrimaryKeys() as $primaryKey) {
                 $paramName = lcfirst($primaryKey->getName());
                 $body .= "
-        {$foreignObjectName}->set{$primaryKey->getName()}(\$$paramName);
+    {$foreignObjectName}->set{$primaryKey->getName()}(\$$paramName);
 ";
             }
         } else {
@@ -120,9 +121,9 @@ EOF;
         $refFK = $crossRelation->getIncomingRelation();
         $body .= "
 
-        {$foreignObjectName}->set" . $this->getRelationPhpName($refFK, $plural = false) . "(\$this);
+    {$foreignObjectName}->set" . $this->getRelationPhpName($refFK, $plural = false) . "(\$this);
 
-        \$this->add{$refKObjectClassName}({$foreignObjectName});\n";
+    \$this->add{$refKObjectClassName}({$foreignObjectName});\n";
 
         if (1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys()) {
             foreach ($crossRelation->getRelations() as $relation) {
@@ -133,14 +134,9 @@ EOF;
                 $getterRemoveObjectName = $this->getCrossRefFKRemoveObjectNames($crossRelation, $relation);
 
                 $body .= "
-        // set the back reference to this object directly as using provided method either results
-        // in endless loop or in multiple relations
-        if (\${$lowerRelatedObjectClassName}->is{$getterName}Loaded()) {
-            \${$lowerRelatedObjectClassName}->init{$getterName}();
-            \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
-        } elseif (!\${$lowerRelatedObjectClassName}->get{$getterName}()->contains($getterRemoveObjectName)) {
-            \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
-        }\n";
+    if (!\${$lowerRelatedObjectClassName}->get{$getterName}()->contains($getterRemoveObjectName)) {
+        \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
+    }\n";
             }
         } else {
             $relation = $crossRelation->getRelations()[0];
@@ -148,14 +144,9 @@ EOF;
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
             $getterSignature = $this->getCrossFKGetterSignature($crossRelation, '$' . $lowerRelatedObjectClassName);
             $body .= "
-        // set the back reference to this object directly as using provided method either results
-        // in endless loop or in multiple relations
-        if (!\${$lowerRelatedObjectClassName}->is{$selfRelationNamePlural}Loaded()) {
-            \${$lowerRelatedObjectClassName}->init{$selfRelationNamePlural}();
-            \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
-        } elseif (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
-            \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
-        }\n";
+    if (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
+        \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
+    }\n";
         }
 
         $method = $this->addMethod('doAdd' . $relatedObjectClassName)

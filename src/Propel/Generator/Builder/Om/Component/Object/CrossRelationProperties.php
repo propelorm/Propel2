@@ -37,6 +37,8 @@ class CrossRelationProperties extends BuildComponent
                 ->setType('ObjectCombinationCollection')
                 ->setTypeDescription("Cross CombinationCollection to store aggregation of $names combinations.");
 
+            $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
+
             if ($crossRelation->getEntity()->isActiveRecord()) {
                 $partialVarName = $varName . 'Partial';
 
@@ -56,6 +58,7 @@ class CrossRelationProperties extends BuildComponent
             ->setType("ObjectCollection|{$className}[]")
             ->setTypeDescription("Cross Collection to store aggregation of $className objects.");
 
+        $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
 
         if ($crossRelation->getEntity()->isActiveRecord()) {
             $partialVarName = $varName . 'Partial';

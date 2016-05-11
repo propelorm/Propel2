@@ -633,7 +633,6 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function joinWith($relation, $joinType = Criteria::INNER_JOIN)
     {
-        $relationMap = $this->getEntityMap()->getRelation($relation);
         $this->join($relation, $joinType);
         $this->with(self::getRelationName($relation));
 

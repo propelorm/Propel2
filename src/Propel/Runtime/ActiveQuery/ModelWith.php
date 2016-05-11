@@ -76,7 +76,7 @@ class ModelWith
         }
         $this->rightName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relationName;
         if (!$join->isPrimary()) {
-            $this->leftName = $join->hasLeftEntityAlias() ? $join->getLeftEntityAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
+            $this->leftName = $join->hasLeftTableAlias() ? $join->getLeftTableAlias() : $join->getPreviousJoin()->getRelationMap()->getName();
         }
     }
 

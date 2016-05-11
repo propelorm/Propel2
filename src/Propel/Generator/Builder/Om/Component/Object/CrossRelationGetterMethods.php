@@ -18,15 +18,15 @@ class CrossRelationGetterMethods extends BuildComponent
 
     public function process()
     {
-        if ($this->getEntity()->isActiveRecord()) {
-            foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
-                $this->addActiveCrossFKGet($crossRelation);
-            }
-        } else {
+//        if ($this->getEntity()->isActiveRecord()) {
+//            foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+//                $this->addActiveCrossFKGet($crossRelation);
+//            }
+//        } else {
             foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
                 $this->addCrossFKGet($crossRelation);
             }
-        }
+//        }
     }
 
     /**

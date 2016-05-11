@@ -210,9 +210,9 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
         $books = \Foo\Bar\NamespacedBookQuery::create()
+            ->joinWith('namespacedBookListRel')
+            ->joinWith('namespacedBookListRel.namespacedBookClub')
             ->orderByTitle()
-            ->joinWith('NamespacedBookListRel')
-            ->joinWith('NamespacedBookListRel.NamespacedBookClub')
             ->find();
     }
 
