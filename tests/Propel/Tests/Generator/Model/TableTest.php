@@ -796,7 +796,6 @@ class TableTest extends ModelTestCase
         $database->loadMapping(array(
             'name'                   => 'bookstore',
             'defaultIdMethod'        => 'native',
-            'defaultColumnNamingMethod' => 'underscore',
             'tablePrefix'            => 'acme_',
             'defaultStringFormat'    => 'XML',
         ));

@@ -64,7 +64,6 @@ class Entity extends ScopedMappingModel implements IdMethod
      * @var bool
      */
     private $allowPkInsert;
-    private $phpNamingMethod;
 
     /**
      * @var Database
@@ -202,10 +201,6 @@ class Entity extends ScopedMappingModel implements IdMethod
         if ($this->getAttribute('activeRecord')) {
             $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
         }
-
-        // retrieves the method for converting from specified name to a PHP name.
-        // find a better, more abstract way to define and use naming strategies.
-//        $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultColumnNamingMethod());
 
         $this->idMethod = $this->getAttribute('idMethod', $this->database->getDefaultIdMethod());
         $this->allowPkInsert = $this->booleanValue($this->getAttribute('allowPkInsert'));
@@ -1852,26 +1847,6 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function hasCrossRelations()
     {
         return 0 !== count($this->getCrossFks());
-    }
-
-    /**
-     * Returns the PHP naming method.
-     *
-     * @return string
-     */
-    public function getPhpNamingMethod()
-    {
-        return $this->phpNamingMethod;
-    }
-
-    /**
-     * Sets the PHP naming method.
-     *
-     * @param string $phpNamingMethod
-     */
-    public function setPhpNamingMethod($phpNamingMethod)
-    {
-        $this->phpNamingMethod = $phpNamingMethod;
     }
 
     /**

@@ -68,7 +68,7 @@ EOF;
         $expectedSchema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
-  <database name="foo" defaultIdMethod="native" defaultColumnNamingMethod="underscore"/>
+  <database name="foo" defaultIdMethod="native"/>
 </app-data>
 EOF;
 
@@ -82,7 +82,7 @@ EOF;
         $expectedSchema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
-  <database name="foo" defaultIdMethod="native" defaultColumnNamingMethod="underscore">
+  <database name="foo" defaultIdMethod="native">
     <table name="bar" idMethod="native" phpName="Bar">
       <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     </table>
@@ -101,7 +101,7 @@ EOF;
         $expectedSchema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
-  <database name="foo" defaultIdMethod="native" defaultColumnNamingMethod="underscore">
+  <database name="foo" defaultIdMethod="native">
     <table name="bar" idMethod="native" phpName="Bar">
       <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     </table>
@@ -117,7 +117,7 @@ EOF;
         $expectedSchema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
-  <database name="foo" defaultIdMethod="native" defaultColumnNamingMethod="underscore">
+  <database name="foo" defaultIdMethod="native">
     <table name="bar1" idMethod="native" phpName="Bar1">
       <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     </table>

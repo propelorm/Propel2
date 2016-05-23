@@ -55,7 +55,6 @@ class Database extends ScopedMappingModel
 
     private $baseClass;
     private $defaultIdMethod;
-    private $defaultColumnNamingMethod;
 
     /**
      * The default accessor visibility.
@@ -134,7 +133,6 @@ class Database extends ScopedMappingModel
 
         $this->heavyIndexing             = false;
         $this->identifierQuoting         = false;
-        $this->defaultColumnNamingMethod = 'underscore';
         $this->defaultIdMethod           = IdMethod::NATIVE;
         $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
@@ -155,7 +153,6 @@ class Database extends ScopedMappingModel
         $this->platformClass = $this->getAttribute('platform') ?: 'mysql';
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
-        $this->defaultColumnNamingMethod = $this->getAttribute('defaultColumnNamingMethod', 'underscore');
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
         $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
@@ -278,28 +275,6 @@ class Database extends ScopedMappingModel
     public function setDefaultIdMethod($strategy)
     {
         $this->defaultIdMethod = $strategy;
-    }
-
-    /**
-     * Returns the name of the default PHP naming method strategy, which
-     * specifies the method for converting schema names for entity and column to
-     * PHP names. This parameter can be overridden at the entity layer.
-     *
-     * @return string
-     */
-    public function getDefaultColumnNamingMethod()
-    {
-        return $this->defaultColumnNamingMethod;
-    }
-
-    /**
-     * Sets name of the default PHP naming method strategy.
-     *
-     * @param string $strategy
-     */
-    public function setDefaultColumnNamingMethod($strategy)
-    {
-        $this->defaultColumnNamingMethod = $strategy;
     }
 
     /**

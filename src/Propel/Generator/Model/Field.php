@@ -38,7 +38,6 @@ class Field extends MappingModel
     private $description;
     private $phpName;
     private $phpSingularName;
-    private $phpNamingMethod;
     private $isNotNull;
     private $namePrefix;
     private $accessorVisibility;
@@ -177,12 +176,6 @@ class Field extends MappingModel
             $this->phpType = $this->getAttribute('phpType');
             $this->tableMapName = $this->getAttribute('tableMapName');
             $this->description = $this->getAttribute('description');
-
-            /*
-                Retrieves the method for converting from specified name
-                to a PHP name, defaulting to parent tables default method.
-            */
-            $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $database->getDefaultColumnNamingMethod());
 
             $this->namePrefix = $this->getAttribute(
                 'prefix',
