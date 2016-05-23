@@ -77,14 +77,6 @@
         <xs:union memberTypes="dbidmethod tbidmethod"/>
     </xs:simpleType>
 
-    <xs:simpleType name="phpnamingmethod">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="nochange"/>
-            <xs:enumeration value="underscore"/>
-            <xs:enumeration value="phpname"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:simpleType name="delete">
         <xs:restriction base="xs:string">
             <xs:enumeration value="cascade"/>
@@ -318,7 +310,7 @@
         <xs:attribute name="phpName" type="php_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used in PHP code to reference this field (in getters, setters, etc.). Defaults to the name transformed by the phpNamingMethod, which defaults to a CamelCase converter. So by default, a field named 'author_id' receives 'AuthorId' as phpName.
+                    Name used in PHP code to reference this field (in getters, setters, etc.). Defaults to a CamelCase converter. So by default, a field named 'author_id' receives 'AuthorId' as phpName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -423,13 +415,6 @@
         </xs:attribute>
         <xs:attribute name="autoIncrement" type="xs:boolean" default="false"/>
         <xs:attribute name="inheritance" type="inh_option" default="false"/>
-        <xs:attribute name="phpNamingMethod" type="phpnamingmethod" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Name of the method used to transform the field name into a phpName. Defaults to 'clean', which Removes any character that is not a letter or a number and capitilizes the first letter of the name, the first letter of each alphanumeric block, and converts the rest of the letters to lowercase. Possible values: any of the PhpNameGenerator CONV_METHOD_XXX constants (clean, underscore, phpName, nochange).
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="description" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
@@ -615,7 +600,7 @@
         <xs:attribute name="phpName" type="php_class" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The name of the ActiveRecord class generated for this table. Defaults to the name transformed by the phpNamingMethod, which defaults to a CamelCase converter. So by default, a table named 'foo_author' receives 'FooAuthor' as phpName.
+                    The name of the ActiveRecord class generated for this table. Defaults to a CamelCase converter. So by default, a table named 'foo_author' receives 'FooAuthor' as phpName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -693,13 +678,6 @@
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="interface" type="xs:string" use="optional"/>
-        <xs:attribute name="phpNamingMethod" type="phpnamingmethod" use='optional'>
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Name of the method used to transform the table name into a phpName. Defaults to 'clean', which Removes any character that is not a letter or a number and capitilizes the first letter of the name, the first letter of each alphanumeric block, and converts the rest of the letters to lowercase. Possible values: any of the PhpNameGenerator CONV_METHOD_XXX constants (clean, underscore, phpName, nochange).
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="heavyIndexing" type="xs:boolean" use="optional">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -828,13 +806,6 @@
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     Allows to specify a default base class that all generated Propel objects should extend (in place of propel.om.BaseObject)
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="defaultPhpNamingMethod" type="phpnamingmethod" default="underscore">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    The default naming method to use in this database.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

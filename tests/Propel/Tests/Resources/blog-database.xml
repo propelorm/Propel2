@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="acme_blog" defaultIdMethod="native" package="Acme" schema="acme" namespace="Acme\Model" baseClass="Acme\Model\ActiveRecord" defaultPhpNamingMethod="underscore" heavyIndexing="true" tablePrefix="acme_">
+<database name="acme_blog" defaultIdMethod="native" package="Acme" schema="acme" namespace="Acme\Model" baseClass="Acme\Model\ActiveRecord" heavyIndexing="true" tablePrefix="acme_">
   <vendor type="mysql">
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>

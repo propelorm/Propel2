@@ -6,21 +6,6 @@
     some differences do exist.
 -->
 
-<!--
-
-defaultColumnNamingMethod determines how a table or column name,
-from the name attribute in the xml database file, is converted to a
-PHP class or method name.
-
-     nochange   - indicates not change is performed.
-     underscore - Underscores are removed, First letter is
-              capitalized, first letter after an underscore
-              is capitalized, the rest of the letters are
-              converted to lowercase.
-     phpname   - same as underscore, but no letters are converted
-              to lowercase.
--->
-
 <!ELEMENT database (external-schema*, entity+, behavior*)>
 <!ATTLIST database
   name CDATA #IMPLIED
@@ -29,7 +14,6 @@ PHP class or method name.
   schema CDATA #IMPLIED
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
-  defaultPhpNamingMethod (nochange|underscore|phpname) "underscore"
   heavyIndexing (true|false) "false"
   identifierQuoting (true|false) "false"
   tablePrefix CDATA #IMPLIED
@@ -63,7 +47,6 @@ PHP class or method name.
   baseClass CDATA #IMPLIED
   alias CDATA #IMPLIED
   interface CDATA #IMPLIED
-  tableNamingMethod (nochange|underscore|phpname) #IMPLIED
   heavyIndexing (true|false) #IMPLIED
   identifierQuoting (true|false) #IMPLIED
   description CDATA #IMPLIED
@@ -99,7 +82,6 @@ PHP class or method name.
   defaultExpr CDATA #IMPLIED
   autoIncrement (true|false) "false"
   inheritance (single|false) "false"
-  phpNamingMethod (nochange|underscore|phpname) #IMPLIED
   description CDATA #IMPLIED
   lazyLoad (true|false) "false"
   primaryString (true|false) "false"

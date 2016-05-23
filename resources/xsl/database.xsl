@@ -22,9 +22,6 @@
             <xsl:if test='not(boolean(@defaultIdMethod))'>
                 <xsl:attribute name='defaultIdMethod'>native</xsl:attribute>
             </xsl:if>
-            <xsl:if test='not(boolean(@defaultPhpNamingMethod))'>
-                <xsl:attribute name='defaultPhpNamingMethod'>underscore</xsl:attribute>
-            </xsl:if>
             <xsl:if test='not(boolean(@heavyIndexing))'>
                 <xsl:attribute name='heavyIndexing'>false</xsl:attribute>
             </xsl:if>
@@ -36,13 +33,6 @@
             <xsl:apply-templates select='table'/>
             <xsl:apply-templates select='behavior'/>
         </database>
-    </xsl:template>
-
-    <!--
-    Normalizes any defaultColumnNamingMethod attribute by making it lowercase
-    -->
-    <xsl:template match='@defaultPhPNamingMethod'>
-        <xsl:attribute name='defaultPhPNamingMethod'><xsl:value-of select='translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")'/></xsl:attribute>
     </xsl:template>
 
     <!--
