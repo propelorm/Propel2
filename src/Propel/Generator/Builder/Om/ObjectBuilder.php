@@ -234,8 +234,8 @@ class ObjectBuilder extends AbstractObjectBuilder
  *";
             }
             $script .= "
-* @package    propel.generator.".$this->getPackage()."
-*/";
+ * @package    propel.generator.".$this->getPackage()."
+ */";
         }
 
         $script .= "
