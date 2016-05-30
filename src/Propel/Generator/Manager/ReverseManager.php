@@ -25,6 +25,12 @@ class ReverseManager extends AbstractManager
      * @var string|null
      */
     private $schemaName;
+
+    /**
+     * @var string|null
+     */
+    private $namespace;
+
     /**
      * DOM document produced.
      *
@@ -95,6 +101,26 @@ class ReverseManager extends AbstractManager
     public function setSchemaName($schemaName)
     {
         $this->schemaName = $schemaName;
+    }
+
+    /**
+     * Gets the (optional) php namespace to use.
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * Sets the php namespace to use (optional).
+     *
+     * @param string $namespace
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
     }
 
     /**
@@ -187,6 +213,8 @@ class ReverseManager extends AbstractManager
         $database = new Database($this->getDatabaseName());
         $database->setPlatform($config->getConfiguredPlatform($connection), $databaseName);
         $database->setDefaultIdMethod(IdMethod::NATIVE);
+
+        $this->getNamespace() && $database->setNamespace($this->getNamespace());
 
         $buildConnection = $config->getBuildConnection($databaseName);
         $this->log(sprintf('Reading database structure of database `%s` using dsn `%s`', $this->getDatabaseName(), $buildConnection['dsn']));
