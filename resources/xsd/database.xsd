@@ -294,7 +294,8 @@
 
     <xs:complexType name="reference">
         <xs:attribute name="local" type="column_name" use="required"/>
-        <xs:attribute name="foreign" type="column_name" use="required"/>
+        <xs:attribute name="foreign" type="column_name" use="optional"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="behavior">
