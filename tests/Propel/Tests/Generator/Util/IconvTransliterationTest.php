@@ -21,7 +21,7 @@ class IconvTransliterationTest extends TestCase
      * Excerpt from http://php.net/manual/en/function.iconv.php#74101
      * "Please note that iconv('UTF-8', 'ASCII//TRANSLIT', ...) doesn't work properly when locale category LC_CTYPE is set to C or POSIX. You must choose another locale otherwise all non-ASCII characters will be replaced with question marks."
      */
-    public function testIconvSupportedLocale($in, $out)
+    public function testIconvSupportedLocale()
     {
         if (!function_exists('iconv')) {
             $this->markTestSkipped();
@@ -38,8 +38,8 @@ class IconvTransliterationTest extends TestCase
             ['fôo', 'foo'],
             ['€', 'EUR'],
             ['CŠŒŽšœžŸµÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝßàáâãäåæçèéêëìíîïñòóôõöùúûüýÿ', 'CSOEZsoezYuAAAAAAAECEEEEIIIINOOOOOUUUUYssaaaaaaaeceeeeiiiinooooouuuuyy'],
-            ['ø', 'oe'],
-            ['Ø', 'OE'],
+            ['ø', '?'],
+            ['Ø', '?'],
             ['¥Ðð', '???'],
         ];
     }
