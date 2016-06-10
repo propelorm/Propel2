@@ -99,13 +99,15 @@ class InitCommand extends AbstractCommand
         $consoleHelper->writeSection('The XML schema can also be used to generate SQL code to setup your database. Alternatively, you can generate the schema from an existing database.');
         $consoleHelper->writeln('');
 
-        if ($consoleHelper->askConfirmation('Do you have an existing database you want to use with propel?', false)) {
-            $options['schema'] = $this->reverseEngineerSchema($consoleHelper->getOutput(), $options);
-        }
+        $isReverseEngineerRequested = $consoleHelper->askConfirmation('Do you have an existing database you want to use with propel?', false);
 
         $options['schemaDir'] = $consoleHelper->askQuestion('Where do you want to store your schema.xml?', $this->defaultSchemaDir);
         $options['phpDir'] = $consoleHelper->askQuestion('Where do you want propel to save the generated php models?', $this->defaultPhpDir);
         $options['namespace'] = $consoleHelper->askQuestion('Which namespace should the generated php models use?');
+        
+        if ($isReverseEngineerRequested) {
+            $options['schema'] = $this->reverseEngineerSchema($consoleHelper->getOutput(), $options);
+        }
 
         $consoleHelper->writeSection('Propel asks you to define some data to work properly, for instance: connection parameters, working directories, flags to take decisions and so on. You can pass these data via a configuration file.');
         $consoleHelper->writeSection('The name of the configuration file is <comment>propel</comment>, with one of the supported extensions (yml, xml, json, ini, php). E.g. <comment>propel.yml</comment> or <comment>propel.json</comment>.');
@@ -266,11 +268,17 @@ class InitCommand extends AbstractCommand
         $this->getApplication()->setAutoExit(false);
         $fullDsn = sprintf('%s;user=%s;password=%s', $options['dsn'], urlencode($options['user']), urlencode($options['password']));
 
-        $input = new ArrayInput([
+        $arrInput = [
             'reverse',
             'connection' => $fullDsn,
             '--output-dir' => $outputDir
-        ]);
+        ];
+        
+        if (isset($options['namespace'])) {
+            $arrInput['--namespace'] = $options['namespace'];
+        }
+        
+        $input = new ArrayInput($arrInput);
         $result = $this->getApplication()->run($input,$output);
 
         if (0 === $result) {

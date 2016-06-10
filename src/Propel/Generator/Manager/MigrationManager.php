@@ -299,6 +299,8 @@ class MigrationManager extends AbstractManager
         $migrationClassBody = <<<EOP
 <?php
 
+use Propel\Generator\Manager\MigrationManager;
+
 /**
  * Data object containing the SQL and PHP code to migrate the database
  * up to version $timestamp.
@@ -308,22 +310,22 @@ class $migrationClassName
 {
     public \$comment = $commentString;
 
-    public function preUp(\$manager)
+    public function preUp(MigrationManager \$manager)
     {
         // add the pre-migration code here
     }
 
-    public function postUp(\$manager)
+    public function postUp(MigrationManager \$manager)
     {
         // add the post-migration code here
     }
 
-    public function preDown(\$manager)
+    public function preDown(MigrationManager \$manager)
     {
         // add the pre-migration code here
     }
 
-    public function postDown(\$manager)
+    public function postDown(MigrationManager \$manager)
     {
         // add the post-migration code here
     }

@@ -523,4 +523,71 @@ EOF;
         $this->assertEmpty($builder->getSQL());
     }
 
+    public function tablePrefixSchemaDataProvider() {
+        $schema = <<<XML
+<database name="versionable_behavior_test_0" tablePrefix="prefix_">
+    <table name="versionable_behavior_test_0">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+        <behavior name="versionable" />
+    </table>
+</database>
+XML;
+        return [[$schema]];
+    }
+
+
+    /**
+     * @dataProvider tablePrefixSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionColumnWithPrefix($schema)
+    {
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<SQL
+-----------------------------------------------------------------------
+-- prefix_versionable_behavior_test_0
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS prefix_versionable_behavior_test_0;
+
+CREATE TABLE prefix_versionable_behavior_test_0
+(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    bar INTEGER,
+    version INTEGER DEFAULT 0,
+    UNIQUE (id)
+);
+SQL;
+        $this->assertContains($expected, $builder->getSQL());
+    }
+    /**
+     * @dataProvider tablePrefixSchemaDataProvider
+     */
+    public function testModifyTableAddsVersionTableWithPrefix($schema) {
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $expected = <<<SQL
+-----------------------------------------------------------------------
+-- prefix_versionable_behavior_test_0_version
+-----------------------------------------------------------------------
+
+DROP TABLE IF EXISTS prefix_versionable_behavior_test_0_version;
+
+CREATE TABLE prefix_versionable_behavior_test_0_version
+(
+    id INTEGER NOT NULL,
+    bar INTEGER,
+    version INTEGER DEFAULT 0 NOT NULL,
+    PRIMARY KEY (id,version),
+    UNIQUE (id,version),
+    FOREIGN KEY (id) REFERENCES prefix_versionable_behavior_test_0 (id)
+        ON DELETE CASCADE
+);
+SQL;
+        $this->assertContains($expected, $builder->getSQL());
+    }
+
 }

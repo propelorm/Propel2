@@ -10,9 +10,13 @@
 
 namespace Propel\Tests\Generator\Model;
 
+use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Symfony\Component\Filesystem\Filesystem;
+use Propel\Generator\Model\Schema;
 
 /**
  * Unit test suite for Database model class.
@@ -438,5 +442,41 @@ class DatabaseTest extends ModelTestCase
         $t1b->setSchema('bis');
         $db->addTable($t1b);
         $this->assertEquals('bis.t1', $t1b->getName());
+    }
+
+    public function testAutoNamespaceToDatabaseSchemaName()
+    {
+        $yamlConf = <<<EOF
+propel:
+  database:
+      connections:
+          mysource:
+              adapter: mysql
+              classname: Propel\Runtime\Connection\DebugPDO
+              dsn: mysql:host=localhost;dbname=mydb
+              user: root
+              password:
+  generator:
+      schema:
+          autoNamespace: true
+EOF;
+
+        $configFilename = sys_get_temp_dir() . '/propel.yml';
+
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($configFilename, $yamlConf);
+
+        $schema = 'TestSchema';
+        $config = new GeneratorConfig($configFilename);
+        $platform = new MysqlPlatform();
+        $parentSchema = new Schema($platform);
+        $parentSchema->setGeneratorConfig($config);
+
+        $db = new Database();
+        $db->setPlatform($platform);
+        $db->setParentSchema($parentSchema);
+        $db->setSchema($schema);
+
+        $this->assertEquals($schema, $db->getNamespace());
     }
 }
