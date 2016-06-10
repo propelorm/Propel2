@@ -23,6 +23,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\OraclePlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlsrvPlatform;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Generates a PHP5 base Object class for user object model (OM).
@@ -5821,6 +5822,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // if non auto-increment but using sequence, get the id first
         if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
             $column = $table->getFirstPrimaryKeyColumn();
+            if (!$column) {
+                throw new PropelException('Cannot find primary key column in table `' . $table->getName() . '`.');
+            }
             $columnProperty = $column->getLowercasedName();
             $script .= "
         if (null === \$this->{$columnProperty}) {
