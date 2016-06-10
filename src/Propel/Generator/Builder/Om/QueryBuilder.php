@@ -1122,9 +1122,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if (null === \$comparison) {
             if (is_array(\$$variableName)) {
                 \$comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', \$$variableName)) {
-                \$$variableName = str_replace('*', '%', \$$variableName);
-                \$comparison = Criteria::LIKE;
             }
         }";
         } elseif ($col->isBooleanType()) {
