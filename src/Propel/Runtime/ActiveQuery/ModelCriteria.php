@@ -1861,7 +1861,7 @@ class ModelCriteria extends BaseModelCriteria
 
             if (false !== strpos($key, '.')) {
                 list($tableName, $columnName) = explode('.', $key);
-                $realColumnName = array_pop(explode('.', $realFullColumnName));
+                $realColumnName = substr($realFullColumnName, strrpos($realFullColumnName, '.') + 1);
                 if (isset($this->aliases[$tableName])) {
                     //don't replace a alias with their real table name
                     return $this->quoteIdentifier($tableName.'.'.$realColumnName);
