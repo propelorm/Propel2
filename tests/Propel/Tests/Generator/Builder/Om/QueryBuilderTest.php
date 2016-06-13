@@ -551,7 +551,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, ['foo', 'bar'], Criteria::NOT_IN);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed an array');
 
-        $q = BookQuery::create()->filterByTitle('foo%');
+        $q = BookQuery::create()->filterByTitle('foo%', Criteria::LIKE);
         $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, 'foo%', Criteria::LIKE);
         $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a % wildcard');
 
@@ -562,14 +562,6 @@ class QueryBuilderTest extends BookstoreTestBase
         $q = BookQuery::create()->filterByTitle('foo%', Criteria::EQUAL);
         $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, 'foo%', Criteria::EQUAL);
         $this->assertEquals($q1, $q, 'filterByStringColumn() accepts a comparison when passed a string with a % wildcard');
-
-        $q = BookQuery::create()->filterByTitle('*foo');
-        $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, '%foo', Criteria::LIKE);
-        $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with a * wildcard, and turns * into %');
-
-        $q = BookQuery::create()->filterByTitle('*f%o*o%');
-        $q1 = BookQuery::create()->add(BookTableMap::COL_TITLE, '%f%o%o%', Criteria::LIKE);
-        $this->assertEquals($q1, $q, 'filterByStringColumn() translates to a Criteria::LIKE when passed a string with mixed wildcards, and turns *s into %s');
     }
 
     public function testFilterByBoolean()

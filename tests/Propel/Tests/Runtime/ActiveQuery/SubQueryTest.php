@@ -124,7 +124,7 @@ class SubQueryTest extends BookstoreTestBase
         $c3 = new BookQuery();
         $c3->addSelectQuery($c1); // no alias
         $c3->addSelectQuery($c2); // no alias
-        $c3->filterByTitle('War%');
+        $c3->filterByTitle('War%', Criteria::LIKE);
 
         $sql = $this->getSql("SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id, alias_2.id, alias_2.title, alias_2.isbn, alias_2.price, alias_2.publisher_id, alias_2.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.price>:p2) AS alias_1, (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.price<:p3) AS alias_2 WHERE alias_2.title LIKE :p1");
 
@@ -147,7 +147,7 @@ class SubQueryTest extends BookstoreTestBase
 
         $c3 = new BookQuery();
         $c3->addSelectQuery($c2); // no alias
-        $c3->filterByTitle('War%');
+        $c3->filterByTitle('War%', Criteria::LIKE);
 
         $sql = $this->getSql("SELECT alias_2.id, alias_2.title, alias_2.isbn, alias_2.price, alias_2.publisher_id, alias_2.author_id FROM (SELECT alias_1.id, alias_1.title, alias_1.isbn, alias_1.price, alias_1.publisher_id, alias_1.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias_1 WHERE alias_1.price<:p2) AS alias_2 WHERE alias_2.title LIKE :p1");
 
