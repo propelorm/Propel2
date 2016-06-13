@@ -56,6 +56,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'float8'      => PropelTypes::DOUBLE,
         'char'        => PropelTypes::CHAR,
         'character'   => PropelTypes::CHAR,
+        'character varying'   => PropelTypes::VARCHAR,
         'varchar'     => PropelTypes::VARCHAR,
         'date'        => PropelTypes::DATE,
         'time'        => PropelTypes::TIME,
