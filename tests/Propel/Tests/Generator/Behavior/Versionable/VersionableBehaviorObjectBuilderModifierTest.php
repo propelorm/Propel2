@@ -159,8 +159,8 @@ EOF;
         <column name="bar" type="INTEGER" />
 
         <behavior name="versionable">
-          <parameter name="version_column" value="CustomVersion"/>
-        </behavior>
+            <parameter name="version_column" value="CustomVersion"/>
+      	</behavior>
     </table>
 
     <table name="versionable_behavior_test_custom_field_key">
@@ -169,8 +169,8 @@ EOF;
         <column name="baz" type="VARCHAR" size="25" />
 
         <behavior name="versionable">
-          <parameter name="version_column" value="CustomVersion"/>
-        </behavior>
+            <parameter name="version_column" value="CustomVersion"/>
+      	</behavior>
 
         <foreign-key foreignTable="versionable_behavior_test_custom_field">
             <reference local="bar_id" foreign="id" />
@@ -374,35 +374,51 @@ EOF;
 
     public function testNewVersionCreatesRecordInVersionTableWithFieldCustomName()
     {
-        \VersionableBehaviorTest2Query::create()->deleteAll();
-        \VersionableBehaviorTest2VersionQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldVersionQuery::create()->deleteAll();
 
-        $o = new \VersionableBehaviorTest2();
+        \VersionableBehaviorTestCustomFieldKeyQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldKeyVersionQuery::create()->deleteAll();
+
+        $o = new \VersionableBehaviorTestCustomField();
         $o->setBar(150);
         $o->save();
 
-        $versions = \VersionableBehaviorTest2VersionQuery::create()->find();
+        $k = new \VersionableBehaviorTestCustomFieldKey();
+        $k->setVersionableBehaviorTestCustomField($o);
+        $k->save();
 
-    //  print_r($o);
-    //  print_r($versions);
+        $versions     = \VersionableBehaviorTestCustomFieldVersionQuery::create()->find();
+        $versionsKeys = \VersionableBehaviorTestCustomFieldKeyVersionQuery::create()->find();
 
         $this->assertEquals(1, $versions->count());
-        $this->assertEquals($o, $versions[0]->getVersionableBehaviorTest2());
+        $this->assertEquals(1, $versionsKeys->count());
+        $this->assertEquals($o, $versions[0]->getVersionableBehaviorTestCustomField());
+        $this->assertEquals($k, $versionsKeys[0]->getVersionableBehaviorTestCustomFieldKey());
+
         $o->setBar(150);
         $o->save();
 
-        $versions = \VersionableBehaviorTest2VersionQuery::create()->find();
+        $versions = \VersionableBehaviorTestCustomFieldVersionQuery::create()->find();
         $this->assertEquals(1, $versions->count());
         $o->setBar(123);
         $o->save();
 
-        $versions = \VersionableBehaviorTest2VersionQuery::create()->orderByVersion()->find();
+        $versions = \VersionableBehaviorTestCustomFieldVersionQuery::create()->orderByCustomVersion()->find();
 
         $this->assertEquals(2, $versions->count());
         $this->assertEquals($o->getId(), $versions[0]->getId());
-        $this->assertNull($versions[0]->getBar());
+        $this->assertNotNull($versions[0]->getBar());
         $this->assertEquals($o->getId(), $versions[1]->getId());
         $this->assertEquals(123, $versions[1]->getBar());
+
+        $this->assertEquals(2, $o->getVersion());
+
+        $o->toVersion(1);
+
+        $this->assertEquals(1, $o->getVersion());
+
+        $this->assertEquals($o->getId(), $versions[0]->getId());
     }
 
     public function testNewVersionDoesNotCreateRecordInVersionTableWhenVersioningIsDisabled()
