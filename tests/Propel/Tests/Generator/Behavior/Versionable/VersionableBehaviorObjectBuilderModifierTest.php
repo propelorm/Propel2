@@ -149,18 +149,50 @@ EOF;
 </database>
 EOF;
         QuickBuilder::buildSchema($schema4);
+
+
+        $schemaCustomName = <<<EOF
+<database name="default">
+
+    <table name="versionable_behavior_test_custom_field">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER" />
+
+        <behavior name="versionable">
+            <parameter name="version_column" value="CustomVersion"/>
+      	</behavior>
+    </table>
+
+    <table name="versionable_behavior_test_custom_field_key">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar_id" type="INTEGER" />
+        <column name="baz" type="VARCHAR" size="25" />
+
+        <behavior name="versionable">
+            <parameter name="version_column" value="CustomVersion"/>
+      	</behavior>
+
+        <foreign-key foreignTable="versionable_behavior_test_custom_field">
+            <reference local="bar_id" foreign="id" />
+        </foreign-key>
+    </table>
+</database>
+EOF;
+        QuickBuilder::buildSchema($schemaCustomName);
     }
 
     public function testGetVersionExists()
     {
         $this->assertTrue(method_exists('VersionableBehaviorTest1', 'getVersion'));
         $this->assertTrue(method_exists('VersionableBehaviorTest2', 'getVersion'));
+        $this->assertTrue(method_exists('VersionableBehaviorTestCustomField', 'getCustomVersion'));
     }
 
     public function testSetVersionExists()
     {
         $this->assertTrue(method_exists('VersionableBehaviorTest1', 'setVersion'));
         $this->assertTrue(method_exists('VersionableBehaviorTest2', 'setVersion'));
+        $this->assertTrue(method_exists('VersionableBehaviorTestCustomField', 'setCustomVersion'));
     }
 
     public function testMethodsExistsNoChangeNaming()
@@ -182,6 +214,7 @@ EOF;
         return [
             ['\VersionableBehaviorTest1'],
             ['VersionableBehaviorTest2'],
+            ['VersionableBehaviorTestCustomField'],
         ];
     }
 
@@ -279,8 +312,10 @@ EOF;
     public function testVersionDoesNotIncrementWhenVersioningIsDisabled($class)
     {
         $o = new $class;
+
         \VersionableBehaviorTest1Query::disableVersioning();
         \VersionableBehaviorTest2Query::disableVersioning();
+        \VersionableBehaviorTestCustomFieldQuery::disableVersioning();
         $o->setBar(12);
         $o->save();
         $this->assertEquals(0, $o->getVersion());
@@ -289,6 +324,7 @@ EOF;
         $this->assertEquals(0, $o->getVersion());
         \VersionableBehaviorTest1Query::enableVersioning();
         \VersionableBehaviorTest1Query::enableVersioning();
+        \VersionableBehaviorTestCustomFieldQuery::enableVersioning();
 
     }
 
@@ -334,6 +370,52 @@ EOF;
         $this->assertNull($versions[0]->getBar());
         $this->assertEquals($o->getId(), $versions[1]->getId());
         $this->assertEquals(123, $versions[1]->getBar());
+    }
+
+    public function testNewVersionCreatesRecordInVersionTableWithFieldCustomName()
+    {
+        \VersionableBehaviorTestCustomFieldQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldVersionQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldKeyQuery::create()->deleteAll();
+        \VersionableBehaviorTestCustomFieldKeyVersionQuery::create()->deleteAll();
+
+        $o = new \VersionableBehaviorTestCustomField();
+        $o->setBar(150);
+        $o->save();
+
+        $k = new \VersionableBehaviorTestCustomFieldKey();
+        $k->setVersionableBehaviorTestCustomField($o);
+        $k->save();
+
+        $versions     = \VersionableBehaviorTestCustomFieldVersionQuery::create()->find();
+        $versionsKeys = \VersionableBehaviorTestCustomFieldKeyVersionQuery::create()->find();
+
+        $this->assertEquals(1, $versions->count());
+        $this->assertEquals(1, $versionsKeys->count());
+        $this->assertEquals($o, $versions[0]->getVersionableBehaviorTestCustomField());
+        $this->assertEquals($k, $versionsKeys[0]->getVersionableBehaviorTestCustomFieldKey());
+
+        $o->setBar(150);
+        $o->save();
+
+        $versions = \VersionableBehaviorTestCustomFieldVersionQuery::create()->find();
+        $this->assertEquals(1, $versions->count());
+        $o->setBar(123);
+        $o->save();
+
+        $versions = \VersionableBehaviorTestCustomFieldVersionQuery::create()->orderByCustomVersion()->find();
+
+        $this->assertEquals(2, $versions->count());
+        $this->assertEquals($o->getId(), $versions[0]->getId());
+        $this->assertNotNull($versions[0]->getBar());
+        $this->assertEquals($o->getId(), $versions[1]->getId());
+        $this->assertEquals(123, $versions[1]->getBar());
+        $this->assertEquals(2, $o->getVersion());
+
+        $o->toVersion(1);
+
+        $this->assertEquals(1, $o->getVersion());
+        $this->assertEquals($o->getId(), $versions[0]->getId());
     }
 
     public function testNewVersionDoesNotCreateRecordInVersionTableWhenVersioningIsDisabled()
