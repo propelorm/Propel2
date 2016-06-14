@@ -273,7 +273,7 @@ class ModelCriteria extends BaseModelCriteria
      *   $c->groupBy(array('Book.AuthorId', 'Book.AuthorName'))
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_NAME)
-     * 
+     *
      * @param mixed $columnName an array of columns name (e.g. array('Book.AuthorId', 'Book.AuthorName')) or a single column name (e.g. 'Book.AuthorId')
      *
      * @return $this|ModelCriteria The current object, for fluid interface
@@ -283,19 +283,19 @@ class ModelCriteria extends BaseModelCriteria
         if (empty($columnName)) {
             throw new PropelException('You must ask for at least one column');
         }
-        
+
         if (!is_array($columnName)) {
             $columnName = array($columnName);
         }
-        
+
         foreach ($columnName as $column) {
             list(, $realColumnName) = $this->getColumnFromName($column, false);
             $this->addGroupByColumn($realColumnName);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Adds a GROUP BY clause for all columns of a model to the query
      * Examples:
@@ -1860,8 +1860,17 @@ class ModelCriteria extends BaseModelCriteria
             $this->foundMatch = true;
 
             if (false !== strpos($key, '.')) {
-                list($tableName, $columnName) = explode('.', $key);
+
+                $fields = explode('.', $key);
+
+                list($tableName, $columnName) = $fields;
+
+                if (count($fields) === 3) {
+                  list($schemaName, $tableName, $columnName) = $fields;
+                }
+
                 $realColumnName = substr($realFullColumnName, strrpos($realFullColumnName, '.') + 1);
+
                 if (isset($this->aliases[$tableName])) {
                     //don't replace a alias with their real table name
                     return $this->quoteIdentifier($tableName.'.'.$realColumnName);
