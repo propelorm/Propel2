@@ -393,7 +393,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             \$related = new {$relatedClassName}();
             \$relatedVersion = {$relatedVersionQueryClassName}::create()
                 ->filterBy{$fk->getForeignColumn()->getPhpName()}(\$fkValue)
-                ->filterByVersion(\$version->get{$fkVersionColumnPhpName}())
+                ->filterBy{$col->getPhpName()}(\$version->get{$fkVersionColumnPhpName}())
                 ->findOne(\$con);
             \$related->populateFromVersion(\$relatedVersion, \$con, \$loadedObjects);
             \$related->setNew(false);
