@@ -150,6 +150,29 @@ EOF;
 EOF;
         QuickBuilder::buildSchema($schema4);
 
+    /**
+     *  Schema to test relation 1:1 versionable
+     */
+    $schema5 = <<<XML
+<database name="versionable_behavior_test_5">
+    <table name="VersionableBehaviorTestOneToOne">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="bar" type="varchar" size="32"/>
+        <behavior name="versionable" />
+    </table>
+
+    <table name="VersionableBehaviorTestOneToOneFK">
+        <column name="foo_id" type="integer" primaryKey="true"/>
+        <column name="bar" type="varchar" size="32"/>
+        <foreign-key foreignTable="VersionableBehaviorTestOneToOne">
+            <reference local="foo_id" foreign="id"/>
+        </foreign-key>
+        <behavior name="versionable" />
+    </table>
+</database>
+XML;
+        QuickBuilder::buildSchema($schema5);
+
 
         $schemaCustomName = <<<EOF
 <database name="default">
@@ -215,6 +238,7 @@ EOF;
             ['\VersionableBehaviorTest1'],
             ['VersionableBehaviorTest2'],
             ['VersionableBehaviorTestCustomField'],
+            ['VersionableBehaviorTestOneToOne']
         ];
     }
 
@@ -316,6 +340,7 @@ EOF;
         \VersionableBehaviorTest1Query::disableVersioning();
         \VersionableBehaviorTest2Query::disableVersioning();
         \VersionableBehaviorTestCustomFieldQuery::disableVersioning();
+        \VersionableBehaviorTestOneToOneQuery::disableVersioning();
         $o->setBar(12);
         $o->save();
         $this->assertEquals(0, $o->getVersion());
@@ -324,6 +349,7 @@ EOF;
         $this->assertEquals(0, $o->getVersion());
         \VersionableBehaviorTest1Query::enableVersioning();
         \VersionableBehaviorTest1Query::enableVersioning();
+        \VersionableBehaviorTestOneToOneQuery::enableVersioning();
         \VersionableBehaviorTestCustomFieldQuery::enableVersioning();
 
     }
