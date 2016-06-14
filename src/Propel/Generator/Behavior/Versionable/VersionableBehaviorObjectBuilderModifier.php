@@ -86,7 +86,9 @@ class VersionableBehaviorObjectBuilderModifier
     {
         $script = "if (\$this->isVersioningNecessary()) {
     \$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
+    
         if ($this->behavior->getParameter('log_created_at') == 'true') {
+            
             $col = $this->behavior->getTable()->getColumn($this->getParameter('version_created_at_column'));
             $script .= "
     if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
