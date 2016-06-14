@@ -376,7 +376,6 @@ EOF;
     {
         \VersionableBehaviorTestCustomFieldQuery::create()->deleteAll();
         \VersionableBehaviorTestCustomFieldVersionQuery::create()->deleteAll();
-
         \VersionableBehaviorTestCustomFieldKeyQuery::create()->deleteAll();
         \VersionableBehaviorTestCustomFieldKeyVersionQuery::create()->deleteAll();
 
@@ -411,13 +410,11 @@ EOF;
         $this->assertNotNull($versions[0]->getBar());
         $this->assertEquals($o->getId(), $versions[1]->getId());
         $this->assertEquals(123, $versions[1]->getBar());
-
         $this->assertEquals(2, $o->getVersion());
 
         $o->toVersion(1);
 
         $this->assertEquals(1, $o->getVersion());
-
         $this->assertEquals($o->getId(), $versions[0]->getId());
     }
 
