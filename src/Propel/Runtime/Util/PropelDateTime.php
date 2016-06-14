@@ -80,7 +80,14 @@ class PropelDateTime extends \DateTime
         }
         try {
             if (self::isTimestamp($value)) { // if it's a unix timestamp
-                $dateTimeObject = new $dateTimeClass('@' . $value, new \DateTimeZone('UTC'));
+
+                $format = 'U';
+                if (strpos($value, '.')) {
+                    //with milliseconds
+                    $format = 'U.u';
+                }
+
+                $dateTimeObject = \DateTime::createFromFormat($format, $value, new \DateTimeZone('UTC'));
                 // timezone must be explicitly specified and then changed
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
                 $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
