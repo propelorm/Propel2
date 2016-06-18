@@ -86,9 +86,7 @@ class VersionableBehaviorObjectBuilderModifier
     {
         $script = "if (\$this->isVersioningNecessary()) {
     \$this->set{$this->getColumnPhpName()}(\$this->isNew() ? 1 : \$this->getLastVersionNumber(\$con) + 1);";
-    
         if ($this->behavior->getParameter('log_created_at') == 'true') {
-            
             $col = $this->behavior->getTable()->getColumn($this->getParameter('version_created_at_column'));
             $script .= "
     if (!\$this->isColumnModified({$this->builder->getColumnConstant($col)})) {
@@ -224,8 +222,7 @@ public function enforceVersioning()
 /**
  * Checks whether the current state must be recorded as a version
  *
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
- *
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  * @return  boolean
  */
 public function isVersioningNecessary(ConnectionInterface \$con = null)
@@ -242,7 +239,6 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
         return true;
     }";
         $plural = false;
-
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural);
             $script .= "
@@ -305,12 +301,12 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
     {
         $versionTable       = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
-  
+
         $script .= "
 /**
  * Creates a version of the current object and saves it.
  *
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  {$versionARClassName} A version object
  */
@@ -326,7 +322,6 @@ public function addVersion(ConnectionInterface \$con = null)
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
         $plural = false;
-
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural);
             $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
@@ -338,16 +333,29 @@ public function addVersion(ConnectionInterface \$con = null)
         }
         $plural = true;
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
-
             $plural = !$fk->isLocalPrimaryKey();
             $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural);
             $idsColumn = $this->behavior->getReferrerIdsColumn($fk);
             $versionsColumn = $this->behavior->getReferrerVersionsColumn($fk);
             $script .= "
-    if (\$this->get{$fkGetter}(null, \$con) && \$relateds = \$this->get{$fkGetter}(null, \$con)->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
+    \$object = \$this->get{$fkGetter}(null, \$con);
+            ";
+            if (!$fk->isLocalPrimaryKey()) {
+                $script .= "
+
+    if (\$object && \$relateds = \$object->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
         \$version->set{$idsColumn->getPhpName()}(array_keys(\$relateds));
         \$version->set{$versionsColumn->getPhpName()}(array_values(\$relateds));
-    }";
+    }
+                ";
+            } else {
+                $script .= "
+    if (\$object && \$object->getVersion()) {
+      \$version->set{$idsColumn->getPhpName()}(array(\$object->getPrimaryKey()));
+      \$version->set{$versionsColumn->getPhpName()}(array(\$object->getVersion()));
+    }
+                ";
+            }
         }
             $script .= "
     \$version->save(\$con);
@@ -365,7 +373,7 @@ public function addVersion(ConnectionInterface \$con = null)
  * Sets the properties of the current object to the value they had at a specific version
  *
  * @param   integer \$versionNumber The version number to read
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  \$this|{$ARclassName} The current object (for fluent API support)
  */
@@ -489,7 +497,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
 /**
  * Gets the latest persisted version number for the current object
  *
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  integer
  */
@@ -514,7 +522,7 @@ public function getLastVersionNumber(ConnectionInterface \$con = null)
 /**
  * Checks whether the current object is the latest one
  *
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  Boolean
  */
@@ -533,7 +541,7 @@ public function isLastVersion(ConnectionInterface \$con = null)
  * Retrieves a version object for this entity and a version number
  *
  * @param   integer \$versionNumber The version number to read
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  {$versionARClassName} A version object
  */
@@ -560,7 +568,7 @@ public function getOneVersion(\$versionNumber, ConnectionInterface \$con = null)
 /**
  * Gets all the versions of this object, in incremental order
  *
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return  ObjectCollection|{$versionARClassName}[] A list of {$versionARClassName} objects
  */
@@ -655,7 +663,7 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  *
  * @param   integer             \$versionNumber
  * @param   string              \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  * @param   array               \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
@@ -686,7 +694,7 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', ConnectionIn
  * @param   integer             \$fromVersionNumber
  * @param   integer             \$toVersionNumber
  * @param   string              \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  * @param   array               \$ignoredColumns  The columns to exclude from the diff.
  *
  * @return  array A list of differences
@@ -718,7 +726,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
  *
  * @param  Integer             \$number The number of record to return.
  * @param  Criteria            \$criteria The Criteria object containing modified values.
- * @param  ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
+ * @param  ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return PropelCollection|{$versionARClassName}[] List of {$versionARClassName} objects
  */
