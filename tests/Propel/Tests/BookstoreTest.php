@@ -733,7 +733,100 @@ class BookstoreTest extends BookstoreEmptyTestBase
             "Found correct authors based on being either first or second author of a certain essay"
         );
 
-        // query authors based on being either first or second author of a certain essay - supplying relation-alias and join-type
+        // query authors based on being either first or second author of a certain essay - without supplying relation-alias nor join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery()
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery()
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay ON (author.id=essay.first_author_id) INNER JOIN essay ON (author.id=essay.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
+            $authorsQuery->createSelectSql($params = [])
+        );
+
+        $exception = null;
+        try {
+            $authorsQuery->find()->toArray();
+            $this->assertEmpty(__LINE__);
+        } catch (\Exception $e) {
+            $exception = $e;
+        }
+        $this->assertInstanceOf(
+            'Propel\Runtime\Exception\PropelException',
+            $exception,
+            "Getting an exception about when querying authors based on being either first or second author of a certain essay - without supplying relation-alias nor join-type"
+        );
+        $this->assertEquals(
+            'Unable to execute SELECT statement [SELECT author.id, author.first_name, author.last_name, author.email, author.age FROM author LEFT JOIN essay ON (author.id=essay.first_author_id) INNER JOIN essay ON (author.id=essay.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)]',
+            $exception->getMessage()
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('EssayRelatedByFirstAuthorId')
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('EssayRelatedBySecondAuthorId')
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $this->assertEquals(
+            'SELECT  FROM author CROSS JOIN essay LEFT JOIN essay EssayRelatedByFirstAuthorId ON (author.id=EssayRelatedByFirstAuthorId.first_author_id) INNER JOIN essay EssayRelatedBySecondAuthorId ON (author.id=EssayRelatedBySecondAuthorId.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
+            $authorsQuery->createSelectSql($params = [])
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id])
+            ->find();
+        $expected
+            ->append(
+                AuthorQuery::create()
+                    ->filterById([$grass_id])
+                    ->findOne()
+            );
+        $expected = $expected->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found incorrect authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type"
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying another relation-alias but not join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author')
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('essay_related_by_second_author')
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) INNER JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
+            $authorsQuery->createSelectSql($params = [])
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id /*, $stephenson_id*/])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found incorrect authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type"
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying another relation-alias and join-type
 
         $authorsQuery = AuthorQuery::create()
             ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author', Criteria::LEFT_JOIN)
