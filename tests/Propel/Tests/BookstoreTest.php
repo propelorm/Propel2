@@ -687,13 +687,17 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // query essays based a certain author being either first or second author
 
-        $essays = EssayQuery::create()
+        $essaysQuery = EssayQuery::create()
             ->leftJoinFirstAuthor('first_author')
             ->leftJoinSecondAuthor('second_author')
             ->filterByFirstAuthor($grass)
             ->_or()
-            ->filterBySecondAuthor($grass)
-            ->find();
+            ->filterBySecondAuthor($grass);
+
+        $this->assertEquals(
+            'SELECT  FROM essay LEFT JOIN author first_author ON (essay.first_author_id=first_author.id) LEFT JOIN author second_author ON (essay.second_author_id=second_author.id) WHERE (essay.first_author_id=:p1 OR essay.second_author_id=:p2)',
+            $essaysQuery->createSelectSql($params = [])
+        );
 
         $expected = EssayQuery::create()
             ->filterById([$e1_id, $e2_id])
@@ -702,17 +706,21 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(
             $expected,
-            $essays->toArray(),
+            $essaysQuery->find()->toArray(),
             "Found correct essays based a certain author being either first or second author"
         );
 
         // query authors based on being first author of a certain essay
 
-        $authors = AuthorQuery::create()
+        $authorsQuery = AuthorQuery::create()
             ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author')
             ->filterById($e2->getId())
-            ->endUse()
-            ->find();
+            ->endUse();
+
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) WHERE essay_related_by_first_author.id=:p1',
+            $authorsQuery->createSelectSql($params = [])
+        );
 
         $expected = AuthorQuery::create()
             ->filterById([$stephenson_id])
@@ -721,11 +729,11 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(
             $expected,
-            $authors->toArray(),
+            $authorsQuery->find()->toArray(),
             "Found correct authors based on being either first or second author of a certain essay"
         );
 
-        // query authors based on being either first or second author of a certain essay
+        // query authors based on being either first or second author of a certain essay - supplying relation-alias and join-type
 
         $authorsQuery = AuthorQuery::create()
             ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author', Criteria::LEFT_JOIN)
@@ -736,6 +744,11 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) LEFT JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
+            $authorsQuery->createSelectSql($params = [])
+        );
+
         $expected = AuthorQuery::create()
             ->filterById([$grass_id, $stephenson_id])
             ->find()
@@ -744,7 +757,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertEquals(
             $expected,
             $authorsQuery->find()->toArray(),
-            "Found correct authors based on being either first or second author of a certain essay"
+            "Found correct authors based on being either first or second author of a certain essay - supplying relation-alias and join-type"
         );
 
         // Cleanup (tests DELETE)
