@@ -30,6 +30,8 @@ use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Bookstore\Essay;
+use Propel\Tests\Bookstore\EssayQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 use \DateTime;
@@ -495,6 +497,35 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $this->fail('Save Review records');
         }
 
+        // Add essay records
+        // ------------------
+
+        try {
+            $e1 = new Essay();
+            $e1->setTitle("Byron and Grass on Joins");
+            $e1->setFirstAuthor($byron);
+            $e1->setSecondAuthor($grass);
+            $e1->save();
+            $e1_id = $e1->getId();
+
+            $e2 = new Essay();
+            $e2->setTitle("Stephenson and Grass on Joins");
+            $e2->setFirstAuthor($stephenson);
+            $e2->setSecondAuthor($grass);
+            $e2->save();
+            $e2_id = $e2->getId();
+
+            $e3 = new Essay();
+            $e3->setTitle("Rowling on Joins");
+            $e3->setFirstAuthor($rowling);
+            $e3->setSecondAuthor();
+            $e3->save();
+            $e3_id = $e3->getId();
+            $this->assertTrue(true, 'Save Essay records');
+        } catch (\Exception $e) {
+            $this->fail('Save Essay records');
+        }
+
         // Perform a "complex" search
         // --------------------------
 
@@ -654,6 +685,68 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $relCount = $blc2->countBookListRels();
         $this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
 
+        // query essays based a certain author being either first or second author
+
+        $essays = EssayQuery::create()
+            ->leftJoinFirstAuthor('first_author')
+            ->leftJoinSecondAuthor('second_author')
+            ->filterByFirstAuthor($grass)
+            ->_or()
+            ->filterBySecondAuthor($grass)
+            ->find();
+
+        $expected = EssayQuery::create()
+            ->filterById([$e1_id, $e2_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $essays->toArray(),
+            "Found correct essays based a certain author being either first or second author"
+        );
+
+        // query authors based on being first author of a certain essay
+
+        $authors = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author')
+            ->filterById($e2->getId())
+            ->endUse()
+            ->find();
+
+        $expected = AuthorQuery::create()
+            ->filterById([$stephenson_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authors->toArray(),
+            "Found correct authors based on being either first or second author of a certain essay"
+        );
+
+        // query authors based on being either first or second author of a certain essay
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author', Criteria::LEFT_JOIN)
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('essay_related_by_second_author', Criteria::LEFT_JOIN)
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id, $stephenson_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found correct authors based on being either first or second author of a certain essay"
+        );
+
         // Cleanup (tests DELETE)
         // ----------------------
 
@@ -698,6 +791,11 @@ class BookstoreTest extends BookstoreEmptyTestBase
         PublisherQuery::create()->filterById($penguin_id)->delete();
         $vintage->delete();
 
+        // Attempting to delete essays
+        $e1->delete();
+        $e2->delete();
+        $e3->delete();
+
         // These have to be deleted manually also since we have onDelete
         // set to SETNULL in the foreign keys in book. Is this correct?
         $rowling->delete();
@@ -709,6 +807,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
         $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
         $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, EssayQuery::create()->find(), 'no records in [essay] table');
         $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
         $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
         $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
