@@ -51,6 +51,21 @@ class UniqueConstraintTest extends BookstoreTestBase
         $publisher->delete();
     }
 
+    public function testUniqueValidatorPassOnUpdate() {
+        $publisher = new Publisher();
+        $publisher->setName('Happy Reading');
+        $publisher->setWebsite('http://www.happyreading.com');
+        $publisher->save();
+
+        $publisher
+            ->setWebsite('http://www.example.com')
+            ->save();
+        $this->assertTrue($publisher->validate());
+
+        $publisher->delete();
+
+    }
+
     public function testUniqueValidatorPassIfNull()
     {
         $book = new Book();
