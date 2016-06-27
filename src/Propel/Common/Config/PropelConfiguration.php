@@ -317,6 +317,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('targetPackage')->end()
                         ->booleanNode('packageObjectModel')->defaultTrue()->end()
                         ->booleanNode('namespaceAutoPackage')->defaultTrue()->end()
+                        ->booleanNode('recursive')->defaultFalse()->end()
                         ->arrayNode('connections')
                             ->prototype('scalar')->end()
                         ->end()
