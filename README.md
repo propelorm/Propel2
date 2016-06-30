@@ -1,4 +1,5 @@
 # Propel2 #
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/propelorm/Propel2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.
 
