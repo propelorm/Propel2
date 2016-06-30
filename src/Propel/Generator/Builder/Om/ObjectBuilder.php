@@ -267,6 +267,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClassFromBuilder($this->getStubQueryBuilder());
         $this->declareClassFromBuilder($this->getTableMapBuilder());
+        $this->declareClass($this->getBaseClass());
 
         $this->declareClasses(
             '\Exception',
