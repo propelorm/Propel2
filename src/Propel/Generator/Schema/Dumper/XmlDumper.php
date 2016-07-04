@@ -214,8 +214,19 @@ class XmlDumper implements DumperInterface
             $tableNode->setAttribute('package', $package);
         }
 
-        if ($namespace = $table->getNamespace()) {
-            $tableNode->setAttribute('namespace', $namespace);
+        if ($table->getNamespace()) {
+            if ($table->getDatabase()->getNamespace()) {
+                $startsWithDbNamespace = '^' . preg_quote($table->getDatabase()->getNamespace());
+                $optionalBackslash = preg_quote('\\') . '?';
+
+                $regex = '/' . $startsWithDbNamespace . $optionalBackslash . '/';
+
+                $namespace = preg_replace($regex, '', $table->getNamespace());
+            }
+
+            if ($namespace) {
+                $tableNode->setAttribute('namespace', $namespace);
+            }
         }
 
         if ($table->isSkipSql()) {
