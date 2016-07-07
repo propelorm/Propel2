@@ -26,8 +26,15 @@ class UniqueValidator extends ConstraintValidator
         $tableMap   = $className::TABLE_MAP;
         $queryClass = $className . 'Query';
         $filter     = sprintf('filterBy%s', $tableMap::translateFieldName($this->context->getPropertyName(), TableMap::TYPE_FIELDNAME, TableMap::TYPE_PHPNAME));
+        $matches    = $queryClass::create()->$filter($value);
 
-        if (0 < $queryClass::create()->$filter($value)->count()) {
+        $columnName = sprintf('%s.%s', $tableMap::TABLE_NAME, $this->context->getPropertyName());
+
+        if ($this->context->getObject()->isNew() && $matches->count() > 0) {
+            $this->context->addViolation($constraint->message);
+        }
+
+        else if ($this->context->getObject()->isModified() && $matches->count() > (in_array($columnName, $this->context->getObject()->getModifiedColumns()) ? 0 : 1)) {
             $this->context->addViolation($constraint->message);
         }
     }
