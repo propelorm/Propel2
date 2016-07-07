@@ -70,7 +70,7 @@ class MigrationCreateCommand extends AbstractCommand
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
 
         $migrationsUp   = [];
         $migrationsDown = [];

@@ -58,6 +58,9 @@ abstract class AbstractCommand extends Command
             $properties['propel']['generator']['platformClass'] = $input->getOption('platform');
         }
 
+        if ($input->hasParameterOption('--recursive')) {
+            $properties['propel']['generator']['recursive'] = $input->getOption('recursive');
+        }
         return new GeneratorConfig($input->getOption('config-dir'), $properties);
     }
 
