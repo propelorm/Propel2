@@ -5719,7 +5719,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = \$criteria->insert(\$con);";
+        \$pk = \$criteria->doInsert(\$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()
