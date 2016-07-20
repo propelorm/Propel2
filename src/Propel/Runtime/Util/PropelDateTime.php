@@ -58,6 +58,20 @@ class PropelDateTime extends \DateTime
     }
 
     /**
+     * Creates a new DateTime object with milliseconds resolution.
+     *
+     * Usually `new \Datetime()` does not contain milliseconds so you need a method like this.
+     *
+     * @param bool $time optional in seconds. floating point allowed.
+     *
+     * @return \DateTime
+     */
+    public static function createHighPrecision($time = null)
+    {
+        return \DateTime::createFromFormat('U.u', $time ?: microtime(true));
+    }
+
+    /**
      * Factory method to get a DateTime object from a temporal input
      *
      * @param mixed        $value         The value to convert (can be a string, a timestamp, or another DateTime)

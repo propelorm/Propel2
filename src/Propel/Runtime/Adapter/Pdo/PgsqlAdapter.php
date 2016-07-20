@@ -106,7 +106,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function getTimestampFormatter()
     {
-        return 'Y-m-d H:i:s O';
+        return 'Y-m-d H:i:s.u O';
     }
 
     /**
@@ -116,7 +116,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function getTimeFormatter()
     {
-        return 'H:i:s O';
+        return 'H:i:s.u O';
     }
 
     /**
