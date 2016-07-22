@@ -241,6 +241,8 @@ class ReverseManager extends AbstractManager
                 }
             }
 
+            $table->setNamespace(null);
+
             $skip && $database->removeTable($table);
         }
 

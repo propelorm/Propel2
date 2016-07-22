@@ -93,6 +93,10 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
 
         $databaseXml = simplexml_load_file($outputDir . '/schema.xml');
         $this->assertEquals($testNamespace, $databaseXml['namespace']);
+
+        foreach ($databaseXml->children() as $tableXml) {
+            $this->assertNotTrue(isset($tableXml['namespace']));
+        }
     }
 
 }
