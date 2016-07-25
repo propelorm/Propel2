@@ -37,7 +37,6 @@ class InitCommand extends AbstractCommand
         $this->defaultPhpDir = $this->detectDefaultPhpDir();
     }
 
-
     protected function configure()
     {
         parent::configure();
@@ -104,7 +103,9 @@ class InitCommand extends AbstractCommand
         $options['schemaDir'] = $consoleHelper->askQuestion('Where do you want to store your schema.xml?', $this->defaultSchemaDir);
         $options['phpDir'] = $consoleHelper->askQuestion('Where do you want propel to save the generated php models?', $this->defaultPhpDir);
         $options['namespace'] = $consoleHelper->askQuestion('Which namespace should the generated php models use?');
-        
+
+        $consoleHelper->writeln('');
+
         if ($isReverseEngineerRequested) {
             $options['schema'] = $this->reverseEngineerSchema($consoleHelper->getOutput(), $options);
         }
@@ -225,6 +226,27 @@ class InitCommand extends AbstractCommand
         $this->writeFile($output, sprintf('%s/schema.xml', $options['schemaDir']), $options['schema']);
         $this->writeFile($output, sprintf('%s/propel.%s', getcwd(), $options['format']), $config->render($options));
         $this->writeFile($output, sprintf('%s/propel.%s.dist', getcwd(), $options['format']), $distConfig->render($options));
+
+        $this->buildSqlAndModelsAndConvertConfig();
+    }
+
+    private function buildSqlAndModelsAndConvertConfig()
+    {
+        $this->getApplication()->setAutoExit(false);
+
+        $followupCommands = [
+            'sql:build',
+            'model:build',
+            'config:convert',
+        ];
+
+        foreach($followupCommands as $command) {
+            if (0 !== $this->getApplication()->run(new ArrayInput([$command]))) {
+                exit(1);
+            }
+        }
+
+        $this->getApplication()->setAutoExit(true);
     }
 
     private function writeFile(OutputInterface $output, $filename, $content)
