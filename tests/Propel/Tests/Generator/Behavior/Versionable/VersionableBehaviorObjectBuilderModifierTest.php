@@ -150,9 +150,32 @@ EOF;
 EOF;
         QuickBuilder::buildSchema($schema4);
 
+    /**
+     *  Schema to test relation 1:1 versionable
+     */
+    $schema5 = <<<XML
+<database name="versionable_behavior_test_one_to_one_database">
+    <table name="versionable_behavior_test_one_to_one">
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="bar" type="varchar" size="32"/>
+        <behavior name="versionable" />
+    </table>
+
+    <table name="versionable_behavior_test_one_to_one_key">
+        <column name="foo_id" type="integer" primaryKey="true"/>
+        <column name="bar" type="varchar" size="32"/>
+        <foreign-key foreignTable="versionable_behavior_test_one_to_one">
+            <reference local="foo_id" foreign="id"/>
+        </foreign-key>
+        <behavior name="versionable" />
+    </table>
+</database>
+XML;
+        QuickBuilder::buildSchema($schema5);
+
 
         $schemaCustomName = <<<EOF
-<database name="default">
+<database name="versionable_behavior_test_custom_field_database">
 
     <table name="versionable_behavior_test_custom_field">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -215,6 +238,7 @@ EOF;
             ['\VersionableBehaviorTest1'],
             ['VersionableBehaviorTest2'],
             ['VersionableBehaviorTestCustomField'],
+            ['VersionableBehaviorTestOneToOne']
         ];
     }
 
@@ -316,6 +340,7 @@ EOF;
         \VersionableBehaviorTest1Query::disableVersioning();
         \VersionableBehaviorTest2Query::disableVersioning();
         \VersionableBehaviorTestCustomFieldQuery::disableVersioning();
+        \VersionableBehaviorTestOneToOneQuery::disableVersioning();
         $o->setBar(12);
         $o->save();
         $this->assertEquals(0, $o->getVersion());
@@ -325,6 +350,7 @@ EOF;
         \VersionableBehaviorTest1Query::enableVersioning();
         \VersionableBehaviorTest1Query::enableVersioning();
         \VersionableBehaviorTestCustomFieldQuery::enableVersioning();
+        \VersionableBehaviorTestOneToOneQuery::enableVersioning();
 
     }
 
@@ -977,5 +1003,48 @@ EOF;
 
         $bar->save();
         $this->assertEquals(2, $bar->getVersion());
+    }
+
+    public function testOneToOneCreatesValidRecord()
+    {
+        \VersionableBehaviorTestOneToOneQuery::create()->deleteAll();
+        \VersionableBehaviorTestOneToOneKeyQuery::create()->deleteAll();
+        \VersionableBehaviorTestOneToOneVersionQuery::create()->deleteAll();
+        \VersionableBehaviorTestOneToOneKeyVersionQuery::create()->deleteAll();
+
+        $x = new \VersionableBehaviorTestOneToOne();
+        $x->setBar("One To....");
+        $x->save();
+
+        $y = new \VersionableBehaviorTestOneToOneKey();
+        $y->setVersionableBehaviorTestOneToOne($x);
+        $y->setBar("One");
+        $y->save();
+
+        $this->assertEquals(1, $x->getVersion());
+        $this->assertEquals(1, $y->getVersion());
+
+        $newX = \VersionableBehaviorTestOneToOneQuery::create()->findOne();
+        $this->assertInstanceOf('VersionableBehaviorTestOneToOne', $x);
+        $this->assertInstanceOf('VersionableBehaviorTestOneToOne', $newX);
+        $this->assertEquals($x, $newX);
+
+        $newY = $x->getVersionableBehaviorTestOneToOneKey();
+        $this->assertInstanceOf('VersionableBehaviorTestOneToOneKey', $y);
+        $this->assertInstanceOf('VersionableBehaviorTestOneToOneKey', $newY);
+        $this->assertEquals($y, $newY);
+
+        $this->assertFalse($x->isVersioningNecessary());
+        $x->setBar('Two');
+        $this->assertTrue($x->isVersioningNecessary());
+        $x->save();
+
+        $this->assertEquals(2, $x->getVersion());
+        $x->toVersion(1);
+        $x->save();
+
+        $this->assertEquals('One To....', $x->getBar());
+        $this->assertEquals('One', $x->getVersionableBehaviorTestOneToOneKey()->getBar());//$y
+
     }
 }
