@@ -68,7 +68,20 @@ class PropelDateTime extends \DateTime
      */
     public static function createHighPrecision($time = null)
     {
-        return \DateTime::createFromFormat('U.u', $time ?: microtime(true));
+        return \DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+    }
+
+    /**
+     * Get the current microtime with milliseconds. Making sure that the decimal point separator is always ".", ignoring
+     * what is set with the current locale. Otherwise self::createHighPrecision would return false.
+     *
+     * @return string
+     */
+    public static function getMicrotime()
+    {
+        $mtime = microtime(true);
+
+        return str_replace(',', '.', $mtime);
     }
 
     /**
