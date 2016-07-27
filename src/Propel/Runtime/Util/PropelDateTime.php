@@ -68,7 +68,11 @@ class PropelDateTime extends \DateTime
      */
     public static function createHighPrecision($time = null)
     {
-        return \DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+        $dateTime = \DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+        
+        $dateTime->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+        
+        return $dateTime;
     }
 
     /**
