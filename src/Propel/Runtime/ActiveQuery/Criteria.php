@@ -1511,7 +1511,14 @@ class Criteria
             $sb .= "\nParams: ";
             $paramstr = [];
             foreach ($params as $param) {
-                $paramstr[] = $param['table'] . '.' . $param['column'] . ' => ' . var_export($param['value'], true);
+                $str = "";
+                if (isset($param['table']))
+                    $str .= $param['table'];
+                if (isset($param['column']))
+                    $str .= "." . $param['column'];
+                if (isset($param['value']))
+                    $str .=  ' => ' . var_export($param['value'], true);
+                $paramstr[] = $str;
             }
             $sb .= implode(', ', $paramstr);
 

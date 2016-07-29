@@ -132,7 +132,7 @@ class PropelDateTime extends \DateTime
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
                 $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
             } else {
-                if (strpos($value, "%") !== false) {
+                if (is_string($value) && (strpos($value, "%") !== false) || strpos($value, "_") !== false) {
                     return new FakeDateTime($value, $timeZone);
                 }
 
