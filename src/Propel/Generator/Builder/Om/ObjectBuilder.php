@@ -23,6 +23,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\OraclePlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlsrvPlatform;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Generates a PHP5 base Object class for user object model (OM).
@@ -234,8 +235,8 @@ class ObjectBuilder extends AbstractObjectBuilder
  *";
             }
             $script .= "
-* @package    propel.generator.".$this->getPackage()."
-*/";
+ * @package    propel.generator.".$this->getPackage()."
+ */";
         }
 
         $script .= "
@@ -1015,10 +1016,30 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addBooleanAccessor(&$script, Column $column)
     {
+        $name = self::getBooleanAccessorName($column);
+        if (in_array($name, ClassTools::getPropelReservedMethods())) {
+            //TODO: Issue a warning telling the user to use default accessors
+            return; // Skip boolean accessors for reserved names
+        }
         $this->addDefaultAccessorComment($script, $column);
         $this->addBooleanAccessorOpen($script, $column);
         $this->addBooleanAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Returns the name to be used as boolean accessor name
+     *
+     * @param Column $column
+     * @return string
+     */
+    protected static function getBooleanAccessorName(Column $column)
+    {
+        $name = $column->getCamelCaseName();
+        if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
+            $name = 'is' . ucfirst($name);
+        }
+        return $name;
     }
 
     /**
@@ -1029,10 +1050,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
     {
-        $name = $column->getCamelCaseName();
-        if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
-            $name = 'is' . ucfirst($name);
-        }
+        $name = self::getBooleanAccessorName($column);
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
@@ -1705,10 +1723,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $format = 'Y-m-d';
                     break;
                 case 'TIME':
-                    $format = 'H:i:s';
+                    $format = 'H:i:s.u';
                     break;
                 default:
-                    $format = 'Y-m-d H:i:s';
+                    $format = 'Y-m-d H:i:s.u';
             }
             $script .= "
             if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";
@@ -5701,7 +5719,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addDoInsertBodyStandard()
     {
         return "
-        \$pk = \$criteria->insert(\$con);";
+        \$pk = \$criteria->doInsert(\$con);";
     }
 
     protected function addDoInsertBodyWithIdMethod()
@@ -5804,6 +5822,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // if non auto-increment but using sequence, get the id first
         if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
             $column = $table->getFirstPrimaryKeyColumn();
+            if (!$column) {
+                throw new PropelException('Cannot find primary key column in table `' . $table->getName() . '`.');
+            }
             $columnProperty = $column->getLowercasedName();
             $script .= "
         if (null === \$this->{$columnProperty}) {

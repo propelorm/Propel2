@@ -110,6 +110,19 @@ class QueryCacheTest extends BookstoreTestBase
         $this->assertEquals(1, count($results));
         $this->assertEquals('Title4', $results[0]->getTitle());
     }
+
+    public function testQueryIsNotCachedIfExceptionIsThrown()
+    {
+        $q = QuerycacheTable1Query::create()->setQueryKey('test4')->filterByTitle('bar');
+
+        try {
+            $q->withField('wrongField')->find();
+        } catch (\Exception $e) {
+            $this->assertTrue(true, 'The exception is correctly thrown');
+        }
+
+        $this->assertNull($q->cacheFetch('test4'), 'The query is not cached,  if it has thrown exception');
+    }
     
     protected function getPager($maxPerPage, $page = 1)
     {

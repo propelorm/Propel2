@@ -43,14 +43,22 @@ class GeneratorConfigTest extends ConfigTestCase
                         'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                         'dsn' => 'sqlite:" . sys_get_temp_dir() . "/mydb',
                         'user' => 'root',
-                        'password' => ''
+                        'password' => '',
+                        'model_paths' => [
+                            'src',
+                            'vendor'
+                        ]
                     ),
                     'yoursource' => array(
                         'adapter' => 'mysql',
                         'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                         'dsn' => 'mysql:host=localhost;dbname=yourdb',
                         'user' => 'root',
-                        'password' => ''
+                        'password' => '',
+                        'model_paths' => [
+                            'src',
+                            'vendor'
+                        ]
                     )
                 )
             ),
@@ -231,14 +239,22 @@ class GeneratorConfigTest extends ConfigTestCase
                 'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                 'dsn' => 'sqlite:' . sys_get_temp_dir() . '/mydb',
                 'user' => 'root',
-                'password' => ''
+                'password' => '',
+                'model_paths' => [
+                    'src',
+                    'vendor'
+                ]
             ],
             'yoursource' => [
                 'adapter' => 'mysql',
                 'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                 'dsn' => 'mysql:host=localhost;dbname=yourdb',
                 'user' => 'root',
-                'password' => ''
+                'password' => '',
+                'model_paths' => [
+                    'src',
+                    'vendor'
+                ]
             ]
         ];
 
@@ -254,7 +270,11 @@ class GeneratorConfigTest extends ConfigTestCase
             'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
             'dsn' => 'sqlite:' . sys_get_temp_dir() . '/mydb',
             'user' => 'root',
-            'password' => ''
+            'password' => '',
+            'model_paths' => [
+                'src',
+                'vendor'
+            ]
         ];
 
         $actual = $this->generatorConfig->getBuildConnection();
@@ -269,7 +289,11 @@ class GeneratorConfigTest extends ConfigTestCase
             'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
             'dsn' => 'mysql:host=localhost;dbname=yourdb',
             'user' => 'root',
-            'password' => ''
+            'password' => '',
+            'model_paths' => [
+                'src',
+                'vendor'
+            ]
         ];
 
         $actual = $this->generatorConfig->getBuildConnection('yoursource');

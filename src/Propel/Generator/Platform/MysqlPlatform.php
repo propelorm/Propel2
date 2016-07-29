@@ -22,7 +22,6 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
-use Propel\Generator\Model\Diff\TableDiff;
 
 /**
  * MySql PlatformInterface implementation.
@@ -453,13 +452,13 @@ ALTER TABLE %s DROP PRIMARY KEY;
     public function getAddIndexDDL(Index $index)
     {
         $pattern = "
-ALTER TABLE %s ADD %sINDEX %s (%s);
+CREATE %sINDEX %s ON %s (%s);
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($index->getTable()->getName()),
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
+            $this->quoteIdentifier($index->getTable()->getName()),
             $this->getIndexColumnListDDL($index)
         );
     }
@@ -473,12 +472,12 @@ ALTER TABLE %s ADD %sINDEX %s (%s);
     public function getDropIndexDDL(Index $index)
     {
         $pattern = "
-ALTER TABLE %s DROP INDEX %s;
+DROP INDEX %s ON %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($index->getTable()->getName()),
-            $this->quoteIdentifier($index->getName())
+            $this->quoteIdentifier($index->getName()),
+            $this->quoteIdentifier($index->getTable()->getName())
         );
     }
 
@@ -719,96 +718,10 @@ ALTER TABLE %s ADD %s %s;
         );
     }
 
-    public function getModifyTableDDL(TableDiff $tableDiff)
-    {
-        $alterTableStatements = '';
-
-        $toTable = $tableDiff->getToTable();
-
-        // drop indices, foreign keys
-        foreach ($tableDiff->getRemovedFks() as $fk) {
-            $alterTableStatements .= $this->getDropForeignKeyDDL($fk);
-        }
-        foreach ($tableDiff->getModifiedFks() as $fkModification) {
-            list($fromFk) = $fkModification;
-            $alterTableStatements .= $this->getDropForeignKeyDDL($fromFk);
-        }
-        foreach ($tableDiff->getRemovedIndices() as $index) {
-            $alterTableStatements .= $this->getDropIndexDDL($index);
-        }
-        foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list($fromIndex) = $indexModification;
-            $alterTableStatements .= $this->getDropIndexDDL($fromIndex);
-        }
-
-        // alter table structure
-        if ($tableDiff->hasModifiedPk()) {
-            $alterTableStatements .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
-        }
-        foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
-            $alterTableStatements .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
-        }
-        if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
-            $alterTableStatements .= $this->getModifyColumnsDDL($modifiedColumns);
-        }
-        if ($addedColumns = $tableDiff->getAddedColumns()) {
-            $alterTableStatements .= $this->getAddColumnsDDL($addedColumns);
-        }
-        foreach ($tableDiff->getRemovedColumns() as $column) {
-            $alterTableStatements .= $this->getRemoveColumnDDL($column);
-        }
-
-        // add new indices and foreign keys
-        if ($tableDiff->hasModifiedPk()) {
-            $alterTableStatements .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
-        }
-
-        // create indices, foreign keys
-        foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list($oldIndex, $toIndex) = $indexModification;
-            $alterTableStatements .= $this->getAddIndexDDL($toIndex);
-        }
-        foreach ($tableDiff->getAddedIndices() as $index) {
-            $alterTableStatements .= $this->getAddIndexDDL($index);
-        }
-        foreach ($tableDiff->getModifiedFks() as $fkModification) {
-            list(, $toFk) = $fkModification;
-            $alterTableStatements .= $this->getAddForeignKeyDDL($toFk);
-        }
-        foreach ($tableDiff->getAddedFks() as $fk) {
-            $alterTableStatements .= $this->getAddForeignKeyDDL($fk);
-        }
-
-        $ret = '';
-        if (trim($alterTableStatements)) {
-            //merge all changes into one command. This prevents https://github.com/propelorm/Propel2/issues/1115
-
-            $changes = explode(';', $alterTableStatements);
-            $changeFragments = [];
-            foreach ($changes as $change) {
-                if (trim($change)) {
-                    $changeFragments[] = preg_replace(
-                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($toTable->getName())),
-                        "\n\n  ",
-                        trim($change)
-                    );
-                }
-            }
-
-            $ret .= sprintf("
-ALTER TABLE %s%s;
-",
-                $this->quoteIdentifier($toTable->getName()), implode(',', $changeFragments)
-            );
-        }
-
-        return $ret;
-    }
-
     /**
      * Builds the DDL SQL to add a list of columns
      *
-     * @param Column[] $columns
+     * @param  Column[] $columns
      *
      * @return string
      */
@@ -876,11 +789,6 @@ ALTER TABLE %s%s;
     public function doQuoting($text)
     {
         return '`' . strtr($text, ['.' => '`.`']) . '`';
-    }
-
-    public function getTimestampFormatter()
-    {
-        return 'Y-m-d H:i:s';
     }
 
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")

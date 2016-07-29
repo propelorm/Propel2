@@ -69,7 +69,11 @@ class QuickGeneratorConfigTest extends TestCase
                             'adapter' => 'sqlite',
                             'dsn' => 'sqlite:fakeDb.sqlite',
                             'user'=> '',
-                            'password' => ''
+                            'password' => '',
+                            'model_paths' => [
+                                'src',
+                                'vendor'
+                            ]
                         ]
                     ]
                 ],
@@ -87,9 +91,33 @@ class QuickGeneratorConfigTest extends TestCase
         $this->assertEquals('path/to/composer', $generatorConfig->get()['paths']['composerDir']);
         $this->assertEquals('fakeConn', $generatorConfig->get()['runtime']['defaultConnection']);
         $this->assertEquals(['fakeConn', 'default'], $generatorConfig->get()['runtime']['connections']);
-        $this->assertEquals(['adapter' => 'sqlite', 'classname' => '\Propel\Runtime\Connection\ConnectionWrapper',
-            'dsn' => 'sqlite:fakeDb.sqlite', 'user' => '', 'password' => ''], $generatorConfig->get()['database']['connections']['fakeConn']);
-        $this->assertEquals(['adapter' => 'sqlite','classname' => 'Propel\Runtime\Connection\DebugPDO','dsn' => 'sqlite::memory:','user' => '',
-        'password' => ''], $generatorConfig->get()['database']['connections']['default']);
+        $this->assertEquals(
+            [
+                'adapter' => 'sqlite',
+                'classname' => '\Propel\Runtime\Connection\ConnectionWrapper',
+                'dsn' => 'sqlite:fakeDb.sqlite',
+                'user' => '',
+                'password' => '',
+                'model_paths' => [
+                    'src',
+                    'vendor'
+                ]
+            ],
+            $generatorConfig->get()['database']['connections']['fakeConn']
+        );
+        $this->assertEquals(
+            [
+                'adapter' => 'sqlite',
+                'classname' => 'Propel\Runtime\Connection\DebugPDO',
+                'dsn' => 'sqlite::memory:',
+                'user' => '',
+                'password' => '',
+                'model_paths' => [
+                    'src',
+                    'vendor'
+                ]
+            ],
+            $generatorConfig->get()['database']['connections']['default']
+        );
     }
 }

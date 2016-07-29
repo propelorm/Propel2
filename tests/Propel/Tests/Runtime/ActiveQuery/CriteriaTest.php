@@ -1082,14 +1082,14 @@ class CriteriaTest extends BookstoreTestBase
             ->condition('u1', 'book.title LIKE ?', '%test1%')
             ->condition('u2', 'book.isbn LIKE ?', '%test2%')
             ->combine(['u1', 'u2'], 'or')
-            ->filterByTitle('%test3%');
+            ->filterByTitle('%test3%', Criteria::LIKE);
         $result = $c->createSelectSql($params);
         $this->assertEquals($sql, $result);
 
         $params = [];
         $sql = $this->getSql("SELECT  FROM book WHERE (book.title LIKE :p1 AND (book.title LIKE :p2 OR book.isbn LIKE :p3))");
         $c = BookQuery::create()
-            ->filterByTitle('%test3%')
+            ->filterByTitle('%test3%', Criteria::LIKE)
             ->condition('u1', 'book.title LIKE ?', '%test1%')
             ->condition('u2', 'book.isbn LIKE ?', '%test2%')
             ->combine(['u1', 'u2'], 'or');

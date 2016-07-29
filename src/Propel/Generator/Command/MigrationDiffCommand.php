@@ -45,6 +45,7 @@ class MigrationDiffCommand extends AbstractCommand
             ->addOption('skip-tables',        null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'List of excluded tables', [])
             ->addOption('disable-identifier-quoting', null, InputOption::VALUE_NONE, 'Disable identifier quoting in SQL queries for reversed database tables.')
             ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
+            ->addOption('suffix',             null, InputOption::VALUE_OPTIONAL,  'A suffix for the migration class', '')
             ->setName('migration:diff')
             ->setAliases(['diff'])
             ->setDescription('Generate diff classes')
@@ -82,7 +83,7 @@ class MigrationDiffCommand extends AbstractCommand
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
 
         $connections = [];
         $optionConnections = $input->getOption('connection');
@@ -215,8 +216,8 @@ class MigrationDiffCommand extends AbstractCommand
         }
 
         $timestamp = time();
-        $migrationFileName  = $manager->getMigrationFileName($timestamp);
-        $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'));
+        $migrationFileName  = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
+        $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'), $input->getOption('suffix'));
 
         $file = $generatorConfig->getSection('paths')['migrationDir'] . DIRECTORY_SEPARATOR . $migrationFileName;
         file_put_contents($file, $migrationClassBody);

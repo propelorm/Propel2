@@ -58,6 +58,9 @@ abstract class AbstractCommand extends Command
             $properties['propel']['generator']['platformClass'] = $input->getOption('platform');
         }
 
+        if ($input->hasParameterOption('--recursive')) {
+            $properties['propel']['generator']['recursive'] = $input->getOption('recursive');
+        }
         return new GeneratorConfig($input->getOption('config-dir'), $properties);
     }
 
@@ -129,7 +132,7 @@ abstract class AbstractCommand extends Command
             $parts = preg_split('/=/', $element);
 
             if (2 === count($parts)) {
-                $extras[strtolower($parts[0])] = $parts[1];
+                $extras[strtolower($parts[0])] = urldecode($parts[1]);
             }
         }
         $extras['adapter'] = $adapter;

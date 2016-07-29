@@ -219,7 +219,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return $pkg;
         }
 
-        return strtr($pkg, '.', '/');
+        $path = $pkg;
+
+        $path = str_replace('...', '$$/', $path);
+        $path = strtr(ltrim($path, '.'), '.', '/');
+        $path = str_replace('$$/', '../', $path);
+
+        return $path;
     }
 
     /**

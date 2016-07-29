@@ -74,6 +74,48 @@ class MigrationTest extends TestCaseFixturesDatabase
         $this->assertContains('CREATE TABLE ', $content);
     }
 
+    public function testDiffCommandUsingSuffix()
+    {
+        $app = new Application('Propel', Propel::VERSION);
+        $command = new MigrationDiffCommand();
+        $app->add($command);
+
+        $files = glob($this->outputDir . '/PropelMigration_*.php');
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        $input = new \Symfony\Component\Console\Input\ArrayInput([
+            'command' => 'migration:diff',
+            '--schema-dir' => $this->schemaDir,
+            '--config-dir' => $this->configDir,
+            '--output-dir' => $this->outputDir,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform',
+            '--connection' => $this->connectionOption,
+            '--suffix' => 'an_explanatory_filename_suffix',
+            '--verbose' => true
+        ]);
+
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $app->setAutoExit(false);
+        $result = $app->run($input, $output);
+
+        if (0 !== $result) {
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
+        }
+
+        $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
+
+        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
+        $this->assertGreaterThanOrEqual(1, count($files));
+        $file = $files[0];
+
+        $content = file_get_contents($file);
+        $this->assertGreaterThanOrEqual(2, substr_count($content, "CREATE TABLE "));
+        $this->assertContains('CREATE TABLE ', $content);
+    }
+
     public function testUpCommand()
     {
         $app = new Application('Propel', Propel::VERSION);
@@ -197,6 +239,47 @@ class MigrationTest extends TestCaseFixturesDatabase
         $this->assertEquals(0, $result, 'migration:create tests exited successfully');
 
         $files = glob($this->outputDir . '/PropelMigration_*.php');
+        $this->assertGreaterThanOrEqual(1, count($files));
+        $file = $files[0];
+
+        $content = file_get_contents($file);
+        $this->assertNotContains('CREATE TABLE ', $content);
+    }
+
+    public function testCreateCommandUsingSuffix()
+    {
+        $app = new Application('Propel', Propel::VERSION);
+        $command = new MigrationCreateCommand();
+        $app->add($command);
+
+        $files = glob($this->outputDir . '/PropelMigration_*.php');
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        $input = new \Symfony\Component\Console\Input\ArrayInput([
+            'command' => 'migration:create',
+            '--schema-dir' => $this->schemaDir,
+            '--config-dir' => $this->configDir,
+            '--output-dir' => $this->outputDir,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform',
+            '--connection' => $this->connectionOption,
+            '--suffix' => 'an_explanatory_filename_suffix',
+            '--verbose' => true
+        ]);
+
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $app->setAutoExit(false);
+        $result = $app->run($input, $output);
+
+        if (0 !== $result) {
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
+        }
+
+        $this->assertEquals(0, $result, 'migration:create tests exited successfully');
+
+        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
         $this->assertGreaterThanOrEqual(1, count($files));
         $file = $files[0];
 

@@ -101,16 +101,6 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
-     * Returns the file path to the parent class.
-     *
-     * @return string
-     */
-    protected function getParentClassFilePath()
-    {
-        return ClassTools::getFilePath($this->getParentClasspath());
-    }
-
-    /**
      * Adds class phpdoc comment and opening of class.
      *
      * @param string &$script

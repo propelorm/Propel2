@@ -264,7 +264,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
                     $this->addFilterBySetCol($script, $col);
                 }
             }
-            
+
         }
         foreach ($this->getTable()->getForeignKeys() as $fk) {
             $this->addFilterByFK($script, $fk);
@@ -570,28 +570,34 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if ($table->hasCompositePrimaryKey()) {
             $pks = [];
             foreach ($table->getPrimaryKey() as $index => $column) {
-                $pks []= "\$key[$index]";
+                $pks[] = "\$key[$index]";
             }
         } else {
             $pks = '$key';
         }
         $pkHash = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
         $script .= "
-        if ((null !== (\$obj = {$tableMapClassName}::getInstanceFromPool({$pkHash}))) && !\$this->formatter) {
-            // the object is already in the instance pool
-            return \$obj;
-        }
+
         if (\$con === null) {
             \$con = Propel::getServiceContainer()->getReadConnection({$this->getTableMapClass()}::DATABASE_NAME);
         }
+
         \$this->basePreSelect(\$con);
-        if (\$this->formatter || \$this->modelAlias || \$this->with || \$this->select
-         || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers
-         || \$this->map || \$this->having || \$this->joins) {
+
+        if (
+            \$this->formatter || \$this->modelAlias || \$this->with || \$this->select
+            || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers
+            || \$this->map || \$this->having || \$this->joins
+        ) {
             return \$this->findPkComplex(\$key, \$con);
-        } else {
-            return \$this->findPkSimple(\$key, \$con);
         }
+
+        if ((null !== (\$obj = {$tableMapClassName}::getInstanceFromPool({$pkHash})))) {
+            // the object is already in the instance pool
+            return \$obj;
+        }
+
+        return \$this->findPkSimple(\$key, \$con);
     }
 ";
     }
@@ -1116,9 +1122,6 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         if (null === \$comparison) {
             if (is_array(\$$variableName)) {
                 \$comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', \$$variableName)) {
-                \$$variableName = str_replace('*', '%', \$$variableName);
-                \$comparison = Criteria::LIKE;
             }
         }";
         } elseif ($col->isBooleanType()) {
@@ -1182,7 +1185,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the singular filterByCol method for an Array column.
-     * 
+     *
      * @param string &$script The script will be modified in this method.
      * @param Column $col
      */

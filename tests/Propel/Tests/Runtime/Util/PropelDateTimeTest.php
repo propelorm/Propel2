@@ -216,6 +216,16 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, TestPropelDateTime::isTimestamp(1319580000));
         $this->assertEquals(false, TestPropelDateTime::isTimestamp('2011-07-20 00:00:00'));
     }
+
+    public function testCreateHighPrecision()
+    {
+        $createHP = PropelDateTime::createHighPrecision();
+        $this->assertInstanceOf(DateTime::class, $createHP);
+
+        setlocale(LC_ALL, 'de_DE.UTF-8');
+        $createHP = PropelDateTime::createHighPrecision();
+        $this->assertInstanceOf(DateTime::class, $createHP);
+    }
 }
 
 class TestPropelDateTime extends PropelDateTime

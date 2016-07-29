@@ -512,6 +512,7 @@ class ColumnMap
     {
         if (false !== ($pos = strrpos($name, '.'))) {
             $name = substr($name, $pos + 1);
+	     $name = trim($name," \t\n\r\0\x0B`'()\"[]~!-{}%^&.");
         }
 
         return strtoupper($name);

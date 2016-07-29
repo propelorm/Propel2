@@ -122,7 +122,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager = new ModelManager();
         $manager->setFilesystem($this->getFilesystem());
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
         $manager->setLoggerClosure(function ($message) use ($input, $output) {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);

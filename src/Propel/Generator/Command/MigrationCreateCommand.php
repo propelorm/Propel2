@@ -37,6 +37,7 @@ class MigrationCreateCommand extends AbstractCommand
             ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', [])
             ->addOption('editor',             null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
             ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
+            ->addOption('suffix',             null, InputOption::VALUE_OPTIONAL,  'A suffix for the migration class', '')
             ->setName('migration:create')
             ->setDescription('Create an empty migration class')
             ;
@@ -69,7 +70,7 @@ class MigrationCreateCommand extends AbstractCommand
 
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $input->getOption('recursive')));
+        $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
 
         $migrationsUp   = [];
         $migrationsDown = [];
@@ -80,8 +81,8 @@ class MigrationCreateCommand extends AbstractCommand
         }
 
         $timestamp = time();
-        $migrationFileName  = $manager->getMigrationFileName($timestamp);
-        $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'));
+        $migrationFileName  = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
+        $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'), $input->getOption('suffix'));
 
         $file = $generatorConfig->getSection('paths')['migrationDir'] . DIRECTORY_SEPARATOR . $migrationFileName;
         file_put_contents($file, $migrationClassBody);

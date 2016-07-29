@@ -230,7 +230,7 @@ class MigrationManager extends AbstractManager
         if (is_dir($path)) {
             $files = scandir($path);
             foreach ($files as $file) {
-                if (preg_match('/^PropelMigration_(\d+)\.php$/', $file, $matches)) {
+                if (preg_match('/^PropelMigration_(\d+).*\.php$/', $file, $matches)) {
                     $migrationTimestamps[] = (integer) $matches[1];
                 }
             }
@@ -272,9 +272,30 @@ class MigrationManager extends AbstractManager
         return $this->getOldestDatabaseVersion();
     }
 
-    public static function getMigrationClassName($timestamp)
+    public function getMigrationClassName($timestamp, $suffix = "")
     {
-        return sprintf('PropelMigration_%d', $timestamp);
+        $className = sprintf('PropelMigration_%d', $timestamp);
+        if ($suffix === "") {
+            $suffix = $this->findMigrationClassNameSuffix($timestamp);
+        }
+        if ($suffix !== "") {
+            $className .= '_' . $suffix;
+        }
+        return $className;
+    }
+
+    public function findMigrationClassNameSuffix($timestamp) {
+        $suffix = "";
+        $path = $this->getWorkingDirectory();
+        if (is_dir($path)) {
+            $files = scandir($path);
+            foreach ($files as $file) {
+                if (preg_match('/^PropelMigration_'.$timestamp.'(_)?(.*)\.php$/', $file, $matches)) {
+                    $suffix = (string) $matches[2];
+                }
+            }
+        }
+        return $suffix;
     }
 
     public function getMigrationObject($timestamp)
@@ -288,16 +309,18 @@ class MigrationManager extends AbstractManager
         return new $className();
     }
 
-    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = "")
+    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = "", $suffix = "")
     {
         $timeInWords = date('Y-m-d H:i:s', $timestamp);
         $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
-        $migrationClassName = $this->getMigrationClassName($timestamp);
+        $migrationClassName = $this->getMigrationClassName($timestamp, $suffix);
         $migrationUpString = var_export($migrationsUp, true);
         $migrationDownString = var_export($migrationsDown, true);
         $commentString = var_export($comment, true);
         $migrationClassBody = <<<EOP
 <?php
+
+use Propel\Generator\Manager\MigrationManager;
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
@@ -308,22 +331,22 @@ class $migrationClassName
 {
     public \$comment = $commentString;
 
-    public function preUp(\$manager)
+    public function preUp(MigrationManager \$manager)
     {
         // add the pre-migration code here
     }
 
-    public function postUp(\$manager)
+    public function postUp(MigrationManager \$manager)
     {
         // add the post-migration code here
     }
 
-    public function preDown(\$manager)
+    public function preDown(MigrationManager \$manager)
     {
         // add the pre-migration code here
     }
 
-    public function postDown(\$manager)
+    public function postDown(MigrationManager \$manager)
     {
         // add the post-migration code here
     }
@@ -356,9 +379,9 @@ EOP;
         return $migrationClassBody;
     }
 
-    public static function getMigrationFileName($timestamp)
+    public function getMigrationFileName($timestamp, $suffix = "")
     {
-        return sprintf('%s.php', self::getMigrationClassName($timestamp));
+        return sprintf('%s.php', $this->getMigrationClassName($timestamp, $suffix));
     }
 
     public static function getUser()
