@@ -62,7 +62,7 @@ XML
                 ),
             ))
             ),
-            array(<<<EOF
+            array(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -73,31 +73,31 @@ XML
       </connection>
       <slaves>
        <connection>
-        <dsn>mysql:host=slave-server1; dbname=bookstore</dsn>
+        <dsn>mysql:host=slave-server1;dbname=bookstore</dsn>
        </connection>
        <connection>
-        <dsn>mysql:host=slave-server2; dbname=bookstore</dsn>
+        <dsn>mysql:host=slave-server2;dbname=bookstore</dsn>
        </connection>
       </slaves>
     </datasource>
   </datasources>
 </config>
-EOF
+XML
 , array('datasources' => array(
     'bookstore' => array(
         'adapter' => 'mysql',
         'connection' => array('dsn' => 'mysql:host=localhost;dbname=bookstore'),
         'slaves' => array(
             'connection' => array(
-                array('dsn' => 'mysql:host=slave-server1; dbname=bookstore'),
-                array('dsn' => 'mysql:host=slave-server2; dbname=bookstore'),
+                array('dsn' => 'mysql:host=slave-server1;dbname=bookstore'),
+                array('dsn' => 'mysql:host=slave-server2;dbname=bookstore'),
             ),
         ),
     ),
     'default' => 'bookstore',
     ))
             ),
-            array(<<<EOF
+            array(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -109,7 +109,7 @@ EOF
     </datasource>
   </datasources>
 </config>
-EOF
+XML
 , array('datasources' => array(
                 'bookstore' => array(
                     'adapter' => 'mysql',
@@ -120,7 +120,7 @@ EOF
                 'default' => 'bookstore',
             ))
             ),
-            array(<<<EOF
+            array(<<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <profiler class="\Runtime\Runtime\Util\Profiler">
@@ -133,7 +133,7 @@ EOF
     <outerGlue> | </outerGlue>
   </profiler>
  </config>
-EOF
+XML
 , array('profiler' => array(
                 'class' => '\Runtime\Runtime\Util\Profiler',
                 'slowTreshold' => 0.2,

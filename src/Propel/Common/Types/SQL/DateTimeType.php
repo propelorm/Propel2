@@ -7,6 +7,7 @@ use Propel\Common\Types\AbstractType;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Map\FieldMap;
+use Propel\Runtime\Util\PropelDateTime;
 
 class DateTimeType extends AbstractType
 {
@@ -25,7 +26,10 @@ EOF;
         $method->setBody($body);
     }
 
-    public function databaseToProperty($value, FieldMap $fieldMap)
+    /**
+     * {@inheritdoc}
+     */
+    public function propertyToDatabase($value, FieldMap $fieldMap)
     {
         if ($value instanceof \DateTime) {
             $format = 'U';
@@ -46,8 +50,15 @@ EOF;
         return $value;
     }
 
-    public function propertyToDatabase($value, FieldMap $fieldMap)
+    /**
+     * {@inheritdoc}
+     */
+    public function databaseToProperty($value, FieldMap $fieldMap)
     {
-        return $this->databaseToProperty($value, $fieldMap);
+        if (!($value instanceof \DateTime)) {
+            $value = PropelDateTime::newInstance($value);
+        }
+
+        return $value;
     }
 }
