@@ -273,6 +273,7 @@ abstract class EntityMap
     public function propertyToDatabase($value, $fieldName)
     {
         $fieldType = $this->getFieldType($fieldName);
+
         return $fieldType->propertyToDatabase($value, $this->getField($fieldName));
     }
 
@@ -286,7 +287,8 @@ abstract class EntityMap
     public function databaseToProperty($value, $fieldName)
     {
         $fieldType = $this->getFieldType($fieldName);
-        return $fieldType->propertyToDatabase($value, $this->getField($fieldName));
+
+        return $fieldType->databaseToProperty($value, $this->getField($fieldName));
     }
 
     /**
@@ -1023,7 +1025,7 @@ abstract class EntityMap
         }
 
         if (!isset($this->relations[$name])) {
-            throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s. [%s]', $name, implode(',', array_keys($this->relations))));
+            throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s.', $name));
         }
 
         return $this->relations[$name];
