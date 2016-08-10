@@ -142,7 +142,7 @@ class SortableBehavior extends Behavior
 
         if ($this->useScope()) {
             $this->applyComponent('Object\OldScope', $builder);
-            
+
             if ('scope_value' !== $this->getParameter('scope_field')) {
                 $this->applyComponent('Object\ScopeAccessorMethod', $builder);
             }
@@ -194,6 +194,7 @@ class SortableBehavior extends Behavior
 
             $methodSignature = [];
             $buildScope      = [];
+            $buildScopeVars  = [];
 
             foreach ($this->getScopes() as $idx => $scope) {
 

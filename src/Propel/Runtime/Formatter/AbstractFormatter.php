@@ -11,11 +11,9 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveQuery\ModelWith;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\EntityMap;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
@@ -40,7 +38,6 @@ abstract class AbstractFormatter
 
     protected $hasLimit;
 
-    /** @var ActiveRecordInterface[] */
     protected $currentObjects;
 
     protected $collectionName;
@@ -223,17 +220,14 @@ abstract class AbstractFormatter
      * @param int    $col        Offset of the object in the list of objects to hydrate
      * @param string $entityName Propel model object entityName
      *
-     * @return ActiveRecordInterface
+     * @return object
      */
     protected function getWorkerObject($col, $entityName)
     {
         if (isset($this->currentObjects[$col])) {
-            $this->currentObjects[$col]->clearAllReferences();
-            $this->currentObjects[$col]->clear();
-            // TODO: also consider to return always a new $entityName(), it's a little fast that clear the previous and is must secure to clear all data/references!
-        } else {
-            $this->currentObjects[$col] = new $entityName();
+            $this->currentObjects[$col] = null;
         }
+        $this->currentObjects[$col] = new $entityName();
 
         return $this->currentObjects[$col];
     }
@@ -243,16 +237,15 @@ abstract class AbstractFormatter
      *
      * @param array  $row        associative array indexed by field number,
      *                           as returned by DataFetcher::fetch()
-     * @param string $entityName The entityNamename of the object to create
+     * @param string $entityName The entity name of the object to create
      * @param int    $col        The start field for the hydration (modified)
      *
-     * @return ActiveRecordInterface
+     * @return object
      */
     public function getSingleObjectFromRow($row, $entityName, &$col = 0)
     {
         $obj = $this->getWorkerObject($col, $entityName);
-        $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
-        return $obj;
+        return $this->getEntityMap()->populateObject($row, $col, $this->getDataFetcher()->getIndexType(), $obj);
     }
 }

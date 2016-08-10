@@ -29,7 +29,7 @@ class Constants extends BuildComponent
         $behavior = $this->getBehavior();
         $entityName = $this->getEntity()->getFullClassName();
 
-        $col = '';
+        $col = [];
 
         if ($behavior->useScope()) {
 

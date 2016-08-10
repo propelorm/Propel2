@@ -10,29 +10,28 @@
 
 use Propel\Generator\Util\QuickBuilder;
 
-use Propel\Runtime\Propel;
 use \Propel\Tests\TestCase;
 
 /**
- * Tests the generated objects for boolean column types accessor & mutator
+ * Tests the generated objects for boolean field types accessor & mutator
  *
  * @author Francois Zaninotto
  */
-class GeneratedObjectBooleanColumnTypeTest extends TestCase
+class GeneratedObjectBooleanFieldTypeActiveRecordTest extends TestCase
 {
     public function setUp()
     {
-        if (!class_exists('ComplexColumnTypeEntity4')) {
+        if (!class_exists('ComplexFieldTypeEntity4')) {
             $schema = <<<EOF
-<database name="generated_object_complex_type_test_4">
-    <table name="complex_column_type_entity_4">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="BOOLEAN" />
-        <column name="true_bar" type="BOOLEAN" defaultValue="true" />
-        <column name="false_bar" type="BOOLEAN" defaultValue="false" />
-        <column name="is_baz" type="BOOLEAN" />
-        <column name="has_xy" type="BOOLEAN" />
-    </table>
+<database name="generated_object_complex_type_test_4" activeRecord="true">
+    <entity name="ComplexFieldTypeEntity4">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="BOOLEAN" />
+        <field name="true_bar" type="BOOLEAN" defaultValue="true" />
+        <field name="false_bar" type="BOOLEAN" defaultValue="false" />
+        <field name="is_baz" type="BOOLEAN" />
+        <field name="has_xy" type="BOOLEAN" />
+    </entity>
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
@@ -41,9 +40,9 @@ EOF;
 
     public function testIsserName()
     {
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBar'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBaz'));
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'hasXy'));
+        $this->assertTrue(method_exists('\ComplexFieldTypeEntity4', 'isBar'));
+        $this->assertTrue(method_exists('\ComplexFieldTypeEntity4', 'isBaz'));
+        $this->assertTrue(method_exists('\ComplexFieldTypeEntity4', 'hasXy'));
     }
 
     public function providerForSetter()
@@ -76,7 +75,7 @@ EOF;
      */
     public function testSetterBooleanValue($value, $expected)
     {
-        $e = new ComplexColumnTypeEntity4();
+        $e = new \ComplexFieldTypeEntity4();
         $e->setBar($value);
         if ($expected) {
             $this->assertTrue($e->getBar());
@@ -89,10 +88,9 @@ EOF;
 
     public function testDefaultValue()
     {
-        $e = new ComplexColumnTypeEntity4();
+        $e = new \ComplexFieldTypeEntity4();
         $this->assertNull($e->getBar());
         $this->assertTrue($e->getTrueBar());
         $this->assertFalse($e->getFalseBar());
     }
-
 }

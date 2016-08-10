@@ -237,4 +237,4 @@ trait ComponentHelperTrait
             'namespace'
         );
     }
-} 
+}
