@@ -4,10 +4,9 @@ namespace Propel\Generator\Builder\Om\Component\Object;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentHelperTrait;
-use Propel\Generator\Model\Field;
 
 /**
- * Adds __construct method 
+ * Adds __construct method
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */

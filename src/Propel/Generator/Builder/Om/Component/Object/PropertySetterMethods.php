@@ -5,7 +5,6 @@ namespace Propel\Generator\Builder\Om\Component\Object;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\Field;
-use Propel\Generator\Model\NamingTool;
 
 /**
  * Adds all setter methods for all entity fields. Excludes fields marked as implementationDetail.
@@ -66,14 +65,50 @@ if (!is_resource(\$$varName) && \$$varName !== null) {
             $body = "
 \$$varName = (double)\$$varName;
 ";
-        } else {
+        } else if ($field->isPhpArrayType()) {
+            $cloUnserialized = $field->getName().'_unserialized';
+
+            $body = "
+if (\$this->$cloUnserialized !== \$$varName) {
+    \$this->$cloUnserialized = \$$varName;
+    \$this->$varName = '| ' . implode(' | ', \$$varName) . ' |';
+}
+";
+        } else if ($field->isBooleanType()) {
+            $body = "
+if (\$$varName !== null) {
+    if (is_string(\$$varName)) {
+        \$$varName = in_array(strtolower(\$$varName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+    } else {
+        \$$varName = (boolean) \$$varName;
+    }
+}
+";
+        } else if ($field->isEnumType()) {
+            $body = "
+{$this->getRepositoryAssignment()}
+if (\$$varName !== null) {
+    \$valueSet = \$repository->getEntityMap()->getField('{$field->getName()}')->getValueSet();
+    if (!in_array(\$$varName, \$valueSet)) {
+        throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$varName));
+    }
+    \$$varName = array_search(\$$varName, \$valueSet);
+}
+";
+        }
+
+        if (!$field->isPhpArrayType()) {
+            $body .= "
+\$this->$varName = \$$varName;
+";
         }
 
         $body .= "
-\$this->$varName = \$$varName;
-return \$this;";
+return \$this;
+";
 
-        $methodName = 'set' . NamingTool::toUpperCamelCase($field->getName());
+        $this->getDefinition()->addUseStatement('Propel\Runtime\Exception\PropelException');
+        $methodName = 'set' . $field->getMethodName();
 
         $method = $this->addMethod($methodName, $visibility)
             ->setType($className . '|$this')

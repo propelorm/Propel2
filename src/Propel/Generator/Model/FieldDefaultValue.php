@@ -113,4 +113,12 @@ class FieldDefaultValue
 
         return false; // Can't help, they are different
     }
+
+    /**
+     * 
+     */
+    public function getTypedValue()
+    {
+
+    }
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="bootstrap.php">
+
+  <testsuites>
+    <testsuite name="Propel2 Test Suite">
+      <directory>Propel/Tests/</directory>
+    </testsuite>
+  </testsuites>
+
+  <groups>
+    <exclude>
+      <group>database</group>
+      <group>pgsql</group>
+      <group>mysql</group>
+    </exclude>
+  </groups>
+
+  <filter>
+    <whitelist>
+      <directory>../src/Propel/</directory>
+      <exclude>
+        <directory>../src/Propel/Generator/Builder/SQL/Mssql</directory>
+        <directory>../src/Propel/Generator/Builder/SQL/Oracle</directory>
+        <directory>../src/Propel/Generator/Builder/SQL/Sqlsrv</directory>
+
+        <file>../src/Propel/Generator/Platform/MssqlPlatform.php</file>
+        <file>../src/Propel/Generator/Platform/OraclePlatform.php</file>
+        <file>../src/Propel/Generator/Platform/SqlsrvPlatform.php</file>
+
+        <file>../src/Propel/Generator/Reverse/MssqlSchemaParser.php</file>
+        <file>../src/Propel/Generator/Reverse/OracleSchemaParser.php</file>
+        <file>../src/Propel/Generator/Reverse/SqlsrvSchemaParser.php</file>
+
+        <directory>../src/Propel/Runtime/Adapter/MSSQL</directory>
+        <file>../src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php</file>
+        <file>../src/Propel/Runtime/Adapter/Pdo/OracleAdapter.php</file>
+        <file>../src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
+
+        <file>../src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php</file>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>

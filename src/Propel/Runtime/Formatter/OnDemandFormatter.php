@@ -70,7 +70,7 @@ class OnDemandFormatter extends ObjectFormatter
 
         /** @var OnDemandCollection $collection */
         $collection = new $class();
-        $collection->setModel($this->class);
+        $collection->setModel($this->getEntityName());
 
         return $collection;
     }
@@ -84,12 +84,12 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row)
+    public function getAllObjectsFromRow(array $row)
     {
         $col = 0;
 
         // main object
-        $class = $this->isSingleEntityInheritance ? call_user_func(array($this->entityMap, 'getOMClass'), $row, $col, false) : $this->class;
+        $class = $this->isSingleEntityInheritance ? call_user_func(array($this->entityMap, 'getOMClass'), $row, $col, false) : $this->getEntityName();
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {

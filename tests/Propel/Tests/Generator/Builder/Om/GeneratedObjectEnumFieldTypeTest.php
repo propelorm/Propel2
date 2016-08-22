@@ -12,46 +12,52 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
- * Tests the generated objects for enum column types accessor & mutator
+ * Tests the generated objects for enum field types accessor & mutator
  *
  * @author Francois Zaninotto
  */
-class GeneratedObjectEnumColumnTypeTest extends TestCase
+class GeneratedObjectEnumFieldTypeTest extends TestCase
 {
+    /** @var  Configuration */
+    private $con;
+
     public function setUp()
     {
-        if (!class_exists('ComplexColumnTypeEntity3')) {
+        if (!class_exists('ComplexFieldTypeEntity3')) {
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_3">
-    <table name="complex_column_type_entity_3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
-        <column name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar" />
-    </table>
+    <entity name="ComplexFieldTypeEntity3">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
+        <field name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar" />
+    </entity>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema);
+            $this->con = QuickBuilder::buildSchema($schema);
             // ok this is hackish but it makes testing of getter and setter independent of each other
             $publicAccessorCode = <<<EOF
-class PublicComplexColumnTypeEntity3 extends ComplexColumnTypeEntity3
+class PublicComplexFieldTypeEntity3 extends ComplexFieldTypeEntity3
 {
     public \$bar;
 }
 EOF;
             eval($publicAccessorCode);
+        } else {
+            $this->con = Configuration::getCurrentConfiguration();
         }
     }
 
     public function testGetter()
     {
-        $this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'getBar'));
-        $e = new \ComplexColumnTypeEntity3();
+        $this->assertTrue(method_exists('ComplexFieldTypeEntity3', 'getBar'));
+        $e = new \ComplexFieldTypeEntity3();
         $this->assertNull($e->getBar());
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new \PublicComplexFieldTypeEntity3();
         $e->bar = 0;
         $this->assertEquals('foo', $e->getBar());
         $e->bar = 3;
@@ -65,21 +71,21 @@ EOF;
      */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new \PublicComplexFieldTypeEntity3();
         $e->bar = 156;
         $e->getBar();
     }
 
     public function testGetterDefaultValue()
     {
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new \PublicComplexFieldTypeEntity3();
         $this->assertEquals('bar', $e->getBar2());
     }
 
     public function testSetter()
     {
-        $this->assertTrue(method_exists('\ComplexColumnTypeEntity3', 'setBar'));
-        $e = new \PublicComplexColumnTypeEntity3();
+        $this->assertTrue(method_exists('\ComplexFieldTypeEntity3', 'setBar'));
+        $e = new \PublicComplexFieldTypeEntity3();
         $e->setBar('foo');
         $this->assertEquals(0, $e->bar);
         $e->setBar(1);
@@ -95,26 +101,25 @@ EOF;
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new \ComplexFieldTypeEntity3();
         $e->setBar('bazz');
     }
 
     public function testValueIsPersisted()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new \ComplexFieldTypeEntity3();
         $e->setBar('baz');
-        $e->save();
-        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
-        $e = \ComplexColumnTypeEntity3Query::create()->findOne();
+        $this->getRepository()->save($e);
+        $e = \ComplexFieldTypeEntity3Query::create()->findOne();
         $this->assertEquals('baz', $e->getBar());
     }
 
     public function testValueIsCopied()
     {
-        $e1 = new \ComplexColumnTypeEntity3();
+        $e1 = new \ComplexFieldTypeEntity3();
         $e1->setBar('baz');
-        $e2 = new \ComplexColumnTypeEntity3();
-        $e1->copyInto($e2);
+        $e2 = new \ComplexFieldTypeEntity3();
+        $this->getRepository()->getEntityMap()->copyInto($e1, $e2);
         $this->assertEquals('baz', $e2->getBar());
     }
 
@@ -123,11 +128,15 @@ EOF;
      */
     public function testSetterWithSameValueDoesNotUpdateObject()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $repository= $this->getRepository();
+
+        $e = new \ComplexFieldTypeEntity3();
         $e->setBar('baz');
-        $e->resetModified();
+        $repository->save($e);
+        $this->assertFalse($this->con->getSession()->isChanged($e));
+
         $e->setBar('baz');
-        $this->assertFalse($e->isModified());
+        $this->assertFalse($this->con->getSession()->isChanged($e));
     }
 
     /**
@@ -135,13 +144,23 @@ EOF;
      */
     public function testSetterWithSameValueDoesNotUpdateHydratedObject()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $repository = $this->getRepository();
+        $e = new \ComplexFieldTypeEntity3();
         $e->setBar('baz');
-        $e->save();
+        $repository->save($e);
         // force hydration
-        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
-        $e = \ComplexColumnTypeEntity3Query::create()->findPk($e->getPrimaryKey());
+        $this->con->getSession()->clearFirstLevelCache();
+        $e = $repository->createQuery()->findPk($e->getId());
         $e->setBar('baz');
-        $this->assertFalse($e->isModified());
+        $this->assertFalse($this->con->getSession()->isChanged($e));
+    }
+
+    protected function getRepository($entityName = null)
+    {
+        if (null === $entityName) {
+            $entityName = '\ComplexFieldTypeEntity3';
+        }
+
+        return $this->con->getRepository($entityName);
     }
 }

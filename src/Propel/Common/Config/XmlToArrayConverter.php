@@ -80,6 +80,7 @@ class XmlToArrayConverter
     protected static function simpleXmlToArray($xml)
     {
         $ar = array();
+
         foreach ($xml->children() as $k => $v) {
             // recurse the child
             $child = self::simpleXmlToArray($v);
@@ -96,6 +97,9 @@ class XmlToArrayConverter
                     // then we will name the current key after that id
                     $k = self::getConvertedXmlValue($av);
                 } else {
+                    if ('' === $child) {
+                        $child = [];
+                    }
                     // otherwise, just add the attribute like a child element
                     $child[$ak] = self::getConvertedXmlValue($av);
                 }

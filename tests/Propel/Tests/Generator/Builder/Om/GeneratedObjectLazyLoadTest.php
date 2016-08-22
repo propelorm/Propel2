@@ -12,72 +12,83 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Configuration;
+use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
- * Tests the generated Object classes for lazy load columns.
+ * Tests the generated Object classes for lazy load fields.
  *
  */
 class GeneratedObjectLazyLoadTest extends TestCase
 {
+    /** @var  ConnectionWrapper */
+    private $con;
+
+    /** @var  Configuration */
+    private $config;
+
     public function setUp()
     {
-        if (!class_exists('LazyLoadActiveRecord')) {
+        if (!class_exists('\LazyLoadEntity')) {
             $schema = <<<EOF
-<database name="lazy_load_active_record_1">
-    <table name="lazy_load_active_record">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="VARCHAR" size="100" />
-        <column name="bar" type="VARCHAR" size="100" lazyLoad="true" />
-        <column name="baz" type="VARCHAR" size="100" defaultValue="world" lazyLoad="true" />
-    </table>
+<database name="lazy_load_entity_1">
+    <entity name="LazyLoadEntity">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="VARCHAR" size="100" />
+        <field name="bar" type="VARCHAR" size="100" lazyLoad="true" />
+        <field name="baz" type="VARCHAR" size="100" defaultValue="world" lazyLoad="true" />
+    </entity>
 </database>
 EOF;
-            //QuickBuilder::debugClassesForTable($schema, 'lazy_load_active_record');
-            QuickBuilder::buildSchema($schema);
+            //QuickBuilder::debugClassesForEntity($schema, 'lazy_load_active_record');
+            $this->config = QuickBuilder::buildSchema($schema);
         }
+
+        if (null === $this->config) {
+            $this->config = Configuration::getCurrentConfiguration();
+        }
+
+        $this->con = $this->config->getConnectionManager("lazy_load_entity_1")->getWriteConnection();
     }
 
-    public function testNormalColumnsRequireNoQueryOnGetter()
+    public function testNormalFieldsRequireNoQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
-        $con->useDebug(true);
-        $obj = new \LazyLoadActiveRecord();
+        $this->con->useDebug(true);
+        $obj = new \LazyLoadEntity();
         $obj->setFoo('hello');
-        $obj->save($con);
-        \Map\LazyLoadActiveRecordTableMap::clearInstancePool();
-        $obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
-        $count = $con->getQueryCount();
+        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getSession()->clearFirstLevelCache();
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $count = $this->con->getQueryCount();
         $this->assertEquals('hello', $obj2->getFoo());
-        $this->assertEquals($count, $con->getQueryCount());
+        $this->assertEquals($count, $this->con->getQueryCount());
     }
 
-    public function testLazyLoadedColumnsRequireAnAdditionalQueryOnGetter()
+    public function testLazyLoadedFieldsRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
-        $con->useDebug(true);
-        $obj = new \LazyLoadActiveRecord();
+        $this->con->useDebug(true);
+        $obj = new \LazyLoadEntity();
         $obj->setBar('hello');
-        $obj->save($con);
-        \Map\LazyLoadActiveRecordTableMap::clearInstancePool();
-        $obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
-        $count = $con->getQueryCount();
-        $this->assertEquals('hello', $obj2->getBar($con));
-        $this->assertEquals($count + 1, $con->getQueryCount());
+        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getSession()->clearFirstLevelCache();
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $count = $this->con->getQueryCount();
+        $this->assertEquals('hello', $obj2->getBar($this->con));
+        $this->assertEquals($count + 1, $this->con->getQueryCount());
     }
 
-    public function testLazyLoadedColumnsWithDefaultRequireAnAdditionalQueryOnGetter()
+    public function testLazyLoadedFieldsWithDefaultRequireAnAdditionalQueryOnGetter()
     {
-        $con = Propel::getServiceContainer()->getConnection(\Map\LazyLoadActiveRecordTableMap::DATABASE_NAME);
-        $con->useDebug(true);
-        $obj = new \LazyLoadActiveRecord();
+        $this->con->useDebug(true);
+        $obj = new \LazyLoadEntity();
         $obj->setBaz('hello');
-        $obj->save($con);
-        \Map\LazyLoadActiveRecordTableMap::clearInstancePool();
-        $obj2 = \LazyLoadActiveRecordQuery::create()->findPk($obj->getId(), $con);
-        $count = $con->getQueryCount();
-        $this->assertEquals('hello', $obj2->getBaz($con));
-        $this->assertEquals($count + 1, $con->getQueryCount());
+        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getSession()->clearFirstLevelCache();
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $count = $this->con->getQueryCount();
+        $this->assertEquals('hello', $obj2->getBaz($this->con));
+        $this->assertEquals($count + 1, $this->con->getQueryCount());
     }
 }

@@ -64,18 +64,32 @@ class Properties extends BuildComponent
 
         $description[] = "The value for the $clo field.";
 
+        $defaultValue = null;
         if ($field->getDefaultValue()) {
             if ($field->getDefaultValue()->isExpression()) {
                 $expression = $field->getDefaultValue()->getValue();
                 $description[] = "Note: this field has a database default value of: (expression) $expression";
             } else {
-                $defaultValue = $this->getDefaultValueString($field);
-                $description[] = "Note: this field has a database default value of: $defaultValue";
+                $defaultValue = $field->getDefaultValue()->getValue();
+                if ($field->isPhpArrayType()) {
+                    $defaultValue = $this->getDefaultValueString($field);
+                    $defaultValue = substr($defaultValue, 1, -1);
+                }
+                $description[] = "Note: this field has a database default value of: '$defaultValue'";
             }
         }
 
         $this->addProperty($clo)
             ->setType($cpType)
-            ->setDescription($description);
+            ->setDescription($description)
+            ->setValue($defaultValue)
+        ;
+
+        if ($field->isPhpArrayType()) {
+            $this->addProperty($clo.'_unserialized')
+                ->setType('array')
+                ->setDescription("The effective array $clo")
+            ;
+        }
     }
 }
