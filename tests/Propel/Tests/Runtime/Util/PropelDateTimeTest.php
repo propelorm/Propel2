@@ -226,6 +226,22 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
         $createHP = PropelDateTime::createHighPrecision();
         $this->assertInstanceOf(DateTime::class, $createHP);
     }
+
+    public function testCreateHighPrecisioniTz()
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set('America/New_York');
+
+        $createHP = PropelDateTime::createHighPrecision();
+
+        $dt = new \DateTime();
+        $dt->setTimezone(new \DateTimeZone('America/New_York'));
+
+        $this->assertEquals(date_timezone_get($dt), date_timezone_get($createHP));
+
+        date_default_timezone_set($originalTimezone);
+    }
+
 }
 
 class TestPropelDateTime extends PropelDateTime
