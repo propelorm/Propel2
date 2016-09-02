@@ -2489,16 +2489,9 @@ class Criteria
         return $params;
     }
 
-    public function doCount(ConnectionInterface $con = null)
+    public function createCountSql(&$params)
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
-
-        $params = [];
         if ($this->needsComplexCount()) {
             if ($this->needsSelectAliases()) {
                 if ($this->getHaving()) {
@@ -2515,6 +2508,21 @@ class Criteria
             $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
             $sql = $this->createSelectSql($params);
         }
+        return $sql;
+    }
+
+    public function doCount(ConnectionInterface $con = null)
+    {
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
+        }
+
+        $params = [];
+        $sql = $this->createCountSql($params);
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);

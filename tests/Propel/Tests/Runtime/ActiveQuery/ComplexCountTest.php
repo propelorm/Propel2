@@ -11,11 +11,8 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Bookstore\Base\BookQuery;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Test class for ComplexCountTest.
@@ -30,7 +27,7 @@ class ComplexCountTest extends BookstoreTestBase
     {
         $c = new AuthorQuery();
         $c->leftJoinWithBook();
-        $c->addHaving('COUNT(Book.id) > 1');
+        $c->having('COUNT(book.id) > 1');
 
         $this->assertTrue($c->needsComplexCount(), 'query needs complex count');
 
@@ -38,8 +35,19 @@ class ComplexCountTest extends BookstoreTestBase
 
         $this->assertTrue((bool) $c->getHaving(), 'query has a having clause');
 
-        $nbAuthorsWithAtLeastOneBook = $c->count();
+        $params = [];
+        $countSql = $c->createCountSql($params);
+        $expectedCountSql = $this->getSql("SELECT COUNT(*) FROM (SELECT author.id AS author_id FROM author LEFT JOIN book ON (author.id=book.author_id) HAVING COUNT(book.id) > 1) propelmatch4cnt");
 
-        $this->assertEquals(0, $nbAuthorsWithAtLeastOneBook, 'query returns expected count in an empty database');
+        $this->assertEquals($expectedCountSql, $countSql, 'count sql is defined as expected');
+
+        $nbBooks = BookQuery::create()->count();
+        $this->assertEquals(4, $nbBooks, 'expected book count in test dataset');
+
+        $nbAuthors = AuthorQuery::create()->count();
+        $this->assertEquals(4, $nbAuthors, 'expected author count in test dataset');
+
+        $nbAuthorsWithAtLeastOneBook = $c->count();
+        $this->assertEquals(1, $nbAuthorsWithAtLeastOneBook, 'query returns expected count in test dataset');
     }
 }
