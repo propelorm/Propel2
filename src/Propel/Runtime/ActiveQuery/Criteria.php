@@ -2502,7 +2502,9 @@ class Criteria
         if ($this->needsComplexCount()) {
             if ($this->needsSelectAliases()) {
                 if ($this->getHaving()) {
-                    throw new LogicException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                    $selectColumns = $this->getSelectColumns();
+                    $firstSelectColumn = array_shift($selectColumns);
+                    $this->clearSelectColumns()->addSelectColumn($firstSelectColumn);
                 }
                 $db->turnSelectColumnsToAliases($this);
             }

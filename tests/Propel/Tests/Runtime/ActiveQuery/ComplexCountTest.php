@@ -10,10 +10,12 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Test class for ComplexCountTest.
@@ -24,9 +26,6 @@ use Propel\Runtime\Propel;
  */
 class ComplexCountTest extends BookstoreTestBase
 {
-    /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     */
     public function testCountQueryWhenUsingHavingAndDuplicateColumnNamesInTheSelectPart()
     {
         $c = new AuthorQuery();
@@ -40,5 +39,7 @@ class ComplexCountTest extends BookstoreTestBase
         $this->assertTrue((bool) $c->getHaving(), 'query has a having clause');
 
         $nbAuthorsWithAtLeastOneBook = $c->count();
+
+        $this->assertEquals(0, $nbAuthorsWithAtLeastOneBook, 'query returns expected count in an empty database');
     }
 }
