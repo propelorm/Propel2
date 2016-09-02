@@ -694,9 +694,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->_or()
             ->filterBySecondAuthor($grass);
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM essay LEFT JOIN author first_author ON (essay.first_author_id=first_author.id) LEFT JOIN author second_author ON (essay.second_author_id=second_author.id) WHERE (essay.first_author_id=:p1 OR essay.second_author_id=:p2)',
-            $essaysQuery->createSelectSql($params = [])
+            $essaysQuery->createSelectSql($params)
         );
 
         $expected = EssayQuery::create()
@@ -717,9 +718,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) WHERE essay_related_by_first_author.id=:p1',
-            $authorsQuery->createSelectSql($params = [])
+            $authorsQuery->createSelectSql($params)
         );
 
         $expected = AuthorQuery::create()
@@ -744,9 +746,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM author LEFT JOIN essay ON (author.id=essay.first_author_id) INNER JOIN essay ON (author.id=essay.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
-            $authorsQuery->createSelectSql($params = [])
+            $authorsQuery->createSelectSql($params)
         );
 
         $exception = null;
@@ -777,9 +780,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM author CROSS JOIN essay LEFT JOIN essay EssayRelatedByFirstAuthorId ON (author.id=EssayRelatedByFirstAuthorId.first_author_id) INNER JOIN essay EssayRelatedBySecondAuthorId ON (author.id=EssayRelatedBySecondAuthorId.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
-            $authorsQuery->createSelectSql($params = [])
+            $authorsQuery->createSelectSql($params)
         );
 
         $expected = AuthorQuery::create()
@@ -810,9 +814,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) INNER JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
-            $authorsQuery->createSelectSql($params = [])
+            $authorsQuery->createSelectSql($params)
         );
 
         $expected = AuthorQuery::create()
@@ -837,9 +842,10 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->filterById($e2->getId())
             ->endUse();
 
+        $params = [];
         $this->assertEquals(
             'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) LEFT JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
-            $authorsQuery->createSelectSql($params = [])
+            $authorsQuery->createSelectSql($params)
         );
 
         $expected = AuthorQuery::create()
