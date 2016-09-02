@@ -33,6 +33,8 @@ class ComplexCountTest extends BookstoreTestBase
         $c->leftJoinWithBook();
         $c->addHaving('COUNT(Book.id) > 1');
 
+        $this->assertTrue($c->needsComplexCount(), 'query needs complex count');
+
         $this->assertTrue($c->needsSelectAliases(), 'query needs select aliases');
 
         $this->assertTrue((bool) $c->getHaving(), 'query has a having clause');

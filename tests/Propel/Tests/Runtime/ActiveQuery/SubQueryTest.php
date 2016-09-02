@@ -261,8 +261,10 @@ class SubQueryTest extends BookstoreTestBase
         $c = new BookQuery();
         $c->addSelectQuery($subCriteria, 'subCriteriaAlias');
         $c->filterByPrice(20, Criteria::LESS_THAN);
-        $nbBooks = $c->count();
 
+        $this->assertTrue($c->needsComplexCount(), 'addSelectQuery() doCount implies a need for complex count');
+
+        $nbBooks = $c->count();
         $query = Propel::getConnection()->getLastExecutedQuery();
 
         $sql = $this->getSql("SELECT COUNT(*) FROM (SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS subCriteriaAlias WHERE subCriteriaAlias.price<20) propelmatch4cnt");
