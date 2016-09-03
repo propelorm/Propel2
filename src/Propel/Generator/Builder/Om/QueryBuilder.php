@@ -974,11 +974,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Example usage:
      * <code>
      * \$query->filterBy$colPhpName('fooValue');   // WHERE $colName = 'fooValue'
-     * \$query->filterBy$colPhpName('%fooValue%'); // WHERE $colName LIKE '%fooValue%'
+     * \$query->filterBy$colPhpName('%fooValue%', Criteria::LIKE); // WHERE $colName LIKE '%fooValue%'
      * </code>
      *
-     * @param     string \$$variableName The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)";
+     * @param     string \$$variableName The value to use as filter.";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
