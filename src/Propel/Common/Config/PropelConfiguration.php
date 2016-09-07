@@ -123,6 +123,7 @@ class PropelConfiguration implements ConfigurationInterface
                                             ->scalarNode('MYSQL_ATTR_SSL_CA')->end()
                                             ->scalarNode('MYSQL_ATTR_SSL_CERT')->end()
                                             ->scalarNode('MYSQL_ATTR_SSL_KEY')->end()
+                                            ->scalarNode('MYSQL_ATTR_MAX_BUFFER_SIZE')->end()
                                         ->end()
                                     ->end()
                                     ->arrayNode('attributes')
