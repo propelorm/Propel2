@@ -457,7 +457,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
             $relatedVersionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($foreignVersionTable));
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
-            $fkColumn = $fk->getLocalColumn();
+            $fkColumn = $foreignTable->getFirstPrimaryKeyColumn();
             $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
 
             $script .= "

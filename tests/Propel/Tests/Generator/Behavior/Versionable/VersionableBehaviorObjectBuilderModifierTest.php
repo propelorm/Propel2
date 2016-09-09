@@ -583,6 +583,10 @@ EOF;
         $bs = $a->getVersionableBehaviorTest5s();
         $this->assertEquals(1, $bs[0]->getVersion());
         $this->assertEquals(1, $bs[1]->getVersion());
+
+        $bs[0]->toVersion(2);
+        $a = $bs[0]->getVersionableBehaviorTest4();
+        $this->assertEquals(2, $a->getVersion());
     }
 
     public function testGetLastVersionNumber()
