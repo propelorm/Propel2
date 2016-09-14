@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./vendor/bin/phpunit -c tests/agnostic.phpunit.xml
+./vendor/bin/phpunit -c tests/agnostic.phpunit.xml $@
