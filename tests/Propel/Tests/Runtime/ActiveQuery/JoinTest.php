@@ -201,11 +201,11 @@ class JoinTest extends BaseTestCase
 
         $j3 = new Join('foo', 'bar', 'INNER JOIN');
         $j3->addCondition('baz.foo', 'baz.bar');
-        $this->assertFalse($j1->equals($j3), 'Joins with differend conditionsare not equal');
+        $this->assertFalse($j1->equals($j3), 'Joins with different conditions are not equal');
 
         $j4 = new Join('foo', 'bar', 'INNER JOIN');
         $j4->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID', 'a', Join::EQUAL);
-        $this->assertFalse($j1->equals($j4), 'Joins with differend clauses not equal');
+        $this->assertFalse($j1->equals($j4), 'Joins with different clauses not equal');
 
         $j5 = new Join('foo', 'bar');
         $j6 = new Join('foo', 'bar');
