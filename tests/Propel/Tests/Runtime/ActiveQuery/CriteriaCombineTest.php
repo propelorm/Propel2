@@ -471,15 +471,12 @@ class CriteriaCombineTest extends BaseTestCase
 
         $clonedCriteria->combine(['cond12', 'cond34'], Criteria::LOGICAL_OR);
 
-        $expect3 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR ((INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4) AND INVOICE.COST5>=:p5))");
-        //$expect3 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
+        $expect3 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
         $expect_params3 = [
             ['table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'],
             ['table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'],
             ['table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'],
             ['table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'],
-            // Should not be required here
-            ['table' => 'INVOICE', 'column' => 'COST5', 'value' => '5000'],
         ];
 
         $params3 = [];

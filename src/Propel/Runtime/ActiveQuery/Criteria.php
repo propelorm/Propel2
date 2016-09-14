@@ -871,7 +871,7 @@ class Criteria
                 throw new LogicException(sprintf('Cannot combine unknown condition %s', $key));
             }
         }
-        $firstCriterion = array_shift($namedCriterions);
+        $firstCriterion = clone array_shift($namedCriterions);
         foreach ($namedCriterions as $criterion) {
             $firstCriterion->$operatorMethod($criterion);
         }
