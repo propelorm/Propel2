@@ -2197,14 +2197,20 @@ class ModelCriteria extends BaseModelCriteria
 
         // Maybe it's a magic call to a qualified joinWith method, e.g. 'leftJoinWith' or 'joinWithAuthor'
         if (false !== ($pos = stripos($name, 'joinWith'))) {
+            $joinType = null;
+
             $type = substr($name, 0, $pos);
             if (in_array($type, ['left', 'right', 'inner'])) {
                 $joinType = strtoupper($type) . ' JOIN';
-            } else {
-                $joinType = isset($arguments[0]) ? $arguments[0] : Criteria::INNER_JOIN;
             }
 
             $relation = substr($name, $pos + 8);
+            if (!$relation) {
+                $relation = $arguments[0];
+                $joinType = isset($arguments[1]) ? $arguments[1] : $joinType;
+            } else {
+                $joinType = isset($arguments[0]) ? $arguments[0] : $joinType;
+            }
 
             return $this->joinWith($relation, $joinType);
         }
