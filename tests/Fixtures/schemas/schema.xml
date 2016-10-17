@@ -9,7 +9,7 @@
     <entity name="Book" description="Book Table">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
         <field name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
-        <field name="isbn" required="true" type="VARCHAR" size="24" phpName="ISBN" description="ISBN Number" />
+        <field name="isbn" required="true" type="VARCHAR" size="24" description="ISBN Number" />
         <field name="price" required="false" type="FLOAT" description="Price of the book." />
     </entity>
 
@@ -38,7 +38,7 @@
     </entity>
 
     <!-- Test one-to-one (1:1) relationship -->
-    <entity name="CustomerAccount" reloadOnInsert="true" reloadOnUpdate="true" description="A entity that represents a bookstore customer's account.">
+    <entity name="CustomerAccount" reloadOnInsert="true" reloadOnUpdate="true">
         <field name="customerId" type="INTEGER" primaryKey="true" description="Primary key for the account ..." />
         <field name="enabled" type="BOOLEAN" default="true" />
         <field name="notEnabled" type="BOOLEAN" default="false" />
@@ -48,7 +48,7 @@
         </relation>
     </entity>
 
-    <!-- Test Views (read-only entitys) -->
+    <!-- Test Views (read-only entities) -->
     <entity name="ContestView" readOnly="true" schema="contest">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <field name="name" type="VARCHAR" size="100" />

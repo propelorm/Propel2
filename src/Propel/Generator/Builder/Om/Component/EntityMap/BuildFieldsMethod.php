@@ -26,7 +26,7 @@ class BuildFieldsMethod extends BuildComponent
 
         foreach ($this->getEntity()->getFields() as $field) {
             $fieldName = $field->getName();
-            $columnName = $field->getColumnName();
+            $columnName = $field->getSqlName();
             if (!$columnName) {
                 $columnName = $this->getPlatform()->getName($field);
             }
@@ -103,7 +103,7 @@ class BuildFieldsMethod extends BuildComponent
             }
 
             $body .= "
-\$this->getField('$fieldName')->setColumnName('$columnName');";
+\$this->getField('$fieldName')->setSqlName('$columnName');";
         } // foreach
 
         $this->addMethod('buildFields')

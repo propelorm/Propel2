@@ -30,9 +30,9 @@ class Constants extends BuildComponent
         $constant->setValue($entity->getDatabase()->getName());
         $this->getDefinition()->setConstant($constant);
 
-        $constant = new PhpConstant('TABLE_NAME');
+        $constant = new PhpConstant('SQL_NAME');
         $constant->setDescription("The table name");
-        $constant->setValue($entity->getTableName());
+        $constant->setValue($entity->getSqlName());
         $this->getDefinition()->setConstant($constant);
 
         $constant = new PhpConstant('ENTITY_CLASS');
@@ -49,9 +49,9 @@ class Constants extends BuildComponent
             $this->getDefinition()->setConstant($constant);
         }
 
-        $constant = new PhpConstant('FQ_TABLE_NAME');
+        $constant = new PhpConstant('FQ_SQL_NAME');
         $constant->setDescription("The full qualified table name (with schema name)");
-        $constant->setValue($entity->getFQTableName());
+        $constant->setValue($entity->getSqlName());
         $this->getDefinition()->setConstant($constant);
     }
 }

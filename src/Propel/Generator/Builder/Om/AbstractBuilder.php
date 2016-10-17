@@ -199,7 +199,7 @@ abstract class AbstractBuilder extends DataModelBuilder
     /**
      * Returns default key type.
      *
-     * If not presented in configuration default will be 'TYPE_PHPNAME'
+     * If not presented in configuration default will be 'TYPE_FIELDNAME'
      *
      * @return string
      */
@@ -207,7 +207,7 @@ abstract class AbstractBuilder extends DataModelBuilder
     {
         $defaultKeyType = $this->getBuilder()->getBuildProperty('generator.objectModel.defaultKeyType')
             ? $this->getBuilder()->getBuildProperty('generator.objectModel.defaultKeyType')
-            : 'phpName';
+            : 'fieldName';
 
         return "TYPE_".strtoupper($defaultKeyType);
     }

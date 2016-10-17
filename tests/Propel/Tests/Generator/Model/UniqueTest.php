@@ -20,36 +20,36 @@ use Propel\Generator\Model\Unique;
 class UniqueTest extends ModelTestCase
 {
     /**
-     * @dataProvider provideTableSpecificAttributes
+     * @dataProvider provideEntitySpecificAttributes
      *
      */
-    public function testCreateDefaultUniqueIndexName($tableName, $maxColumnNameLength, $indexName)
+    public function testCreateDefaultUniqueIndexName($entityName, $maxFieldNameLength, $indexSqlName, $indexName)
     {
         $database = $this->getDatabaseMock('bookstore');
         $database
             ->expects($this->any())
-            ->method('getMaxColumnNameLength')
-            ->will($this->returnValue($maxColumnNameLength))
+            ->method('getMaxFieldNameLength')
+            ->will($this->returnValue($maxFieldNameLength))
         ;
 
-        $table = $this->getTableMock($tableName, [
-            'common_name' => $tableName,
+        $entity = $this->getEntityMock($entityName, [
             'unices'      => [ new Unique(), new Unique() ],
             'database'    => $database,
         ]);
 
         $index = new Unique();
-        $index->setTable($table);
+        $index->setEntity($entity);
 
         $this->assertTrue($index->isUnique());
+        $this->assertSame($indexSqlName, $index->getSqlName());
         $this->assertSame($indexName, $index->getName());
     }
 
-    public function provideTableSpecificAttributes()
+    public function provideEntitySpecificAttributes()
     {
         return [
-            [ 'books', 64, 'books_u_no_columns' ],
-            [ 'super_long_table_name', 16, 'super_long_table' ],
+            [ 'books', 64, 'books_u_no_fields', 'booksUNoFields' ],
+            [ 'super_long_entity_name', 17, 'super_long_entity', 'superLongEntity' ],
         ];
     }
 }

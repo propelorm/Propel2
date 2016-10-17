@@ -174,9 +174,9 @@ class BehaviorLocator
      */
     private function getCoreBehavior($name)
     {
-        $phpName = NamingTool::toUpperCamelCase($name);
+        $name = NamingTool::toUpperCamelCase($name);
 
-        return sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $phpName, $phpName);
+        return sprintf('\\Propel\\Generator\\Behavior\\%s\\%sBehavior', $name, $name);
     }
 
     /**

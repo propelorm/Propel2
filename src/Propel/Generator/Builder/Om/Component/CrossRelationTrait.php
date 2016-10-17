@@ -70,7 +70,7 @@ trait CrossRelationTrait
      */
     protected function getCrossRelationVarName(CrossRelation $crossRelation)
     {
-        return lcfirst($this->getCrossRelationPhpName($crossRelation));
+        return lcfirst($this->getCrossRelationName($crossRelation));
     }
 
     /**
@@ -79,23 +79,23 @@ trait CrossRelationTrait
      *
      * @return string
      */
-    protected function getCrossRelationPhpName(CrossRelation $crossRelation, $plural = true)
+    protected function getCrossRelationName(CrossRelation $crossRelation, $plural = true)
     {
         $names = [];
 
         if ($plural) {
             if ($pks = $crossRelation->getUnclassifiedPrimaryKeys()) {
                 //we have a non fk as pk as well, so we need to make pluralisation on our own and can't
-                //rely on getRelationPhpName`s pluralisation
+                //rely on getRelationName`s pluralisation
                 foreach ($crossRelation->getRelations() as $relation) {
-                    $names[] = $this->getRelationPhpName($relation, false);
+                    $names[] = $this->getRelationName($relation, false);
                 }
             } else {
                 //we have only fks, so give us names with plural and return those
                 $lastIdx = count($crossRelation->getRelations()) - 1;
                 foreach ($crossRelation->getRelations() as $idx => $relation) {
                     $needPlural = $idx === $lastIdx; //only last fk should be plural
-                    $names[] = $this->getRelationPhpName($relation, $needPlural);
+                    $names[] = $this->getRelationName($relation, $needPlural);
                 }
 
                 return implode($names);
@@ -103,7 +103,7 @@ trait CrossRelationTrait
         } else {
             // no plural, so $plural=false
             foreach ($crossRelation->getRelations() as $relation) {
-                $names[] = $this->getRelationPhpName($relation, false);
+                $names[] = $this->getRelationName($relation, false);
             }
         }
 
@@ -146,7 +146,7 @@ trait CrossRelationTrait
                         $fks
                     ))
             ) {
-                $names[] = $this->getRelationPhpName($relation, false);
+                $names[] = $this->getRelationName($relation, false);
             }
         }
 
@@ -200,7 +200,7 @@ trait CrossRelationTrait
                 if ($relation === $crossRelation->getIncomingRelation()) {
                     $names[] = '$this';
                 } else {
-                    $names[] = '$' . lcfirst($this->getRelationPhpName($relation, false));
+                    $names[] = '$' . lcfirst($this->getRelationName($relation, false));
                 }
             }
         }
@@ -240,11 +240,11 @@ trait CrossRelationTrait
             }
 
             $phpType = $typeHint = $this->getClassNameFromEntity($fk->getForeignEntity());
-            $name = '$' . lcfirst($this->getRelationPhpName($fk));
+            $name = '$' . lcfirst($this->getRelationName($fk));
 
             $normalizedShortSignature[] = $name;
 
-            $parameter = new PhpParameter(lcfirst($this->getRelationPhpName($fk)));
+            $parameter = new PhpParameter(lcfirst($this->getRelationName($fk)));
             if ($typeHint) {
                 $parameter->setType($typeHint);
             }
@@ -291,10 +291,10 @@ trait CrossRelationTrait
     protected function getCrossRelationAddMethodInformation(CrossRelation $crossRelation, $relation = null)
     {
         if ($relation instanceof Relation) {
-            $crossObjectName = '$' . lcfirst($this->getRelationPhpName($relation));
+            $crossObjectName = '$' . lcfirst($this->getRelationName($relation));
             $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
 
-            $parameter = new PhpParameter(lcfirst($this->getRelationPhpName($relation)));
+            $parameter = new PhpParameter(lcfirst($this->getRelationName($relation)));
             $parameter->setType($crossObjectClassName);
             if ($relation->isAtLeastOneLocalFieldRequired()) {
                 $parameter->setDefaultValue(null);

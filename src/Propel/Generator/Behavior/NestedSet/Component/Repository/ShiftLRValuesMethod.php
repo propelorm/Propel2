@@ -27,7 +27,7 @@ class ShiftLRValuesMethod extends BuildComponent
 
         $body = "
 \$leftCriteria = new Criteria($entityMapClassName::DATABASE_NAME);
-\$leftCriteria->add($entityMapClassName::LEFT_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('left_field')->getColumnName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+\$leftCriteria->add($entityMapClassName::LEFT_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('left_field')->getSqlName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 //Shift left field value
 \$this->createQuery()
@@ -42,7 +42,7 @@ class ShiftLRValuesMethod extends BuildComponent
         $body .= "->update(\$leftCriteria);
 
 \$rightCriteria = new Criteria($entityMapClassName::DATABASE_NAME);
-\$rightCriteria->add($entityMapClassName::RIGHT_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('right_field')->getColumnName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+\$rightCriteria->add($entityMapClassName::RIGHT_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('right_field')->getSqlName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 // Shift right field values
 \$this->createQuery()

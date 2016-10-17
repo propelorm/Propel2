@@ -33,22 +33,18 @@ class Field extends MappingModel
 
     public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
-    private $name;
-    private $columnName;
     private $description;
-    private $phpName;
-    private $phpSingularName;
+    private $singularName;
     private $isNotNull;
-    private $namePrefix;
     private $accessorVisibility;
     private $mutatorVisibility;
 
     /**
-     * The name to use for the tableMap constant that identifies this column.
+     * The name to use for the entityMap constant that identifies this column.
      * (Will be converted to all-uppercase in the templates.)
      * @var string
      */
-    private $tableMapName;
+    private $entityMapName;
 
     /**
      * Native PHP type (scalar or class name)
@@ -170,17 +166,12 @@ class Field extends MappingModel
                 }
             }
 
-            $this->name = $this->getAttribute('name');
-            $this->columnName = $this->getAttribute('columnName');
-            $this->phpSingularName = $this->getAttribute('singularName');
+            $this->setName($this->getAttribute('name'));
+            $this->setSqlName($this->getAttribute('sqlName'));
+            $this->setSingularName($this->getAttribute('singularName'));
             $this->phpType = $this->getAttribute('phpType');
-            $this->tableMapName = $this->getAttribute('tableMapName');
+            $this->entityMapName = $this->getAttribute('entityMapName');
             $this->description = $this->getAttribute('description');
-
-            $this->namePrefix = $this->getAttribute(
-                'prefix',
-                $this->parentEntity->getAttribute('columnPrefix')
-            );
 
             // Accessor visibility
             $visibility = $this->getMethodVisibility('accessorVisibility', 'defaultAccessorVisibility');
@@ -320,41 +311,14 @@ class Field extends MappingModel
     }
 
     /**
-     * Returns the column name.
+     * Return the Upper CamelCase name of this field.
+     * Useful to generate method names (eg. setXxx, getXxx)
      *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * @return string
      */
     public function getMethodName()
     {
-        return NamingTool::toUpperCamelCase($this->getName());
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getColumnName()
-    {
-        if (null == $this->columnName) {
-            return NamingTool::toUnderscore($this->getName());
-        }
-
-        return $this->columnName;
-    }
-
-    /**
-     * @param mixed $columnName
-     */
-    public function setColumnName($columnName)
-    {
-        $this->columnName = $columnName;
+        return ucfirst($this->getName());
     }
 
     /**
@@ -379,22 +343,12 @@ class Field extends MappingModel
 
     /**
      * @return string
-     */
+     *//*
     public function getUnderscoreName()
     {
         return NamingTool::toUnderscore($this->name);
     }
-
-    /**
-     * Sets the column name.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
+*/
     /**
      * Returns whether or not the column name is plural.
      *
@@ -412,8 +366,19 @@ class Field extends MappingModel
      */
     public function getSingularName()
     {
-        if ($this->getAttribute('singularName')) return $this->getAttribute('singularName');
-        return rtrim($this->name, 's');
+        if (!$this->singularName) {
+            $this->singularName = rtrim($this->name, 's');
+        }
+
+        return $this->singularName;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setSingularName($value)
+    {
+        $this->singularName = NamingTool::toCamelCase($value);
     }
 
     /**
@@ -434,84 +399,6 @@ class Field extends MappingModel
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-//
-//    /**
-//     * Returns the name to use in PHP sources. It will set & return
-//     * a self-generated phpName from its name if its not already set.
-//     *
-//     * @return string
-//     */
-//    public function getPhpName()
-//    {
-//        if (null === $this->phpName) {
-//            $this->setPhpName();
-//        }
-//
-//        return $this->phpName;
-//    }
-
-//    /**
-//     * Returns the singular form of the name to use in PHP sources.
-//     * It will set & return a self-generated phpName from its name
-//     * if its not already set.
-//     *
-//     * @return string
-//     */
-//    public function getPhpSingularName()
-//    {
-//        if (null === $this->phpSingularName) {
-//            $this->setPhpSingularName();
-//        }
-//
-//        return $this->phpSingularName;
-//    }
-
-//    /**
-//     * Sets the name to use in PHP sources.
-//     *
-//     * It will generate a phpName from its name if no
-//     * $phpName is passed.
-//     *
-//     * @param string $phpName
-//     */
-//    public function setPhpName($phpName = null)
-//    {
-//        if (null === $phpName) {
-//            $this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
-//        } else {
-//            $this->phpName = $phpName;
-//        }
-//    }
-
-//    /**
-//     * Sets the singular forn of the name to use in PHP
-//     * sources.
-//     *
-//     * It will generate a phpName from its name if no
-//     * $phpSingularName is passed.
-//     *
-//     * @param string $phpSingularName
-//     */
-//    public function setPhpSingularName($phpSingularName = null)
-//    {
-//        if (null === $phpSingularName) {
-//            $this->phpSingularName = self::generatePhpSingularName($this->getName());
-//        } else {
-//            $this->phpSingularName = $phpSingularName;
-//        }
-//    }
-
-    /**
-     * Returns the camelCase version of the PHP name.
-     *
-     * The studly name is the PHP name with the first character lowercase.
-     *
-     * @return string
-     */
-    public function getCamelCaseName()
-    {
-        return NamingTool::toCamelCase($this->getName());
     }
 
     /**
@@ -597,7 +484,7 @@ class Field extends MappingModel
             return self::CONSTANT_PREFIX.strtoupper($this->getEntityMapName());
         }
 
-        return self::CONSTANT_PREFIX.strtoupper($this->getName());
+        return self::CONSTANT_PREFIX.strtoupper($this->getSqlName());
     }
 
     /**
@@ -607,7 +494,7 @@ class Field extends MappingModel
      */
     public function getEntityMapName()
     {
-        return $this->tableMapName;
+        return $this->entityMapName;
     }
 
     /**
@@ -617,7 +504,7 @@ class Field extends MappingModel
      */
     public function setEntityMapName($name)
     {
-        $this->tableMapName = $name;
+        $this->entityMapName = $name;
     }
 
     /**
@@ -1520,11 +1407,11 @@ class Field extends MappingModel
     /**
      * Generates the singular form of a PHP name.
      *
-     * @param  string $phpname
+     * @param  string $name
      * @return string
      */
-    public static function generatePhpSingularName($phpname)
+    public static function generateSingularName($name)
     {
-        return rtrim($phpname, 's');
+        return rtrim($name, 's');
     }
 }

@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\I18n\Component;
 
-use gossi\codegen\model\PhpParameter;
+use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
@@ -20,6 +28,7 @@ class Getters extends BuildComponent
 
     public function process()
     {
+        /** @var I18nBehavior $behavior */
         $behavior = $this->getBehavior();
 
         $this->addGetLocale($behavior);
@@ -31,9 +40,9 @@ class Getters extends BuildComponent
         $this->addTranslatedColumnGetter($behavior);
     }
 
-    private function addGetLocale($behavior)
+    private function addGetLocale(I18nBehavior $behavior)
     {
-        $this->addMethod('get' . NamingTool::toUpperCamelCase($behavior->getLocaleField()->getName()))
+        $this->addMethod('get' . $behavior->getLocaleField()->getMethodName())
             ->setDescription('Gets the locale for translations')
             ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
             ->setBody("
@@ -42,10 +51,9 @@ return \$this->currentLocale;
             );
     }
 
-    private function addGetLocaleAlias($alias, $behavior)
+    private function addGetLocaleAlias($alias, I18nBehavior $behavior)
     {
         $aliasMethod = 'get' . NamingTool::toUpperCamelCase($alias);
-        $method = ucfirst($behavior->getLocaleField()->getName());
 
         $this->addMethod($aliasMethod)
             ->setDescription("
@@ -54,12 +62,12 @@ Alias for getLocale(), for BC purpose.
                 ")
             ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
             ->setBody("
-return \$this->get$method();
+return \$this->get{$behavior->getLocaleField()->getMethodName()}();
 "
             );
     }
 
-    private function addGetTranslation($behavior)
+    private function addGetTranslation(I18nBehavior $behavior)
     {
         $relation = $behavior->getI18nRelation();
 
@@ -67,7 +75,7 @@ return \$this->get$method();
 if (!isset(\$this->currentTranslations[\$locale])) {
     if (null !== \$this->{$this->getRefRelationCollVarName($relation)}) {
         foreach (\$this->{$this->getRefRelationCollVarName($relation)} as \$translation) {
-            if (\$translation->get{$behavior->getLocaleField()->getName()}() == \$locale) {
+            if (\$translation->get{$behavior->getLocaleField()->getMethodName()}() == \$locale) {
                 \$this->currentTranslations[\$locale] = \$translation;
 
                 return \$translation;
@@ -76,15 +84,18 @@ if (!isset(\$this->currentTranslations[\$locale])) {
     }
     if (\$this->isNew()) {
         \$translation = new {$this->getClassNameFromEntity($behavior->getI18nEntity())}();
-        \$translation->set{$behavior->getLocaleField()->getName()}(\$locale);
+        \$translation->set{$behavior->getLocaleField()->getMethodName()}(\$locale);
     } else {
         \$i18nRepository = {$this->getRepositoryGetter($behavior->getI18nEntity())};
         \$translation = \$i18nRepository->createQuery()
             ->filterByPrimaryKey(array(\$this->getPrimaryKey(), \$locale))
             ->findOneOrCreate(\$con);
+        if (null === \$translation->getLocale()) {
+            \$translation->setLocale(\$locale);
+        }
         \$this->currentTranslations[\$locale] = \$translation;
     }
-    \$this->add{$this->getRefRelationPhpName($relation)}(\$translation);
+    \$this->add{$this->getRefRelationName($relation)}(\$translation);
 }
 
 return \$this->currentTranslations[\$locale];
@@ -94,31 +105,22 @@ return \$this->currentTranslations[\$locale];
 
         $this->addMethod('getTranslation')
             ->setDescription('Returns the current translation for a given locale')
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
-                ->setDefaultValue($behavior->getDefaultLocale())
-            )
-            ->addParameter(PhpParameter::create('con')
-                ->setType('ConnectionInterface', 'an optional connection object')
-                ->setDefaultValue(null)
-            )
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the translation, e.g. 'fr_FR'", $behavior->getDefaultLocale())
+            ->addSimpleDescParameter('con', 'ConnectionInterface', 'An optional connection object', null)
             ->setType($this->getClassNameFromEntity($behavior->getI18nEntity()))
             ->setBody($body);
     }
 
-    private function addGetCurrentTranslation($behavior)
+    private function addGetCurrentTranslation(I18nBehavior $behavior)
     {
         $this->addMethod('getCurrentTranslation')
             ->setDescription('Returns the current translation')
-            ->addParameter(PhpParameter::create('con')
-                ->setType('ConnectionInterface', 'An optional connection object')
-                ->setDefaultValue(null)
-            )
+            ->addSimpleDescParameter('con', 'ConnectionInterface','An optional connection object', null)
             ->setType($this->getClassNameFromEntity($behavior->getI18nEntity()))
-            ->setBody("return \$this->getTranslation(\$this->get{$behavior->getLocaleField()->getName()}(), \$con);");
+            ->setBody("return \$this->getTranslation(\$this->get{$behavior->getLocaleField()->getMethodName()}(), \$con);");
     }
 
-    private function addTranslatedColumnGetter($behavior)
+    private function addTranslatedColumnGetter(I18nBehavior $behavior)
     {
         foreach ($behavior->getI18nFieldNamesFromConfig() as $fieldName) {
             $field = $behavior->getI18nEntity()->getField($fieldName);

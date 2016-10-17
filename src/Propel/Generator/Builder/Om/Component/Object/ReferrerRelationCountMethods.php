@@ -38,7 +38,7 @@ class ReferrerRelationCountMethods extends BuildComponent
     protected function addRefCountMethod(Relation $refRelation)
     {
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getBuilder()->getNewStubQueryBuilder($refRelation->getEntity()));
-        $relCol = $this->getRefRelationPhpName($refRelation, $plural = true);
+        $relCol = $this->getRefRelationName($refRelation, $plural = true);
         $collName = $this->getRefRelationCollVarName($refRelation);
 
         $joinedTableObjectBuilder = $this->getBuilder()->getNewObjectBuilder($refRelation->getEntity());
@@ -65,7 +65,7 @@ if (null === \$this->$collName || null !== \$criteria || \$partial) {
     }
 
     return \$query
-        ->filterBy{$this->getRelationPhpName($refRelation)}(\$this)
+        ->filterBy{$this->getRelationName($refRelation)}(\$this)
         ->count();
 }
 
@@ -82,4 +82,4 @@ EOF;
             ->setTypeDescription("Count of related $className objects")
         ;
     }
-} 
+}

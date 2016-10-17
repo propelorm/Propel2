@@ -18,15 +18,15 @@ trait EntityMapTrait
      * Returns an array of field names.
      *
      * @param  string          $type The type of fieldnames to return:
-     *                               One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME
+     *                               One of the class type constants EntityMap::TYPE_COLNAME
      *                               EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      * @return array           A list of field names
      * @throws PropelException
      */
-    public static function getFieldNames($type = EntityMap::TYPE_PHPNAME)
+    public static function getFieldNames($type = EntityMap::TYPE_FIELDNAME)
     {
         if (!array_key_exists($type, static::$fieldNames)) {
-            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.');
+            throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.');
         }
 
         return static::$fieldNames[$type];
@@ -36,7 +36,7 @@ trait EntityMapTrait
      * Translates a fieldname to another type
      *
      * @param  string          $name     field name
-     * @param  string          $fromType One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME
+     * @param  string          $fromType One of the class type constants EntityMap::TYPE_COLNAME
      *                                   EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      * @param  string          $toType   One of the class type constants
      * @return string          translated name of the field.
@@ -73,7 +73,7 @@ trait EntityMapTrait
      *
      * Using this method you can maintain SQL abstraction while using field aliases.
      * <code>
-     *        $c->addAlias("alias1", EntityEntityMap::TABLE_NAME);
+     *        $c->addAlias("alias1", EntityEntityMap::SQL_NAME);
      *        $c->addJoin(EntityEntityMap::alias("alias1", EntityEntityMap::PRIMARY_KEY_COLUMN), EntityEntityMap::PRIMARY_KEY_COLUMN);
      * </code>
      * @param  string $alias  The alias for the current entity.
@@ -82,6 +82,6 @@ trait EntityMapTrait
      */
     public static function alias($alias, $field)
     {
-        return str_replace(static::TABLE_NAME.'.', $alias.'.', $field);
+        return str_replace(static::SQL_NAME.'.', $alias.'.', $field);
     }
 }

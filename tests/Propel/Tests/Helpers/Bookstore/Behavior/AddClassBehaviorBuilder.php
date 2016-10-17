@@ -20,7 +20,7 @@ class AddClassBehaviorBuilder extends AbstractBuilder
      */
     protected function buildClass()
     {
-        $tableName = $this->getEntity()->getTableName();
+        $tableName = $this->getEntity()->getSqlName();
         $this->getDefinition()->setDescription("Test class for Additional builder enabled on the '$tableName' table.");
     }
 }

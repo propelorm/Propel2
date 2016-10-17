@@ -19,7 +19,7 @@ class DoDeleteAllMethod extends BuildComponent
 
         $query = sprintf(
             'DELETE FROM %s',
-            $this->quoteIdentifier($entity->getTableName())
+            $this->quoteIdentifier($entity->getSqlName())
         );
 
         $dbName = $entity->getDatabase()->getName();

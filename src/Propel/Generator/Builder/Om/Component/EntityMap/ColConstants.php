@@ -26,7 +26,7 @@ class ColConstants extends BuildComponent
         foreach ($this->getEntity()->getFields() as $field) {
             $constant = new PhpConstant($field->getConstantName());
             $constant->setDescription("The column name for the {$field->getName()} field.");
-            $constant->setValue($this->getEntity()->getFullClassName() . '.' .$field->getName());
+            $constant->setValue($this->getEntity()->getFullClassName() . '.' .$field->getSqlName());
 
             $this->getDefinition()->setConstant($constant);
         }

@@ -122,7 +122,7 @@ class PgsqlPlatform extends SqlDefaultPlatform
                 // because I'm not sure how Postgres would handle this w/ SERIAL anyway)
                 foreach ($entity->getFields() as $col) {
                     if ($col->isAutoIncrement()) {
-                        $result = $entity->getName() . '_' . $col->getName() . '_seq';
+                        $result = $entity->getSqlName() . '_' . $col->getSqlName() . '_seq';
                         break; // there's only one auto-increment field allowed
                     }
                 }
@@ -221,7 +221,7 @@ SET search_path TO public;
         }
 
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getSqlName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -276,7 +276,7 @@ CREATE TABLE %s
 );
 ";
         $ret .= sprintf($pattern,
-            $this->quoteIdentifier($entity->getName()),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines)
         );
 
@@ -285,7 +285,7 @@ CREATE TABLE %s
 COMMENT ON TABLE %s IS %s;
 ";
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($entity->getName()),
+                $this->quoteIdentifier($entity->getSqlName()),
                 $this->quote($entity->getDescription())
             );
         }
@@ -313,8 +313,8 @@ COMMENT ON COLUMN %s.%s IS %s;
 ";
         if ($description = $field->getDescription()) {
             return sprintf($pattern,
-                $this->quoteIdentifier($field->getEntity()->getName()),
-                $this->quoteIdentifier($field->getName()),
+                $this->quoteIdentifier($field->getEntity()->getSqlName()),
+                $this->quoteIdentifier($field->getSqlName()),
                 $this->quote($description)
             );
         }
@@ -327,7 +327,7 @@ COMMENT ON COLUMN %s.%s IS %s;
         $pattern = "
 DROP TABLE IF EXISTS %s CASCADE;
 ";
-        $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()));
+        $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getSqlName()));
         $ret .= $this->getDropSequenceDDL($entity);
         $ret .= $this->getResetSchemaDDL($entity);
 
@@ -336,7 +336,9 @@ DROP TABLE IF EXISTS %s CASCADE;
 
     public function getPrimaryKeyName(Entity $entity)
     {
-        $entityName = $entity->getCommonName();
+        $entityName = $entity->getSqlName();
+        //remove the schema name
+        $entityName = substr($entityName, strpos($entityName, '.'));
 
         return $entityName . '_pkey';
     }
@@ -345,7 +347,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     {
         $domain = $col->getDomain();
 
-        $ddl = array($this->quoteIdentifier($col->getName()));
+        $ddl = array($this->quoteIdentifier($col->getSqlName()));
         $sqlType = $domain->getSqlType();
         $entity = $col->getEntity();
         if ($col->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
@@ -380,7 +382,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
-            $this->quoteIdentifier($unique->getName()),
+            $this->quoteIdentifier($unique->getSqlName()),
             $this->getFieldListDDL($unique->getFieldObjects())
         );
     }
@@ -455,15 +457,15 @@ ALTER TABLE %s RENAME TO %s;
         $fromEntity = $fromField->getEntity();
         $entity = $toField->getEntity();
 
-        $colName = $this->quoteIdentifier($toField->getName());
+        $colName = $this->quoteIdentifier($toField->getSqlName());
 
         $pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
 ";
 
         if (isset($changedProperties['autoIncrement'])) {
-            $entityName = $entity->getName();
-            $colPlainName = $toField->getName();
+            $entityName = $entity->getSqlName();
+            $colPlainName = $toField->getSqlName();
             $seqName = "{$entityName}_{$colPlainName}_seq";
 
             if ($toField->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
@@ -517,7 +519,7 @@ DROP SEQUENCE %s CASCADE;
                 $sqlType .= $using;
             }
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($entity->getName()),
+                $this->quoteIdentifier($entity->getSqlName()),
                 $colName . ' TYPE ' . $sqlType
             );
         }
@@ -525,9 +527,9 @@ DROP SEQUENCE %s CASCADE;
         if (isset($changedProperties['defaultValueValue'])) {
             $property = $changedProperties['defaultValueValue'];
             if ($property[0] !== null && $property[1] === null) {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' DROP DEFAULT');
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getSqlName()), $colName . ' DROP DEFAULT');
             } else {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' SET ' . $this->getFieldDefaultValueDDL($toField));
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getSqlName()), $colName . ' SET ' . $this->getFieldDefaultValueDDL($toField));
             }
         }
 
@@ -537,7 +539,7 @@ DROP SEQUENCE %s CASCADE;
             if ($property[1]) {
                 $notNull = ' SET NOT NULL';
             }
-            $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . $notNull);
+            $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getSqlName()), $colName . $notNull);
         }
 
         return $ret;
@@ -561,7 +563,7 @@ DROP SEQUENCE %s CASCADE;
     {
         $fromSqlType = strtoupper($fromField->getDomain()->getSqlType());
         $toSqlType = strtoupper($toField->getDomain()->getSqlType());
-        $name = $fromField->getName();
+        $name = $fromField->getSqlName();
 
         if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
             //cast from int to string
@@ -643,8 +645,8 @@ DROP SEQUENCE %s CASCADE;
     ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier($index->getEntity()->getName()),
-                $this->quoteIdentifier($index->getName())
+                $this->quoteIdentifier($index->getEntity()->getSqlName()),
+                $this->quoteIdentifier($index->getSqlName())
             );
         } else {
             return parent::getDropIndexDDL($index);

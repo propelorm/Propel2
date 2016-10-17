@@ -10,6 +10,9 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Exception\InvalidArgumentException;
+
 /**
  * An abstract model class to represent objects that belongs to a schema like
  * databases, tables, columns, indices, unices, foreign keys...
@@ -24,14 +27,28 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @var array
      */
-    protected $attributes;
+    private $attributes;
 
     /**
      * The list of vendor's information.
      *
      * @var array
      */
-    protected $vendorInfos;
+    private $vendorInfos;
+
+    /**
+     * The name of this element, used in sql statements.
+     *
+     * @var string
+     */
+    protected $sqlName;
+
+    /**
+     * The name of this element.
+     *
+     * @var string
+     */
+    protected $name;
 
     /**
      * Constructor.
@@ -180,4 +197,61 @@ abstract class MappingModel implements MappingModelInterface
         return $this->vendorInfos;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getSqlName()
+    {
+        if (!$this->sqlName) {
+            if (null === $this->name) {
+                throw new BuildException(
+                    "Cannot create the `sqlName`: did you set the `name` of your " . get_class($this) . " object?");
+            }
+            $this->sqlName = NamingTool::toUnderscore($this->getName());
+        }
+
+        return $this->sqlName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set the name of the element. It's forced to camelCase.
+     * Override it for different behavior.
+     *
+     * @return string
+     */
+    public function setName($value)
+    {
+        if (!is_string($value) || '' == $value) {
+            throw new InvalidArgumentException("The name of a `" . get_class($this) . "` must be a valid string.");
+        }
+
+        $this->name = NamingTool::toCamelCase($value);
+    }
+
+    /**
+     * Set the name of this element, to be used in sql statements.
+     * It's NOT forced to particular format.
+     *
+     * @param $value string
+     */
+    public function setSqlName($value)
+    {
+        if (null === $value || '' == $value) {
+            $value = NamingTool::toUnderscore($this->getName());
+        }
+
+        if (!is_string($value)) {
+            throw new InvalidArgumentException("The name of a `" . get_class($this) . "` must be a valid string.");
+        }
+
+        $this->sqlName = $value;
+    }
 }

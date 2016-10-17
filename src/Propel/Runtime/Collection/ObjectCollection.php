@@ -104,9 +104,9 @@ class ObjectCollection extends Collection
      *                                        Otherwise, the array is indexed using the specified field
      * @param boolean $usePrefix              If true, the returned array prefixes keys
      *                                        with the model class name ('Article_0', 'Article_1', etc).
-     * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_PHPNAME,
+     * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_FIELDNAME,
      *                                        EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME,
-     *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_PHPNAME.
+     *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_FIELDNAME.
      * @param boolean $includeLazyLoadFields (optional) Whether to include lazy loaded fields. Defaults to TRUE.
      * @param object  $alreadyDumpedObjectsWatcher Internal struct to detect recursion.
      *
@@ -130,7 +130,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_PHPNAME, $includeLazyLoadFields = true, $alreadyDumpedObjectsWatcher = null)
+    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_FIELDNAME, $includeLazyLoadFields = true, $alreadyDumpedObjectsWatcher = null)
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyField;
@@ -261,7 +261,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param $instance
-     * 
+     *
      * @return mixed
      */
     protected function getHashCode($instance)

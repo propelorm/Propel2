@@ -43,7 +43,7 @@ class Setters extends BuildComponent
             ->setDescription("Proxy setter method for the left value of the nested set model.
 It provides a generic way to set the value, whatever the actual column name is.")
             ->addSimpleDescParameter('v', 'int', 'The nested set left value')
-            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('left_field')->getCamelCaseName()}(\$v);")
+            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(\$v);")
         ;
     }
 
@@ -54,7 +54,7 @@ It provides a generic way to set the value, whatever the actual column name is."
             ->setDescription("Proxy setter method for the right value of the nested set model.
 It provides a generic way to set the value, whatever the actual column name is.")
             ->addSimpleDescParameter('v', 'int', 'The nested set right value')
-            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('right_field')->getCamelCaseName()}(\$v);")
+            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('right_field')->getMethodName()}(\$v);")
         ;
     }
 
@@ -65,7 +65,7 @@ It provides a generic way to set the value, whatever the actual column name is."
             ->setDescription("Proxy setter method for the level value of the nested set model.
 It provides a generic way to set the value, whatever the actual column name is.")
             ->addSimpleDescParameter('v', 'int', 'The nested set level value')
-            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('level_field')->getCamelCaseName()}(\$v);")
+            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('level_field')->getMethodName()}(\$v);")
         ;
     }
 
@@ -76,7 +76,7 @@ It provides a generic way to set the value, whatever the actual column name is."
             ->setDescription("Proxy setter method for the scope value of the nested set model.
 It provides a generic way to set the value, whatever the actual column name is.")
             ->addSimpleDescParameter('v', 'int', 'The nested set scope value')
-            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('scope_field')->getCamelCaseName()}(\$v);")
+            ->setBody("return \$this->set{$this->getBehavior()->getFieldForParameter('scope_field')->getMethodName()}(\$v);")
         ;
     }
 }

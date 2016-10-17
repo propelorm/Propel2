@@ -252,6 +252,7 @@ class DatabaseComparator
                     // no difference except the name, that's probably a renaming
                     if ($this->getWithRenaming()) {
                         $this->databaseDiff->addRenamedEntity($removedEntityName, $addedEntityName);
+                        $this->databaseDiff->addSqlRenamedEntity($removedEntity->getSqlName(false), $addedEntity->getSqlName(false));
                         $this->databaseDiff->removeAddedEntity($addedEntityName);
                         $this->databaseDiff->removeRemovedEntity($removedEntityName);
                         $databaseDifferences--;

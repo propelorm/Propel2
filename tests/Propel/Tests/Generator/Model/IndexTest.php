@@ -22,85 +22,93 @@ class IndexTest extends ModelTestCase
     public function testCreateNamedIndex()
     {
         $index = new Index('foo_idx');
-        $index->setTable($this->getTableMock('db_books'));
+        $index->setEntity($this->getEntityMock('DbBooks'));
 
-        $this->assertEquals('foo_idx', $index->getName());
+        $this->assertEquals('fooIdx', $index->getName());
+        $this->assertEquals('foo_idx', $index->getSqlName());
         $this->assertFalse($index->isUnique());
-        $this->assertInstanceOf('Propel\Generator\Model\Table', $index->getTable());
-        $this->assertSame('db_books', $index->getTableName());
-        $this->assertCount(0, $index->getColumns());
-        $this->assertFalse($index->hasColumns());
+        $this->assertInstanceOf('Propel\Generator\Model\Entity', $index->getEntity());
+        $this->assertSame('DbBooks', $index->getEntityName());
+        $this->assertCount(0, $index->getFields());
+        $this->assertFalse($index->hasFields());
+    }
+
+    public function testCreateIndexWithNoNameButSqlName(){
+        $index = new Index();
+        $index->setSqlName('new_sql_name');
+        $this->assertEquals('newSqlName', $index->getName());
     }
 
     public function testSetupObject()
     {
         $index = new Index();
-        $index->setTable($this->getTableMock('books'));
-        $index->loadMapping([ 'name' => 'foo_idx' ]);
+        $index->setEntity($this->getEntityMock('books'));
+        $index->loadMapping([ 'name' => 'foo_idx', 'sqlName' => 'foo_idx' ]);
 
-        $this->assertEquals('foo_idx', $index->getName());
+        $this->assertEquals('fooIdx', $index->getName());
+        $this->assertEquals('foo_idx', $index->getSqlName());
     }
 
     /**
-     * @dataProvider provideTableSpecificAttributes
+     * @dataProvider provideentitiespecificAttributes
      *
      */
-    public function testCreateDefaultIndexName($tableName, $maxColumnNameLength, $indexName)
+    public function testCreateDefaultIndexName($entityName, $maxFieldNameLength, $indexSqlName, $indexName)
     {
         $database = $this->getDatabaseMock('bookstore');
         $database
             ->expects($this->any())
-            ->method('getMaxColumnNameLength')
-            ->will($this->returnValue($maxColumnNameLength))
+            ->method('getMaxFieldNameLength')
+            ->will($this->returnValue($maxFieldNameLength))
         ;
 
-        $table = $this->getTableMock($tableName, [
-            'common_name' => $tableName,
+        $entity = $this->getEntityMock($entityName, [
             'indices'     => [ new Index(), new Index() ],
             'database'    => $database,
         ]);
 
         $index = new Index();
-        $index->setTable($table);
+        $index->setEntity($entity);
 
+        $this->assertSame($indexSqlName, $index->getSqlName());
         $this->assertSame($indexName, $index->getName());
     }
 
-    public function provideTableSpecificAttributes()
+    public function provideentitiespecificAttributes()
     {
         return [
-            [ 'books', 64, 'books_i_no_columns' ],
-            [ 'super_long_table_name', 16, 'super_long_table' ],
+            [ 'books', 64, 'books_i_no_fields', 'booksINoFields' ],
+            [ 'super_long_entity_name', 17, 'super_long_entity', 'superLongEntity' ],
         ];
     }
 
     /**
-     * @dataProvider provideColumnDefinitions
+     * @dataProvider provideFieldDefinitions
      *
      */
-    public function testAddIndexedColumns($columns)
+    public function testAddIndexedFields($fields)
     {
         $index = new Index();
-        $index->setColumns($columns);
+        $index->setFields($fields);
 
-        $this->assertTrue($index->hasColumns());
-        $this->assertCount(3, $index->getColumns());
+        $this->assertTrue($index->hasFields());
+        $this->assertCount(3, $index->getFields());
 
-        $this->assertSame(100, $index->getColumnSize('foo'));
-        $this->assertTrue($index->hasColumnSize('foo'));
+        $this->assertSame(100, $index->getFieldSize('foo'));
+        $this->assertTrue($index->hasFieldSize('foo'));
 
-        $this->assertSame(5, $index->getColumnSize('bar'));
-        $this->assertTrue($index->hasColumnSize('bar'));
+        $this->assertSame(5, $index->getFieldSize('bar'));
+        $this->assertTrue($index->hasFieldSize('bar'));
 
-        $this->assertNull($index->getColumnSize('baz'));
+        $this->assertNull($index->getFieldSize('baz'));
     }
 
-    public function provideColumnDefinitions()
+    public function provideFieldDefinitions()
     {
         $dataset[0][] = [
-            $this->getColumnMock('foo', [ 'size' => 100 ]),
-            $this->getColumnMock('bar', [ 'size' => 5   ]),
-            $this->getColumnMock('baz', [ 'size' => 0   ]),
+            $this->getFieldMock('foo', [ 'size' => 100 ]),
+            $this->getFieldMock('bar', [ 'size' => 5   ]),
+            $this->getFieldMock('baz', [ 'size' => 0   ]),
         ];
 
         $dataset[1][] = [
@@ -112,41 +120,41 @@ class IndexTest extends ModelTestCase
         return $dataset;
     }
 
-    public function testResetColumnsSize()
+    public function testResetFieldsSize()
     {
-        $columns[] = $this->getColumnMock('foo', [ 'size' => 100 ]);
-        $columns[] = $this->getColumnMock('bar', [ 'size' => 5   ]);
+        $fields[] = $this->getFieldMock('foo', [ 'size' => 100 ]);
+        $fields[] = $this->getFieldMock('bar', [ 'size' => 5   ]);
 
         $index = new Index();
-        $index->setColumns($columns);
+        $index->setFields($fields);
 
-        $this->assertTrue($index->hasColumnSize('foo'));
-        $this->assertTrue($index->hasColumnSize('bar'));
+        $this->assertTrue($index->hasFieldSize('foo'));
+        $this->assertTrue($index->hasFieldSize('bar'));
 
-        $index->resetColumnsSize();
-        $this->assertFalse($index->hasColumnSize('foo'));
-        $this->assertFalse($index->hasColumnSize('bar'));
+        $index->resetFieldsSize();
+        $this->assertFalse($index->hasFieldSize('foo'));
+        $this->assertFalse($index->hasFieldSize('bar'));
     }
 
-    public function testNoColumnAtFirstPosition()
+    public function testNoFieldAtFirstPosition()
     {
         $index = new Index();
 
-        $this->assertFalse($index->hasColumnAtPosition(0, 'foo'));
+        $this->assertFalse($index->hasFieldAtPosition(0, 'foo'));
     }
 
     /**
-     * @dataProvider provideColumnAttributes
+     * @dataProvider provideFieldAttributes
      */
-    public function testNoColumnAtPositionCaseSensitivity($name, $case)
+    public function testNoFieldAtPositionCaseSensitivity($name, $case)
     {
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', [ 'size' => 5 ]));
+        $index->addField($this->getFieldMock('foo', [ 'size' => 5 ]));
 
-        $this->assertFalse($index->hasColumnAtPosition(0, $name, 5, $case));
+        $this->assertFalse($index->hasFieldAtPosition(0, $name, 5, $case));
     }
 
-    public function provideColumnAttributes()
+    public function provideFieldAttributes()
     {
         return [
             [ 'bar', false ],
@@ -154,22 +162,22 @@ class IndexTest extends ModelTestCase
         ];
     }
 
-    public function testNoSizedColumnAtPosition()
+    public function testNoSizedFieldAtPosition()
     {
         $size = 5;
 
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', [ 'size' => $size ]));
+        $index->addField($this->getFieldMock('foo', [ 'size' => $size ]));
 
         $size++;
-        $this->assertFalse($index->hasColumnAtPosition(0, 'foo', $size));
+        $this->assertFalse($index->hasFieldAtPosition(0, 'foo', $size));
     }
 
-    public function testHasColumnAtFirstPosition()
+    public function testHasFieldAtFirstPosition()
     {
         $index = new Index();
-        $index->addColumn($this->getColumnMock('foo', [ 'size' => 0 ]));
+        $index->addField($this->getFieldMock('foo', [ 'size' => 0 ]));
 
-        $this->assertTrue($index->hasColumnAtPosition(0, 'foo'));
+        $this->assertTrue($index->hasFieldAtPosition(0, 'foo'));
     }
 }

@@ -29,7 +29,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * the specified database.
      *
      * @param string $dbName     The dabase name
-     * @param string $entityName  The phpName of a model, e.g. 'Book'
+     * @param string $entityName  The name of a model, e.g. 'Book'
      * @param string $entityAlias The alias for the model in this query, e.g. 'b'
      */
     public function __construct($dbName = null, $entityName = null, $entityAlias = null)

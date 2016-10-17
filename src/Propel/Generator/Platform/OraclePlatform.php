@@ -94,7 +94,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
     {
         $ret = $this->getBeginDDL();
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getSqlName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -136,7 +136,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ";
         $ret = sprintf($pattern,
             $entityDescription,
-            $this->quoteIdentifier($entity->getName()),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines),
             $this->generateBlockStorage($entity)
         );
@@ -171,7 +171,7 @@ CREATE SEQUENCE %s
     public function getDropEntityDDL(Entity $entity)
     {
         $ret = "
-DROP TABLE " . $this->quoteIdentifier($entity->getName(), $entity) . " CASCADE CONSTRAINTS;
+DROP TABLE " . $this->quoteIdentifier($entity->getSqlName(), $entity) . " CASCADE CONSTRAINTS;
 ";
         if ($entity->getIdMethod() == IdMethod::NATIVE) {
             $ret .= "
@@ -184,7 +184,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($entity)) . ";
 
     public function getPrimaryKeyName(Entity $entity)
     {
-        $entityName = $entity->getName();
+        $entityName = $entity->getSqlName();
         // pk constraint name must be 30 chars at most
         $entityName = substr($entityName, 0, min(27, strlen($entityName)));
 
@@ -207,7 +207,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($entity)) . ";
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
-            $this->quoteIdentifier($unique->getName()),
+            $this->quoteIdentifier($unique->getSqlName()),
             $this->getFieldListDDL($unique->getFieldObjects())
         );
     }
@@ -220,9 +220,9 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($entity)) . ";
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s) REFERENCES %s (%s)";
         $script = sprintf($pattern,
-            $this->quoteIdentifier($relation->getName()),
+            $this->quoteIdentifier($relation->getSqlName()),
             $this->getFieldListDDL($relation->getLocalFieldObjects()),
-            $this->quoteIdentifier($relation->getEntity()->getFQTableName()),
+            $this->quoteIdentifier($relation->getForeignEntity()->getSqlName()),
             $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
         if ($relation->hasOnDelete()) {
@@ -318,8 +318,8 @@ USING INDEX
             $physicalParameters .= ")
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'Entitiespace')) {
-            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Entitiespace');
+        if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
+            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
         }
 
         return $physicalParameters;
@@ -338,14 +338,18 @@ USING INDEX
             return '';
         }
 
+        //Follow Oracle naming standard
+        $indexName = $index->getSqlName();
+        $indexName = str_replace('_idx', '_IDX', $indexName);
+
         $pattern = "
 CREATE %sINDEX %s ON %s (%s)%s;
 ";
 
         return sprintf($pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
-            $this->quoteIdentifier($index->getName()),
-            $this->quoteIdentifier($index->getEntity()->getName()),
+            $this->quoteIdentifier($indexName),
+            $this->quoteIdentifier($index->getEntity()->getSqlName()),
             $this->getFieldListDDL($index->getFieldObjects()),
             $this->generateBlockStorage($index)
         );

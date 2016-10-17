@@ -45,10 +45,10 @@ class ReferrerRelationSetMethods extends BuildComponent
 
         $internal = "\nMapped by fields " . implode(', ', $relation->getForeignFields());
 
-        $methodName = 'set' . $this->getRefRelationPhpName($relation, false);
+        $methodName = 'set' . $this->getRefRelationName($relation, false);
         $this->addMethod($methodName)
             ->addSimpleParameter($varName, $foreignClassName)
             ->setBody($body)
             ->setDescription("Sets the associated $foreignClassName object.$internal");
     }
-} 
+}

@@ -293,7 +293,6 @@ class PropelConfiguration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('basename')->defaultValue('schema')->end()
-                                ->booleanNode('autoPrefix')->defaultFalse()->end()
                                 ->booleanNode('autoPackage')->defaultFalse()->end()
                                 ->booleanNode('autoNamespace')->defaultFalse()->end()
                                 ->booleanNode('transform')->defaultFalse()->end()

@@ -30,13 +30,7 @@ use Propel\Runtime\Session\Session;
 abstract class EntityMap
 {
     /**
-     * phpname type, the actual name of the property in a entity.
-     * e.g. 'authorId'
-     */
-    const TYPE_PHPNAME = 'phpName';
-
-    /**
-     * camelCase type
+     * underscore type
      * e.g. 'author_id'
      */
     const TYPE_COLNAME = 'colName';
@@ -67,7 +61,7 @@ abstract class EntityMap
     protected $fields = array();
 
     /**
-     * Fields in the entity, using entity phpName as key
+     * Fields in the entity, using entity name as key
      *
      * @var FieldMap[]
      */
@@ -84,9 +78,10 @@ abstract class EntityMap
     protected $fieldKeys = [];
 
     /**
+     * The name of the entity, to be used in sql statements.
      * @var string
      */
-    protected $tableName;
+    protected $sqlName;
 
     /**
      * The full class name for this entity with namespace.
@@ -94,13 +89,6 @@ abstract class EntityMap
      * @var string
      */
     protected $fullClassName;
-
-//    /**
-//     * The Package for this entity
-//     *
-//     * @var string
-//     */
-//    protected $package;
 
     /**
      * Whether to use an id generator for pkey
@@ -186,11 +174,16 @@ abstract class EntityMap
     protected $allowPkInsert;
 
     /**
-     * Construct a new EntityMap.
+     * Construct a new entity map.
+     *
+     * @param string $name
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     * @param \Propel\Runtime\Configuration $configuration
      */
     public function __construct($name, DatabaseMap $dbMap, Configuration $configuration)
     {
-        $this->name = $name;
+        $this->setName($name);
+        $this->setDatabaseName($dbMap->getName());
         $this->setConfiguration($configuration);
         $this->initialize();
     }
@@ -346,38 +339,55 @@ abstract class EntityMap
 
     /**
      * Set the (class) name of the Entity without namespace.
+     * Forced to UpperCamelCase
      *
      * @param string $name The name of the entity.
      */
     public function setName($name)
     {
-        $this->entityName = $name;
+        $this->entityName = NamingTool::toUpperCamelCase($name);
     }
 
     /**
      * Get the (class) name of the Entity without namespace.
      *
      * @return string A String with the name of the entity.
+     * @throws PropelException If both $entityName and $sqlName are set to null
      */
     public function getName()
     {
+        if (null === $this->entityName) {
+            if (null == $this->sqlName) {
+                throw new PropelException("Cannot create the `name`: did you set the `name` property of your field object?");
+            }
+            $this->entityName = NamingTool::toUpperCamelCase($this->sqlName);
+        }
+
         return $this->entityName;
     }
 
     /**
      * @return string
+     * @throws PropelException
      */
-    public function getTableName()
+    public function getSqlName()
     {
-        return $this->tableName;
+        if (null === $this->sqlName) {
+            if (null !== $this->entityName) {
+                throw new PropelException("Cannot create the `sqlName`: did you set the `name` of your field object?");
+            }
+                $this->sqlName = NamingTool::toUnderscore($this->entityName);
+        }
+
+        return $this->sqlName;
     }
 
     /**
-     * @param string $tableName
+     * @param string $sqlName
      */
-    public function setTableName($tableName)
+    public function setSqlName($sqlName)
     {
-        $this->tableName = $tableName;
+        $this->sqlName = $sqlName;
     }
 
     /**
@@ -397,9 +407,9 @@ abstract class EntityMap
      *
      * @return string
      */
-    public function getFQTableName()
+    public function getFQSqlName()
     {
-        return static::FQ_TABLE_NAME;
+        return static::FQ_SQL_NAME;
     }
 
     /**
@@ -437,27 +447,6 @@ abstract class EntityMap
     {
         $this->allowPkInsert = $allowPkInsert;
     }
-
-//    /**
-//     * Set the Package of the Entity
-//     *
-//     * @param string $package The Package
-//     */
-//    public function setPackage($package)
-//    {
-//        $this->package = $package;
-//    }
-//
-//    /**
-//     * Get the Package of the entity.
-//     *
-//     * @return string
-//     */
-//    public function getPackage()
-//    {
-//        return $this->package;
-//    }
-
 
     /**
      * Set whether or not to use Id generator for primary key.
@@ -645,7 +634,6 @@ abstract class EntityMap
      * Add a field to the entity.
      *
      * @param  string $name A String with the field name.
-     * @param  string $phpName A string representing the PHP name.
      * @param  string $type A string specifying the Propel type.
      * @param  boolean $isNotNull Whether field does not allow NULL values.
      * @param  int $size An int specifying the size.
@@ -726,8 +714,7 @@ abstract class EntityMap
         if(isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)])) {
             return true;
         }
-        //Maybe it's phpName
-        $name = NamingTool::toUnderscore($name);
+        $name = NamingTool::toCamelCase($name);
 
         return isset($this->fields[$name]);
     }
@@ -758,7 +745,7 @@ abstract class EntityMap
             return $this->fieldsByLowercaseName[strtolower($name)];
         }
 
-        $name = NamingTool::toUnderscore($name);
+        $name = NamingTool::toCamelCase($name);
 
         return $this->fields[$name];
     }
@@ -781,6 +768,7 @@ abstract class EntityMap
      * @param  boolean $isNotNull Whether field does not allow NULL values.
      * @param  int $size An int specifying the size.
      * @param  string $defaultValue The default value for this field.
+     * @param  boolean $implementationDetail
      *
      * @return \Propel\Runtime\Map\FieldMap Newly added PrimaryKey field.
      */
@@ -1135,17 +1123,17 @@ abstract class EntityMap
      * Returns an array of field names.
      *
      * @param  string $type The type of fieldnames to return:
-     *                               One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME
-     *                               TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *                               One of the class type constants EntityMap::TYPE_COLNAME
+     *                               EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      *
      * @return array           A list of field names
      * @throws PropelException
      */
-    public function getFieldNames($type = EntityMap::TYPE_PHPNAME)
+    public function getFieldNames($type = EntityMap::TYPE_FIELDNAME)
     {
         if (!array_key_exists($type, $this->fieldNames)) {
             throw new PropelException(
-                'Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . $type . ' was given.'
+                'Method getFieldNames() expects the parameter \$type to be one of the class constants, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.'
             );
         }
 
@@ -1156,9 +1144,8 @@ abstract class EntityMap
      * Translates a fieldname to another type
      *
      * @param  string $name field name
-     * @param  string $fromType One of the class type constants TableMap::TYPE_PHPNAME,
-     *                                   TableMap::TYPE_COLNAME TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME,
-     *                                   TableMap::TYPE_NUM
+     * @param  string $fromType One of the class type constants EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME,
+     *                                    EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      * @param  string $toType One of the class type constants
      *
      * @return string          translated name of the field.
@@ -1200,18 +1187,18 @@ abstract class EntityMap
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
      * <code>
-     *        $c->addAlias("alias1", TableTableMap::TABLE_NAME);
-     *        $c->addJoin(TableTableMap::alias("alias1", TableTableMap::PRIMARY_KEY_COLUMN),
-     *        TableTableMap::PRIMARY_KEY_COLUMN);
+     *        $c->addAlias("alias1", TableEntityMap::SQL_NAME);
+     *        $c->addJoin(TableEntityMap::alias("alias1", TableEntityMap::PRIMARY_KEY_COLUMN),
+     *        TableEntityMap::PRIMARY_KEY_COLUMN);
      * </code>
      *
      * @param  string $alias The alias for the current table.
-     * @param  string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
+     * @param  string $column The column name for current table. (i.e. BookEntityMap::COLUMN_NAME).
      *
      * @return string
      */
     public function alias($alias, $column)
     {
-        return str_replace(static::TABLE_NAME . '.', $alias . '.', $column);
+        return str_replace(static::SQL_NAME . '.', $alias . '.', $column);
     }
 }

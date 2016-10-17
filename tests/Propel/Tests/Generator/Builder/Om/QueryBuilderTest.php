@@ -936,7 +936,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $join->setRelationMap(BookTableMap::getTableMap()->getRelation('Author'), null, 'a');
         $join->setRelationAlias('a');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorTableMap::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::SQL_NAME)
             ->addJoinObject($join, 'a')
             ->add('a.first_name', 'Leo', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() uses the first argument as a table alias');
@@ -992,10 +992,10 @@ class QueryBuilderTest extends BookstoreTestBase
         $join2->setRelationMap(BookTableMap::getTableMap()->getRelation('Author'), null, 'b');
         $join2->setRelationAlias('b');
         $q1 = BookQuery::create()
-            ->addAlias('a', AuthorTableMap::TABLE_NAME)
+            ->addAlias('a', AuthorTableMap::SQL_NAME)
             ->addJoinObject($join1, 'a')
             ->add('a.first_name', 'Leo', Criteria::EQUAL)
-            ->addAlias('b', AuthorTableMap::TABLE_NAME)
+            ->addAlias('b', AuthorTableMap::SQL_NAME)
             ->addJoinObject($join2, 'b')
             ->add('b.last_name', 'Tolstoi', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() called twice on the same relation with two aliases creates two joins');

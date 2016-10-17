@@ -1,7 +1,7 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
+/**
+ *
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,17 +9,17 @@
  * @license MIT License
  */
 
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\FieldDefaultValue;
+use Propel\Generator\Model\Diff\FieldComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 use \Propel\Tests\TestCase;
 
 /**
- * Tests for the ColumnComparator service class.
+ * Tests for the FieldComparator service class.
  *
  */
-class ColumnComparatorTest extends TestCase
+class FieldComparatorTest extends TestCase
 {
     public function setUp()
     {
@@ -28,121 +28,121 @@ class ColumnComparatorTest extends TestCase
 
     public function testCompareNoDifference()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $c2 = new Column();
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $c2 = new Field();
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
         $c2->getDomain()->replaceSize(3);
         $c2->setNotNull(true);
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $this->assertEquals(array(), ColumnComparator::compareColumns($c1, $c2));
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $this->assertEquals(array(), FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareType()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
         $expectedChangedProperties = array(
             'type'    => array('VARCHAR', 'LONGVARCHAR'),
             'sqlType' => array('VARCHAR', 'TEXT'),
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareScale()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->replaceScale(2);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->getDomain()->replaceScale(3);
         $expectedChangedProperties = array('scale' => array(2, 3));
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareSize()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->replaceSize(2);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->getDomain()->replaceSize(3);
         $expectedChangedProperties = array('size' => array(2, 3));
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareSqlType()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c2->getDomain()->setSqlType('INTEGER(10) UNSIGNED');
         $expectedChangedProperties = array('sqlType' => array('INTEGER', 'INTEGER(10) UNSIGNED'));
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareNotNull()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->setNotNull(true);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->setNotNull(false);
         $expectedChangedProperties = array('notNull' => array(true, false));
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareDefaultValueToNull()
     {
-        $c1 = new Column();
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $c2 = new Column();
+        $c1 = new Field();
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $c2 = new Field();
         $expectedChangedProperties = array(
-            'defaultValueType' => array(ColumnDefaultValue::TYPE_VALUE, null),
+            'defaultValueType' => array(FieldDefaultValue::TYPE_VALUE, null),
             'defaultValueValue' => array(123, null)
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareDefaultValueFromNull()
     {
-        $c1 = new Column();
-        $c2 = new Column();
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $c1 = new Field();
+        $c2 = new Field();
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
         $expectedChangedProperties = array(
-            'defaultValueType' => array(null, ColumnDefaultValue::TYPE_VALUE),
+            'defaultValueType' => array(null, FieldDefaultValue::TYPE_VALUE),
             'defaultValueValue' => array(null, 123)
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareDefaultValueValue()
     {
-        $c1 = new Column();
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $c2 = new Column();
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(456, ColumnDefaultValue::TYPE_VALUE));
+        $c1 = new Field();
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $c2 = new Field();
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(456, FieldDefaultValue::TYPE_VALUE));
         $expectedChangedProperties = array(
             'defaultValueValue' => array(123, 456)
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareDefaultValueType()
     {
-        $c1 = new Column();
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $c2 = new Column();
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_EXPR));
+        $c1 = new Field();
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $c2 = new Field();
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_EXPR));
         $expectedChangedProperties = array(
-            'defaultValueType' => array(ColumnDefaultValue::TYPE_VALUE, ColumnDefaultValue::TYPE_EXPR)
+            'defaultValueType' => array(FieldDefaultValue::TYPE_VALUE, FieldDefaultValue::TYPE_EXPR)
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     /**
@@ -150,43 +150,43 @@ class ColumnComparatorTest extends TestCase
      */
     public function testCompareDefaultExrpCurrentTimestamp()
     {
-        $c1 = new Column();
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue("NOW()", ColumnDefaultValue::TYPE_EXPR));
-        $c2 = new Column();
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue("CURRENT_TIMESTAMP", ColumnDefaultValue::TYPE_EXPR));
-        $this->assertEquals(array(), ColumnComparator::compareColumns($c1, $c2));
+        $c1 = new Field();
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue("NOW()", FieldDefaultValue::TYPE_EXPR));
+        $c2 = new Field();
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue("CURRENT_TIMESTAMP", FieldDefaultValue::TYPE_EXPR));
+        $this->assertEquals(array(), FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareAutoincrement()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->setAutoIncrement(true);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->setAutoIncrement(false);
         $expectedChangedProperties = array('autoIncrement' => array(true, false));
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 
     public function testCompareMultipleDifferences()
     {
-        $c1 = new Column();
+        $c1 = new Field();
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c1->setNotNull(false);
-        $c2 = new Column();
+        $c2 = new Field();
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
         $c2->getDomain()->replaceSize(3);
         $c2->setNotNull(true);
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
         $expectedChangedProperties = array(
             'type' => array('INTEGER', 'DOUBLE'),
             'sqlType' => array('INTEGER', 'DOUBLE'),
             'scale' => array(NULL, 2),
             'size' => array(NULL, 3),
             'notNull' => array(false, true),
-            'defaultValueType' => array(NULL, ColumnDefaultValue::TYPE_VALUE),
+            'defaultValueType' => array(NULL, FieldDefaultValue::TYPE_VALUE),
             'defaultValueValue' => array(NULL, 123)
         );
-        $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
+        $this->assertEquals($expectedChangedProperties, FieldComparator::compareFields($c1, $c2));
     }
 }

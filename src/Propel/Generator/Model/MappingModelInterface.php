@@ -28,4 +28,21 @@ interface MappingModelInterface
      * @param array $attributes
      */
     public function loadMapping(array $attributes);
+
+    /**
+     * Return the name of a model object to be used in PHP code.
+     * It's usually in camelCase format.
+     *
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Return the name of a model object to be used in SQL strings.
+     * It's usually in underscore format (e.g. my_awesome_field), but it can be defined by the user,
+     * via `sqlName` schema attribute.
+     *
+     * @return string
+     */
+    public function getSqlName();
 }

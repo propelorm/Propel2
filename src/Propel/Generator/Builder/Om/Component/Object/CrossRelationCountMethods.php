@@ -30,11 +30,11 @@ class CrossRelationCountMethods extends BuildComponent
     protected function addCrossRelationCount(CrossRelation $crossRelation)
     {
         $refRelation = $crossRelation->getIncomingRelation();
-        $selfRelationName = $this->getRelationPhpName($refRelation, $plural = false);
+        $selfRelationName = $this->getRelationName($refRelation, $plural = false);
 
         $multi = 1 < count($crossRelation->getRelations()) || !!$crossRelation->getUnclassifiedPrimaryKeys();
 
-        $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
+        $relatedName = $this->getCrossRelationName($crossRelation, true);
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
         if ($multi) {
@@ -92,9 +92,9 @@ EOF;
             ->setTypeDescription("the number of related $relatedObjectClassName objects");
 
         if ($multi) {
-            $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
+            $relatedName = $this->getCrossRelationName($crossRelation, true);
             $firstRelation = $crossRelation->getRelations()[0];
-            $firstRelationName = $this->getRelationPhpName($firstRelation, true);
+            $firstRelationName = $this->getRelationName($firstRelation, true);
 
             $relatedObjectClassName = $firstRelation->getForeignEntity()->getName();
             $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];

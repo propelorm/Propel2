@@ -45,7 +45,7 @@ class DelegateBehavior extends Behavior
         $database = $table->getDatabase();
         $delegates = explode(',', $this->parameters['to']);
         foreach ($delegates as $delegate) {
-            $delegate = $database->getEntityPrefix() . trim($delegate);
+            $delegate = trim($delegate);
             if (!$database->hasEntity($delegate)) {
                 throw new \InvalidArgumentException(sprintf(
                     'No delegate table "%s" found for table "%s"',

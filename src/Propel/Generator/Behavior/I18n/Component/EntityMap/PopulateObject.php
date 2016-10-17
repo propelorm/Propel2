@@ -20,13 +20,11 @@ class PopulateObject extends BuildComponent
         $doMethod->setName('doPopulateObject');
         $this->getDefinition()->setMethod($doMethod);
 
-        $setLocaleMethod = 'set' . NamingTool::toUpperCamelCase($this->getBehavior()->getLocaleField()->getName());
-
         $body = "
 \$object = \$this->doPopulateObject(\$row, \$offset, \$indexType, \$entity);
 
 if (isset(\$row[3])) {
-    \$object->$setLocaleMethod(\$row[3]);
+    \$object->set{$this->getBehavior()->getLocaleField()->getMethodName()}(\$row[3]);
 }
 
 return \$object;

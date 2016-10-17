@@ -37,15 +37,15 @@ class RelationSetterMethods extends BuildComponent
     {
         $varName = $this->getRelationVarName($relation);
         $className = $this->getObjectClassName(true);
-        $setterName = 'set' . $this->getRelationPhpName($relation, false);
+        $setterName = 'set' . $this->getRelationName($relation, false);
         $relationEntity = $relation->getForeignEntity();
 
         $relationClassName = $this->getBuilder()->getDefinition()->declareUse($relationEntity->getFullClassName());
 
         $body = $this->renderTemplate(
             [
-                'adder' => 'add' . $this->getRefRelationPhpName($relation, false),
-                'setter' => 'set' . $this->getRefRelationPhpName($relation, false),
+                'adder' => 'add' . $this->getRefRelationName($relation, false),
+                'setter' => 'set' . $this->getRefRelationName($relation, false),
                 'varName' => $varName,
                 'isOneToOne' => $relation->isLocalPrimaryKey(),
                 'isManyToOne' => !$relation->isLocalPrimaryKey()

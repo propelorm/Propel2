@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\I18n\Component;
 
-use gossi\codegen\model\PhpParameter;
+use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
@@ -19,6 +27,7 @@ class RemoveTranslation extends BuildComponent
 
     public function process()
     {
+        /** @var I18nBehavior $behavior */
         $behavior = $this->getBehavior();
         $i18nEntity = $behavior->getI18nEntity();
         $relation = $behavior->getI18nRelation();
@@ -34,7 +43,7 @@ if (!\$this->isNew()) {
         unset(\$this->currentTranslations[\$locale]);
     }
     foreach (\$this->{$this->getRefRelationCollVarName($relation)} as \$key => \$translation) {
-        if (\$translation->get{$behavior->getLocaleField()->getName()}() == \$locale) {
+        if (\$translation->get{$behavior->getLocaleField()->getMethodName()}() == \$locale) {
             \$this->{$this->getRefRelationCollVarName($relation)}->removeObject(\$this->{$this->getRefRelationCollVarName($relation)}[\$key]);
             break;
         }
@@ -45,12 +54,8 @@ if (!\$this->isNew()) {
 
         $this->addMethod('removeTranslation')
             ->setDescription('Remove the translation for a given locale')
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
-                ->setDefaultValue($behavior->getDefaultLocale()))
-            ->addParameter(PhpParameter::create('con')
-                ->setType('ConnectionInterface', 'An optional connection object')
-                ->setDefaultValue(null))
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the translation, e.g. 'fr_FR'", $behavior->getDefaultLocale())
+            ->addSimpleDescParameter('con', 'ConnectionInterface', 'An optional connection object', null)
             ->setType('$this|' . $this->getClassNameFromEntity($behavior->getEntity()))
             ->setDescription('The current object (for fluent API support)')
             ->setBody($body);

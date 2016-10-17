@@ -8,68 +8,68 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Model\Diff\DatabaseTableComparatorTest;
+namespace Propel\Tests\Generator\Model\Diff\DatabaseEntityComparatorTest;
 
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\FieldDefaultValue;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\DatabaseDiff;
-use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Diff\EntityComparator;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Tests\TestCase;
 
 /**
- * Tests for the Table method of the DatabaseComparator service class.
+ * Tests for the Entity method of the DatabaseComparator service class.
  *
  */
-class PropelDatabaseTableComparatorTest extends TestCase
+class DatabaseEntityComparatorTest extends TestCase
 {
     public function setUp()
     {
         $this->platform = new MysqlPlatform();
     }
 
-    public function testCompareSameTables()
+    public function testCompareSameEntities()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
-        $d1->addTable($t2);
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
+        $d1->addEntity($t2);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar');
-        $d2->addTable($t4);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar');
+        $d2->addEntity($t4);
 
         $this->assertFalse(DatabaseComparator::computeDiff($d1, $d2));
     }
 
-    public function testCompareNotSameTables()
+    public function testCompareNotSameEntities()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('Bar');
-        $d2->addTable($t2);
+        $t2 = new Entity('Bar');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2);
         $this->assertTrue($diff instanceof DatabaseDiff);
@@ -78,360 +78,360 @@ class PropelDatabaseTableComparatorTest extends TestCase
     public function testCompareCaseInsensitive()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('fOO');
-        $d2->addTable($t2);
+        $t2 = new Entity('fOO');
+        $d2->addEntity($t2);
 
         $this->assertFalse(DatabaseComparator::computeDiff($d1, $d2, true));
     }
 
-    public function testCompareAddedTable()
+    public function testCompareAddedEntity()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar');
-        $d2->addTable($t4);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar');
+        $d2->addEntity($t4);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(1, $nbDiffs);
-        $this->assertEquals(1, count($databaseDiff->getAddedTables()));
-        $this->assertEquals(array('Bar' => $t4), $databaseDiff->getAddedTables());
+        $this->assertEquals(1, count($databaseDiff->getAddedEntities()));
+        $this->assertEquals(array('Bar' => $t4), $databaseDiff->getAddedEntities());
     }
 
-    public function testCompareAddedTableSkipSql()
+    public function testCompareAddedEntitieskipSql()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar');
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar');
         $t4->setSkipSql(true);
-        $d2->addTable($t4);
+        $d2->addEntity($t4);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(0, $nbDiffs);
     }
 
-    public function testCompareRemovedTable()
+    public function testCompareRemovedEntity()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
-        $d1->addTable($t2);
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
+        $d1->addEntity($t2);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(1, $nbDiffs);
-        $this->assertEquals(1, count($databaseDiff->getRemovedTables()));
-        $this->assertEquals(array('Bar' => $t2), $databaseDiff->getRemovedTables());
+        $this->assertEquals(1, count($databaseDiff->getRemovedEntities()));
+        $this->assertEquals(array('Bar' => $t2), $databaseDiff->getRemovedEntities());
     }
 
-    public function testCompareRemovedTableSkipSql()
+    public function testCompareRemovedEntitieskipSql()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
         $t2->setSkipSql(true);
-        $d1->addTable($t2);
+        $d1->addEntity($t2);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(0, $nbDiffs);
     }
 
-    public function testCompareModifiedTable()
+    public function testCompareModifiedEntity()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $c2 = new Column('Foo2');
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $c2 = new Field('Foo2');
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t1->addColumn($c2);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
-        $d1->addTable($t2);
+        $t1->addField($c2);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
+        $d1->addEntity($t2);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar');
-        $d2->addTable($t4);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar');
+        $d2->addEntity($t4);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(1, $nbDiffs);
-        $this->assertEquals(1, count($databaseDiff->getModifiedTables()));
-        $tableDiff = TableComparator::computeDiff($t1, $t3);
-        $this->assertEquals(array('Foo_Table' => $tableDiff), $databaseDiff->getModifiedTables());
+        $this->assertEquals(1, count($databaseDiff->getModifiedEntities()));
+        $entityDiff = EntityComparator::computeDiff($t1, $t3);
+        $this->assertEquals(array('FooEntity' => $entityDiff), $databaseDiff->getModifiedEntities());
     }
 
-    public function testCompareRenamedTable()
+    public function testCompareRenamedEntity()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
-        $d1->addTable($t2);
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
+        $d1->addEntity($t2);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table2');
-        $c3 = new Column('Foo');
+        $t3 = new Entity('Foo_Entity2');
+        $c3 = new Field('Foo');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar');
-        $d2->addTable($t4);
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar');
+        $d2->addEntity($t4);
 
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
         $dc->setWithRenaming(true);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(1, $nbDiffs);
-        $this->assertEquals(1, count($databaseDiff->getRenamedTables()));
-        $this->assertEquals(array('Foo_Table' => 'Foo_Table2'), $databaseDiff->getRenamedTables());
-        $this->assertEquals(array(), $databaseDiff->getAddedTables());
-        $this->assertEquals(array(), $databaseDiff->getRemovedTables());
+        $this->assertEquals(1, count($databaseDiff->getRenamedEntities()));
+        $this->assertEquals(array('FooEntity' => 'FooEntity2'), $databaseDiff->getRenamedEntities());
+        $this->assertEquals(array(), $databaseDiff->getAddedEntities());
+        $this->assertEquals(array(), $databaseDiff->getRemovedEntities());
     }
 
 
-    public function testCompareSeveralTableDifferences()
+    public function testCompareSeveralEntityDifferences()
     {
         $d1 = new Database();
-        $t1 = new Table('Foo_Table');
-        $c1 = new Column('Foo');
+        $t1 = new Entity('Foo_Entity');
+        $c1 = new Field('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
         $c1->getDomain()->replaceSize(3);
         $c1->setNotNull(true);
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('Bar');
-        $c2 = new Column('Bar_Column');
+        $c1->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('Bar');
+        $c2 = new Field('Bar_Field');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
-        $t2->addColumn($c2);
-        $d1->addTable($t2);
-        $t11 = new Table('Baz');
-        $d1->addTable($t11);
+        $t2->addField($c2);
+        $d1->addEntity($t2);
+        $t11 = new Entity('Baz');
+        $d1->addEntity($t11);
 
         $d2 = new Database();
-        $t3 = new Table('Foo_Table');
-        $c3 = new Column('Foo1');
+        $t3 = new Entity('Foo_Entity');
+        $c3 = new Field('Foo1');
         $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c3->getDomain()->replaceScale(2);
         $c3->getDomain()->replaceSize(3);
         $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-        $t3->addColumn($c3);
-        $d2->addTable($t3);
-        $t4 = new Table('Bar2');
-        $c4 = new Column('Bar_Column');
+        $c3->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
+        $t3->addField($c3);
+        $d2->addEntity($t3);
+        $t4 = new Entity('Bar2');
+        $c4 = new Field('Bar_Field');
         $c4->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
-        $t4->addColumn($c4);
-        $d2->addTable($t4);
-        $t5 = new Table('Biz');
-        $c5 = new Column('Biz_Column');
+        $t4->addField($c4);
+        $d2->addEntity($t4);
+        $t5 = new Entity('Biz');
+        $c5 = new Field('Biz_Field');
         $c5->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t5->addColumn($c5);
-        $d2->addTable($t5);
+        $t5->addField($c5);
+        $d2->addEntity($t5);
 
-        // Foo_Table was modified, Bar was renamed, Baz was removed, Biz was added
+        // Foo_Entity was modified, Bar was renamed, Baz was removed, Biz was added
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(5, $nbDiffs);
-        $this->assertEquals(array(), $databaseDiff->getRenamedTables());
-        $this->assertEquals(array('Bar2' => $t4, 'Biz' => $t5), $databaseDiff->getAddedTables());
-        $this->assertEquals(array('Baz' => $t11, 'Bar' => $t2), $databaseDiff->getRemovedTables());
-        $tableDiff = TableComparator::computeDiff($t1, $t3);
-        $this->assertEquals(array('Foo_Table' => $tableDiff), $databaseDiff->getModifiedTables());
+        $this->assertEquals(array(), $databaseDiff->getRenamedEntities());
+        $this->assertEquals(array('Bar2' => $t4, 'Biz' => $t5), $databaseDiff->getAddedEntities());
+        $this->assertEquals(array('Baz' => $t11, 'Bar' => $t2), $databaseDiff->getRemovedEntities());
+        $entityDiff = EntityComparator::computeDiff($t1, $t3);
+        $this->assertEquals(array('FooEntity' => $entityDiff), $databaseDiff->getModifiedEntities());
     }
 
-    public function testCompareSeveralRenamedSameTables()
+    public function testCompareSeveralRenamedSameEntities()
     {
         $d1 = new Database();
-        $t1 = new Table('table1');
-        $c1 = new Column('col1');
+        $t1 = new Entity('entity1');
+        $c1 = new Field('col1');
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
-        $t2 = new Table('table2');
-        $c2 = new Column('col1');
+        $t1->addField($c1);
+        $d1->addEntity($t1);
+        $t2 = new Entity('entity2');
+        $c2 = new Field('col1');
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t2->addColumn($c2);
-        $d1->addTable($t2);
-        $t3 = new Table('table3');
-        $c3 = new Column('col1');
+        $t2->addField($c2);
+        $d1->addEntity($t2);
+        $t3 = new Entity('entity3');
+        $c3 = new Field('col1');
         $c3->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t3->addColumn($c3);
-        $d1->addTable($t3);
+        $t3->addField($c3);
+        $d1->addEntity($t3);
 
         $d2 = new Database();
-        $t4 = new Table('table4');
-        $c4 = new Column('col1');
+        $t4 = new Entity('entity4');
+        $c4 = new Field('col1');
         $c4->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t4->addColumn($c4);
-        $d2->addTable($t4);
-        $t5 = new Table('table5');
-        $c5 = new Column('col1');
+        $t4->addField($c4);
+        $d2->addEntity($t4);
+        $t5 = new Entity('entity5');
+        $c5 = new Field('col1');
         $c5->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t5->addColumn($c5);
-        $d2->addTable($t5);
-        $t6 = new Table('table3');
-        $c6 = new Column('col1');
+        $t5->addField($c5);
+        $d2->addEntity($t5);
+        $t6 = new Entity('entity3');
+        $c6 = new Field('col1');
         $c6->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
-        $t6->addColumn($c6);
-        $d2->addTable($t6);
+        $t6->addField($c6);
+        $d2->addEntity($t6);
 
-        // table1 and table2 were removed and table4, table5 added with same columns (does not always mean its a rename, hence we
+        // entity1 and entity2 were removed and entity4, entity5 added with same fields (does not always mean its a rename, hence we
         // can not guarantee it)
         $dc = new DatabaseComparator();
         $dc->setFromDatabase($d1);
         $dc->setToDatabase($d2);
-        $nbDiffs = $dc->compareTables();
+        $nbDiffs = $dc->compareEntities();
         $databaseDiff = $dc->getDatabaseDiff();
         $this->assertEquals(4, $nbDiffs);
-        $this->assertEquals(0, count($databaseDiff->getRenamedTables()));
-        $this->assertEquals(array('table4', 'table5'), array_keys($databaseDiff->getAddedTables()));
-        $this->assertEquals(array('table1', 'table2'), array_keys($databaseDiff->getRemovedTables()));
+        $this->assertEquals(0, count($databaseDiff->getRenamedEntities()));
+        $this->assertEquals(array('Entity4', 'Entity5'), array_keys($databaseDiff->getAddedEntities()));
+        $this->assertEquals(array('Entity1', 'Entity2'), array_keys($databaseDiff->getRemovedEntities()));
     }
 
 
-    public function testRemoveTable()
+    public function testRemoveEntity()
     {
         $dc = new DatabaseComparator();
-        $this->assertTrue($dc->getRemoveTable());
+        $this->assertTrue($dc->getRemoveEntity());
 
-        $dc->setRemoveTable(false);
-        $this->assertFalse($dc->getRemoveTable());
+        $dc->setRemoveEntity(false);
+        $this->assertFalse($dc->getRemoveEntity());
 
-        $dc->setRemoveTable(true);
-        $this->assertTrue($dc->getRemoveTable());
+        $dc->setRemoveEntity(true);
+        $this->assertTrue($dc->getRemoveEntity());
 
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $d1->addEntity($t1);
         $d2 = new Database();
 
 
@@ -452,18 +452,18 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
     }
 
-    public function testExcludedTablesWithoutRenaming()
+    public function testExcludedEntitiesWithoutRenaming()
     {
         $dc = new DatabaseComparator();
-        $this->assertCount(0, $dc->getExcludedTables());
+        $this->assertCount(0, $dc->getExcludedEntities());
 
-        $dc->setExcludedTables(array('foo'));
-        $this->assertCount(1, $dc->getExcludedTables());
+        $dc->setExcludedEntities(array('foo'));
+        $this->assertCount(1, $dc->getExcludedEntities());
 
         $d1 = new Database();
         $d2 = new Database();
-        $t2 = new Table('Bar');
-        $d2->addTable($t2);
+        $t2 = new Entity('Bar');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar'));
         $this->assertFalse($diff);
@@ -472,11 +472,11 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
 
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('Bar');
-        $d2->addTable($t2);
+        $t2 = new Entity('Bar');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar', 'Foo'));
         $this->assertFalse($diff);
@@ -489,13 +489,13 @@ class PropelDatabaseTableComparatorTest extends TestCase
 
 
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $c1 = new Column('col1');
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $c1 = new Field('col1');
+        $t1->addField($c1);
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('Foo');
-        $d2->addTable($t2);
+        $t2 = new Entity('Foo');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, array('Bar', 'Foo'));
         $this->assertFalse($diff);
@@ -504,18 +504,18 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
     }
 
-    public function testExcludedTablesWithRenaming()
+    public function testExcludedEntitiesWithRenaming()
     {
         $dc = new DatabaseComparator();
-        $this->assertCount(0, $dc->getExcludedTables());
+        $this->assertCount(0, $dc->getExcludedEntities());
 
-        $dc->setExcludedTables(array('foo'));
-        $this->assertCount(1, $dc->getExcludedTables());
+        $dc->setExcludedEntities(array('foo'));
+        $this->assertCount(1, $dc->getExcludedEntities());
 
         $d1 = new Database();
         $d2 = new Database();
-        $t2 = new Table('Bar');
-        $d2->addTable($t2);
+        $t2 = new Entity('Bar');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar'));
         $this->assertFalse($diff);
@@ -524,11 +524,11 @@ class PropelDatabaseTableComparatorTest extends TestCase
         $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
 
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('Bar');
-        $d2->addTable($t2);
+        $t2 = new Entity('Bar');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar', 'Foo'));
         $this->assertFalse($diff);
@@ -541,13 +541,13 @@ class PropelDatabaseTableComparatorTest extends TestCase
 
 
         $d1 = new Database();
-        $t1 = new Table('Foo');
-        $c1 = new Column('col1');
-        $t1->addColumn($c1);
-        $d1->addTable($t1);
+        $t1 = new Entity('Foo');
+        $c1 = new Field('col1');
+        $t1->addField($c1);
+        $d1->addEntity($t1);
         $d2 = new Database();
-        $t2 = new Table('Foo');
-        $d2->addTable($t2);
+        $t2 = new Entity('Foo');
+        $d2->addEntity($t2);
 
         $diff = DatabaseComparator::computeDiff($d1, $d2, false, true, true, array('Bar', 'Foo'));
         $this->assertFalse($diff);

@@ -21,7 +21,6 @@ use Propel\Generator\Exception\EngineException;
  */
 class Domain extends MappingModel
 {
-    private $name;
     private $description;
     private $size;
     private $scale;
@@ -81,7 +80,7 @@ class Domain extends MappingModel
         $this->copy($this->database->getPlatform()->getDomainForType($schemaType));
 
         // Name
-        $this->name = $this->getAttribute('name');
+        $this->setName($this->getAttribute('name'));
 
         // Default value
         $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
@@ -94,6 +93,11 @@ class Domain extends MappingModel
         $this->size = $this->getAttribute('size');
         $this->scale = $this->getAttribute('scale');
         $this->description = $this->getAttribute('description');
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -134,26 +138,6 @@ class Domain extends MappingModel
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /**
-     * Returns the domain description.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Sets the domain name.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
     }
 
     /**

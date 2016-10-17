@@ -27,7 +27,7 @@ class ShiftLevelMethod extends BuildComponent
 
         $body = "
 \$levelCriteria = new Criteria($entityMapClassName::DATABASE_NAME);
-\$levelCriteria->add($entityMapClassName::LEVEL_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('level_field')->getColumnName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+\$levelCriteria->add($entityMapClassName::LEVEL_COL, array('raw' => '{$this->getBehavior()->getFieldForParameter('level_field')->getSqlName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 \$this->createQuery()
     ->filterBy{$this->getBehavior()->getFieldForParameter('left_field')->getMethodName()}(['min' => \$first])

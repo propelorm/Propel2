@@ -624,14 +624,14 @@ abstract class DataModelBuilder
         return $this->warnings;
     }
 
-    /**
-     * Returns the name of the current class being built, with a possible prefix.
-     *
-     * @return string
-     * @see OMBuilder#getClassName()
-     */
-    public function prefixClassName($identifier)
-    {
-        return $this->getBuildProperty('generator.objectModel.classPrefix') . $identifier;
-    }
+//    /**
+//     * Returns the name of the current class being built, with a possible prefix.
+//     *
+//     * @return string
+//     * @see OMBuilder#getClassName()
+//     */
+//    public function prefixClassName($identifier)
+//    {
+//        return $this->getBuildProperty('generator.objectModel.classPrefix') . $identifier;
+//    }
 }

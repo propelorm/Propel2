@@ -16,7 +16,6 @@
   baseClass CDATA #IMPLIED
   heavyIndexing (true|false) "false"
   identifierQuoting (true|false) "false"
-  tablePrefix CDATA #IMPLIED
   defaultStringFormat CDATA #IMPLIED
   xmlns:xsi CDATA #IMPLIED
   xsi:noNamespaceSchemaLocation CDATA #IMPLIED
@@ -34,7 +33,7 @@
 <!ELEMENT entity (field+,(relation|index|unique|id-method-parameter|behavior|vendor)*)>
 <!ATTLIST entity
   name CDATA #REQUIRED
-  tableName CDATA #IMPLIED
+  sqlName CDATA #IMPLIED
   idMethod (native|autoincrement|sequence|none|null) "null"
   skipSql (true|false) "false"
   readOnly (true|false) "false"
@@ -62,6 +61,7 @@
 <!ELEMENT field ((inheritance|vendor)*)>
 <!ATTLIST field
   name CDATA #REQUIRED
+  sqlName CDATA #IMPLIED
   primaryKey (true|false) "false"
   required (true|false) "false"
   type
@@ -101,6 +101,7 @@
   target CDATA #REQUIRED
   field CDATA #IMPLIED
   name CDATA #IMPLIED
+  sqlName CDATA #IMPLIED
   refFieldName CDATA #IMPLIED
   refName CDATA #IMPLIED
   onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
@@ -117,6 +118,7 @@
 <!ELEMENT index (index-field+,vendor*)>
 <!ATTLIST index
   name CDATA #IMPLIED
+  sqlName CDATA #IMPLIED
 >
 
 <!ELEMENT behavior (parameter*)>
@@ -133,6 +135,7 @@
 <!ELEMENT unique (unique-field+)>
 <!ATTLIST unique
   name CDATA #IMPLIED
+  sqlName CDATA #IMPLIED
 >
 
 <!ELEMENT unique-field (vendor*)>

@@ -100,7 +100,7 @@ class ModelCriteria extends BaseModelCriteria
      * Adds a condition on a field based on a pseudo SQL clause
      * but keeps it for later use with combine()
      * Until combine() is called, the condition is not added to the query
-     * Uses introspection to translate the field phpName into a fully qualified name
+     * Uses introspection to translate the field name into a fully qualified name
      * <code>
      * $c->condition('cond1', 'b.Title = ?', 'foo');
      * </code>
@@ -122,16 +122,16 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Adds a condition on a field based on a field phpName and a value
-     * Uses introspection to translate the field phpName into a fully qualified name
-     * Warning: recognizes only the phpNames of the main Model (not joined entities)
+     * Adds a condition on a field based on a field name and a value
+     * Uses introspection to translate the field name into a fully qualified name
+     * Warning: recognizes only the names of the main Model (not joined entities)
      * <code>
      * $c->filterBy('Title', 'foo');
      * </code>
      *
      * @see Criteria::add()
      *
-     * @param string $field     A string representing the field phpName, e.g. 'AuthorId'
+     * @param string $field     A string representing the field name, e.g. 'AuthorId'
      * @param mixed  $value      A value for the condition
      * @param string $comparison What to use for the field comparison, defaults to Criteria::EQUAL
      *
@@ -144,8 +144,8 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Adds a list of conditions on the fields of the current model
-     * Uses introspection to translate the field phpName into a fully qualified name
-     * Warning: recognizes only the phpNames of the main Model (not joined entities)
+     * Uses introspection to translate the field name into a fully qualified name
+     * Warning: recognizes only the names of the main Model (not joined entities)
      * <code>
      * $c->filterByArray(array(
      *  'Title'     => 'War And Peace',
@@ -155,7 +155,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see filterBy()
      *
-     * @param mixed $conditions An array of conditions, using field phpNames as key
+     * @param mixed $conditions An array of conditions, using field names as key
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -170,7 +170,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Adds a condition on a field based on a pseudo SQL clause
-     * Uses introspection to translate the field phpName into a fully qualified name
+     * Uses introspection to translate the field name into a fully qualified name
      * <code>
      * // simple clause
      * $c->where('b.Title = ?', 'foo');
@@ -205,7 +205,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Adds a having condition on a field based on a pseudo SQL clause
-     * Uses introspection to translate the field phpName into a fully qualified name
+     * Uses introspection to translate the field name into a fully qualified name
      * <code>
      * // simple clause
      * $c->having('b.Title = ?', 'foo');
@@ -400,7 +400,7 @@ class ModelCriteria extends BaseModelCriteria
 
         if ('*' === $fieldArray) {
             $fieldArray = array();
-            foreach (call_user_func(array($this->entityMap, 'getFieldNames'), EntityMap::TYPE_PHPNAME) as $field) {
+            foreach (call_user_func(array($this->entityMap, 'getFieldNames'), EntityMap::TYPE_FIELDNAME) as $field) {
                 $fieldArray []= $this->entityName . '.' . $field;
             }
         }
@@ -467,7 +467,7 @@ class ModelCriteria extends BaseModelCriteria
      *   $c->join('Book.Author', Criteria::RIGHT_JOIN);
      *    => $c->addJoin(BookEntityMap::AUTHOR_ID, AuthorEntityMap::ID, Criteria::RIGHT_JOIN);
      *   $c->join('Book.Author a', Criteria::RIGHT_JOIN);
-     *    => $c->addAlias('a', AuthorEntityMap::TABLE_NAME);
+     *    => $c->addAlias('a', AuthorEntityMap::SQL_NAME);
      *    => $c->addJoin(BookEntityMap::AUTHOR_ID, 'a.ID', Criteria::RIGHT_JOIN);
      * </code>
      *
@@ -475,6 +475,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ModelCriteria The current object, for fluid interface
+     * @throws UnknownRelationException
+     * @throws PropelException
      */
     public function join($relation, $joinType = Criteria::INNER_JOIN)
     {
@@ -539,7 +541,7 @@ class ModelCriteria extends BaseModelCriteria
      * </code>
      *
      * @param string $name     The relation name or alias on which the join was created
-     * @param string $clause   SQL clause, may contain field and entity phpNames
+     * @param string $clause   SQL clause, may contain field and entity names
      * @param mixed  $value    An optional value to bind to the clause
      * @param string $operator The operator to use to add the condition. Defaults to 'AND'
      *
@@ -1060,7 +1062,7 @@ class ModelCriteria extends BaseModelCriteria
      * // composite primary key
      * $bookOpinion = $c->findPk(array(34, 634));
      * </code>
-     * 
+     *
      * @param mixed               $key Primary key to use for the query
      *
      * @return mixed the result, formatted by the current formatter
@@ -1130,7 +1132,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see filterBy()
      * @see find()
      *
-     * @param string              $field A string representing the field phpName, e.g. 'AuthorId'
+     * @param string              $field A string representing the field name, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
      *
      * @return mixed the list of results, formatted by the current formatter
@@ -1155,7 +1157,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see filterByArray()
      * @see find()
      *
-     * @param mixed               $conditions An array of conditions, using field phpNames as key
+     * @param mixed               $conditions An array of conditions, using field names as key
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1172,7 +1174,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see filterBy()
      * @see findOne()
      *
-     * @param mixed               $field A string representing the field phpName, e.g. 'AuthorId'
+     * @param mixed               $field A string representing the field name, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
      *
      * @return mixed the result, formatted by the current formatter
@@ -1197,7 +1199,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see filterByArray()
      * @see findOne()
      *
-     * @param mixed               $conditions An array of conditions, using field phpNames as key
+     * @param mixed               $conditions An array of conditions, using field names as key
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1590,7 +1592,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Creates a Criterion object based on a SQL clause and a value
-     * Uses introspection to translate the field phpName into a fully qualified name
+     * Uses introspection to translate the field name into a fully qualified name
      *
      * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
      * @param mixed  $value  A value for the condition
@@ -1707,17 +1709,17 @@ class ModelCriteria extends BaseModelCriteria
      *   => array($authorFirstNameFieldMap, 'a.first_name')
      * </code>
      *
-     * @param string $phpName String representing the field name in a pseudo SQL clause, e.g. 'Book.Title'
+     * @param string $name String representing the field name in a pseudo SQL clause, e.g. 'Book.Title'
      *
      * @return array List($fieldMap, $realColumnName)
      */
-    protected function getFieldFromName($phpName, $failSilently = true)
+    protected function getFieldFromName($name, $failSilently = true)
     {
-        if (false === strpos($phpName, '.')) {
+        if (false === strpos($name, '.')) {
             $prefix = $this->getModelAliasOrName();
         } else {
             // $prefix could be either class name or entity name
-            list($prefix, $phpName) = explode('.', $phpName);
+            list($prefix, $name) = explode('.', $name);
         }
 
         $joinName = $prefix;
@@ -1739,7 +1741,7 @@ class ModelCriteria extends BaseModelCriteria
             // field of a relations's model
             $entityMap = $this->joins[$shortClass]->getEntityMap();
         } elseif ($this->hasSelectQuery($prefix)) {
-            return $this->getFieldFromSubQuery($prefix, $phpName, $failSilently);
+            return $this->getFieldFromSubQuery($prefix, $name, $failSilently);
         } elseif ($failSilently) {
             return array(null, null);
         } else {
@@ -1758,18 +1760,18 @@ class ModelCriteria extends BaseModelCriteria
 //            return array($field, $realFieldName);
 //        } else
 
-        if ($entityMap->hasField($phpName)) {
-            $field = $entityMap->getField($phpName);
-            $realColumnName = $field->getFullyQualifierColumnName();
+        if ($entityMap->hasField($name)) {
+            $field = $entityMap->getField($name);
+            $realColumnName = $field->getFullyQualifiedSqlName();
 
             return array($field, $realColumnName);
-        } elseif (isset($this->asFields[$phpName])) {
+        } elseif (isset($this->asFields[$name])) {
             // aliased field
-            return array(null, $phpName);
+            return array(null, $name);
         } elseif ($failSilently) {
             return array(null, null);
         } else {
-            throw new UnknownFieldException(sprintf('Unknown field "%s" on model, alias or entity "%s"', $phpName, $prefix));
+            throw new UnknownFieldException(sprintf('Unknown field "%s" on model, alias or entity "%s"', $name, $prefix));
         }
     }
 
@@ -1836,32 +1838,32 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return array List($fieldMap, $realFieldName)
      */
-    protected function getFieldFromSubQuery($class, $phpName, $failSilently = true)
+    protected function getFieldFromSubQuery($class, $name, $failSilently = true)
     {
         $subQueryCriteria = $this->getSelectQuery($class);
         $entityMap = $subQueryCriteria->getEntityMap();
-        if ($entityMap->hasFieldByPhpName($phpName)) {
-            $field = $entityMap->getFieldByPhpName($phpName);
+        if ($entityMap->hasField($name)) {
+            $field = $entityMap->getField($name);
             $realFieldName = $class.'.'.$field->getName();
 
             return array($field, $realFieldName);
-        } elseif (isset($subQueryCriteria->asFields[$phpName])) {
+        } elseif (isset($subQueryCriteria->asFields[$name])) {
             // aliased field
-            return array(null, $class.'.'.$phpName);
+            return array(null, $class.'.'.$name);
         } elseif ($failSilently) {
             return array(null, null);
         } else {
-            throw new PropelException(sprintf('Unknown field "%s" in the subQuery with alias "%s".', $phpName, $class));
+            throw new PropelException(sprintf('Unknown field "%s" in the subQuery with alias "%s".', $name, $class));
         }
     }
 
     /**
-     * Return a fully qualified field name corresponding to a simple field phpName
+     * Return a fully qualified field name corresponding to a simple field name
      * Uses model alias if it exists
      * Warning: restricted to the fields of the main model
      * e.g. => 'Title' => 'book.title'
      *
-     * @param string $fieldName the Field phpName, without the entity name
+     * @param string $fieldName the Field name, without the entity name
      *
      * @return string the fully qualified field name
      */
@@ -1976,7 +1978,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Handle the magic
      * Supports findByXXX(), findOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
-     * where XXX is a field phpName.
+     * where XXX is a field name.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
      */
     public function __call($name, $arguments)

@@ -15,7 +15,6 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Domain;
-use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Index;
@@ -75,10 +74,10 @@ class SqlDefaultPlatform implements PlatformInterface
      *
      * @return string
      */
-    public function getName($object)
+    /*public function getName($object)
     {
         if ($object instanceof Entity) {
-            $commonName = $object->getTableName() ?: $this->toUnderscore($object->getName());
+            $commonName = $object->getSqlName() ?: $this->toUnderscore($object->getName());
             if ($schema = $object->guessSchemaName()) {
                 return $schema . $this->getSchemaDelimiter() . $commonName;
             }
@@ -86,18 +85,16 @@ class SqlDefaultPlatform implements PlatformInterface
             return $commonName;
 
         } else if ($object instanceof Field) {
-            if ($object->getColumnName()) {
-                return $object->getColumnName();
+            if ($object->getSqlName()) {
+                return $object->getSqlName();
             }
+
             return $this->toUnderscore($object->getName());
         } else {
             return $this->toUnderscore($object->getName());
         }
     }
-
-    protected function toUnderscore($v) {
-        return NamingTool::toUnderscore($v);
-    }
+*/
 
     public function getRepositoryBuilder(Entity $entity)
     {
@@ -261,13 +258,13 @@ class SqlDefaultPlatform implements PlatformInterface
      * <code>FOO_ID</code> <i>must</i> be the first element used in
      * the <code>where</code> clause of the SQL query used against
      * this entity for the primary key index to be used. This feature
-     * could cause problems under MySQL with heavily indexed entitys,
+     * could cause problems under MySQL with heavily indexed entities,
      * as MySQL currently only supports 16 indices per entity (i.e. it
      * might cause too many indices to be created).
      *
      * See the mysql manual http://www.mysql.com/doc/E/X/EXPLAIN.html
      * for a better description of why heavy indexing is useful for
-     * quickly searchable database entitys.
+     * quickly searchable database entities.
      */
     protected function doHeavyIndexing(Entity $entity)
     {
@@ -392,7 +389,7 @@ class SqlDefaultPlatform implements PlatformInterface
         if (IdMethod::NATIVE === $entity->getIdMethod()) {
             $idMethodParams = $entity->getIdMethodParameters();
             $maxIdentifierLength = $this->getMaxFieldNameLength();
-            $entityName = $this->getName($entity);
+            $entityName = $entity->getSqlName();
             if (empty($idMethodParams)) {
                 if (strlen($entityName . '_SEQ') > $maxIdentifierLength) {
                     if (!isset($longNamesMap[$entity->getName()])) {
@@ -411,8 +408,10 @@ class SqlDefaultPlatform implements PlatformInterface
     }
 
     /**
-     * Returns the DDL SQL to add the entitys of a database
+     * Returns the DDL SQL to add the entities of a database
      * together with index and foreign keys
+     *
+     * @param Database $database
      *
      * @return string
      */
@@ -423,7 +422,7 @@ class SqlDefaultPlatform implements PlatformInterface
             $this->normalizeEntity($entity);
         }
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getSqlName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -459,7 +458,7 @@ class SqlDefaultPlatform implements PlatformInterface
     public function getDropEntityDDL(Entity $entity)
     {
         return "
-DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
+DROP TABLE IF EXISTS " . $this->quoteIdentifier($entity->getSqlName()) . ";
 ";
     }
 
@@ -499,20 +498,23 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
 
         return sprintf($pattern,
             $entityDescription,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines)
         );
     }
 
     /**
      * Builds the DDL SQL for a Field object.
+     *
+     * @param Field $col
+     *
      * @return string
      */
     public function getFieldDDL(Field $col)
     {
         $domain = $col->getDomain();
 
-        $ddl = array($this->quoteIdentifier($this->getName($col)));
+        $ddl = array($this->quoteIdentifier($col->getSqlName()));
         $sqlType = $domain->getSqlType();
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             $ddl[] = $sqlType . $col->getSizeDefinition();
@@ -534,6 +536,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
 
     /**
      * Returns the SQL for the default value of a Field object
+     *
+     * @param Field $col
+     *
      * @return string
      */
     public function getFieldDefaultValueDDL(Field $col)
@@ -574,8 +579,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
      * echo $platform->getFieldListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param array Field[] or string[]
-     * @param string $delim The delimiter to use in separating the field names.
+     * @param array $fields Field[] or string[] array
+     * @param string $delimiter The delimiter to use in separating the field names.
      *
      * @return string
      */
@@ -586,7 +591,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
             throw new BuildException('Can not generate a field list DDL without fields.');
         }
         foreach ($fields as $field) {
-            $fieldName = $this->getName($field);
+            $fieldName = $field->getSqlName();
             $list[] = $this->quoteIdentifier($fieldName);
         }
 
@@ -596,17 +601,21 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
     /**
      * Returns the name of a entity primary key.
      *
+     * @param Entity $entity
+     *
      * @return string
      */
     public function getPrimaryKeyName(Entity $entity)
     {
-        $entityName = $this->getName($entity);
+        $entityName = $entity->getSqlName(false);
 
         return $entityName . '_pk';
     }
 
     /**
      * Returns the SQL for the primary key of a Entity object.
+     *
+     * @param Entity $entity
      *
      * @return string
      */
@@ -634,7 +643,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             $this->quoteIdentifier($this->getPrimaryKeyName($entity))
         );
     }
@@ -656,7 +665,7 @@ ALTER TABLE %s ADD %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             $this->getPrimaryKeyDDL($entity)
         );
     }
@@ -691,8 +700,8 @@ CREATE %sINDEX %s ON %s (%s);
 
         return sprintf($pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
-            $this->quoteIdentifier($this->getName($index)),
-            $this->quoteIdentifier($this->getName($index->getEntity())),
+            $this->quoteIdentifier($index->getSqlName(false)),
+            $this->quoteIdentifier($index->getEntity()->getSqlName()),
             $this->getFieldListDDL($index->getFieldObjects())
         );
     }
@@ -710,7 +719,7 @@ DROP INDEX %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($index->getFQName())
+            $this->quoteIdentifier($index->getSqlName())
         );
     }
 
@@ -724,7 +733,7 @@ DROP INDEX %s;
     {
         return sprintf('%sINDEX %s (%s)',
             $index->isUnique() ? 'UNIQUE ' : '',
-            $this->quoteIdentifier($this->getName($index)),
+            $this->quoteIdentifier($index->getSqlName()),
             $this->getFieldListDDL($index->getFieldObjects())
         );
     }
@@ -772,7 +781,7 @@ ALTER TABLE %s ADD %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($relation->getEntity())),
+            $this->quoteIdentifier($relation->getEntity()->getSqlName()),
             $this->getRelationDDL($relation)
         );
     }
@@ -793,8 +802,8 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($relation->getEntity())),
-            $this->quoteIdentifier($this->getName($relation))
+            $this->quoteIdentifier($relation->getEntity()->getSqlName()),
+            $this->quoteIdentifier($relation->getSqlName())
         );
     }
 
@@ -811,9 +820,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     FOREIGN KEY (%s)
     REFERENCES %s (%s)";
         $script = sprintf($pattern,
-            $this->quoteIdentifier($this->getName($relation)),
+            $this->quoteIdentifier($relation->getSqlName()),
             $this->getFieldListDDL($relation->getLocalFieldObjects()),
-            $this->quoteIdentifier($this->getName($relation->getForeignEntity())),
+            $this->quoteIdentifier($relation->getForeignEntity()->getSqlName()),
             $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
         if ($relation->hasOnUpdate()) {
@@ -860,7 +869,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             $ret .= $this->getDropEntityDDL($entity);
         }
 
-        foreach ($databaseDiff->getRenamedEntities() as $fromEntityName => $toEntityName) {
+        foreach ($databaseDiff->getSqlRenamedEntities() as $fromEntityName => $toEntityName) {
             $ret .= $this->getRenameEntityDDL($fromEntityName, $toEntityName);
         }
 
@@ -961,12 +970,12 @@ ALTER TABLE %s RENAME TO %s;
             foreach ($changes as $change) {
                 if (!trim($change)) continue;
                 $isCompatibleCall = preg_match(
-                    sprintf('/ALTER TABLE %s (?!RENAME)/', $this->quoteIdentifier($this->getName($toEntity))),
+                    sprintf('/ALTER TABLE %s (?!RENAME)/', $this->quoteIdentifier($toEntity->getSqlName())),
                     $change
                 );
                 if ($isCompatibleCall) {
                     $fieldChanges[] = preg_replace(
-                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($this->getName($toEntity))),
+                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($toEntity->getSqlName())),
                         "\n\n  ",
                         trim($change)
                     );
@@ -979,7 +988,7 @@ ALTER TABLE %s RENAME TO %s;
                 $ret .= sprintf("
 ALTER TABLE %s%s;
 ",
-                    $this->quoteIdentifier($this->getName($toEntity)), implode(',', $fieldChanges));
+                    $this->quoteIdentifier($toEntity->getSqlName()), implode(',', $fieldChanges));
             }
         }
 
@@ -1115,8 +1124,8 @@ ALTER TABLE %s DROP COLUMN %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($field->getEntity())),
-            $this->quoteIdentifier($this->getName($field))
+            $this->quoteIdentifier($field->getEntity()->getSqlName()),
+            $this->quoteIdentifier($field->getSqlName())
         );
     }
 
@@ -1132,9 +1141,9 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($fromField->getEntity())),
-            $this->quoteIdentifier($this->getName($fromField)),
-            $this->quoteIdentifier($this->getName($toField))
+            $this->quoteIdentifier($fromField->getEntity()->getSqlName()),
+            $this->quoteIdentifier($fromField->getSqlName()),
+            $this->quoteIdentifier($toField->getSqlName())
         );
     }
 
@@ -1151,7 +1160,7 @@ ALTER TABLE %s MODIFY %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($toField->getEntity())),
+            $this->quoteIdentifier($toField->getEntity()->getSqlName()),
             $this->getFieldDDL($toField)
         );
     }
@@ -1185,7 +1194,7 @@ ALTER TABLE %s MODIFY
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines)
         );
     }
@@ -1202,7 +1211,7 @@ ALTER TABLE %s ADD %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($field->getEntity())),
+            $this->quoteIdentifier($field->getEntity()->getSqlName()),
             $this->getFieldDDL($field)
         );
     }
@@ -1235,7 +1244,7 @@ ALTER TABLE %s ADD
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines)
         );
     }

@@ -22,7 +22,7 @@ class OverwritePrimaryKeyGetter extends BuildComponent
         $behavior = $this->getBehavior();
         $parentEntity = $behavior->getParentEntity();
 
-        $parentGetter = 'get' . $this->getRelationPhpName($parentRelation);
+        $parentGetter = 'get' . $this->getRelationName($parentRelation);
 
         foreach ($parentEntity->getPrimaryKey() as $primaryKey) {
             $methodName = 'get' . $primaryKey->getMethodName();

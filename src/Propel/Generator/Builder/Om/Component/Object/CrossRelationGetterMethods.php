@@ -62,7 +62,7 @@ class CrossRelationGetterMethods extends BuildComponent
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
         foreach ($crossRelation->getRelations() as $relation) {
-            $relatedName = $this->getRelationPhpName($relation, true);
+            $relatedName = $this->getRelationName($relation, true);
             $relatedObjectClassName = $this->getClassNameFromBuilder(
                 $this->getBuilder()->getNewObjectBuilder($relation->getForeignEntity())
             );
@@ -90,7 +90,7 @@ EOF;
     {
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
-        $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
+        $relatedName = $this->getCrossRelationName($crossRelation, true);
         $collVarName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
 
         $classNames = [];
@@ -117,10 +117,10 @@ EOF;
     protected function addActiveCombinedCrossRelationGetter(CrossRelation $crossRelation)
     {
         $refFK = $crossRelation->getIncomingRelation();
-        $selfRelationName = $this->getRelationPhpName($refFK, $plural = false);
+        $selfRelationName = $this->getRelationName($refFK, $plural = false);
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
-        $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
+        $relatedName = $this->getCrossRelationName($crossRelation, true);
         $collVarName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
 
         $classNames = [];
@@ -147,7 +147,7 @@ if (null === \$this->$collVarName || null !== \$criteria || \$partial) {
         \$query = $relatedQueryClassName::create(null, \$criteria)
             ->filterBy{$selfRelationName}(\$this)";
         foreach ($crossRelation->getRelations() as $fk) {
-            $varName = $this->getRelationPhpName($fk, $plural = false);
+            $varName = $this->getRelationName($fk, $plural = false);
             $body .= "
             ->join{$varName}()";
         }
@@ -162,7 +162,7 @@ if (null === \$this->$collVarName || null !== \$criteria || \$partial) {
 ";
 
         foreach ($crossRelation->getRelations() as $fk) {
-            $varName = $this->getRelationPhpName($fk, $plural = false);
+            $varName = $this->getRelationName($fk, $plural = false);
             $body .= "
             \$combination[] = \$item->get{$varName}();";
         }
@@ -219,9 +219,9 @@ EOF;
             ->setBody($body);
 
 
-        $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
+        $relatedName = $this->getCrossRelationName($crossRelation, true);
         $firstFK = $crossRelation->getRelations()[0];
-        $firstFkName = $this->getRelationPhpName($firstFK, true);
+        $firstFkName = $this->getRelationName($firstFK, true);
 
         $relatedObjectClassName = $this->getClassNameFromBuilder(
             $this->getBuilder()->getNewObjectBuilder($firstFK->getForeignEntity())
@@ -268,11 +268,11 @@ EOF;
     protected function addActiveNormalCrossRelationGetter(CrossRelation $crossRelation)
     {
         $refFK = $crossRelation->getIncomingRelation();
-        $selfRelationName = $this->getRelationPhpName($refFK, $plural = false);
+        $selfRelationName = $this->getRelationName($refFK, $plural = false);
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
         foreach ($crossRelation->getRelations() as $relation) {
-            $relatedName = $this->getRelationPhpName($relation, true);
+            $relatedName = $this->getRelationName($relation, true);
             $relatedObjectClassName = $this->getClassNameFromBuilder(
                 $this->getBuilder()->getNewObjectBuilder($relation->getForeignEntity())
             );
@@ -337,4 +337,4 @@ EOF;
                 ->setBody($body);
         }
     }
-} 
+}

@@ -38,7 +38,7 @@ class ReferrerRelationAddMethods extends BuildComponent
      */
     protected function addRefAddMethod(Relation $refRelation)
     {
-        $varName = lcfirst($this->getRefRelationPhpName($refRelation));
+        $varName = lcfirst($this->getRefRelationName($refRelation));
         $className = $this->getObjectClassName();
         $methodName = 'add' . ucfirst($varName);
         $colVarName = $this->getRefRelationCollVarName($refRelation);
@@ -58,7 +58,7 @@ if (null === \$this->{$colVarName}) {
 
 if (!\$this->{$colVarName}->contains(\${$varName})) {
     \$this->{$colVarName}[] = \${$varName};
-    \${$varName}->set" . $this->getRelationPhpName($refRelation) . "(\$this);
+    \${$varName}->set" . $this->getRelationName($refRelation) . "(\$this);
 }
 
 return \$this;

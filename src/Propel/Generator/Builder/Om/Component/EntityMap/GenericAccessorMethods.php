@@ -87,7 +87,6 @@ if (\$foreignEntity) {
     \$value = \$foreignEntityMap->toArray(\$foreignEntity, \$keyType, \$includeLazyLoadColumns, \$includeForeignObjects, \$alreadyDumpedObjectsWatcher);
 }
 if (\$value) {
-    {$this->addRelationNameModifier()}
     \$array[\$relationName] = \$value;
 }
 ";
@@ -99,13 +98,11 @@ if (\$value) {
                 $toArrayCall = "\$foreignEntityMap->toArray(\$foreignEntity, \$keyType, \$includeLazyLoadColumns, \$includeForeignObjects, \$alreadyDumpedObjectsWatcher)";
                 $defaultValue = 'null';
                 $typeHint = 'object';
-                $relationSetter = $this->addRelationNameModifier();
             } else {
                 $propertyName = $this->getRefRelationCollVarName($refRelation);
                 $toArrayCall = "\$foreignEntity->toArray(null, false, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjectsWatcher)";
                 $defaultValue = '[]';
                 $typeHint = 'array|\Propel\Runtime\Collection\ObjectCollection';
-                $relationSetter = $this->addRelationNameModifier();
             }
 
             $body .= "
@@ -119,7 +116,6 @@ if (\$foreignEntity) {
     \$value = {$toArrayCall};
 }
 if (\$value) {
-    $relationSetter
     \$array[\$relationName] = \$value;
 }
 ";
@@ -134,7 +130,7 @@ return \$array;";
         $method = $this->addMethod('toArray')
             ->addSimpleParameter('entity', 'object')
             ->addSimpleDescParameter('keyType', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setDescription($description)
@@ -145,20 +141,6 @@ Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
         $method->addSimpleDescParameter('includeLazyLoadColumns', 'boolean', 'Whether to include lazy loaded columns', true);
         $method->addSimpleDescParameter('includeForeignObjects', 'boolean', 'Whether to include hydrated related objects', false);
         $method->addSimpleParameter('alreadyDumpedObjectsWatcher', 'object', null);
-    }
-
-
-    /**
-     * Adds the switch-statement for looking up the array-key name for toArray
-     * @see toArray
-     */
-    protected function addRelationNameModifier()
-    {
-        return "
-    if (EntityMap::TYPE_PHPNAME === \$keyType) {
-        \$relationName = ucfirst(\$relationName);
-    }
-        ";
     }
 
     protected function addGetByName()
@@ -179,7 +161,7 @@ return \$this->getByPosition(\$entity, \$pos);
             ->addSimpleParameter('entity', 'object')
             ->addSimpleDescParameter('name', 'string', 'name of the field')
             ->addSimpleDescParameter('type', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setBody($body);

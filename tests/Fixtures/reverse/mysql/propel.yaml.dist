@@ -22,9 +22,6 @@ propel:
     defaultConnection: reverse-bookstore
     connections:
       - reverse-bookstore
-    schema:
-      autoPrefix: true
-
   runtime:
     defaultConnection: reverse-bookstore
     connections:

@@ -79,5 +79,4 @@ class RelationComparator
         // compare skipSql
         return $fromFk->isSkipSql() !== $toFk->isSkipSql();
     }
-
 }

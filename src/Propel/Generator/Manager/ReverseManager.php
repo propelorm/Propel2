@@ -47,13 +47,6 @@ class ReverseManager extends AbstractManager
     protected $primaryKeys;
 
     /**
-     * Whether to use same name for phpName or not.
-     *
-     * @var boolean
-     */
-    protected $samePhpName;
-
-    /**
      * Whether to add vendor info or not.
      *
      * @var boolean
@@ -120,16 +113,6 @@ class ReverseManager extends AbstractManager
     }
 
     /**
-     * Sets whether to use the column name as phpName without any translation.
-     *
-     * @param boolean $samePhpName
-     */
-    public function setSamePhpName($samePhpName)
-    {
-        $this->samePhpName = (boolean) $samePhpName;
-    }
-
-    /**
      * Sets whether to add vendor info to the schema.
      *
      * @param boolean $addVendorInfo
@@ -137,17 +120,6 @@ class ReverseManager extends AbstractManager
     public function setAddVendorInfo($addVendorInfo)
     {
         $this->addVendorInfo = (Boolean) $addVendorInfo;
-    }
-
-    /**
-     * Returns whether to use the column name as phpName without any
-     * translation.
-     *
-     * @return boolean
-     */
-    public function isSamePhpName()
-    {
-        return $this->samePhpName;
     }
 
     public function reverse()

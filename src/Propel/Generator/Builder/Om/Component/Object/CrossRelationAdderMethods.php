@@ -30,12 +30,12 @@ class CrossRelationAdderMethods extends BuildComponent
         $refFK = $crossRelation->getIncomingRelation();
 
         foreach ($crossRelation->getRelations() as $relation) {
-            $relSingleNamePlural = $this->getRelationPhpName($relation, $plural = true);
-            $relSingleName = $this->getRelationPhpName($relation, $plural = false);
+            $relSingleNamePlural = $this->getRelationName($relation, $plural = true);
+            $relSingleName = $this->getRelationName($relation, $plural = false);
             $collSingleName = $this->getRelationVarName($relation, true);
 
-            $relCombineNamePlural = $this->getCrossRelationPhpName($crossRelation, $plural = true);
-            $relCombineName = $this->getCrossRelationPhpName($crossRelation, $plural = false);
+            $relCombineNamePlural = $this->getCrossRelationName($crossRelation, $plural = true);
+            $relCombineName = $this->getCrossRelationName($crossRelation, $plural = false);
             $collCombinationVarName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
 
             $collName = 1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys() ? $collCombinationVarName : $collSingleName;
@@ -43,7 +43,7 @@ class CrossRelationAdderMethods extends BuildComponent
             $relName = ucfirst(1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys() ? $relCombineName : $relSingleName);
 
             $foreignEntity = $refFK->getEntity();
-            $relatedObjectClassName = $this->getRelationPhpName($relation, false);
+            $relatedObjectClassName = $this->getRelationName($relation, false);
             $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
             list ($signature, , $normalizedShortSignature, $phpDoc) = $this->getCrossRelationAddMethodInformation($crossRelation, $relation);
 
@@ -83,11 +83,11 @@ EOF;
      */
     protected function addCrossFKDoAdd(CrossRelation $crossRelation)
     {
-        $selfRelationNamePlural = $this->getRelationPhpName($crossRelation->getIncomingRelation(), $plural = true);
-        $relatedObjectClassName = $this->getCrossRelationPhpName($crossRelation, $plural = false);
+        $selfRelationNamePlural = $this->getRelationName($crossRelation->getIncomingRelation(), $plural = true);
+        $relatedObjectClassName = $this->getCrossRelationName($crossRelation, $plural = false);
         $className = $this->getClassNameFromEntity($crossRelation->getIncomingRelation()->getEntity());
 
-        $refKObjectClassName = $this->getRefRelationPhpName($crossRelation->getIncomingRelation(), $plural = false);
+        $refKObjectClassName = $this->getRefRelationName($crossRelation->getIncomingRelation(), $plural = false);
         $entity = $crossRelation->getIncomingRelation()->getEntity();
         $foreignObjectName = '$' . $entity->getCamelCaseName();
 
@@ -98,7 +98,7 @@ EOF;
 
         if (1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys()) {
             foreach ($crossRelation->getRelations() as $relation) {
-                $relatedObjectClassName = $this->getRelationPhpName($relation, $plural = false);
+                $relatedObjectClassName = $this->getRelationName($relation, $plural = false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
                 $body .= "
     {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
@@ -112,7 +112,7 @@ EOF;
             }
         } else {
             $relation = $crossRelation->getRelations()[0];
-            $relatedObjectClassName = $this->getRelationPhpName($relation, $plural = false);
+            $relatedObjectClassName = $this->getRelationName($relation, $plural = false);
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
             $body .= "
         {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
@@ -121,13 +121,13 @@ EOF;
         $refFK = $crossRelation->getIncomingRelation();
         $body .= "
 
-    {$foreignObjectName}->set" . $this->getRelationPhpName($refFK, $plural = false) . "(\$this);
+    {$foreignObjectName}->set" . $this->getRelationName($refFK, $plural = false) . "(\$this);
 
     \$this->add{$refKObjectClassName}({$foreignObjectName});\n";
 
         if (1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys()) {
             foreach ($crossRelation->getRelations() as $relation) {
-                $relatedObjectClassName = $this->getRelationPhpName($relation, $plural = false);
+                $relatedObjectClassName = $this->getRelationName($relation, $plural = false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
                 $getterName = $this->getCrossRefRelationGetterName($crossRelation, $relation);
@@ -140,7 +140,7 @@ EOF;
             }
         } else {
             $relation = $crossRelation->getRelations()[0];
-            $relatedObjectClassName = $this->getRelationPhpName($relation, $plural = false);
+            $relatedObjectClassName = $this->getRelationName($relation, $plural = false);
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
             $getterSignature = $this->getCrossFKGetterSignature($crossRelation, '$' . $lowerRelatedObjectClassName);
             $body .= "
@@ -157,4 +157,4 @@ EOF;
             $method->addParameter($parameter);
         }
     }
-} 
+}

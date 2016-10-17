@@ -35,7 +35,7 @@ class PopulateObjectMethod extends BuildComponent
 ";
 
         //first check primary key and first level cache
-        $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
+        $fullColumnNames = $columnNames = $fieldNames = $fieldTypes = [];
         $implementationDetail = [];
         $singlePk = 1 === count($this->getEntity()->getPrimaryKey());
         foreach ($this->getEntity()->getFields() as $idx => $field) {
@@ -49,9 +49,8 @@ class PopulateObjectMethod extends BuildComponent
 
             $fieldNames[$idx] = $field->getName();
             $fieldTypes[$idx] = $field->getType();
-            $camelNames[$idx] = $field->getCamelCaseName();
-            $columnNames[$idx] = $field->getColumnName();
-            $fullColumnNames[$idx] = $field->getEntity()->getName(). '.' .$field->getColumnName();
+            $columnNames[$idx] = $field->getSqlName();
+            $fullColumnNames[$idx] = $field->getEntity()->getName(). '.' .$field->getSqlName();
         }
 
         $body .= "
@@ -68,10 +67,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 } else if (EntityMap::TYPE_COLNAME === \$indexType) {
     //columnName
 ";
-        foreach ($camelNames as $idx => $fieldName) {
+        foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$pk[] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
+    \$pk[] = \$this->databaseToProperty(\$row['{$fieldNames[$idx]}'], '$propName');";
         }
 
         $body .= "
@@ -122,7 +121,7 @@ if (\$entity) {
 \$originalValues = [];
 ";
 
-        $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
+        $fullColumnNames = $columnNames = $fieldNames = $fieldTypes = [];
         $implementationDetail = [];
         foreach ($this->getEntity()->getFields() as $field) {
             if ($field->isLazyLoad()) {
@@ -135,9 +134,8 @@ if (\$entity) {
 
             $fieldNames[] = $field->getName();
             $fieldTypes[] = $field->getType();
-            $camelNames[] = $field->getCamelCaseName();
-            $columnNames[] = $field->getColumnName();
-            $fullColumnNames[] = $field->getEntity()->getName(). '.' .$field->getColumnName();
+            $columnNames[] = $field->getSqlName();
+            $fullColumnNames[] = $field->getEntity()->getName(). '.' .$field->getSqlName();
         }
 
         $body .= "
@@ -158,10 +156,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 } else if (EntityMap::TYPE_COLNAME === \$indexType) {
     //columnName
 ";
-        foreach ($camelNames as $idx => $fieldName) {
+        foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
+    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$fieldNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
     \$writer(\$obj, '$propName', \$originalValues['$propName']);";

@@ -41,7 +41,7 @@ return \$this->$varName;
 
         $internal = "\nMapped by fields " . implode(', ', $relation->getLocalFields());
 
-        $methodName = 'get' . $this->getRelationPhpName($relation, false);
+        $methodName = 'get' . $this->getRelationName($relation, false);
         $this->addMethod($methodName)
             ->setType("null|$foreignClassName")
             ->setTypeDescription("The associated $foreignClassName object")

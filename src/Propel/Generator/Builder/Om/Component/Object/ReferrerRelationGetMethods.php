@@ -71,11 +71,11 @@ return \$this->$varName;
 
         $internal = "\nMapped by fields " . implode(', ', $relation->getForeignFields());
 
-        $methodName = 'get' . $this->getRefRelationPhpName($relation, false);
+        $methodName = 'get' . $this->getRefRelationName($relation, false);
         $this->addMethod($methodName)
             ->setType("null|$foreignClassName")
             ->setTypeDescription("The associated $foreignClassName object$internal")
             ->setBody($body)
             ->setDescription("Returns the associated $foreignClassName object or null if none is associated.");
     }
-} 
+}

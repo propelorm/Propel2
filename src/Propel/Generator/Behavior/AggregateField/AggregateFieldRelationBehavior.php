@@ -52,7 +52,7 @@ class AggregateFieldRelationBehavior extends Behavior
     {
         $this->builder = $builder;
 
-        $relationName = $this->getRelationName();
+        $relationName = $this->getRelation()->getName();
         $aggregateName = ucfirst($this->getParameter('aggregate_name'));
 
         return "
@@ -65,7 +65,7 @@ class AggregateFieldRelationBehavior extends Behavior
     {
         $this->builder = $builder;
 
-        $relationName = $this->getRelationName();
+        $relationName = $this->getRelation()->getName();
         $aggregateName = ucfirst($this->getParameter('aggregate_name'));
 
         return "
@@ -97,10 +97,5 @@ class AggregateFieldRelationBehavior extends Behavior
 
         // FIXME doesn't work when more than one fk to the same table
         return array_shift($fks);
-    }
-
-    public function getRelationName()
-    {
-        return $this->getRelationPhpName($this->getRelation());
     }
 }

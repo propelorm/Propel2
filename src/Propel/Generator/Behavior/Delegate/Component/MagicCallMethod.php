@@ -29,14 +29,14 @@ class MagicCallMethod extends BuildComponent
                 $relation = $relations[0];
                 $ARClassName = '\\' . $relation->getEntity()->getFullClassName();
                 $ARFQCN = $relation->getEntity()->getFullClassName(); //$builder->getNewStubObjectBuilder($entity->getEntity())->getFullyQualifiedClassName();
-                $relationName = $this->getRefRelationPhpName($relation);
+                $relationName = $this->getRefRelationName($relation);
             } else {
                 $relations = $this->getEntity()->getRelationsReferencingEntity($delegate);
                 /** @var Relation $relation */
                 $relation = $relations[0];
                 $ARClassName = '\\' . $delegateEntity->getFullClassName(); // $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($delegateEntity));
                 $ARFQCN = $delegateEntity->getFullClassName(); //$builder->getNewStubObjectBuilder($delegateEntity)->getFullyQualifiedClassName();
-                $relationName = $this->getRelationPhpName($relation);
+                $relationName = $this->getRelationName($relation);
             }
 
             $script .= "

@@ -15,7 +15,6 @@ use Propel\Generator\Builder\Om\EntityMapBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
-use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
 
 /**
@@ -46,13 +45,6 @@ class Behavior extends MappingModel
      * @var string
      */
     protected $id;
-
-    /**
-     * The behavior name.
-     *
-     * @var string
-     */
-    protected $name;
 
     /**
      * A collection of parameters.
@@ -100,7 +92,7 @@ class Behavior extends MappingModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        parent::setName($name);
 
         if ($this->id === null) {
             $this->id = $name;
@@ -136,16 +128,6 @@ class Behavior extends MappingModel
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Returns the name of the Behavior
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -322,52 +304,6 @@ class Behavior extends MappingModel
     {
         return $this->isEntityModified;
     }
-//
-//    /**
-//     * Use Propel simple templating system to render a PHP file using variables
-//     * passed as arguments. The template file name is relative to the behavior's
-//     * directory name.
-//     *
-//     * @param  string $filename
-//     * @param  array  $vars
-//     * @param  string $templateDir
-//     * @return string
-//     */
-//    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
-//    {
-//        $filePath = $this->getDirname() . $templateDir . $filename;
-//        if (!file_exists($filePath)) {
-//            // try with '.php' at the end
-//            $filePath = $filePath . '.php';
-//            if (!file_exists($filePath)) {
-//                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
-//                    $filename,
-//                    $this->getDirname() . $templateDir
-//                ));
-//            }
-//        }
-//        $template = new PropelTemplate();
-//        $template->setTemplateFile($filePath);
-//        $vars = array_merge($vars, [ 'behavior' => $this ]);
-//
-//        return $template->render($vars);
-//    }
-
-//    /**
-//     * Returns the current absolute directory name of this behavior. It also
-//     * works for descendants.
-//     *
-//     * @return string
-//     */
-//    protected function getDirname()
-//    {
-//        if (null === $this->dirname) {
-//            $r = new \ReflectionObject($this);
-//            $this->dirname = dirname($r->getFileName());
-//        }
-//
-//        return $this->dirname;
-//    }
 
     /**
      * Returns a column object using a name stored in the behavior parameters.
@@ -541,5 +477,4 @@ class Behavior extends MappingModel
     public function postUpdate(RepositoryBuilder $builder)
     {
     }
-
 }

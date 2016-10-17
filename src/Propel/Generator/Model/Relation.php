@@ -11,7 +11,7 @@
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\BuildException;
-use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Exception\InvalidArgumentException;
 
 /**
  * A class for information about table foreign keys.
@@ -40,16 +40,6 @@ class Relation extends MappingModel
      * @var string
      */
     private $foreignEntityName;
-//
-//    /**
-//     * @var string
-//     */
-//    private $foreignSchemaName;
-
-    /**
-     * @var string
-     */
-    private $name;
 
     private $field;
     private $refField;
@@ -114,7 +104,7 @@ class Relation extends MappingModel
         parent::__construct();
 
         if (null !== $name) {
-            $this->setField($name);
+            $this->setName($name);
         }
 
         $this->onUpdate = self::NONE;
@@ -126,15 +116,16 @@ class Relation extends MappingModel
 
     protected function setupObject()
     {
-        $this->foreignEntityName = $this->getAttribute('target') ?: $this->getAttribute('target');
+        if ($feName = $this->getAttribute('target')) {
+            $this->setForeignEntityName($feName);
+        }
 
-//        $this->foreignSchemaName = $this->getAttribute('targetSchema');
-
-        $this->name = $this->getAttribute('name');
+        $this->setName($this->getAttribute('name'));
+        $this->setSqlName($this->getAttribute('sqlName'));
         $this->field = $this->getAttribute('field') ?: lcfirst($this->getAttribute('target'));
 
         if (!$this->field) {
-            throw new \InvalidArgumentException('field value empty for relation');
+            throw new InvalidArgumentException('field value empty for relation');
         }
 
         $this->refName = $this->getAttribute('refName') ?: lcfirst($this->getEntity()->getName());
@@ -292,44 +283,81 @@ class Relation extends MappingModel
     }
 
     /**
-     * Returns the foreign key name.
      *
      * @return string
      */
-    public function getName()
+    public function getSqlName()
     {
         $this->doNaming();
-        return $this->name;
+
+        return $this->sqlName;
     }
 
     /**
-     * Sets the foreign key name.
-     *
-     * @param string $name
+     * @param string $value
      */
-    public function setName($name)
+    public function setSqlName($value)
     {
-        $this->autoNaming = !$name; //if no name we activate autoNaming
-        $this->name = $name;
+        if (!$value) {
+            if ($this->sqlName) {
+                return;
+            }
+            if (!$this->name) {
+                $this->autoNaming = true;
+            } else {
+                $value = NamingTool::toUnderscore($this->name);
+            }
+        }
+
+        parent::setSqlName($value);
+    }
+
+    public function getName()
+    {
+        if (!$this->name) {
+            $this->setName($this->getSqlName());
+        }
+
+        return $this->name;
+    }
+
+    public function setName($value)
+    {
+        if (!$value) {
+            $value = $this->getSqlName();
+        }
+
+        parent::setName($value);
     }
 
     protected function doNaming()
     {
-        if (!$this->name || $this->autoNaming) {
+        if (!$this->sqlName) {
+            $this->sqlName = NamingTool::toUnderscore($this->name);
+        }
+
+        if (!$this->sqlName || $this->autoNaming) {
             $newName = 'fk_';
 
             $hash = [];
-            $hash[] = $this->getForeignEntity()->getSchema() . '.' . $this->getForeignEntity()->getTableName();
+            try {
+                $foreignEntity = $this->getForeignEntity();
+            } catch (InvalidArgumentException $e) {
+                $foreignEntity = null;
+            }
+            if ($foreignEntity) {
+                $hash[] = $this->getForeignEntity()->getSchema() . '.' . $this->getForeignEntity()->getSqlName();
+            }
             $hash[] = implode(',', (array)$this->localFields);
             $hash[] = implode(',', (array)$this->foreignFields);
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
 
             if ($this->parentEntity) {
-                $newName = $this->parentEntity->getTableName() . '_' . $newName;
+                $newName = $this->parentEntity->getSqlName(false) . '_' . $newName;
             }
 
-            $this->name = $newName;
+            $this->sqlName = $newName;
             $this->autoNaming = true;
         }
     }
@@ -375,16 +403,6 @@ class Relation extends MappingModel
     }
 
     /**
-     * Returns the PlatformInterface instance.
-     *
-     * @return PlatformInterface
-     */
-    private function getPlatform()
-    {
-        return $this->parentEntity->getPlatform();
-    }
-
-    /**
      * Returns the Database object of this Field.
      *
      * @return Database
@@ -425,7 +443,7 @@ class Relation extends MappingModel
      */
     public function setForeignEntityName($foreignEntityName)
     {
-        $this->foreignEntityName = $foreignEntityName;
+        $this->foreignEntityName = NamingTool::toUpperCamelCase($foreignEntityName);
     }
 
 //    /**
@@ -483,7 +501,7 @@ class Relation extends MappingModel
     /**
      * Sets the parent Entity of the foreign key.
      *
-     * @param Entity $table
+     * @param Entity $parent
      */
     public function setEntity(Entity $parent)
     {
@@ -529,15 +547,15 @@ class Relation extends MappingModel
     public function addReference($ref1, $ref2 = null)
     {
         if (is_array($ref1)) {
-            $this->localFields[] = $ref1['local'] ? $ref1['local'] : null;
-            $this->foreignFields[] = $ref1['foreign'] ? $ref1['foreign'] : null;
+            $this->localFields[] = $ref1['local'] ? NamingTool::toCamelCase($ref1['local']) : null;
+            $this->foreignFields[] = $ref1['foreign'] ? NamingTool::toCamelCase($ref1['foreign']) : null;
 
             return;
         }
 
         if (is_string($ref1)) {
-            $this->localFields[] = $ref1;
-            $this->foreignFields[] = is_string($ref2) ? $ref2 : null;
+            $this->localFields[] = NamingTool::toCamelCase($ref1);
+            $this->foreignFields[] = is_string($ref2) ? NamingTool::toCamelCase($ref2) : null;
 
             return;
         }

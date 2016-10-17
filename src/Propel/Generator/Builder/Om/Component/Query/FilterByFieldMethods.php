@@ -4,15 +4,12 @@
 namespace Propel\Generator\Builder\Om\Component\Query;
 
 
-use gossi\codegen\model\PhpConstant;
 use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
-use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Runtime\ActiveQuery\ModelJoin;
 
 /**
  * Adds all filterBy methods for fields.
@@ -38,18 +35,17 @@ class FilterByFieldMethods extends BuildComponent
     }
 
     /**
-    Adds the filterByCol method for this object.
+     * Adds the filterByCol method for this object.
      *
-    @param Field $field
+     * @param Field $field
      */
     protected function addFilterByCol(Field $field)
     {
-        $fieldPhpName = NamingTool::toUpperCamelCase($field->getName());
+        $fieldMethodName = $field->getMethodName();
         $fieldName = $field->getName();
-        $variableName = $field->getCamelCaseName();
         $qualifiedName = $field->getFQConstantName();
 
-        $variableParameter = new PhpParameter($variableName);
+        $variableParameter = new PhpParameter($fieldName);
         $variableParameter->setType('mixed');
         $variableParameter->setTypeDescription('The value to use as filter.');
 
@@ -60,15 +56,15 @@ Filter the query on the $fieldName field.
             $description .= "
 Example usage:
 <code>
-\$query->filterBy$fieldPhpName(1234); // WHERE $fieldName = 1234
-\$query->filterBy$fieldPhpName(array(12, 34)); // WHERE $fieldName IN (12, 34)
-\$query->filterBy$fieldPhpName(array('min' => 12)); // WHERE $fieldName > 12
+\$query->filterBy$fieldMethodName(1234); // WHERE $fieldName = 1234
+\$query->filterBy$fieldMethodName(array(12, 34)); // WHERE $fieldName IN (12, 34)
+\$query->filterBy$fieldMethodName(array('min' => 12)); // WHERE $fieldName > 12
 </code>";
             if ($field->isRelation()) {
                 foreach ($field->getRelations() as $relation) {
                     $description .= "
      *
-    @see filterBy" . $this->getRelationPhpName($relation) . "()";
+    @see filterBy" . $this->getRelationName($relation) . "()";
                 }
             }
 
@@ -88,9 +84,9 @@ Use associative array('min' => \$minValue, 'max' => \$maxValue) for intervals.")
             $description .= "
 Example usage:
 <code>
-\$query->filterBy$fieldPhpName('2011-03-14'); // WHERE $fieldName = '2011-03-14'
-\$query->filterBy$fieldPhpName('now'); // WHERE $fieldName = '2011-03-14'
-\$query->filterBy$fieldPhpName(array('max' => 'yesterday')); // WHERE $fieldName > '2011-03-13'
+\$query->filterBy$fieldMethodName('2011-03-14'); // WHERE $fieldName = '2011-03-14'
+\$query->filterBy$fieldMethodName('now'); // WHERE $fieldName = '2011-03-14'
+\$query->filterBy$fieldMethodName(array('max' => 'yesterday')); // WHERE $fieldName > '2011-03-13'
 </code>";
         } elseif ($field->getType() == PropelTypes::PHP_ARRAY) {
 
@@ -106,8 +102,8 @@ Example usage:
             $description .= "
 Example usage:
 <code>
-\$query->filterBy$fieldPhpName('fooValue');   // WHERE $fieldName = 'fooValue'
-\$query->filterBy$fieldPhpName('%fooValue%'); // WHERE $fieldName LIKE '%fooValue%'
+\$query->filterBy$fieldMethodName('fooValue');   // WHERE $fieldName = 'fooValue'
+\$query->filterBy$fieldMethodName('%fooValue%'); // WHERE $fieldName LIKE '%fooValue%'
 </code>";
 
         } elseif ($field->isBooleanType()) {
@@ -122,8 +118,8 @@ Example usage:
             $description .= "
 Example usage:
 <code>
-\$query->filterBy$fieldPhpName(true); // WHERE $fieldName = true
-\$query->filterBy$fieldPhpName('yes'); // WHERE $fieldName = true
+\$query->filterBy$fieldMethodName(true); // WHERE $fieldName = true
+\$query->filterBy$fieldMethodName('yes'); // WHERE $fieldName = true
 </code>";
 
         }
@@ -132,14 +128,14 @@ Example usage:
 
         if ($field->isNumericType() || $field->isTemporalType()) {
             $body .= "
-if (is_array(\$$variableName)) {
+if (is_array(\$$fieldName)) {
     \$useMinMax = false;
-    if (isset(\${$variableName}['min'])) {
-        \$this->addUsingAlias($qualifiedName, \${$variableName}['min'], Criteria::GREATER_EQUAL);
+    if (isset(\${$fieldName}['min'])) {
+        \$this->addUsingAlias($qualifiedName, \${$fieldName}['min'], Criteria::GREATER_EQUAL);
         \$useMinMax = true;
     }
-    if (isset(\${$variableName}['max'])) {
-        \$this->addUsingAlias($qualifiedName, \${$variableName}['max'], Criteria::LESS_EQUAL);
+    if (isset(\${$fieldName}['max'])) {
+        \$this->addUsingAlias($qualifiedName, \${$fieldName}['max'], Criteria::LESS_EQUAL);
         \$useMinMax = true;
     }
     if (\$useMinMax) {
@@ -151,14 +147,14 @@ if (is_array(\$$variableName)) {
 }";
         } elseif ($field->getType() == PropelTypes::OBJECT) {
             $body .= "
-if (is_object(\$$variableName)) {
-    \$$variableName = serialize(\$$variableName);
+if (is_object(\$$fieldName)) {
+    \$$fieldName = serialize(\$$fieldName);
 }";
         } elseif ($field->getType() == PropelTypes::PHP_ARRAY) {
             $body .= "
 \$key = \$this->getAliasedColName($qualifiedName);
 if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
-    foreach (\$$variableName as \$value) {
+    foreach (\$$fieldName as \$value) {
         \$value = '%| ' . \$value . ' |%';
         if (\$this->containsKey(\$key)) {
             \$this->addAnd(\$key, \$value, Criteria::LIKE);
@@ -169,7 +165,7 @@ if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
 
     return \$this;
 } elseif (\$comparison == Criteria::CONTAINS_SOME) {
-    foreach (\$$variableName as \$value) {
+    foreach (\$$fieldName as \$value) {
         \$value = '%| ' . \$value . ' |%';
         if (\$this->containsKey(\$key)) {
             \$this->addOr(\$key, \$value, Criteria::LIKE);
@@ -180,7 +176,7 @@ if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
 
     return \$this;
 } elseif (\$comparison == Criteria::CONTAINS_NONE) {
-    foreach (\$$variableName as \$value) {
+    foreach (\$$fieldName as \$value) {
         \$value = '%| ' . \$value . ' |%';
         if (\$this->containsKey(\$key)) {
             \$this->addAnd(\$key, \$value, Criteria::NOT_LIKE);
@@ -195,20 +191,20 @@ if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
         } elseif ($field->getType() == PropelTypes::ENUM) {
             $body .= "
 \$valueSet = " . $this->getEntityMapClassName() . "::getValueSet(" . $field->getConstantName() . ");
-if (is_scalar(\$$variableName)) {
-    if (!in_array(\$$variableName, \$valueSet)) {
-        throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$variableName));
+if (is_scalar(\$$fieldName)) {
+    if (!in_array(\$$fieldName, \$valueSet)) {
+        throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$fieldName));
     }
-    \$$variableName = array_search(\$$variableName, \$valueSet);
-} elseif (is_array(\$$variableName)) {
+    \$$fieldName = array_search(\$$fieldName, \$valueSet);
+} elseif (is_array(\$$fieldName)) {
     \$convertedValues = array();
-    foreach (\$$variableName as \$value) {
+    foreach (\$$fieldName as \$value) {
         if (!in_array(\$value, \$valueSet)) {
             throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$value));
         }
         \$convertedValues []= array_search(\$value, \$valueSet);
     }
-    \$$variableName = \$convertedValues;
+    \$$fieldName = \$convertedValues;
     if (null === \$comparison) {
         \$comparison = Criteria::IN;
     }
@@ -216,25 +212,25 @@ if (is_scalar(\$$variableName)) {
         } elseif ($field->isTextType()) {
             $body .= "
 if (null === \$comparison) {
-    if (is_array(\$$variableName)) {
+    if (is_array(\$$fieldName)) {
         \$comparison = Criteria::IN;
-    } elseif (preg_match('/[\%\*]/', \$$variableName)) {
-        \$$variableName = str_replace('*', '%', \$$variableName);
+    } elseif (preg_match('/[\%\*]/', \$$fieldName)) {
+        \$$fieldName = str_replace('*', '%', \$$fieldName);
         \$comparison = Criteria::LIKE;
     }
 }";
         } elseif ($field->isBooleanType()) {
             $body .= "
-if (is_string(\$$variableName)) {
-    \$$variableName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+if (is_string(\$$fieldName)) {
+    \$$fieldName = in_array(strtolower(\$$fieldName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
 }";
         }
         $body .= "
 
-return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+return \$this->addUsingAlias($qualifiedName, \$$fieldName, \$comparison);
 ";
 
-        $methodName = "filterBy$fieldPhpName";
+        $methodName = "filterBy$fieldMethodName";
 
         $this->addMethod($methodName)
             ->addParameter($variableParameter)
@@ -252,40 +248,39 @@ return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
      */
     protected function addFilterByArrayCol(Field $field)
     {
-        $singularPhpName = $field->getSingularName();
+        $singularName = $field->getSingularName();
         $fieldName = $field->getName();
-        $variableName = $field->getCamelCaseName();
         $qualifiedName = $field->getFQConstantName();
 
         $description = "Filter the query on the $fieldName column";
 
         $body = "
 if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
-    if (is_scalar(\$$variableName)) {
-        \$$variableName = '%| ' . \$$variableName . ' |%';
+    if (is_scalar(\$$fieldName)) {
+        \$$fieldName = '%| ' . \$$fieldName . ' |%';
         \$comparison = Criteria::LIKE;
     }
 } elseif (\$comparison == Criteria::CONTAINS_NONE) {
-    \$$variableName = '%| ' . \$$variableName . ' |%';
+    \$$fieldName = '%| ' . \$$fieldName . ' |%';
     \$comparison = Criteria::NOT_LIKE;
     \$key = \$this->getAliasedColName($qualifiedName);
     if (\$this->containsKey(\$key)) {
-        \$this->addAnd(\$key, \$$variableName, \$comparison);
+        \$this->addAnd(\$key, \$$fieldName, \$comparison);
     } else {
-        \$this->addAnd(\$key, \$$variableName, \$comparison);
+        \$this->addAnd(\$key, \$$fieldName, \$comparison);
     }
     \$this->addOr(\$key, null, Criteria::ISNULL);
 
     return \$this;
 }
 
-return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+return \$this->addUsingAlias($qualifiedName, \$$fieldName, \$comparison);
 ";
 
-        $variableParameter = new PhpParameter($variableName);
+        $variableParameter = new PhpParameter($fieldName);
         $variableParameter->setDefaultValue(null);
 
-        $methodName = "filterBy$singularPhpName";
+        $methodName = "filterBy$singularName";
 
         $this->addMethod($methodName)
             ->addParameter($variableParameter)
@@ -294,6 +289,5 @@ return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
             ->setType("\$this|" . $this->getQueryClassName())
             ->setTypeDescription("The current query, for fluid interface")
             ->setBody($body);
-
     }
 }

@@ -35,8 +35,8 @@ class ModelJoin extends Join
 
         for ($i = 0; $i < $nbFields; $i++) {
             $this->addExplicitCondition(
-                $relationMap->getLeftEntity()->getTableName(), $leftCols[$i]->getColumnName(), $leftEntityAlias,
-                $relationMap->getRightEntity()->getTableName(), $rightCols[$i]->getColumnName(), $relationAlias,
+                $relationMap->getLeftEntity()->getSqlName(), $leftCols[$i]->getSqlName(), $leftEntityAlias,
+                $relationMap->getRightEntity()->getSqlName(), $rightCols[$i]->getSqlName(), $relationAlias,
                 Criteria::EQUAL);
         }
         $this->relationMap = $relationMap;
@@ -183,7 +183,7 @@ class ModelJoin extends Join
      */
     public function getRightTableName()
     {
-        return $this->getEntityMap()->getTableName();
+        return $this->getEntityMap()->getSqlName();
     }
 
     public function equals($join)

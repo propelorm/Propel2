@@ -58,7 +58,7 @@ class DomainTest extends ModelTestCase
 
         $this->assertSame('BOOLEAN', $domain->getType());
         $this->assertSame('foo', $domain->getName());
-        $this->assertInstanceOf('Propel\Generator\Model\ColumnDefaultValue', $domain->getDefaultValue());
+        $this->assertInstanceOf('Propel\Generator\Model\FieldDefaultValue', $domain->getDefaultValue());
         $this->assertSame(10, $domain->getSize());
         $this->assertSame(2, $domain->getScale());
         $this->assertSame('Some description', $domain->getDescription());
@@ -82,7 +82,7 @@ class DomainTest extends ModelTestCase
 
     public function testReplaceMappingAndSqlTypes()
     {
-        $value = $this->getColumnDefaultValueMock();
+        $value = $this->getFieldDefaultValueMock();
 
         $domain = new Domain('FLOAT', 'DOUBLE');
         $domain->replaceType('BOOLEAN');
@@ -91,7 +91,7 @@ class DomainTest extends ModelTestCase
 
         $this->assertSame('BOOLEAN', $domain->getType());
         $this->assertSame('INT', $domain->getSqlType());
-        $this->assertInstanceOf('Propel\Generator\Model\ColumnDefaultValue', $value);
+        $this->assertInstanceOf('Propel\Generator\Model\FieldDefaultValue', $value);
     }
 
     public function testGetNoPhpDefaultValue()
@@ -103,7 +103,7 @@ class DomainTest extends ModelTestCase
 
     public function testGetPhpDefaultValue()
     {
-        $value = $this->getColumnDefaultValueMock();
+        $value = $this->getFieldDefaultValueMock();
         $value
             ->expects($this->once())
             ->method('getValue')
@@ -122,7 +122,7 @@ class DomainTest extends ModelTestCase
      */
     public function testGetBooleanValue($mappingType, $booleanAsString, $expected)
     {
-        $value = $this->getColumnDefaultValueMock();
+        $value = $this->getFieldDefaultValueMock();
         $value
             ->expects($this->once())
             ->method('getValue')
@@ -155,7 +155,7 @@ class DomainTest extends ModelTestCase
 
     public function testCantGetPhpDefaultValue()
     {
-        $value = $this->getColumnDefaultValueMock();
+        $value = $this->getFieldDefaultValueMock();
         $value
             ->expects($this->once())
             ->method('isExpression')
@@ -191,7 +191,7 @@ class DomainTest extends ModelTestCase
 
     public function testCopyDomain()
     {
-        $value = $this->getColumnDefaultValueMock();
+        $value = $this->getFieldDefaultValueMock();
 
         $domain = new Domain();
         $domain->setType('FLOAT');
@@ -211,13 +211,13 @@ class DomainTest extends ModelTestCase
         $this->assertSame(2, $newDomain->getScale());
         $this->assertSame('Mapping between FLOAT and DOUBLE', $newDomain->getName());
         $this->assertSame('Some description', $newDomain->getDescription());
-        $this->assertInstanceOf('Propel\Generator\Model\ColumnDefaultValue', $value);
+        $this->assertInstanceOf('Propel\Generator\Model\FieldDefaultValue', $value);
     }
 
-    private function getColumnDefaultValueMock()
+    private function getFieldDefaultValueMock()
     {
         $value = $this
-            ->getMockBuilder('Propel\Generator\Model\ColumnDefaultValue')
+            ->getMockBuilder('Propel\Generator\Model\FieldDefaultValue')
             ->disableOriginalConstructor()
             ->getMock()
         ;

@@ -1,11 +1,19 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\I18n\Component;
 
+use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use gossi\codegen\model\PhpParameter;
-use Propel\Generator\Builder\Om\Component\Object\PropertySetterMethods;
 use Propel\Generator\Model\NamingTool;
 
 /**
@@ -19,6 +27,7 @@ class Setters extends BuildComponent
 
     public function process()
     {
+        /** @var I18nBehavior $behavior */
         $behavior = $this->getBehavior();
 
         $this->addSetLocale($behavior);
@@ -29,14 +38,11 @@ class Setters extends BuildComponent
         $this->addTranslatedColumnSetter($behavior);
     }
 
-    private function addSetLocale($behavior)
+    private function addSetLocale(I18nBehavior $behavior)
     {
-        $this->addMethod('set' . NamingTool::toUpperCamelCase($behavior->getLocaleField()->getName()))
+        $this->addMethod('set' . $behavior->getLocaleField()->getMethodName())
             ->setDescription('Sets the locale for translations')
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
-                ->setDefaultValue($behavior->getDefaultLocale())
-            )
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the translation, e.g. 'fr_FR'", $behavior->getDefaultLocale())
             ->setType('$this|' . $this->getClassNameFromEntity($behavior->getEntity()))
             ->setTypeDescription('The current object (for fluent API support)')
             ->setBody("
@@ -47,7 +53,7 @@ return \$this;
             );
     }
 
-    private function addSetLocaleAlias($alias, $behavior)
+    private function addSetLocaleAlias($alias, I18nBehavior $behavior)
     {
         $this->addMethod('set' . NamingTool::toUpperCamelCase($alias))
             ->setDescription("
@@ -55,22 +61,19 @@ Sets the locale for translations.
 Alias for setLocale(), for BC purpose.
 "
             )
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
-                ->setDefaultValue($behavior->getDefaultLocale())
-            )
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the translation, e.g. 'fr_FR'", $behavior->getDefaultLocale())
             ->setType('$this|' . $this->getClassNameFromEntity($behavior->getEntity()))
             ->setTypeDescription('The current object (for fluent API support)')
             ->setBody("
-return \$this->set{$behavior->getLocaleField()->getName()}(\$locale);
+return \$this->set{$behavior->getLocaleField()->getMethodName()}(\$locale);
 "
             );
     }
 
-    private function addSetTranslation($behavior)
+    private function addSetTranslation(I18nBehavior $behavior)
     {
         $body = "
-\$translation->set{$behavior->getLocaleField()->getName()}(\$locale);
+\$translation->set{$behavior->getLocaleField()->getMethodName()}(\$locale);
 \$this->add{$this->getClassNameFromEntity($behavior->getI18nEntity())}(\$translation);
 \$this->currentTranslations[\$locale] = \$translation;
 
@@ -79,20 +82,14 @@ return \$this;
 
         $this->addMethod('setTranslation')
             ->setDescription('Sets the translation for a given locale')
-            ->addParameter(PhpParameter::create('translation')
-                ->setType($this->getClassNameFromEntity($behavior->getI18nEntity()))
-                ->setDescription('The translation object')
-            )
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the translation, e.g. 'fr_FR'")
-                ->setDefaultValue($behavior->getDefaultLocale())
-            )
+            ->addSimpleDescParameter('translation', $this->getClassNameFromEntity($behavior->getI18nEntity()), 'The translation object.')
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the translation, e.g. 'fr_FR'", $behavior->getDefaultLocale())
             ->setType('$this|' . $this->getClassNameFromEntity($behavior->getEntity()))
             ->setTypeDescription('The current object (for fluent API support)')
             ->setBody($body);
     }
 
-    private function addTranslatedColumnSetter($behavior)
+    private function addTranslatedColumnSetter(I18nBehavior $behavior)
     {
         foreach ($behavior->getI18nFieldNamesFromConfig() as $fieldName) {
             $field = $behavior->getI18nEntity()->getField($fieldName);

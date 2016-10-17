@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\AggregateField\Component\Repository;
 
 use Propel\Generator\Behavior\AggregateField\AggregateFieldBehavior;
@@ -26,15 +34,12 @@ class UpdateMethod extends BuildComponent
             $conditions[] = $behavior->getParameter('condition');
         }
 
-        $name = ucfirst($behavior->getField()->getName());
-        $setter = 'set' . $name;
-
         $body = "
-\$entity->{$setter}(\$this->compute{$name}(\$entity));
+\$entity->set{$behavior->getField()->getMethodName()}(\$this->compute{$behavior->getField()->getMethodName()}(\$entity));
 \$this->persist(\$entity);
 ";
 
-        $this->addMethod('update' . ucfirst($behavior->getField()->getName()))
+        $this->addMethod('update' . $behavior->getField()->getMethodName())
             ->addSimpleDescParameter('entity', 'object', 'The entity object')
             ->addSimpleDescParameter('save', 'boolean', 'Save the entity immediately', false)
             ->setDescription("[AggregateField] Updates the aggregate field {$behavior->getField()->getName()}.")
