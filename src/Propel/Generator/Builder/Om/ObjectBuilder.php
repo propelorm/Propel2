@@ -3425,7 +3425,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
             }
             $script .= "
-        return " . join(' && ', $tests) . ";";
+        return " . implode(' && ', $tests) . ";";
         }
         $script .= "
     }
