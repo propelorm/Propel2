@@ -410,7 +410,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $hans->save();
         $this->assertEquals(4, \Relation1UserQuery::create()->count(), 'We have four users.');
         $this->assertEquals(3, \Relation1UserFriendQuery::create()->count(), 'We have three connections.');
-        $this->assertEquals(3, \Relation1UserQuery::create()->filterByWho($hans)->count(), 'Hans has three friends.');;
+        $this->assertEquals(3, \Relation1UserQuery::create()->filterByWho($hans)->count(), 'Hans has three friends.');
 
     }
 
