@@ -113,7 +113,7 @@ class XmlParser extends AbstractParser
                     $element = $this->arrayToDOM($value, $element, $charset);
                 }
             } elseif (is_string($value)) {
-                $charset = $charset ? $charset : 'utf-8';
+                $charset = $charset ?: 'utf-8';
                 if (function_exists('iconv') && strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
                     $value = iconv($charset, 'UTF-8', $value);
                 }

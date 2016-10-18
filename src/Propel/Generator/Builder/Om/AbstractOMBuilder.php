@@ -196,7 +196,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getPackage()
     {
-        $pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
+        $pkg = ($this->getTable()->getPackage() ?: $this->getDatabase()->getPackage());
         if (!$pkg) {
             $pkg = $this->getBuildProperty('generator.targetPackage');
         }

@@ -141,7 +141,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 // this is an Oracle internal column - prune
                 continue;
             }
-            $size = $row['DATA_PRECISION'] ? $row['DATA_PRECISION'] : $row['DATA_LENGTH'];
+            $size = $row['DATA_PRECISION'] ?: $row['DATA_LENGTH'];
             $scale = $row['DATA_SCALE'];
             $default = $row['DATA_DEFAULT'];
             $type = $row['DATA_TYPE'];

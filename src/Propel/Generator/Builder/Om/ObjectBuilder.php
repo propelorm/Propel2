@@ -70,7 +70,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     public function getDefaultKeyType()
     {
-        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ? $this->getBuildProperty('generator.objectModel.defaultKeyType') : 'phpName';
+        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ?: 'phpName';
 
         return "TYPE_".strtoupper($defaultKeyType);
     }

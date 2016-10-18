@@ -611,7 +611,7 @@ class Column extends MappingModel
      */
     public function getPhpType()
     {
-        return $this->phpType ? $this->phpType : $this->getPhpNative();
+        return $this->phpType ?: $this->getPhpNative();
     }
 
     /**

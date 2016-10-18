@@ -189,7 +189,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getModelAliasOrName()
     {
-        return $this->modelAlias ? $this->modelAlias : $this->modelName;
+        return $this->modelAlias ?: $this->modelName;
     }
 
     /**

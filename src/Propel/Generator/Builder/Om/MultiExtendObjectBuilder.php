@@ -48,7 +48,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      */
     public function getPackage()
     {
-        return ($this->child->getPackage() ? $this->child->getPackage() : parent::getPackage());
+        return ($this->child->getPackage() ?: parent::getPackage());
     }
 
     /**

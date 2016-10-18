@@ -107,7 +107,7 @@ abstract class AbstractCriterion
 
         // init $this->realtable
         $realtable = $criteria->getTableForAlias($this->table);
-        $this->realtable = $realtable ? $realtable : $this->table;
+        $this->realtable = $realtable ?: $this->table;
     }
 
     /**
