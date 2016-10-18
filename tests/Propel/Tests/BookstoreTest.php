@@ -181,7 +181,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
-        $new_title = "Quicksilver (".crc32(uniqid(mt_rand())).")";
+        $new_title = "Quicksilver (".crc32(uniqid(mt_rand(), true)).")";
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
         $qs_lookup->save();
@@ -529,7 +529,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
-        $new_title = "Quicksilver (".crc32(uniqid(mt_rand())).")";
+        $new_title = "Quicksilver (".crc32(uniqid(mt_rand(), true)).")";
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
         $qs_lookup->save();
