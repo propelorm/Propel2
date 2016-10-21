@@ -1,11 +1,18 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\AggregateField\Component\Repository;
 
 use Propel\Generator\Behavior\AggregateField\AggregateFieldBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
-use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
 use Propel\Generator\Model\Field;
 
 /**
@@ -34,23 +41,16 @@ class ComputeMethod extends BuildComponent
             $local = $fieldReference['local'];
             /** @var Field $foreign */
             $foreign = $fieldReference['foreign'];
-            $conditions[] = $local->getColumnName() . ' = :p' . ($index + 1);
+            $conditions[] = $local->getSqlName() . ' = :p' . ($index + 1);
             $bindings[$index + 1] = $foreign->getName();
         }
 
         $foreignEntity = $database->getEntity($behavior->getParameter('foreign_entity'));
-//
-//        $tableName = $database->getEntityPrefix() . $foreignEntity->getEntityName();
-//        if ($database->getPlatform()->supportsSchemas() && $behavior->getParameter('foreign_schema')) {
-//            $tableName = $behavior->getParameter('foreign_schema')
-//                . $database->getPlatform()->getSchemaDelimiter()
-//                . $tableName;
-//        }
 
         $sql = sprintf(
             'SELECT %s FROM %s WHERE %s',
             $behavior->getParameter('expression'),
-            $behavior->getEntity()->quoteIdentifier($foreignEntity->getFQTableName()),
+            $behavior->getEntity()->quoteIdentifier($foreignEntity->getSqlName()),
             implode(' AND ', $conditions)
         );
 
@@ -72,7 +72,7 @@ foreach ($bindings as $key => $binding) {
 return \$stmt->fetchColumn();
 ";
 
-        $this->addMethod('compute' . ucfirst($behavior->getField()->getName()))
+        $this->addMethod('compute' . $behavior->getField()->getMethodName())
             ->addSimpleDescParameter('entity', 'object', 'The entity object')
             ->setType('mixed')
             ->setTypeDescription('The scalar result from the aggregate query')

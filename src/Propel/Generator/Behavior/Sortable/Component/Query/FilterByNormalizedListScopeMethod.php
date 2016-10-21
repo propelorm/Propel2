@@ -13,6 +13,7 @@ use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\Field;
+use Propel\Generator\Model\NamingTool;
 
 /**
  *
@@ -31,6 +32,7 @@ class FilterByNormalizedListScopeMethod extends BuildComponent
 
         if ($behavior->hasMultipleScopes()) {
             foreach ($behavior->getScopes() as $idx => $scope) {
+                $scope = NamingTool::toUnderscore($scope);
                 $body .= "
 //FIXME: this isn't a correct behavior: null should not be treated as string
 if (null === \$scope[$idx]) {

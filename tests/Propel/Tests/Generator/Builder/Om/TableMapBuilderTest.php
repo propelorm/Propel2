@@ -258,7 +258,7 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
 
         $tmap = Propel::getServiceContainer()->getDatabaseMap(Table1TableMap::DATABASE_NAME)->getTable(
-            Table1TableMap::TABLE_NAME
+            Table1TableMap::SQL_NAME
         );
         $expectedBehaviorParams = array(
             'timestampable' => array(

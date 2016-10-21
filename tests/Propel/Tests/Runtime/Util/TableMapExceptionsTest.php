@@ -57,7 +57,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
     {
         try {
             $c = new Criteria();
-            $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
+            $c->setPrimaryTableName(BookTableMap::SQL_NAME);
             $c->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             $c->doDelete(Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME));
             $this->fail('Missing expected exception on BAD SQL');
@@ -70,7 +70,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
     {
         try {
             $c1 = new Criteria();
-            $c1->setPrimaryTableName(BookTableMap::TABLE_NAME);
+            $c1->setPrimaryTableName(BookTableMap::SQL_NAME);
             $c1->add(BookTableMap::COL_ID, 12, ' BAD SQL');
             $c2 = new Criteria();
             $c2->add(BookTableMap::COL_TITLE, 'Foo');
@@ -88,7 +88,7 @@ class TableMapExceptionsTest extends BookstoreTestBase
 
         try {
             $c = new Criteria();
-            $c->setPrimaryTableName(BookTableMap::TABLE_NAME);
+            $c->setPrimaryTableName(BookTableMap::SQL_NAME);
             $c->add(BookTableMap::COL_AUTHOR_ID, 'lkhlkhj');
 
             $db = Propel::getServiceContainer()->getAdapter($c->getDbName());

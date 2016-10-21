@@ -174,9 +174,9 @@ class ModelWith
         return $this->resetPartialMethod;
     }
 
-    public function setLeftName($leftPhpName)
+    public function setLeftName($leftName)
     {
-        $this->leftName = $leftPhpName;
+        $this->leftName = $leftName;
     }
 
     public function getLeftName()
@@ -184,9 +184,9 @@ class ModelWith
         return $this->leftName;
     }
 
-    public function setRightName($rightPhpName)
+    public function setRightName($rightName)
     {
-        $this->rightName = $rightPhpName;
+        $this->rightName = $rightName;
     }
 
     public function getRightName()

@@ -22,6 +22,7 @@ use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\Diff\FieldDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
+use Propel\Runtime\Configuration;
 
 /**
  * MySql PlatformInterface implementation.
@@ -84,10 +85,10 @@ class MysqlPlatform extends SqlDefaultPlatform
         /** @var Index[] $entityIndices */
         $entityIndices = array_merge($entity->getIndices(), $entity->getUnices());
         foreach ($entityIndices as $index) {
-            $this->collectIndexedFields($this->getName($index), $index->getFields(), $indices);
+            $this->collectIndexedFields($index->getSqlName(), $index->getFields(), $indices);
         }
 
-        // we're determining which entitys have foreign keys that point to this entity,
+        // we're determining which entities have foreign keys that point to this entity,
         // since MySQL needs an index on any column that is referenced by another entity
         // (yep, MySQL _is_ a PITA)
         $counter = 0;
@@ -99,7 +100,7 @@ class MysqlPlatform extends SqlDefaultPlatform
             }
 
             // no matching index defined in the schema, so we have to create one
-            $name = sprintf('i_referenced_%s_%s', $this->getName($relation), ++$counter);
+            $name = sprintf('i_referenced_%s_%s', $relation->getSqlName(), ++$counter);
             if ($entity->hasIndex($name)) {
                 // if we have already a index with this name, then it looks like the columns of this index have just
                 // been changed, so remove it and inject it again. This is the case if a referenced entity is handled
@@ -109,7 +110,7 @@ class MysqlPlatform extends SqlDefaultPlatform
 
             $index = $entity->createIndex($name, $referencedFields);
             // Add this new index to our collection, otherwise we might add it again (bug #725)
-            $this->collectIndexedFields($this->getName($index), $referencedFields, $indices);
+            $this->collectIndexedFields($index->getSqlName(), $referencedFields, $indices);
         }
 
         // we're adding indices for this entity foreign keys
@@ -124,7 +125,7 @@ class MysqlPlatform extends SqlDefaultPlatform
             // MySQL needs indices on any columns that serve as foreign keys.
             // These are not auto-created prior to 4.1.2.
 
-            $name = substr_replace($this->getName($relation), 'rl_',  strrpos($this->getName($relation), 'rl_'), 3);
+            $name = substr_replace($relation->getSqlName(), 'rl_',  strrpos($relation->getSqlName(), 'rl_'), 3);
             if ($entity->hasIndex($name)) {
                 // if we already have an index with this name, then it looks like the columns of this index have just
                 // been changed, so remove it and inject it again. This is the case if a referenced entity is handled
@@ -133,7 +134,7 @@ class MysqlPlatform extends SqlDefaultPlatform
             }
 
             $index = $entity->createIndex($name, $localFields);
-            $this->collectIndexedFields($this->getName($index), $localFields, $indices);
+            $this->collectIndexedFields($index->getSqlName(), $localFields, $indices);
         }
     }
 
@@ -178,7 +179,7 @@ class MysqlPlatform extends SqlDefaultPlatform
         $list = [];
         foreach ($columns as $col) {
             if ($col instanceof Field) {
-                $col = $this->getName($col);
+                $col = $col->getSqlName();
             }
             $list[] = $col;
         }
@@ -275,7 +276,7 @@ class MysqlPlatform extends SqlDefaultPlatform
     {
         $ret = '';
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($this->getName($entity));
+            $ret .= $this->getCommentBlockDDL($entity->getSqlName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
         }
@@ -290,7 +291,7 @@ class MysqlPlatform extends SqlDefaultPlatform
     {
         return "
 # This is a fix for InnoDB in MySQL >= 4.1.x
-# It \"suspends judgement\" for fkey relationships until are entitys are set.
+# It \"suspends judgement\" for fkey relationships until tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 ";
     }
@@ -390,7 +391,7 @@ CREATE TABLE %s
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity)),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode($sep, $lines),
             $this->getEntityEngineKeyword(),
             $mysqlEntityType,
@@ -460,7 +461,7 @@ CREATE TABLE %s
     public function getDropEntityDDL(Entity $entity)
     {
         return "
-DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
+DROP TABLE IF EXISTS " . $this->quoteIdentifier($entity->getSqlName()) . ";
 ";
     }
 
@@ -490,7 +491,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
             }
         }
 
-        $ddl = array($this->quoteIdentifier($this->getName($col)));
+        $ddl = array($this->quoteIdentifier($col->getSqlName()));
         if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
             $ddl[] = $sqlType . $col->getSizeDefinition();
         } else {
@@ -547,7 +548,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
     {
         $list = array();
         foreach ($index->getFieldObjects() as $col) {
-            $list[] = $this->quoteIdentifier($this->getName($col)) . ($index->hasFieldSize($col->getName()) ? '(' . $index->getFieldSize($col->getName()) . ')' : '');
+            $list[] = $this->quoteIdentifier($col->getSqlName()) . ($index->hasFieldSize($col->getName()) ? '(' . $index->getFieldSize($col->getName()) . ')' : '');
         }
 
         return implode(', ', $list);
@@ -570,7 +571,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($entity))
+            $this->quoteIdentifier($entity->getSqlName())
         );
     }
 
@@ -588,8 +589,8 @@ CREATE %sINDEX %s ON %s (%s);
 
         return sprintf($pattern,
             $this->getIndexType($index),
-            $this->quoteIdentifier($this->getName($index)),
-            $this->quoteIdentifier($this->getName($index->getEntity())),
+            $this->quoteIdentifier($index->getSqlName()),
+            $this->quoteIdentifier($index->getEntity()->getSqlName()),
             $this->getIndexFieldListDDL($index)
         );
     }
@@ -607,8 +608,8 @@ DROP INDEX %s ON %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($index)),
-            $this->quoteIdentifier($this->getName($index->getEntity()))
+            $this->quoteIdentifier($index->getSqlName()),
+            $this->quoteIdentifier($index->getEntity()->getSqlName())
         );
     }
 
@@ -620,7 +621,7 @@ DROP INDEX %s ON %s;
     {
         return sprintf('%sINDEX %s (%s)',
             $this->getIndexType($index),
-            $this->quoteIdentifier($this->getName($index)),
+            $this->quoteIdentifier($index->getSqlName()),
             $this->getIndexFieldListDDL($index)
         );
     }
@@ -641,7 +642,7 @@ DROP INDEX %s ON %s;
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('UNIQUE INDEX %s (%s)',
-            $this->quoteIdentifier($this->getName($unique)),
+            $this->quoteIdentifier($unique->getSqlName()),
             $this->getIndexFieldListDDL($unique)
         );
     }
@@ -673,18 +674,9 @@ DROP INDEX %s ON %s;
 
     public function getDropRelationDDL(Relation $relation)
     {
-        if (!$this->supportsRelations($relation->getEntity())) return '';
-        if ($relation->isSkipSql()) {
-            return;
-        }
-        $pattern = "
-ALTER TABLE %s DROP FOREIGN KEY %s;
-";
+        if (!$this->supportsRelations($relation->getEntity())) return;
 
-        return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($relation->getEntity())),
-            $this->quoteIdentifier($this->getName($relation))
-        );
+        return parent::getDropRelationDDL($relation);
     }
 
     public function getCommentBlockDDL($comment)
@@ -713,7 +705,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
             $ret .= $this->getDropEntityDDL($entity);
         }
 
-        foreach ($databaseDiff->getRenamedEntities() as $fromEntityName => $toEntityName) {
+        foreach ($databaseDiff->getSqlRenamedEntities() as $fromEntityName => $toEntityName) {
             $ret .= $this->getRenameEntityDDL($fromEntityName, $toEntityName);
         }
 
@@ -760,8 +752,8 @@ ALTER TABLE %s DROP %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($field->getEntity())),
-            $this->quoteIdentifier($this->getName($field))
+            $this->quoteIdentifier($field->getEntity()->getSqlName()),
+            $this->quoteIdentifier($field->getSqlName())
         );
     }
 
@@ -795,8 +787,8 @@ ALTER TABLE %s CHANGE %s %s;
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($this->getName($fromField->getEntity())),
-            $this->quoteIdentifier($this->getName($fromField)),
+            $this->quoteIdentifier($fromField->getEntity()->getSqlName()),
+            $this->quoteIdentifier($fromField->getSqlName()),
             $this->getFieldDDL($toField)
         );
     }

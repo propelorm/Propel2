@@ -174,7 +174,6 @@ class OracleSchemaParser extends AbstractSchemaParser
             }
 
             $column = new Column($row['COLUMN_NAME']);
-            $column->setPhpName(); // Prevent problems with strange col names
             $column->setTable($table);
             $column->setDomainForType($propelType);
             $column->getDomain()->replaceSize($size);

@@ -448,7 +448,7 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
             $b = new Book();
             $b->setTitle("Book$id")->setISBN("BookISBN$id")->save();
             $b1Id = $b->getId();
-            $sql = "UPDATE " . BookTableMap::TABLE_NAME . " SET id = ? WHERE id = ?";
+            $sql = "UPDATE " . BookTableMap::SQL_NAME . " SET id = ? WHERE id = ?";
             $stmt = $con->prepare($sql);
             $stmt->bindValue(1, $id);
             $stmt->bindValue(2, $b1Id);
@@ -467,7 +467,7 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
             $r = new BookReader();
             $r->setName('Reader'.$id)->save();
             $r1Id = $r->getId();
-            $sql = "UPDATE " . BookReaderTableMap::TABLE_NAME . " SET id = ? WHERE id = ?";
+            $sql = "UPDATE " . BookReaderTableMap::SQL_NAME . " SET id = ? WHERE id = ?";
             $stmt = $con->prepare($sql);
             $stmt->bindValue(1, $id);
             $stmt->bindValue(2, $r1Id);

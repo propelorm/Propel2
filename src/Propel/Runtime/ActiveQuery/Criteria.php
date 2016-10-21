@@ -279,6 +279,7 @@ class Criteria
      * the specified database.
      *
      * @param String $dbName The database name.
+     * @param Configuration $configuration.
      */
     public function __construct($dbName = null, Configuration $configuration = null)
     {
@@ -321,8 +322,8 @@ class Criteria
         $this->limit = 0;
         $this->aliases = array();
         $this->useTransaction = false;
-        $this->ifLvlCount = false;
-        $this->wasTrue = false;
+        //$this->ifLvlCount = false;
+        //$this->wasTrue = false;
     }
 
     /**
@@ -361,7 +362,7 @@ class Criteria
     /**
      * Returns the field name associated with an alias (AS-field).
      *
-     * @param  string $alias
+     * @param  string $as
      * @return string $string
      */
     public function getFieldForAs($as)
@@ -425,17 +426,25 @@ class Criteria
     }
 
     /**
+     * Return the sql name of an entity or a field.
+     *
      * @param string $entityName
+     * @param string $fieldName
      *
      * @return string
      */
-    public function getTableName($entityName)
+    public function getSqlName($entityName, $fieldName = null)
     {
         if (!$entityName) {
             throw new \InvalidArgumentException('entityName can not be empty.');
         }
         $entityMap = $this->getConfiguration()->getDatabase($this->getDbName())->getEntity($entityName);
-        return $entityMap->getFQTableName();
+
+        if (null !== $fieldName) {
+            return $entityMap->getField($fieldName)->getSqlName();
+        }
+
+        return $entityMap->getFQSqlName();
     }
 
     /**
@@ -1844,10 +1853,10 @@ class Criteria
         $this->replaceNames($selectSql);
 
         if ($this->getPrimaryEntityName()) {
-            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
+            $fromClause[] = $this->getSqlName($this->getPrimaryEntityName());
         } else {
             if ($this instanceof BaseModelCriteria) {
-                $fromClause[] = $this->getTableName($this->getEntityName());
+                $fromClause[] = $this->getSqlName($this->getEntityName());
             }
         }
 
@@ -1875,10 +1884,10 @@ class Criteria
 
                     $entity = $this->getEntityForAlias($entityName);
                     if ($entity !== null) {
-                        $table = $this->getTableName($entity);
+                        $table = $this->getSqlName($entity);
                         $fromClause[] = $table . ' ' . $entityName;
                     } else {
-                        $table = $this->getTableName($entityName);
+                        $table = $this->getSqlName($entityName);
                         $fromClause[] = $table;
                         $entity = $entityName;
                     }
@@ -1976,7 +1985,7 @@ class Criteria
         }
 
         if (empty($fromClause) && $this->getPrimaryEntityName()) {
-            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
+            $fromClause[] = $this->getSqlName($this->getPrimaryEntityName());
         }
 
         // entities should not exist as alias of subQuery
@@ -2074,7 +2083,7 @@ class Criteria
                 $entityMap = $dbMap->getEntity($entityMapName);
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
                 if ($rightSide) {
-                    $string = $entityMap->getTableName();
+                    $string = $entityMap->getSqlName();
                     $string .= $rightSide;
                 }
             }
@@ -2106,7 +2115,7 @@ class Criteria
 
             $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
 
-            $string = $entityMap->getTableName();
+            $string = $entityMap->getSqlName();
             if ($alias) {
                 $string .= " $alias";
             }
@@ -2329,7 +2338,7 @@ class Criteria
      * WHERE some_field = some value AND could_have_another_field =
      * another value AND so on.
      *
-     * @param Criteria            $updateValues A Criteria object containing values used in set clause.
+     * @param Criteria $updateValues A Criteria object containing values used in set clause.
      *
      * @return int The number of rows affected by last update statement.
      *             For most uses there is only one update statement executed, so this number will
@@ -2391,6 +2400,7 @@ class Criteria
                 foreach ($updateEntitiesFields[$entityName] as $col) {
                     $updateFieldName = substr($col, strrpos($col, '.') + 1);
                     // add identifiers for the actual database?
+                    $updateFieldName = $this->getSqlName($entityName, $updateFieldName);
                     $updateFieldName = $this->quoteIdentifier($updateFieldName, $entityName);
                     if ($updateValues->getComparison($col) != Criteria::CUSTOM_EQUAL) {
                         $sql .= $updateFieldName . '=:p'.$p++.', ';

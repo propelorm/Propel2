@@ -10,10 +10,8 @@
 
 namespace Propel\Generator\Behavior\I18n\Component\Query;
 
-use gossi\codegen\model\PhpParameter;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
-use Propel\Generator\Model\NamingTool;
 
 class Join extends BuildComponent
 {
@@ -31,7 +29,7 @@ class Join extends BuildComponent
     {
         $field = $this->getBehavior()->getLocaleField();
         $entityName = $field->getEntity()->getName();
-        $columnName = $field->getColumnName();
+        $columnName = $field->getSqlName();
 
         $body = "
 \$relationName = \$relationAlias ? \$relationAlias : '$i18nRelationName';
@@ -44,19 +42,9 @@ return \$this
 ";
 
         $this->addMethod('joinI18n')
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the join condition, e.g. 'fr_FR'")
-                ->setDefaultValue($this->getBehavior()->getDefaultLocale())
-            )
-            ->addParameter(PhpParameter::create('relationAlias')
-                ->setType('string', 'optional alias for the relation')
-                ->setDefaultValue(null)
-            )
-            ->addParameter(PhpParameter::create('joinType')
-                ->setType('string')
-                ->setDescription("Accepted values are null, 'left join', 'right join', 'inner join'. Defaults to left join.")
-                ->setDefaultValue('LEFT JOIN')
-            )
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the join condition, e.g. 'fr_FR'", $this->getBehavior()->getDefaultLocale())
+            ->addSimpleDescParameter('relationAlias', 'string', 'optional alias for the relation', null)
+            ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'. Defaults to left join.", 'LEFT JOIN')
             ->setType('$this|' . $this->getBuilder()->getClassName(), 'The current query, for fluid interface')
             ->setDescription('Adds a JOIN clause to the query using the i18n relation')
             ->setBody($body);
@@ -74,15 +62,8 @@ return \$this
 ";
 
         $this->addMethod('joinWithI18n')
-            ->addParameter(PhpParameter::create('locale')
-                ->setType('string', "Locale to use for the join condition, e.g. 'fr_FR'")
-                ->setDefaultValue($this->getBehavior()->getDefaultLocale())
-            )
-            ->addParameter(PhpParameter::create('joinType')
-                ->setType('string')
-                ->setDescription("Accepted values are null, 'left join', 'right join', 'inner join'. Defaults to left join.")
-                ->setDefaultValue('LEFT JOIN')
-            )
+            ->addSimpleDescParameter('locale', 'string', "Locale to use for the join condition, e.g. 'fr_FR'", $this->getBehavior()->getDefaultLocale())
+            ->addSimpleDescParameter('joinType', 'string', "Accepted values are null, 'left join', 'right join', 'inner join'. Defaults to left join.", 'LEFT JOIN')
             ->setType('$this|' . $this->getBuilder()->getClassName(), 'The current query, for fluid interface')
             ->setDescription("
  Adds a JOIN clause to the query and hydrates the related I18n object.

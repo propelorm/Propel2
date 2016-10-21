@@ -59,8 +59,8 @@ class BuildRelationsMethod extends BuildComponent
         }
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
             foreach ($crossRelation->getRelations() as $relation) {
-                $relationName = $this->getRelationPhpName($relation);
-                $pluralName = "'" . $this->getRelationPhpName($relation, true) . "'";
+                $relationName = $this->getRelationName($relation);
+                $pluralName = "'" . $this->getRelationName($relation, true) . "'";
                 $onDelete = $relation->hasOnDelete() ? "'" . $relation->getOnDelete() . "'" : 'null';
                 $onUpdate = $relation->hasOnUpdate() ? "'" . $relation->getOnUpdate() . "'" : 'null';
                 $body .= "

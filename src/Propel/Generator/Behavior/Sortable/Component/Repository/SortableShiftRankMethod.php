@@ -41,7 +41,7 @@ if (null !== \$last) {
 
         $body .= "
 \$valuesCriteria = \$this->createQuery();
-\$valuesCriteria->add({$this->getEntityMapClassName()}::RANK_COL, array('raw' => '{$behavior->getFieldForParameter('rank_field')->getColumnName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
+\$valuesCriteria->add({$this->getEntityMapClassName()}::RANK_COL, array('raw' => '{$behavior->getFieldForParameter('rank_field')->getSqlName()} + ?', 'value' => \$delta), Criteria::CUSTOM_EQUAL);
 
 \$whereCriteria->doUpdate(\$valuesCriteria);
 \$this->getConfiguration()->getSession()->clearFirstLevelCache();

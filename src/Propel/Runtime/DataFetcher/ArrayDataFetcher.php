@@ -14,7 +14,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @var string
      */
-    protected $indexType = EntityMap::TYPE_PHPNAME;
+    protected $indexType = EntityMap::TYPE_FIELDNAME;
 
     /**
      * {@inheritDoc}

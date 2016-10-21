@@ -48,11 +48,6 @@ class Database extends ScopedMappingModel
      */
     private $entities;
 
-    /**
-     * @var string
-     */
-    private $name;
-
     private $baseClass;
     private $defaultIdMethod;
 
@@ -91,14 +86,11 @@ class Database extends ScopedMappingModel
     private $entitiesByFullClassName;
 
     /**
+     * Useful property for case insensitive searches.
+     *
      * @var Entity[]
      */
     private $entitiesByLowercaseName;
-
-//    /**
-//     * @var Entity[]
-//     */
-//    private $entitiesByPhpName;
 
     /**
      * @var string[]
@@ -106,7 +98,6 @@ class Database extends ScopedMappingModel
     private $sequences;
 
     protected $defaultStringFormat;
-    protected $entityPrefix;
 
     /**
      * @var bool
@@ -139,23 +130,22 @@ class Database extends ScopedMappingModel
         $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
         $this->behaviors                 = [];
         $this->domainMap                 = [];
-        $this->entities                    = [];
-        $this->entitiesByName              = [];
-//        $this->entitiesByPhpName           = [];
-        $this->entitiesByLowercaseName     = [];
+        $this->entities                  = [];
+        $this->entitiesByName            = [];
+        $this->entitiesByLowercaseName   = [];
+        $this->entitiesByFullClassName   = [];
     }
 
     protected function setupObject()
     {
         parent::setupObject();
 
-        $this->name = $this->getAttribute('name');
+        $this->setName($this->getAttribute('name'));
         $this->platformClass = $this->getAttribute('platform') ?: 'mysql';
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
-        $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
 
         if ($this->getAttribute('activeRecord')) {
@@ -221,16 +211,6 @@ class Database extends ScopedMappingModel
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Sets the database name.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
     }
 
     /**
@@ -470,33 +450,6 @@ class Database extends ScopedMappingModel
         return implode(',', array_keys($this->entitiesByName));
     }
 
-//    /**
-//     * Returns whether or not the database has a entity identified by its
-//     * PHP name.
-//     *
-//     * @param  string  $phpName
-//     * @return boolean
-//     */
-//    public function hasEntityByPhpName($phpName)
-//    {
-//        return isset($this->entitiesByPhpName[$phpName]);
-//    }
-//
-//    /**
-//     * Returns the entity object with the specified PHP name.
-//     *
-//     * @param  string $phpName
-//     * @return Entity
-//     */
-//    public function getEntityByPhpName($phpName)
-//    {
-//        if (isset($this->entitiesByPhpName[$phpName])) {
-//            return $this->entitiesByPhpName[$phpName];
-//        }
-//
-//        return null; // just to be explicit
-//    }
-
     /**
      * Adds a new entity to this database.
      *
@@ -516,14 +469,15 @@ class Database extends ScopedMappingModel
         $entity->setDatabase($this);
 
         if (isset($this->entitiesByName[$entity->getName()])) {
-            throw new EngineException(sprintf('Entity "%s" declared twice', $entity->getName()));
+            if ($this->entitiesByName[$entity->getName()]->getSchema() === $entity->getSchema()) {
+                throw new EngineException(sprintf('Entity "%s" declared twice', $entity->getName()));
+            }
         }
 
         $this->entities[] = $entity;
         $this->entitiesByFullClassName[$entity->getFullClassName()] = $entity;
         $this->entitiesByName[$entity->getName()] = $entity;
         $this->entitiesByLowercaseName[strtolower($entity->getName())] = $entity;
-//        $this->entitiesByPhpName[$entity->getName()] = $entity;
 
 //        $this->computeEntityNamespace($entity);
 
@@ -577,7 +531,7 @@ class Database extends ScopedMappingModel
     {
         if ($this->sequences) {
             if (false !== ($idx = array_search($sequence, $this->sequences))) {
-                unset($this->sequence[$idx]);
+                unset($this->sequences[$idx]);
             }
         }
     }
@@ -750,26 +704,6 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns the entity prefix for this database.
-     *
-     * @return string
-     */
-    public function getEntityPrefix()
-    {
-        return $this->entityPrefix;
-    }
-
-    /**
-     * Sets the entities' prefix.
-     *
-     * @param string $entityPrefix
-     */
-    public function setEntityPrefix($entityPrefix)
-    {
-        $this->entityPrefix = $entityPrefix;
-    }
-
-    /**
      * Returns the next behavior on all entities, ordered by behavior priority,
      * and skipping the ones that were already executed.
      *
@@ -835,7 +769,7 @@ class Database extends ScopedMappingModel
             $columns = [];
             foreach ($entity->getFields() as $column) {
                 $columns[] = sprintf("      %s %s %s %s %s %s",
-                    $column->getName(),
+                    $column->getSqlName(),
                     $column->getType(),
                     $column->getSize() ? '(' . $column->getSize() . ')' : '',
                     $column->isPrimaryKey() ? 'PK' : '',
@@ -847,10 +781,9 @@ class Database extends ScopedMappingModel
 
             $fks = [];
             foreach ($entity->getRelations() as $fk) {
-                $fks[] = sprintf("      %s to %s.%s (%s => %s)",
-                    $fk->getName(),
-                    $fk->getForeignSchemaName(),
-                    $fk->getForeignEntityCommonName(),
+                $fks[] = sprintf("      %s to %s (%s => %s)",
+                    $fk->getSqlName(),
+                    $fk->getForeignEntity()->getSqlName(),
                     join(', ', $fk->getLocalFields()),
                     join(', ', $fk->getForeignFields())
                 );
@@ -863,7 +796,7 @@ class Database extends ScopedMappingModel
                     $indexFields[] = sprintf('%s (%s)', $indexFieldName, $index->getFieldSize($indexFieldName));
                 }
                 $indices[] = sprintf("      %s (%s)",
-                    $index->getName(),
+                    $index->getSqlName(),
                     join(', ', $indexFields)
                 );
             }
@@ -876,9 +809,8 @@ class Database extends ScopedMappingModel
                 );
             }
 
-            $entityDef = sprintf("  %s (%s):\n%s",
-                $entity->getName(),
-                $entity->getCommonName(),
+            $entityDef = sprintf("  %s:\n%s",
+                $entity->getSqlName(),
                 implode("\n", $columns)
             );
 
@@ -898,7 +830,7 @@ class Database extends ScopedMappingModel
         }
 
         return sprintf("%s:\n%s",
-            $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
+            $this->getSqlName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
             implode("\n", $entities)
         );
     }

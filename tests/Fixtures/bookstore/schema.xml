@@ -44,7 +44,7 @@
         <relation target="Book" onDelete="cascade"/>
     </entity>
 
-    <!-- This entity exists to test the related setters on identical entity ("relatedByXXX" issues) and field phpNames -->
+    <!-- This entity exists to test the related setters on identical entity ("relatedByXXX" issues) -->
     <entity name="Essay">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
         <field name="title" type="VARCHAR" required="true" primaryString="true"/>
@@ -62,7 +62,7 @@
         <relation field="secondEssy" target="CompositeEssay" onDelete="setnull" onUpdate="cascade"/>
     </entity>
 
-    <!-- This entity and the following exist to test the related setters ("relatedByXXX" issues) when two foreign keys exist on symmetrical entitys -->
+    <!-- This entity and the following exist to test the related setters ("relatedByXXX" issues) when two foreign keys exist on symmetrical entities -->
     <entity name="Man">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
         <relation field="wife" target="Woman" onDelete="setnull"/>
@@ -253,7 +253,7 @@
         </relation>
     </entity>
 
-    <!-- Test Views (read-only entitys) -->
+    <!-- Test Views (read-only entities) -->
     <entity name="countryTranslation" readOnly="true">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
         <field name="countryCode" type="VARCHAR" size="6"/>
@@ -267,7 +267,7 @@
         </relation>
     </entity>
 
-    <!-- Test Views (read-only entitys) -->
+    <!-- Test Views (read-only entities) -->
     <entity name="Country" readOnly="true">
         <field name="code" type="VARCHAR" size="6" primaryKey="true"/>
         <field name="capital" type="VARCHAR" size="100"/>

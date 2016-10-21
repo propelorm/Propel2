@@ -27,20 +27,20 @@ class Constants extends BuildComponent
 
         $this->getDefinition()
             ->setConstant(PhpConstant::create(
-                'LEFT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('left_field')->getName())
+                'LEFT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('left_field')->getSqlName())
                 ->setDescription('Left field for the set'))
             ->setConstant(PhpConstant::create(
-                'RIGHT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('right_field')->getName())
+                'RIGHT_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('right_field')->getSqlName())
                 ->setDescription('Right field for the set'))
             ->setConstant(PhpConstant::create(
-                'LEVEL_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('level_field')->getName())
+                'LEVEL_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('level_field')->getSqlName())
                 ->setDescription('Level field for the set'))
         ;
 
         if ($this->getBehavior()->useScope()) {
             $this->getDefinition()
                 ->setConstant(PhpConstant::create(
-                    'SCOPE_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('scope_field')->getName())
+                    'SCOPE_COL', $entityName . '.' . $this->getBehavior()->getFieldForParameter('scope_field')->getSqlName())
                     ->setDescription('Scope field for the set'))
             ;
         }

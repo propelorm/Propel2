@@ -27,11 +27,11 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
             <column name="user_id" type="integer" primaryKey="true"/>
             <column name="friend_id" type="integer" primaryKey="true"/>
 
-            <foreign-key foreignTable="relation1_user" phpName="Who">
+            <foreign-key foreignTable="relation1_user">
                 <reference local="user_id" foreign="id"/>
             </foreign-key>
 
-            <foreign-key foreignTable="relation1_user" phpName="Friend">
+            <foreign-key foreignTable="relation1_user">
                 <reference local="friend_id" foreign="id"/>
             </foreign-key>
         </table>

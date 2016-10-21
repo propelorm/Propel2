@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Model\Database;
 use Propel\Tests\TestCase;
 
 /**
@@ -18,18 +19,30 @@ use Propel\Tests\TestCase;
  */
 abstract class PlatformTestBase extends TestCase
 {
+    /**
+     * @var Database
+     */
+    private $database;
 
     protected function getDatabaseFromSchema($schema)
     {
-        $xtad = new SchemaReader($this->getPlatform());
+        $mockGenConf = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')->getMock();
+        $mockGenConf->method('createPlatform')->willReturn($this->getPlatform());
+        $xtad = new SchemaReader();
+        $xtad->setGeneratorConfig($mockGenConf);
         $appData = $xtad->parseString($schema);
+        $this->database = $appData->getDatabase();
 
-        return $appData->getDatabase();
+        return $this->database;
     }
 
-    protected function getTableFromSchema($schema, $tableName = 'foo')
+    protected function getEntityFromSchema($schema, $entityName = 'Foo')
     {
-        return $this->getDatabaseFromSchema($schema)->getTable($tableName);
+        return $this->getDatabaseFromSchema($schema)->getEntity($entityName);
     }
 
+    protected function getDatabase()
+    {
+        return $this->database;
+    }
 }

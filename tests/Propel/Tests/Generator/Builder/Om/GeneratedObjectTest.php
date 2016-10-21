@@ -366,7 +366,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // now change values behind the scenes
         $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountTableMap::DATABASE_NAME);
-        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
+        $con->exec("UPDATE " . BookTableMap::SQL_NAME . " SET "
             . " publisher_id = " . $pub2->getId()
             . " WHERE id = " . $book->getId());
 
@@ -382,7 +382,7 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // Now let's set it back, just to be double sure ...
 
-        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
+        $con->exec("UPDATE " . BookTableMap::SQL_NAME . " SET "
             . " publisher_id = " . $pub1->getId()
             . " WHERE id = " . $book->getId());
 

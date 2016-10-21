@@ -284,7 +284,7 @@ class TableMapTest extends BookstoreTestBase
         }
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addAlias('b', BookTableMap::TABLE_NAME);
+        $c->addAlias('b', BookTableMap::SQL_NAME);
         $c->add('b.title', 'War And Peace');
         $c->doDelete($con);
 
@@ -335,7 +335,7 @@ class TableMapTest extends BookstoreTestBase
     public function testCommentDoUpdate()
     {
         $c1 = new Criteria();
-        $c1->setPrimaryTableName(BookTableMap::TABLE_NAME);
+        $c1->setPrimaryTableName(BookTableMap::SQL_NAME);
         $c1->setComment('Foo');
         $c2 = new Criteria();
         $c2->add(BookTableMap::COL_TITLE, 'Updated Title');

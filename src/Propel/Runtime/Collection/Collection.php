@@ -487,7 +487,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), EntityMap::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), EntityMap::TYPE_FIELDNAME);
     }
 
     /**
@@ -516,7 +516,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, EntityMap::TYPE_PHPNAME, $includeLazyLoadFields);
+        $array = $this->toArray(null, $usePrefix, EntityMap::TYPE_FIELDNAME, $includeLazyLoadFields);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }

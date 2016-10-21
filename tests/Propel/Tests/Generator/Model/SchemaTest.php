@@ -21,45 +21,53 @@ class SchemaTest extends ModelTestCase
 {
     public function testCreateNewSchema()
     {
-        $platform = $this->getPlatformMock();
-
-        $schema = new Schema($platform);
-        $this->assertSame($platform, $schema->getPlatform());
+        $schema = new Schema();
         $this->assertCount(0, $schema->getDatabases());
         $this->assertFalse($schema->hasMultipleDatabases());
     }
 
-    public function testJoinMultipleSchemasWithSameTableTwice()
+    public function testJoinMultipleSchemasWithSameEntityTwice()
     {
-        $booksTable = $this->getTableMock('books');
+        $booksEntity = $this->getEntityMock('Books');
 
         $database1 = $this->getDatabaseMock('bookstore');
         $database1
             ->expects($this->any())
-            ->method('getTables')
-            ->will($this->returnValue(array($booksTable)))
+            ->method('getEntities')
+            ->will($this->returnValue(array($booksEntity)))
         ;
+        $database1
+            ->expects($this->any())
+            ->method('hasEntityByFullClassName')
+            ->will($this->returnValue(true))
+        ;
+
 
         $database2 = $this->getDatabaseMock('bookstore');
         $database2
             ->expects($this->any())
-            ->method('getTables')
+            ->method('getEntities')
             ->will($this->returnValue(array(
-                $booksTable,
-                $this->getTableMock('authors'),
+                $booksEntity,
+                $this->getEntityMock('Authors'),
             )))
         ;
         $database2
             ->expects($this->any())
-            ->method('getTable')
-            ->with($this->equalTo('books'))
+            ->method('getEntity')
+            ->with($this->equalTo('Books'))
+            ->will($this->returnValue(true))
+        ;
+        $database2
+            ->expects($this->any())
+            ->method('hasEntityByFullClassName')
             ->will($this->returnValue(true))
         ;
 
-        $subSchema1 = new Schema($this->getPlatformMock());
+        $subSchema1 = new Schema();
         $subSchema1->addDatabase($database1);
 
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->addDatabase($database2);
 
         $this->setExpectedException('Propel\Generator\Exception\EngineException');
@@ -76,19 +84,19 @@ class SchemaTest extends ModelTestCase
             ->will($this->returnValue(false))
         ;
 
-        $tables[] = $this->getTableMock('books');
-        $tables[] = $this->getTableMock('authors');
+        $entities[] = $this->getEntityMock('Books');
+        $entities[] = $this->getEntityMock('Authors');
 
         $database = $this->getDatabaseMock('bookstore');
         $database
             ->expects($this->any())
-            ->method('countTables')
-            ->will($this->returnValue(count($tables)))
+            ->method('countEntities')
+            ->will($this->returnValue(count($entities)))
         ;
         $database
             ->expects($this->any())
-            ->method('getTables')
-            ->will($this->returnValue($tables))
+            ->method('getEntities')
+            ->will($this->returnValue($entities))
         ;
         $database
             ->expects($this->any())
@@ -96,28 +104,28 @@ class SchemaTest extends ModelTestCase
             ->will($this->returnValue(array($behavior)))
         ;
 
-        $subSchema1 = new Schema($this->getPlatformMock());
+        $subSchema1 = new Schema();
         $subSchema1->addDatabase($database);
 
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->addDatabase($database);
 
         $schema->joinSchemas(array($subSchema1));
 
         $this->assertCount(1, $schema->getDatabases(false));
-        $this->assertSame(2, $schema->countTables());
+        $this->assertSame(2, $schema->countEntities());
     }
 
-    public function testJoinMultipleSchemasWithoutTables()
+    public function testJoinMultipleSchemasWithoutEntities()
     {
-        $subSchema1 = new Schema($this->getPlatformMock());
+        $subSchema1 = new Schema();
         $subSchema1->addDatabase(array('name' => 'bookstore'));
         $subSchema1->addDatabase(array('name' => 'shoestore'));
 
-        $subSchema2 = new Schema($this->getPlatformMock());
+        $subSchema2 = new Schema();
         $subSchema2->addDatabase(array('name' => 'surfstore'));
 
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->addDatabase(array('name' => 'skatestore'));
 
         $schema->joinSchemas(array($subSchema1, $subSchema2));
@@ -131,7 +139,7 @@ class SchemaTest extends ModelTestCase
 
     public function testGetFirstDatabase()
     {
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $db = $schema->addDatabase(array('name' => 'bookstore'));
 
         $this->assertSame($db, $schema->getDatabase());
@@ -139,7 +147,7 @@ class SchemaTest extends ModelTestCase
 
     public function testGetDatabase()
     {
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $db1 = $schema->addDatabase(array('name' => 'bookstore'));
         $db2 = $schema->addDatabase(array('name' => 'shoestore'));
 
@@ -149,7 +157,7 @@ class SchemaTest extends ModelTestCase
 
     public function testGetNoDatabase()
     {
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
 
         $this->assertNull($schema->getDatabase('shoestore', false));
     }
@@ -168,7 +176,7 @@ class SchemaTest extends ModelTestCase
             ->will($this->returnValue($this->getPlatformMock()))
         ;
 
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->setGeneratorConfig($config);
         $schema->addDatabase(array('name' => 'bookstore'));
 
@@ -180,7 +188,7 @@ class SchemaTest extends ModelTestCase
 
     public function testAddArrayDatabaseWithDefaultPlatform()
     {
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->addDatabase(array('name' => 'bookstore'));
 
         $this->assertCount(1, $schema->getDatabases(false));
@@ -196,7 +204,7 @@ class SchemaTest extends ModelTestCase
         $config = $this->getMockBuilder('Propel\Generator\Config\GeneratorConfig')
             ->disableOriginalConstructor()->getMock();
 
-        $schema = new Schema($this->getPlatformMock());
+        $schema = new Schema();
         $schema->setGeneratorConfig($config);
         $schema->addDatabase($database1);
         $schema->addDatabase($database2);

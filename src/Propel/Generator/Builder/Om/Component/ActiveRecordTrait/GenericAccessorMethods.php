@@ -47,7 +47,7 @@ return \$repository->getEntityMap()->getByName(\$this, \$name, \$type);";
             ->setDescription('Retrieves a field from the object by name passed in as a string')
             ->addSimpleDescParameter('name', 'string', 'name of the field')
             ->addSimpleDescParameter('type', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setType('$this|' . $this->getObjectClassName())
@@ -73,7 +73,7 @@ type constants. The default key type is the column's EntityMap::$defaultKeyType.
 
         $method = $this->addMethod('toArray')
             ->addSimpleDescParameter('keyType', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setDescription($description)

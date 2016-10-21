@@ -24,7 +24,7 @@ class IsValidRowMethod extends BuildComponent
 
         $body = "";
 
-        $colName = $phpNames = $camelNames = $fieldNames = [];
+        $colName = $names = $camelNames = $fieldNames = [];
         $fieldCount = 0;
         foreach ($this->getEntity()->getFields() as $field) {
             if ($field->isImplementationDetail()) {
@@ -36,8 +36,6 @@ class IsValidRowMethod extends BuildComponent
 
             $fieldCount++;
             $fieldNames[] = $field->getName();
-            $camelNames[] = $field->getCamelCaseName();
-            $phpNames[] = $field->getName();
             $colName[] = $field->getEntity()->getName(). '.' .$field->getName();
         }
 
@@ -50,19 +48,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         }
 
         $body .= "
-} else if (EntityMap::TYPE_PHPNAME === \$indexType) {
-    //ColumnName
-";
-        foreach ($phpNames as $idx => $fieldName) {
-            $body .= "
-    if (null === \$row['$fieldName']) return false;";
-        }
-
-        $body .= "
 } else if (EntityMap::TYPE_COLNAME === \$indexType) {
     //columnName
 ";
-        foreach ($camelNames as $idx => $fieldName) {
+        foreach ($fieldNames as $idx => $fieldName) {
             $body .= "
     if (null === \$row['$fieldName']) return false;";
         }

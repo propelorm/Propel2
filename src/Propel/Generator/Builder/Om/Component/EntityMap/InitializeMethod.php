@@ -31,7 +31,7 @@ class InitializeMethod extends BuildComponent
         \$this->setName('" . $entity->getName() . "');
         \$this->setDatabaseName('" . $entity->getDatabase()->getName() . "');
         \$this->setFullClassName('" . $entity->getFullClassName() . "');
-        \$this->setTableName('" . $entity->getTableName() . "');
+        \$this->setSqlName('" . $entity->getSqlName() . "');
         \$this->setAllowPkInsert(". ($entity->isAllowPkInsert() ? 'true' : 'false') . ");
         \$this->setIdentifierQuoting(" . ($entity->isIdentifierQuotingEnabled() ? 'true' : 'false') . ");
         ";

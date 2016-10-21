@@ -20,7 +20,6 @@ namespace Propel\Generator\Model;
  */
 class IdMethodParameter extends MappingModel
 {
-    private $name;
     private $value;
 
     /** @var Entity */
@@ -28,28 +27,9 @@ class IdMethodParameter extends MappingModel
 
     protected function setupObject()
     {
+        //The name can be null
         $this->name = $this->getAttribute('name');
         $this->value = $this->getAttribute('value');
-    }
-
-    /**
-     * Returns the parameter name.
-     *
-     * @param string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Sets the parameter name.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
     }
 
     /**

@@ -44,20 +44,20 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 
             $schema = <<<EOF
 <database name="concrete_content_set_pk" activeRecord="true">
-    <table name="concrete_content_set_pk" phpName="ConcreteContentSetPk" allowPkInsert="true">
+    <entity name="concrete_content_set_pk" allowPkInsert="true">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <field name="title" type="VARCHAR" size="100" primaryString="true" />
         <index>
             <index-field name="title" />
         </index>
-    </table>
-    <table name="concrete_article_set_pk" allowPkInsert="true">
+    </entity>
+    <entity name="concrete_article_set_pk" allowPkInsert="true">
         <field name="body" type="longvarchar" />
         <field name="author_id" required="false" type="INTEGER" />
         <behavior name="concrete_inheritance">
             <parameter name="extends" value="ConcreteContentSetPk" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
 
@@ -132,7 +132,7 @@ EOF;
     public function testmodifyEntityAddsForeignKeysWithoutDuplicates()
     {
         $article = $this->getConfiguration()->getEntityMap(ConcreteAuthorEntityMap::ENTITY_CLASS);
-        $this->assertTrue($article->hasRelation('concreteNews'), 'modifyEntity() copies relationships from parent table and removes hardcoded refPhpName');
+        $this->assertTrue($article->hasRelation('concreteNews'), 'modifyEntity() copies relationships from parent table and removes hardcoded refName');
     }
 
     // no way to test copying of indices and uniques, except by reverse engineering the db...

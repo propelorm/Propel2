@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Config\GeneratorConfig;
+use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
@@ -54,10 +54,7 @@ class Entity extends ScopedMappingModel implements IdMethod
      */
     private $unices;
     private $idMethodParameters;
-    private $name;
-    private $tableName;
     private $description;
-//    private $phpName;
     private $idMethod;
 
     /**
@@ -146,7 +143,7 @@ class Entity extends ScopedMappingModel implements IdMethod
         parent::__construct();
 
         if (null !== $name) {
-            $this->name = $name;
+            $this->setName($name);
         }
 
         $this->idMethod = IdMethod::NO_ID_METHOD;
@@ -162,7 +159,6 @@ class Entity extends ScopedMappingModel implements IdMethod
         $this->behaviors = [];
         $this->fields = [];
         $this->fieldsByName = [];
-//        $this->fieldsByPhpName = [];
         $this->fieldsByLowercaseName = [];
         $this->relations = [];
         $this->foreignEntityNames = [];
@@ -193,10 +189,7 @@ class Entity extends ScopedMappingModel implements IdMethod
         parent::setupObject();
 
         $this->setName($this->getAttribute('name'));
-
-        $names = explode('\\', $this->name);
-        $shortName = array_pop($names);
-        $this->tableName = $this->getAttribute('tableName') ?: NamingTool::toUnderscore($shortName);
+        $this->setSqlName($this->getAttribute('sqlName'));
 
         if ($this->getAttribute('activeRecord')) {
             $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
@@ -256,7 +249,7 @@ class Entity extends ScopedMappingModel implements IdMethod
      * Browses the foreign keys and creates referrers for the foreign entity.
      * This method can be called several times on the same entity. It only
      * adds the missing referrers and is non-destructive.
-     * Warning: only use when all the entitys were created.
+     * Warning: only use when all the entities were created.
      *
      * @param  boolean $throwErrors
      *
@@ -456,7 +449,6 @@ class Entity extends ScopedMappingModel implements IdMethod
             $this->fields[] = $col;
             $this->fieldsByName[$col->getName()] = $col;
             $this->fieldsByLowercaseName[strtolower($col->getName())] = $col;
-//            $this->fieldsByPhpName[$col->getName()] = $col;
             $col->setPosition(count($this->fields));
 
             if ($col->requiresTransactionInPostgres()) {
@@ -702,7 +694,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns the list of entitys referenced by foreign keys in this entity.
+     * Returns the list of entities referenced by foreign keys in this entity.
      *
      * @return array
      */
@@ -841,7 +833,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     /**
      * Retrieves the configuration object.
      *
-     * @return GeneratorConfig
+     * @return GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {
@@ -913,40 +905,29 @@ class Entity extends ScopedMappingModel implements IdMethod
     {
         if (false !== strpos($name, '\\')) {
             $namespace = explode('\\', trim($name, '\\'));
-            $this->name = array_pop($namespace);
+            $this->name = NamingTool::toUpperCamelCase(array_pop($namespace));
             $this->namespace = implode('\\', $namespace);
         } else {
-            $this->name = $name;
+            $this->name = NamingTool::toUpperCamelCase($name);
         }
     }
 
     /**
-     * @return mixed
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
-    }
-
-    /**
+     * @param bool $fq If return the fully qualified name
      * @return string
      */
-    public function getFQTableName()
+    public function getSqlName($fq = true)
     {
-        $fqTableName = $this->getTableName();
+        if (!$fq) {
+            return parent::getSqlName();
+        }
+
+        $fqTableName = parent::getSqlName();
         if ($this->hasSchema()) {
             $fqTableName = $this->guessSchemaName() . $this->getPlatform()->getSchemaDelimiter() . $fqTableName;
         }
 
         return $fqTableName;
-    }
-
-    /**
-     * @param mixed $tableName
-     */
-    public function setTableName($tableName)
-    {
-        $this->tableName = $tableName;
     }
 
     /**
@@ -1054,15 +1035,15 @@ class Entity extends ScopedMappingModel implements IdMethod
 //        $this->commonName = $this->originCommonName = $name;
 //    }
 
-    /**
-     * Returns the unmodified common name (not modified by entity prefix).
-     *
-     * @return string
-     */
-    public function getOriginCommonName()
-    {
-        return $this->originCommonName;
-    }
+//    /**
+//     * Returns the unmodified common name (not modified by entity prefix).
+//     *
+//     * @return string
+//     */
+//    public function getOriginCommonName()
+//    {
+//        return $this->originCommonName;
+//    }
 
     /**
      * Sets the default string format for ActiveRecord objects in this entity.
@@ -1120,7 +1101,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether we allow to insert primary keys on entitys with
+     * Returns whether we allow to insert primary keys on entities with
      * native id method.
      *
      * @return boolean
@@ -1500,6 +1481,8 @@ class Entity extends ScopedMappingModel implements IdMethod
             $field = $field->getName();
         }
 
+        $field = NamingTool::toCamelCase($field);
+
         if ($caseInsensitive) {
             return isset($this->fieldsByLowercaseName[strtolower($field)]);
         }
@@ -1518,8 +1501,10 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function getField($name, $caseInsensitive = false)
     {
         if (!$this->hasField($name, $caseInsensitive)) {
-            throw new \InvalidArgumentException(sprintf('Field `%s` not found in Entity `%s` [%s]', $name, $this->getName(), implode(',', array_keys($this->fieldsByName))));
+            throw new InvalidArgumentException(sprintf('Field `%s` not found in Entity `%s` [%s]', $name, $this->getName(), implode(',', array_keys($this->fieldsByName))));
         }
+
+        $name = NamingTool::toCamelCase($name);
 
         if ($caseInsensitive) {
             return $this->fieldsByLowercaseName[strtolower($name)];
@@ -1705,7 +1690,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     /**
      * Returns the first primary key field.
      *
-     * Useful for entitys with a PK using a single field.
+     * Useful for entities with a PK using a single field.
      *
      * @return Field
      */

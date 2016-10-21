@@ -32,7 +32,7 @@ class JoinMethods extends BuildComponent
             $queryClass = $this->getQueryClassName();
             $joinType = $this->getJoinType($relation);
 
-            $relationName = lcfirst($this->getRelationPhpName($relation));
+            $relationName = lcfirst($this->getRelationName($relation));
 
             $this->addJoin($relationName, $queryClass, $joinType);
         }

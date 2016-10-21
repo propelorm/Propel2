@@ -11,7 +11,7 @@
 namespace Propel\Generator\Model;
 
 /**
- * Information about indices of a table.
+ * Information about indices of a entity.
  *
  * @author Jason van Zyl <vanzyl@apache.org>
  * @author Daniel Rall <dlr@finemaltcoding.com>
@@ -20,31 +20,26 @@ namespace Propel\Generator\Model;
 class Index extends MappingModel
 {
     /**
-     * @var string
-     */
-    protected $name;
-
-    /**
      * The Entity instance.
      *
      * @var Entity
      */
-    protected $table;
+    protected $entity;
 
     /**
      * @var string[]
      */
-    protected $columns;
+    protected $fields;
 
     /**
      * @var Field[]
      */
-    protected $columnObjects = [];
+    protected $fieldObjects = [];
 
     /**
      * @var string[]
      */
-    protected $columnsSize;
+    protected $fieldsSize;
 
     /**
      * @var bool
@@ -60,8 +55,8 @@ class Index extends MappingModel
     {
         parent::__construct();
 
-        $this->columns     = [];
-        $this->columnsSize = [];
+        $this->fields     = [];
+        $this->fieldsSize = [];
 
         if (null !== $name) {
             $this->setName($name);
@@ -79,121 +74,156 @@ class Index extends MappingModel
     }
 
     /**
-     * Sets the index name.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->autoNaming = !$name; //if no name we activate autoNaming
-        $this->name = $name;
-    }
-
-    /**
-     * Returns the index name.
+     * Get the name of the Index object. If none given, it uses the autonaming and the name.
      *
      * @return string
      */
     public function getName()
     {
-        $this->doNaming();
-
-        if ($this->table && $database = $this->table->getDatabase()) {
-            return substr($this->name, 0, $database->getMaxFieldNameLength());
+        if (!$this->name) {
+            $this->setName($this->getSqlName());
         }
 
-        return $this->name;
+        return parent::getName();
+    }
+
+    public function setName($value)
+    {
+        if (!$value) {
+            $value = $this->getSqlName();
+        }
+
+        parent::setName($value);
+    }
+
+    /**
+     * Sets the index name.
+     *
+     * @param string $name
+     */
+    public function setSqlName($name)
+    {
+        if (!$name) {
+            if ($this->sqlName) {
+                return;
+            }
+            if (!$this->name) {
+                $this->autoNaming = true;
+            } else {
+                $name = NamingTool::toUnderscore($this->name);
+            }
+        }
+
+        $this->sqlName = $name;
+    }
+
+    /**
+     * Returns the index name.
+     *
+     * @param bool $fq If return fully qualified name
+     * @return string
+     */
+    public function getSqlName($fq = false)
+    {
+        $this->doNaming();
+        $sqlName = '';
+        $entity = $this->getEntity();
+
+        if ($entity && $database = $entity->getDatabase()) {
+            $sqlName = substr($this->sqlName, 0, $database->getMaxFieldNameLength());
+
+            if ($fq && ($entity->getSchema() || $entity->getDatabase()->getSchema())
+                && $entity->getDatabase()->getPlatform()
+                && $entity->getDatabase()->getPlatform()->supportsSchemas()
+            ) {
+                return ($entity->getSchema() ?: $entity->getDatabase()->getSchema()) . '.' . $sqlName;
+            }
+
+            return $sqlName;
+        }
+
+        return $this->sqlName;
     }
 
     protected function doNaming()
     {
-        if (!$this->name || $this->autoNaming) {
+        if (!$this->sqlName) {
+            $this->sqlName = NamingTool::toUnderscore($this->name);
+        }
+
+        if (!$this->sqlName || $this->autoNaming) {
             $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
 
-            if ($this->columns) {
+            if ($this->fields) {
                 $hash = [];
-                $hash[] = implode(',', (array)$this->columns);
-                $hash[] = implode(',', (array)$this->columnsSize);
+                $hash[] = implode(',', (array)$this->fields);
+                $hash[] = implode(',', (array)$this->fieldsSize);
 
                 $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
             } else {
-                $newName .= 'no_columns';
+                $newName .= 'no_fields';
             }
 
-            if ($this->table) {
-                $newName = $this->table->getTableName() . '_' . $newName;
+            if ($this->entity) {
+                $newName = $this->entity->getSqlName(false) . '_' . $newName;
             }
 
-            $this->name = $newName;
+            $this->sqlName = $newName;
             $this->autoNaming = true;
         }
-    }
-
-    public function getFQName()
-    {
-        $table = $this->getEntity();
-        if ($table->getDatabase()
-            && ($table->getSchema() || $table->getDatabase()->getSchema())
-            && $table->getDatabase()->getPlatform()
-            && $table->getDatabase()->getPlatform()->supportsSchemas()
-        ) {
-            return ($table->getSchema() ?: $table->getDatabase()->getSchema()) . '.' . $this->getName();
-        }
-
-        return $this->getName();
     }
 
     /**
      * Sets the index parent Entity.
      *
-     * @param Entity $table
+     * @param Entity $entity
      */
-    public function setEntity(Entity $table)
+    public function setEntity(Entity $entity)
     {
-        $this->table = $table;
+        $this->entity = $entity;
     }
 
     /**
-     * Returns the index parent table.
+     * Returns the index parent entity.
      *
      * @return Entity
      */
     public function getEntity()
     {
-        return $this->table;
+        return $this->entity;
     }
 
     /**
-     * Returns the name of the index parent table.
+     * Returns the name of the index parent entity.
      *
      * @return string
      */
     public function getEntityName()
     {
-        return $this->table->getName();
+        return $this->entity->getName();
     }
 
     /**
-     * Adds a new column to the index.
+     * Adds a new field to the index.
      *
      * @param Field|array $data Field or attributes from XML.
      */
     public function addField($data)
     {
         if ($data instanceof Field) {
-            $column = $data;
-            $this->columns[] = $column->getName();
-            if ($column->getSize()) {
-                $this->columnsSize[$column->getName()] = $column->getSize();
+            $field = $data;
+            $this->fields[] = $field->getName();
+            if ($field->getSize()) {
+                $this->fieldsSize[$field->getName()] = $field->getSize();
             }
-            $this->columnObjects[] = $column;
+            $this->fieldObjects[] = $field;
         } else {
-            $this->columns[] = $name = $data['name'];
+            $this->fields[] = $name = $data['name'];
             if (isset($data['size']) && $data['size'] > 0) {
-                $this->columnsSize[$name] = $data['size'];
+                $this->fieldsSize[$name] = $data['size'];
             }
             if ($this->getEntity()) {
-                $this->columnObjects[] = $this->getEntity()->getField($name);
+                $this->fieldObjects[] = $this->getEntity()->getField($name);
             }
         }
     }
@@ -204,36 +234,36 @@ class Index extends MappingModel
      */
     public function hasField($name)
     {
-        return in_array($name, $this->columns);
+        return in_array($name, $this->fields);
     }
 
     /**
-     * Sets an array of columns to use for the index.
+     * Sets an array of fields to use for the index.
      *
-     * @param array $columns array of array definitions $columns[]['name'] = 'columnName'
+     * @param array $fields array of array definitions $fields[]['name'] = 'fieldName'
      */
-    public function setFields(array $columns)
+    public function setFields(array $fields)
     {
-        $this->columns     = [];
-        $this->columnsSize = [];
-        foreach ($columns as $column) {
-            $this->addField($column);
+        $this->fields     = [];
+        $this->fieldsSize = [];
+        foreach ($fields as $field) {
+            $this->addField($field);
         }
     }
 
     /**
-     * Returns whether or not there is a size for the specified column.
+     * Returns whether or not there is a size for the specified field.
      *
      * @param  string  $name
      * @return boolean
      */
     public function hasFieldSize($name)
     {
-        return isset($this->columnsSize[$name]);
+        return isset($this->fieldsSize[$name]);
     }
 
     /**
-     * Returns the size for the specified column.
+     * Returns the size for the specified field.
      *
      * @param  string  $name
      * @param  boolean $caseInsensitive
@@ -242,30 +272,30 @@ class Index extends MappingModel
     public function getFieldSize($name, $caseInsensitive = false)
     {
         if ($caseInsensitive) {
-            foreach ($this->columnsSize as $forName => $size) {
+            foreach ($this->fieldsSize as $forName => $size) {
                 if (0 === strcasecmp($forName, $name)) {
                     return $size;
                 }
             }
             return null;
         }
-        return isset($this->columnsSize[$name]) ? $this->columnsSize[$name] : null;
+        return isset($this->fieldsSize[$name]) ? $this->fieldsSize[$name] : null;
     }
 
     /**
-     * Resets the columns sizes.
+     * Resets the fields sizes.
      *
      * This method is useful for generated indices for FKs.
      */
     public function resetFieldsSize()
     {
-        $this->columnsSize = [];
+        $this->fieldsSize = [];
     }
 
     /**
-     * Returns whether or not this index has a given column at a given position.
+     * Returns whether or not this index has a given field at a given position.
      *
-     * @param  integer $pos             Position in the column list
+     * @param  integer $pos             Position in the field list
      * @param  string  $name            Field name
      * @param  integer $size            Optional size check
      * @param  boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
@@ -273,14 +303,14 @@ class Index extends MappingModel
      */
     public function hasFieldAtPosition($pos, $name, $size = null, $caseInsensitive = false)
     {
-        if (!isset($this->columns[$pos])) {
+        if (!isset($this->fields[$pos])) {
             return false;
         }
 
         if ($caseInsensitive) {
-            $test = 0 === strcasecmp($this->columns[$pos], $name);
+            $test = 0 === strcasecmp($this->fields[$pos], $name);
         } else {
-            $test = $this->columns[$pos] == $name;
+            $test = $this->fields[$pos] == $name;
         }
 
         if (!$test) {
@@ -295,17 +325,17 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not the index has columns.
+     * Returns whether or not the index has fields.
      *
      * @return boolean
      */
     public function hasFields()
     {
-        return count($this->columns) > 0;
+        return count($this->fields) > 0;
     }
 
     /**
-     * Returns the list of local columns.
+     * Returns the list of local fields.
      *
      * You should not edit this list.
      *
@@ -313,12 +343,13 @@ class Index extends MappingModel
      */
     public function getFields()
     {
-        return $this->columns;
+        return $this->fields;
     }
 
     protected function setupObject()
     {
         $this->setName($this->getAttribute('name'));
+        $this->setSqlName($this->getAttribute('sqlName'));
     }
 
     /**
@@ -326,14 +357,14 @@ class Index extends MappingModel
      */
     public function getFieldObjects()
     {
-        return $this->columnObjects;
+        return $this->fieldObjects;
     }
 
     /**
-     * @param Field[] $columnObjects
+     * @param Field[] $fieldObjects
      */
-    public function setFieldObjects($columnObjects)
+    public function setFieldObjects($fieldObjects)
     {
-        $this->columnObjects = $columnObjects;
+        $this->fieldObjects = $fieldObjects;
     }
 }

@@ -37,7 +37,7 @@ return \$repository->getEntityMap()->setByName(\$this, \$name, \$value, \$type);
             ->addSimpleDescParameter('name', 'string', 'name of the field')
             ->addSimpleDescParameter('value', 'mixed', 'field value')
             ->addSimpleDescParameter('type', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setType('$this|' . $this->getObjectClassName())
@@ -59,7 +59,7 @@ request arrays (e.g. \$_POST).  This method goes through the field
 names and sets all values through its setter or directly into the property.
 
 You can specify the key type of the array by additionally passing one
-of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME,
+of the class type constants EntityMap::TYPE_CAMELNAME,
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 The default key type is the column's EntityMap::$defaultKeyType.
 ";
@@ -69,7 +69,7 @@ The default key type is the column's EntityMap::$defaultKeyType.
         $this->addMethod('fromArray')
             ->addSimpleDescParameter('arr', 'array')
             ->addSimpleDescParameter('keyType', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
+one of the class type constants EntityMap::TYPE_CAMELNAME
 EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
 Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
             ->setDescription($description)

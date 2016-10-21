@@ -184,7 +184,7 @@
     </xs:simpleType>
 
     <!-- Restrict table name to letters (upper- and lowercase), numbers and the _ -->
-    <xs:simpleType name="table_name">
+    <xs:simpleType name="sql_name">
         <xs:restriction base="xs:string">
             <xs:pattern value="[\w_]+"/>
         </xs:restriction>
@@ -303,21 +303,21 @@
         <xs:attribute name="name" type="field_name" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The name of the field as it appears in the database.
+                    The name of the field as used in PHP code. Usually camelCase.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="phpName" type="php_name" use="optional">
+        <xs:attribute name="sqlName" type="sql_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used in PHP code to reference this field (in getters, setters, etc.). Defaults to a CamelCase converter. So by default, a field named 'author_id' receives 'AuthorId' as phpName.
+                    Name as it appears in the database. Used in SQL statements.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="phpSingularName" type="php_name" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    Name used in PHP code to reference the singular form of this field (in getters, setters, etc.). Defaults to an auto-generated value based on the field's phpName.
+                    Name used in PHP code to reference the singular form of this field (in getters, setters, etc.). Defaults to an auto-generated value based on the field's name.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -557,15 +557,6 @@
                 </xs:annotation>
             </xs:element>
 
-            <!-- TODO: to be removed? Are validators still supported in Propel 2? -->
-            <xs:element name="validator" type="validator" minOccurs="0" maxOccurs="unbounded">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">
-                        A validator to be executed on a given field at runtime
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-
             <xs:element name="behavior" type="behavior" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
@@ -583,7 +574,7 @@
             </xs:element>
 
         </xs:choice>
-        <xs:attribute name="name" type="table_name" use="required">
+        <xs:attribute name="name" type="sql_name" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     The name of the table as it appears in the database.
@@ -597,13 +588,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="phpName" type="php_class" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    The name of the ActiveRecord class generated for this table. Defaults to a CamelCase converter. So by default, a table named 'foo_author' receives 'FooAuthor' as phpName.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="namespace" type="php_namespace" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
@@ -611,8 +595,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <!-- TODO: to be removed? Is this really supported? -->
-        <xs:attribute name="fieldPrefix" type="field_name" use="optional"/>
         <xs:attribute name="defaultAccessorVisibility" type="visibility" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
@@ -669,7 +651,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="alias" type="table_name" use="optional"/>
+        <xs:attribute name="alias" type="sql_name" use="optional"/>
         <xs:attribute name="package" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">

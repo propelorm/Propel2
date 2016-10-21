@@ -1,13 +1,18 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
+
 namespace Propel\Generator\Behavior\AggregateField\Component\RelatedRepository;
 
-use gossi\codegen\model\PhpProperty;
-use Propel\Generator\Behavior\AggregateField\AggregateFieldBehavior;
 use Propel\Generator\Behavior\AggregateField\AggregateFieldRelationBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
-use Propel\Generator\Builder\Om\Component\SimpleTemplateTrait;
 
 /**
  *
@@ -23,17 +28,13 @@ class Attribute extends BuildComponent
         /** @var AggregateFieldRelationBehavior $behavior */
         $behavior = $this->getBehavior();
 
-        $relationName = $behavior->getRelationName();
+        $relationName = $behavior->getRelation()->getName();
         $variableName = $relationName . ucfirst($behavior->getParameter('aggregate_name'));
-
-//        $relationName = $behavior->getRelationName();
         $relatedClass = $behavior->getForeignEntity()->getFullClassName();
-//        $aggregateName = $behavior->getParameter('aggregate_name');
-
-        $property = new PhpProperty("afCache{$variableName}");
-        $property->setType($relatedClass . '[]');
-        $property->setDescription('[AggregateField-related]');
-        $property->setVisibility('protected');
-        $this->getDefinition()->setProperty($property);
+        $this->addProperty("afCache{$variableName}")
+            ->setType($relatedClass . '[]')
+            ->setDescription('[AggregateField-related]')
+            ->setVisibility('protected')
+        ;
     }
 }

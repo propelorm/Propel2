@@ -18,6 +18,7 @@ use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Gives a model class the ability to be ordered

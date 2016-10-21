@@ -42,9 +42,9 @@ class OnDemandCollection extends Collection
      *                                        Otherwise, the array is indexed using the specified field
      * @param boolean $usePrefix              If true, the returned array prefixes keys
      *                                        with the model class name ('Article_0', 'Article_1', etc).
-     * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_PHPNAME,
-     *                                        EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME,
-     *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_PHPNAME.
+     * @param string  $keyType                (optional) One of the class type constants EntityMap::TYPE_FIELDNAME,
+     *                                        EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME,
+     *                                        EntityMap::TYPE_NUM. Defaults to EntityMap::TYPE_FIELDNAME.
      * @param boolean $includeLazyLoadFields (optional) Whether to include lazy loaded fields. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
      *
@@ -68,7 +68,7 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_PHPNAME, $includeLazyLoadFields = true, $alreadyDumpedObjects = array())
+    public function toArray($keyField = null, $usePrefix = false, $keyType = EntityMap::TYPE_FIELDNAME, $includeLazyLoadFields = true, $alreadyDumpedObjects = array())
     {
         $ret = array();
         $keyGetterMethod = 'get' . $keyField;

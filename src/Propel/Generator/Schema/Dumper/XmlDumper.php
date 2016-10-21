@@ -193,10 +193,6 @@ class XmlDumper implements DumperInterface
             $tableNode->setAttribute('idMethod', $idMethod);
         }
 
-        if ($phpName = $table->getName()) {
-            $tableNode->setAttribute('phpName', $phpName);
-        }
-
         $package = $table->getPackage();
         if ($package && !$table->isPackageOverriden()) {
             $tableNode->setAttribute('package', $package);
@@ -221,7 +217,7 @@ class XmlDumper implements DumperInterface
         if ($table->isCrossRef()) {
             $tableNode->setAttribute('isCrossRef', 'true');
         }
-        
+
         if ($baseClass = $table->getBaseClass()) {
             $tableNode->setAttribute('baseClass', $baseClass);
         }
@@ -327,10 +323,6 @@ class XmlDumper implements DumperInterface
         $columnNode = $parentNode->appendChild($this->document->createElement('column'));
         $columnNode->setAttribute('name', $column->getName());
 
-        if ($phpName = $column->getName()) {
-            $columnNode->setAttribute('phpName', $phpName);
-        }
-
         $columnNode->setAttribute('type', $column->getType());
 
         $domain = $column->getDomain();
@@ -421,14 +413,6 @@ class XmlDumper implements DumperInterface
         }
 
         $foreignKeyNode->setAttribute('name', $foreignKey->getName());
-
-        if ($phpName = $foreignKey->getName()) {
-            $foreignKeyNode->setAttribute('phpName', $phpName);
-        }
-
-        if ($refPhpName = $foreignKey->getRefPhpName()) {
-            $foreignKeyNode->setAttribute('refPhpName', $refPhpName);
-        }
 
         if ($defaultJoin = $foreignKey->getDefaultJoin()) {
             $foreignKeyNode->setAttribute('defaultJoin', $defaultJoin);

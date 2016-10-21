@@ -335,12 +335,12 @@ class QuickBuilder
 
     public function getBuildName($classTargets = null)
     {
-        $entitys = [];
+        $entities = [];
         foreach ($this->getDatabase()->getEntities() as $entity) {
-            if (count($entitys) > 3) break;
-            $entitys[] = $entity->getName();
+            if (count($entities) > 3) break;
+            $entities[] = $entity->getName();
         }
-        $name = implode('_', $entitys);
+        $name = implode('_', $entities);
         if (!$classTargets || count($classTargets) == 5) {
             $name .= '-all';
         } else {

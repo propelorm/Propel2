@@ -24,6 +24,7 @@ class DatabaseDiff
     protected $removedEntities;
     protected $modifiedEntities;
     protected $renamedEntities;
+    protected $sqlRenamedEntities;
     protected $possibleRenamedEntities;
 
     public function __construct()
@@ -33,6 +34,7 @@ class DatabaseDiff
         $this->modifiedEntities = [];
         $this->renamedEntities  = [];
         $this->possibleRenamedEntities  = [];
+        $this->sqlRenamedEntities =[];
     }
 
     /**
@@ -230,7 +232,7 @@ class DatabaseDiff
     }
 
     /**
-     * Adds a renamed table.
+     * Adds a renamed entity.
      *
      * @param string $fromName
      * @param string $toName
@@ -241,13 +243,34 @@ class DatabaseDiff
     }
 
     /**
-     * Returns the list of renamed tables.
+     * Adds a renamed entity by its sql name.
+     *
+     * @param string $fromName
+     * @param string $toName
+     */
+    public function addSqlRenamedEntity($fromSqlName, $toSqlName)
+    {
+        $this->sqlRenamedEntities[$fromSqlName] = $toSqlName;
+    }
+
+    /**
+     * Returns the list of renamed entities.
      *
      * @return array
      */
     public function getRenamedEntities()
     {
         return $this->renamedEntities;
+    }
+
+    /**
+     * Returns the list of renamed entities by their sql name.
+     *
+     * @return array
+     */
+    public function getSqlRenamedEntities()
+    {
+        return $this->sqlRenamedEntities;
     }
 
     /**

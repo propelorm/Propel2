@@ -31,12 +31,12 @@ class ArchivableBehaviorTest extends TestCase
             $schema = <<<EOF
 <database name="archivable_behavior_test_0">
 
-    <table name="archivable_test_1">
+    <entity name="archivable_test_1">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <column name="age" type="INTEGER" />
         <column name="foo_id" type="INTEGER" />
-        <foreign-key foreignTable="archivable_test_2">
+        <foreign-key foreignEntity="archivable_test_2">
             <reference local="foo_id" foreign="id" />
         </foreign-key>
         <index>
@@ -44,20 +44,20 @@ class ArchivableBehaviorTest extends TestCase
             <index-column name="age" />
         </index>
         <behavior name="archivable" />
-    </table>
+    </entity>
 
-    <table name="archivable_test_2">
+    <entity name="archivable_test_2">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="archivable" />
-    </table>
+    </entity>
 
-    <table name="archivable_test_2_archive">
+    <entity name="archivable_test_2_archive">
         <column name="id" required="true" primaryKey="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    </table>
+    </entity>
 
-    <table name="archivable_test_3">
+    <entity name="archivable_test_3">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <column name="age" type="INTEGER" />
@@ -72,24 +72,24 @@ class ArchivableBehaviorTest extends TestCase
             <parameter name="archive_on_update" value="true" />
             <parameter name="archive_on_delete" value="false" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="archivable_test_4">
+    <entity name="archivable_test_4">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <column name="age" type="INTEGER" />
         <behavior name="archivable">
             <parameter name="archive_entity" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
         </behavior>
-    </table>
+    </entity>
 
-    <table name="archivable_test_5">
+    <entity name="archivable_test_5">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <behavior name="archivable">
             <parameter name="archive_table" value="archivable_test_5_backup" />
             <parameter name="archive_entity" value="ArchivableTest5MyBackup" />
         </behavior>
-    </table>
+    </entity>
 
 </database>
 EOF;
@@ -101,38 +101,38 @@ EOF;
         }
     }
 
-    public function testCreatesArchiveTable()
+    public function testCreatesArchiveEntity()
     {
         $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest1Archive'));
     }
 
-    public function testDoesNotCreateCustomArchiveTableIfExists()
+    public function testDoesNotCreateCustomArchiveEntityIfExists()
     {
         $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest2Archive'));
     }
 
-    public function testCanCreateCustomArchiveTableName()
+    public function testCanCreateCustomArchiveEntityName()
     {
         $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('MyOldArchivableTest3'));
         $entityMap = QuickBuilder::$configuration->getEntityMap('MyOldArchivableTest3');
-        $this->assertEquals('my_old_archivable_test_3', $entityMap->getTableName());
+        $this->assertEquals('my_old_archivable_test3', $entityMap->getSqlName());
     }
 
-    public function testDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
+    public function testDoesNotCreateCustomArchiveEntityIfArchiveClassIsSpecified()
     {
         $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('Propel\Tests\Generator\Behavior\Archivable\FooArchive'));
         $entityMap = QuickBuilder::$configuration->getEntityMap('Propel\Tests\Generator\Behavior\Archivable\FooArchive');
-        $this->assertEquals('foo_archive', $entityMap->getTableName());
+        $this->assertEquals('foo_archive', $entityMap->getSqlName());
     }
 
-    public function testCanCreateCustomArchiveTableNameAndPhpName()
+    public function testCanCreateCustomArchiveEntityNameAndName()
     {
         $this->assertTrue(QuickBuilder::$configuration->hasEntityMap('ArchivableTest5MyBackup'));
         $entityMap = QuickBuilder::$configuration->getEntityMap('ArchivableTest5MyBackup');
-        $this->assertEquals('archivable_test_5_backup', $entityMap->getTableName());
+        $this->assertEquals('archivable_test5_my_backup', $entityMap->getSqlName());
     }
 
-    public function testCopiesColumnsToArchiveTable()
+    public function testCopiesColumnsToArchiveEntity()
     {
         $entity = QuickBuilder::$configuration->getEntityMap('ArchivableTest1Archive');
         $this->assertTrue($entity->hasField('id'));
@@ -156,17 +156,17 @@ EOF;
 
     public function testCopiesUniquesToIndices()
     {
-        $expected = "CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);";
+        $expected = "CREATE INDEX my_old_archivable_test3_i_639136 ON my_old_archivable_test3 (title);";
         $this->assertContains($expected, self::$generatedSQL);
     }
 
-    public function testAddsArchivedAtColumnToArchiveTableByDefault()
+    public function testAddsArchivedAtColumnToArchiveEntityByDefault()
     {
         $entityMap = QuickBuilder::$configuration->getEntityMap('ArchivableTest1Archive');
         $this->assertTrue($entityMap->hasField('archivedAt'));
     }
 
-    public function testDoesNotAddArchivedAtColumnToArchiveTableIfSpecified()
+    public function testDoesNotAddArchivedAtColumnToArchiveEntityIfSpecified()
     {
         $entityMap = QuickBuilder::$configuration->getEntityMap('MyOldArchivableTest3');
         $this->assertFalse($entityMap->hasField('archivedAt'));
@@ -177,11 +177,11 @@ EOF;
         $schema = <<<EOF
 <database name="archivable_behavior_test_0">
     <behavior name="archivable" />
-    <table name="archivable_test_01">
+    <entity name="archivable_test_01">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
         <column name="title" type="VARCHAR" size="100" primaryString="true" />
         <behavior name="archivable" />
-    </table>
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();

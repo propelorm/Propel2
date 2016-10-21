@@ -95,7 +95,7 @@ class SqlPersister implements PersisterInterface
             $whereClauses[] = '(' . $this->entityMap->buildSqlPrimaryCondition($entity, $params) . ')';
         }
 
-        $query = sprintf('DELETE FROM %s WHERE %s', $this->getFQTableName(), implode(' OR ', $whereClauses));
+        $query = sprintf('DELETE FROM %s WHERE %s', $this->getFQSqlName(), implode(' OR ', $whereClauses));
 
         $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
@@ -179,7 +179,7 @@ EOF;
             $sql = str_replace('DATABASE()', '?', $sql);
             $params[] = $this->entityMap->getSchemaName();
         }
-        $params[] = $this->entityMap->getTableName();
+        $params[] = $this->entityMap->getSqlName();
 
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
@@ -244,18 +244,18 @@ EOF;
             if ($field->isImplementationDetail()) {
                 continue;
             }
-            $fields[$field->getColumnName()] = $field->getColumnName();
+            $fields[$field->getSqlName()] = $field->getSqlName();
         }
 
         foreach ($this->entityMap->getRelations() as $relation) {
             if ($relation->isOutgoingRelation()) {
                 foreach ($relation->getLocalFields() as $field) {
-                    $fields[$field->getColumnName()] = $field->getColumnName();
+                    $fields[$field->getSqlName()] = $field->getSqlName();
                 }
             }
         }
 
-        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->getFQTableName(), implode(', ', $fields));
+        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->getFQSqlName(), implode(', ', $fields));
 
         $params = [];
         $firstRound = true;
@@ -337,10 +337,10 @@ EOF;
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);
 
         //todo, use CASE WHEN THEN to improve performance
-        $sqlStart = 'UPDATE ' . $this->getFQTableName();
+        $sqlStart = 'UPDATE ' . $this->getFQSqlName();
         $where = [];
         foreach ($this->entityMap->getPrimaryKeys() as $pk) {
-            $where[] = $pk->getColumnName() . ' = ?';
+            $where[] = $pk->getSqlName() . ' = ?';
         }
 
         $where = ' WHERE ' . implode(' AND ', $where);
@@ -354,7 +354,7 @@ EOF;
                 $params = [];
                 $sets = [];
                 foreach ($changeSet as $fieldName => $value) {
-                    $columnName = $this->entityMap->getField($fieldName)->getColumnName();
+                    $columnName = $this->entityMap->getField($fieldName)->getSqlName();
                     $sets[] = $columnName . ' = ?';
                     $params[] = $value;
                 }
@@ -393,8 +393,8 @@ EOF;
     /**
      * @return string
      */
-    public function getFQTableName()
+    public function getFQSqlName()
     {
-        return $this->entityMap->getFQTableName();
+        return $this->entityMap->getFQSqlName();
     }
 }

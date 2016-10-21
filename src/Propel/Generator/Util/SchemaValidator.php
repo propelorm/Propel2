@@ -52,10 +52,10 @@ class SchemaValidator
 
     protected function validateDatabaseTables(Database $database)
     {
-        $phpNames = array();
+        $names = array();
         $namespaces = array();
         foreach ($database->getTables() as $table) {
-            $list = &$phpNames;
+            $list = &$names;
             if ($table->getNamespace()) {
                 if (!isset($namespaces[$table->getNamespace()])) {
                     $namespaces[$table->getNamespace()] = array();
@@ -64,7 +64,7 @@ class SchemaValidator
                 $list = &$namespaces[$table->getNamespace()];
             }
             if (in_array($table->getName(), $list)) {
-                $this->errors[] = sprintf('Table "%s" declares a phpName already used in another table', $table->getName());
+                $this->errors[] = sprintf('Table "%s" declares a name already used in another table', $table->getName());
             }
             $list[] = $table->getName();
             $this->validateTableAttributes($table);
@@ -86,12 +86,12 @@ class SchemaValidator
         if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {
             $this->errors[] = sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $table->getName());
         }
-        $phpNames = array();
+        $names = array();
         foreach ($table->getColumns() as $column) {
-            if (in_array($column->getName(), $phpNames)) {
-                $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());
+            if (in_array($column->getName(), $names)) {
+                $this->errors[] = sprintf('Column "%s" declares a name already used in table "%s"', $column->getName(), $table->getName());
             }
-            $phpNames[]= $column->getName();
+            $names[]= $column->getName();
         }
     }
 

@@ -168,7 +168,10 @@ class SchemaReader
     {
         try {
             $this->parseElement($parser, $name, $attributes);
-        } catch (\Exception $e) {
+        } catch (BehaviorNotFoundException $e) {
+            throw $e;
+        }
+        catch (\Exception $e) {
             if ($this->currEntity) {
                 throw new SchemaException(
                     sprintf('There was an schema error in entity %s.%s', $this->currDB->getName(), $this->currEntity->getName()),
@@ -235,19 +238,7 @@ class SchemaReader
                     $this->currDB->addDomain($attributes);
                     break;
 
-                case 'table':
                 case 'entity':
-                    if ('table' === $name) {
-                        //backwards compatibility
-                        $attributes['tableName'] = $attributes['name'];
-
-                        if (isset($attributes['phpName'])) {
-                            $attributes['name'] = $attributes['phpName'];
-                        } else {
-                            $attributes['name'] = ucfirst(NamingTool::toCamelCase($attributes['tableName']));
-                        }
-                    }
-
                     $this->currEntity = $this->currDB->addEntity($attributes);
                     if ($this->isExternalSchema()) {
                         $this->currEntity->setForReferenceOnly($this->isForReferenceOnly);
@@ -273,12 +264,10 @@ class SchemaReader
 
                     if ('column' === $name) {
                         //backwards compatibility
-                        $attributes['columnName'] = $attributes['name'];
-                        if (isset($attributes['phpName'])) {
-                            $attributes['name'] = $attributes['phpName'];
-                        } else {
-                            $attributes['name'] = NamingTool::toCamelCase($attributes['name']);
+                        if (array_key_exists('sqlName', $attributes)) {
+                            $attributes['columnName'] = $attributes['sqlName'];
                         }
+                        $attributes['name'] = NamingTool::toCamelCase($attributes['name']);
                     }
 
                     $this->currField = $this->currEntity->addField($attributes);
@@ -289,12 +278,8 @@ class SchemaReader
 
                     if ('foreign-key' === $name) {
                         //backwards compatibility
-                        $attributes['target'] = ucfirst(NamingTool::toCamelCase($attributes['foreignTable']));
-                        if (isset($attributes['phpName'])) {
-                            $attributes['field'] = $attributes['phpName'];
-                        } else {
-                            $attributes['field'] = NamingTool::toCamelCase($attributes['foreignTable']);
-                        }
+                        $attributes['target'] = NamingTool::toUpperCamelCase($attributes['foreignEntity']);
+                        $attributes['field'] = NamingTool::toCamelCase($attributes['foreignEntity']);
                     }
 
                     $this->currFK = $this->currEntity->addRelation($attributes);

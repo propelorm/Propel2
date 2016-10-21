@@ -147,7 +147,7 @@ EOF;
 
     private function getAutoincrementId(ConnectionInterface $connection)
     {
-        $tableName = \Map\ShowEntityMap::FQ_TABLE_NAME;
+        $tableName = \Map\ShowEntityMap::FQ_SQL_NAME;
         $stmt = $connection->prepare("SELECT seq FROM sqlite_sequence WHERE name = '$tableName'");
         $stmt->execute();
 
@@ -156,7 +156,7 @@ EOF;
 
     private function deleteSequenceTable(ConnectionInterface $connection)
     {
-        $tableName = \Map\ShowEntityMap::FQ_TABLE_NAME;
+        $tableName = \Map\ShowEntityMap::FQ_SQL_NAME;
         $stmt = $connection->prepare("DELETE FROM sqlite_sequence WHERE name = '$tableName'");
 
         return $stmt->execute();

@@ -30,7 +30,7 @@ trait RelationTrait
      *
      * @return string
      */
-    public function getRelationPhpName(Relation $relation, $plural = false)
+    public function getRelationName(Relation $relation, $plural = false)
     {
         if ($relation->getField()) {
             if ($plural) {
@@ -119,7 +119,7 @@ trait RelationTrait
      */
     public function getRelationVarName(Relation $relation, $plural = false)
     {
-        return lcfirst($this->getRelationPhpName($relation, $plural));
+        return lcfirst($this->getRelationName($relation, $plural));
     }
 
     /**
@@ -130,7 +130,7 @@ trait RelationTrait
      */
     public function getRefRelationVarName(Relation $relation, $plural = false)
     {
-        return lcfirst($this->getRefRelationPhpName($relation, $plural));
+        return lcfirst($this->getRefRelationName($relation, $plural));
     }
 
     /**
@@ -143,7 +143,7 @@ trait RelationTrait
      */
     public function getPKRefRelationVarName(Relation $relation)
     {
-        return lcfirst($this->getRefRelationPhpName($relation, false));
+        return lcfirst($this->getRefRelationName($relation, false));
     }
 
     /**
@@ -154,7 +154,7 @@ trait RelationTrait
      *
      * @return string
      */
-    public function getRefRelationPhpName(Relation $relation, $plural = false)
+    public function getRefRelationName(Relation $relation, $plural = false)
     {
         $pluralizer = $this->getBuilder()->getPluralizer();
         if ($relation->getRefField()) {
@@ -222,6 +222,6 @@ trait RelationTrait
      */
     public function getRefRelationCollVarName(Relation $relation)
     {
-        return lcfirst($this->getRefRelationPhpName($relation, true));
+        return lcfirst($this->getRefRelationName($relation, true));
     }
-} 
+}

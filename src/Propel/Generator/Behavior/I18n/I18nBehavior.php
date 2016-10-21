@@ -17,6 +17,7 @@ use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
@@ -188,7 +189,7 @@ class I18nBehavior extends Behavior
     {
         $entity     = $this->getEntity();
         $i18nEntity = $this->i18nEntity;
-        $pks       = $this->getEntity()->getPrimaryKey();
+        $pks        = $this->getEntity()->getPrimaryKey();
 
         if (count($pks) > 1) {
             throw new EngineException('The i18n behavior does not support entities with composite primary keys');
@@ -199,7 +200,7 @@ class I18nBehavior extends Behavior
 
         if ($this->getParameter('i18n_relation_field')) {
             // custom i18n table pk name
-            $i18nField->setName($this->getParameter('i18n_relation_field'));
+            $i18nField->setSqlName($this->getParameter('i18n_relation_field'));
         } else if (in_array($entity->getName(), $i18nEntity->getForeignEntityNames())) {
             // custom i18n table pk name not set, but some fk already exists
             return;
@@ -207,15 +208,15 @@ class I18nBehavior extends Behavior
 
         if (!$i18nEntity->hasField($i18nField->getName())) {
             $i18nField->setAutoIncrement(false);
+            $i18nField->setPrimaryKey(true);
             $i18nEntity->addField($i18nField);
         }
-
         $relation = new Relation();
         $relation->setForeignEntityName($entity->getName());
         $relation->setDefaultJoin('LEFT JOIN');
         $relation->setOnDelete(Relation::CASCADE);
         $relation->setOnUpdate(Relation::NONE);
-        $relation->addReference($i18nField->getName(), $field->getName());
+        $relation->addReference($i18nField, $field);
 
         $i18nEntity->addRelation($relation);
 
@@ -245,7 +246,6 @@ class I18nBehavior extends Behavior
         $entity     = $this->getEntity();
         $i18nEntity = $this->i18nEntity;
 
-        $i18nValidateParams = array();
         foreach ($this->getI18nFieldNamesFromConfig() as $fieldName) {
             if (!$i18nEntity->hasField($fieldName)) {
                 if (!$entity->hasField($fieldName)) {
@@ -254,32 +254,12 @@ class I18nBehavior extends Behavior
 
                 $field = $entity->getField($fieldName);
                 $i18nEntity->addField(clone $field);
-
-                // validate behavior: move rules associated to the field
-                if ($entity->hasBehavior('validate')) {
-                    $validateBehavior = $entity->getBehavior('validate');
-                    $params = $validateBehavior->getParametersFromFieldName($fieldName);
-                    $i18nValidateParams = array_merge($i18nValidateParams, $params);
-                    $validateBehavior->removeParametersFromFieldName($fieldName);
-                }
                 // FIXME: also move FKs, and indices on this field
             }
 
             if ($entity->hasField($fieldName)) {
                 $entity->removeField($fieldName);
             }
-        }
-
-        // validate behavior
-        if (count($i18nValidateParams) > 0) {
-            $i18nVbehavior = new ValidateBehavior();
-            $i18nVbehavior->setName('validate');
-            $i18nVbehavior->setParameters($i18nValidateParams);
-            $i18nEntity->addBehavior($i18nVbehavior);
-
-            // current table must have almost 1 validation rule
-            $validate = $entity->getBehavior('validate');
-            $validate->addRuleOnPk();
         }
     }
 
@@ -290,7 +270,7 @@ class I18nBehavior extends Behavior
 
     protected function getLocaleFieldName()
     {
-        return $this->replaceTokens($this->getParameter('locale_field'));
+        return NamingTool::toCamelCase($this->replaceTokens($this->getParameter('locale_field')));
     }
 
     public function getI18nFieldNamesFromConfig()
@@ -298,7 +278,7 @@ class I18nBehavior extends Behavior
         $fieldNames = explode(',', $this->getParameter('i18n_fields'));
         foreach ($fieldNames as $key => $fieldName) {
             if ($fieldName = trim($fieldName)) {
-                $fieldNames[$key] = $fieldName;
+                $fieldNames[$key] = NamingTool::toCamelCase($fieldName);
             } else {
                 unset($fieldNames[$key]);
             }

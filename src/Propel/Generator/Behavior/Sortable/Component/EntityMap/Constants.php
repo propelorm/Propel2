@@ -40,14 +40,14 @@ class Constants extends BuildComponent
                 $col = json_encode($col);
                 $col = "'$col'";
             } else {
-                $colName = $behavior->getFieldForParameter('scope_field')->getName();
+                $colName = $behavior->getFieldForParameter('scope_field')->getSqlName();
                 $col = "$entityName.$colName";
             }
         }
 
         $definition = $this->getDefinition();
         $definition->setConstant(PhpConstant::create(
-                'RANK_COL', $entityName . '.' . $behavior->getFieldForParameter('rank_field')->getName())
+                'RANK_COL', $entityName . '.' . $behavior->getFieldForParameter('rank_field')->getSqlName())
                 ->setDescription('Rank field'));
 
         if ($behavior->useScope()) {

@@ -26,38 +26,38 @@ abstract class PlatformMigrationTestProvider extends PlatformTestBase
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="blooopoo" type="INTEGER" />
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
-    <table name="foo3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="yipee" type="INTEGER" />
-    </table>
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="blooopoo" type="INTEGER" />
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
+    <entity name="foo3">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="yipee" type="INTEGER" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="false" />
-        <column name="baz3" type="LONGVARCHAR" />
-    </table>
-    <table name="foo4">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="yipee" type="INTEGER" />
-    </table>
-    <table name="foo5">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="lkdjfsh" type="INTEGER" />
-        <column name="dfgdsgf" type="LONGVARCHAR" />
-    </table>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar1" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="false" />
+        <field name="baz3" type="LONGVARCHAR" />
+    </entity>
+    <entity name="foo4">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="yipee" type="INTEGER" />
+    </entity>
+    <entity name="foo5">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="lkdjfsh" type="INTEGER" />
+        <field name="dfgdsgf" type="LONGVARCHAR" />
+    </entity>
 </database>
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
@@ -75,10 +75,10 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
@@ -86,46 +86,46 @@ EOF;
             <reference local="baz" foreign="baz" />
         </foreign-key>
         <index name="bar_fk">
-            <index-column name="bar"/>
+            <index-field name="bar"/>
         </index>
         <index name="bar_baz_fk">
-            <index-column name="bar"/>
-            <index-column name="baz"/>
+            <index-field name="bar"/>
+            <index-field name="baz"/>
         </index>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="false" />
-        <column name="baz3" type="LONGVARCHAR" />
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar1" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="false" />
+        <field name="baz3" type="LONGVARCHAR" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar1" foreign="bar" />
         </foreign-key>
         <index name="bar_fk">
-            <index-column name="bar1"/>
+            <index-field name="bar1"/>
         </index>
         <index name="baz_fk">
-            <index-column name="baz3"/>
+            <index-field name="baz3"/>
         </index>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo');
 
         return array(array(EntityComparator::computeDiff($t1,$t2)));
     }
@@ -134,25 +134,25 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="false" />
-        <column name="baz3" type="LONGVARCHAR" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar1" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="false" />
+        <field name="baz3" type="LONGVARCHAR" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -165,24 +165,24 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" />
-        <column name="bar" type="INTEGER" primaryKey="true" />
-        <column name="baz" type="VARCHAR" size="12" required="false" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" />
+        <field name="bar" type="INTEGER" primaryKey="true" />
+        <field name="baz" type="VARCHAR" size="12" required="false" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -195,39 +195,39 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
         <index name="bar_fk">
-            <index-column name="bar"/>
+            <index-field name="bar"/>
         </index>
         <index name="bar_baz_fk">
-            <index-column name="bar"/>
-            <index-column name="baz"/>
+            <index-field name="bar"/>
+            <index-field name="baz"/>
         </index>
-    </table>
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
         <index name="bar_baz_fk">
-            <index-column name="id"/>
-            <index-column name="bar"/>
-            <index-column name="baz"/>
+            <index-field name="id"/>
+            <index-field name="bar"/>
+            <index-field name="baz"/>
         </index>
         <index name="baz_fk">
-            <index-column name="baz"/>
+            <index-field name="baz"/>
         </index>
-    </table>
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -240,10 +240,10 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
@@ -251,20 +251,20 @@ EOF;
             <reference local="bar" foreign="bar" />
             <reference local="baz" foreign="baz" />
         </foreign-key>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
         <foreign-key name="foo1_fk_2" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
             <reference local="id" foreign="id" />
@@ -272,16 +272,16 @@ EOF;
         <foreign-key name="foo1_fk_3" foreignEntity="foo2">
             <reference local="baz" foreign="baz" />
         </foreign-key>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+        <field name="baz" type="VARCHAR" size="12" required="true" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo1');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -294,36 +294,36 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo1');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -336,33 +336,33 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
         <foreign-key name="foo1_fk_1" foreignEntity="foo2" skipSql="true">
             <reference local="bar" foreign="bar" />
         </foreign-key>
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
-    <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    <entity name="foo1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
+    <entity name="foo2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
-        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('foo1');
-        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('foo1');
+        $t1 = $this->getDatabaseFromSchema($schema1)->getEntity('Foo1');
+        $t2 = $this->getDatabaseFromSchema($schema2)->getEntity('Foo1');
         $tc = new EntityComparator();
         $tc->setFromEntity($t1);
         $tc->setToEntity($t2);
@@ -373,17 +373,17 @@ EOF;
 
     public function providerForTestGetRemoveFieldDDL()
     {
-        $table = new Entity('foo');
-        $table->setIdentifierQuoting(true);
-        $column = new Field('bar');
-        $table->addField($column);
+        $entity = new Entity('Foo');
+        $entity->setIdentifierQuoting(true);
+        $field = new Field('bar');
+        $entity->addField($field);
 
-        return array(array($column));
+        return array(array($field));
     }
 
     public function providerForTestGetRenameFieldDDL()
     {
-        $t1 = new Entity('foo');
+        $t1 = new Entity('Foo');
         $t1->setIdentifierQuoting(true);
         $c1 = new Field('bar1');
         $c1->getDomain()->setType('DOUBLE');
@@ -391,7 +391,7 @@ EOF;
         $c1->getDomain()->replaceSize(2);
         $t1->addField($c1);
 
-        $t2 = new Entity('foo');
+        $t2 = new Entity('Foo');
         $t2->setIdentifierQuoting(true);
         $c2 = new Field('bar2');
         $c2->getDomain()->setType('DOUBLE');
@@ -404,13 +404,13 @@ EOF;
 
     public function providerForTestGetModifyFieldDDL()
     {
-        $t1 = new Entity('foo');
+        $t1 = new Entity('Foo');
         $t1->setIdentifierQuoting(true);
         $c1 = new Field('bar');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
         $t1->addField($c1);
-        $t2 = new Entity('foo');
+        $t2 = new Entity('Foo');
         $t2->setIdentifierQuoting(true);
         $c2 = new Field('bar');
         $c2->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
@@ -422,7 +422,7 @@ EOF;
 
     public function providerForTestGetModifyFieldsDDL()
     {
-        $t1 = new Entity('foo');
+        $t1 = new Entity('Foo');
         $t1->setIdentifierQuoting(true);
         $c1 = new Field('bar1');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
@@ -433,7 +433,7 @@ EOF;
         $c2->getDomain()->setSqlType('INTEGER');
         $t1->addField($c2);
 
-        $t2 = new Entity('foo');
+        $t2 = new Entity('Foo');
         $t2->setIdentifierQuoting(true);
         $t2->setIdentifierQuoting(true);
         $c3 = new Field('bar1');
@@ -456,31 +456,31 @@ EOF;
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
-        $column = $this->getDatabaseFromSchema($schema)->getEntity('foo')->getField('bar');
+        $field = $this->getDatabaseFromSchema($schema)->getEntity('Foo')->getField('bar');
 
-        return array(array($column));
+        return array(array($field));
     }
 
     public function providerForTestGetAddFieldsDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="DOUBLE" scale="2" size="3" default="-1" required="true" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar1" type="INTEGER" />
+        <field name="bar2" type="DOUBLE" scale="2" size="3" default="-1" required="true" />
+    </entity>
 </database>
 EOF;
-        $table = $this->getDatabaseFromSchema($schema)->getEntity('foo');
+        $entity = $this->getDatabaseFromSchema($schema)->getEntity('Foo');
 
-        return array(array(array($table->getField('bar1'), $table->getField('bar2'))));
+        return array(array(array($entity->getField('bar1'), $entity->getField('bar2'))));
     }
 
     public function providerForTestGetModifyFieldRemoveDefaultValueDDL()
@@ -506,27 +506,27 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="test">
-        <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
-        <column name="ref_test" type="INTEGER"/>
+    <entity name="test">
+        <field name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
+        <field name="ref_test" type="INTEGER"/>
         <foreign-key foreignEntity="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
             <reference local="ref_test" foreign="test" />
         </foreign-key>
-    </table>
-    <table name="test2">
-        <column name="test" type="integer" primaryKey="true" />
-    </table>
+    </entity>
+    <entity name="test2">
+        <field name="test" type="integer" primaryKey="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-  <table name="test">
-    <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
-    <column name="ref_test" type="INTEGER"/>
-  </table>
-  <table name="test2">
-    <column name="test" type="integer" primaryKey="true" />
-  </table>
+  <entity name="test">
+    <field name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
+    <field name="ref_test" type="INTEGER"/>
+  </entity>
+  <entity name="test2">
+    <field name="test" type="integer" primaryKey="true" />
+  </entity>
 </database>
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);
@@ -540,27 +540,27 @@ EOF;
     {
         $schema1 = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="test">
-        <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
-        <column name="ref_test" type="INTEGER"/>
+    <entity name="test">
+        <field name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
+        <field name="ref_test" type="INTEGER"/>
         <foreign-key foreignEntity="test2" onDelete="CASCADE" onUpdate="CASCADE" skipSql="true">
             <reference local="ref_test" foreign="test" />
         </foreign-key>
-    </table>
-    <table name="test2">
-        <column name="test" type="integer" primaryKey="true" />
-    </table>
+    </entity>
+    <entity name="test2">
+        <field name="test" type="integer" primaryKey="true" />
+    </entity>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test" identifierQuoting="true">
-  <table name="test">
-    <column name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
-    <column name="ref_test" type="INTEGER"/>
-  </table>
-  <table name="test2">
-    <column name="test" type="integer" primaryKey="true" />
-  </table>
+  <entity name="test">
+    <field name="test" type="INTEGER" primaryKey="true" autoIncrement="true" required="true" />
+    <field name="ref_test" type="INTEGER"/>
+  </entity>
+  <entity name="test2">
+    <field name="test" type="integer" primaryKey="true" />
+  </entity>
 </database>
 EOF;
         $d1 = $this->getDatabaseFromSchema($schema1);

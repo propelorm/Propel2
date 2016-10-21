@@ -42,7 +42,7 @@ class DoFindMethod extends BuildComponent
         $selectFields = array();
         foreach ($entity->getFields() as $field) {
             if (!$field->isLazyLoad()) {
-                $selectFields[] = $this->quoteIdentifier($this->getPlatform()->getName($field));
+                $selectFields[] = $this->quoteIdentifier($field->getName());
             }
         }
         $conditions = array();
@@ -52,7 +52,7 @@ class DoFindMethod extends BuildComponent
         $query = sprintf(
             'SELECT %s FROM %s WHERE %s',
             implode(', ', $selectFields),
-            $this->quoteIdentifier($entity->getTableName()),
+            $this->quoteIdentifier($entity->getSqlName()),
             implode(' AND ', $conditions)
         );
         $pks = array();

@@ -12,6 +12,7 @@ namespace Propel\Generator\Model\Diff;
 
 use Propel\Generator\Exception\DiffException;
 use Propel\Generator\Model\Field;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Entity;
@@ -253,6 +254,8 @@ class EntityDiff
      */
     public function getAddedField($columnName)
     {
+        $columnName = NamingTool::toCamelCase($columnName);
+
         if (isset($this->addedFields[$columnName])) {
             return $this->addedFields[$columnName];
         }
@@ -311,6 +314,8 @@ class EntityDiff
      */
     public function getRemovedField($columnName)
     {
+        $columnName = NamingTool::toCamelCase($columnName);
+
         if (isset($this->removedFields[$columnName])) {
             return $this->removedFields[$columnName];
         }
@@ -695,7 +700,7 @@ class EntityDiff
      * Adds a removed foreign key column.
      *
      * @param string     $fkName
-     * @param Relation $removedField
+     * @param Relation $removedFk
      */
     public function addRemovedFk($fkName, Relation $removedFk)
     {

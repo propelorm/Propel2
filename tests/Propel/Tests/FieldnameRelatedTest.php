@@ -43,21 +43,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testGetFieldNames ()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
             EntityMap::TYPE_NUM
         );
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => array(
-                0 => 'Id',
-                1 => 'Title',
-                2 => 'ISBN',
-                3 => 'Price',
-                4 => 'PublisherId',
-                5 => 'AuthorId'
-            ),
             EntityMap::TYPE_COLNAME => array(
                 0 => 'id',
                 1 => 'title',
@@ -110,14 +101,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testTranslateFieldName ()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
             EntityMap::TYPE_NUM
         );
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => 'AuthorId',
             EntityMap::TYPE_COLNAME => 'author_id',
             EntityMap::TYPE_FULLCOLNAME => 'book.author_id',
             EntityMap::TYPE_FIELDNAME => 'authorId',
@@ -140,21 +129,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testGetFieldNamesStatic ()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
             EntityMap::TYPE_NUM
         );
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => array(
-                0 => 'Id',
-                1 => 'Title',
-                2 => 'ISBN',
-                3 => 'Price',
-                4 => 'PublisherId',
-                5 => 'AuthorId'
-            ),
             EntityMap::TYPE_COLNAME => array(
                 0 => 'id',
                 1 => 'title',
@@ -207,14 +187,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testTranslateFieldNameStatic ()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
             EntityMap::TYPE_NUM
         );
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => 'AuthorId',
             EntityMap::TYPE_COLNAME => 'author_id',
             EntityMap::TYPE_FULLCOLNAME => 'book.author_id',
             EntityMap::TYPE_FIELDNAME => 'authorId',
@@ -236,7 +214,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testGetByName()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME => 'Title',
             EntityMap::TYPE_COLNAME => 'title',
             EntityMap::TYPE_FULLCOLNAME => 'book.title',
             EntityMap::TYPE_FIELDNAME => 'title',
@@ -260,7 +237,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
     {
         $book = new Book();
         $types = array(
-            EntityMap::TYPE_PHPNAME => 'Title',
             EntityMap::TYPE_COLNAME => 'title',
             EntityMap::TYPE_FULLCOLNAME => 'book.title',
             EntityMap::TYPE_FIELDNAME => 'title',
@@ -283,17 +259,12 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testFromArray()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
             EntityMap::TYPE_NUM
         );
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => array (
-                'Title' => 'Harry Potter and the Order of the Phoenix',
-                'ISBN' => '043935806X'
-            ),
             EntityMap::TYPE_COLNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
@@ -336,7 +307,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testToArray()
     {
         $types = array(
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
@@ -350,10 +320,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
         ));
 
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => array (
-                'Title' => 'Harry Potter and the Order of the Phoenix',
-                'ISBN' => '043935806X'
-            ),
             EntityMap::TYPE_COLNAME => array (
                 'title' => 'Harry Potter and the Order of the Phoenix',
                 'isbn' => '043935806X'
@@ -404,7 +370,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
     public function testToArrayWithForeignObjects()
     {
         $types = [
-            EntityMap::TYPE_PHPNAME,
             EntityMap::TYPE_COLNAME,
             EntityMap::TYPE_FULLCOLNAME,
             EntityMap::TYPE_FIELDNAME,
@@ -421,22 +386,6 @@ class FieldnameRelatedTest extends TestCaseFixtures
             ->setPrice(10);
 
         $expecteds = array (
-            EntityMap::TYPE_PHPNAME => [
-                'Id' => null,
-                'Title' => 'Harry Potter and the Order of the Phoenix',
-                'ISBN' => '043935806X',
-                'Price' => 10.0,
-                'Reviews' => [
-                    [
-                        'Id' => null,
-                        'ReviewedBy' => 'Someone',
-                        'ReviewDate' => null,
-                        'Recommended' => true,
-                        'Status' => null,
-                        'Book' => '*RECURSION*'
-                    ]
-                ]
-            ],
             EntityMap::TYPE_COLNAME => array (
                 'id' => null,
                 'title' => 'Harry Potter and the Order of the Phoenix',

@@ -32,7 +32,7 @@ $entityReader = $this->getPropReader();
 
             $fieldName = $field->getName();
             $propertyName = $field->getName();
-            $placeholder[] = sprintf('%s = ?', $field->getColumnName());
+            $placeholder[] = sprintf('%s = ?', $field->getSqlName());
 
             $body .= "
 //$fieldName

@@ -50,14 +50,14 @@ class FilterByRelationMethods extends BuildComponent
         $fkStubObjectBuilder = $this->getBuilder()->getNewObjectBuilder($foreignEntity);
         $this->getDefinition()->declareUse($fkStubObjectBuilder->getFullClassName());
 
-        $fkPhpName = '\\' . $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
-        $relationName = $this->getRelationPhpName($relation);
+        $fkName = '\\' . $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
+        $relationName = $this->getRelationName($relation);
         $objectName = '$' . $foreignEntity->getCamelCaseName();
 
-        $description = "Filter the query by a related $fkPhpName object.";
+        $description = "Filter the query by a related $fkName object.";
 
         $body = "
-if ($objectName instanceof $fkPhpName) {
+if ($objectName instanceof $fkName) {
     return \$this";
         foreach ($relation->getFieldObjectsMapArray() as $map) {
             list ($localColumnObject, $foreignColumnObject) = $map;
@@ -82,10 +82,10 @@ if ($objectName instanceof $fkPhpName) {
 } else {";
         if ($relation->isComposite()) {
             $body .= "
-    throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName');";
+    throw new PropelException('filterBy$relationName() only accepts arguments of type $fkName');";
         } else {
             $body .= "
-    throw new PropelException('filterBy$relationName() only accepts arguments of type $fkPhpName or Collection');";
+    throw new PropelException('filterBy$relationName() only accepts arguments of type $fkName or Collection');";
         }
         $body .= "
 }
@@ -95,10 +95,10 @@ if ($objectName instanceof $fkPhpName) {
         $variableParameter = new PhpParameter($foreignEntity->getCamelCaseName());
 
         if ($relation->isComposite()) {
-            $variableParameter->setType($fkPhpName);
+            $variableParameter->setType($fkName);
             $variableParameter->setTypeDescription("The related object to use as filter");
         } else {
-            $variableParameter->setType("$fkPhpName|ObjectCollection");
+            $variableParameter->setType("$fkName|ObjectCollection");
             $variableParameter->setTypeDescription("The related object(s) to use as filter");
         }
 

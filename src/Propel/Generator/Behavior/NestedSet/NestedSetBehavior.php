@@ -17,6 +17,7 @@ use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\RepositoryBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * Behavior to adds nested set tree structure fields and abilities
@@ -27,7 +28,7 @@ use Propel\Generator\Model\Behavior;
 class NestedSetBehavior extends Behavior
 {
     use ComponentTrait;
-    
+
     // default parameters value
     protected $parameters = array(
         'left_field'       => 'tree_left',
@@ -83,7 +84,7 @@ class NestedSetBehavior extends Behavior
 
     public function getFieldAttribute($name)
     {
-        return strtolower($this->getFieldForParameter($name)->getName());
+        return NamingTool::toCamelCase($this->getFieldForParameter($name)->getName());
     }
 
     public function useScope()

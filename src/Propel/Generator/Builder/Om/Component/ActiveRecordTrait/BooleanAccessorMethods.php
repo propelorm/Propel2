@@ -41,7 +41,7 @@ class BooleanAccessorMethods extends BuildComponent
      */
     protected function getBooleanAccessorName(Field $field)
     {
-        $name = $field->getCamelCaseName();
+        $name = $field->getName();
         if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
             $name = 'is' . ucfirst($name);
         }

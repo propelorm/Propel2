@@ -12,6 +12,7 @@ namespace Propel\Generator\Behavior\Sortable\Component\Repository;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\Field;
+use Propel\Generator\Model\NamingTool;
 
 /**
  * @author François Zaninotto
@@ -27,6 +28,7 @@ class PreUpdateMethod extends BuildComponent
         $behavior = $this->getBehavior();
 
         foreach ($behavior->getScopes() as $scope) {
+            $scope = NamingTool::toCamelCase($scope);
             $condition[] = "\$this->isFieldModified(\$entity, '$scope')";
         }
 

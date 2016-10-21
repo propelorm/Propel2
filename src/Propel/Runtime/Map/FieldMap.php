@@ -10,7 +10,9 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 use Propel\Generator\Model\PropelTypes;
 
@@ -76,12 +78,12 @@ class FieldMap
     /**
      * The name of the field
      */
-    protected $fieldName;
+    protected $name;
 
     /**
-     * The column name of the field
+     * The field name to be used in sql statements
      */
-    protected $columnName;
+    protected $sqlName;
 
     /**
      * The allowed values for an ENUM field
@@ -112,7 +114,7 @@ class FieldMap
      */
     public function __construct($name, EntityMap $containingEntity)
     {
-        $this->fieldName = $name;
+        $this->setName($name);
         $this->entity = $containingEntity;
     }
 
@@ -139,23 +141,45 @@ class FieldMap
      */
     public function getName()
     {
-        return $this->fieldName;
+        if (null === $this->name) {
+            if (null == $this->sqlName) {
+                throw new RuntimeException("Cannot create the `name`: did you set the `name` property of your field object?");
+            }
+            $this->name = NamingTool::toCamelCase($this->sqlName);
+        }
+
+        return $this->name;
     }
 
     /**
      * @return mixed
      */
-    public function getColumnName()
+    public function getSqlName()
     {
-        return $this->columnName;
+        if (null === $this->sqlName) {
+            if (null !== $this->name) {
+                throw new RuntimeException("Cannot create the `sqlName`: did you set the `name` of your field object?");
+            }
+            $this->sqlName = NamingTool::toUnderscore($this->name);
+        }
+
+        return $this->sqlName;
     }
 
     /**
      * @param mixed $columnName
      */
-    public function setColumnName($columnName)
+    public function setSqlName($sqlName)
     {
-        $this->columnName = $columnName;
+        $this->sqlName = $sqlName;
+    }
+
+    /**
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->name = NamingTool::toCamelCase($name);
     }
 
     /**
@@ -207,9 +231,9 @@ class FieldMap
     /**
      * @return string
      */
-    public function getFullyQualifierColumnName()
+    public function getFullyQualifiedSqlName()
     {
-        return $this->getEntity()->getTableName() . '.' . $this->getColumnName();
+        return $this->getEntity()->getSqlName() . '.' . $this->getSqlName();
     }
 
     /**
