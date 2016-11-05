@@ -177,7 +177,7 @@ class InitCommand extends AbstractCommand
     {
         $path = $consoleHelper->askQuestion('Where should the sqlite database be stored?', getcwd() . '/my.app.sq3');
 
-        return sprintf('sqlite: %s', $path);
+        return sprintf('sqlite:%s', $path);
     }
 
     private function initPgsql(ConsoleHelperInterface $consoleHelper)
