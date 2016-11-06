@@ -43,8 +43,8 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATE"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, "DATE"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "TIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME2"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME2"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BINARY(7132)"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "VARBINARY(MAX)"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "VARBINARY(MAX)"));
