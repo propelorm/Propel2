@@ -58,7 +58,9 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
         parent::__construct($dsn, $user, $password, $pdoOptions);
 
-        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, ['\Propel\Runtime\Adapter\Pdo\PdoStatement', []]);
+        if (defined('HHVM_VERSION')) {
+            $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, ['\Propel\Runtime\Adapter\Pdo\PdoStatement', []]);
+        }
         $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
