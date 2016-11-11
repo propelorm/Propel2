@@ -77,7 +77,7 @@ class TimestampableBehavior extends Behavior
 
 foreach (\$event->getEntities() as \$entity) {
     if (!\$this->isFieldModified(\$entity, '$field')) {
-        \$writer(\$entity, '$field', time());
+        \$writer(\$entity, '$field', \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
     }
 }
             ";
@@ -96,7 +96,7 @@ foreach (\$event->getEntities() as \$entity) {
             $createdAtField = $this->getEntity()->getField($this->getParameter('create_field'))->getName();
             $script .= "
     if (!\$this->isFieldModified(\$entity, '$createdAtField')) {
-        \$writer(\$entity, '$createdAtField', time());
+        \$writer(\$entity, '$createdAtField', \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
     }";
         }
 
@@ -104,7 +104,7 @@ foreach (\$event->getEntities() as \$entity) {
             $updatedAtField = $this->getEntity()->getField($this->getParameter('update_field'))->getName();
             $script .= "
     if (!\$this->isFieldModified(\$entity, '$updatedAtField')) {
-        \$writer(\$entity, '$updatedAtField', time());
+        \$writer(\$entity, '$updatedAtField', \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
     }";
         }
 

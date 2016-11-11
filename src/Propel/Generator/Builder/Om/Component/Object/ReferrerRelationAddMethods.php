@@ -58,6 +58,7 @@ if (null === \$this->{$colVarName}) {
 
 if (!\$this->{$colVarName}->contains(\${$varName})) {
     \$this->{$colVarName}[] = \${$varName};
+
     \${$varName}->set" . $this->getRelationPhpName($refRelation) . "(\$this);
 }
 

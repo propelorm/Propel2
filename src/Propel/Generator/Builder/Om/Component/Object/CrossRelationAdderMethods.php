@@ -8,7 +8,7 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\CrossRelation;
 
 /**
- * Adds all getter methods for crossRelations.
+ * Adds all add* methods for crossRelations.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
@@ -60,7 +60,7 @@ EOF;
 
             $description = <<<EOF
 Associate a $crossObjectClassName to this object
-through the {$foreignEntity->getName()} cross reference table.
+through the {$foreignEntity->getFullClassName()} cross reference entity.
 $phpDoc
 EOF;
 

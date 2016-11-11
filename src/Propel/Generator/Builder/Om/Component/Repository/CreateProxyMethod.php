@@ -2,12 +2,8 @@
 
 namespace Propel\Generator\Builder\Om\Component\Repository;
 
-use gossi\codegen\model\PhpParameter;
-use Mandango\Mondator\Definition\Method;
-use Propel\Generator\Builder\ClassDefinition;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
-use Propel\Tests\Bookstore\BookstoreQuery;
 
 /**
  * Adds the createProxy method.
@@ -23,8 +19,26 @@ class CreateProxyMethod extends BuildComponent
         $proxyClass = $this->getProxyClassName(true);
         $objectClass = $this->getObjectClassName();
 
+        $propertiesToUnset = [];
+        $this->getDefinition()->declareUse($this->getRepositoryClassName(true));
+
+        //reset lazy loaded properties
+        foreach ($this->getEntity()->getFields() as $field) {
+            if ($field->isPrimaryKey()) continue;
+            if (!$field->isLazyLoad()) continue;
+
+            $propertiesToUnset[] = '$unset($object, ' . json_encode($field->getName()) . ');';
+        }
+
+        $unsetLazyLoadProperties = implode(PHP_EOL, $propertiesToUnset);
+
         $body = <<<EOF
-return new \\$proxyClass(\$this);
+\$reflection = new \ReflectionClass('$proxyClass');
+\$unset = \$this->getEntityMap()->getPropUnsetter();
+\$object = \$reflection->newInstanceWithoutConstructor();
+\$object->_repository = \$this;
+$unsetLazyLoadProperties
+return \$object;
 EOF;
 
         $this->addMethod('createProxy')

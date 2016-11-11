@@ -21,10 +21,7 @@ class GetPropReaderMethod extends BuildComponent
         $className = $this->getObjectClassName(true);
 
         $body = "
-if (!\$this->propReader) {
-    \$this->propReader = \$this->getClassPropReader('$className');
-}
-return \$this->propReader;
+return \$this->getClassPropReader('$className');
         ";
 
         $this->addMethod('getPropReader')

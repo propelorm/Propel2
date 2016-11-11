@@ -9,6 +9,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 use Propel\Tests\TestCaseFixtures;
@@ -36,25 +37,26 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      */
     protected $databaseName = 'reverse-bookstore';
 
-    /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
-     */
-    public $con;
-
     protected function setUp()
     {
         $config = sprintf('%s-conf.php', $this->databaseName);
         $path = 'reverse-bookstore' === $this->databaseName ? 'reverse/mysql' : $this->databaseName;
-        include(__DIR__ . '/../../../Fixtures/' . $path . '/build/conf/' . $config);
+        $this->configuration = include(__DIR__ . '/../../../Fixtures/' . $path . '/build/conf/' . $config);
 
-        $this->con = Propel::getConnection($this->databaseName);
-
-        $this->parser = $this->getParser($this->con);
+        $this->parser = $this->getParser($this->getConnection());
         $this->platform = $this->getPlatform();
 
         $this->parser->setGeneratorConfig(new QuickGeneratorConfig());
         $this->parser->setPlatform($this->platform);
         parent::setUp();
+    }
+
+    /**
+     * @return \Propel\Runtime\Connection\ConnectionInterface
+     */
+    protected function getConnection()
+    {
+        return $this->configuration->getConnectionManager($this->databaseName)->getWriteConnection();
     }
 
     public function readDatabase()
@@ -73,15 +75,17 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
     public function buildAndMigrate($schema)
     {
         $builder = new QuickBuilder();
-        $platform  = $this->getPlatform();
+        $platform = $this->getPlatform();
 
         $builder->setPlatform($platform);
-        $builder->setParser($this->getParser($this->con));
+        $builder->setParser($this->getParser($this->getConnection()));
         $builder->getParser()->setPlatform($platform);
         $builder->setSchema($schema);
-        $builder->buildClasses(null, true);
 
-        $builder->updateDB($this->con);
+        $builder->buildClasses(null, true);
+        $builder->registerEntities($this->configuration);
+
+        $builder->updateDB($this->getConnection());
     }
 
     /**
@@ -95,11 +99,11 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
         $platform  = $this->getPlatform();
 
         $builder->setPlatform($platform);
-        $builder->setParser($this->getParser($this->con));
+        $builder->setParser($this->getParser($this->getConnection()));
         $builder->getParser()->setPlatform($platform);
         $builder->setSchema($schema);
 
-        $builder->updateDB($this->con);
+        $builder->updateDB($this->getConnection());
     }
 
     /**
@@ -119,7 +123,7 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
                 // drop statements cause errors since the table doesn't exist
                 continue;
             }
-            $stmt = $this->con->prepare($statement);
+            $stmt = $this->getConnection()->prepare($statement);
             $stmt->execute();
         }
     }

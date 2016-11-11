@@ -10,62 +10,29 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Configuration;
-use Propel\Tests\TestCase as BaseTestCase;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity10;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity10Query;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity9;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity9Query;
+use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class TestCase extends BaseTestCase
+class TestCase extends TestCaseFixturesDatabase
 {
-    protected $con;
-
-    public function setUp()
-    {
-        if (!class_exists('\NestedSetEntity9')) {
-            $schema = <<<XML
-<database name="bookstore-behavior" defaultIdMethod="native">
-    <entity name="NestedSetEntity9">
-        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <field name="title" type="VARCHAR" size="100" primaryString="true" />
-
-        <behavior name="nested_set" />
-    </entity>
-
-    <entity name="NestedSetEntity10">
-        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <field name="title" type="VARCHAR" size="100" primaryString="true" />
-        <field name="my_left_field" type="INTEGER" required="false"/>
-        <field name="my_right_field" type="INTEGER" required="false"/>
-        <field name="my_level_field" type="INTEGER" required="false"/>
-        <field name="my_scope_field" type="INTEGER" required="false"/>
-
-        <behavior name="nested_set">
-            <parameter name="left_field" value="my_left_field" />
-            <parameter name="right_field" value="my_right_field" />
-            <parameter name="level_field" value="my_level_field" />
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_field" value="my_scope_field" />
-            <parameter name="method_proxies" value="true" />
-        </behavior>
-    </entity>
-</database>
-XML;
-            $this->con = QuickBuilder::buildSchema($schema);
-        } else {
-            $this->con = Configuration::getCurrentConfiguration();
-        }
-    }
-
+    /**
+     * @return Configuration
+     */
     public function getConfiguration()
     {
-        return $this->con;
+        return Configuration::getCurrentConfiguration();
     }
 
     protected function initTreeWithScope()
     {
-        $this->getConfiguration()->getRepository('\NestedSetEntity10')->deleteAll();
+        $this->getConfiguration()->getRepository(NestedSetEntity10::class)->deleteAll();
 
         $ret = array();
         $fixtures = array(
@@ -84,7 +51,7 @@ XML;
         $session = $this->getConfiguration()->getSession();
 
         foreach ($fixtures as $key => $data) {
-            $t = new \NestedSetEntity10();
+            $t = new NestedSetEntity10();
             $t->setTitle($key);
             $t->setLeftValue($data[0]);
             $t->setRightValue($data[1]);
@@ -110,7 +77,7 @@ XML;
      */
     protected function initTree()
     {
-        $this->getConfiguration()->getRepository('\NestedSetEntity9')->deleteAll();
+        $this->getConfiguration()->getRepository(NestedSetEntity9::class)->deleteAll();
 
         $ret = array();
         // shuffling the results so the db order is not the natural one
@@ -136,7 +103,7 @@ XML;
         $session = $this->getConfiguration()->getSession();
 
         foreach ($fixtures as $key => $data) {
-            $t = new \NestedSetEntity9();
+            $t = new NestedSetEntity9();
             $t->setTitle($key);
             $t->setLeftValue($data[0]);
             $t->setRightValue($data[1]);
@@ -154,9 +121,14 @@ XML;
 
     protected function dumpTree()
     {
-        return $this->dumpNodes(\NestedSetEntity9Query::create()->orderByTitle()->find());
+        return $this->dumpNodes(NestedSetEntity9Query::create()->orderByTitle()->find());
     }
 
+    /**
+     * @param NestedSetEntity9[] $nodes
+     *
+     * @return array
+     */
     protected function dumpNodes($nodes)
     {
         $tree = array();
@@ -174,6 +146,6 @@ XML;
 
     protected function dumpTreeWithScope($scope)
     {
-        return $this->dumpNodes(\NestedSetEntity10Query::create()->filterByMyScopeField($scope)->orderByTitle()->find());
+        return $this->dumpNodes(NestedSetEntity10Query::create()->filterByMyScopeField($scope)->orderByTitle()->find());
     }
 }

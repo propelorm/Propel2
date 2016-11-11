@@ -6,7 +6,6 @@ use Propel\Runtime\Map\EntityMap;
 
 class UniqueConstraintException extends PersisterException
 {
-
     /**
      * {@inheritdoc}
      */

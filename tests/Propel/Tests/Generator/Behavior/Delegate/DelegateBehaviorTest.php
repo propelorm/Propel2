@@ -217,9 +217,6 @@ EOF;
         $basketballer->save(); // should not throw exception
     }
 
-    /**
-     * @group test
-     */
     public function testDelegateSimulatesMultipleClassTableInheritance()
     {
         Configuration::$globalConfiguration->getSession()->reset();

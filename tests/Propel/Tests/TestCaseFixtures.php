@@ -22,6 +22,7 @@ use Symfony\Component\Finder\Finder;
  * This test case class is used when the fixtures are needed. It takes care that
  * those files (model classes and -conf.php files) are created.
  *
+ * This does not updates database's schema.
  * If you need additional to that also database's tables use TestCaseFixturesDatabase instead.
  */
 class TestCaseFixtures extends TestCase
@@ -44,7 +45,7 @@ class TestCaseFixtures extends TestCase
      *
      * @var ConnectionInterface
      */
-    protected $con;
+    protected $connection;
 
     public $lastBuildDsn;
     public $lastBuildMode;
@@ -190,15 +191,11 @@ class TestCaseFixtures extends TestCase
         $finder = new Finder();
         $finder->files()->name('*-conf.php')->in(__DIR__.'/../../Fixtures/');
 
-        Configuration::$globalConfiguration = null;
-        $configuration = new Configuration();
-
         foreach ($finder as $file) {
             include($file->getPathname());
         }
 
-        $this->configuration = $configuration;
-
+        $this->configuration = Configuration::$globalConfiguration;
         $this->lastReadConfigs = $this->lastBuildMode.':'.$this->lastBuildDsn;
     }
 
@@ -272,7 +269,6 @@ class TestCaseFixtures extends TestCase
         return $dsn;
     }
 
-
     /**
      * Returns current database driver.
      *
@@ -280,7 +276,7 @@ class TestCaseFixtures extends TestCase
      */
     protected function getDriver()
     {
-        $driver = $this->con ? $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
+        $driver = $this->connection ? $this->connection->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
 
         if (null === $driver && $currentDSN = $this->getBuiltDsn()) {
             $driver = explode(':', $currentDSN)[0];

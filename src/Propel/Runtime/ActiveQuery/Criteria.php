@@ -1844,10 +1844,10 @@ class Criteria
         $this->replaceNames($selectSql);
 
         if ($this->getPrimaryEntityName()) {
-            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
+            $fromClause[] = $this->getPrimaryEntityName();
         } else {
             if ($this instanceof BaseModelCriteria) {
-                $fromClause[] = $this->getTableName($this->getEntityName());
+                $fromClause[] = $this->getEntityName();
             }
         }
 
@@ -1875,11 +1875,9 @@ class Criteria
 
                     $entity = $this->getEntityForAlias($entityName);
                     if ($entity !== null) {
-                        $table = $this->getTableName($entity);
-                        $fromClause[] = $table . ' ' . $entityName;
+                        $fromClause[] = $entity . ' ' . $entityName;
                     } else {
-                        $table = $this->getTableName($entityName);
-                        $fromClause[] = $table;
+                        $fromClause[] = $entityName;
                         $entity = $entityName;
                     }
                 }
@@ -1976,7 +1974,7 @@ class Criteria
         }
 
         if (empty($fromClause) && $this->getPrimaryEntityName()) {
-            $fromClause[] = $this->getTableName($this->getPrimaryEntityName());
+            $fromClause[] = $this->getPrimaryEntityName();
         }
 
         // entities should not exist as alias of subQuery
@@ -1993,7 +1991,7 @@ class Criteria
             }
         }
 
-        // from / join entities quoted if it is necessary
+        // quote if necessary and replace entity name -> real sql table name
         $fromClause = array_map(array($this, 'quoteTableIdentifierForEntity'), $fromClause);
         $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteTableIdentifierForEntity'), $joinClause);
 
@@ -2074,7 +2072,7 @@ class Criteria
                 $entityMap = $dbMap->getEntity($entityMapName);
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
                 if ($rightSide) {
-                    $string = $entityMap->getTableName();
+                    $string = $entityMap->getFQTableName();
                     $string .= $rightSide;
                 }
             }
@@ -2106,7 +2104,7 @@ class Criteria
 
             $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
 
-            $string = $entityMap->getTableName();
+            $string = $entityMap->getFQTableName();
             if ($alias) {
                 $string .= " $alias";
             }

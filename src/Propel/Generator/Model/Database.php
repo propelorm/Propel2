@@ -89,6 +89,7 @@ class Database extends ScopedMappingModel
      */
     private $entitiesByName;
     private $entitiesByFullClassName;
+    private $entitiesByTableName;
 
     /**
      * @var Entity[]
@@ -436,6 +437,26 @@ class Database extends ScopedMappingModel
     }
 
     /**
+     * @param string $tableName full qualified table name (with schema)
+     *
+     * @return Entity
+     */
+    public function getEntityByTableName($tableName)
+    {
+        $schema = $this->getSchema() ?: $this->getName();
+
+        if (!isset($this->entitiesByTableName[$tableName])) {
+            if (isset($this->entitiesByTableName[$schema . $this->getSchemaDelimiter() . $tableName])) {
+                return $this->entitiesByTableName[$schema . $this->getSchemaDelimiter() . $tableName];
+            }
+
+            throw new \InvalidArgumentException("Entity by table name $tableName not found in {$this->getName()}.");
+        }
+
+        return $this->entitiesByTableName[$tableName];
+    }
+
+    /**
      * Returns the entity with the specified name.
      *
      * @param  string  $name
@@ -521,6 +542,7 @@ class Database extends ScopedMappingModel
 
         $this->entities[] = $entity;
         $this->entitiesByFullClassName[$entity->getFullClassName()] = $entity;
+        $this->entitiesByTableName[$entity->getFQTableName()] = $entity;
         $this->entitiesByName[$entity->getName()] = $entity;
         $this->entitiesByLowercaseName[strtolower($entity->getName())] = $entity;
 //        $this->entitiesByPhpName[$entity->getName()] = $entity;

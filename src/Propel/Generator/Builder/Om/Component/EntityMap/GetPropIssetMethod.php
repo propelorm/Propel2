@@ -21,10 +21,7 @@ class GetPropIssetMethod extends BuildComponent
         $className = $this->getObjectClassName(true);
 
         $body = "
-if (!\$this->propIsset) {
-    \$this->propIsset = \$this->getClassPropIsset('$className');
-}
-return \$this->propIsset;
+return \$this->getClassPropIsset('$className');
         ";
 
         $this->addMethod('getPropIsset')

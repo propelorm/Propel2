@@ -30,39 +30,39 @@ class GeneratedObjectMoreRelationTest extends TestCase
 
         if (!class_exists('MoreRelationTest\Page')) {
             $schema = <<<EOF
-<database name="more_relation_test" namespace="MoreRelationTest">
+<database name="more_relation_test" namespace="MoreRelationTest" activeRecord="true">
 
     <table name="more_relation_test_page" phpName="Page">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
     </table>
 
     <table name="more_relation_test_content" phpName="Content">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" />
-        <column name="content" type="LONGVARCHAR" required="false" />
-        <column name="page_id" type="INTEGER" required="false" />
-        <foreign-key foreignTable="more_relation_test_page" onDelete="cascade">
-          <reference local="page_id" foreign="id"/>
-        </foreign-key>
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" />
+        <field name="content" type="LONGVARCHAR" required="false" />
+        <field name="pageId" type="INTEGER" required="false" />
+        <relation target="Page" onDelete="cascade">
+          <reference local="pageId" foreign="id"/>
+        </relation>
     </table>
 
     <table name="more_relation_test_comment" phpName="Comment">
-        <column name="user_id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="page_id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="comment" type="VARCHAR" size="100" />
-        <foreign-key foreignTable="more_relation_test_page" onDelete="cascade">
-          <reference local="page_id" foreign="id"/>
-        </foreign-key>
+        <field name="userId" required="true" primaryKey="true" type="INTEGER" />
+        <field name="pageId" required="true" primaryKey="true" type="INTEGER" />
+        <field name="comment" type="VARCHAR" size="100" />
+        <relation target="Page" onDelete="cascade">
+          <reference local="pageId" foreign="id"/>
+        </relation>
     </table>
 
     <table name="more_relation_test_content_comment" phpName="ContentComment">
-        <column name="id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
-        <column name="content_id" type="INTEGER" />
-        <column name="comment" type="VARCHAR" size="100" />
-        <foreign-key foreignTable="more_relation_test_content" onDelete="setnull">
-          <reference local="content_id" foreign="id"/>
-        </foreign-key>
+        <field name="id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
+        <field name="contentId" type="INTEGER" />
+        <field name="comment" type="VARCHAR" size="100" />
+        <relation target="Content" onDelete="setnull">
+          <reference local="contentId" foreign="id"/>
+        </relation>
     </table>
 
 </database>
@@ -81,10 +81,9 @@ EOF;
         for ($i=1;$i<=2;$i++) {
 
             $page = new \MoreRelationTest\Page();
-
             $page->setTitle('Page '.$i);
-            for ($j=1;$j<=3;$j++) {
 
+            for ($j=1;$j<=3;$j++) {
                 $content = new \MoreRelationTest\Content();
                 $content->setTitle('Content '.$j);
                 $content->setContent(str_repeat('Content', $j));
@@ -96,10 +95,8 @@ EOF;
                 $page->addComment($comment);
 
                 $comment = new \MoreRelationTest\ContentComment();
-                $comment->setContentId($i*$j);
                 $comment->setComment(str_repeat('Comment-'.$j.', ', $j));
                 $content->addContentComment($comment);
-
             }
 
             $page->save();

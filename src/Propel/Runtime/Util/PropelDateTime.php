@@ -7,7 +7,6 @@
  *
  * @license MIT License
  */
-
 namespace Propel\Runtime\Util;
 
 use \DateTimeZone;
@@ -24,12 +23,13 @@ class PropelDateTime extends \DateTime
 {
     /**
      * A string representation of the date, for serialization.
+     *
      * @var string
      */
     private $dateString;
-
     /**
      * A string representation of the time zone, for serialization.
+     *
      * @var string
      */
     private $tzString;
@@ -39,22 +39,49 @@ class PropelDateTime extends \DateTime
         if (!is_numeric($value)) {
             return false;
         }
-
-        if (8 === strlen((string) $value)) {
+        if (8 === strlen((string)$value)) {
             return false;
         }
-
         $stamp = strtotime($value);
-
         if (false === $stamp) {
             return true;
         }
-
         $month = date('m', $value);
-        $day   = date('d', $value);
-        $year  = date('Y', $value);
+        $day = date('d', $value);
+        $year = date('Y', $value);
 
         return checkdate($month, $day, $year);
+    }
+
+    /**
+     * Creates a new DateTime object with milliseconds resolution.
+     *
+     * Usually `new \Datetime()` does not contain milliseconds so you need a method like this.
+     *
+     * @param bool $time optional in seconds. floating point allowed.
+     *
+     * @return \DateTime
+     */
+    public static function createHighPrecision($time = null)
+    {
+        $dateTime = \DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+
+        $dateTime->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+
+        return $dateTime;
+    }
+
+    /**
+     * Get the current microtime with milliseconds. Making sure that the decimal point separator is always "."
+     * and always including the fractional part. Otherwise self::createHighPrecision would return false.
+     *
+     * @return string
+     */
+    public static function getMicrotime()
+    {
+        $mtime = microtime(true);
+
+        return number_format($mtime, 6, '.', '');
     }
 
     /**
@@ -70,7 +97,7 @@ class PropelDateTime extends \DateTime
      */
     public static function newInstance($value, DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof \DateTimeInterface) {
             return $value;
         }
         if (empty($value)) {
@@ -80,7 +107,12 @@ class PropelDateTime extends \DateTime
         }
         try {
             if (self::isTimestamp($value)) { // if it's a unix timestamp
-                $dateTimeObject = new $dateTimeClass('@' . $value, new \DateTimeZone('UTC'));
+                $format = 'U';
+                if (strpos($value, '.')) {
+                    //with milliseconds
+                    $format = 'U.u';
+                }
+                $dateTimeObject = \DateTime::createFromFormat($format, $value, new \DateTimeZone('UTC'));
                 // timezone must be explicitly specified and then changed
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
                 $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
@@ -103,6 +135,7 @@ class PropelDateTime extends \DateTime
      * PHP "magic" function called when object is serialized.
      * Sets an internal property with the date string and returns properties
      * of class that should be serialized.
+     *
      * @return string[]
      */
     public function __sleep()
@@ -112,7 +145,7 @@ class PropelDateTime extends \DateTime
         $this->dateString = $this->format('Y-m-d H:i:s');
         $this->tzString = $this->getTimeZone()->getName();
 
-        return array('dateString', 'tzString');
+        return ['dateString', 'tzString'];
     }
 
     /**

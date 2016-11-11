@@ -4,6 +4,7 @@ namespace Propel\Runtime;
 
 use Monolog\Logger;
 use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\AdapterFactory;
@@ -243,7 +244,9 @@ class Configuration extends GeneratorConfig
     public static function getCurrentConfiguration()
     {
         if (!static::$globalConfiguration) {
-            throw new RuntimeException('There is no propel configuration instantiated which could be used for active record entities.');
+            throw new RuntimeException(
+                'There is no propel configuration instantiated which could be used for active record entities.'
+            );
         }
 
         return static::$globalConfiguration;
@@ -346,11 +349,31 @@ class Configuration extends GeneratorConfig
         if (!isset($this->databaseMaps[$databaseName])) {
             $this->databaseMaps[$databaseName] = new DatabaseMap($databaseName);
 
-            $this->getEntityMapsForDatabase($databaseName); //this registers all entityMaps to $this->databaseMaps[$databaseName]
+            $this->getEntityMapsForDatabase(
+                $databaseName
+            ); //this registers all entityMaps to $this->databaseMaps[$databaseName]
         }
 
         return $this->databaseMaps[$databaseName];
     }
+
+    /**
+     * @return string[]
+     */
+    public function getDatabaseNames()
+    {
+        return array_keys($this->databaseToEntitiesMap);
+    }
+
+//    /**
+//     * @return string[]
+//     */
+//    public function getDatabaseSchemaNames()
+//    {
+//        return array_map(function(DatabaseMap $database) {
+//            return $database->
+//        }, $this->databaseMaps);
+//    }
 
     /**
      * @param string $fullEntityClassName
@@ -364,14 +387,24 @@ class Configuration extends GeneratorConfig
 
     /**
      * @param string $fullEntityClassName
+     * @param bool   $returnNull Returns null instead of throwing an exception
      *
-     * @return EntityMap
+     * @return null|EntityMap
      */
-    public function getEntityMap($fullEntityClassName)
+    public function getEntityMap($fullEntityClassName, $returnNull = false)
     {
         $fullEntityClassName = trim($fullEntityClassName, '\\');
         if (!isset($this->entityToDatabaseMap[$fullEntityClassName])) {
-            throw new RuntimeException(sprintf('Entity `%s` not assigned to any database', $fullEntityClassName));
+            if ($returnNull) {
+                return null;
+            }
+            throw new RuntimeException(
+                sprintf(
+                    'Entity `%s` not assigned to any database [%s]',
+                    $fullEntityClassName,
+                    implode(', ', array_keys($this->databaseToEntitiesMap)) ?: 'no-databases'
+                )
+            );
         }
 
         if (isset($this->entityMaps[$fullEntityClassName])) {
@@ -386,6 +419,9 @@ class Configuration extends GeneratorConfig
         $entityMapClass = implode('\\', $namespaces) . '\\Map\\' . $className . 'EntityMap';
 
         if (!class_exists($entityMapClass)) {
+            if ($returnNull) {
+                return null;
+            }
             throw new RuntimeException(
                 sprintf('EntityMap class `%s` for entity `%s` not found', $entityMapClass, $fullEntityClassName)
             );
@@ -408,7 +444,7 @@ class Configuration extends GeneratorConfig
 
     /**
      * @param Session $session
-     * @param object $entity
+     * @param object  $entity
      *
      * @return PersisterInterface
      */
@@ -424,7 +460,7 @@ class Configuration extends GeneratorConfig
     }
 
     /**
-     * @param string $entityName
+     * @param string  $entityName
      * @param Session $session
      *
      * @return PersisterInterface
@@ -434,6 +470,7 @@ class Configuration extends GeneratorConfig
         $entityMap = $this->getEntityMap($entityName);
         $database = $this->getDatabaseForEntityClass($entityName);
         $adapter = $this->getAdapter($database->getName());
+
         return $adapter->getPersister($session, $entityMap);
     }
 
@@ -448,6 +485,11 @@ class Configuration extends GeneratorConfig
         return $this->getRepository($entityName)->createQuery($alias);
     }
 
+    /**
+     * @param $type
+     *
+     * @return FieldTypeInterface
+     */
     public function getFieldType($type)
     {
         $type = strtolower($type);
@@ -477,7 +519,6 @@ class Configuration extends GeneratorConfig
         }
 
         return $this->typeMaps[$class];
-
     }
 
     /**
@@ -594,10 +635,26 @@ class Configuration extends GeneratorConfig
     public function getConnectionManager($databaseName = 'default')
     {
         if (!isset($this->connectionManager[$databaseName])) {
-            throw new InvalidArgumentException(sprintf('ConnectionManager for %s database not found. [%s]', $databaseName, implode(', ', array_keys($this->connectionManager))));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'ConnectionManager for %s database not found. [%s]',
+                    $databaseName,
+                    implode(', ', array_keys($this->connectionManager))
+                )
+            );
         }
 
         return $this->connectionManager[$databaseName];
+    }
+
+    /**
+     * @param string $databaseName
+     *
+     * @return bool
+     */
+    public function hasConnectionManager($databaseName = 'default')
+    {
+        return isset($this->connectionManager[$databaseName]);
     }
 
     /**
@@ -648,6 +705,16 @@ class Configuration extends GeneratorConfig
 
     /**
      * @param string $name
+     *
+     * @return bool
+     */
+    public function hasAdapter($name)
+    {
+        return isset($this->adapters[$name]);
+    }
+
+    /**
+     * @param string           $name
      * @param AdapterInterface $adapter
      */
     public function setAdapter($name, AdapterInterface $adapter)
@@ -661,6 +728,7 @@ class Configuration extends GeneratorConfig
      */
     public function setAdapterClass($databaseName, $adapterClass)
     {
+        unset($this->adapters[$databaseName]);
         $this->databaseToAdapter[$databaseName] = $adapterClass;
     }
 
@@ -754,6 +822,7 @@ class Configuration extends GeneratorConfig
                 'php://output'
             );
             $logger->pushHandler($handler);
+
             return $logger;
         }
 

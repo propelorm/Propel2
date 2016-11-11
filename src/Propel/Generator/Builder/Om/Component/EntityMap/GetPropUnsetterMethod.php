@@ -8,11 +8,11 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
 /**
- * Adds getPropWriter method.
+ * Adds getPropUnsetter method.
  *
  * @author Marc J. Schmidt <marc@marcjschmidt.de>
  */
-class GetPropWriterMethod extends BuildComponent
+class GetPropUnsetterMethod extends BuildComponent
 {
     use NamingTrait;
 
@@ -21,10 +21,10 @@ class GetPropWriterMethod extends BuildComponent
         $className = $this->getObjectClassName(true);
 
         $body = "
-return \$this->getClassPropWriter('$className');
+return \$this->getClassPropUnsetter('$className');
         ";
 
-        $this->addMethod('getPropWriter')
+        $this->addMethod('getPropUnsetter')
             ->setBody($body);
     }
 }

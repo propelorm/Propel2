@@ -286,7 +286,7 @@ trait CrossRelationTrait
      * @param  CrossRelation  $crossRelation
      * @param  array|Relation $relation will be the first variable defined
      *
-     * @return array
+     * @return array [$signature, $shortSignature, $normalizedShortSignature, $phpDoc]
      */
     protected function getCrossRelationAddMethodInformation(CrossRelation $crossRelation, $relation = null)
     {

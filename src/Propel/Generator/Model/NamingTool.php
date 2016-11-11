@@ -8,7 +8,7 @@ class NamingTool
      * Convert a string from underscore to camel case.
      * E.g. my_own_variable => myOwnVariable
      *
-     * @param $string The string to convert
+     * @param string $string The string to convert
      * @static
      *
      * @return string
@@ -25,7 +25,7 @@ class NamingTool
      * Numbers are considered as part of its previous piece:
      * E.g. myTest3Variable => my_test3_variable
      *
-     * @param $string The string to convert
+     * @param string $string The string to convert
      * @static
      *
      * @return string
@@ -40,7 +40,7 @@ class NamingTool
      * This function is useful while writing getter and setter method names.
      * E.g. my_own_variable => MyOwnVariable
      *
-     * @param $string
+     * @param string $string
      * @static
      *
      * @return string

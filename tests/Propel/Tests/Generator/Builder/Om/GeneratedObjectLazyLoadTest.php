@@ -58,9 +58,9 @@ EOF;
         $this->con->useDebug(true);
         $obj = new \LazyLoadEntity();
         $obj->setFoo('hello');
-        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getRepository('\LazyLoadEntity')->save($obj);
         $this->config->getSession()->clearFirstLevelCache();
-        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId());
         $count = $this->con->getQueryCount();
         $this->assertEquals('hello', $obj2->getFoo());
         $this->assertEquals($count, $this->con->getQueryCount());
@@ -71,11 +71,11 @@ EOF;
         $this->con->useDebug(true);
         $obj = new \LazyLoadEntity();
         $obj->setBar('hello');
-        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getRepository('\LazyLoadEntity')->save($obj);
         $this->config->getSession()->clearFirstLevelCache();
-        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId());
         $count = $this->con->getQueryCount();
-        $this->assertEquals('hello', $obj2->getBar($this->con));
+        $this->assertEquals('hello', $obj2->getBar());
         $this->assertEquals($count + 1, $this->con->getQueryCount());
     }
 
@@ -84,11 +84,11 @@ EOF;
         $this->con->useDebug(true);
         $obj = new \LazyLoadEntity();
         $obj->setBaz('hello');
-        $this->config->getRepository('\LazyLoadEntity')->save($obj, $this->con);
+        $this->config->getRepository('\LazyLoadEntity')->save($obj);
         $this->config->getSession()->clearFirstLevelCache();
-        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId(), $this->con);
+        $obj2 = \LazyLoadEntityQuery::create()->findPk($obj->getId());
         $count = $this->con->getQueryCount();
-        $this->assertEquals('hello', $obj2->getBaz($this->con));
+        $this->assertEquals('hello', $obj2->getBaz());
         $this->assertEquals($count + 1, $this->con->getQueryCount());
     }
 }

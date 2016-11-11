@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
@@ -176,6 +177,7 @@ abstract class EntityMap
     protected $classReader = [];
     protected $classIsser = [];
     protected $classWriter = [];
+    protected $classUnsetter = [];
     protected $propReader;
     protected $propWriter;
     protected $propIsset;
@@ -231,6 +233,11 @@ abstract class EntityMap
         return $this->getConfiguration()->getAdapter($this->getDatabaseName());
     }
 
+    /**
+     * @param string $fieldName
+     *
+     * @return FieldTypeInterface
+     */
     public function getFieldType($fieldName)
     {
         $field = $this->getField($fieldName);
@@ -575,17 +582,15 @@ abstract class EntityMap
      */
     public function getClassPropReader($className)
     {
-        if (isset($this->classReader[$className])) {
-            return $this->classReader[$className];
+        if (!isset($this->classReader[$className])) {
+            $this->classReader[$className] = \Closure::bind(
+                function ($object, $prop) {
+                    return $object->$prop;
+                },
+                null,
+                $className
+            );
         }
-
-        $this->classReader[$className] = \Closure::bind(
-            function ($object, $prop) {
-                return $object->$prop;
-            },
-            null,
-            $className
-        );
 
         return $this->classReader[$className];
     }
@@ -597,17 +602,15 @@ abstract class EntityMap
      */
     public function getClassPropIsset($className)
     {
-        if (isset($this->classIsser[$className])) {
-            return $this->classIsser[$className];
+        if (!isset($this->classIsser[$className])) {
+            $this->classIsser[$className] = \Closure::bind(
+                function ($object, $prop) {
+                    return isset($object->$prop);
+                },
+                null,
+                $className
+            );
         }
-
-        $this->classIsser[$className] = \Closure::bind(
-            function ($object, $prop) {
-                return isset($object->$prop);
-            },
-            null,
-            $className
-        );
 
         return $this->classIsser[$className];
     }
@@ -619,19 +622,37 @@ abstract class EntityMap
      */
     public function getClassPropWriter($className)
     {
-        if (isset($this->classWriter[$className])) {
-            return $this->classWriter[$className];
+        if (!isset($this->classWriter[$className])) {
+            $this->classWriter[$className] = \Closure::bind(
+                function ($object, $prop, $value) {
+                    $object->$prop = $value;
+                },
+                null,
+                $className
+            );
         }
 
-        $this->classWriter[$className] = \Closure::bind(
-            function ($object, $prop, $value) {
-                $object->$prop = $value;
-            },
-            null,
-            $className
-        );
-
         return $this->classWriter[$className];
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return \Closure
+     */
+    public function getClassPropUnsetter($className)
+    {
+        if (!isset($this->classUnsetter[$className])) {
+            $this->classUnsetter[$className] = \Closure::bind(
+                function ($object, $prop) {
+                    unset($object->$prop);
+                },
+                null,
+                $className
+            );
+        }
+
+        return $this->classUnsetter[$className];
     }
 
     /**

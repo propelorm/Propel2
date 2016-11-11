@@ -41,12 +41,6 @@ class ReferrerRelationProperties extends BuildComponent
             $this->addProperty($varName)
                 ->setType($className)
                 ->setTypeDescription("one-to-one related $className object. (referrer relation)");
-
-//            if ($refRelation->getEntity()->isActiveRecord()) {
-//                $this->addProperty($this->getPKRefRelationVarName($refRelation).'Partial')
-//                    ->setType('boolean');
-//            }
-
         } else {
             $collection = $this->getDefinition()->declareUse('Propel\Runtime\Collection\Collection');
 

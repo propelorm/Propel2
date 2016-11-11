@@ -11,4 +11,30 @@
         <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior" />
     </entity>
 
+    <entity name="NestedSetEntity9">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+
+        <behavior name="nested_set" />
+    </entity>
+
+    <entity name="NestedSetEntity10">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+        <field name="my_left_field" type="INTEGER" required="false"/>
+        <field name="my_right_field" type="INTEGER" required="false"/>
+        <field name="my_level_field" type="INTEGER" required="false"/>
+        <field name="my_scope_field" type="INTEGER" required="false"/>
+
+        <behavior name="nested_set">
+            <parameter name="left_field" value="my_left_field" />
+            <parameter name="right_field" value="my_right_field" />
+            <parameter name="level_field" value="my_level_field" />
+            <parameter name="use_scope" value="true" />
+            <parameter name="scope_field" value="my_scope_field" />
+            <parameter name="method_proxies" value="true" />
+        </behavior>
+    </entity>
+
+
 </database>

@@ -13,46 +13,51 @@ use Propel\Runtime\Map\FieldMap;
 interface FieldTypeInterface
 {
     /**
-     * Adds propertyToDatabase method which is being used to convert the php object property value
+     * This method is being used to convert the php object property value
      * to a copy of the value, which is being stored in the snapshot array. Against this snapshot
-     * the whole change set build is based.
+     * the whole building of change sets is based.
      *
      * Note:
      *
-     * This should return always return a compareable object. Returning always new objects is not compareable.
-     * Propel uses this results for its change set building, means it result will be cached and when a user
+     * This should return always a compareable object. Returning always new objects is not compareable.
+     * Propel uses this results for its change set building, means its result will be cached and when a user
      * wants to sync its object with the database, this method is called and the results is compared
-     * (using: $changed = $old !== $new) to check whether the value has changed. If so, propel syncs it to the database.
+     * (using: $changed = $old !== $new) to check whether the value has changed. If so, propel syncs it to the
+     * database.
      *
-     * In most cases a internal call to propertyToDatabase like AbstractType is does is enough, however,
-     * if you deal with php objects and the database driver understands those objects, we can not use it to build change sets.
+     * In most cases a internal call to propertyToDatabase is enough, however,
+     * if you deal with php objects and the database driver understands those objects, we can not use it to build
+     * change sets.
      *
-     * @param mixed $value
+     * @param mixed    $value
      * @param FieldMap $fieldMap
+     *
      * @return mixed
      */
     public function propertyToSnapshot($value, FieldMap $fieldMap);
 
     /**
      * Sometimes, it is necessary to convert your snapshot (propertyToSnapshot) back to a real php data type
-     * (like int, object etc). Especially, when propertyToSnapshot can not return always a new object, which
+     * (like int, object etc). For example for primary keys. They are stored as snapshots and restored using this
+     * method and then being used in the database adapter.
+     *
+     * Especially, when propertyToSnapshot can not return always a new object, which
      * isn't compareable, it should return some kind of serialization Propel can use to detect changes
      * (using: $changed = $old !== $new)
      *
-     * Calling databaseToProperty like AbstractType is does is often enough.
+     * Calling databaseToProperty like AbstractType it does is often enough.
      *
-     * @param mixed $value
+     * @param mixed    $value
      * @param FieldMap $fieldMap
      */
     public function snapshotToProperty($value, FieldMap $fieldMap);
 
     /**
-     *
-     * This method is being used to convert the php object property value
+     * This method is being used to convert the php class property value
      * to a format the persister can understand. This is used as the actual value in change set.
      * (from Repository::buildChangeSet())
      *
-     * @param mixed $value
+     * @param mixed    $value
      * @param FieldMap $fieldMap
      *
      * @return mixed
@@ -61,7 +66,7 @@ interface FieldTypeInterface
 
     /**
      * This method is being used to convert data from PDO/database to the php data structure.
-     * Results is set as the actual object property.
+     * Results is set as the actual class property.
      *
      * Example:
      *   Database returns a timestamp as integer, we convert it here to a \DateTime.
@@ -71,8 +76,9 @@ interface FieldTypeInterface
      *
      *  This is also used for array -> object converting.
      *
-     * @param $value
+     * @param          $value
      * @param FieldMap $fieldMap
+     *
      * @return mixed
      */
     public function databaseToProperty($value, FieldMap $fieldMap);

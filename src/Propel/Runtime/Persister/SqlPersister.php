@@ -152,50 +152,9 @@ class SqlPersister implements PersisterInterface
     }
 
     /**
-     * @param string $field
-     *
-     * @return integer
-     */
-    protected function getAutoIncrementStartValue($field)
-    {
-    }
-
-    /**
-     * @param ConnectionInterface $connection
-     *
-     * @return string
-     */
-    protected function readAutoIncrement(ConnectionInterface $connection)
-    {
-        $sql = <<<EOF
-    SELECT `AUTO_INCREMENT`
-    FROM  INFORMATION_SCHEMA.TABLES
-    WHERE TABLE_SCHEMA = DATABASE()
-    AND   TABLE_NAME   = ?
-EOF;
-
-        $params = [];
-        if ($this->entityMap->getSchemaName()) {
-            $sql = str_replace('DATABASE()', '?', $sql);
-            $params[] = $this->entityMap->getSchemaName();
-        }
-        $params[] = $this->entityMap->getTableName();
-
-        $stmt = $connection->prepare($sql);
-        $stmt->execute($params);
-        $value = (integer) $stmt->fetchColumn();
-
-        if ($value > 0) {
-            return $value;
-        }
-
-        return 1;
-    }
-
-    /**
      * @param ConnectionInterface $connection
      */
-    protected function prepareAutoIncrement(ConnectionInterface $connection)
+    protected function prepareAutoIncrement(ConnectionInterface $connection, $count)
     {
         $fieldNames = $this->entityMap->getAutoIncrementFieldNames();
         $object = [];
@@ -203,12 +162,17 @@ EOF;
         if (1 < count($fieldNames)) {
             throw new RuntimeException(
                 sprintf('Entity `%s` has more than one autoIncrement field. This is currently not supported'),
-                $this->entityMap->getClassName()
+                $this->entityMap->getFullClassName()
             );
         }
 
         $firstFieldName = $fieldNames[0];
-        $object[$firstFieldName] = $this->readAutoIncrement($connection);
+
+        //mysql returns the lastInsertId of the first bulk-insert part
+        $lastInsertId = (int) $connection->lastInsertId($firstFieldName);
+
+        $this->getConfiguration()->debug("prepareAutoIncrement lastInsertId=$lastInsertId, for $count items");
+        $object[$firstFieldName] = $lastInsertId;
 
         $this->getConfiguration()->debug('prepareAutoIncrement for ' . $this->entityMap->getFullClassName(). ': ' . json_encode($object));
         $this->autoIncrementValues = (object)$object;
@@ -231,9 +195,6 @@ EOF;
         $event = new InsertEvent($this->getSession(), $this->entityMap, $inserts);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_INSERT, $event);
 
-        if ($this->entityMap->hasAutoIncrement()) {
-            $this->prepareAutoIncrement($connection);
-        }
 
         $fieldObjects = $this->entityMap->getFields();
         $fields = [];
@@ -285,6 +246,10 @@ EOF;
         try {
             $stmt = $connection->prepare($sql);
             $stmt->execute($params);
+
+            if ($this->entityMap->hasAutoIncrement()) {
+                $this->prepareAutoIncrement($connection, count($inserts));
+            }
         } catch (\Exception $e) {
             if ($e instanceof \PDOException) {
                 if ($normalizedException = $this->normalizePdoException($e)) {
@@ -382,7 +347,12 @@ EOF;
                 try {
                     $stmt->execute($params);
                 } catch (\Exception $e) {
-                    throw new RuntimeException(sprintf('Could not execute query %s', $query), 0, $e);
+                    throw new RuntimeException(
+                        sprintf(
+                            'Could not execute query %s',
+                            $readable
+                        ), 0, $e
+                    );
                 }
             }
         }

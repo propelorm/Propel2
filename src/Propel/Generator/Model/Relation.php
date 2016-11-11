@@ -131,10 +131,18 @@ class Relation extends MappingModel
 //        $this->foreignSchemaName = $this->getAttribute('targetSchema');
 
         $this->name = $this->getAttribute('name');
-        $this->field = $this->getAttribute('field') ?: lcfirst($this->getAttribute('target'));
+        $this->field = $this->getAttribute('field');
 
         if (!$this->field) {
-            throw new \InvalidArgumentException('field value empty for relation');
+            $this->field = $this->name;
+        }
+
+        if (!$this->field) {
+            $this->field = lcfirst($this->getAttribute('target'));
+        }
+
+        if (!$this->field) {
+            throw new \InvalidArgumentException('field or target value empty for relation');
         }
 
         $this->refName = $this->getAttribute('refName') ?: lcfirst($this->getEntity()->getName());
@@ -428,26 +436,6 @@ class Relation extends MappingModel
         $this->foreignEntityName = $foreignEntityName;
     }
 
-//    /**
-//     * Returns the foreign table name without schema.
-//     *
-//     * @return string
-//     */
-//    public function getForeignEntityCommonName()
-//    {
-//        return $this->foreignEntityName;
-//    }
-//
-//    /**
-//     * Sets the foreign table common name of the FK.
-//     *
-//     * @param string $tableName
-//     */
-//    public function setForeignEntityCommonName($tableName)
-//    {
-//        $this->foreignEntityName = $tableName;
-//    }
-
     /**
      * Returns the resolved foreign Entity model object.
      *
@@ -459,26 +447,6 @@ class Relation extends MappingModel
             return $database->getEntity($this->getForeignEntityName());
         }
     }
-
-//    /**
-//     * Returns the foreign schema name of the FK.
-//     *
-//     * @return string
-//     */
-//    public function getForeignSchemaName()
-//    {
-//        return $this->foreignSchemaName;
-//    }
-//
-//    /**
-//     * Set the foreign schema name of the foreign key.
-//     *
-//     * @param string $schemaName
-//     */
-//    public function setForeignSchemaName($schemaName)
-//    {
-//        $this->foreignSchemaName = $schemaName;
-//    }
 
     /**
      * Sets the parent Entity of the foreign key.
@@ -569,7 +537,7 @@ class Relation extends MappingModel
     /**
      * Returns an array of local field names.
      *
-     * @return array
+     * @return string[]
      */
     public function getLocalFields()
     {
@@ -584,7 +552,7 @@ class Relation extends MappingModel
     public function getLocalFieldObjects()
     {
         $fields = [];
-        foreach ($this->localFields as $fieldName) {
+        foreach ($this->getLocalFields() as $fieldName) {
             $field = $this->parentEntity->getField($fieldName);
             if (null === $field) {
                 throw new BuildException(sprintf(

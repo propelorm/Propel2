@@ -194,8 +194,7 @@ class Entity extends ScopedMappingModel implements IdMethod
 
         $this->setName($this->getAttribute('name'));
 
-        $names = explode('\\', $this->name);
-        $shortName = array_pop($names);
+        $shortName = basename($this->name);
         $this->tableName = $this->getAttribute('tableName') ?: NamingTool::toUnderscore($shortName);
 
         if ($this->getAttribute('activeRecord')) {

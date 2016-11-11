@@ -6,6 +6,7 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\ObjectCombinationCollection;
+use Propel\Runtime\Configuration;
 use Propel\Tests\Helpers\PlatformDatabaseBuildTimeBase;
 
 /**
@@ -22,24 +23,24 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
 
         if (!class_exists('\Relation1UserFriendQuery')) {
             $schema = '
-    <database name="migration" schema="migration">
-        <table name="relation1_user_friend" isCrossRef="true">
-            <column name="user_id" type="integer" primaryKey="true"/>
-            <column name="friend_id" type="integer" primaryKey="true"/>
+    <database name="migration" schema="migration" activeRecord="true">
+        <entity name="Relation1UserFriend" isCrossRef="true">
+            <field name="userId" type="integer" primaryKey="true"/>
+            <field name="friendId" type="integer" primaryKey="true"/>
 
-            <foreign-key foreignTable="relation1_user" phpName="Who">
-                <reference local="user_id" foreign="id"/>
-            </foreign-key>
+            <relation name="who" target="Relation1User">
+                <reference local="userId" foreign="id"/>
+            </relation>
 
-            <foreign-key foreignTable="relation1_user" phpName="Friend">
-                <reference local="friend_id" foreign="id"/>
-            </foreign-key>
-        </table>
+            <relation name="friend" target="Relation1User">
+                <reference local="friendId" foreign="id"/>
+            </relation>
+        </entity>
 
-        <table name="relation1_user">
-            <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name"/>
-        </table>
+        <entity name="Relation1User">
+            <field name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+            <field name="name"/>
+        </entity>
     </database>
         ';
 
@@ -71,12 +72,16 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
 
         $friend1 = (new \Relation1User())->setName('Friend 1');
         $friend2 = (new \Relation1User())->setName('Friend 2');
+        $friend1->save();
+        $friend2->save();
         $hans->addFriend($friend1);
         $this->assertCount(1, $hans->getFriends(), 'one friend');
 
         $hans->addFriend($friend2);
         $this->assertCount(2, $hans->getFriends(), 'two friends');
 
+        //@todo, this fails because of doAdd* sets up a bi-directional relation and sets wrong
+        //relation both to $hans, which causes "Integrity constraint violation: 1062 Duplicate entry"
         $hans->save();
         $this->assertEquals(3, \Relation1UserQuery::create()->count(), 'We have three users.');
         $this->assertEquals(2, \Relation1UserFriendQuery::create()->count(), 'We have two connections.');
@@ -84,9 +89,11 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
 
     }
 
-    /*
+    /**
      * ####################################
      * 2. addFriend, removeFriend
+     *
+     * @group test
      */
     public function test2()
     {
@@ -121,7 +128,6 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertEquals(1, \Relation1UserFriendQuery::create()->count(), 'We have one connection.');
         $this->assertEquals(1, \Relation1UserQuery::create()->filterByWho($hans)->count(), 'Hans has one friend.');
         $this->assertEquals($friend2, \Relation1UserQuery::create()->filterByWho($hans)->findOne(), 'Hans has Friend 2 as friend');
-
     }
 
     /*

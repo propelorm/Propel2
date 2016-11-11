@@ -119,7 +119,7 @@ if (\$entity) {
     \$obj = \$this->getRepository()->createProxy();
 }
 \$obj->__duringInitializing__ = true;
-\$originalValues = [];
+\$objectValues = [];
 ";
 
         $fullColumnNames = $columnNames = $camelNames = $fieldNames = $fieldTypes = [];
@@ -147,10 +147,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fieldNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
+    \$objectValues['$propName'] = \$this->databaseToProperty(\$row[\$offset + $idx], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+    \$writer(\$obj, '$propName', \$objectValues['$propName']);";
             }
         }
 
@@ -161,10 +161,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($camelNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
+    \$objectValues['$propName'] = \$this->databaseToProperty(\$row['{$camelNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+    \$writer(\$obj, '$propName', \$objectValues['$propName']);";
             }
         }
 
@@ -175,10 +175,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($columnNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$columnNames[$idx]}'], '$propName');";
+    \$objectValues['$propName'] = \$this->databaseToProperty(\$row['{$columnNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+    \$writer(\$obj, '$propName', \$objectValues['$propName']);";
             }
         }
 
@@ -189,10 +189,10 @@ if (EntityMap::TYPE_NUM === \$indexType) {
         foreach ($fullColumnNames as $idx => $fieldName) {
             $propName = $fieldNames[$idx];
             $body .= "
-    \$originalValues['$propName'] = \$this->databaseToProperty(\$row['{$fullColumnNames[$idx]}'], '$propName');";
+    \$objectValues['$propName'] = \$this->databaseToProperty(\$row['{$fullColumnNames[$idx]}'], '$propName');";
             if (!isset($implementationDetail[$propName])) {
                 $body .= "
-    \$writer(\$obj, '$propName', \$originalValues['$propName']);";
+    \$writer(\$obj, '$propName', \$objectValues['$propName']);";
             }
         }
 
@@ -208,14 +208,21 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 //relation $relationName
 \$exist = true;
 ";
+            //$relationPkArguments => $id
+            $relationPkArguments = [];
+            foreach ($relation->getLocalFields() as $field) {
+                $relationPkArguments[] = "\$objectValues['$field']";
+            }
+            $relationPkArguments = implode(', ', $relationPkArguments);
+
             foreach ($relation->getLocalFieldObjects() as $field) {
                 $propName = $field->getName();
-                $body .= "\$exist = \$exist && null !== \$originalValues['$propName'];";
+                $body .= "\$exist = \$exist && null !== \$objectValues['$propName'];";
             }
 
             $body .= "
 if (\$exist) {
-    \$relationProxy = \$this->getConfiguration()->getRepository('$className')->createProxy();
+    \$relationProxy = \$this->getConfiguration()->getRepository('$className')->getReference($relationPkArguments);
     \$relationProxyWriter = \$this->getConfiguration()->getEntityMap('$className')->getPropWriter();
 ";
 
@@ -228,7 +235,7 @@ if (\$exist) {
                 $pkName = $foreign->getName();
                 $localName = $local->getName();
                 $body .= "
-    \$relationProxyWriter(\$relationProxy, '$pkName', \$originalValues['$localName']);";
+    \$relationProxyWriter(\$relationProxy, '$pkName', \$objectValues['$localName']);";
             }
 
 
@@ -239,7 +246,7 @@ if (\$exist) {
         }
 
         $body .= "
-\$this->getConfiguration()->getSession()->setLastKnownValues(\$obj, \$originalValues);
+\$this->getConfiguration()->getSession()->snapshot(\$obj);
 unset(\$obj->__duringInitializing__);
 \$offset += $fieldCount;
 

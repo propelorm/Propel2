@@ -225,6 +225,41 @@ abstract class Repository
     /**
      * @todo, to improve performance pre-compile this stuff
      *
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function getOriginPK($entity)
+    {
+        $entityMap = $this->getEntityMap();
+        $primaryKeyFields = $entityMap->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $pk = null;
+
+        $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $entityMap->snapshotToProperty(
+                $lastKnownValues[$primaryKeyField->getName()],
+                $primaryKeyField->getName()
+            );
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pks[] = $entityMap->snapshotToProperty(
+                    $lastKnownValues[$primaryKeyField->getName()],
+                    $primaryKeyField->getName()
+                );
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * @todo, to improve performance pre-compile this stuff
+     *
      * @param array $entities
      *
      * @return array
@@ -232,7 +267,8 @@ abstract class Repository
     public function getOriginPKs(array $entities)
     {
         $pks = [];
-        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $entityMap = $this->getEntityMap();
+        $primaryKeyFields = $entityMap->getPrimaryKeys();
         $singlePk = 1 === count($primaryKeyFields);
 
         foreach ($entities as $entity) {
@@ -241,10 +277,16 @@ abstract class Repository
 
             if ($singlePk) {
                 $primaryKeyField = current($primaryKeyFields);
-                $pk = $lastKnownValues[$primaryKeyField->getName()];
+                $pk = $entityMap->snapshotToProperty(
+                    $lastKnownValues[$primaryKeyField->getName()],
+                    $primaryKeyField->getName()
+                );
             } else {
                 foreach ($primaryKeyFields as $primaryKeyField) {
-                    $pks[] = $lastKnownValues[$primaryKeyField->getName()];
+                    $pks[] = $entityMap->snapshotToProperty(
+                        $lastKnownValues[$primaryKeyField->getName()],
+                        $primaryKeyField->getName()
+                    );
                 }
             }
 
@@ -275,36 +317,25 @@ abstract class Repository
         return $this->getConfiguration()->getSession()->hasKnownValues($entity);
     }
 
-    /**
-     * @todo, to improve performance pre-compile this stuff
-     *
-     * @param object $entity
-     *
-     * @return array
-     */
-    public function getOriginPK($entity)
+    abstract public function createProxy();
+
+    public function getReference()
     {
-        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
-        $singlePk = 1 === count($primaryKeyFields);
+        $object = $this->createProxy();
+        $writer = $this->getEntityMap()->getPropWriter();
+        $pks = func_get_args();
 
-        $pk = null;
-
-        $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
-        if ($singlePk) {
-            $primaryKeyField = current($primaryKeyFields);
-            $pk = $lastKnownValues[$primaryKeyField->getName()];
-        } else {
-            $pk = [];
-            foreach ($primaryKeyFields as $primaryKeyField) {
-                $pks[] = $lastKnownValues[$primaryKeyField->getName()];
-            }
+        $i = 0;
+        foreach ($this->getEntityMap()->getPrimaryKeys() as $fieldMap) {
+            $writer($object, $fieldMap->getName(), $pks[$i++]);
         }
 
-        return $pk;
+        return $object;
     }
 
     /**
-     * @todo, to improve performance precompile this stuff
+     * Returns the primary key values from the object as array or directly when the
+     * entity has only one primary key.
      *
      * @param object $entity
      *

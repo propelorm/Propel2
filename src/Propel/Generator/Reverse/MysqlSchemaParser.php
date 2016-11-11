@@ -10,14 +10,15 @@
 
 namespace Propel\Generator\Reverse;
 
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
+use Propel\Generator\Model\NamingTool;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\FieldDefaultValue;
 
 /**
  * Mysql database schema parser.
@@ -88,54 +89,54 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * @param  Database $database
-     * @param  Table[]  $additionalTables
+     * @param  Entity[]  $additionalEntities
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = array())
+    public function parse(Database $database, array $additionalEntities = array())
     {
         if (null !== $this->getGeneratorConfig()) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];
         }
 
         $this->parseTables($database);
-        foreach ($additionalTables as $table) {
-            $this->parseTables($database, $table);
+        foreach ($additionalEntities as $entity) {
+            $this->parseTables($database, $entity);
         }
 
-        // Now populate only columns.
-        foreach ($database->getTables() as $table) {
-            $this->addColumns($table);
+        // Now populate only fields.
+        foreach ($database->getEntities() as $entity) {
+            $this->addFields($entity);
         }
 
         // Now add indices and constraints.
-        foreach ($database->getTables() as $table) {
-            $this->addForeignKeys($table);
-            $this->addIndexes($table);
-            $this->addPrimaryKey($table);
+        foreach ($database->getEntities() as $entity) {
+            $this->addRelations($entity);
+            $this->addIndexes($entity);
+            $this->addPrimaryKey($entity);
 
-            $this->addTableVendorInfo($table);
+            $this->addEntityVendorInfo($entity);
         }
 
-        return count($database->getTables());
+        return count($database->getEntities());
     }
 
-    protected function parseTables(Database $database, $filterTable = null)
+    protected function parseTables(Database $database, $filterEntity = null)
     {
         $sql = 'SHOW FULL TABLES';
 
-        if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+        if ($filterEntity) {
+            if ($schema = $filterEntity->getSchema()) {
                 $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
             }
-            $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
+            $sql .= sprintf(" LIKE '%s'", $filterEntity->getCommonName());
         } else if ($schema = $database->getSchema()) {
             $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
         }
 
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
-        $tables = array();
+        // First load the entities (important that this happen before filling out details of entities)
+        $entities = array();
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -144,40 +145,41 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 continue;
             }
 
-            $table = new Table($name);
-            $table->setIdMethod($database->getDefaultIdMethod());
-            if ($filterTable && $filterTable->getSchema()) {
-                $table->setSchema($filterTable->getSchema());
+            $entity = new Entity(NamingTool::toCamelCase($name));
+            $entity->setTableName($name);
+            $entity->setIdMethod($database->getDefaultIdMethod());
+            if ($filterEntity && $filterEntity->getSchema()) {
+                $entity->setSchema($filterEntity->getSchema());
             }
-            $database->addTable($table);
-            $tables[] = $table;
+            $database->addEntity($entity);
+            $entities[] = $entity;
         }
     }
 
     /**
-     * Adds Columns to the specified table.
+     * Adds Fields to the specified entity.
      *
-     * @param Table $table The Table model class to add columns to.
+     * @param Entity $entity The Entity model class to add fields to.
      */
-    protected function addColumns(Table $table)
+    protected function addFields(Entity $entity)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($entity->getFQTableName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $column = $this->getColumnFromRow($row, $table);
-            $table->addColumn($column);
+            $field = $this->getFieldFromRow($row, $entity);
+            $entity->addField($field);
         }
     }
 
     /**
-     * Factory method creating a Column object
-     * based on a row from the 'show columns from ' MySQL query result.
+     * Factory method creating a Field object
+     * based on a row from the 'show fields from ' MySQL query result.
      *
      * @param  array  $row An associative array with the following keys:
      *                     Field, Type, Null, Key, Default, Extra.
-     * @return Column
+     * @return Field
      */
-    public function getColumnFromRow($row, Table $table)
+    public function getFieldFromRow($row, Entity $entity)
     {
         $name = $row['Field'];
         $isNullable = ('YES' === $row['Null']);
@@ -187,7 +189,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $sqlType = false;
 
         $regexp = '/^
-            (\w+)        # column type [1]
+            (\w+)        # field type [1]
             [\(]         # (
                 ?([\d,]*)  # size or size, precision [2]
             [\)]         # )
@@ -224,9 +226,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         $propelType = $this->getMappedPropelType($nativeType);
         if (!$propelType) {
-            $propelType = Column::DEFAULT_TYPE;
+            $propelType = Field::DEFAULT_TYPE;
             $sqlType = $row['Type'];
-            $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+            $this->warn("Field [" . $entity->getFQTableName() . "." . $name. "] has a field type (".$nativeType.") that Propel does not support.");
         }
 
         // Special case for TINYINT(1) which is a BOOLEAN
@@ -234,14 +236,14 @@ class MysqlSchemaParser extends AbstractSchemaParser
             $propelType = PropelTypes::BOOLEAN;
         }
 
-        $column = new Column($name);
-        $column->setTable($table);
-        $column->setDomainForType($propelType);
+        $field = new Field($name);
+        $field->setEntity($entity);
+        $field->setDomainForType($propelType);
         if ($sqlType) {
-            $column->getDomain()->replaceSqlType($sqlType);
+            $field->getDomain()->replaceSqlType($sqlType);
         }
-        $column->getDomain()->replaceSize($size);
-        $column->getDomain()->replaceScale($scale);
+        $field->getDomain()->replaceSize($size);
+        $field->getDomain()->replaceScale($scale);
         if ($default !== null) {
             if ($propelType == PropelTypes::BOOLEAN) {
                 if ($default == '1') {
@@ -252,34 +254,34 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 }
             }
             if (in_array($default, array('CURRENT_TIMESTAMP'))) {
-                $type = ColumnDefaultValue::TYPE_EXPR;
+                $type = FieldDefaultValue::TYPE_EXPR;
             } else {
-                $type = ColumnDefaultValue::TYPE_VALUE;
+                $type = FieldDefaultValue::TYPE_VALUE;
             }
-            $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
+            $field->getDomain()->setDefaultValue(new FieldDefaultValue($default, $type));
         }
-        $column->setAutoIncrement($autoincrement);
-        $column->setNotNull(!$isNullable);
+        $field->setAutoIncrement($autoincrement);
+        $field->setNotNull(!$isNullable);
 
         if ($this->addVendorInfo) {
             $vi = $this->getNewVendorInfoObject($row);
-            $column->addVendorInfo($vi);
+            $field->addVendorInfo($vi);
         }
 
-        return $column;
+        return $field;
     }
 
     /**
-     * Load foreign keys for this table.
+     * Load foreign keys for this entity.
      */
-    protected function addForeignKeys(Table $table)
+    protected function addRelations(Entity $entity)
     {
-        $database = $table->getDatabase();
+        $database = $entity->getDatabase();
 
-        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
+        $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($entity->getFQTableName())));
         $row = $dataFetcher->fetch();
 
-        $foreignKeys = array(); // local store to avoid duplicates
+        $Relations = array(); // local store to avoid duplicates
 
         // Get the information on all the foreign keys
         $pattern = '/CONSTRAINT `([^`]+)` FOREIGN KEY \((.+)\) REFERENCES `([^\s]+)` \((.+)\)(.*)/';
@@ -304,15 +306,15 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 // typical for mysql is RESTRICT
                 $fkactions = array(
-                    'ON DELETE' => ForeignKey::RESTRICT,
-                    'ON UPDATE' => ForeignKey::RESTRICT,
+                    'ON DELETE' => Relation::RESTRICT,
+                    'ON UPDATE' => Relation::RESTRICT,
                 );
 
                 if ($fkey) {
                     // split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
                     foreach (array_keys($fkactions) as $fkaction) {
                         $result = null;
-                        preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . ')/', $fkey, $result);
+                        preg_match('/' . $fkaction . ' (' . Relation::CASCADE . '|' . Relation::SETNULL . ')/', $fkey, $result);
                         if ($result && is_array($result) && isset($result[1])) {
                             $fkactions[$fkaction] = $result[1];
                         }
@@ -321,59 +323,56 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
                 // restrict is the default
                 foreach ($fkactions as $key => $action) {
-                    if (ForeignKey::RESTRICT === $action) {
+                    if (Relation::RESTRICT === $action) {
                         $fkactions[$key] = null;
                     }
                 }
 
-                $localColumns = array();
-                $foreignColumns = array();
-                if ($table->guessSchemaName() != $database->getSchema() && false == strpos($ftbl, $database->getPlatform()->getSchemaDelimiter())) {
-                    $ftbl = $table->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
+                $localFields = array();
+                $foreignFields = array();
+                if ($entity->guessSchemaName() != $database->getSchema() && false == strpos($ftbl, $database->getPlatform()->getSchemaDelimiter())) {
+                    $ftbl = $entity->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
                 }
 
-                $foreignTable = $database->getTable($ftbl, true);
+                $foreignEntity = $database->getEntityByTableName($ftbl);
 
-                if (!$foreignTable) {
+                if (!$foreignEntity) {
                     continue;
                 }
 
                 foreach ($fcols as $fcol) {
-                    $foreignColumns[] = $foreignTable->getColumn($fcol);
+                    $foreignFields[] = $foreignEntity->getField($fcol);
                 }
                 foreach ($lcols as $lcol) {
-                    $localColumns[] = $table->getColumn($lcol);
+                    $localFields[] = $entity->getField($lcol);
                 }
 
-                if (!isset($foreignKeys[$name])) {
-                    $fk = new ForeignKey($name);
-                    $fk->setForeignTableCommonName($foreignTable->getCommonName());
-                    if ($table->guessSchemaName() != $foreignTable->guessSchemaName()) {
-                        $fk->setForeignSchemaName($foreignTable->guessSchemaName());
-                    }
+                if (!isset($Relations[$name])) {
+                    $fk = new Relation($name);
+                    $fk->setForeignEntityName($foreignEntity->getFullClassName());
                     $fk->setOnDelete($fkactions['ON DELETE']);
                     $fk->setOnUpdate($fkactions['ON UPDATE']);
-                    $table->addForeignKey($fk);
-                    $foreignKeys[$name] = $fk;
+                    $entity->addRelation($fk);
+                    $Relations[$name] = $fk;
                 }
 
-                $max = count($localColumns);
+                $max = count($localFields);
                 for ($i = 0; $i < $max; $i++) {
-                    $foreignKeys[$name]->addReference($localColumns[$i], $foreignColumns[$i]);
+                    $Relations[$name]->addReference($localFields[$i], $foreignFields[$i]);
                 }
             }
         }
     }
 
     /**
-     * Load indexes for this table
+     * Load indexes for this entity
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Entity $entity)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->doQuoting($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->doQuoting($entity->getFQTableName())));
 
         // Loop through the returned results, grouping the same key_name together
-        // adding each column for that key.
+        // adding each field for that key.
 
         /** @var $indexes Index[] */
         $indexes = array();
@@ -397,10 +396,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $vi = $this->getNewVendorInfoObject($row);
                     $indexes[$name]->addVendorInfo($vi);
                 }
-                $indexes[$name]->setTable($table);
+                $indexes[$name]->setEntity($entity);
             }
 
-            $indexes[$name]->addColumn([
+            $indexes[$name]->addField([
                 'name' => $colName,
                 'size' => $colSize
             ]);
@@ -408,46 +407,46 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         foreach ($indexes as $index) {
             if ($index instanceof Unique) {
-                $table->addUnique($index);
+                $entity->addUnique($index);
             } else {
-                $table->addIndex($index);
+                $entity->addIndex($index);
             }
         }
     }
 
     /**
-     * Loads the primary key for this table.
+     * Loads the primary key for this entity.
      */
-    protected function addPrimaryKey(Table $table)
+    protected function addPrimaryKey(Entity $entity)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->doQuoting($entity->getFQTableName())));
 
         // Loop through the returned results, grouping the same key_name together
-        // adding each column for that key.
+        // adding each field for that key.
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // Skip any non-primary keys.
             if ('PRIMARY' !== $row['Key_name']) {
                 continue;
             }
             $name = $row['Column_name'];
-            $table->getColumn($name)->setPrimaryKey(true);
+            $entity->getField($name)->setPrimaryKey(true);
         }
     }
 
     /**
-     * Adds vendor-specific info for table.
+     * Adds vendor-specific info for entity.
      *
-     * @param Table $table
+     * @param Entity $entity
      */
-    protected function addTableVendorInfo(Table $table)
+    protected function addEntityVendorInfo(Entity $entity)
     {
-        $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
+        $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $entity->getFQTableName() . "'");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
             $row = array('Engine' => $row['Engine']);
         }
         $vi = $this->getNewVendorInfoObject($row);
-        $table->addVendorInfo($vi);
+        $entity->addVendorInfo($vi);
     }
 }

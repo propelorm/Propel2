@@ -26,6 +26,7 @@ class GetSnapshotMethod extends BuildComponent
     {
         $body = "
 \$reader = \$this->getPropReader();
+\$isset = \$this->getPropIsset();
 \$snapshot = [];
 ";
 
@@ -35,7 +36,14 @@ class GetSnapshotMethod extends BuildComponent
             }
 
             $fieldName = $field->getName();
-            $body .= "\$snapshot['$fieldName'] = \$this->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');\n";
+            if ($field->isLazyLoad()) {
+                $body .= "
+if (\$isset(\$entity, '$fieldName')){
+    \$snapshot['$fieldName'] = \$this->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');
+}";
+            } else {
+                $body .= "\$snapshot['$fieldName'] = \$this->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');\n";
+            }
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {

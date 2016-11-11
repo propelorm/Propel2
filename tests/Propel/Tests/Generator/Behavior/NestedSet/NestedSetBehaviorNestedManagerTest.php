@@ -12,6 +12,13 @@ namespace Propel\Tests\Generator\Behavior\NestedSet;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Tests\Bookstore\Behavior\Map\NestedSetEntity9EntityMap;
+use Propel\Tests\Bookstore\Behavior\MapNestedSetEntity9EntityMap;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity10;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity10Query;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity9;
+use Propel\Tests\Bookstore\BehaviorNestedSetEntity10;
+use Propel\Tests\Bookstore\BehaviorNestedSetEntity9;
 
 /**
  * Class NestedSetBehaviorNestedManagerTest
@@ -34,11 +41,11 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(0, $manager->countChildren($t6), 'Leaf node has no child');
         $this->assertEquals(0, $manager->countChildren($t2), 'Leaf node has no child');
 
-        $obj = new \NestedSetEntity9();
+        $obj = new NestedSetEntity9();
         $this->assertEquals(0, $manager->countChildren($obj), 'Return 0 if new node');
 
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
         $this->assertEquals(1, $manager->countChildren($t3, $c), 'countChildren() accepts a criteria as parameter');
     }
 
@@ -55,8 +62,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(0, $manager->countDescendants($t6), 'countDescendants() returns 0 for leafs');
         $this->assertEquals(0, $manager->countDescendants($t7), 'countDescendants() returns 0 for leafs');
 
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
         $this->assertEquals(1, $manager->countDescendants($t3, $c), 'countDescendants() accepts a criteria as parameter');
     }
 
@@ -74,7 +81,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals($manager->getParent($t2), $manager->getParent($t3), 'getParent() returns the same parent for sibling nodes');
         $this->assertNull($manager->getParent($t1), 'getParent() return null for root nodes');
 
-        $tn = new \NestedSetEntity9();
+        $tn = new NestedSetEntity9();
         $this->assertNull($manager->getParent($tn), 'getParent() return null for empty nodes');
     }
 
@@ -104,7 +111,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertNull($manager->getPrevSibling($t6), 'getPrevSibling() returns null for first siblings');
         $this->assertEquals($manager->getPrevSibling($t7), $t6, 'getPrevSibling() correctly retrieves prev sibling');
 
-        $con = $this->getConfiguration()->getConnectionManager(\Map\NestedSetEntity9EntityMap::DATABASE_NAME)->getWriteConnection();
+        $con = $this->getConfiguration()->getConnectionManager(NestedSetEntity9EntityMap::DATABASE_NAME)->getWriteConnection();
         $this->assertNull($manager->getPrevSibling($t4, $con), 'getPrevSibling() accepts a connection parameter');
         $this->assertEquals($manager->getPrevSibling($t5, $con), $t4, 'getPrevSibling() accepts a connection parameter');
     }
@@ -143,7 +150,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals($manager->getNextSibling($t2), $t3, 'getNextSibling() correctly retrieves next sibling');
         $this->assertNull($manager->getNextSibling($t3), 'getNextSibling() returns null for last siblings');
 
-        $con = $this->getConfiguration()->getconnectionManager(\Map\NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
+        $con = $this->getConfiguration()->getconnectionManager(NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
         $this->assertEquals($manager->getNextSibling($t6, $con), $t7, 'getNextSibling() accepts a connection parameter');
         $this->assertNull($manager->getNextSibling($t7, $con), 'getNextSibling() accepts a connection parameter');
     }
@@ -187,7 +194,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
 
-        $con = $this->getConfiguration()->getconnectionManager(\Map\NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
+        $con = $this->getConfiguration()->getconnectionManager(NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
         $children = $manager->getChildren($t5, null, $con);
         $expected = array(
             't6' => array(8, 9, 3),
@@ -195,8 +202,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() accepts a connection as parameter');
 
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
         $children = $manager->getChildren($t3, $c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -214,12 +221,12 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertNull($manager->getFirstChild($t7), 'getFirstChild() returns null for leaf nodes');
         $this->assertNull($manager->getFirstChild($t2), 'getFirstChild() returns null for leaf nodes');
 
-        $con = $this->getConfiguration()->getconnectionManager(\Map\NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
+        $con = $this->getConfiguration()->getconnectionManager(NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
         $this->assertNull($manager->getFirstChild($t6, null, $con), 'getFirstChild() accepts a connection as parameter');
         $this->assertEquals($t6, $manager->getFirstChild($t5, null, $con), 'getFirstChild() accept a connection as parameter');
 
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't4');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't4');
 
         $this->assertEquals($t4, $manager->getFirstChild($t3, $c), 'getFirstChild() accepts a criteria as parameter');
     }
@@ -234,12 +241,12 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertNull($manager->getLastChild($t7), 'getFirstChild() returns null for leaf nodes');
         $this->assertNull($manager->getLastChild($t2), 'getFirstChild() returns null for leaf nodes');
 
-        $con = $this->getConfiguration()->getconnectionManager(\Map\NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
+        $con = $this->getConfiguration()->getconnectionManager(NestedSetEntity9EntityMap::DATABASE_NAME)->getReadConnection();
         $this->assertNull($manager->getLastChild($t6, null, $con), 'getFirstChild() accepts a connection as parameter');
         $this->assertEquals($t7, $manager->getLastChild($t5, null, $con), 'getFirstChild() accept a connection as parameter');
 
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
 
         $this->assertEquals($t5, $manager->getLastChild($t3, $c), 'getFirstChild() accepts a criteria as parameter');
     }
@@ -310,8 +317,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
             't7' => array(10, 11, 3),
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
         $descendants = $manager->getDescendants($t3, $c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -369,8 +376,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
             't7' => array(10, 11, 3),
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't3', Criteria::NOT_EQUAL);
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $manager->getBranch($t3, $c);
         unset($expected['t3']);
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
@@ -396,8 +403,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
             't3' => array(4, 13, 1),
         );
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
-        $c = new Criteria(\Map\NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(\Map\NestedSetEntity9EntityMap::COL_TITLE, 't3');
+        $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
+        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3');
         $ancestors = $manager->getAncestors($t5, $c);
         $expected = array(
             't3' => array(4, 13, 1),
@@ -435,17 +442,17 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testHasParent()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t0 = new \NestedSetEntity9();
-        $t1 = new \NestedSetEntity9();
+        $t0 = new NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6)->setLevel(0);
         $repository->save($t1);
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(5)->setLevel(1);
         $repository->save($t2);
-        $t3 = new \NestedSetEntity9();
+        $t3 = new NestedSetEntity9();
         $t3->setTitle('t3')->setLeftValue(3)->setRightValue(4)->setLevel(2);
         $repository->save($t3);
 
@@ -458,17 +465,17 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testHasPrevSibling()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
         
-        $t0 = new \NestedSetEntity9();
-        $t1 = new \NestedSetEntity9();
+        $t0 = new NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6);
         $repository->save($t1);
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(3);
         $repository->save($t2);
-        $t3 = new \NestedSetEntity9();
+        $t3 = new NestedSetEntity9();
         $t3->setTitle('t3')->setLeftValue(4)->setRightValue(5);
         $repository->save($t3);
 
@@ -481,17 +488,17 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testHasNextSibling()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
         
-        $t0 = new \NestedSetEntity9();
-        $t1 = new \NestedSetEntity9();
+        $t0 = new NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1')->setLeftValue(1)->setRightValue(6);
         $repository->save($t1);
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t2')->setLeftValue(2)->setRightValue(3);
         $repository->save($t2);
-        $t3 = new \NestedSetEntity9();
+        $t3 = new NestedSetEntity9();
         $t3->setTitle('t3')->setLeftValue(4)->setRightValue(5);
         $repository->save($t3);
 
@@ -515,25 +522,25 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testAddChild()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1');
         $manager->makeRoot($t1);
         $repository->save($t1);
 
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t2');
         $manager->addChild($t1, $t2);
         $repository->save($t2);
 
-        $t3 = new \NestedSetEntity9();
+        $t3 = new NestedSetEntity9();
         $t3->setTitle('t3');
         $manager->addChild($t1, $t3);
         $repository->save($t3);
 
-        $t4 = new \NestedSetEntity9();
+        $t4 = new NestedSetEntity9();
         $t4->setTitle('t4');
         $manager->addChild($t2, $t4);
         $repository->save($t4);
@@ -551,7 +558,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsFirstChildOf()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -562,7 +569,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new \NestedSetEntity9();
+        $t8 = new NestedSetEntity9();
         $t8->setTitle('t8');
         $manager->insertAsFirstChildOf($t8, $t3);
         $this->assertEquals(5, $t4->getLeftValue(), 'insertAsFirstChildOf() does not modify the tree until the object is saved');
@@ -593,10 +600,10 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsFirstChildOfExistingObject()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $manager->makeRoot($t);
         $repository->save($t);
 
@@ -604,7 +611,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $manager->insertAsFirstChildOf($t1, $t);
         $repository->save($t1);
 
@@ -639,7 +646,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new \NestedSetEntity10();
+        $t11 = new NestedSetEntity10();
         $t11->setTitle('t11');
         $manager->insertAsFirstChildOf($t11, $fixtures[2]); // first child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
@@ -666,18 +673,18 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     public function testInsertAsFirstChildOfExistingObjectWithScope()
     {
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
         $manager = $this->getManagerWithScope();
 
-        $t = new \NestedSetEntity10();
+        $t = new NestedSetEntity10();
         $t->setScopeValue(34);
         $manager->makeRoot($t);
         $repository->save($t);
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $repository->save($t1);
         $manager->insertAsFirstChildOf($t1, $t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -697,7 +704,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsLastChildOf()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -708,7 +715,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new \NestedSetEntity9();
+        $t8 = new NestedSetEntity9();
         $t8->setTitle('t8');
         $manager->insertAsLastChildOf($t8, $t3);
         $this->assertEquals(13, $t3->getRightValue(), 'insertAsLastChildOf() does not modify the tree until the object is saved');
@@ -739,10 +746,10 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsLastChildOfExistingObject()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $manager->makeRoot($t);
         $repository->save($t);
         
@@ -750,7 +757,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $manager->insertAsLastChildOf($t1, $t);
         $repository->save($t1);
         
@@ -785,7 +792,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new \NestedSetEntity10();
+        $t11 = new NestedSetEntity10();
         $t11->setTitle('t11');
         $manager->insertAsLastChildOf($t11, $fixtures[2]); // last child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
@@ -812,18 +819,18 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     public function testInsertAsLastChildOfExistingObjectWithScope()
     {
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
         $manager = $this->getManagerWithScope();
 
-        $t = new \NestedSetEntity10();
+        $t = new NestedSetEntity10();
         $t->setScopeValue(34);
         $manager->makeRoot($t);
         $repository->save($t);
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $repository->save($t1);
         $manager->insertAsLastChildOf($t1, $t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -843,7 +850,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsPrevSiblingOf()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -854,7 +861,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new \NestedSetEntity9();
+        $t8 = new NestedSetEntity9();
         $t8->setTitle('t8');
         $manager->insertAsPrevSiblingOf($t8, $t3);
         $this->assertEquals(4, $t3->getLeftValue(), 'insertAsPrevSiblingOf() does not modify the tree until the object is saved');
@@ -885,15 +892,15 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsPrevSiblingOfExistingObject()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $t->setTitle('t');
         $manager->makeRoot($t);
         $repository->save($t);
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1');
         $manager->insertAsFirstChildOf($t1, $t);
         $repository->save($t1);
@@ -905,7 +912,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(1, $t1->getLevel());
 
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t2');
         $repository->save($t2);
 
@@ -929,7 +936,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     public function testInsertAsPrevSiblingOfWithScope()
     {
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $manager = $this->getManagerWithScope();
 
         $fixtures = $this->initTreeWithScope();
@@ -947,7 +954,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new \NestedSetEntity10();
+        $t11 = new NestedSetEntity10();
         $t11->setTitle('t11');
         $manager->insertAsPrevSiblingOf($t11, $fixtures[2]); // prev sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
@@ -973,15 +980,15 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     public function testInsertAsPrevSiblingOfExistingObjectWithScope()
     {
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
         $manager = $this->getManagerWithScope();
 
-        $t = new \NestedSetEntity10();
+        $t = new NestedSetEntity10();
         $t->setScopeValue(34);
         $manager->makeRoot($t);
         $repository->save($t);
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $manager->insertAsFirstChildOf($t1, $t);
         $repository->save($t1);
         $this->assertEquals(1, $t->getLeftValue());
@@ -991,7 +998,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new \NestedSetEntity10();
+        $t2 = new NestedSetEntity10();
         $repository->save($t2);
         $manager->insertAsPrevSiblingOf($t2, $t1);
         $this->assertEquals(2, $t2->getLeftValue());
@@ -1015,7 +1022,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsNextSiblingOf()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7) = $this->initTree();
         /* Tree used for tests
          t1
@@ -1026,7 +1033,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
                |  \
                t6 t7
         */
-        $t8 = new \NestedSetEntity9();
+        $t8 = new NestedSetEntity9();
         $t8->setTitle('t8');
         $manager->insertAsNextSiblingOf($t8, $t3);
         $this->assertEquals(14, $t1->getRightValue(), 'insertAsNextSiblingOf() does not modify the tree until the object is saved');
@@ -1057,14 +1064,14 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsNextSiblingOfExistingObject()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $manager->makeRoot($t);
         $repository->save($t);
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $manager->insertAsFirstChildOf($t1, $t);
         $repository->save($t1);
         
@@ -1075,7 +1082,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(1, $t1->getLevel());
 
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $repository->save($t2);
         
         $manager->insertAsNextSiblingOf($t2, $t1);
@@ -1098,7 +1105,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsNextSiblingOfWithScope()
     {
         $manager = $this->getManagerWithScope();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $fixtures = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -1114,7 +1121,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new \NestedSetEntity10();
+        $t11 = new NestedSetEntity10();
         $t11->setTitle('t11');
         $manager->insertAsNextSiblingOf($t11, $fixtures[2]); // next sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');
@@ -1141,14 +1148,14 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testInsertAsNextSiblingOfExistingObjectWithScope()
     {
         $manager = $this->getManagerWithScope();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
 
-        $t = new \NestedSetEntity10();
+        $t = new NestedSetEntity10();
         $t->setScopeValue(34);
         $manager->makeRoot($t);
         $repository->save($t);
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $manager->insertAsFirstChildOf($t1, $t);
         $repository->save($t1);
         $this->assertEquals(1, $t->getLeftValue());
@@ -1158,7 +1165,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new \NestedSetEntity10();
+        $t2 = new NestedSetEntity10();
         $repository->save($t2);
         $manager->insertAsNextSiblingOf($t2, $t1);
         $this->assertEquals(4, $t2->getLeftValue());
@@ -1182,9 +1189,9 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testIsInTree()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $this->assertFalse($manager->isInTree($t1), 'isInTree() returns false for nodes with no left and right value');
         $repository->save($t1);
         
@@ -1365,7 +1372,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testMoveToFirstChildOfWithScope()
     {
         $manager = $this->getManagerWithScope();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
@@ -1854,12 +1861,12 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testMakeRoot()
     {
         $manager = $this->getManager();
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $manager->makeRoot($t);
         $this->assertEquals($t->getLeftValue(), 1, 'makeRoot() initializes left_field to 1');
         $this->assertEquals($t->getRightValue(), 2, 'makeRoot() initializes right_field to 2');
         $this->assertEquals($t->getLevel(), 0, 'makeRoot() initializes right_field to 0');
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $t->setLeftValue(12);
         try {
             $manager->makeRoot($t);
@@ -1875,14 +1882,14 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testSaveRootInTreeWithExistingRoot()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $manager->makeRoot($t1);
         $repository->save($t1);
         
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $manager->makeRoot($t2);
         $repository->save($t2);
         
@@ -1966,17 +1973,17 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     {
         $manager = $this->getManager();
         $this->assertFalse($manager->isValid(null), 'isValid() returns false when passed null ');
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $this->assertFalse($manager->isValid($t1), 'isValid() returns false when passed an empty node object');
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setLeftValue(5);
         $t2->setRightValue(2);
         $this->assertFalse($manager->isValid($t2), 'isValid() returns false when passed a node object with left > right');
-        $t3 = new \NestedSetEntity9();
+        $t3 = new NestedSetEntity9();
         $t3->setLeftValue(5);
         $t3->setRightValue(5);
         $this->assertFalse($manager->isValid($t3), 'isValid() returns false when passed a node object with left = right');
-        $t4 = new \NestedSetEntity9();
+        $t4 = new NestedSetEntity9();
         $t4->setLeftValue(2);
         $t4->setRightValue(5);
         $this->assertTrue($manager->isValid($t4), 'isValid() returns true when passed a node object with left < right');
@@ -1985,10 +1992,10 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testSaveOutOfTree()
     {
         $manager = $this->getManager();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity9::class);
         $repository->deleteAll();
 
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('t1');
         try {
             $repository->save($t1);
@@ -2005,7 +2012,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         }
         $repository->save($t1);
         
-        $t2 = new \NestedSetEntity9();
+        $t2 = new NestedSetEntity9();
         $t2->setTitle('t1');
         $repository->save($t2);
         
@@ -2031,8 +2038,8 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testAddNestedSetChildrenOnNewEntityThrowsException()
     {
         $manager = $this->getManager();
-        $t0 = new \NestedSetEntity9();
-        $t1 = new \NestedSetEntity9();
+        $t0 = new NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $manager->addChild($t0, $t1);
     }
 
@@ -2044,14 +2051,14 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
         $manager = $this->getManagerWithScope();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
 
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $t1->setScopeValue(1);
         $manager->makeRoot($t1);
         $repository->save($t1);
-        $t2 = new \NestedSetEntity10();
+        $t2 = new NestedSetEntity10();
         $t2->setScopeValue(1);
         $manager->makeRoot($t2);
         $repository->save($t2);
@@ -2060,14 +2067,14 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
     public function testSaveRootInTreeWithExistingRootWithDifferentScope()
     {
         $manager = $this->getManagerWithScope();
-        $repository = $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        $repository = $this->getConfiguration()->getRepository(NestedSetEntity10::class);
         $repository->deleteAll();
 
-        $t1 = new \NestedSetEntity10();
+        $t1 = new NestedSetEntity10();
         $t1->setScopeValue(1);
         $manager->makeRoot($t1);
         $repository->save($t1);
-        $t2 = new \NestedSetEntity10();
+        $t2 = new NestedSetEntity10();
         $t2->setScopeValue(2);
         $manager->makeRoot($t2);
         $repository->save($t2);
@@ -2112,16 +2119,16 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
 
     protected function getManager()
     {
-        return $this->getConfiguration()->getRepository('\NestedSetEntity9')->getNestedManager();
+        return $this->getConfiguration()->getRepository(NestedSetEntity9::class)->getNestedManager();
     }
 
     protected function getManagerWithScope()
     {
-        return $this->getConfiguration()->getRepository('\NestedSetEntity10')->getNestedManager();
+        return $this->getConfiguration()->getRepository(NestedSetEntity10::class)->getNestedManager();
     }
 
     protected function getByTitle($title)
     {
-        return \NestedSetEntity10Query::create()->filterByTitle($title)->findOne();
+        return NestedSetEntity10Query::create()->filterByTitle($title)->findOne();
     }
 }

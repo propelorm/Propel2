@@ -70,7 +70,16 @@ class QuickBuilder
     /**
      * @var array
      */
-    protected $classTargets = array('activerecordtrait', 'object', 'entitymap', 'proxy','query', 'repository', 'repositorystub', 'querystub');
+    protected $classTargets = array(
+        'activerecordtrait',
+        'object',
+        'entitymap',
+        'proxy',
+        'query',
+        'repository',
+        'repositorystub',
+        'querystub'
+    );
 
     /**
      * Identifier quoting for reversed database.
@@ -191,6 +200,9 @@ class QuickBuilder
         return $this->config;
     }
 
+    /**
+     * @return Configuration
+     */
     public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
     {
         $builder = new self;
@@ -200,17 +212,22 @@ class QuickBuilder
     }
 
     /**
-     * @param string           $dsn
-     * @param string           $user
-     * @param string           $pass
+     * @param string $dsn
+     * @param string $user
+     * @param string $pass
      * @param AdapterInterface $adapter
-     * @param array            $classTargets
+     * @param array $classTargets
      *
      * @return Configuration
      * @throws \Exception
      */
-    public function build($dsn = null, $user = null, $pass = null, AdapterInterface $adapter = null, array $classTargets = null)
-    {
+    public function build(
+        $dsn = null,
+        $user = null,
+        $pass = null,
+        AdapterInterface $adapter = null,
+        array $classTargets = null
+    ) {
         if (null === $dsn) {
             $dsn = 'sqlite::memory:';
         }
@@ -233,6 +250,15 @@ class QuickBuilder
         } else {
             Configuration::$globalConfiguration = static::$configuration = new Configuration();
         }
+
+//        if (static::$configuration->hasConnectionManager($this->getDatabase()->getName())) {
+//            overwriting a connection with a wrong incompatible adapter could go horrible wrong, so we forbid it.
+//            throw new \InvalidArgumentException('Could not build due to already existing connection-manager ' . $this->getDatabase()->getName());
+//        }
+//
+//        if (static::$configuration->hasAdapter($this->getDatabase()->getName())) {
+//            throw new \InvalidArgumentException('Could not build due to already existing an adapter ' . $this->getDatabase()->getName());
+//        }
 
         static::$configuration->setConnectionManager($this->getDatabase()->getName(), $connectionManager);
         static::$configuration->setAdapter($this->getDatabase()->getName(), $adapter);
@@ -301,12 +327,15 @@ class QuickBuilder
                 $stmt->execute();
             } catch (\Exception $e) {
                 //echo $sql; //uncomment for better debugging
-                throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
-                    $statement,
-                    $this->database,
-                    $database,
-                    $diff
-                ), null, $e);
+                throw new BuildException(
+                    sprintf(
+                        "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                        $statement,
+                        $this->database,
+                        $database,
+                        $diff
+                    ), null, $e
+                );
             }
         }
 
@@ -337,7 +366,9 @@ class QuickBuilder
     {
         $entitys = [];
         foreach ($this->getDatabase()->getEntities() as $entity) {
-            if (count($entitys) > 3) break;
+            if (count($entitys) > 3) {
+                break;
+            }
             $entitys[] = $entity->getName();
         }
         $name = implode('_', $entitys);
@@ -376,13 +407,14 @@ class QuickBuilder
             if ($separate) {
                 foreach ($classes as $class) {
                     $code = $this->getClassesForEntity($entity, [$class]);
-                        $tempFile = $dir
-                            . str_replace('\\', '-', $entity->getName())
-                            . "-$class"
-                            . '.php';
-                        file_put_contents($tempFile, "<?php\n" . $code);
-                        $includes[] = $tempFile;
+                    $tempFile = $dir
+                        . str_replace('\\', '-', $entity->getName())
+                        . "-$class"
+                        . '.php';
+                    file_put_contents($tempFile, "<?php\n" . $code);
+                    $includes[] = $tempFile;
                 }
+
                 if ($entity->hasAdditionalBuilders()) {
                     $code = $this->getClassesFromAdditionalBuilders($entity);
                     $tempFile = $dir
@@ -404,7 +436,7 @@ class QuickBuilder
                 include($tempFile);
             }
         } else {
-            $tempFile = $dir . join('_', $allCodeName).'.php';
+            $tempFile = $dir . join('_', $allCodeName) . '.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
             include($tempFile);
         }
@@ -514,7 +546,10 @@ class QuickBuilder
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING))) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array(
+                        $t[0],
+                        array(T_WHITESPACE, T_NS_SEPARATOR, T_STRING)
+                    )) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && '{' === $t) {
@@ -540,6 +575,7 @@ class QuickBuilder
      * Prevent generated class without namespace to fail.
      *
      * @param  string $code
+     *
      * @return string
      */
     protected function forceNamespace($code)

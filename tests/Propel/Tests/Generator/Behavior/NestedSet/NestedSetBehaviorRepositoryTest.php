@@ -10,6 +10,14 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Propel\Runtime\Exception\PropelException;
+use Propel\Tests\Bookstore\Behavior\Base\BaseNestedSetEntity10Repository;
+use Propel\Tests\Bookstore\Behavior\Base\BaseNestedSetEntity9Repository;
+use Propel\Tests\Bookstore\Behavior\Map\NestedSetEntity9EntityMap;
+use Propel\Tests\Bookstore\Behavior\MapNestedSetEntity9EntityMap;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity9;
+use Propel\Tests\Bookstore\BehaviorBaseNestedSetEntity9Repository;
+use Propel\Tests\Bookstore\Behavior\NestedSetEntity10;
+use Propel\Tests\Bookstore\BehaviorNestedSetEntity9;
 
 /**
  * Class NestedSetBehaviorRepositoryTest
@@ -66,14 +74,14 @@ class NestedSetBehaviorRepositoryTest extends TestCase
             ->setMethods(['getEventDispatcher'])
             ->getMock();
         $configMock->method('getEventDispatcher')->willReturn($evtDispatcherMock);
-        $entityMapMock = $this->getMockBuilder('\map\NestedSetEntity9EntityMap')->disableOriginalConstructor()->getMock();
+        $entityMapMock = $this->getMockBuilder(NestedSetEntity9EntityMap::class)->disableOriginalConstructor()->getMock();
 
-        $repository = new \Base\BaseNestedSetEntity9Repository($entityMapMock, $configMock);
+        $repository = new BaseNestedSetEntity9Repository($entityMapMock, $configMock);
 
         $query = ['callable' => 'myCallable', 'arguments' => ['attr1' => 'foo', 'attr2' => true]];
         $repository->addNestedSetQuery($query);
 
-        $refProperty = new \ReflectionProperty('\Base\BaseNestedSetEntity9Repository', 'nestedSetQueries');
+        $refProperty = new \ReflectionProperty(BaseNestedSetEntity9Repository::class, 'nestedSetQueries');
         $refProperty->setAccessible(true);
         $queries = $refProperty->getValue($repository);
 
@@ -84,9 +92,9 @@ class NestedSetBehaviorRepositoryTest extends TestCase
     {
         $repository = $this->getRepository();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $t->setTitle('Iron Man');
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('X-men');
         $repository->save($t);
         $repository->save($t1);
@@ -94,7 +102,7 @@ class NestedSetBehaviorRepositoryTest extends TestCase
         $expected[$t->getId()] = $t;
         $expected[$t1->getId()] = $t1;
 
-        $property = new \ReflectionProperty('\Base\BaseNestedSetEntity9Repository', 'nestedSetEntityPool');
+        $property = new \ReflectionProperty(BaseNestedSetEntity9Repository::class, 'nestedSetEntityPool');
         $property->setAccessible(true);
         $entityPool = $property->getValue($repository);
         $this->assertEquals($expected, $entityPool, 'Entity is correctly added to pool');
@@ -106,9 +114,9 @@ class NestedSetBehaviorRepositoryTest extends TestCase
     {
         $repository = $this->getRepository();
 
-        $t = new \NestedSetEntity9();
+        $t = new NestedSetEntity9();
         $t->setTitle('Iron Man');
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $t1->setTitle('X-men');
         $repository->save($t);
         $repository->save($t1);
@@ -116,7 +124,7 @@ class NestedSetBehaviorRepositoryTest extends TestCase
 
         $expected[$t1->getId()] = $t1;
 
-        $property = new \ReflectionProperty('\Base\BaseNestedSetEntity9Repository', 'nestedSetEntityPool');
+        $property = new \ReflectionProperty(BaseNestedSetEntity9Repository::class, 'nestedSetEntityPool');
         $property->setAccessible(true);
         $entityPool = $property->getValue($repository);
         $this->assertEquals($expected, $entityPool, 'Entity correctly removed from entity pool');
@@ -589,7 +597,7 @@ class NestedSetBehaviorRepositoryTest extends TestCase
     public function DeleteNotInTree()
     {
         $repository = $this->getRepository();
-        $t1 = new \NestedSetEntity9();
+        $t1 = new NestedSetEntity9();
         $repository->save($t1);
         $repository->remove($t1);
         $this->assertTrue($this->getConfiguration()->getSession()->isRemoved(spl_object_hash($t1)));
@@ -599,10 +607,10 @@ class NestedSetBehaviorRepositoryTest extends TestCase
     {
         if ($scope) {
             $repository = $this->getRepositoryWithScope();
-            $repositoryClassName = '\Base\BaseNestedSetEntity10Repository';
+            $repositoryClassName = BaseNestedSetEntity10Repository::class;
         } else {
             $repository = $this->getRepository();
-            $repositoryClassName = '\Base\BaseNestedSetEntity9Repository';
+            $repositoryClassName = BaseNestedSetEntity9Repository::class;
         }
         $method = new \ReflectionMethod($repositoryClassName, 'clearEntityPool');
         $method->setAccessible(true);
@@ -611,11 +619,11 @@ class NestedSetBehaviorRepositoryTest extends TestCase
 
     protected function getRepository()
     {
-        return $this->getConfiguration()->getRepository('\NestedSetEntity9');
+        return $this->getConfiguration()->getRepository(NestedSetEntity9::class);
     }
 
     protected function getRepositoryWithScope()
     {
-        return $this->getConfiguration()->getRepository('\NestedSetEntity10');
+        return $this->getConfiguration()->getRepository(NestedSetEntity10::class);
     }
 }

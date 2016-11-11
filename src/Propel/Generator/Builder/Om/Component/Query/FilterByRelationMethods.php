@@ -94,13 +94,13 @@ if ($objectName instanceof $fkPhpName) {
         $methodName = "filterBy$relationName";
         $variableParameter = new PhpParameter($foreignEntity->getCamelCaseName());
 
-        if ($relation->isComposite()) {
+//        if ($relation->isComposite()) {
             $variableParameter->setType($fkPhpName);
             $variableParameter->setTypeDescription("The related object to use as filter");
-        } else {
-            $variableParameter->setType("$fkPhpName|ObjectCollection");
-            $variableParameter->setTypeDescription("The related object(s) to use as filter");
-        }
+//        } else {
+//            $variableParameter->setType("$fkPhpName|ObjectCollection");
+//            $variableParameter->setTypeDescription("The related object(s) to use as filter");
+//        }
 
         $this->addMethod($methodName)
             ->addParameter($variableParameter)

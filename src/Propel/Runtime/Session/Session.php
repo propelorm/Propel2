@@ -2,6 +2,7 @@
 
 namespace Propel\Runtime\Session;
 
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Events;
 use Propel\Runtime\Exception\SessionClosedException;
@@ -354,10 +355,19 @@ class Session
     }
 
     /**
-     * Returns last known values by the database. Those values are currently known by the database and
-     * should be used to query the database. Important for event hooks, since objects in preSave for example
-     * can contain changed primary keys which are not yet stored in the database and thus all queries
-     * using this primary key return invalid results.
+     * Returns last known values by the database as snapshot values.
+     *
+     * @see FieldTypeInterface::propertyToSnapshot()
+     *
+     * Use FieldTypeInterface::snapshotToProperty() to make sure you have the real php value.
+     *
+     * Those values are currently known by the database and should be used to query the
+     * database when you need to work with primary keys. You may want to use getOriginPK().
+     *
+     * That is important for event hooks: since objects in preSave event for example
+     * can contain changed primary keys. If you'd use such a primary key directly, you could not use this value
+     * in queries, since those primary keys might not be known by the database yet. getLastKnownValues returns always
+     * the single truth about the current state of the database.
      *
      * @param object|string $id
      * @param bool          $orCurrent
@@ -377,7 +387,7 @@ class Session
 
         if (!isset($this->lastKnownValues[$id])) {
             throw new \InvalidArgumentException(
-                'Given id does not exists in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().'
+                'Given id does not exist in known values pool. Create a snapshot(), use $orCurrent=true or use hasKnownValues().'
             );
         }
 
@@ -399,6 +409,12 @@ class Session
     }
 
     /**
+     * Contains all values of an object as snapshots.
+     *
+     * This is being used to build a change set.
+     *
+     * @see FieldTypeInterface::propertyToSnapshot()
+     *
      * @param object|string $id
      * @param array         $values
      */

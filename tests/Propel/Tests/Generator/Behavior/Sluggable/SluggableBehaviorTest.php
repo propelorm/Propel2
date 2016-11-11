@@ -27,7 +27,7 @@ class SluggableBehaviorTest extends TestCase
      * @var \Propel\Runtime\Configuration
      */
     protected $configuration;
-    
+
     protected function setUp()
     {
         if (!class_exists('\Entity13')) {
@@ -67,13 +67,13 @@ XML;
             $this->configuration = QuickBuilder::buildSchema($schema);
         }
     }
-    
+
     public function getConfiguration()
     {
         if (null === $this->configuration) {
             $this->configuration = Configuration::getCurrentConfiguration();
         }
-        
+
         return $this->configuration;
     }
 
@@ -93,7 +93,7 @@ XML;
 XML;
         QuickBuilder::buildSchema($schema);
     }
-    
+
     public function testParameters()
     {
         $entity13 = $this->getConfiguration()->getEntityMap('\Entity13');

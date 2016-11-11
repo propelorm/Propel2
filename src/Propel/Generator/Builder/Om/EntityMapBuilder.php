@@ -63,6 +63,7 @@ class EntityMapBuilder extends AbstractBuilder
         $this->applyComponent('EntityMap\\GetPropReaderMethod');
         $this->applyComponent('EntityMap\\GetPropWriterMethod');
         $this->applyComponent('EntityMap\\GetPropIssetMethod');
+        $this->applyComponent('EntityMap\\GetPropUnsetterMethod');
         $this->applyComponent('EntityMap\\GetBehaviorsMethod');
         $this->applyComponent('EntityMap\\PopulateObjectMethod');
         $this->applyComponent('EntityMap\\GetSnapshotMethod');

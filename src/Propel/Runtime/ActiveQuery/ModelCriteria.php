@@ -12,6 +12,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Event\DeleteEvent;
 use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Events;
@@ -1433,7 +1434,7 @@ class ModelCriteria extends BaseModelCriteria
 
             $affectedRows += $stmt->rowCount();
         } catch (\Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            $this->getConfiguration()->log($e->getMessage(), Configuration::LOG_ERR);
             throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
         }
 
@@ -1740,10 +1741,14 @@ class ModelCriteria extends BaseModelCriteria
             $entityMap = $this->joins[$shortClass]->getEntityMap();
         } elseif ($this->hasSelectQuery($prefix)) {
             return $this->getFieldFromSubQuery($prefix, $phpName, $failSilently);
-        } elseif ($failSilently) {
-            return array(null, null);
         } else {
-            throw new UnknownModelException(sprintf('Unknown model, alias or entity "%s"', $prefix));
+            $entityMap = $this->getConfiguration()->getEntityMap($prefix, true);
+            if (!$entityMap) {
+                if ($failSilently) {
+                    return [null, null];
+                }
+                throw new UnknownModelException(sprintf('Unknown model, alias or entity "%s"', $prefix));
+            }
         }
 
 //        if ($entityMap->hasFieldByPhpName($phpName)) {

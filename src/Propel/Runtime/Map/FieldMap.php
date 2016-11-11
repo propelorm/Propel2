@@ -209,7 +209,7 @@ class FieldMap
      */
     public function getFullyQualifierColumnName()
     {
-        return $this->getEntity()->getTableName() . '.' . $this->getColumnName();
+        return $this->getEntity()->getFQTableName() . '.' . $this->getColumnName();
     }
 
     /**

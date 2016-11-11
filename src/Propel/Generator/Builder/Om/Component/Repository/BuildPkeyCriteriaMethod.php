@@ -22,7 +22,6 @@ class BuildPkeyCriteriaMethod extends BuildComponent
     {
         $body = '$reader = $this->getEntityMap()->getPropReader();' . PHP_EOL;
 
-
         if (!$this->getEntity()->getPrimaryKey()) {
             $body .= "
 throw new LogicException('The {$this->getObjectClassName()} entity has no primary key');";

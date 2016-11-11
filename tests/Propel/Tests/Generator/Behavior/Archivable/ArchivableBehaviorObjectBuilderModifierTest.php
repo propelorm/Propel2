@@ -267,9 +267,6 @@ EOF;
         $this->assertEquals(0, \ArchivableTest10ArchiveQuery::create()->count());
     }
 
-    /**
-     * @group test
-     */
     public function testUpdateCreatesArchiveIfSpecified()
     {
         \MyOldArchivableTest30Query::create()->deleteAll();

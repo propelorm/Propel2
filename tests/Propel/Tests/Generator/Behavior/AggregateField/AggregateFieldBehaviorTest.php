@@ -183,9 +183,6 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $this->assertEquals(1, $poll->getVotesCount());
     }
 
-    /**
-     * @group test
-     */
     public function testRemoveRelation()
     {
         AggregateCommentQuery::create()->deleteAll();

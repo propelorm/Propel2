@@ -22,14 +22,6 @@ EOF;
         $method->setBody($body);
     }
 
-//    /**
-//     * Return the php data type of this field.
-//     *
-//     * @param Field $field
-//     * @return mixed
-//     */
-//    abstract public function getPHPType(Field $field);
-
     /**
      * {@inheritdoc}
      *

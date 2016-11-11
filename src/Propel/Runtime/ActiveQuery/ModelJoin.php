@@ -35,8 +35,8 @@ class ModelJoin extends Join
 
         for ($i = 0; $i < $nbFields; $i++) {
             $this->addExplicitCondition(
-                $relationMap->getLeftEntity()->getTableName(), $leftCols[$i]->getColumnName(), $leftEntityAlias,
-                $relationMap->getRightEntity()->getTableName(), $rightCols[$i]->getColumnName(), $relationAlias,
+                $relationMap->getLeftEntity()->getFullClassName(), $leftCols[$i]->getName(), $leftEntityAlias,
+                $relationMap->getRightEntity()->getFullClassName(), $rightCols[$i]->getName(), $relationAlias,
                 Criteria::EQUAL);
         }
         $this->relationMap = $relationMap;
@@ -144,46 +144,35 @@ class ModelJoin extends Join
         return $previousObject->$method();
     }
 
-//    public function getClause(&$params)
-//    {
-//        if (null === $this->joinCondition) {
-//            $conditions = array();
-//            for ($i = 0; $i < $this->count; $i++) {
-//                $conditions [] = $this->getLeftField($i) . $this->getOperator($i) . $this->getRightField($i);
-//            }
-//            $joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
-//        } else {
-//            $joinCondition = '';
-//            $this->joinCondition->appendPsTo($joinCondition, $params);
-//        }
-//
-//        $rightEntityName = $this->getRightTableName();
-//
-//        if ($this->hasRightEntityAlias()) {
-//            $rightEntityName .= ' ' . $this->getRightEntityAlias();
-//        }
-////        $rightEntityName = $this->getRightEntityWithAlias();
-//
-//        if ($this->isIdentifierQuotingEnabled()) {
-//            $rightEntityName = $this->getAdapter()->quoteIdentifierEntity($rightEntityName);
-//        }
-//
-//        return sprintf(
-//            '%s %s ON %s',
-//            $this->getJoinType(),
-//            $rightEntityName,
-//            $joinCondition
-//        );
-//    }
-
-    /**
-     * Overwrite so it returns the real table name.
-     *
-     * @return string
-     */
-    public function getRightTableName()
+    public function getClause(&$params)
     {
-        return $this->getEntityMap()->getTableName();
+        if (null === $this->joinCondition) {
+            $conditions = array();
+            for ($i = 0; $i < $this->count; $i++) {
+                $conditions [] = $this->getLeftField($i) . $this->getOperator($i) . $this->getRightField($i);
+            }
+            $joinCondition = sprintf('(%s)', implode($conditions, ' AND '));
+        } else {
+            $joinCondition = '';
+            $this->joinCondition->appendPsTo($joinCondition, $params);
+        }
+
+        $rightEntityName = $this->getEntityMap()->getFQTableName();
+
+        if ($this->hasRightTableAlias()) {
+            $rightEntityName .= ' ' . $this->getRightTableAlias();
+        }
+
+        if ($this->isIdentifierQuotingEnabled()) {
+            $rightEntityName = $this->getAdapter()->quoteTableIdentifier($rightEntityName);
+        }
+
+        return sprintf(
+            '%s %s ON %s',
+            $this->getJoinType(),
+            $rightEntityName,
+            $joinCondition
+        );
     }
 
     public function equals($join)
