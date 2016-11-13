@@ -68,9 +68,9 @@ trait CrossRelationTrait
      *
      * @return string
      */
-    protected function getCrossRelationVarName(CrossRelation $crossRelation)
+    protected function getCrossRelationVarName(CrossRelation $crossRelation, $plural = false)
     {
-        return lcfirst($this->getCrossRelationPhpName($crossRelation));
+        return lcfirst($this->getCrossRelationPhpName($crossRelation, $plural));
     }
 
     /**

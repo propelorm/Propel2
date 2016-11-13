@@ -66,6 +66,13 @@ class Entity extends ScopedMappingModel implements IdMethod
     private $allowPkInsert;
 
     /**
+     * Whether this entity is an implementation detail. Implementation details are entities that are only
+     * relevant in the current persister api, like implicit pivot tables in n-n relations, or foreign key columns.
+     * @var bool
+     */
+    private $implementationDetail = false;
+
+    /**
      * @var Database
      */
     private $database;
@@ -339,6 +346,22 @@ class Entity extends ScopedMappingModel implements IdMethod
                 );
             }
         }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isImplementationDetail()
+    {
+        return $this->implementationDetail;
+    }
+
+    /**
+     * @param boolean $implementationDetail
+     */
+    public function setImplementationDetail($implementationDetail)
+    {
+        $this->implementationDetail = $implementationDetail;
     }
 
     /**

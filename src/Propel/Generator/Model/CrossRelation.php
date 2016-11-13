@@ -43,7 +43,6 @@ namespace Propel\Generator\Model;
  */
 class CrossRelation
 {
-
     /**
      * The middle-entity.
      *
@@ -99,6 +98,20 @@ class CrossRelation
     public function getIncomingRelation()
     {
         return $this->incomingRelation;
+    }
+
+    /**
+     * In a cross relation setup, the foreign entity is always the first relation (of getRelations())
+     *
+     * @return Entity
+     */
+    public function getForeignEntity()
+    {
+        $relations = $this->getRelations();
+
+        /** @var Relation $relation */
+        $relation = reset($relations);
+        return $relation->getForeignEntity();
     }
 
     /**

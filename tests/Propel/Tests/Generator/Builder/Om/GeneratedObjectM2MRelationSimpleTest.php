@@ -80,8 +80,6 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $hans->addFriend($friend2);
         $this->assertCount(2, $hans->getFriends(), 'two friends');
 
-        //@todo, this fails because of doAdd* sets up a bi-directional relation and sets wrong
-        //relation both to $hans, which causes "Integrity constraint violation: 1062 Duplicate entry"
         $hans->save();
         $this->assertEquals(3, \Relation1UserQuery::create()->count(), 'We have three users.');
         $this->assertEquals(2, \Relation1UserFriendQuery::create()->count(), 'We have two connections.');
@@ -107,8 +105,10 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $friend2 = (new \Relation1User())->setName('Friend 2');
         $hans->addFriend($friend1);
         $hans->addFriend($friend2);
+
         $this->assertEquals($hans, $friend1->getWhos()->getFirst(), 'Hans is friend1\'s friend.');
         $this->assertEquals($hans, $friend2->getWhos()->getFirst(), 'Hans is friend2\'s friend.');
+
         $hans->save();
         $this->assertCount(1, $friend1->getWhos(), 'Friend 1 is from one guy (hans) a friend');
         $this->assertEquals(3, \Relation1UserQuery::create()->count(), 'We have three users.');

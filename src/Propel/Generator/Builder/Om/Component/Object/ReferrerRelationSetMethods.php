@@ -22,6 +22,7 @@ class ReferrerRelationSetMethods extends BuildComponent
         $entity = $this->getEntity();
 
         foreach ($entity->getReferrers() as $refRelation) {
+           
             if ($refRelation->isLocalPrimaryKey()) {
                 //one-to-one
                 $this->addRefGetMethod($refRelation);

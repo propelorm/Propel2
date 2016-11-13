@@ -49,6 +49,28 @@ class RelationMap
     protected $foreignEntity;
 
     /**
+     * @var EntityMap
+     */
+    protected $middleEntity;
+
+    /**
+     * @var string
+     */
+    protected $middleEntityTableName;
+
+    /**
+     * @var bool
+     */
+    protected $implementationDetail = false;
+
+    protected $fieldMappingIncomingName;
+    protected $fieldMappingIncoming;
+
+    protected $fieldMappingOutgoing;
+
+    protected $fieldMappingPrimaryKeys;
+
+    /**
      * @var FieldMap[]
      */
     protected $localFields = array();
@@ -85,6 +107,118 @@ class RelationMap
     public function setPluralName($pluralName)
     {
         $this->pluralName = $pluralName;
+    }
+
+    /**
+     * @return EntityMap
+     */
+    public function getMiddleEntity()
+    {
+        return $this->middleEntity;
+    }
+
+    /**
+     * @param EntityMap $middleEntity
+     */
+    public function setMiddleEntity(EntityMap $middleEntity)
+    {
+        $this->middleEntity = $middleEntity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMiddleEntityTableName()
+    {
+        return $this->middleEntityTableName;
+    }
+
+    /**
+     * @param mixed $middleEntityTableName
+     */
+    public function setMiddleEntityTableName($middleEntityTableName)
+    {
+        $this->middleEntityTableName = $middleEntityTableName;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isImplementationDetail()
+    {
+        return $this->implementationDetail;
+    }
+
+    /**
+     * @param boolean $implementationDetail
+     */
+    public function setImplementationDetail($implementationDetail)
+    {
+        $this->implementationDetail = $implementationDetail;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFieldMappingIncoming()
+    {
+        return $this->fieldMappingIncoming;
+    }
+
+    /**
+     * @param mixed $fieldMappingIncoming
+     */
+    public function setFieldMappingIncoming($fieldMappingIncoming)
+    {
+        $this->fieldMappingIncoming = $fieldMappingIncoming;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFieldMappingOutgoing()
+    {
+        return $this->fieldMappingOutgoing;
+    }
+
+    /**
+     * @param mixed $fieldMappingOutgoing
+     */
+    public function setFieldMappingOutgoing($fieldMappingOutgoing)
+    {
+        $this->fieldMappingOutgoing = $fieldMappingOutgoing;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFieldMappingPrimaryKeys()
+    {
+        return $this->fieldMappingPrimaryKeys;
+    }
+
+    /**
+     * @param mixed $fieldMappingPrimaryKeys
+     */
+    public function setFieldMappingPrimaryKeys($fieldMappingPrimaryKeys)
+    {
+        $this->fieldMappingPrimaryKeys = $fieldMappingPrimaryKeys;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFieldMappingIncomingName()
+    {
+        return $this->fieldMappingIncomingName;
+    }
+
+    /**
+     * @param mixed $fieldMappingIncomingName
+     */
+    public function setFieldMappingIncomingName($fieldMappingIncomingName)
+    {
+        $this->fieldMappingIncomingName = $fieldMappingIncomingName;
     }
 
     /**
@@ -223,6 +357,14 @@ class RelationMap
         }
 
         return $h;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isManyToMany()
+    {
+        return RelationMap::MANY_TO_MANY === $this->getType();
     }
 
     /**

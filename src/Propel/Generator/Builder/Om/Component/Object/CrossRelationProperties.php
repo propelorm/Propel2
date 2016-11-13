@@ -58,6 +58,7 @@ class CrossRelationProperties extends BuildComponent
             ->setType("ObjectCollection|{$className}[]")
             ->setTypeDescription("Cross Collection to store aggregation of $className objects.");
 
+        $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
         $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
 
         if ($crossRelation->getEntity()->isActiveRecord()) {

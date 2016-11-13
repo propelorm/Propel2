@@ -49,6 +49,7 @@ class ReferrerRelationProperties extends BuildComponent
                 ->setType("$collection|{$className}[]")
                 ->setTypeDescription("Collection of $className. (referrer relation)");
 
+            $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
             $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
 
             if ($refRelation->getEntity()->isActiveRecord()) {

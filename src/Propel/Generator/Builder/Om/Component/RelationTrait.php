@@ -40,6 +40,14 @@ trait RelationTrait
             return ucfirst($relation->getField());
         }
 
+        if ($relation->hasName()) {
+            if ($plural) {
+                return ucfirst($this->getBuilder()->getPluralizer()->getPluralForm($relation->getName()));
+            }
+
+            return ucfirst($relation->getName());
+        }
+
         $className = $relation->getForeignEntity()->getName();
         if ($plural) {
             $className = $this->getBuilder()->getPluralizer()->getPluralForm($className);

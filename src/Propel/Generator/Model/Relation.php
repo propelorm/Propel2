@@ -311,6 +311,14 @@ class Relation extends MappingModel
     }
 
     /**
+     * @return bool
+     */
+    public function hasName()
+    {
+        return !!$this->name && !$this->autoNaming;
+    }
+
+    /**
      * Sets the foreign key name.
      *
      * @param string $name

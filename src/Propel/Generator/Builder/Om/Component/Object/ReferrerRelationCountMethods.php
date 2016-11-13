@@ -25,7 +25,6 @@ class ReferrerRelationCountMethods extends BuildComponent
                 //one-to-one
                 continue;
             }
-
             $this->addRefCountMethod($refRelation);
         }
     }

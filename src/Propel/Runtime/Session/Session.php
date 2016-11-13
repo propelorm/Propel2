@@ -279,7 +279,7 @@ class Session
         }
 
         if ($this->closed) {
-            throw new SessionClosedException('Session is closed due to a exception. Repair its failure and call reset() to open it again.');
+            throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset() to open it again.');
         }
 
         $allCommitted = false;

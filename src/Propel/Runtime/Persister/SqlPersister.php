@@ -276,7 +276,45 @@ class SqlPersister implements PersisterInterface
             }
         }
 
+        foreach ($this->entityMap->getRelations() as $relation) {
+            if ($relation->isManyToMany()) {
+                $this->addCrossRelations($inserts, $relation);
+            }
+        }
+
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
+    }
+
+    protected function addCrossRelations($inserts, RelationMap $relation)
+    {
+        $reader = $this->getEntityMap()->getPropReader();
+
+        foreach ($inserts as $entity) {
+
+            $foreignItems = $reader($entity, $relation->getPluralName());
+
+            if (null !== $foreignItems && count($foreignItems)) {
+                if ($relation->isImplementationDetail()) {
+                    //do manual SQL insert
+                } else {
+                    //use Propel entities
+                    $writer = $relation->getMiddleEntity()->getPropWriter();
+
+                    foreach ($foreignItems as $foreignItem) {
+                        $object = $this->getConfiguration()->getRepository($relation->getMiddleEntity()->getFullClassName())->createObject();
+
+                        $writer($object, $relation->getFieldMappingIncomingName(), $entity);
+                        foreach ($relation->getFieldMappingOutgoing() as $relationName => $mapping ) {
+                            $writer($object, $relationName, $foreignItem);
+                        }
+
+                        $this->getSession()->persist($object, true);
+                    }
+                }
+            }
+        }
+
+//        $this->getSession()->commit();
     }
 
     /**

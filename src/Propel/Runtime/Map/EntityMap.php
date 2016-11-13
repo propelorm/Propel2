@@ -768,7 +768,7 @@ abstract class EntityMap
             $name = FieldMap::normalizeName($name);
         }
         if (!$this->hasField($name, false)) {
-            throw new FieldNotFoundException(sprintf('Cannot fetch FieldMap for undefined field: %s.', $name));
+            throw new FieldNotFoundException(sprintf('Cannot fetch field for undefined field: %s in %s.', $name, $this->getFullClassName()));
         }
 
         if (isset($this->fields[$name])) {
@@ -987,9 +987,8 @@ abstract class EntityMap
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
         $relation->setOnDelete($onDelete);
-        if (null !== $pluralName) {
-            $relation->setPluralName($pluralName);
-        }
+        $relation->setPluralName($pluralName);
+
         // set entities
         if (RelationMap::MANY_TO_ONE === $type) {
             $relation->setLocalEntity($this);
@@ -997,14 +996,29 @@ abstract class EntityMap
         } else {
             $relation->setLocalEntity($this->getConfiguration()->getEntityMap($foreignEntityName));
             $relation->setForeignEntity($this);
-            $fieldMapping = array_flip($fieldMapping);
         }
-        // set fields
-        foreach ($fieldMapping as $local => $foreign) {
-            $relation->addFieldMapping(
-                $relation->getLocalEntity()->getField($local),
-                $relation->getForeignEntity()->getField($foreign)
-            );
+
+        if (RelationMap::MANY_TO_MANY === $type) {
+            $relation->setImplementationDetail($fieldMapping['isImplementationDetail']);
+            $relation->setMiddleEntityTableName($fieldMapping['viaTable']);
+
+            $relation->setFieldMappingIncomingName($fieldMapping['fieldMappingIncomingName']);
+            $relation->setFieldMappingIncoming($fieldMapping['fieldMappingIncoming']);
+            $relation->setFieldMappingOutgoing($fieldMapping['fieldMappingOutgoing']);
+
+            $relation->setFieldMappingPrimaryKeys($fieldMapping['fieldMappingPrimaryKeys']);
+
+            if (!empty($fieldMapping['via'])) {
+                $relation->setMiddleEntity($this->getConfiguration()->getEntityMap($fieldMapping['via']));
+            }
+        } else {
+            // set fields
+            foreach ($fieldMapping as $local => $foreign) {
+                $relation->addFieldMapping(
+                    $relation->getLocalEntity()->getField($local),
+                    $relation->getForeignEntity()->getField($foreign)
+                );
+            }
         }
         $this->relations[$name] = $relation;
 
