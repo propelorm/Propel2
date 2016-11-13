@@ -21,7 +21,6 @@ class CrossRelationRemoverMethods extends BuildComponent
         // many-to-many relationships
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
             $this->addCrossFKAdd($crossRelation);
-            $this->addCrossFKDoAdd($crossRelation);
         }
     }
 
