@@ -14,7 +14,7 @@ use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
 
 /**
- * PDO extension that implements ConnectionInterface and builds statements implementing StatementInterface.
+ * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
  */
 class PdoConnection extends \PDO implements ConnectionInterface
 {
@@ -145,7 +145,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * @param  string                                     $statement
      * @param  array                                      $driver_options
-     * @return bool|\PDOStatement|StatementInterface|void
+     * @return bool|\PDOStatement|void
      */
     public function prepare($statement, $driver_options = null)
     {

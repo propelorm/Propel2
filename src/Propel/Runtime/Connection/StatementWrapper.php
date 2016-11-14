@@ -14,12 +14,12 @@ namespace Propel\Runtime\Connection;
  * Wraps a Statement class, providing logging.
  *
  */
-class StatementWrapper implements StatementInterface, \IteratorAggregate
+class StatementWrapper extends \PDOStatement implements \IteratorAggregate
 {
 
     /**
      * The wrapped statement class
-     * @var StatementInterface
+     * @var \PDOStatement
      */
     protected $statement;
 
@@ -233,7 +233,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      *
      * @return mixed
      */
-    public function fetch($fetchStyle = 4)
+    public function fetch($fetchStyle = \PDO::FETCH_BOTH, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
         return $this->statement->fetch($fetchStyle);
     }
@@ -245,7 +245,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
      *
      * @return array
      */
-    public function fetchAll($fetchStyle = 4)
+    public function fetchAll($fetchStyle = \PDO::FETCH_BOTH, $fetchArgument = null, $ctorArgs = [])
     {
         return $this->statement->fetchAll($fetchStyle);
     }
@@ -301,7 +301,7 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @return StatementInterface
+     * @return \PDOStatement
      */
     public function getStatement()
     {
@@ -309,9 +309,9 @@ class StatementWrapper implements StatementInterface, \IteratorAggregate
     }
 
     /**
-     * @param StatementInterface $statement
+     * @param \PDOStatement $statement
      */
-    public function setStatement(StatementInterface $statement)
+    public function setStatement(\PDOStatement $statement)
     {
         $this->statement = $statement;
     }

@@ -10,11 +10,9 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDOStatement;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -93,15 +91,15 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param PDOStatement $stmt
-     * @param string       $parameter
-     * @param mixed        $value
-     * @param ColumnMap    $cMap
-     * @param null|integer $position
+     * @param \PDOStatement $stmt
+     * @param string        $parameter
+     * @param mixed         $value
+     * @param ColumnMap     $cMap
+     * @param null|integer  $position
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
