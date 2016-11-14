@@ -100,11 +100,17 @@ class PropelDateTime extends \DateTime
         if ($value instanceof \DateTimeInterface) {
             return $value;
         }
+
         if (empty($value)) {
             // '' is seen as NULL for temporal objects
             // because DateTime('') == DateTime('now') -- which is unexpected
             return null;
         }
+
+        if ($value === '0000-00-00' || $value === '0000-00-00 00:00:00') {
+            return null;
+        }
+
         try {
             if (self::isTimestamp($value)) { // if it's a unix timestamp
                 $format = 'U';

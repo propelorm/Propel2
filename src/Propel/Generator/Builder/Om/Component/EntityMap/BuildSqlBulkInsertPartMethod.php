@@ -77,6 +77,7 @@ if (is_resource(\$value)) {
             }
 
             $body .= "
+\$value = \$this->propertyToDatabase(\$value, '{$fieldName}');
 \$params['{$fieldName}'] = \$value;
 \$outgoingParams[] = \$value;
 //end field:$fieldName
@@ -124,6 +125,7 @@ if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
 } else {
     \$value = null;
 }
+//dsfasdfasfd
 if (!isset(\$params['{$localField->getName()}'])) {
     \$params['{$localField->getName()}'] = \$value; //{$localField->getName()}
     \$outgoingParams[] = \$value;

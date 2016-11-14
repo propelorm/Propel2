@@ -18,6 +18,7 @@ use Propel\Tests\TestCase;
  * Tests for More relations
  *
  * @author MArc J. Schmidt
+ * @group database
  */
 class GeneratedObjectMoreRelationTest extends TestCase
 {

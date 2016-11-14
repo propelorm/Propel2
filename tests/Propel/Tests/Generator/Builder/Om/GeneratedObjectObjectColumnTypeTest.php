@@ -10,8 +10,10 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Map\ComplexColumnTypeEntity1EntityMap;
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\TestCase;
@@ -23,18 +25,23 @@ use Propel\Tests\TestCase;
  */
 class GeneratedObjectObjectColumnTypeTest extends TestCase
 {
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+
     public function setup()
     {
         if (!class_exists('ComplexColumnTypeEntity1')) {
             $schema = <<<EOF
-<database name="generated_object_complex_type_test_1">
+<database name="generated_object_complex_type_test_1" activeRecord="true">
     <table name="complex_column_type_entity_1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="OBJECT" />
     </table>
 </database>
 EOF;
-            QuickBuilder::buildSchema($schema);
+            $this->configuration = QuickBuilder::buildSchema($schema);
         }
     }
 
@@ -50,7 +57,7 @@ EOF;
         $this->assertNull($e->getBar(), 'object columns are nullable');
         $e->setBar($c);
         $e->save();
-        \Map\ComplexColumnTypeEntity1TableMap::clearInstancePool();
+        $this->configuration->getSession()->clearFirstLevelCache();
         $e = \ComplexColumnTypeEntity1Query::create()->findOne();
         $this->assertEquals($c, $e->getBar(), 'object columns are persisted');
     }

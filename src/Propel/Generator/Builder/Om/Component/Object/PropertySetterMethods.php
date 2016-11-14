@@ -52,15 +52,6 @@ class PropertySetterMethods extends BuildComponent
             $varType = 'integer|' . $dateTimeClass;
 
             $body = "\$$varName = \\Propel\\Runtime\\Util\\PropelDateTime::newInstance(\$$varName, null, '$dateTimeClass');";
-        } else if ($field->isLobType()) {
-            $body = "
-if (!is_resource(\$$varName) && \$$varName !== null) {
-    //convert string to resource
-    \$stream = fopen('php://memory', 'r+');
-    fwrite(\$stream, \$$varName);
-    rewind(\$stream);
-    \$$varName = \$stream;
-}";
         } else if ($field->isFloatingPointNumber()) {
             $body = "
 \$$varName = (double)\$$varName;

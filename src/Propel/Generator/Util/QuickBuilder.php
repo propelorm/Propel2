@@ -271,6 +271,11 @@ class QuickBuilder
         return static::$configuration;
     }
 
+    public function setAdapter($adapter)
+    {
+        static::$configuration->setAdapter($this->getDatabase()->getName(), $adapter);
+    }
+
     public function getDatabase()
     {
         if (null === $this->database) {
@@ -455,8 +460,12 @@ class QuickBuilder
     /**
      * @param Configuration $configuration
      */
-    public function registerEntities(Configuration $configuration)
+    public function registerEntities(Configuration $configuration = null)
     {
+        if (!$configuration) {
+            $configuration = Configuration::getCurrentConfiguration();
+        }
+
         foreach ($this->knownEntityClassNames as $databaseName => $entityNames) {
             $configuration->registerEntity($databaseName, $entityNames);
         }

@@ -164,6 +164,8 @@ class Session
         if ($this->hasKnownValues($entity)) {
             return !!$this->getConfiguration()->getRepositoryForEntity($entity)->buildChangeSet($entity);
         }
+
+        return false;
     }
 
     /**

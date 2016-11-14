@@ -502,10 +502,12 @@ class Configuration extends GeneratorConfig
             'float' => 'Propel\Common\Types\SQL\DoubleType',
             'datetime' => 'Propel\Common\Types\SQL\DateTimeType',
             'date' => 'Propel\Common\Types\SQL\DateTimeType',
+            'time' => 'Propel\Common\Types\SQL\DateTimeType',
             'timestamp' => 'Propel\Common\Types\SQL\DateTimeType',
             'lob' => 'Propel\Common\Types\SQL\LobType',
             'clob' => 'Propel\Common\Types\SQL\LobType',
             'blob' => 'Propel\Common\Types\SQL\LobType',
+            'object' => 'Propel\Common\Types\SQL\ObjectType',
         ];
 
         if (!isset($typeMap[$type])) {
