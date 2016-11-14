@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDOStatement;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
