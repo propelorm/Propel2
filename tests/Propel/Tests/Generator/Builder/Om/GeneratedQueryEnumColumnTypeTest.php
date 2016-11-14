@@ -12,6 +12,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCase;
@@ -27,7 +28,7 @@ class GeneratedQueryEnumColumnTypeTest extends TestCase
     {
         if (!class_exists('\ComplexColumnTypeEntity13')) {
             $schema = <<<EOF
-<database name="generated_object_complex_type_test_13">
+<database name="generated_object_complex_type_test_13" activeRecord="true">
     <table name="complex_column_type_entity_13">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
@@ -44,7 +45,7 @@ EOF;
             $e2 = new \ComplexColumnTypeEntity13();
             $e2->setBar('4');
             $e2->save();
-            \Map\ComplexColumnTypeEntity13TableMap::clearInstancePool();
+            Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         }
     }
 
