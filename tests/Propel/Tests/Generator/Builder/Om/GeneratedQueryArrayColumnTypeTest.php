@@ -26,7 +26,7 @@ class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
     {
         if (!class_exists('\ComplexColumnTypeEntity11')) {
             $schema = <<<EOF
-<database name="generated_object_complex_type_test_11">
+<database name="generated_object_complex_type_test_11" activeRecord="true">
     <table name="complex_column_type_entity_11">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="tags" type="ARRAY" />
@@ -37,12 +37,15 @@ EOF;
             QuickBuilder::buildSchema($schema);
             $e0 = new \ComplexColumnTypeEntity11();
             $e0->save();
+
             $e1 = new \ComplexColumnTypeEntity11();
             $e1->setTags(array('foo', 'bar', 'baz'));
             $e1->save();
+
             $e2 = new \ComplexColumnTypeEntity11();
             $e2->setTags(array('bar'));
             $e2->save();
+
             $e3 = new \ComplexColumnTypeEntity11();
             $e3->setTags(array('bar23'));
             $e3->save();

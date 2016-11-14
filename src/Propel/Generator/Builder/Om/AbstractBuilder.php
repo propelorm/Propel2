@@ -17,6 +17,7 @@ use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
 use Propel\Generator\Builder\PhpModel\ClassDefinition;
 use Propel\Generator\Model\NamingTool;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Abstract class for all builders.
@@ -89,6 +90,10 @@ abstract class AbstractBuilder extends DataModelBuilder
     {
         $this->validateModel();
         $this->definition = new ClassDefinition($this->getFullClassName());
+
+        if (!$this->getEntity()->getPrimaryKey()) {
+            throw new PropelException(sprintf('The entity %s does not have a primary key.', $this->getEntity()->getFullClassName()));
+        }
 
         if (false === $this->buildClass()) {
             return null;

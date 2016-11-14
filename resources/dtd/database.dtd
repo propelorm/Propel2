@@ -27,10 +27,6 @@
   filename CDATA #REQUIRED
 >
 
-<!--
-     note: the interface="true", requires that useManagers=true in the
-     properties file.
--->
 <!ELEMENT entity (field+,(relation|index|unique|id-method-parameter|behavior|vendor)*)>
 <!ATTLIST entity
   name CDATA #REQUIRED
@@ -46,7 +42,6 @@
   namespace CDATA #IMPLIED
   baseClass CDATA #IMPLIED
   alias CDATA #IMPLIED
-  interface CDATA #IMPLIED
   heavyIndexing (true|false) #IMPLIED
   identifierQuoting (true|false) #IMPLIED
   description CDATA #IMPLIED

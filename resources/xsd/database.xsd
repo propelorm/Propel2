@@ -677,7 +677,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="interface" type="xs:string" use="optional"/>
         <xs:attribute name="heavyIndexing" type="xs:boolean" use="optional">
           <xs:annotation>
             <xs:documentation xml:lang="en">

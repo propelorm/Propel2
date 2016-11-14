@@ -508,6 +508,7 @@ class Configuration extends GeneratorConfig
             'clob' => 'Propel\Common\Types\SQL\LobType',
             'blob' => 'Propel\Common\Types\SQL\LobType',
             'object' => 'Propel\Common\Types\SQL\ObjectType',
+            'array' => 'Propel\Common\Types\SQL\ArrayType',
         ];
 
         if (!isset($typeMap[$type])) {
