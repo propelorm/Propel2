@@ -108,6 +108,14 @@ class SchemaReader
     }
 
     /**
+     * @param PlatformInterface $platform
+     */
+    public function setPlatform(PlatformInterface $platform)
+    {
+        $this->schema->setPlatform($platform);
+    }
+
+    /**
      * Parses a XML input file and returns a newly created and
      * populated Schema structure.
      *

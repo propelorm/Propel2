@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Common\Types\BuildableFieldTypeInterface;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
 /**

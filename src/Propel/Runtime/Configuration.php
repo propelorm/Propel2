@@ -10,6 +10,7 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Map\DatabaseMap;
@@ -179,8 +180,9 @@ class Configuration extends GeneratorConfig
      */
     public function __construct($filename = null, $extraConf = array())
     {
+        parent::__construct($filename, $extraConf);
+
         if ($filename || $extraConf) {
-            parent::__construct($filename, $extraConf);
 
             foreach ($this->getRuntimeConnections() as $name => $connection) {
                 $this->databaseToAdapter[$name] = $connection['adapter'];
@@ -494,34 +496,19 @@ class Configuration extends GeneratorConfig
     {
         $type = strtolower($type);
 
-        //@todo, move this to PropelConfiguration tree
-        $typeMap = [
-            'varchar' => 'Propel\Common\Types\SQL\VarcharType',
-            'integer' => 'Propel\Common\Types\SQL\IntegerType',
-            'double' => 'Propel\Common\Types\SQL\DoubleType',
-            'float' => 'Propel\Common\Types\SQL\DoubleType',
-            'datetime' => 'Propel\Common\Types\SQL\DateTimeType',
-            'date' => 'Propel\Common\Types\SQL\DateTimeType',
-            'time' => 'Propel\Common\Types\SQL\DateTimeType',
-            'timestamp' => 'Propel\Common\Types\SQL\DateTimeType',
-            'lob' => 'Propel\Common\Types\SQL\LobType',
-            'clob' => 'Propel\Common\Types\SQL\LobType',
-            'blob' => 'Propel\Common\Types\SQL\LobType',
-            'object' => 'Propel\Common\Types\SQL\ObjectType',
-            'array' => 'Propel\Common\Types\SQL\ArrayType',
-        ];
+        if (!isset($this->typeMaps[$type])) {
+            $types = $this->get()['types'];
 
-        if (!isset($typeMap[$type])) {
-            $class = 'Propel\Common\Types\SQL\VarcharType';
-        } else {
-            $class = $typeMap[$type];
+            if (!isset($types[$type])) {
+                throw new \InvalidArgumentException(sprintf('Could not find field type %s', $type));
+            }
+
+            $class = $types[$type];
+
+            $this->typeMaps[$type] = new $class;
         }
 
-        if (!isset($this->typeMaps[$class])) {
-            $this->typeMaps[$class] = new $class;
-        }
-
-        return $this->typeMaps[$class];
+        return $this->typeMaps[$type];
     }
 
     /**
@@ -693,7 +680,7 @@ class Configuration extends GeneratorConfig
      *
      * @param string $name The datasource name
      *
-     * @return AdapterInterface
+     * @return AdapterInterface|SqlAdapterInterface
      *
      * @throws AdapterException
      */

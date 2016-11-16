@@ -12,6 +12,8 @@ namespace Propel\Generator\Config;
 
 use Propel\Common\Config\ConfigurationManager;
 use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Common\Types\BuildableFieldTypeInterface;
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Exception\BuildException;
@@ -61,6 +63,11 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      */
     public function createPlatform($platform, ConnectionInterface $con = null)
     {
+        if (!$platform) {
+            //todo, place it into configuration?
+            $platform = 'mysql';
+        }
+
         $classes = [
             $platform,
             '\\Propel\\Generator\\Platform\\' . $platform,
@@ -116,6 +123,25 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
         $parser->setGeneratorConfig($this);
 
         return $parser;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return FieldTypeInterface|BuildableFieldTypeInterface
+     */
+    public function getFieldType($name)
+    {
+        $name = strtolower($name);
+        $types = $this->get()['types'];
+
+        if (!isset($types[$name])) {
+            throw new \InvalidArgumentException(sprintf('Could not find field type %s', $name));
+        }
+
+        $class = $types[$name];
+
+        return new $class;
     }
 
     /**

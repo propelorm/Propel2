@@ -10,6 +10,15 @@
 
 namespace Propel\Common\Config;
 
+use Propel\Common\Types\SQL\ArrayType;
+use Propel\Common\Types\SQL\BooleanType;
+use Propel\Common\Types\SQL\DateTimeType;
+use Propel\Common\Types\SQL\DoubleType;
+use Propel\Common\Types\SQL\EnumType;
+use Propel\Common\Types\SQL\IntegerType;
+use Propel\Common\Types\SQL\LobType;
+use Propel\Common\Types\SQL\ObjectType;
+use Propel\Common\Types\SQL\VarcharType;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -39,8 +48,46 @@ class PropelConfiguration implements ConfigurationInterface
         $this->addReverseSection($rootNode);
         $this->addRuntimeSection($rootNode);
         $this->addGeneratorSection($rootNode);
+        $this->addFieldTypesSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    protected function addFieldTypesSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('types')
+                    ->addDefaultsIfNotSet()
+//                    ->useAttributeAsKey('name')
+//                    ->prototype('scalar')
+//                        ->beforeNormalization()
+//                            ->always(function ($v) {
+//                                var_dump($v);
+//                                exit;
+//                            })
+//                        ->end()
+//                    ->end()
+                    ->children()
+                        ->scalarNode('varchar')->defaultValue(VarcharType::class)->end()
+                        ->scalarNode('longvarchar')->defaultValue(VarcharType::class)->end()
+                        ->scalarNode('boolean')->defaultValue(BooleanType::class)->end()
+                        ->scalarNode('integer')->defaultValue(IntegerType::class)->end()
+                        ->scalarNode('double')->defaultValue(DoubleType::class)->end()
+                        ->scalarNode('float')->defaultValue(DoubleType::class)->end()
+                        ->scalarNode('datetime')->defaultValue(DateTimeType::class)->end()
+                        ->scalarNode('date')->defaultValue(DateTimeType::class)->end()
+                        ->scalarNode('time')->defaultValue(DateTimeType::class)->end()
+                        ->scalarNode('timestamp')->defaultValue(DateTimeType::class)->end()
+                        ->scalarNode('lob')->defaultValue(LobType::class)->end()
+                        ->scalarNode('clob')->defaultValue(LobType::class)->end()
+                        ->scalarNode('object')->defaultValue(ObjectType::class)->end()
+                        ->scalarNode('array')->defaultValue(ArrayType::class)->end()
+                        ->scalarNode('enum')->defaultValue(EnumType::class)->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     protected function addGeneralSection(ArrayNodeDefinition $node)
@@ -84,7 +131,6 @@ class PropelConfiguration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('database')
-                    ->isRequired()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('connections')

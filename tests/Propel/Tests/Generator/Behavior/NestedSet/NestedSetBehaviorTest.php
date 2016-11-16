@@ -19,6 +19,7 @@ use Propel\Tests\Bookstore\Behavior\NestedSetEntity9;
  * Tests for NestedSetBehavior class
  *
  * @author François Zaninotto
+ * @group database
  */
 class NestedSetBehaviorTest extends TestCase
 {

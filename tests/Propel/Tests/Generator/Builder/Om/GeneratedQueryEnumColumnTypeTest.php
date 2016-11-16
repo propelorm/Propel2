@@ -12,7 +12,9 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Configuration;
+use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCase;
@@ -63,6 +65,7 @@ EOF;
         $e = \ComplexColumnTypeEntity13Query::create()
             ->where('ComplexColumnTypeEntity13.Bar = ?', 'baz')
             ->find();
+
         $this->assertEquals(1, $e->count(), 'object columns are searchable by enumerated value using where()');
         $this->assertEquals('baz', $e[0]->getBar(), 'object columns are searchable by enumerated value using where()');
         $e = \ComplexColumnTypeEntity13Query::create()
@@ -89,9 +92,5 @@ EOF;
             ->filterByBar(array('baz', '4'), Criteria::IN)
             ->count();
         $this->assertEquals(2, $nb, 'enum columns are searchable by enumerated value');
-        $nb = \ComplexColumnTypeEntity13Query::create()
-            ->filterByBar(array('baz', '4'))
-            ->count();
-        $this->assertEquals(2, $nb, 'enum columns filters default to Criteria IN when passed an array');
     }
 }

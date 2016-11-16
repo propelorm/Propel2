@@ -151,7 +151,7 @@ class Database extends ScopedMappingModel
         parent::setupObject();
 
         $this->name = $this->getAttribute('name');
-        $this->platformClass = $this->getAttribute('platform') ?: 'mysql';
+        $this->platformClass = $this->getAttribute('platform');
         $this->baseClass = $this->getAttribute('baseClass');
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
@@ -171,8 +171,14 @@ class Database extends ScopedMappingModel
      */
     public function getPlatform()
     {
-        if (null === $this->platform && $this->getGeneratorConfig()) {
-            $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
+        if (null === $this->platform) {
+            if ($this->getParentSchema()) {
+                return $this->getParentSchema()->getPlatform();
+            }
+
+            if ($this->getGeneratorConfig()) {
+                $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
+            }
         }
 
         return $this->platform;

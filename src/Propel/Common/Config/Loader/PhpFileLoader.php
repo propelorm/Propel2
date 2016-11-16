@@ -36,8 +36,8 @@ class PhpFileLoader extends FileLoader
      * @param string $type The resource type
      *
      * @throws \InvalidArgumentException                               if configuration file not found
-     * @throws Propel\Common\Config\Exception\InvalidArgumentException if invalid json file
-     * @throws Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException if invalid json file
+     * @throws \Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
      */
     public function load($file, $type = null)
     {

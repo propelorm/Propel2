@@ -12,6 +12,7 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\StatementInterface;
@@ -26,7 +27,7 @@ use Propel\Generator\Model\PropelTypes;
 /**
  * Base for PDO database adapters.
  */
-abstract class PdoAdapter
+abstract class PdoAdapter implements SqlAdapterInterface
 {
     public function getPersister($session, $entityMap)
     {

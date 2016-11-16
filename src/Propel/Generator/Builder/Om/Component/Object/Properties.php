@@ -60,9 +60,9 @@ class Properties extends BuildComponent
         } else {
             $cpType = $field->getPhpType();
         }
-        $clo = $field->getName();
+        $name = $field->getName();
 
-        $description[] = "The value for the $clo field.";
+        $description[] = "The value for the $name field.";
 
         $defaultValue = null;
         if ($field->getDefaultValue()) {
@@ -73,23 +73,15 @@ class Properties extends BuildComponent
                 $defaultValue = $field->getDefaultValue()->getValue();
                 if ($field->isPhpArrayType()) {
                     $defaultValue = $this->getDefaultValueString($field);
-                    $defaultValue = substr($defaultValue, 1, -1);
                 }
-                $description[] = "Note: this field has a database default value of: '$defaultValue'";
             }
         }
 
-        $this->addProperty($clo)
+
+        $this->addProperty($name)
             ->setType($cpType)
             ->setDescription($description)
             ->setValue($defaultValue)
         ;
-
-        if ($field->isPhpArrayType()) {
-            $this->addProperty($clo.'_unserialized')
-                ->setType('array')
-                ->setDescription("The effective array $clo")
-            ;
-        }
     }
 }

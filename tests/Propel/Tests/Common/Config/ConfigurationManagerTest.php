@@ -379,23 +379,6 @@ EOF;
 
     /**
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "database" at path "propel" must be configured
-     */
-    public function testNotDefineDatabaseSectionTrowsException()
-    {
-        $yamlConf = <<<EOF
-propel:
-  general:
-      project: MyAwesomeProject
-      version: 2.0.0-dev
-EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-
-        $manager = new ConfigurationManager();
-    }
-
-    /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Dots are not allowed in connection names
      */
     public function testDotInConnectionNamesArentAccepted()
@@ -662,7 +645,7 @@ EOF;
     {
         $manager = new NotLoadingConfigurationManager(null);
 
-        $this->assertEmpty($manager->get());
+        $this->assertNotEmpty($manager->get());
     }
 
     public function testGetConfigurationParametersArrayTest()

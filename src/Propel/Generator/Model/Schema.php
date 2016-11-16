@@ -35,6 +35,11 @@ class Schema
     protected $generatorConfig;
 
     /**
+     * @var PlatformInterface
+     */
+    protected $platform;
+
+    /**
      * Creates a new instance for the specified database type.
      */
     public function __construct()
@@ -61,6 +66,22 @@ class Schema
     public function getGeneratorConfig()
     {
         return $this->generatorConfig;
+    }
+
+    /**
+     * @return PlatformInterface
+     */
+    public function getPlatform()
+    {
+        return $this->platform;
+    }
+
+    /**
+     * @param PlatformInterface $platform
+     */
+    public function setPlatform($platform)
+    {
+        $this->platform = $platform;
     }
 
     /**
@@ -191,6 +212,7 @@ class Schema
         // XML attributes array / hash
         $db = new Database();
         $db->setParentSchema($this);
+        $db->setPlatform($this->getPlatform());
         $db->loadMapping($database);
 
         return $this->addDatabase($db);

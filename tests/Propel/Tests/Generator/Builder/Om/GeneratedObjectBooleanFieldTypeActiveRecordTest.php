@@ -45,47 +45,6 @@ EOF;
         $this->assertTrue(method_exists('\ComplexFieldTypeEntity4', 'hasXy'));
     }
 
-    public function providerForSetter()
-    {
-        return array(
-            array(true, true),
-            array(false, false),
-            array('true', true),
-            array('false', false),
-            array(1, true),
-            array(0, false),
-            array('1', true),
-            array('0', false),
-            array('on', true),
-            array('off', false),
-            array('yes', true),
-            array('no', false),
-            array('y', true),
-            array('n', false),
-            array('Y', true),
-            array('N', false),
-            array('+', true),
-            array('-', false),
-            array('', false),
-        );
-    }
-
-    /**
-     * @dataProvider providerForSetter
-     */
-    public function testSetterBooleanValue($value, $expected)
-    {
-        $e = new \ComplexFieldTypeEntity4();
-        $e->setBar($value);
-        if ($expected) {
-            $this->assertTrue($e->getBar());
-            $this->assertTrue($e->isBar());
-        } else {
-            $this->assertFalse($e->getBar());
-            $this->assertFalse($e->isBar());
-        }
-    }
-
     public function testDefaultValue()
     {
         $e = new \ComplexFieldTypeEntity4();

@@ -58,7 +58,7 @@ class PgsqlPlatform extends SqlDefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'TEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'BYTEA'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'TEXT'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'ENUM'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
     }
 

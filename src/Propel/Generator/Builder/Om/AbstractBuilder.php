@@ -12,6 +12,7 @@ namespace Propel\Generator\Builder\Om;
 
 use gossi\codegen\generator\CodeGenerator;
 use gossi\codegen\model\PhpMethod;
+use Propel\Common\Types\BuildableFieldTypeInterface;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
@@ -97,6 +98,12 @@ abstract class AbstractBuilder extends DataModelBuilder
 
         if (false === $this->buildClass()) {
             return null;
+        }
+
+        foreach ($this->getEntity()->getFields() as $field) {
+            if ($field->getFieldType() instanceof BuildableFieldTypeInterface) {
+                $field->getFieldType()->build($this, $field);
+            }
         }
 
         $this->applyBehaviorModifier();

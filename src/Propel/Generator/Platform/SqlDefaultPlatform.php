@@ -550,7 +550,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
                 } elseif (in_array($col->getType(), array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
-                    $default .= array_search($defaultValue->getValue(), $col->getValueSet());
+                    $default .= $defaultValue->getValue();
                 } elseif ($col->isPhpArrayType()) {
                     $value = $this->getPhpArrayString($defaultValue->getValue());
                     if (null === $value) {

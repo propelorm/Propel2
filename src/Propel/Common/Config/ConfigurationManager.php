@@ -211,10 +211,6 @@ class ConfigurationManager
      */
     protected function process($extraConf = null)
     {
-        if (null === $extraConf && count($this->config) <= 0) {
-            return;
-        }
-
         $processor = new Processor();
         $configuration = new PropelConfiguration();
 

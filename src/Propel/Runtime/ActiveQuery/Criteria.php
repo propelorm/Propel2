@@ -2518,12 +2518,17 @@ class Criteria
             $sql = $this->createSelectSql($params);
         }
         try {
+            $p = [];
+            foreach ($params as $param) {
+                $p[] = $param['value'];
+            }
+            $this->getConfiguration()->debug("count-sql: $sql [" . implode(',', $p). "]");
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
             $stmt->execute();
         } catch (\Exception $e) {
             $this->getConfiguration()->log($e->getMessage(), Configuration::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql));
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
         return $con->getDataFetcher($stmt);

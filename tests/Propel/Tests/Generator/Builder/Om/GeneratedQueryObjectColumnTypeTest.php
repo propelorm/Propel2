@@ -12,6 +12,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Util\QuickBuilder;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 
@@ -33,7 +34,7 @@ class GeneratedQueryObjectColumnTypeTest extends \PHPUnit_Framework_TestCase
 
         if (!class_exists('ComplexColumnTypeEntity10')) {
             $schema = <<<EOF
-<database name="generated_query_complex_type_test_10">
+<database name="generated_query_complex_type_test_10" activeRecord="true">
     <table name="complex_column_type_entity_10">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="OBJECT" />
@@ -49,7 +50,7 @@ EOF;
             $e2 = new \ComplexColumnTypeEntity10();
             $e2->setBar($this->c2);
             $e2->save();
-            \Map\ComplexColumnTypeEntity10TableMap::clearInstancePool();
+            Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         }
     }
 

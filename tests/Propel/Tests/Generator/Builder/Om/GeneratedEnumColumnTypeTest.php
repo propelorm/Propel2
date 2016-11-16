@@ -16,11 +16,11 @@ use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
- * Tests the generated TableMap classes for enum column type constants
+ * Tests the generated EntityMap classes for enum column type constants
  *
  * @author Francois Zaninotto
  */
-class GeneratedTableMapEnumColumnTypeTest extends TestCase
+class GeneratedEnumColumnTypeTest extends TestCase
 {
     public function setUp()
     {
@@ -40,13 +40,13 @@ EOF;
     public function valueSetConstantProvider()
     {
         return array(
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO', 'foo'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAR', 'bar'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_BAZ', 'baz'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_1', '1'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_4', '4'),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR__', '('),
-            array('\Map\ComplexColumnTypeEntity103TableMap::COL_BAR_FOO_BAR', 'foo bar'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_FOO', 'foo'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_BAR', 'bar'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_BAZ', 'baz'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_1', '1'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_4', '4'),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE__', '('),
+            array('\ComplexColumnTypeEntity103::BAR_TYPE_FOO_BAR', 'foo bar'),
         );
     }
 
@@ -61,13 +61,7 @@ EOF;
 
     public function testGetValueSets()
     {
-        $expected = array(\Map\ComplexColumnTypeEntity103TableMap::COL_BAR => array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar'));
-        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSets());
-    }
-
-    public function testGetValueSet()
-    {
         $expected = array('foo', 'bar', 'baz', '1', '4', '(', 'foo bar');
-        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSet(\Map\ComplexColumnTypeEntity103TableMap::COL_BAR));
+        $this->assertEquals($expected, \ComplexColumnTypeEntity103::BAR_TYPES);
     }
 }

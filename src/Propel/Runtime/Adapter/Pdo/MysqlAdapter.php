@@ -23,9 +23,8 @@ use Propel\Runtime\Map\FieldMap;
  * @author Brett McLaughlin <bmclaugh@algx.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  */
-class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
+class MysqlAdapter extends PdoAdapter
 {
-
     /**
      * Returns SQL which concatenates the second string to the first.
      *

@@ -229,7 +229,11 @@ class QuickBuilder
         array $classTargets = null
     ) {
         if (null === $dsn) {
-            $dsn = 'sqlite::memory:';
+            $sqliteFile = 'latest_quickbuilder_sqlite.db';
+            $reflection = new \ReflectionClass('\Propel\Tests\TestCase');
+            $sqliteFile = realpath(dirname($reflection->getFileName()) . '/../../') . '/' . $sqliteFile;
+            unlink($sqliteFile);
+            $dsn = 'sqlite:' . $sqliteFile;
         }
         if (null === $adapter) {
             $adapter = new SqliteAdapter();
@@ -279,9 +283,10 @@ class QuickBuilder
     public function getDatabase()
     {
         if (null === $this->database) {
-            $xtad = new SchemaReader($this->getPlatform());
-            $xtad->setGeneratorConfig($this->getConfig());
-            $appData = $xtad->parseString($this->schema);
+            $reader = new SchemaReader();
+            $reader->setGeneratorConfig($this->getConfig());
+            $reader->setPlatform($this->getPlatform());
+            $appData = $reader->parseString($this->schema);
             $this->database = $appData->getDatabase(); // does final initialization
         }
 

@@ -80,7 +80,7 @@ trait ComponentHelperTrait
         } elseif ($field->isPhpObjectType()) {
             $defaultValue = 'new ' . $field->getPhpType() . '(' . var_export($val, true) . ')';
         } elseif ($field->isPhpArrayType()) {
-            $defaultValue = var_export($val, true);
+            $defaultValue = $val;
         } else {
             throw new EngineException("Cannot get default value string for " . $field->getFullyQualifiedName());
         }

@@ -63,43 +63,6 @@ if (!is_bool(\$this->$varName)) {
         $body .= "
 return \$this->$varName;";
 
-        if ($field->isPhpArrayType()) {
-            $clo = $field->getName();
-            $cloUnserialized = $clo.'_unserialized';
-            $body = "
-if (null === \$this->$cloUnserialized) {
-    \$this->$cloUnserialized = [];
-}
-if (!\$this->$cloUnserialized && null !== \$this->$clo) {
-    \$$cloUnserialized = substr(\$this->$clo, 2, -2);
-    \$this->$cloUnserialized = \$$cloUnserialized ? explode(' | ', \$$cloUnserialized) : [];
-}
-
-return \$this->$cloUnserialized;
-";
-        }
-
-        if ($field->isEnumType()) {
-            $body = "
-if (null === \$this->$varName) {
-    return null;
-}
-
-//Default values can be strings, so they must be fixed by setter method
-if (!is_int(\$this->$varName)) {
-    \$this->set{$field->getMethodName()}(\$this->$varName);
-}
-
-{$this->getRepositoryAssignment()}
-\$valueSet = \$repository->getEntityMap()->getField('{$field->getName()}')->getValueSet();
-if (!isset(\$valueSet[\$this->$varName])) {
-    throw new PropelException('Unknown stored enum key: ' . \$this->$varName);
-}
-
-return \$valueSet[\$this->$varName];
-";
-        }
-
         $method
             ->setType($field->getPhpType())
             ->setDescription("Returns the value of $varName.")

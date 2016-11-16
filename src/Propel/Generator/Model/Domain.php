@@ -269,6 +269,7 @@ class Domain extends MappingModel
      */
     public function getPhpDefaultValue()
     {
+
         if (null === $this->defaultValue) {
             return null;
         }
@@ -280,7 +281,6 @@ class Domain extends MappingModel
         if (in_array($this->mappingType, [ PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU ])) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
-
         if (PropelTypes::PHP_ARRAY === $this->mappingType) {
             return $this->getDefaultValueForArray($this->defaultValue->getValue());
         }

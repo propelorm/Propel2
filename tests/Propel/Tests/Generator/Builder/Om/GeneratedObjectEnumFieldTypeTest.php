@@ -39,14 +39,6 @@ class GeneratedObjectEnumFieldTypeTest extends TestCase
 </database>
 EOF;
             $this->con = QuickBuilder::buildSchema($schema);
-            // ok this is hackish but it makes testing of getter and setter independent of each other
-            $publicAccessorCode = <<<EOF
-class PublicComplexFieldTypeEntity3 extends ComplexFieldTypeEntity3
-{
-    public \$bar;
-}
-EOF;
-            eval($publicAccessorCode);
         } else {
             $this->con = Configuration::getCurrentConfiguration();
         }
@@ -57,47 +49,23 @@ EOF;
         $this->assertTrue(method_exists('ComplexFieldTypeEntity3', 'getBar'));
         $e = new \ComplexFieldTypeEntity3();
         $this->assertNull($e->getBar());
-        $e = new \PublicComplexFieldTypeEntity3();
-        $e->bar = 0;
-        $this->assertEquals('foo', $e->getBar());
-        $e->bar = 3;
+        $this->assertEquals('bar', $e->getBar2());
+        $e->setBar('1');
         $this->assertEquals('1', $e->getBar());
-        $e->bar = 6;
+        $e->setBar('foo bar');
         $this->assertEquals('foo bar', $e->getBar());
-    }
-
-    /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     */
-    public function testGetterThrowsExceptionOnUnknownKey()
-    {
-        $e = new \PublicComplexFieldTypeEntity3();
-        $e->bar = 156;
-        $e->getBar();
+        $e->setBar(\ComplexFieldTypeEntity3::BAR_TYPE_FOO_BAR);
+        $this->assertEquals('foo bar', $e->getBar());
     }
 
     public function testGetterDefaultValue()
     {
-        $e = new \PublicComplexFieldTypeEntity3();
+        $e = new \ComplexFieldTypeEntity3();
         $this->assertEquals('bar', $e->getBar2());
     }
 
-    public function testSetter()
-    {
-        $this->assertTrue(method_exists('\ComplexFieldTypeEntity3', 'setBar'));
-        $e = new \PublicComplexFieldTypeEntity3();
-        $e->setBar('foo');
-        $this->assertEquals(0, $e->bar);
-        $e->setBar(1);
-        $this->assertEquals(3, $e->bar);
-        $e->setBar('1');
-        $this->assertEquals(3, $e->bar);
-        $e->setBar('foo bar');
-        $this->assertEquals(6, $e->bar);
-    }
-
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \InvalidArgumentException
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {

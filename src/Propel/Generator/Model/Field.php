@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Common\Types\BuildableFieldTypeInterface;
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\PlatformInterface;
 
@@ -143,10 +145,7 @@ class Field extends MappingModel
             $database = $this->getDatabase();
             $domain   = $this->getDomain();
 
-            $platform = null;
-            if ($this->hasPlatform()) {
-                $platform = $this->getPlatform();
-            }
+            $platform = $this->getPlatform();
 
             $dom = $this->getAttribute('domain');
             if ($dom) {
@@ -984,6 +983,14 @@ class Field extends MappingModel
     public function getRelations()
     {
         return $this->parentEntity->getFieldRelations($this->name);
+    }
+
+    /**
+     * @return FieldTypeInterface|BuildableFieldTypeInterface
+     */
+    public function getFieldType()
+    {
+        return $this->getDatabase()->getGeneratorConfig()->getFieldType($this->getType());
     }
 
     /**

@@ -14,6 +14,10 @@ class ObjectType extends AbstractType
 
     public function propertyToDatabase($value, FieldMap $fieldMap)
     {
-        return $value ? serialize($value) : '';
+        if (is_string($value) && $value) {
+            return $value;
+        }
+
+        return is_object($value) ? serialize($value) : null;
     }
 }

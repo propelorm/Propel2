@@ -23,7 +23,8 @@ use Propel\Tests\Bookstore\BehaviorNestedSetEntity9;
  * Class NestedSetBehaviorRepositoryTest
  *
  * @author François Zaninotto
- * @author  Cristiano Cinotti <cristianocinotti@gmail.com>
+ * @author Cristiano Cinotti <cristianocinotti@gmail.com>
+ * @group database
  */
 class NestedSetBehaviorRepositoryTest extends TestCase
 {

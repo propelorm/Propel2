@@ -1643,23 +1643,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected function convertValueForField($value, FieldMap $colMap)
     {
-        if ($colMap->getType() == 'OBJECT' && is_object($value)) {
-            if (is_array($value)) {
-                $value = array_map('serialize', $value);
-            } else {
-                $value = serialize($value);
-            }
-        } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
-            $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif ('ENUM' === $colMap->getType()) {
-            if (is_array($value)) {
-                $value = array_map(array($colMap, 'getValueSetKey'), $value);
-            } else {
-                $value = $colMap->getValueSetKey($value);
-            }
-        }
-
-        return $value;
+        return $this->getConfiguration()->getFieldType($colMap->getType())->propertyToDatabase($value, $colMap);
     }
 
     /**

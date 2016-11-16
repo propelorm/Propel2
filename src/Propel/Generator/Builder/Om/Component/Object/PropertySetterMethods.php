@@ -56,15 +56,6 @@ class PropertySetterMethods extends BuildComponent
             $body = "
 \$$varName = (double)\$$varName;
 ";
-        } else if ($field->isPhpArrayType()) {
-            $cloUnserialized = $field->getName().'_unserialized';
-
-            $body = "
-if (\$this->$cloUnserialized !== \$$varName) {
-    \$this->$cloUnserialized = \$$varName;
-    \$this->$varName = '| ' . implode(' | ', \$$varName) . ' |';
-}
-";
         } else if ($field->isBooleanType()) {
             $body = "
 if (\$$varName !== null) {
@@ -76,23 +67,20 @@ if (\$$varName !== null) {
 }
 ";
         } else if ($field->isEnumType()) {
+            $constName = strtoupper($varName . '_types');
+
             $body = "
-{$this->getRepositoryAssignment()}
 if (\$$varName !== null) {
-    \$valueSet = \$repository->getEntityMap()->getField('{$field->getName()}')->getValueSet();
-    if (!in_array(\$$varName, \$valueSet)) {
-        throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$varName));
+    if (!in_array(\$$varName, static::$constName, true)) {
+        throw new \\InvalidArgumentException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$$varName));
     }
-    \$$varName = array_search(\$$varName, \$valueSet);
 }
 ";
         }
 
-        if (!$field->isPhpArrayType()) {
             $body .= "
 \$this->$varName = \$$varName;
 ";
-        }
 
         $body .= "
 return \$this;

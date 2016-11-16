@@ -24,6 +24,7 @@ use Propel\Tests\Bookstore\Behavior\NestedSetEntity9Query;
  *
  * @author François Zaninotto
  * @author Cristiano Cinotti
+ * @group database
  */
 class NestedSetBehaviorQueryTest extends TestCase
 {

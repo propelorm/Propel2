@@ -11,6 +11,8 @@
 namespace Propel\Generator\Config;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Common\Types\BuildableFieldTypeInterface;
+use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PlatformInterface;
@@ -53,6 +55,13 @@ interface GeneratorConfigInterface
      * @return BehaviorLocator
      */
     public function getBehaviorLocator();
+
+    /**
+     * @param string $name
+     *
+     * @return FieldTypeInterface|BuildableFieldTypeInterface
+     */
+    public function getFieldType($name);
 
     /**
      * Return a specific configuration property.

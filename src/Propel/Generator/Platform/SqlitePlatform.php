@@ -67,7 +67,7 @@ class SqlitePlatform extends SqlDefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'BLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'MEDIUMTEXT'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TEXT'));
     }
 
     public function getSchemaDelimiter()
