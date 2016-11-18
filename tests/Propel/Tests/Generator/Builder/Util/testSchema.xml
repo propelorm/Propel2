@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="foo">
-    <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
-    </table>
+    <entity name="Bar">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+    </entity>
 </database>

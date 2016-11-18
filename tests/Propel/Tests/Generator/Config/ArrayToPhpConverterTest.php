@@ -31,10 +31,11 @@ class ArrayToPhpConverterTest extends TestCase
             )
         );
         $expected = <<<EOF
-\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-\$serviceContainer->checkVersion('2.0.0-dev');
-\$serviceContainer->setAdapterClass('bookstore', 'mysql');
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+\$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+\$configuration->checkVersion('2.0.0-dev');
+\$configuration->setAdapterClass('bookstore', 'mysql');
+\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle(\$configuration->getAdapter('bookstore'));
 \$manager->setConfiguration(array (
   'classname' => 'DebugPDO',
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
@@ -50,8 +51,9 @@ class ArrayToPhpConverterTest extends TestCase
   ),
 ));
 \$manager->setName('bookstore');
-\$serviceContainer->setConnectionManager('bookstore', \$manager);
-\$serviceContainer->setDefaultDatasource('bookstore');
+\$configuration->setConnectionManager('bookstore', \$manager);
+\$configuration->setDefaultDatasource('bookstore');
+return \$configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
@@ -71,10 +73,11 @@ EOF;
             )
         );
         $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
+$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+$configuration->checkVersion('2.0.0-dev');
+$configuration->setAdapterClass('bookstore-cms', 'mysql');
+$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave($configuration->getAdapter('bookstore-cms'));
 $manager->setReadConfiguration(array (
   0 =>
   array (
@@ -89,8 +92,9 @@ $manager->setWriteConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
 ));
 $manager->setName('bookstore-cms');
-$serviceContainer->setConnectionManager('bookstore-cms', $manager);
-$serviceContainer->setDefaultDatasource('bookstore-cms');
+$configuration->setConnectionManager('bookstore-cms', $manager);
+$configuration->setDefaultDatasource('bookstore-cms');
+return $configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
@@ -106,10 +110,11 @@ EOF;
             'outerGlue' => ' | '
         ));
         $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setProfilerClass('\Propel\Runtime\Util\Profiler');
-$serviceContainer->setProfilerConfiguration(array (
+$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+$configuration->checkVersion('2.0.0-dev');
+$configuration->setProfilerClass('\Propel\Runtime\Util\Profiler');
+$configuration->setProfilerConfiguration(array (
   'slowTreshold' => 0.2,
   'time' =>
   array (
@@ -124,6 +129,7 @@ $serviceContainer->setProfilerConfiguration(array (
   'innerGlue' => ': ',
   'outerGlue' => ' | ',
 ));
+return $configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
@@ -136,13 +142,15 @@ EOF;
             'path' => '/var/log/propel.log',
         )));
         $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+$configuration->checkVersion('2.0.0-dev');
+$configuration->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',
   'level' => '300',
   'path' => '/var/log/propel.log',
 ));
+return $configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
@@ -161,17 +169,19 @@ EOF;
             )
         ));
         $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+$configuration->checkVersion('2.0.0-dev');
+$configuration->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',
   'path' => '/var/log/propel.log',
   'level' => '300',
 ));
-$serviceContainer->setLoggerConfiguration('bookstoreLogger', array (
+$configuration->setLoggerConfiguration('bookstoreLogger', array (
   'type' => 'stream',
   'path' => '/var/log/propel_bookstore.log',
 ));
+return $configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
@@ -213,10 +223,11 @@ EOF;
             'defaultConnection' => 'bookstore'
         );
         $expected = <<<'EOF'
-$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-$serviceContainer->checkVersion('2.0.0-dev');
-$serviceContainer->setAdapterClass('bookstore', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+$configuration = \Propel\Runtime\Configuration::getCurrentConfigurationOrCreate();
+
+$configuration->checkVersion('2.0.0-dev');
+$configuration->setAdapterClass('bookstore', 'mysql');
+$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle($configuration->getAdapter('bookstore'));
 $manager->setConfiguration(array (
   'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
   'dsn' => 'mysql:host=127.0.0.1;dbname=test',
@@ -236,9 +247,9 @@ $manager->setConfiguration(array (
   ),
 ));
 $manager->setName('bookstore');
-$serviceContainer->setConnectionManager('bookstore', $manager);
-$serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
+$configuration->setConnectionManager('bookstore', $manager);
+$configuration->setAdapterClass('bookstore-cms', 'mysql');
+$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave($configuration->getAdapter('bookstore-cms'));
 $manager->setReadConfiguration(array (
   0 =>
   array (
@@ -253,13 +264,14 @@ $manager->setWriteConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
 ));
 $manager->setName('bookstore-cms');
-$serviceContainer->setConnectionManager('bookstore-cms', $manager);
-$serviceContainer->setDefaultDatasource('bookstore');
-$serviceContainer->setLoggerConfiguration('defaultLogger', array (
+$configuration->setConnectionManager('bookstore-cms', $manager);
+$configuration->setDefaultDatasource('bookstore');
+$configuration->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',
   'level' => '300',
   'path' => '/var/log/propel.log',
 ));
+return $configuration;
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }

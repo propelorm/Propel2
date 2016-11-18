@@ -19,7 +19,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */
-abstract class AbstractSchemaParser implements SchemaParserInterface
+abstract class AbstractSchemaParser implements SchemaParserInterface, SqlSchemaParserInterface
 {
     /**
      * The database connection.
@@ -231,7 +231,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     public function getPlatform()
     {
         if (null === $this->platform) {
-            $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
+            $this->platform = $this->getGeneratorConfig()->createPlatformForDatabase();
         }
 
         return $this->platform;

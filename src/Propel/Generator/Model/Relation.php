@@ -411,7 +411,7 @@ class Relation extends MappingModel
     }
 
     /**
-     * Returns the foreign table name of the FK.
+     * Returns the foreign table name of the FK, aka 'target'.
      *
      * @return string
      */

@@ -107,7 +107,7 @@ class Database extends ScopedMappingModel
     private $sequences;
 
     protected $defaultStringFormat;
-    protected $entityPrefix;
+    protected $tablePrefix;
 
     /**
      * @var bool
@@ -156,7 +156,7 @@ class Database extends ScopedMappingModel
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
         $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
-        $this->entityPrefix = $this->getAttribute('entityPrefix', $this->getBuildProperty('generator.entityPrefix'));
+        $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('generator.tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
 
         if ($this->getAttribute('activeRecord')) {
@@ -172,12 +172,16 @@ class Database extends ScopedMappingModel
     public function getPlatform()
     {
         if (null === $this->platform) {
-            if ($this->getParentSchema()) {
+            if ($this->getParentSchema() && $this->getParentSchema()->getPlatform()) {
                 return $this->getParentSchema()->getPlatform();
             }
 
             if ($this->getGeneratorConfig()) {
-                $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
+                if ($this->platformClass) {
+                    $this->platform = $this->getGeneratorConfig()->createPlatform($this->platformClass);
+                } else {
+                    $this->platform = $this->getGeneratorConfig()->createPlatformForDatabase($this->getName());
+                }
             }
         }
 
@@ -782,19 +786,19 @@ class Database extends ScopedMappingModel
      *
      * @return string
      */
-    public function getEntityPrefix()
+    public function getTablePrefix()
     {
-        return $this->entityPrefix;
+        return $this->tablePrefix;
     }
 
     /**
      * Sets the entities' prefix.
      *
-     * @param string $entityPrefix
+     * @param string $tablePrefix
      */
-    public function setEntityPrefix($entityPrefix)
+    public function setTablePrefix($tablePrefix)
     {
-        $this->entityPrefix = $entityPrefix;
+        $this->tablePrefix = $tablePrefix;
     }
 
     /**

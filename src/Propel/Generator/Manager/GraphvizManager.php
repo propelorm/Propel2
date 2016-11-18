@@ -29,15 +29,15 @@ class GraphvizManager extends AbstractManager
             $this->log("db: " . $database->getName());
 
             // print the tables
-            foreach ($database->getTables() as $tbl) {
-                $this->log("\t+ " . $tbl->getName());
-                $dotSyntax .= 'node'.$tbl->getName().' [label="{<table>'.$tbl->getName().'|<cols>';
+            foreach ($database->getEntities() as $entity) {
+                $this->log("\t+ " . $entity->getName());
+                $dotSyntax .= 'node'.$entity->getName().' [label="{<table>'.$entity->getName().'|<cols>';
 
-                foreach ($tbl->getColumns() as $col) {
-                    $dotSyntax .= $col->getName() . ' (' . $col->getType()  . ')';
-                    if (count($col->getForeignKeys()) > 0) {
+                foreach ($entity->getFields() as $field) {
+                    $dotSyntax .= $field->getName() . ' (' . $field->getType()  . ')';
+                    if (count($field->getRelations()) > 0) {
                         $dotSyntax .= ' [FK]';
-                    } elseif ($col->isPrimaryKey()) {
+                    } elseif ($field->isPrimaryKey()) {
                         $dotSyntax .= ' [PK]';
                     }
                     $dotSyntax .= '\l';
@@ -51,12 +51,12 @@ class GraphvizManager extends AbstractManager
             // print the relations
             $count = 0;
             $dotSyntax .= "\n";
-            foreach ($database->getTables() as $tbl) {
-                foreach ($tbl->getForeignKeys() as $fk) {
-                    $dotSyntax .= 'node'.$tbl->getName();
-                    $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
+            foreach ($database->getEntities() as $entity) {
+                foreach ($entity->getRelations() as $relation) {
+                    $dotSyntax .= 'node'.$entity->getName();
+                    $dotSyntax .= ':cols -> node'.$relation->getForeignEntityName();
                     $label = [];
-                    foreach ($fk->getColumnObjectsMapping() as $map) {
+                    foreach ($relation->getFieldObjectsMapping() as $map) {
                         $label[] = $map['local']->getName().'='.$map['foreign']->getName();
                     }
                     $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';

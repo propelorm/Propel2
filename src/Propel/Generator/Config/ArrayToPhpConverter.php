@@ -29,13 +29,7 @@ class ArrayToPhpConverter
         $runtimeVersion = Propel::VERSION;
 
         $conf = '';
-        $conf .= "
-if (!isset(\$configuration) || !(\$configuration instanceof \\Propel\\Runtime\\Configuration)) {
-    \$configuration = \\Propel\\Runtime\\Configuration::\$globalConfiguration;
-    if (null === \$configuration) {
-        \$configuration = new \\Propel\\Runtime\\Configuration();
-    }
-}
+        $conf .= "\$configuration = \\Propel\\Runtime\\Configuration::getCurrentConfigurationOrCreate();
 
 \$configuration->checkVersion('{$runtimeVersion}');";
         // set datasources
@@ -117,10 +111,12 @@ if (!isset(\$configuration) || !(\$configuration instanceof \\Propel\\Runtime\\C
 
         // register all known entity classes
 
-        foreach ($c['databaseToEntities'] as $database => $entityClasses) {
-            $entities = var_export($entityClasses, true);
-            $conf .= "
+        if (isset($c['databaseToEntities'])) {
+            foreach ($c['databaseToEntities'] as $database => $entityClasses) {
+                $entities = var_export($entityClasses, true);
+                $conf .= "
 \$configuration->registerEntity('$database', $entities);";
+            }
         }
 
         $conf .= '

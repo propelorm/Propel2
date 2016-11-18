@@ -77,15 +77,15 @@ EOF;
 
     public function testParseStringTable()
     {
-        $xmlSchema = '<database name="foo"><table name="bar"><column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/></table></database>';
+        $xmlSchema = '<database name="foo"><entity name="bar" tableName="b_ar"><field name="id" columnName="i_d" primaryKey="true" type="INTEGER" autoIncrement="true"/></entity></database>';
 
         $expectedSchema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
   <database name="foo" defaultIdMethod="native">
-    <table name="bar" idMethod="native" phpName="Bar">
-      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    </table>
+    <entity name="bar" idMethod="native" tableName="b_ar">
+      <field name="id" columnName="i_d" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </entity>
   </database>
 </app-data>
 EOF;
@@ -102,9 +102,9 @@ EOF;
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
   <database name="foo" defaultIdMethod="native">
-    <table name="bar" idMethod="native" phpName="Bar">
-      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    </table>
+    <entity name="Bar" idMethod="native" tableName="bar">
+      <field name="id" columnName="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </entity>
   </database>
 </app-data>
 EOF;
@@ -118,12 +118,12 @@ EOF;
 <?xml version="1.0" encoding="utf-8"?>
 <app-data>
   <database name="foo" defaultIdMethod="native">
-    <table name="bar1" idMethod="native" phpName="Bar1">
-      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    </table>
-    <table name="bar2" idMethod="native" phpName="Bar2" skipSql="true" forReferenceOnly="true">
-      <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    </table>
+    <entity name="Bar1" idMethod="native" tableName="bar1">
+      <field name="id" columnName="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </entity>
+    <entity name="Bar2" idMethod="native" tableName="bar2" skipSql="true" forReferenceOnly="true">
+      <field name="id" columnName="id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    </entity>
   </database>
 </app-data>
 EOF;

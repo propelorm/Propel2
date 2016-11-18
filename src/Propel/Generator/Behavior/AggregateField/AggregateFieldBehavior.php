@@ -103,7 +103,7 @@ class AggregateFieldBehavior extends Behavior
     public function getForeignEntity()
     {
         $database = $this->getEntity()->getDatabase();
-        $entityName = $database->getEntityPrefix() . $this->getParameter('foreign_entity');
+        $entityName = $this->getParameter('foreign_entity');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('foreign_schema')) {
             $entityName = $this->getParameter('foreign_schema')
                 . $database->getPlatform()->getSchemaDelimiter()

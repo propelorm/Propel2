@@ -255,6 +255,18 @@ class Configuration extends GeneratorConfig
     }
 
     /**
+     * @return Configuration
+     */
+    public static function getCurrentConfigurationOrCreate()
+    {
+        if (!static::$globalConfiguration) {
+            static::$globalConfiguration = new static;
+        }
+
+        return static::$globalConfiguration;
+    }
+
+    /**
      * Sets the current configuration for the global calls, like ActiveRecord entities.
      *
      * @param Configuration $configuration

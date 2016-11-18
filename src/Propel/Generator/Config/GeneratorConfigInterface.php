@@ -50,6 +50,13 @@ interface GeneratorConfigInterface
     public function createPlatform($platform, ConnectionInterface $con = null);
 
     /**
+     * @param string|null $name returns default platform if null
+     *
+     * @return PlatformInterface
+     */
+    public function createPlatformForDatabase($name = null);
+
+    /**
      * Returns the behavior locator.
      *
      * @return BehaviorLocator

@@ -15,6 +15,9 @@ use Propel\Tests\TestCase;
 
 class QuickGeneratorConfigTest extends TestCase
 {
+    /**
+     * @var QuickGeneratorConfig
+     */
     protected $generatorConfig;
 
     public function setUp()
@@ -24,8 +27,8 @@ class QuickGeneratorConfigTest extends TestCase
 
     public function testGetConfiguredBuilder()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
-        $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'query');
+        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
     }
@@ -36,8 +39,8 @@ class QuickGeneratorConfigTest extends TestCase
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
-        $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
+        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'bad_type');
     }
 
     public function testGetConfiguredPluralizer()

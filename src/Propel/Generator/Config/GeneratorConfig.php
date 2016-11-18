@@ -23,6 +23,7 @@ use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\SqlDefaultPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Generator\Reverse\SqlSchemaParserInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -97,6 +98,21 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function createPlatformForDatabase($name = null)
+    {
+        if (isset($this->get()['generator']['platformClass'])) {
+            $class = $this->get()['generator']['platformClass'];
+            return new $class;
+        }
+
+        $buildConnection = $this->getBuildConnection($name);
+
+        return $this->createPlatform($buildConnection['adapter']);
+    }
+
+    /**
      * Creates and configures a new SchemaParser class for specified platform.
      *
      * @param  ConnectionInterface $con
@@ -117,9 +133,12 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
                 ) . 'SchemaParser';
         }
 
+        /** @var SchemaParserInterface $parser */
         $parser = $this->getInstance($clazz, null, '\\Propel\\Generator\\Reverse\\SchemaParserInterface');
         $parser->setConnection($con);
-        $parser->setMigrationEntity($this->get()['migrations']['tableName']);
+        if ($parser instanceof SqlSchemaParserInterface) {
+            $parser->setMigrationTable($this->get()['migrations']['tableName']);
+        }
         $parser->setGeneratorConfig($this);
 
         return $parser;
@@ -219,7 +238,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      */
     public function getBuildConnection($databaseName = null)
     {
-        if (null === $databaseName) {
+        if (!$databaseName && isset($this->get()['generator']['defaultConnection'])) {
             $databaseName = $this->get()['generator']['defaultConnection'];
         }
 
@@ -285,7 +304,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     private function getInstance($className, $arguments = null, $interfaceName = null)
     {
         if (!class_exists($className)) {
-            throw new ClassNotFoundException("Class `$className` not found.");
+            throw new ClassNotFoundException("Class $className not found.");
         }
 
         $object = new $className($arguments);

@@ -20,6 +20,9 @@ use Propel\Tests\Common\Config\ConfigTestCase;
  */
 class GeneratorConfigTest extends ConfigTestCase
 {
+    /**
+     * @var GeneratorConfig
+     */
     protected $generatorConfig;
 
     public function setConfig($config)
@@ -72,14 +75,14 @@ class GeneratorConfigTest extends ConfigTestCase
 
     public function testGetConfiguredPlatformDeafult()
     {
-        $actual = $this->generatorConfig->getConfiguredPlatform();
+        $actual = $this->generatorConfig->createPlatformForDatabase('yoursource');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\MysqlPlatform', $actual);
     }
 
     public function testGetConfiguredPlatformGivenDatabaseName()
     {
-        $actual = $this->generatorConfig->getConfiguredPlatform(null, 'mysource');
+        $actual = $this->generatorConfig->createPlatformForDatabase('mysource');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\SqlitePlatform', $actual);
     }
@@ -87,7 +90,7 @@ class GeneratorConfigTest extends ConfigTestCase
     public function testGetConfiguredPlatform()
     {
         $this->setConfig(array('generator' => array('platformClass' => '\\Propel\\Generator\\Platform\\PgsqlPlatform')));
-        $actual = $this->generatorConfig->getConfiguredPlatform();
+        $actual = $this->generatorConfig->createPlatformForDatabase();
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\PgsqlPlatform', $actual);
     }
 
@@ -97,13 +100,13 @@ class GeneratorConfigTest extends ConfigTestCase
      */
     public function testGetConfiguredPlatformGivenBadDatabaseNameThrowsException()
     {
-        $this->generatorConfig->getConfiguredPlatform(null, 'badsource');
+        $this->generatorConfig->createPlatformForDatabase('badsource');
     }
 
     public function testGetConfiguredPlatformGivenPlatform()
     {
         $this->setConfig(array('generator' => array('platformClass' => '\\Propel\\Generator\\Platform\\PgsqlPlatform')));
-        $actual = $this->generatorConfig->getConfiguredPlatform();
+        $actual = $this->generatorConfig->createPlatformForDatabase();
 
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\PgsqlPlatform', $actual);
     }
@@ -172,19 +175,19 @@ class GeneratorConfigTest extends ConfigTestCase
 
     public function testGetConfiguredBuilder()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
-        $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'query');
+        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException Propel\Generator\Exception\InvalidArgumentException
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
-        $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
+        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'bad_type');
     }
 
     public function testGetConfiguredPluralizer()

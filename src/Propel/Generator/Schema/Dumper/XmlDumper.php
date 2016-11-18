@@ -11,15 +11,15 @@
 namespace Propel\Generator\Schema\Dumper;
 
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Schema;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\VendorInfo;
 
@@ -137,8 +137,8 @@ class XmlDumper implements DumperInterface
 
         /*
             FIXME - Before we can add support for domains in the schema, we need
-            to have a method of the Column that indicates whether the column was mapped
-            to a SPECIFIC domain (since Column->getDomain() will always return a Domain object)
+            to have a method of the Field that indicates whether the field was mapped
+            to a SPECIFIC domain (since Field->getDomain() will always return a Domain object)
 
             foreach ($this->domainMap as $domain) {
                 $this->appendDomainNode($databaseNode);
@@ -148,8 +148,8 @@ class XmlDumper implements DumperInterface
             $this->appendVendorInformationNode($vendorInformation, $databaseNode);
         }
 
-        foreach ($database->getTables() as $table) {
-            $this->appendTableNode($table, $databaseNode);
+        foreach ($database->getEntities() as $entity) {
+            $this->appendEntityNode($entity, $databaseNode);
         }
     }
 
@@ -173,124 +173,116 @@ class XmlDumper implements DumperInterface
     }
 
     /**
-     * Appends the generated <table> XML node to its parent node.
+     * Appends the generated <entity> XML node to its parent node.
      *
-     * @param Table    $table      The Table model instance
+     * @param Entity    $entity      The Entity model instance
      * @param \DOMNode $parentNode The parent DOMNode object
      */
-    private function appendTableNode(Table $table, \DOMNode $parentNode)
+    private function appendEntityNode(Entity $entity, \DOMNode $parentNode)
     {
-        $tableNode = $parentNode->appendChild($this->document->createElement('table'));
-        $tableNode->setAttribute('name', $table->getCommonName());
+        $entityNode = $parentNode->appendChild($this->document->createElement('entity'));
+        $entityNode->setAttribute('name', $entity->getName());
 
-        $database = $table->getDatabase();
-        $schema = $table->getSchema();
+        $database = $entity->getDatabase();
+        $schema = $entity->getSchema();
         if ($schema && $schema !== $database->getSchema()) {
-            $tableNode->setAttribute('schema', $schema);
+            $entityNode->setAttribute('schema', $schema);
         }
 
-        if (IdMethod::NO_ID_METHOD !== ($idMethod = $table->getIdMethod())) {
-            $tableNode->setAttribute('idMethod', $idMethod);
+        if (IdMethod::NO_ID_METHOD !== ($idMethod = $entity->getIdMethod())) {
+            $entityNode->setAttribute('idMethod', $idMethod);
         }
 
-        if ($phpName = $table->getName()) {
-            $tableNode->setAttribute('phpName', $phpName);
+        if ($tableName = $entity->getTableName()) {
+            $entityNode->setAttribute('tableName', $tableName);
         }
 
-        $package = $table->getPackage();
-        if ($package && !$table->isPackageOverriden()) {
-            $tableNode->setAttribute('package', $package);
+        $package = $entity->getPackage();
+        if ($package && !$entity->isPackageOverriden()) {
+            $entityNode->setAttribute('package', $package);
         }
 
-        if ($namespace = $table->getNamespace()) {
-            $tableNode->setAttribute('namespace', $namespace);
+        if ($namespace = $entity->getNamespace()) {
+            $entityNode->setAttribute('namespace', $namespace);
         }
 
-        if ($table->isSkipSql()) {
-            $tableNode->setAttribute('skipSql', 'true');
+        if ($entity->isSkipSql()) {
+            $entityNode->setAttribute('skipSql', 'true');
         }
 
-        if ($table->isAbstract()) {
-            $tableNode->setAttribute('abstract', 'true');
-        }
-
-        if ($interface = $table->getInterface()) {
-            $tableNode->setAttribute('interface', $interface);
-        }
-
-        if ($table->isCrossRef()) {
-            $tableNode->setAttribute('isCrossRef', 'true');
+        if ($entity->isCrossRef()) {
+            $entityNode->setAttribute('isCrossRef', 'true');
         }
         
-        if ($baseClass = $table->getBaseClass()) {
-            $tableNode->setAttribute('baseClass', $baseClass);
+        if ($baseClass = $entity->getBaseClass()) {
+            $entityNode->setAttribute('baseClass', $baseClass);
         }
 
-        if ($table->isReadOnly()) {
-            $tableNode->setAttribute('readOnly', 'true');
+        if ($entity->isReadOnly()) {
+            $entityNode->setAttribute('readOnly', 'true');
         }
 
-        if ($table->isReloadOnInsert()) {
-            $tableNode->setAttribute('reloadOnInsert', 'true');
+        if ($entity->isReloadOnInsert()) {
+            $entityNode->setAttribute('reloadOnInsert', 'true');
         }
 
-        if ($table->isReloadOnUpdate()) {
-            $tableNode->setAttribute('reloadOnUpdate', 'true');
+        if ($entity->isReloadOnUpdate()) {
+            $entityNode->setAttribute('reloadOnUpdate', 'true');
         }
 
-        if (null !== ($referenceOnly = $table->isForReferenceOnly())) {
-            $tableNode->setAttribute('forReferenceOnly', $referenceOnly ? 'true' : 'false');
+        if (null !== ($referenceOnly = $entity->isForReferenceOnly())) {
+            $entityNode->setAttribute('forReferenceOnly', $referenceOnly ? 'true' : 'false');
         }
 
-        if ($alias = $table->getAlias()) {
-            $tableNode->setAttribute('alias', $alias);
+        if ($alias = $entity->getAlias()) {
+            $entityNode->setAttribute('alias', $alias);
         }
 
-        if ($description = $table->getDescription()) {
-            $tableNode->setAttribute('description', $description);
+        if ($description = $entity->getDescription()) {
+            $entityNode->setAttribute('description', $description);
         }
 
-        $defaultStringFormat = $table->getDefaultStringFormat();
-        if (Table::DEFAULT_STRING_FORMAT !== $defaultStringFormat) {
-            $tableNode->setAttribute('defaultStringFormat', $defaultStringFormat);
+        $defaultStringFormat = $entity->getDefaultStringFormat();
+        if (Entity::DEFAULT_STRING_FORMAT !== $defaultStringFormat) {
+            $entityNode->setAttribute('defaultStringFormat', $defaultStringFormat);
         }
 
-        $defaultAccessorVisibility = $table->getDefaultAccessorVisibility();
-        if ($defaultAccessorVisibility !== Table::VISIBILITY_PUBLIC) {
-            $tableNode->setAttribute('defaultAccessorVisibility', $defaultAccessorVisibility);
+        $defaultAccessorVisibility = $entity->getDefaultAccessorVisibility();
+        if ($defaultAccessorVisibility !== Entity::VISIBILITY_PUBLIC) {
+            $entityNode->setAttribute('defaultAccessorVisibility', $defaultAccessorVisibility);
         }
 
-        $defaultMutatorVisibility = $table->getDefaultMutatorVisibility();
-        if ($defaultMutatorVisibility !== Table::VISIBILITY_PUBLIC) {
-            $tableNode->setAttribute('defaultMutatorVisibility', $defaultMutatorVisibility);
+        $defaultMutatorVisibility = $entity->getDefaultMutatorVisibility();
+        if ($defaultMutatorVisibility !== Entity::VISIBILITY_PUBLIC) {
+            $entityNode->setAttribute('defaultMutatorVisibility', $defaultMutatorVisibility);
         }
 
-        foreach ($table->getColumns() as $column) {
-            $this->appendColumnNode($column, $tableNode);
+        foreach ($entity->getFields() as $field) {
+            $this->appendFieldNode($field, $entityNode);
         }
 
-        foreach ($table->getForeignKeys() as $foreignKey) {
-            $this->appendForeignKeyNode($foreignKey, $tableNode);
+        foreach ($entity->getRelations() as $relation) {
+            $this->appendRelationNode($relation, $entityNode);
         }
 
-        foreach ($table->getIdMethodParameters() as $parameter) {
-            $this->appendIdMethodParameterNode($parameter, $tableNode);
+        foreach ($entity->getIdMethodParameters() as $parameter) {
+            $this->appendIdMethodParameterNode($parameter, $entityNode);
         }
 
-        foreach ($table->getIndices() as $index) {
-            $this->appendIndexNode($index, $tableNode);
+        foreach ($entity->getIndices() as $index) {
+            $this->appendIndexNode($index, $entityNode);
         }
 
-        foreach ($table->getUnices() as $index) {
-            $this->appendUniqueIndexNode($index, $tableNode);
+        foreach ($entity->getUnices() as $index) {
+            $this->appendUniqueIndexNode($index, $entityNode);
         }
 
-        foreach ($table->getVendorInformation() as $vendorInformation) {
-            $this->appendVendorInformationNode($vendorInformation, $tableNode);
+        foreach ($entity->getVendorInformation() as $vendorInformation) {
+            $this->appendVendorInformationNode($vendorInformation, $entityNode);
         }
 
-        foreach ($table->getBehaviors() as $behavior) {
-            $this->appendBehaviorNode($behavior, $tableNode);
+        foreach ($entity->getBehaviors() as $behavior) {
+            $this->appendBehaviorNode($behavior, $entityNode);
         }
     }
 
@@ -317,74 +309,74 @@ class XmlDumper implements DumperInterface
     }
 
     /**
-     * Appends the generated <column> XML node to its parent node.
+     * Appends the generated <field> XML node to its parent node.
      *
-     * @param Column   $column     The Column model instance
+     * @param Field   $field     The Field model instance
      * @param \DOMNode $parentNode The parent DOMNode object
      */
-    private function appendColumnNode(Column $column, \DOMNode $parentNode)
+    private function appendFieldNode(Field $field, \DOMNode $parentNode)
     {
-        $columnNode = $parentNode->appendChild($this->document->createElement('column'));
-        $columnNode->setAttribute('name', $column->getName());
+        $fieldNode = $parentNode->appendChild($this->document->createElement('field'));
+        $fieldNode->setAttribute('name', $field->getName());
 
-        if ($phpName = $column->getName()) {
-            $columnNode->setAttribute('phpName', $phpName);
+        if ($columnName = $field->getColumnName()) {
+            $fieldNode->setAttribute('columnName', $columnName);
         }
 
-        $columnNode->setAttribute('type', $column->getType());
+        $fieldNode->setAttribute('type', $field->getType());
 
-        $domain = $column->getDomain();
+        $domain = $field->getDomain();
         if ($size = $domain->getSize()) {
-            $columnNode->setAttribute('size', $size);
+            $fieldNode->setAttribute('size', $size);
         }
 
         if ($scale = $domain->getScale()) {
-            $columnNode->setAttribute('scale', $scale);
+            $fieldNode->setAttribute('scale', $scale);
         }
 
-        $platform = $column->getPlatform();
-        if ($platform && !$column->isDefaultSqlType($platform)) {
-            $columnNode->setAttribute('sqlType', $domain->getSqlType());
+        $platform = $field->getPlatform();
+        if ($platform && !$field->isDefaultSqlType($platform)) {
+            $fieldNode->setAttribute('sqlType', $domain->getSqlType());
         }
 
-        if ($description = $column->getDescription()) {
-            $columnNode->setAttribute('description', $description);
+        if ($description = $field->getDescription()) {
+            $fieldNode->setAttribute('description', $description);
         }
 
-        if ($column->isPrimaryKey()) {
-            $columnNode->setAttribute('primaryKey', 'true');
+        if ($field->isPrimaryKey()) {
+            $fieldNode->setAttribute('primaryKey', 'true');
         }
 
-        if ($column->isAutoIncrement()) {
-            $columnNode->setAttribute('autoIncrement', 'true');
+        if ($field->isAutoIncrement()) {
+            $fieldNode->setAttribute('autoIncrement', 'true');
         }
 
-        if ($column->isNotNull()) {
-            $columnNode->setAttribute('required', 'true');
+        if ($field->isNotNull()) {
+            $fieldNode->setAttribute('required', 'true');
         }
 
         $defaultValue = $domain->getDefaultValue();
         if ($defaultValue) {
             $type = $defaultValue->isExpression() ? 'defaultExpr' : 'defaultValue';
-            $columnNode->setAttribute($type, $defaultValue->getValue());
+            $fieldNode->setAttribute($type, $defaultValue->getValue());
         }
 
-        if ($column->isInheritance()) {
-            $columnNode->setAttribute('inheritance', $column->getInheritanceType());
-            foreach ($column->getInheritanceList() as $inheritance) {
-                $this->appendInheritanceNode($inheritance, $columnNode);
+        if ($field->isInheritance()) {
+            $fieldNode->setAttribute('inheritance', $field->getInheritanceType());
+            foreach ($field->getInheritanceList() as $inheritance) {
+                $this->appendInheritanceNode($inheritance, $fieldNode);
             }
         }
 
-        if ($column->isNodeKey()) {
-            $columnNode->setAttribute('nodeKey', 'true');
-            if ($nodeKeySeparator = $column->getNodeKeySep()) {
-                $columnNode->setAttribute('nodeKeySep', $nodeKeySeparator);
+        if ($field->isNodeKey()) {
+            $fieldNode->setAttribute('nodeKey', 'true');
+            if ($nodeKeySeparator = $field->getNodeKeySep()) {
+                $fieldNode->setAttribute('nodeKeySep', $nodeKeySeparator);
             }
         }
 
-        foreach ($column->getVendorInformation() as $vendorInformation) {
-            $this->appendVendorInformationNode($vendorInformation, $columnNode);
+        foreach ($field->getVendorInformation() as $vendorInformation) {
+            $this->appendVendorInformationNode($vendorInformation, $fieldNode);
         }
     }
 
@@ -408,48 +400,43 @@ class XmlDumper implements DumperInterface
     /**
      * Appends the generated <foreign-key> XML node to its parent node.
      *
-     * @param ForeignKey $foreignKey The ForeignKey model instance
+     * @param Relation $relation The Relation model instance
      * @param \DOMNode   $parentNode The parent DOMNode object
      */
-    private function appendForeignKeyNode(ForeignKey $foreignKey, \DOMNode $parentNode)
+    private function appendRelationNode(Relation $relation, \DOMNode $parentNode)
     {
-        $foreignKeyNode = $parentNode->appendChild($this->document->createElement('foreign-key'));
-        $foreignKeyNode->setAttribute('foreignTable', $foreignKey->getForeignTableCommonName());
+        $relationNode = $parentNode->appendChild($this->document->createElement('foreign-key'));
+        $relationNode->setAttribute('target', $relation->getForeignEntityName());
 
-        if ($schema = $foreignKey->getForeignSchemaName()) {
-            $foreignKeyNode->setAttribute('foreignSchema', $schema);
+        if ($relation->hasName()) {
+            $relationNode->setAttribute('name', $relation->getName());
+        }
+        $relationNode->setAttribute('field', $relation->getField());
+
+        if ($refField = $relation->getRefField()) {
+            $relationNode->setAttribute('refField', $refField);
         }
 
-        $foreignKeyNode->setAttribute('name', $foreignKey->getName());
-
-        if ($phpName = $foreignKey->getName()) {
-            $foreignKeyNode->setAttribute('phpName', $phpName);
+        if ($defaultJoin = $relation->getDefaultJoin()) {
+            $relationNode->setAttribute('defaultJoin', $defaultJoin);
         }
 
-        if ($refPhpName = $foreignKey->getRefPhpName()) {
-            $foreignKeyNode->setAttribute('refPhpName', $refPhpName);
+        if ($onDeleteBehavior = $relation->getOnDelete()) {
+            $relationNode->setAttribute('onDelete', $onDeleteBehavior);
         }
 
-        if ($defaultJoin = $foreignKey->getDefaultJoin()) {
-            $foreignKeyNode->setAttribute('defaultJoin', $defaultJoin);
+        if ($onUpdateBehavior = $relation->getOnUpdate()) {
+            $relationNode->setAttribute('onUpdate', $onUpdateBehavior);
         }
 
-        if ($onDeleteBehavior = $foreignKey->getOnDelete()) {
-            $foreignKeyNode->setAttribute('onDelete', $onDeleteBehavior);
+        for ($i = 0, $size = count($relation->getLocalFields()); $i < $size; $i++) {
+            $refNode = $relationNode->appendChild($this->document->createElement('reference'));
+            $refNode->setAttribute('local', $relation->getLocalFieldName($i));
+            $refNode->setAttribute('foreign', $relation->getForeignFieldName($i));
         }
 
-        if ($onUpdateBehavior = $foreignKey->getOnUpdate()) {
-            $foreignKeyNode->setAttribute('onUpdate', $onUpdateBehavior);
-        }
-
-        for ($i = 0, $size = count($foreignKey->getLocalColumns()); $i < $size; $i++) {
-            $refNode = $foreignKeyNode->appendChild($this->document->createElement('reference'));
-            $refNode->setAttribute('local', $foreignKey->getLocalColumnName($i));
-            $refNode->setAttribute('foreign', $foreignKey->getForeignColumnName($i));
-        }
-
-        foreach ($foreignKey->getVendorInformation() as $vendorInformation) {
-            $this->appendVendorInformationNode($vendorInformation, $foreignKeyNode);
+        foreach ($relation->getVendorInformation() as $vendorInformation) {
+            $this->appendVendorInformationNode($vendorInformation, $relationNode);
         }
     }
 
@@ -502,12 +489,12 @@ class XmlDumper implements DumperInterface
         $indexNode = $parentNode->appendChild($this->document->createElement($nodeType));
         $indexNode->setAttribute('name', $index->getName());
 
-        foreach ($index->getColumns() as $columnName) {
-            $indexColumnNode = $indexNode->appendChild($this->document->createElement($nodeType.'-column'));
-            $indexColumnNode->setAttribute('name', $columnName);
+        foreach ($index->getFields() as $fieldName) {
+            $indexFieldNode = $indexNode->appendChild($this->document->createElement($nodeType.'-field'));
+            $indexFieldNode->setAttribute('name', $fieldName);
 
-            if ($size = $index->getColumnSize($columnName)) {
-                $indexColumnNode->setAttribute('size', $size);
+            if ($size = $index->getFieldSize($fieldName)) {
+                $indexFieldNode->setAttribute('size', $size);
             }
         }
 

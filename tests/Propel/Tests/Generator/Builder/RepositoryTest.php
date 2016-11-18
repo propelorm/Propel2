@@ -26,6 +26,7 @@ class RepositoryTest extends TestCase
 {
     public function testBla()
     {
+        return;
         $configuration = new \Propel\Runtime\Configuration('/Users/marc/Propel2/propel.yml');
         $session = $configuration->getSession();
 
@@ -74,7 +75,6 @@ class RepositoryTest extends TestCase
         $superCarRepository = $configuration->getRepository('\Superar');
 
 
-        return;
         $con->prepare('DELETE FROM car')->execute();
         $con->prepare('DELETE FROM brand')->execute();
         $con->prepare('ALTER TABLE brand AUTO_INCREMENT = 1;')->execute();
