@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model;
+
 use Propel\Generator\Model\FieldDefaultValue;
 use \Propel\Tests\TestCase;
 

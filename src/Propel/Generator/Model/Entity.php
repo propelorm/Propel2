@@ -200,9 +200,7 @@ class Entity extends ScopedMappingModel implements IdMethod
         parent::setupObject();
 
         $this->setName($this->getAttribute('name'));
-
-        $shortName = basename($this->name);
-        $this->tableName = $this->getAttribute('tableName') ?: NamingTool::toUnderscore($shortName);
+        $this->tableName = $this->getAttribute('tableName');
 
         if ($this->getAttribute('activeRecord')) {
             $this->activeRecord = 'true' === $this->getAttribute('activeRecord');
@@ -947,6 +945,15 @@ class Entity extends ScopedMappingModel implements IdMethod
      */
     public function getTableName()
     {
+        if (!$this->tableName) {
+            $shortName = basename($this->name);
+            $this->tableName = NamingTool::toUnderscore($shortName);
+        }
+
+        if ($this->getDatabase()) {
+            return $this->getDatabase()->getTablePrefix() . $this->tableName;
+        }
+
         return $this->tableName;
     }
 
@@ -1310,6 +1317,27 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function getFields()
     {
         return $this->fields;
+    }
+
+    /**
+     * Returns a delimiter-delimited string list of field names.
+     *
+     * @see SqlDefaultPlatform::getFieldList() if quoting is required
+     *
+     * @param array
+     * @param  string $delimiter
+     * @return string
+     */
+    public function getFieldList($columns, $delimiter = ',')
+    {
+        $list = [];
+        foreach ($columns as $col) {
+            if ($col instanceof Field) {
+                $col = $col->getName();
+            }
+            $list[] = $col;
+        }
+        return implode($delimiter, $list);
     }
 
     /**
@@ -1743,14 +1771,16 @@ class Entity extends ScopedMappingModel implements IdMethod
     public function __clone()
     {
         $fields = [];
-        foreach ($this->fields as $oldCol) {
-            $col = clone $oldCol;
-            $fields[] = $col;
-            $this->fieldsByName[$col->getName()] = $col;
-            $this->fieldsByLowercaseName[strtolower($col->getName())] = $col;
+        if ($this->fields) {
+            foreach ($this->fields as $oldCol) {
+                $col = clone $oldCol;
+                $fields[] = $col;
+                $this->fieldsByName[$col->getName()] = $col;
+                $this->fieldsByLowercaseName[strtolower($col->getName())] = $col;
 //            $this->fieldsByPhpName[$col->getName()] = $col;
+            }
+            $this->fields = $fields;
         }
-        $this->fields = $fields;
     }
 
     /**

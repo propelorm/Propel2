@@ -8,9 +8,14 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model;
+
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Exception\BehaviorNotFoundException;
+use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
+use Propel\Tests\Helpers\MultipleBehavior;
 use Propel\Tests\TestCase;
 
 /**
@@ -32,7 +37,7 @@ class BehaviorTest extends TestCase
 
     public function testSetupObjectWithMultipleBehaviorWithNoId()
     {
-        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b = new MultipleBehavior();
         $b->loadMapping(array('name' => 'foo'));
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
@@ -41,7 +46,7 @@ class BehaviorTest extends TestCase
 
     public function testSetupObjectWithMultipleBehaviorWithId()
     {
-        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b = new MultipleBehavior();
         $b->loadMapping(array('name' => 'foo', 'id' => 'bar'));
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
@@ -65,14 +70,14 @@ class BehaviorTest extends TestCase
         $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
     }
 
-    public function testTable()
+    public function testEntity()
     {
         $b = new Behavior();
-        $this->assertNull($b->getTable(), 'Behavior Table is null by default');
-        $t = new Table();
-        $t->setCommonName('fooTable');
-        $b->setTable($t);
-        $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
+        $this->assertNull($b->getEntity(), 'Behavior Entity is null by default');
+        $t = new Entity();
+        $t->setName('FooEntity');
+        $b->setEntity($t);
+        $this->assertEquals($b->getEntity(), $t, 'setEntity() sets the name, and getEntity() gets it');
     }
 
     public function testParameters()
@@ -99,63 +104,68 @@ class BehaviorTest extends TestCase
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
-  <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    <column name="created_on" type="TIMESTAMP" />
-    <column name="updated_on" type="TIMESTAMP" />
+  <entity name="table1">
+    <field name="id" type="INTEGER" primaryKey="true" />
+    <field name="title" type="VARCHAR" size="100" primaryString="true" />
+    <field name="created_on" type="TIMESTAMP" />
+    <field name="updated_on" type="TIMESTAMP" />
     <behavior name="timestampable">
-      <parameter name="create_column" value="created_on" />
-      <parameter name="update_column" value="updated_on" />
+      <parameter name="create_field" value="created_on" />
+      <parameter name="update_field" value="updated_on" />
     </behavior>
-  </table>
+  </entity>
 </database>
 EOF;
         $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table1');
-        $behaviors = $table->getBehaviors();
+        $entity = $appData->getDatabase('test1')->getEntity('table1');
+        $behaviors = $entity->getBehaviors();
         $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
-        $behavior = $table->getBehavior('timestampable');
-        $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
+        $behavior = $entity->getBehavior('timestampable');
+        $this->assertEquals('table1', $behavior->getEntity()->getName(), 'SchemaReader sets the behavior table correctly');
         $this->assertEquals(
-            array('create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'),
+            array('create_field' => 'created_on', 'update_field' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'),
             $behavior->getParameters(),
             'SchemaReader sets the behavior parameters correctly'
         );
     }
 
-  /**
-   * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
-   */
     public function testUnknownBehavior()
     {
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
-  <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
+  <entity name="table1">
+    <field name="id" type="INTEGER" primaryKey="true" />
     <behavior name="foo" />
-  </table>
+  </entity>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
+        try {
+            $appData = $schemaReader->parseString($schema);
+        } catch (SchemaException $e) {
+            if ($e->getPrevious() instanceof BehaviorNotFoundException) {
+                return;
+            }
+        }
+
+        $this->fail('No exception or wrong exception thrown');
     }
 
-    public function testModifyTable()
+    public function testModifyEntity()
     {
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
-  <table name="table2">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
+  <entity name="table2">
+    <field name="id" type="INTEGER" primaryKey="true" />
+    <field name="title" type="VARCHAR" size="100" primaryString="true" />
     <behavior name="timestampable" />
-  </table>
+  </entity>
 </database>
 EOF;
         $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table2');
-        $this->assertEquals(count($table->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
+        $entity = $appData->getDatabase('test1')->getEntity('table2');
+        $this->assertEquals(count($entity->getFields()), 4, 'A behavior can modify its table by implementing modifyEntity()');
     }
 
     public function testModifyDatabase()
@@ -164,14 +174,14 @@ EOF;
         $schema = <<<EOF
 <database name="test1">
   <behavior name="timestampable" />
-  <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-  </table>
+  <entity name="table1">
+    <field name="id" type="INTEGER" primaryKey="true" />
+  </entity>
 </database>
 EOF;
         $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table1');
-        $this->assertTrue(array_key_exists('timestampable', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
+        $entity = $appData->getDatabase('test1')->getEntity('table1');
+        $this->assertTrue(array_key_exists('timestampable', $entity->getBehaviors()), 'A database behavior is automatically copied to all its table');
     }
 
     public function testGetColumnForParameter()
@@ -179,21 +189,21 @@ EOF;
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
-  <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    <column name="created_on" type="TIMESTAMP" />
-    <column name="updated_on" type="TIMESTAMP" />
+  <entity name="table1">
+    <field name="id" type="INTEGER" primaryKey="true" />
+    <field name="title" type="VARCHAR" size="100" primaryString="true" />
+    <field name="created_on" type="TIMESTAMP" />
+    <field name="updated_on" type="TIMESTAMP" />
     <behavior name="timestampable">
-      <parameter name="create_column" value="created_on" />
-      <parameter name="update_column" value="updated_on" />
+      <parameter name="create_field" value="created_on" />
+      <parameter name="update_field" value="updated_on" />
     </behavior>
-  </table>
+  </entity>
 </database>
 EOF;
         $appData = $schemaReader->parseString($schema);
-        $table = $appData->getDatabase('test1')->getTable('table1');
-        $behavior = $table->getBehavior('timestampable');
-        $this->assertEquals($table->getColumn('created_on'), $behavior->getColumnForParameter('create_column'), 'getColumnForParameter() returns the configured column for behavior based on a parameter name');
+        $entity = $appData->getDatabase('test1')->getEntity('table1');
+        $behavior = $entity->getBehavior('timestampable');
+        $this->assertEquals($entity->getField('created_on'), $behavior->getFieldForParameter('create_field'), 'getFieldForParameter() returns the configured field for behavior based on a parameter name');
     }
 }

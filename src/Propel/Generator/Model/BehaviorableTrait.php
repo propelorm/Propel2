@@ -97,7 +97,7 @@ trait BehaviorableTrait
      */
     public function getBehaviors()
     {
-        return $this->behaviors;
+        return (array)$this->behaviors;
     }
 
     /**

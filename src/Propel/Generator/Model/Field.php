@@ -38,8 +38,7 @@ class Field extends MappingModel
     private $name;
     private $columnName;
     private $description;
-    private $phpName;
-    private $phpSingularName;
+    private $singularName;
     private $isNotNull;
     private $namePrefix;
     private $accessorVisibility;
@@ -171,7 +170,7 @@ class Field extends MappingModel
 
             $this->name = $this->getAttribute('name');
             $this->columnName = $this->getAttribute('columnName');
-            $this->phpSingularName = $this->getAttribute('singularName');
+            $this->singularName = $this->getAttribute('singularName');
             $this->phpType = $this->getAttribute('phpType');
             $this->tableMapName = $this->getAttribute('tableMapName');
             $this->description = $this->getAttribute('description');
@@ -411,8 +410,19 @@ class Field extends MappingModel
      */
     public function getSingularName()
     {
-        if ($this->getAttribute('singularName')) return $this->getAttribute('singularName');
+        if ($this->singularName) {
+            return $this->singularName;
+        }
+
         return rtrim($this->name, 's');
+    }
+
+    /**
+     * @param mixed $singularName
+     */
+    public function setSingularName($singularName)
+    {
+        $this->singularName = $singularName;
     }
 
     /**

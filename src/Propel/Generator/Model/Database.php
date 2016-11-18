@@ -371,7 +371,7 @@ class Database extends ScopedMappingModel
      */
     public function getEntities()
     {
-        return $this->entities;
+        return (array)$this->entities;
     }
 
     /**

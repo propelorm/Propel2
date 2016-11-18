@@ -11,7 +11,7 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
@@ -32,12 +32,11 @@ class DatabaseTest extends ModelTestCase
         $this->assertNull($database->getParentSchema());
         $this->assertNull($database->getDomain('BOOLEAN'));
         $this->assertNull($database->getGeneratorConfig());
-        $this->assertCount(0, $database->getTables());
-        $this->assertSame(0, $database->countTables());
+        $this->assertCount(0, $database->getEntities());
+        $this->assertSame(0, $database->countEntities());
         $this->assertFalse($database->isHeavyIndexing());
         $this->assertFalse($database->getHeavyIndexing());
-        $this->assertFalse($database->hasTableByPhpName('foo'));
-        $this->assertNull($database->getTableByPhpName('foo'));
+        $this->assertFalse($database->hasEntity('foo'));
         $this->assertFalse($database->hasBehavior('foo'));
         $this->assertNull($database->getBehavior('foo'));
     }
@@ -88,12 +87,12 @@ class DatabaseTest extends ModelTestCase
         $database = new Database();
         $database->setPlatform($platform);
         $database->setParentSchema($schema);
-        $database->addTable($this->getTableMock('foo'));
-        $database->addTable($this->getTableMock('bar'));
+        $database->addEntity($this->getEntityMock('foo'));
+        $database->addEntity($this->getEntityMock('bar'));
         $database->doFinalInitialization();
 
         $this->assertCount(0, $database->getBehaviors());
-        $this->assertSame(2, $database->countTables());
+        $this->assertSame(2, $database->countEntities());
     }
 
     public function testSetParentSchema()
@@ -141,129 +140,126 @@ class DatabaseTest extends ModelTestCase
         $this->assertInstanceOf($type, $behavior);
     }
 
-    public function testGetNextTableBehavior()
+    public function testGetNextEntityBehavior()
     {
-        $table1 = $this->getTableMock('books', array('behaviors' => array(
+        $entity1 = $this->getEntityMock('books', array('behaviors' => array(
             $this->getBehaviorMock('foo', array(
-                'is_table_modified'  => false,
+                'is_entity_modified'  => false,
                 'modification_order' => 2,
             )),
             $this->getBehaviorMock('bar', array(
-                'is_table_modified'  => false,
+                'is_entity_modified'  => false,
                 'modification_order' => 1,
             )),
-            $this->getBehaviorMock('baz', array('is_table_modified'  => true)),
+            $this->getBehaviorMock('baz', array('is_entity_modified'  => true)),
         )));
 
-        $table2 = $this->getTableMock('authors', array('behaviors' => array(
+        $entity2 = $this->getEntityMock('authors', array('behaviors' => array(
             $this->getBehaviorMock('mix', array(
-                'is_table_modified'  => false,
+                'is_entity_modified'  => false,
                 'modification_order' => 1,
             )),
         )));
 
         $database = new Database();
-        $database->addTable($table1);
-        $database->addTable($table2);
+        $database->addEntity($entity1);
+        $database->addEntity($entity2);
 
-        $behavior = $database->getNextTableBehavior();
+        $behavior = $database->getNextEntityBehavior();
 
         $this->assertInstanceOf('Propel\Generator\Model\Behavior', $behavior);
         $this->assertSame('bar', $behavior->getName());
     }
 
-    public function testCantGetNextTableBehavior()
+    public function testCantGetNextEntityBehavior()
     {
-        $table1 = $this->getTableMock('books', array('behaviors' => array(
-            $this->getBehaviorMock('foo', array('is_table_modified' => true)),
+        $entity1 = $this->getEntityMock('books', array('behaviors' => array(
+            $this->getBehaviorMock('foo', array('is_entity_modified' => true)),
         )));
 
         $database = new Database();
-        $database->addTable($table1);
+        $database->addEntity($entity1);
 
-        $behavior = $database->getNextTableBehavior();
+        $behavior = $database->getNextEntityBehavior();
 
-        $this->assertNull($database->getNextTableBehavior());
+        $this->assertNull($database->getNextEntityBehavior());
     }
 
-    public function testCantGetTable()
+    /**
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     */
+    public function testCantGetEntity()
     {
         $database = new Database();
 
-        $this->assertNull($database->getTable('foo'));
-        $this->assertNull($database->getTableByPhpName('foo'));
-        $this->assertFalse($database->hasTable('foo'));
-        $this->assertFalse($database->hasTableByPhpName('foo'));
+        $this->assertFalse($database->hasEntity('foo'));
+        $this->assertNull($database->getEntity('foo'));
     }
 
-    public function testAddNamespacedTable()
+    public function testAddNamespacedEntity()
     {
-        $table = $this->getTableMock('books', array('namespace' => '\Acme'));
+        $entity = $this->getEntityMock('books', array('namespace' => '\Acme'));
 
         $database = new Database();
-        $database->addTable($table);
+        $database->addEntity($entity);
 
-        $this->assertTrue($database->hasTable('books'));
+        $this->assertTrue($database->hasEntity('books'));
     }
 
-    public function testAddTable()
+    public function testAddEntity()
     {
-        $table = $this->getTableMock('books', array(
+        $entity = $this->getEntityMock('books', array(
             'namespace' => 'Acme\Model',
         ));
 
         $database = new Database();
         $database->setPackage('acme');
         $database->setNamespace('Acme\Model');
-        $database->addTable($table);
+        $database->addEntity($entity);
 
-        $this->assertSame(1, $database->countTables());
-        $this->assertCount(1, $database->getTablesForSql());
+        $this->assertSame(1, $database->countEntities());
+        $this->assertCount(1, $database->getEntitiesForSql());
 
-        $this->assertTrue($database->hasTable('books'));
-        $this->assertTrue($database->hasTable('books', true));
-        $this->assertFalse($database->hasTable('BOOKS'));
-        $this->assertTrue($database->hasTableByPhpName('Books'));
-        $this->assertSame($table, $database->getTable('books'));
-        $this->assertSame($table, $database->getTableByPhpName('Books'));
+        $this->assertTrue($database->hasEntity('books'));
+        $this->assertTrue($database->hasEntity('books', true));
+        $this->assertFalse($database->hasEntity('BOOKS'));
+        $this->assertSame($entity, $database->getEntity('books'));
 
     }
 
-    public function testAddArrayTable()
+    public function testAddArrayEntity()
     {
         $database = new Database();
-        $database->addTable(array('name' => 'books'));
-        $database->addTable(array('name' => 'authors'));
-        $database->addTable(array('name' => 'categories', 'skipSql' => 'true'));
-        $database->addTable(array('name' => 'publishers', 'readOnly' => 'true'));
+        $database->addEntity(array('name' => 'books'));
+        $database->addEntity(array('name' => 'authors'));
+        $database->addEntity(array('name' => 'categories', 'skipSql' => 'true'));
+        $database->addEntity(array('name' => 'publishers', 'readOnly' => 'true'));
 
-        $this->assertTrue($database->hasTable('books'));
-        $this->assertTrue($database->hasTable('books', true));
-        $this->assertFalse($database->hasTable('BOOKS'));
-        $this->assertTrue($database->hasTableByPhpName('Books'));
-        $this->assertInstanceOf('Propel\Generator\Model\Table', $database->getTable('books'));
-        $this->assertInstanceOf('Propel\Generator\Model\Table', $database->getTableByPhpName('Books'));
+        $this->assertTrue($database->hasEntity('books'));
+        $this->assertTrue($database->hasEntity('books', true));
+        $this->assertFalse($database->hasEntity('BOOKS'));
+        $this->assertInstanceOf('Propel\Generator\Model\Entity', $database->getEntity('books'));
 
-        // 3 tables because read only table is excluded from the count
-        $this->assertSame(3, $database->countTables());
+        // 3 entities because read only entity is excluded from the count
+        $this->assertSame(3, $database->countEntities());
 
-        // 3 tables because skipped sql table is excluded from the count
-        $this->assertCount(3, $database->getTablesForSql());
+        // 3 entities because skipped sql entity is excluded from the count
+        $this->assertCount(3, $database->getEntitiesForSql());
     }
 
-    public function testAddSameTableTwice()
+    public function testAddSameEntityTwice()
     {
         $this->setExpectedException('Propel\Generator\Exception\EngineException');
 
         $database = new Database();
-        $database->addTable(array('name' => 'authors'));
-        $database->addTable(array('name' => 'authors'));
+        $database->addEntity(array('name' => 'authors'));
+        $database->addEntity(array('name' => 'authors'));
     }
 
     public function provideBehaviors()
     {
         return array(
-            array('aggregate_column', 'AggregateColumn'),
+            array('aggregate_field', 'AggregateField'),
             array('auto_add_pk', 'AutoAddPk'),
             array('concrete_inheritance', 'ConcreteInheritance'),
             array('delegate', 'Delegate'),
@@ -272,8 +268,6 @@ class DatabaseTest extends ModelTestCase
             array('sluggable', 'Sluggable'),
             array('sortable', 'Sortable'),
             array('timestampable', 'Timestampable'),
-            array('validate', 'Validate'),
-            array('versionable', 'Versionable'),
         );
     }
 
@@ -300,7 +294,7 @@ class DatabaseTest extends ModelTestCase
         $config
             ->expects($this->once())
             ->method('getConfigProperty')
-            ->with($this->equalTo('generator.database.adapters.mysql.tableType'))
+            ->with($this->equalTo('generator.database.adapters.mysql.entityType'))
             ->will($this->returnValue('InnoDB'))
         ;
 
@@ -311,7 +305,7 @@ class DatabaseTest extends ModelTestCase
         $database = new Database();
         $database->setParentSchema($schema);
 
-        $this->assertSame('InnoDB', $database->getBuildProperty('generator.database.adapters.mysql.tableType'));
+        $this->assertSame('InnoDB', $database->getBuildProperty('generator.database.adapters.mysql.entityType'));
     }
 
     public function testAddArrayDomain()
@@ -404,18 +398,22 @@ class DatabaseTest extends ModelTestCase
         $this->assertSame('native', $database->getDefaultIdMethod());
     }
 
-    public function testAddTableWithSameNameOnDifferentSchema()
+    /**
+     * @expectedException \Propel\Generator\Exception\EngineException
+     * @expectedExceptionMessage Entity "t1" declared twice
+     */
+    public function testAddEntityWithSameNameOnDifferentSchema()
     {
         $db = new Database();
         $db->setPlatform(new PgsqlPlatform());
 
-        $t1 = new Table('t1');
-        $db->addTable($t1);
+        $t1 = new Entity('t1');
+        $db->addEntity($t1);
         $this->assertEquals('t1', $t1->getName());
 
-        $t1b = new Table('t1');
+        $t1b = new Entity('t1');
         $t1b->setSchema('bis');
-        $db->addTable($t1b);
+        $db->addEntity($t1b);
         $this->assertEquals('bis.t1', $t1b->getName());
     }
 }

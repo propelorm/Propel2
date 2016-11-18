@@ -11,6 +11,7 @@
 namespace Propel\Generator\Model;
 
 use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -40,6 +41,13 @@ class Relation extends MappingModel
      * @var string
      */
     private $foreignEntityName;
+
+    /**
+     * If foreignEntityName is not given getForeignEntity() uses this entity directly.
+     *
+     * @var Entity|null
+     */
+    private $foreignEntity;
 //
 //    /**
 //     * @var string
@@ -114,7 +122,7 @@ class Relation extends MappingModel
         parent::__construct();
 
         if (null !== $name) {
-            $this->setField($name);
+            $this->setName($name);
         }
 
         $this->onUpdate = self::NONE;
@@ -335,14 +343,16 @@ class Relation extends MappingModel
             $newName = 'fk_';
 
             $hash = [];
-            $hash[] = $this->getForeignEntity()->getSchema() . '.' . $this->getForeignEntity()->getTableName();
+            if ($this->getForeignEntity()) {
+                $hash[] = $this->getForeignEntity()->getFQTableName();
+            }
             $hash[] = implode(',', (array)$this->localFields);
             $hash[] = implode(',', (array)$this->foreignFields);
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
 
-            if ($this->parentEntity) {
-                $newName = $this->parentEntity->getTableName() . '_' . $newName;
+            if ($this->getEntity()) {
+                $newName = $this->getEntity()->getTableName() . '_' . $newName;
             }
 
             $this->name = $newName;
@@ -417,6 +427,10 @@ class Relation extends MappingModel
      */
     public function getForeignEntityName()
     {
+        if (null === $this->foreignEntityName && null !== $this->foreignEntity) {
+            $this->foreignEntity->getFullClassName();
+        }
+
         return $this->foreignEntityName;
 
 //        $platform = $this->getPlatform();
@@ -447,13 +461,25 @@ class Relation extends MappingModel
     /**
      * Returns the resolved foreign Entity model object.
      *
-     * @return Entity
+     * @return Entity|null
      */
     public function getForeignEntity()
     {
-        if ($database = $this->parentEntity->getDatabase()) {
+        if (null !== $this->foreignEntity) {
+            return $this->foreignEntity;
+        }
+
+        if (($database = $this->parentEntity->getDatabase()) && $this->getForeignEntityName()) {
             return $database->getEntity($this->getForeignEntityName());
         }
+    }
+
+    /**
+     * @param null|Entity $foreignEntity
+     */
+    public function setForeignEntity($foreignEntity)
+    {
+        $this->foreignEntity = $foreignEntity;
     }
 
     /**

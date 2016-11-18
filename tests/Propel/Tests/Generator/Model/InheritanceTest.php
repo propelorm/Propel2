@@ -22,21 +22,19 @@ class InheritanceTest extends TestCase
 {
     public function testCreateNewInheritance()
     {
-        $column = $this
-            ->getMockBuilder('Propel\Generator\Model\Column')
+        $field = $this
+            ->getMockBuilder('Propel\Generator\Model\Field')
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $inheritance = new Inheritance();
-        $inheritance->setPackage('Foo');
         $inheritance->setAncestor('BaseObject');
         $inheritance->setKey('baz');
         $inheritance->setClassName('Foo\Bar');
-        $inheritance->setColumn($column);
+        $inheritance->setField($field);
 
-        $this->assertInstanceOf('Propel\Generator\Model\Column', $inheritance->getColumn());
-        $this->assertSame('Foo', $inheritance->getPackage());
+        $this->assertInstanceOf('Propel\Generator\Model\Field', $inheritance->getField());
         $this->assertSame('BaseObject', $inheritance->getAncestor());
         $this->assertSame('baz', $inheritance->getKey());
         $this->assertSame('Foo\Bar', $inheritance->getClassName());
@@ -48,11 +46,9 @@ class InheritanceTest extends TestCase
         $inheritance->loadMapping(array(
             'key' => 'baz',
             'extends' => 'BaseObject',
-            'class' => 'Foo\Bar',
-            'package' => 'Foo',
+            'class' => 'Foo\Bar'
         ));
 
-        $this->assertSame('Foo', $inheritance->getPackage());
         $this->assertSame('BaseObject', $inheritance->getAncestor());
         $this->assertSame('baz', $inheritance->getKey());
         $this->assertSame('Foo\Bar', $inheritance->getClassName());

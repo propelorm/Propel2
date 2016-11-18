@@ -42,8 +42,12 @@ class Schema
     /**
      * Creates a new instance for the specified database type.
      */
-    public function __construct()
+    public function __construct(PlatformInterface $platform = null)
     {
+        if (null !== $platform) {
+            $this->setPlatform($platform);
+        }
+
         $this->isInitialized = false;
         $this->databases     = [];
     }
@@ -255,9 +259,11 @@ class Schema
                         $db->addEntity($addEntity);
                     }
                     // join database behaviors
-                    foreach ($addDb->getBehaviors() as $addBehavior) {
-                        if (!$db->hasBehavior($addBehavior->getId())) {
-                            $db->addBehavior($addBehavior);
+                    if ($addDb->getBehaviors()) {
+                        foreach ($addDb->getBehaviors() as $addBehavior) {
+                            if (!$db->hasBehavior($addBehavior->getId())) {
+                                $db->addBehavior($addBehavior);
+                            }
                         }
                     }
                     // restore the database namespace
