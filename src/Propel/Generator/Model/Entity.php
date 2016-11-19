@@ -975,6 +975,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     {
         $name = $this->getName();
         $namespace = $this->getNamespace();
+
         if (!$namespace && $this->getDatabase()) {
             $namespace = $this->getDatabase()->getNamespace();
         }

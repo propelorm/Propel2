@@ -40,7 +40,7 @@ class RelationSetterMethods extends BuildComponent
         $setterName = 'set' . $this->getRelationPhpName($relation, false);
         $relationEntity = $relation->getForeignEntity();
 
-        $relationClassName = $this->getBuilder()->getDefinition()->declareUse($relationEntity->getFullClassName());
+        $relationClassName = $this->useClass($relationEntity->getFullClassName());
 
         $body = $this->renderTemplate(
             [

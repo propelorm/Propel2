@@ -38,7 +38,7 @@ class ReferrerRelationSetMethods extends BuildComponent
     protected function addRefGetMethod(Relation $relation)
     {
         $varName = $this->getRefRelationVarName($relation);
-        $foreignClassName = $this->getClassNameFromEntity($relation->getEntity());
+        $foreignClassName = $this->useClass($relation->getEntity()->getFullClassName());
 
         $body = "
 \$this->$varName = \$$varName;

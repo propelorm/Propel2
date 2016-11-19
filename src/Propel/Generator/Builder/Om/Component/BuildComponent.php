@@ -114,6 +114,51 @@ abstract class BuildComponent
         return $method;
     }
 
+    /**
+     * Adds a "use $fullClassName" and returns the class name you can use. It ads automatically "use x as y" when necessary.
+     *
+     * @param string $fullClassName
+     * @return string
+     */
+    public function useClass($fullClassName)
+    {
+        if ($this->getDefinition()->getQualifiedName() === $fullClassName) {
+            return $this->getDefinition()->getName();
+        }
+
+        if ($this->getDefinition()->hasUseStatement($fullClassName)) {
+            //this full class is already registered, so return its name/alias.
+            return $this->getDefinition()->getUseAlias($fullClassName);
+        }
+
+        if ($this->classNameInUse($fullClassName)) {
+            //name already in use, so use full qualified name and dont place a "use $fullClassName".
+            return '\\' . $fullClassName;
+        }
+
+        return $this->getDefinition()->declareUse($fullClassName);
+    }
+
+    /**
+     * If the className (without namespace) of $fullClassName is already in "use" directly or as alias.
+     *
+     * @param string $fullClassName
+     *
+     * @return boolean
+     */
+    public function classNameInUse($fullClassName)
+    {
+        $className = basename(str_replace('\\', '/', $fullClassName));
+
+        if ($className === $this->getDefinition()->getName()) {
+            //when the request fullClassName is current definition we return true,
+            //because its not possible to use a same class name in the current namespace.
+            return true;
+        }
+
+        return isset($this->getDefinition()->getUseStatements()[$className]);
+    }
+
     protected function addConstructorBody($bodyPart)
     {
         $this->getDefinition()->addConstructorBody($bodyPart);

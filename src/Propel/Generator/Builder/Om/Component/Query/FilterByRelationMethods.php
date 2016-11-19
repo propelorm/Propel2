@@ -42,15 +42,9 @@ class FilterByRelationMethods extends BuildComponent
      */
     protected function addFilterByRelation($relation)
     {
-        $entity = $this->getEntity();
-//        $queryClass = $this->getQueryClassName();
         $foreignEntity = $relation->getForeignEntity();
 
-//        $foreignBuilder = $this->getObjectClassName();
-        $fkStubObjectBuilder = $this->getBuilder()->getNewObjectBuilder($foreignEntity);
-        $this->getDefinition()->declareUse($fkStubObjectBuilder->getFullClassName());
-
-        $fkPhpName = '\\' . $this->getClassNameFromBuilder($fkStubObjectBuilder, true);
+        $fkPhpName = $this->useClass($foreignEntity->getFullClassName());
         $relationName = $this->getRelationPhpName($relation);
         $objectName = '$' . $foreignEntity->getCamelCaseName();
 

@@ -40,8 +40,7 @@ class ReferrerRelationCountMethods extends BuildComponent
         $relCol = $this->getRefRelationPhpName($refRelation, $plural = true);
         $collName = $this->getRefRelationCollVarName($refRelation);
 
-        $joinedTableObjectBuilder = $this->getBuilder()->getNewObjectBuilder($refRelation->getEntity());
-        $className = $this->getClassNameFromBuilder($joinedTableObjectBuilder);
+        $className = $this->useClass($refRelation->getEntity()->getFullClassName());
 
         $description = <<<EOF
 Returns the number of related $className objects.

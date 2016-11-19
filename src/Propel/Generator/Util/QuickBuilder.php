@@ -418,7 +418,7 @@ class QuickBuilder
                 foreach ($classes as $class) {
                     $code = $this->getClassesForEntity($entity, [$class]);
                     $tempFile = $dir
-                        . str_replace('\\', '-', $entity->getName())
+                        . str_replace('\\', '-', $entity->getFullClassName())
                         . "-$class"
                         . '.php';
                     file_put_contents($tempFile, "<?php\n" . $code);
@@ -428,7 +428,7 @@ class QuickBuilder
                 if ($entity->hasAdditionalBuilders()) {
                     $code = $this->getClassesFromAdditionalBuilders($entity);
                     $tempFile = $dir
-                        . str_replace('\\', '-', $entity->getName())
+                        . str_replace('\\', '-', $entity->getFullClassName())
                         . 'additional.php';
                     file_put_contents($tempFile, "<?php\n" . $code);
                     $includes[] = $tempFile;

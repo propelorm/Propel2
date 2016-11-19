@@ -33,7 +33,7 @@ class RelationProperties extends BuildComponent
      */
     protected function addRelationAttribute(Relation $relation)
     {
-        $className = $this->getClassNameFromEntity($relation->getForeignEntity());
+        $className = $this->useClass($relation->getForeignEntity()->getFullClassName());
         $varName = $this->getRelationVarName($relation);
 
         $prop = $this->addProperty($varName)

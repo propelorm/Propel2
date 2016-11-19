@@ -396,6 +396,10 @@ class Database extends ScopedMappingModel
      */
     public function hasEntity($name, $caseInsensitive = false)
     {
+        if ($this->hasEntityByFullClassName($name)) {
+            return true;
+        }
+
         if ($caseInsensitive) {
             return isset($this->entitiesByLowercaseName[ strtolower($name) ]);
         }
@@ -452,6 +456,11 @@ class Database extends ScopedMappingModel
      */
     public function getEntity($name, $caseInsensitive = false)
     {
+        if ($this->hasEntityByFullClassName($name)) {
+            return $this->getEntityByFullClassName($name);
+        }
+
+
         if (!$this->hasEntity($name, $caseInsensitive)) {
             throw new InvalidArgumentException(
                 sprintf(
@@ -523,7 +532,7 @@ class Database extends ScopedMappingModel
 
         $entity->setDatabase($this);
 
-        if (isset($this->entitiesByName[$entity->getName()])) {
+        if (isset($this->entitiesByFullClassName[$entity->getFullClassName()])) {
             throw new EngineException(sprintf('Entity "%s" declared twice', $entity->getName()));
         }
 

@@ -33,7 +33,7 @@ class RelationGetterMethods extends BuildComponent
     {
         $varName = $this->getRelationVarName($relation);
 
-        $foreignClassName = $this->getBuilder()->getDefinition()->declareUse($relation->getForeignEntity()->getFullClassName());
+        $foreignClassName = $this->useClass($relation->getForeignEntity()->getFullClassName());
 
         $body = "
 return \$this->$varName;

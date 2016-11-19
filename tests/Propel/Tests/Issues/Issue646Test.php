@@ -26,7 +26,7 @@ class Issue646Test extends TestCaseFixtures
         parent::setUp();
         if (!class_exists('\PkDate')) {
             $schema = '
-            <database name="test" defaultIdMethod="native"
+            <database name="test" defaultIdMethod="native" activeRecord="true"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
            <table name="pk_date">
            <column name="created_at" type="DATE" primaryKey="true" />
@@ -68,9 +68,9 @@ class Issue646Test extends TestCaseFixtures
         $timestamp->setName("First")
             ->setCreatedAt(new \DateTime('2014-01-01 20:00:10'));
 
-        $this->assertEquals(1, $date->save());
-        $this->assertEquals(1, $time->save());
-        $this->assertEquals(1, $timestamp->save());
+        $date->save();
+        $time->save();
+        $timestamp->save();
     }
 
     public function testToArrayWithPkDate()

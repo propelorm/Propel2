@@ -40,7 +40,7 @@ class ReferrerRelationGetMethods extends BuildComponent
     protected function addRefGetCollectionMethod(Relation $relation)
     {
         $varName = $this->getRefRelationCollVarName($relation);
-        $foreignClassName = $this->getClassNameFromEntity($relation->getEntity());
+        $foreignClassName = $this->useClass($relation->getEntity()->getFullClassName());
 
         $body = "
 return \$this->$varName;
