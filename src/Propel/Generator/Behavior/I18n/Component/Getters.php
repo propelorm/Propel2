@@ -3,6 +3,7 @@
 namespace Propel\Generator\Behavior\I18n\Component;
 
 use gossi\codegen\model\PhpParameter;
+use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
@@ -59,7 +60,7 @@ return \$this->get$method();
             );
     }
 
-    private function addGetTranslation($behavior)
+    private function addGetTranslation(I18nBehavior $behavior)
     {
         $relation = $behavior->getI18nRelation();
 
@@ -74,7 +75,8 @@ if (!isset(\$this->currentTranslations[\$locale])) {
             }
         }
     }
-    if (\$this->isNew()) {
+    \$repository = {$this->getRepositoryGetter($behavior->getEntity())};
+    if (\$repository->getConfiguration()->getSession()->isNew(\$this)) {
         \$translation = new {$this->getClassNameFromEntity($behavior->getI18nEntity())}();
         \$translation->set{$behavior->getLocaleField()->getName()}(\$locale);
     } else {

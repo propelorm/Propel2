@@ -24,7 +24,8 @@ class RemoveTranslation extends BuildComponent
         $relation = $behavior->getI18nRelation();
 
         $body = "
-if (!\$this->isNew()) {
+\$repository = {$this->getRepositoryGetter($behavior->getEntity())};
+if (!\$repository->getConfiguration()->getSession()->isNew(\$this)) {
     \$i18nRepository = {$this->getRepositoryGetter($i18nEntity)};
     \$i18nRepository->createQuery()
             ->filterByPrimaryKey(array(\$this->getPrimaryKey(), \$locale))

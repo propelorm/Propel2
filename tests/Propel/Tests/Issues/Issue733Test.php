@@ -19,25 +19,25 @@ class Issue733Test extends TestCase
         if (!class_exists('\Issue733Test1')) {
             $schema = <<<EOF
 <database name="issue_733_test">
-    <table name="issue_733_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+    <entity name="Issue733Test1">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="locale_column" value="language" />
+            <parameter name="i18n_fields" value="bar" />
+            <parameter name="locale_field" value="language" />
         </behavior>
-    </table>   
-    <table name="issue_733_test_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+    </entity>   
+    <entity name="Issue733Test2">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="foo" type="INTEGER" />
+        <field name="bar" type="VARCHAR" size="100" />
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="locale_column" value="language" />
+            <parameter name="i18n_fields" value="bar" />
+            <parameter name="locale_field" value="language" />
             <parameter name="locale_alias" value="culture" />
         </behavior>
-    </table>
+    </entity>
 </database>
 EOF;
             $this->con = QuickBuilder::buildSchema($schema);
