@@ -12,13 +12,6 @@ use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\QuickBuilder;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Propel;
-
-use MyNameSpace\QuickBuildFoo1;
-use MyNameSpace\QuickBuildFoo1Query;
-use MyNameSpace\Map\QuickBuildFoo1TableMap;
-
 use MyNameSpace2\QuickBuildFoo2;
 use MyNameSpace2\QuickBuildFoo2Query;
 use \Propel\Tests\TestCase;
@@ -40,11 +33,11 @@ class QuickBuilderTest extends TestCase
     public function simpleSchemaProvider()
     {
         $xmlSchema = <<<EOF
-<database name="test_quick_build_2" namespace="MyNameSpace">
-    <table name="quick_build_foo_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+<database name="TestQuickBuild2" namespace="MyNameSpace">
+    <entity name="QuickBuildFoo1" activeRecord="true">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();
@@ -56,28 +49,28 @@ EOF;
     /**
      * @dataProvider simpleSchemaProvider
      */
-    public function testGetDatabase($builder)
+    public function testGetDatabase(QuickBuilder $builder)
     {
         $database = $builder->getDatabase();
-        $this->assertEquals('test_quick_build_2', $database->getName());
-        $this->assertEquals(1, count($database->getTables()));
-        $this->assertEquals(2, count($database->getTable('quick_build_foo_1')->getColumns()));
+        $this->assertEquals('TestQuickBuild2', $database->getName());
+        $this->assertEquals(1, count($database->getEntities()));
+        $this->assertEquals(2, count($database->getEntity('QuickBuildFoo1')->getFields()));
     }
 
     /**
      * @dataProvider simpleSchemaProvider
      */
-    public function testGetSQL($builder)
+    public function testGetSQL(QuickBuilder $builder)
     {
         $expected = <<<EOF
 
 -----------------------------------------------------------------------
--- quick_build_foo_1
+-- quick_build_foo1
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS quick_build_foo_1;
+DROP TABLE IF EXISTS quick_build_foo1;
 
-CREATE TABLE quick_build_foo_1
+CREATE TABLE quick_build_foo1
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
@@ -91,46 +84,31 @@ EOF;
     /**
      * @dataProvider simpleSchemaProvider
      */
-    public function testGetClasses($builder)
+    public function testGetClasses(QuickBuilder $builder)
     {
         $script = $builder->getClasses();
-        $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
+        $this->assertContains('class QuickBuildFoo1 {', $script);
         $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
     /**
      * @dataProvider simpleSchemaProvider
      */
-    public function testGetClassesLimitedClassTargets($builder)
+    public function testGetClassesLimitedClassTargets(QuickBuilder $builder)
     {
-        $script = $builder->getClasses(array('tablemap', 'object', 'query'));
-        $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
+        $script = $builder->getClasses(array('entitymap', 'object'));
+        $this->assertContains('class QuickBuildFoo1 {', $script);
         $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
-    }
-
-    /**
-     * @dataProvider simpleSchemaProvider
-     */
-    public function testBuildClasses($builder)
-    {
-        $builder->buildClasses();
-        $foo = new QuickBuildFoo1();
-        $this->assertTrue($foo instanceof ActiveRecordInterface);
-        $this->assertTrue(QuickBuildFoo1TableMap::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
     }
 
     public function testBuild()
     {
         $xmlSchema = <<<EOF
-<database name="test_quick_build_2" namespace="MyNameSpace2">
-    <table name="quick_build_foo_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
+<database name="TestQuickBuild2" namespace="MyNameSpace2">
+    <entity name="QuickBuildFoo2" activeRecord="true">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="INTEGER" />
+    </entity>
 </database>
 EOF;
         $builder = new QuickBuilder();

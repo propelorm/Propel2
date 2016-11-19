@@ -12,7 +12,7 @@ namespace Propel\Generator\Util;
 
 use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 
 /**
  * Service class for validating XML schemas.
@@ -54,44 +54,44 @@ class SchemaValidator
     {
         $phpNames = array();
         $namespaces = array();
-        foreach ($database->getTables() as $table) {
+        foreach ($database->getEntities() as $entity) {
             $list = &$phpNames;
-            if ($table->getNamespace()) {
-                if (!isset($namespaces[$table->getNamespace()])) {
-                    $namespaces[$table->getNamespace()] = array();
+            if ($entity->getNamespace()) {
+                if (!isset($namespaces[$entity->getNamespace()])) {
+                    $namespaces[$entity->getNamespace()] = array();
                 }
 
-                $list = &$namespaces[$table->getNamespace()];
+                $list = &$namespaces[$entity->getNamespace()];
             }
-            if (in_array($table->getName(), $list)) {
-                $this->errors[] = sprintf('Table "%s" declares a phpName already used in another table', $table->getName());
+            if (in_array($entity->getName(), $list)) {
+                $this->errors[] = sprintf('Entity "%s" declares a name already used in another entity', $entity->getName());
             }
-            $list[] = $table->getName();
-            $this->validateTableAttributes($table);
-            $this->validateTableColumns($table);
+            $list[] = $entity->getName();
+            $this->validateTableAttributes($entity);
+            $this->validateTableColumns($entity);
         }
     }
 
-    protected function validateTableAttributes(Table $table)
+    protected function validateTableAttributes(Entity $entity)
     {
         $reservedTableNames = array('table_name');
-        $tableName = strtolower($table->getName());
-        if (in_array($tableName, $reservedTableNames)) {
-            $this->errors[] = sprintf('Table "%s" uses a reserved keyword as name', $table->getName());
+        $entityName = strtolower($entity->getTableName());
+        if (in_array($entityName, $reservedTableNames)) {
+            $this->errors[] = sprintf('Entity "%s" uses a reserved keyword as tableName', $entity->getName());
         }
     }
 
-    protected function validateTableColumns(Table $table)
+    protected function validateTableColumns(Entity $entity)
     {
-        if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {
-            $this->errors[] = sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $table->getName());
+        if (!$entity->hasPrimaryKey() && !$entity->isSkipSql()) {
+            $this->errors[] = sprintf('Entity "%s" does not have a primary key defined. Propel requires all entities to have a primary key.', $entity->getName());
         }
         $phpNames = array();
-        foreach ($table->getColumns() as $column) {
-            if (in_array($column->getName(), $phpNames)) {
-                $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());
+        foreach ($entity->getFields() as $field) {
+            if (in_array($field->getName(), $phpNames)) {
+                $this->errors[] = sprintf('Field "%s" declares a name already used in entity "%s"', $field->getName(), $entity->getName());
             }
-            $phpNames[]= $column->getName();
+            $phpNames[]= $field->getName();
         }
     }
 

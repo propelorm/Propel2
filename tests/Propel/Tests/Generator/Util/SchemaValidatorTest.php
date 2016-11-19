@@ -13,17 +13,17 @@ namespace Propel\Tests\Generator\Util;
 use Propel\Generator\Util\SchemaValidator;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Model\Schema;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Tests\TestCase;
 
 class SchemaValidatorTest extends TestCase
 {
-    protected function getSchemaForTable($table)
+    protected function getSchemaForTable($entity)
     {
         $database = new Database();
-        $database->addTable($table);
+        $database->addEntity($entity);
 
         $schema = new Schema();
         $schema->addDatabase($database);
@@ -65,10 +65,10 @@ EOF;
 
         $schema = <<<EOF
 <database name="bookstore" package="my.sub-directory">
-    <table name="book">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    </table>
+    <entity name="book">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <field name="title" type="VARCHAR" size="100" primaryString="true" />
+    </entity>
 </database>
 EOF;
         $dom = new \DomDocument('1.0', 'UTF-8');
@@ -79,13 +79,18 @@ EOF;
 
     public function testValidateReturnsFalseWhenTwoTablesHaveSamePhpName()
     {
-        $table1 = new Table('foo');
-        $table2 = new Table('bar');
-        $table2->setPhpName('Foo');
+        $field1 = new Field('id');
+        $field1->setPrimaryKey(true);
+
+        $entity1 = new Entity('Bar');
+        $entity1->addField($field1);
+        $entity2 = new Entity('Bar2');
+        $entity2->addField($field1);
 
         $database = new Database();
-        $database->addTable($table1);
-        $database->addTable($table2);
+        $database->addEntity($entity1);
+        $database->addEntity($entity2);
+        $entity2->setName('Bar');
 
         $schema = new Schema();
         $schema->addDatabase($database);
@@ -93,29 +98,28 @@ EOF;
         $validator = new SchemaValidator($schema);
 
         $this->assertFalse($validator->validate());
-        $this->assertContains('Table "bar" declares a phpName already used in another table', $validator->getErrors());
+        $this->assertContains('Entity "Bar" declares a name already used in another entity', $validator->getErrors()[0]);
     }
 
     public function testValidateReturnsTrueWhenTwoTablesHaveSamePhpNameInDifferentNamespaces()
     {
-        $column1 = new Column('id');
-        $column1->setPrimaryKey(true);
+        $field1 = new Field('id');
+        $field1->setPrimaryKey(true);
 
-        $table1 = new Table('foo');
-        $table1->addColumn($column1);
-        $table1->setNamespace('Foo');
+        $entity1 = new Entity('foo');
+        $entity1->addField($field1);
+        $entity1->setNamespace('Foo');
 
-        $column2 = new Column('id');
-        $column2->setPrimaryKey(true);
+        $field2 = new Field('id');
+        $field2->setPrimaryKey(true);
 
-        $table2 = new Table('bar');
-        $table2->addColumn($column2);
-        $table2->setPhpName('Foo');
-        $table2->setNamespace('Bar');
+        $entity2 = new Entity('Foo');
+        $entity2->addField($field2);
+        $entity2->setNamespace('Bar');
 
         $database = new Database();
-        $database->addTable($table1);
-        $database->addTable($table2);
+        $database->addEntity($entity1);
+        $database->addEntity($entity2);
 
         $schema = new Schema();
         $schema->addDatabase($database);
@@ -127,19 +131,21 @@ EOF;
 
     public function testValidateReturnsFalseWhenTableHasNoPk()
     {
-        $schema = $this->getSchemaForTable(new Table('foo'));
+        $entity = new Entity('foo');
+
+        $schema = $this->getSchemaForTable($entity);
         $validator = new SchemaValidator($schema);
 
         $this->assertFalse($validator->validate());
-        $this->assertContains('Table "foo" does not have a primary key defined. Propel requires all tables to have a primary key.', $validator->getErrors());
+        $this->assertContains('Entity "foo" does not have a primary key defined. Propel requires all entities to have a primary key.', $validator->getErrors()[0]);
     }
 
     public function testValidateReturnsTrueWhenTableHasNoPkButIsAView()
     {
-        $table = new Table('foo');
-        $table->setSkipSql(true);
+        $entity = new Entity('foo');
+        $entity->setSkipSql(true);
 
-        $schema = $this->getSchemaForTable($table);
+        $schema = $this->getSchemaForTable($entity);
         $validator = new SchemaValidator($schema);
 
         $this->assertTrue($validator->validate());
@@ -147,28 +153,35 @@ EOF;
 
     public function testValidateReturnsFalseWhenTableHasAReservedName()
     {
-        $schema = $this->getSchemaForTable(new Table('TABLE_NAME'));
+        $field1 = new Field('id');
+        $field1->setPrimaryKey(true);
+
+        $entity = new Entity('tableName');
+        $entity->addField($field1);
+        $entity->setTableName('TABLE_NAME');
+        $schema = $this->getSchemaForTable($entity);
         $validator = new SchemaValidator($schema);
 
         $this->assertFalse($validator->validate());
-        $this->assertContains('Table "TABLE_NAME" uses a reserved keyword as name', $validator->getErrors());
+        $this->assertContains('Entity "tableName" uses a reserved keyword as tableName', $validator->getErrors()[0]);
     }
 
     public function testValidateReturnsFalseWhenTwoColumnsHaveSamePhpName()
     {
-        $column1 = new Column('foo');
-        $column2 = new Column('bar');
-        $column2->setPhpName('Foo');
+        $field1 = new Field('foo');
+        $field1->setPrimaryKey(true);
+        $field2 = new Field('Foo');
 
-        $table = new Table('foo_table');
-        $table->addColumn($column1);
-        $table->addColumn($column2);
+        $entity = new Entity('foo_table');
+        $entity->addField($field1);
+        $entity->addField($field2);
+        $field2->setName('foo');
 
-        $schema = $this->getSchemaForTable($table);
+        $schema = $this->getSchemaForTable($entity);
 
         $validator = new SchemaValidator($schema);
 
         $this->assertFalse($validator->validate());
-        $this->assertContains('Column "bar" declares a phpName already used in table "foo_table"', $validator->getErrors());
+        $this->assertContains('Field "foo" declares a name already used in entity "foo_table"', $validator->getErrors()[0]);
     }
 }
