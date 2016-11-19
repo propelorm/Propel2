@@ -93,7 +93,7 @@ CREATE TABLE `x`.`book`
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
     INDEX `book_i_639136` (`title`),
-    INDEX `book_fi_4444ca` (`author_id`)
+    INDEX `book_fi_9f6743` (`author_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -122,7 +122,7 @@ CREATE TABLE `x`.`book_summary`
     `book_id` INTEGER NOT NULL,
     `summary` TEXT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `book_summary_fi_312a7d` (`book_id`)
+    INDEX `book_summary_fi_a5b8c4` (`book_id`)
 ) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
@@ -157,7 +157,7 @@ CREATE TABLE `book`
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
     INDEX `book_i_639136` (`title`),
-    INDEX `book_fi_82ae3e` (`author_id`)
+    INDEX `book_fi_b97a1a` (`author_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------

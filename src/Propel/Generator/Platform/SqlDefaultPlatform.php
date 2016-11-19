@@ -81,10 +81,7 @@ class SqlDefaultPlatform implements PlatformInterface
             return $object->getFQTableName();
 
         } else if ($object instanceof Field) {
-            if ($object->getColumnName()) {
-                return $object->getColumnName();
-            }
-            return $this->toUnderscore($object->getName());
+            return $object->getColumnName();
         } else {
             return $this->toUnderscore($object->getName());
         }

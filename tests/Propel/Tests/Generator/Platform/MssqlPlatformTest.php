@@ -64,8 +64,8 @@ class MssqlPlatformTest extends PlatformTestProvider
 -- book
 -----------------------------------------------------------------------
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_82ae3e')
-    ALTER TABLE [book] DROP CONSTRAINT [book_fk_82ae3e];
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_b97a1a')
+    ALTER TABLE [book] DROP CONSTRAINT [book_fk_b97a1a];
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'book')
 BEGIN
@@ -103,7 +103,7 @@ CREATE TABLE [book]
 CREATE INDEX [book_i_639136] ON [book] ([title]);
 
 BEGIN
-ALTER TABLE [book] ADD CONSTRAINT [book_fk_82ae3e] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
+ALTER TABLE [book] ADD CONSTRAINT [book_fk_b97a1a] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
 END
 ;
 
@@ -160,8 +160,8 @@ EOF;
 -- x.book
 -----------------------------------------------------------------------
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_4444ca')
-    ALTER TABLE [x].[book] DROP CONSTRAINT [book_fk_4444ca];
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_9f6743')
+    ALTER TABLE [x].[book] DROP CONSTRAINT [book_fk_9f6743];
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book')
 BEGIN
@@ -199,7 +199,7 @@ CREATE TABLE [x].[book]
 CREATE INDEX [book_i_639136] ON [x].[book] ([title]);
 
 BEGIN
-ALTER TABLE [x].[book] ADD CONSTRAINT [book_fk_4444ca] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
+ALTER TABLE [x].[book] ADD CONSTRAINT [book_fk_9f6743] FOREIGN KEY ([author_id]) REFERENCES [y].[author] ([id])
 END
 ;
 
@@ -244,8 +244,8 @@ CREATE TABLE [y].[author]
 -- x.book_summary
 -----------------------------------------------------------------------
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_fk_312a7d')
-    ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_fk_312a7d];
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_fk_a5b8c4')
+    ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_fk_a5b8c4];
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book_summary')
 BEGIN
@@ -281,7 +281,7 @@ CREATE TABLE [x].[book_summary]
 );
 
 BEGIN
-ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_fk_312a7d] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
+ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_fk_a5b8c4] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
 END
 ;
 

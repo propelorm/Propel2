@@ -109,7 +109,7 @@ CREATE SEQUENCE author_SEQ
 -- Foreign Keys
 -----------------------------------------------------------------------
 
-ALTER TABLE book ADD CONSTRAINT book_fk_82ae3e
+ALTER TABLE book ADD CONSTRAINT book_fk_b97a1a
     FOREIGN KEY (author_id) REFERENCES author (id);
 
 EOF;

@@ -92,8 +92,8 @@ CREATE TABLE `x`.`book`
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
     INDEX `book_i_639136` (`title`),
-    INDEX `book_fi_4444ca` (`author_id`),
-    CONSTRAINT `book_fk_4444ca`
+    INDEX `book_fi_9f6743` (`author_id`),
+    CONSTRAINT `book_fk_9f6743`
         FOREIGN KEY (`author_id`)
         REFERENCES `y`.`author` (`id`)
 ) ENGINE=InnoDB;
@@ -124,8 +124,8 @@ CREATE TABLE `x`.`book_summary`
     `book_id` INTEGER NOT NULL,
     `summary` TEXT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `book_summary_fi_312a7d` (`book_id`),
-    CONSTRAINT `book_summary_fk_312a7d`
+    INDEX `book_summary_fi_a5b8c4` (`book_id`),
+    CONSTRAINT `book_summary_fk_a5b8c4`
         FOREIGN KEY (`book_id`)
         REFERENCES `x`.`book` (`id`)
         ON DELETE CASCADE
@@ -163,8 +163,8 @@ CREATE TABLE `book`
     `author_id` INTEGER,
     PRIMARY KEY (`id`),
     INDEX `book_i_639136` (`title`),
-    INDEX `book_fi_82ae3e` (`author_id`),
-    CONSTRAINT `book_fk_82ae3e`
+    INDEX `book_fi_b97a1a` (`author_id`),
+    CONSTRAINT `book_fk_b97a1a`
         FOREIGN KEY (`author_id`)
         REFERENCES `author` (`id`)
 ) ENGINE=InnoDB;

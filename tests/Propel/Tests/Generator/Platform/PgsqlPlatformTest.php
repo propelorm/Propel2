@@ -100,7 +100,7 @@ CREATE TABLE "author"
     PRIMARY KEY ("id")
 );
 
-ALTER TABLE "book" ADD CONSTRAINT "book_fk_82ae3e"
+ALTER TABLE "book" ADD CONSTRAINT "book_fk_b97a1a"
     FOREIGN KEY ("author_id")
     REFERENCES "author" ("id");
 
@@ -254,11 +254,11 @@ CREATE TABLE "x"."book_summary"
     PRIMARY KEY ("id")
 );
 
-ALTER TABLE "x"."book" ADD CONSTRAINT "book_fk_4444ca"
+ALTER TABLE "x"."book" ADD CONSTRAINT "book_fk_9f6743"
     FOREIGN KEY ("author_id")
     REFERENCES "y"."author" ("id");
 
-ALTER TABLE "x"."book_summary" ADD CONSTRAINT "book_summary_fk_312a7d"
+ALTER TABLE "x"."book_summary" ADD CONSTRAINT "book_summary_fk_a5b8c4"
     FOREIGN KEY ("book_id")
     REFERENCES "x"."book" ("id")
     ON DELETE CASCADE;

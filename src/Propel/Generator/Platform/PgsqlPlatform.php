@@ -314,7 +314,7 @@ COMMENT ON COLUMN %s.%s IS %s;
         if ($description = $field->getDescription()) {
             return sprintf($pattern,
                 $this->quoteIdentifier($field->getEntity()->getFQTableName()),
-                $this->quoteIdentifier($field->getName()),
+                $this->quoteIdentifier($field->getColumnName()),
                 $this->quote($description)
             );
         }
@@ -455,7 +455,7 @@ ALTER TABLE %s RENAME TO %s;
         $fromEntity = $fromField->getEntity();
         $entity = $toField->getEntity();
 
-        $colName = $this->quoteIdentifier($toField->getName());
+        $colName = $this->quoteIdentifier($toField->getColumnName());
 
         $pattern = "
 ALTER TABLE %s ALTER COLUMN %s;
@@ -463,7 +463,7 @@ ALTER TABLE %s ALTER COLUMN %s;
 
         if (isset($changedProperties['autoIncrement'])) {
             $entityName = $entity->getName();
-            $colPlainName = $toField->getName();
+            $colPlainName = $toField->getColumnName();
             $seqName = "{$entityName}_{$colPlainName}_seq";
 
             if ($toField->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
@@ -561,7 +561,7 @@ DROP SEQUENCE %s CASCADE;
     {
         $fromSqlType = strtoupper($fromField->getDomain()->getSqlType());
         $toSqlType = strtoupper($toField->getDomain()->getSqlType());
-        $name = $fromField->getName();
+        $name = $fromField->getColumnName();
 
         if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
             //cast from int to string
