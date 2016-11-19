@@ -34,7 +34,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -49,7 +49,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT LIKE :p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -65,7 +65,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('UPPER(A.COL) LIKE UPPER(:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -81,7 +81,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('UPPER(A.COL) NOT LIKE UPPER(:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -96,7 +96,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -112,7 +112,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL ILIKE :p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }
@@ -128,7 +128,7 @@ class LikeCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT ILIKE :p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo%')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo%')
         );
         $this->assertEquals($expected, $params);
     }

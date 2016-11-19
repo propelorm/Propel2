@@ -33,21 +33,21 @@ class CriteriaCombineTest extends BaseTestCase
      */
     private $c;
 
-    /**
-     * DB adapter saved for later.
-     *
-     * @var AbstractAdapter
-     */
-    private $savedAdapter;
-
+//    /**
+//     * DB adapter saved for later.
+//     *
+//     * @var AbstractAdapter
+//     */
+//    private $savedAdapter;
+//
     protected function setUp()
     {
-        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
-        parent::setUp();
+        require __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
+//        parent::setUp();
         $this->c = new ModelCriteria();
-        $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
-        $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
-        Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
+//        $defaultDatasource = Propel::getServiceContainer()->getDefaultDatasource();
+//        $this->savedAdapter = Propel::getServiceContainer()->getAdapter($defaultDatasource);
+//        Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
     }
 
     protected function getDriver()
@@ -55,11 +55,11 @@ class CriteriaCombineTest extends BaseTestCase
         return 'sqlite';
     }
 
-    protected function tearDown()
-    {
-        Propel::getServiceContainer()->setAdapter(Propel::getServiceContainer()->getDefaultDatasource(), $this->savedAdapter);
-        parent::tearDown();
-    }
+//    protected function tearDown()
+//    {
+//        Propel::getServiceContainer()->setAdapter(Propel::getServiceContainer()->getDefaultDatasource(), $this->savedAdapter);
+//        parent::tearDown();
+//    }
 
     /**
      * test various properties of Criterion and nested criterion
@@ -100,10 +100,10 @@ class CriteriaCombineTest extends BaseTestCase
         $crit2->appendPsTo($sb, $params);
 
         $expect_params = array(
-            array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
-            array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
-            array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
-            array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
+            array('entity' => 'myTable2', 'field' => 'myColumn2', 'value' => 'myValue2'),
+            array('entity' => 'myTable3', 'field' => 'myColumn3', 'value' => 'myValue3'),
+            array('entity' => 'myTable4', 'field' => 'myColumn4', 'value' => 'myValue4'),
+            array('entity' => 'myTable5', 'field' => 'myColumn5', 'value' => 'myValue5'),
         );
 
         $this->assertEquals($expect, $sb);
@@ -123,10 +123,10 @@ class CriteriaCombineTest extends BaseTestCase
         $crit6->appendPsTo($sb, $params);
 
         $expect_params = array(
-            array('table' => 'myTable2', 'column' => 'myColumn2', 'value' => 'myValue2'),
-            array('table' => 'myTable3', 'column' => 'myColumn3', 'value' => 'myValue3'),
-            array('table' => 'myTable4', 'column' => 'myColumn4', 'value' => 'myValue4'),
-            array('table' => 'myTable5', 'column' => 'myColumn5', 'value' => 'myValue5'),
+            array('entity' => 'myTable2', 'field' => 'myColumn2', 'value' => 'myValue2'),
+            array('entity' => 'myTable3', 'field' => 'myColumn3', 'value' => 'myValue3'),
+            array('entity' => 'myTable4', 'field' => 'myColumn4', 'value' => 'myValue4'),
+            array('entity' => 'myTable5', 'field' => 'myColumn5', 'value' => 'myValue5'),
         );
 
         $this->assertEquals($expect, $sb);
@@ -141,12 +141,12 @@ class CriteriaCombineTest extends BaseTestCase
         $this->assertEquals($crit4, $crita[2]);
         $this->assertEquals($crit5, $crita[3]);
 
-        $tables = $crit2->getAllTables();
+        $tables = $crit2->getAllEntities();
 
-        $this->assertEquals($crit2->getTable(), $tables[0]);
-        $this->assertEquals($crit3->getTable(), $tables[1]);
-        $this->assertEquals($crit4->getTable(), $tables[2]);
-        $this->assertEquals($crit5->getTable(), $tables[3]);
+        $this->assertEquals($crit2->getEntityName(), $tables[0]);
+        $this->assertEquals($crit3->getEntityName(), $tables[1]);
+        $this->assertEquals($crit4->getEntityName(), $tables[2]);
+        $this->assertEquals($crit5->getEntityName(), $tables[3]);
     }
 
     /**
@@ -160,8 +160,8 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => 1000),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => 5000),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => 1000),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => 5000),
         );
 
         try {
@@ -190,10 +190,10 @@ class CriteriaCombineTest extends BaseTestCase
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST>=:p1 AND INVOICE.COST<=:p2) OR (INVOICE.COST>=:p3 AND INVOICE.COST<=:p4))");
 
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '9000'),
         );
 
         try {
@@ -215,8 +215,8 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 AND INVOICE.COST<=:p2)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '2000'),
         );
 
         $params = array();
@@ -236,10 +236,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND (INVOICE.COST1>=:p2 AND INVOICE.COST2<=:p3) AND INVOICE.COST4<=:p4");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();
@@ -259,10 +259,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) AND INVOICE.COST3>=:p3) AND INVOICE.COST4<=:p4)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();
@@ -280,8 +280,8 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE (INVOICE.COST>=:p1 OR INVOICE.COST<=:p2)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST', 'value' => '2000'),
         );
 
         $params = array();
@@ -301,10 +301,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE INVOICE.COST3>=:p1 AND ((INVOICE.COST1>=:p2 OR INVOICE.COST2<=:p3) OR INVOICE.COST4<=:p4)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();
@@ -324,10 +324,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE (((INVOICE.COST1>=:p1 OR INVOICE.COST2<=:p2) OR INVOICE.COST3>=:p3) OR INVOICE.COST4<=:p4)");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();
@@ -349,10 +349,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();
@@ -374,10 +374,10 @@ class CriteriaCombineTest extends BaseTestCase
 
         $expect = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
         $expect_params = array(
-            array('table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'),
-            array('table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'),
-            array('table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'),
-            array('table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'),
+            array('entity' => 'INVOICE', 'field' => 'COST1', 'value' => '1000'),
+            array('entity' => 'INVOICE', 'field' => 'COST2', 'value' => '2000'),
+            array('entity' => 'INVOICE', 'field' => 'COST3', 'value' => '8000'),
+            array('entity' => 'INVOICE', 'field' => 'COST4', 'value' => '9000'),
         );
 
         $params = array();

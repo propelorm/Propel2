@@ -32,8 +32,8 @@ class SeveralModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL BETWEEN :p1 AND :p2', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo'),
-            array('table' => 'A', 'column' => 'COL', 'value' => 'bar')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo'),
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'bar')
         );
         $this->assertEquals($expected, $params);
     }

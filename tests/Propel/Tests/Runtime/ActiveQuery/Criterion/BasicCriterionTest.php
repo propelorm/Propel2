@@ -34,7 +34,7 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL=:p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }
@@ -49,7 +49,7 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL>:p1', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }
@@ -66,7 +66,7 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('UPPER(A.COL)=UPPER(:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }

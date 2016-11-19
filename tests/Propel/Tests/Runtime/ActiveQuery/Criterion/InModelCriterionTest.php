@@ -33,7 +33,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }
@@ -48,7 +48,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT IN (:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }
@@ -63,8 +63,8 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1,:p2)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo'),
-            array('table' => 'A', 'column' => 'COL', 'value' => 'bar')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo'),
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'bar')
         );
         $this->assertEquals($expected, $params);
     }
@@ -79,7 +79,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }
@@ -107,7 +107,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue)
+            array('entity' => 'A', 'field' => 'COL', 'value' => $notEmptyValue)
         );
         $this->assertEquals($expected, $params);
     }
@@ -179,7 +179,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = array(
-            array('table' => 'A', 'column' => 'COL', 'value' => 'foo')
+            array('entity' => 'A', 'field' => 'COL', 'value' => 'foo')
         );
         $this->assertEquals($expected, $params);
     }

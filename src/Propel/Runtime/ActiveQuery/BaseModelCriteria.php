@@ -201,7 +201,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getEntityMap()
     {
-        if (null === $this->entityMap) {
+        if (null === $this->entityMap && $this->entityName) {
             return $this->getConfiguration()->getEntityMap($this->entityName);
         }
 
