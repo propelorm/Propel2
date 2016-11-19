@@ -54,11 +54,12 @@ class MysqlPlatform extends SqlDefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
 
-
-    protected function setupReferrers(Entity $entity, $throwErrors = false)
+    public function finalizeDefinition(Database $database)
     {
-        parent::setupReferrers($entity, $throwErrors);
-        $this->addExtraIndices($entity);
+        parent::finalizeDefinition($database);
+        foreach ($database->getEntities() as $entity) {
+            $this->addExtraIndices($entity);
+        }
     }
 
     /**
@@ -89,7 +90,6 @@ class MysqlPlatform extends SqlDefaultPlatform
 
         // we're determining which entitys have foreign keys that point to this entity,
         // since MySQL needs an index on any column that is referenced by another entity
-        // (yep, MySQL _is_ a PITA)
         $counter = 0;
         foreach ($entity->getReferrers() as $relation) {
             $referencedFields = $relation->getForeignFieldObjects();
@@ -124,7 +124,7 @@ class MysqlPlatform extends SqlDefaultPlatform
             // MySQL needs indices on any columns that serve as foreign keys.
             // These are not auto-created prior to 4.1.2.
 
-            $name = substr_replace($this->getName($relation), 'rl_',  strrpos($this->getName($relation), 'rl_'), 3);
+            $name = substr_replace($relation->getName(), 'fi_',  strrpos($relation->getName(), 'fk_'), 3);
             if ($entity->hasIndex($name)) {
                 // if we already have an index with this name, then it looks like the columns of this index have just
                 // been changed, so remove it and inject it again. This is the case if a referenced entity is handled
@@ -189,6 +189,7 @@ class MysqlPlatform extends SqlDefaultPlatform
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         parent::setGeneratorConfig($generatorConfig);
+
         if ($defaultEntityEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
             $this->defaultEntityEngine = $defaultEntityEngine;
         }
@@ -290,7 +291,7 @@ class MysqlPlatform extends SqlDefaultPlatform
     {
         return "
 # This is a fix for InnoDB in MySQL >= 4.1.x
-# It \"suspends judgement\" for fkey relationships until are entitys are set.
+# It \"suspends judgement\" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 ";
     }
@@ -674,6 +675,7 @@ DROP INDEX %s ON %s;
     public function getDropRelationDDL(Relation $relation)
     {
         if (!$this->supportsRelations($relation->getEntity())) return '';
+
         if ($relation->isSkipSql()) {
             return;
         }

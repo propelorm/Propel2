@@ -77,36 +77,36 @@ class MssqlPlatform extends SqlDefaultPlatform
         foreach ($entity->getRelations() as $relation) {
             $ret .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='" . $relation->getName() . "')
-    ALTER TABLE " . $this->quoteIdentifier($entity->getName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($relation->getName()) . ";
+    ALTER TABLE " . $this->quoteIdentifier($entity->getFQTableName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($relation->getName()) . ";
 ";
         }
 
         self::$dropCount++;
 
         $ret .= "
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '" . $entity->getName() . "')
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '" . $entity->getFQTableName() . "')
 BEGIN
-    DECLARE @refentity_" . self::$dropCount . " nvarchar(60), @constraintname_" . self::$dropCount . " nvarchar(60)
+    DECLARE @reftable_" . self::$dropCount . " nvarchar(60), @constraintname_" . self::$dropCount . " nvarchar(60)
     DECLARE refcursor CURSOR FOR
-    select refentitys.name entityname, cons.name constraintname
-        from sysobjects entitys,
-            sysobjects refentitys,
+    select reftables.name tablename, cons.name constraintname
+        from sysobjects tables,
+            sysobjects reftables,
             sysobjects cons,
             sysreferences ref
-        where entitys.id = ref.rkeyid
+        where tables.id = ref.rkeyid
             and cons.id = ref.constid
-            and refentitys.id = ref.fkeyid
-            and entitys.name = '" . $entity->getName() . "'
+            and reftables.id = ref.fkeyid
+            and tables.name = '" . $entity->getFQTableName() . "'
     OPEN refcursor
-    FETCH NEXT from refcursor into @refentity_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+    FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
     while @@FETCH_STATUS = 0
     BEGIN
-        exec ('alter entity '+@refentity_" . self::$dropCount . "+' drop constraint '+@constraintname_" . self::$dropCount . ")
-        FETCH NEXT from refcursor into @refentity_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+        exec ('alter table '+@reftable_" . self::$dropCount . "+' drop constraint '+@constraintname_" . self::$dropCount . ")
+        FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
     END
     CLOSE refcursor
     DEALLOCATE refcursor
-    DROP TABLE " . $this->quoteIdentifier($entity->getName()) . "
+    DROP TABLE " . $this->quoteIdentifier($entity->getFQTableName()) . "
 END
 ";
 
@@ -138,7 +138,7 @@ END
 ";
 
         return sprintf($pattern,
-            $this->quoteIdentifier($relation->getEntity()->getName()),
+            $this->quoteIdentifier($relation->getEntity()->getFQTableName()),
             $this->getRelationDDL($relation)
         );
     }
@@ -152,7 +152,7 @@ END
         $script = sprintf($pattern,
             $this->quoteIdentifier($relation->getName()),
             $this->getFieldListDDL($relation->getLocalFieldObjects()),
-            $this->quoteIdentifier($relation->getEntity()->getFQTableName()),
+            $this->quoteIdentifier($relation->getForeignEntity()->getFQTableName()),
             $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
         if ($relation->hasOnUpdate() && $relation->getOnUpdate() != Relation::SETNULL) {

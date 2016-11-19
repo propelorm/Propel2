@@ -941,7 +941,7 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTableName()
     {
@@ -958,11 +958,14 @@ class Entity extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Full table name with possible schema.
+     *
      * @return string
      */
     public function getFQTableName()
     {
         $fqTableName = $this->getTableName();
+
         if ($this->hasSchema()) {
             $fqTableName = $this->guessSchemaName() . $this->getPlatform()->getSchemaDelimiter() . $fqTableName;
         }
@@ -1005,7 +1008,11 @@ class Entity extends ScopedMappingModel implements IdMethod
      */
     public function guessSchemaName()
     {
-        return $this->schema ?: $this->database->getSchema();
+        if (!$this->schema && $this->database) {
+            return $this->database->getSchema();
+        }
+
+        return $this->schema;
     }
 
     /**

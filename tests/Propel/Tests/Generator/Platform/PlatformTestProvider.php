@@ -57,23 +57,23 @@ EOF;
         <index>
             <index-field name="title" />
         </index>
-        <field name="author_id" type="INTEGER"/>
-        <foreign-key foreignEntity="author" foreignSchema="y">
-            <reference local="author_id" foreign="id" />
-        </foreign-key>
+        <field name="authorId" type="INTEGER"/>
+        <relation target="author" foreignSchema="y">
+            <reference local="authorId" foreign="id" />
+        </relation>
     </entity>
     <entity name="author" schema="y">
         <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <field name="first_name" type="VARCHAR" size="100" />
-        <field name="last_name" type="VARCHAR" size="100" />
+        <field name="firstName" type="VARCHAR" size="100" />
+        <field name="lastName" type="VARCHAR" size="100" />
     </entity>
     <entity name="book_summary">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <field name="book_id" required="true" type="INTEGER" />
+        <field name="bookId" required="true" type="INTEGER" />
         <field name="summary" required="true" type="LONGVARCHAR" />
-        <foreign-key foreignEntity="book" onDelete="cascade">
-            <reference local="book_id" foreign="id" />
-        </foreign-key>
+        <relation target="book" onDelete="cascade">
+            <reference local="bookId" foreign="id" />
+        </relation>
     </entity>
 </database>
 EOF;
@@ -91,10 +91,10 @@ EOF;
         <index>
             <index-field name="title" />
         </index>
-        <field name="author_id" type="INTEGER"/>
-        <foreign-key foreignEntity="author">
-            <reference local="author_id" foreign="id" />
-        </foreign-key>
+        <field name="authorId" type="INTEGER"/>
+        <relation target="author">
+            <reference local="authorId" foreign="id" />
+        </relation>
     </entity>
     <entity name="author" skipSql="true">
         <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -111,7 +111,7 @@ EOF;
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <entity name="foo" description="This is foo entity">
+    <entity name="foo" description="This is foo table">
         <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <field name="bar" type="VARCHAR" size="255" required="true" />
     </entity>
@@ -275,7 +275,7 @@ EOF;
         $entity2->addField($field2);
 
         $fk = new Relation('foo_bar_fk');
-        $fk->setForeignEntityCommonName('bar');
+        $fk->setForeignEntityName('bar');
         $fk->addReference($field1, $field2);
         $fk->setOnDelete('CASCADE');
         $entity1->addRelation($fk);
@@ -314,7 +314,7 @@ EOF;
         $entity2->addField($field2);
 
         $fk = new Relation('foo_bar_fk');
-        $fk->setForeignEntityCommonName('bar');
+        $fk->setForeignEntityName('bar');
         $fk->addReference($field1, $field2);
         $fk->setOnDelete('CASCADE');
         $entity1->addRelation($fk);
@@ -329,7 +329,7 @@ EOF;
         $entity3->addField($field4);
 
         $fk = new Relation('foo_baz_fk');
-        $fk->setForeignEntityCommonName('baz');
+        $fk->setForeignEntityName('baz');
         $fk->addReference($field3, $field4);
         $fk->setOnDelete('SETNULL');
         $entity1->addRelation($fk);

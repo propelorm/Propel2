@@ -221,7 +221,7 @@ SET search_path TO public;
         }
 
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getFQTableName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -276,7 +276,7 @@ CREATE TABLE %s
 );
 ";
         $ret .= sprintf($pattern,
-            $this->quoteIdentifier($entity->getName()),
+            $this->quoteIdentifier($entity->getFQTableName()),
             implode($sep, $lines)
         );
 
@@ -285,7 +285,7 @@ CREATE TABLE %s
 COMMENT ON TABLE %s IS %s;
 ";
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($entity->getName()),
+                $this->quoteIdentifier($entity->getFQTableName()),
                 $this->quote($entity->getDescription())
             );
         }
@@ -313,7 +313,7 @@ COMMENT ON COLUMN %s.%s IS %s;
 ";
         if ($description = $field->getDescription()) {
             return sprintf($pattern,
-                $this->quoteIdentifier($field->getEntity()->getName()),
+                $this->quoteIdentifier($field->getEntity()->getFQTableName()),
                 $this->quoteIdentifier($field->getName()),
                 $this->quote($description)
             );
@@ -327,7 +327,7 @@ COMMENT ON COLUMN %s.%s IS %s;
         $pattern = "
 DROP TABLE IF EXISTS %s CASCADE;
 ";
-        $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()));
+        $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getFQTableName()));
         $ret .= $this->getDropSequenceDDL($entity);
         $ret .= $this->getResetSchemaDDL($entity);
 
@@ -336,7 +336,7 @@ DROP TABLE IF EXISTS %s CASCADE;
 
     public function getPrimaryKeyName(Entity $entity)
     {
-        $entityName = $entity->getCommonName();
+        $entityName = $entity->getTableName();
 
         return $entityName . '_pkey';
     }
@@ -345,7 +345,7 @@ DROP TABLE IF EXISTS %s CASCADE;
     {
         $domain = $col->getDomain();
 
-        $ddl = array($this->quoteIdentifier($col->getName()));
+        $ddl = array($this->quoteIdentifier($col->getColumnName()));
         $sqlType = $domain->getSqlType();
         $entity = $col->getEntity();
         if ($col->isAutoIncrement() && $entity && $entity->getIdMethodParameters() == null) {
@@ -517,7 +517,7 @@ DROP SEQUENCE %s CASCADE;
                 $sqlType .= $using;
             }
             $ret .= sprintf($pattern,
-                $this->quoteIdentifier($entity->getName()),
+                $this->quoteIdentifier($entity->getFQTableName()),
                 $colName . ' TYPE ' . $sqlType
             );
         }
@@ -525,9 +525,9 @@ DROP SEQUENCE %s CASCADE;
         if (isset($changedProperties['defaultValueValue'])) {
             $property = $changedProperties['defaultValueValue'];
             if ($property[0] !== null && $property[1] === null) {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' DROP DEFAULT');
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getFQTableName()), $colName . ' DROP DEFAULT');
             } else {
-                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . ' SET ' . $this->getFieldDefaultValueDDL($toField));
+                $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getFQTableName()), $colName . ' SET ' . $this->getFieldDefaultValueDDL($toField));
             }
         }
 
@@ -537,7 +537,7 @@ DROP SEQUENCE %s CASCADE;
             if ($property[1]) {
                 $notNull = ' SET NOT NULL';
             }
-            $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getName()), $colName . $notNull);
+            $ret .= sprintf($pattern, $this->quoteIdentifier($entity->getFQTableName()), $colName . $notNull);
         }
 
         return $ret;
@@ -643,7 +643,7 @@ DROP SEQUENCE %s CASCADE;
     ";
 
             return sprintf($pattern,
-                $this->quoteIdentifier($index->getEntity()->getName()),
+                $this->quoteIdentifier($index->getEntity()->getFQTableName()),
                 $this->quoteIdentifier($index->getName())
             );
         } else {

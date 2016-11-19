@@ -21,15 +21,16 @@ abstract class PlatformTestBase extends TestCase
 
     protected function getDatabaseFromSchema($schema)
     {
-        $xtad = new SchemaReader($this->getPlatform());
+        $xtad = new SchemaReader();
+        $xtad->setPlatform($this->getPlatform());
         $appData = $xtad->parseString($schema);
 
         return $appData->getDatabase();
     }
 
-    protected function getTableFromSchema($schema, $tableName = 'foo')
+    protected function getEntityFromSchema($schema, $entityName = 'foo')
     {
-        return $this->getDatabaseFromSchema($schema)->getTable($tableName);
+        return $this->getDatabaseFromSchema($schema)->getEntity($entityName);
     }
 
 }

@@ -346,10 +346,25 @@ class Relation extends MappingModel
             if ($this->getForeignEntity()) {
                 $hash[] = $this->getForeignEntity()->getFQTableName();
             }
-            $hash[] = implode(',', (array)$this->localFields);
-            $hash[] = implode(',', (array)$this->foreignFields);
+
+            if (!$this->localFields) {
+                throw new EngineException('Could not generate a relation name for relation without references.');
+            }
+
+            if ($this->localFields) {
+                $columnNames = array_map(function (Field $field) {
+                    return $field->getColumnName();
+                }, $this->getLocalFieldObjects());
+                $hash[] = implode(',', $columnNames);
+
+                $columnNames = array_map(function(Field $field) {
+                    return $field->getColumnName();
+                }, $this->getForeignFieldObjects());
+                $hash[] = implode(',', $columnNames);
+            }
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
+//            $newName .= implode(':', $hash);
 
             if ($this->getEntity()) {
                 $newName = $this->getEntity()->getTableName() . '_' . $newName;
@@ -701,8 +716,6 @@ class Relation extends MappingModel
 
         return $mapping;
     }
-
-
 
     /**
      * Returns the foreign field name mapped to a specified local field.

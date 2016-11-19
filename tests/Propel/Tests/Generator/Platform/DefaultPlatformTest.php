@@ -136,10 +136,9 @@ class DefaultPlatformTest extends TestCase
             array($this->createField(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"),
             array($this->createField(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"),
             array($this->createField(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"),
-            array($this->createField(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"),
-            array($this->createEnumField(array('foo', 'bar', 'baz'), 'foo'), "DEFAULT 0"),
-            array($this->createEnumField(array('foo', 'bar', 'baz'), 'bar'), "DEFAULT 1"),
-            array($this->createEnumField(array('foo', 'bar', 'baz'), 'baz'), "DEFAULT 2"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'foo'), "DEFAULT 'foo'"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'bar'), "DEFAULT 'bar'"),
+            array($this->createEnumField(array('foo', 'bar', 'baz'), 'baz'), "DEFAULT 'baz'"),
         );
     }
 

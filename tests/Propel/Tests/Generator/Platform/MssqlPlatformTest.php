@@ -10,11 +10,11 @@
 
 namespace Propel\Tests\Generator\Platform;
 
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\FieldDefaultValue;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Platform\MssqlPlatform;
 
 /**
@@ -34,7 +34,7 @@ class MssqlPlatformTest extends PlatformTestProvider
 
     public function testGetSequenceNameDefault()
     {
-        $table = new Table('foo');
+        $table = new Entity('foo');
         $table->setIdMethod(IdMethod::NATIVE);
         $expected = 'foo_SEQ';
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
@@ -42,7 +42,7 @@ class MssqlPlatformTest extends PlatformTestProvider
 
     public function testGetSequenceNameCustom()
     {
-        $table = new Table('foo');
+        $table = new Entity('foo');
         $table->setIdMethod(IdMethod::NATIVE);
         $idMethodParameter = new IdMethodParameter();
         $idMethodParameter->setValue('foo_sequence');
@@ -53,9 +53,9 @@ class MssqlPlatformTest extends PlatformTestProvider
     }
 
     /**
-     * @dataProvider providerForTestGetAddTablesDDL
+     * @dataProvider providerForTestGetAddEntitiesDDL
      */
-    public function testGetAddTablesDDL($schema)
+    public function testGetAddEntitiesDDL($schema)
     {
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
@@ -64,8 +64,8 @@ class MssqlPlatformTest extends PlatformTestProvider
 -- book
 -----------------------------------------------------------------------
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_ea464c')
-    ALTER TABLE [book] DROP CONSTRAINT [book_fk_ea464c];
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_fk_82ae3e')
+    ALTER TABLE [book] DROP CONSTRAINT [book_fk_82ae3e];
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'book')
 BEGIN
@@ -103,7 +103,7 @@ CREATE TABLE [book]
 CREATE INDEX [book_i_639136] ON [book] ([title]);
 
 BEGIN
-ALTER TABLE [book] ADD CONSTRAINT [book_fk_ea464c] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
+ALTER TABLE [book] ADD CONSTRAINT [book_fk_82ae3e] FOREIGN KEY ([author_id]) REFERENCES [author] ([id])
 END
 ;
 
@@ -145,13 +145,13 @@ CREATE TABLE [author]
 );
 
 EOF;
-        $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntitiesDDL($database));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTablesDDLSchema
+     * @dataProvider providerForTestGetAddEntitiesDDLSchema
      */
-    public function testGetAddTablesDDLSchemas($schema)
+    public function testGetAddEntitiesDDLSchemas($schema)
     {
         $database = $this->getDatabaseFromSchema($schema);
         $expected = <<<EOF
@@ -193,7 +193,7 @@ CREATE TABLE [x].[book]
     [id] INT NOT NULL IDENTITY,
     [title] VARCHAR(255) NOT NULL,
     [author_id] INT NULL,
-    CONSTRAINT [book_pk] PRIMARY KEY ([id])
+    CONSTRAINT [x].[book_pk] PRIMARY KEY ([id])
 );
 
 CREATE INDEX [book_i_639136] ON [x].[book] ([title]);
@@ -237,15 +237,15 @@ CREATE TABLE [y].[author]
     [id] INT NOT NULL IDENTITY,
     [first_name] VARCHAR(100) NULL,
     [last_name] VARCHAR(100) NULL,
-    CONSTRAINT [author_pk] PRIMARY KEY ([id])
+    CONSTRAINT [y].[author_pk] PRIMARY KEY ([id])
 );
 
 -----------------------------------------------------------------------
 -- x.book_summary
 -----------------------------------------------------------------------
 
-IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_fk_23450f')
-    ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_fk_23450f];
+IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='book_summary_fk_312a7d')
+    ALTER TABLE [x].[book_summary] DROP CONSTRAINT [book_summary_fk_312a7d];
 
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'x.book_summary')
 BEGIN
@@ -277,34 +277,34 @@ CREATE TABLE [x].[book_summary]
     [id] INT NOT NULL IDENTITY,
     [book_id] INT NOT NULL,
     [summary] VARCHAR(MAX) NOT NULL,
-    CONSTRAINT [book_summary_pk] PRIMARY KEY ([id])
+    CONSTRAINT [x].[book_summary_pk] PRIMARY KEY ([id])
 );
 
 BEGIN
-ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_fk_23450f] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
+ALTER TABLE [x].[book_summary] ADD CONSTRAINT [book_summary_fk_312a7d] FOREIGN KEY ([book_id]) REFERENCES [x].[book] ([id]) ON DELETE CASCADE
 END
 ;
 
 EOF;
-        $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntitiesDDL($database));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     * @dataProvider providerForTestGetAddEntitiesSkipSQLDDL
      */
-    public function testGetAddTablesSkipSQLDDL($schema)
+    public function testGetAddEntitiesSkipSQLDDL($schema)
     {
         $database = $this->getDatabaseFromSchema($schema);
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntitiesDDL($database));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTableDDLSimplePK
+     * @dataProvider providerForTestGetAddEntityDDLSimplePK
      */
-    public function testGetAddTableDDLSimplePK($schema)
+    public function testGetAddEntityDDLSimplePK($schema)
     {
-        $table = $this->getTableFromSchema($schema);
+        $table = $this->getEntityFromSchema($schema);
         $expected = "
 -- This is foo table
 CREATE TABLE [foo]
@@ -314,15 +314,15 @@ CREATE TABLE [foo]
     CONSTRAINT [foo_pk] PRIMARY KEY ([id])
 );
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntityDDL($table));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTableDDLCompositePK
+     * @dataProvider providerForTestGetAddEntityDDLCompositePK
      */
-    public function testGetAddTableDDLCompositePK($schema)
+    public function testGetAddEntityDDLCompositePK($schema)
     {
-        $table = $this->getTableFromSchema($schema);
+        $table = $this->getEntityFromSchema($schema);
         $expected = "
 CREATE TABLE [foo]
 (
@@ -332,15 +332,15 @@ CREATE TABLE [foo]
     CONSTRAINT [foo_pk] PRIMARY KEY ([foo],[bar])
 );
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntityDDL($table));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     * @dataProvider providerForTestGetAddEntityDDLUniqueIndex
      */
-    public function testGetAddTableDDLUniqueIndex($schema)
+    public function testGetAddEntityDDLUniqueIndex($schema)
     {
-        $table = $this->getTableFromSchema($schema);
+        $table = $this->getEntityFromSchema($schema);
         $expected = "
 CREATE TABLE [foo]
 (
@@ -350,29 +350,29 @@ CREATE TABLE [foo]
     UNIQUE ([bar])
 );
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntityDDL($table));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTableDDLSchema
+     * @dataProvider providerForTestGetAddEntityDDLSchema
      */
-    public function testGetAddTableDDLSchema($schema)
+    public function testGetAddEntityDDLSchema($schema)
     {
-        $table = $this->getTableFromSchema($schema, 'Woopah.foo');
+        $table = $this->getEntityFromSchema($schema, 'foo');
         $expected = "
 CREATE TABLE [Woopah].[foo]
 (
     [id] INT NOT NULL IDENTITY,
     [bar] INT NULL,
-    CONSTRAINT [foo_pk] PRIMARY KEY ([id])
+    CONSTRAINT [Woopah].[foo_pk] PRIMARY KEY ([id])
 );
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddEntityDDL($table));
     }
 
-    public function testGetDropTableDDL()
+    public function testGetDropEntityDDL()
     {
-        $table = new Table('foo');
+        $table = new Entity('foo');
         $expected = "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'foo')
 BEGIN
@@ -399,15 +399,15 @@ BEGIN
     DROP TABLE [foo]
 END
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getDropEntityDDL($table));
     }
 
     /**
-     * @dataProvider providerForTestGetAddTableDDLSchema
+     * @dataProvider providerForTestGetAddEntityDDLSchema
      */
-    public function testGetDropTableDDLSchema($schema)
+    public function testGetDropEntityDDLSchema($schema)
     {
-        $table = $this->getTableFromSchema($schema, 'Woopah.foo');
+        $table = $this->getEntityFromSchema($schema, 'foo');
         $expected = "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = 'Woopah.foo')
 BEGIN
@@ -434,41 +434,41 @@ BEGIN
     DROP TABLE [Woopah].[foo]
 END
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getDropEntityDDL($table));
     }
 
     public function testGetColumnDDLCustomSqlType()
     {
-        $column = new Column('foo');
+        $column = new Field('foo');
         $column->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $column->getDomain()->replaceScale(2);
         $column->getDomain()->replaceSize(3);
         $column->setNotNull(true);
-        $column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $column->getDomain()->setDefaultValue(new FieldDefaultValue(123, FieldDefaultValue::TYPE_VALUE));
         $column->getDomain()->replaceSqlType('DECIMAL(5,6)');
         $expected = '[foo] DECIMAL(5,6) DEFAULT 123 NOT NULL';
-        $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+        $this->assertEquals($expected, $this->getPlatform()->getFieldDDL($column));
     }
 
     public function testGetPrimaryKeyDDLSimpleKey()
     {
-        $table = new Table('foo');
-        $column = new Column('bar');
+        $table = new Entity('foo');
+        $column = new Field('bar');
         $column->setPrimaryKey(true);
-        $table->addColumn($column);
+        $table->addField($column);
         $expected = 'CONSTRAINT [foo_pk] PRIMARY KEY ([bar])';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
     public function testGetPrimaryKeyDDLCompositeKey()
     {
-        $table = new Table('foo');
-        $column1 = new Column('bar1');
+        $table = new Entity('foo');
+        $column1 = new Field('bar1');
         $column1->setPrimaryKey(true);
-        $table->addColumn($column1);
-        $column2 = new Column('bar2');
+        $table->addField($column1);
+        $column2 = new Field('bar2');
         $column2->setPrimaryKey(true);
-        $table->addColumn($column2);
+        $table->addField($column2);
         $expected = 'CONSTRAINT [foo_pk] PRIMARY KEY ([bar1],[bar2])';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
@@ -549,9 +549,9 @@ DROP INDEX [babar];
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeysDDL
+     * @dataProvider providerForTestGetRelationsDDL
      */
-    public function testGetAddForeignKeysDDL($table)
+    public function testGetAddRelationsDDL($table)
     {
         $expected = "
 BEGIN
@@ -564,13 +564,13 @@ ALTER TABLE [foo] ADD CONSTRAINT [foo_baz_fk] FOREIGN KEY ([baz_id]) REFERENCES 
 END
 ;
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeysDDL($table));
+        $this->assertEquals($expected, $this->getPlatform()->getAddRelationsDDL($table));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeyDDL
+     * @dataProvider providerForTestGetRelationDDL
      */
-    public function testGetAddForeignKeyDDL($fk)
+    public function testGetAddRelationDDL($fk)
     {
         $expected = "
 BEGIN
@@ -578,54 +578,54 @@ ALTER TABLE [foo] ADD CONSTRAINT [foo_bar_fk] FOREIGN KEY ([bar_id]) REFERENCES 
 END
 ;
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getAddRelationDDL($fk));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     * @dataProvider providerForTestGetRelationSkipSqlDDL
      */
-    public function testGetAddForeignKeySkipSqlDDL($fk)
+    public function testGetAddRelationSkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getAddRelationDDL($fk));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeyDDL
+     * @dataProvider providerForTestGetRelationDDL
      */
-    public function testGetDropForeignKeyDDL($fk)
+    public function testGetDropRelationDDL($fk)
     {
         $expected = "
 ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_fk];
 ";
-        $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getDropRelationDDL($fk));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     * @dataProvider providerForTestGetRelationSkipSqlDDL
      */
-    public function testGetDropForeignKeySkipSqlDDL($fk)
+    public function testGetDropRelationSkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getDropRelationDDL($fk));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeyDDL
+     * @dataProvider providerForTestGetRelationDDL
      */
-    public function testGetForeignKeyDDL($fk)
+    public function testGetRelationDDL($fk)
     {
         $expected = 'CONSTRAINT [foo_bar_fk] FOREIGN KEY ([bar_id]) REFERENCES [bar] ([id]) ON DELETE CASCADE';
-        $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getRelationDDL($fk));
     }
 
     /**
-     * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     * @dataProvider providerForTestGetRelationSkipSqlDDL
      */
-    public function testGetForeignKeySkipSqlDDL($fk)
+    public function testGetRelationSkipSqlDDL($fk)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
+        $this->assertEquals($expected, $this->getPlatform()->getRelationDDL($fk));
     }
 
     public function testGetCommentBlockDDL()

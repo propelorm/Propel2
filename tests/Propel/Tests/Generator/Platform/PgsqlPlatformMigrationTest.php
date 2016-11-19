@@ -11,10 +11,10 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Builder\Util\SchemaReader;
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Field;
+use Propel\Generator\Model\FieldDefaultValue;
+use Propel\Generator\Model\Entity;
+use Propel\Generator\Model\Diff\FieldComparator;
 use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
@@ -26,7 +26,7 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return PgsqlPlatform
      */
     protected function getPlatform()
     {
@@ -65,20 +65,20 @@ END;
     }
 
     /**
-     * @dataProvider providerForTestGetRenameTableDDL
+     * @dataProvider providerForTestGetRenameEntityDDL
      */
-    public function testGetRenameTableDDL($fromName, $toName)
+    public function testGetRenameEntityDDL($fromName, $toName)
     {
         $expected = '
 ALTER TABLE "foo1" RENAME TO "foo2";
 ';
-        $this->assertEquals($expected, $this->getPlatform()->getRenameTableDDL($fromName, $toName));
+        $this->assertEquals($expected, $this->getPlatform()->getRenameEntityDDL($fromName, $toName));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableDDL
+     * @dataProvider providerForTestGetModifyEntityDDL
      */
-    public function testGetModifyTableDDL($tableDiff)
+    public function testGetModifyEntityDDL($tableDiff)
     {
         $expected = <<<END
 
@@ -107,13 +107,13 @@ ALTER TABLE "foo" ADD CONSTRAINT "foo1_fk_1"
     REFERENCES "foo2" ("bar");
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityDDL($tableDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableColumnsDDL
+     * @dataProvider providerForTestGetModifyEntityFieldsDDL
      */
-    public function testGetModifyTableColumnsDDL($tableDiff)
+    public function testGetModifyEntityFieldsDDL($tableDiff)
     {
         $expected = <<<END
 
@@ -124,13 +124,13 @@ ALTER TABLE "foo" ALTER COLUMN "baz" DROP NOT NULL;
 ALTER TABLE "foo" ADD "baz3" TEXT;
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityFieldsDDL($tableDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+     * @dataProvider providerForTestGetModifyEntityPrimaryKeysDDL
      */
-    public function testGetModifyTablePrimaryKeysDDL($tableDiff)
+    public function testGetModifyEntityPrimaryKeysDDL($tableDiff)
     {
         $expected = <<<END
 
@@ -139,13 +139,13 @@ ALTER TABLE "foo" DROP CONSTRAINT "foo_pkey";
 ALTER TABLE "foo" ADD PRIMARY KEY ("id","bar");
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTablePrimaryKeyDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityPrimaryKeyDDL($tableDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableIndicesDDL
+     * @dataProvider providerForTestGetModifyEntityIndicesDDL
      */
-    public function testGetModifyTableIndicesDDL($tableDiff)
+    public function testGetModifyEntityIndicesDDL($tableDiff)
     {
         $expected = <<<END
 
@@ -158,13 +158,13 @@ DROP INDEX "bar_baz_fk";
 CREATE INDEX "bar_baz_fk" ON "foo" ("id","bar","baz");
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableIndicesDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityIndicesDDL($tableDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableForeignKeysDDL
+     * @dataProvider providerForTestGetModifyEntityRelationsDDL
      */
-    public function testGetModifyTableForeignKeysDDL($tableDiff)
+    public function testGetModifyEntityRelationsDDL($tableDiff)
     {
         $expected = <<<END
 
@@ -181,20 +181,20 @@ ALTER TABLE "foo1" ADD CONSTRAINT "foo1_fk_2"
     REFERENCES "foo2" ("bar","id");
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityRelationsDDL($tableDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableForeignKeysSkipSqlDDL
+     * @dataProvider providerForTestGetModifyEntityRelationsSkipSqlDDL
      */
-    public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
+    public function testGetModifyEntityRelationsSkipSqlDDL($tableDiff)
     {
         $expected = <<<END
 
 ALTER TABLE "foo1" DROP CONSTRAINT "foo1_fk_1";
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityRelationsDDL($tableDiff));
         $expected = <<<END
 
 ALTER TABLE "foo1" ADD CONSTRAINT "foo1_fk_1"
@@ -202,69 +202,69 @@ ALTER TABLE "foo1" ADD CONSTRAINT "foo1_fk_1"
     REFERENCES "foo2" ("bar");
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityRelationsDDL($tableDiff->getReverseDiff()));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+     * @dataProvider providerForTestGetModifyEntityRelationsSkipSql2DDL
      */
-    public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
+    public function testGetModifyEntityRelationsSkipSql2DDL($tableDiff)
     {
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityRelationsDDL($tableDiff));
         $expected = '';
-        $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyEntityRelationsDDL($tableDiff->getReverseDiff()));
     }
 
     /**
-     * @dataProvider providerForTestGetRemoveColumnDDL
+     * @dataProvider providerForTestGetRemoveFieldDDL
      */
-    public function testGetRemoveColumnDDL($column)
+    public function testGetRemoveFieldDDL($column)
     {
         $expected = '
 ALTER TABLE "foo" DROP COLUMN "bar";
 ';
-        $this->assertEquals($expected, $this->getPlatform()->getRemoveColumnDDL($column));
+        $this->assertEquals($expected, $this->getPlatform()->getRemoveFieldDDL($column));
     }
 
     /**
-     * @dataProvider providerForTestGetRenameColumnDDL
+     * @dataProvider providerForTestGetRenameFieldDDL
      */
-    public function testGetRenameColumnDDL($fromColumn, $toColumn)
+    public function testGetRenameFieldDDL($fromColumn, $toColumn)
     {
         $expected = '
 ALTER TABLE "foo" RENAME COLUMN "bar1" TO "bar2";
 ';
-        $this->assertEquals($expected, $this->getPlatform()->getRenameColumnDDL($fromColumn, $toColumn));
+        $this->assertEquals($expected, $this->getPlatform()->getRenameFieldDDL($fromColumn, $toColumn));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyColumnDDL
+     * @dataProvider providerForTestGetModifyFieldDDL
      */
-    public function testGetModifyColumnDDL($columnDiff)
+    public function testGetModifyFieldDDL($columnDiff)
     {
         $expected = '
 ALTER TABLE "foo" ALTER COLUMN "bar" TYPE DOUBLE PRECISION;
 ';
-        $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyFieldDDL($columnDiff));
     }
 
-    public function testGetModifyColumnDDLWithChangedTypeAndDefault()
+    public function testGetModifyFieldDDLWithChangedTypeAndDefault()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar');
+        $c1 = new Field('bar');
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceSize(2);
-        $t1->addColumn($c1);
-        $t2 = new Table('foo');
+        $t1->addField($c1);
+        $t2 = new Entity('foo');
         $t2->setIdentifierQuoting(true);
-        $c2 = new Column('bar');
+        $c2 = new Field('bar');
         $c2->getDomain()->copy($this->getPlatform()->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceSize(3);
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(-100, ColumnDefaultValue::TYPE_VALUE));
-        $t2->addColumn($c2);
-        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
+        $c2->getDomain()->setDefaultValue(new FieldDefaultValue(-100, FieldDefaultValue::TYPE_VALUE));
+        $t2->addField($c2);
+        $columnDiff = FieldComparator::computeDiff($c1, $c2);
         $expected = <<<END
 
 ALTER TABLE "foo" ALTER COLUMN "bar" TYPE DOUBLE PRECISION;
@@ -272,13 +272,13 @@ ALTER TABLE "foo" ALTER COLUMN "bar" TYPE DOUBLE PRECISION;
 ALTER TABLE "foo" ALTER COLUMN "bar" SET DEFAULT -100;
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyFieldDDL($columnDiff));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyColumnsDDL
+     * @dataProvider providerForTestGetModifyFieldsDDL
      */
-    public function testGetModifyColumnsDDL($columnDiffs)
+    public function testGetModifyFieldsDDL($columnDiffs)
     {
         $expected = <<<END
 
@@ -287,24 +287,24 @@ ALTER TABLE "foo" ALTER COLUMN "bar1" TYPE DOUBLE PRECISION;
 ALTER TABLE "foo" ALTER COLUMN "bar2" SET NOT NULL;
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyColumnsDDL($columnDiffs));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyFieldsDDL($columnDiffs));
     }
 
     /**
-     * @dataProvider providerForTestGetAddColumnDDL
+     * @dataProvider providerForTestGetAddFieldDDL
      */
-    public function testGetAddColumnDDL($column)
+    public function testGetAddFieldDDL($column)
     {
         $expected = '
 ALTER TABLE "foo" ADD "bar" INTEGER;
 ';
-        $this->assertEquals($expected, $this->getPlatform()->getAddColumnDDL($column));
+        $this->assertEquals($expected, $this->getPlatform()->getAddFieldDDL($column));
     }
 
     /**
-     * @dataProvider providerForTestGetAddColumnsDDL
+     * @dataProvider providerForTestGetAddFieldsDDL
      */
-    public function testGetAddColumnsDDL($columns)
+    public function testGetAddFieldsDDL($columns)
     {
         $expected = <<<END
 
@@ -313,91 +313,91 @@ ALTER TABLE "foo" ADD "bar1" INTEGER;
 ALTER TABLE "foo" ADD "bar2" DOUBLE PRECISION DEFAULT -1 NOT NULL;
 
 END;
-        $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
+        $this->assertEquals($expected, $this->getPlatform()->getAddFieldsDDL($columns));
     }
 
-    public function testGetModifyColumnDDLWithVarcharWithoutSize()
+    public function testGetModifyFieldDDLWithVarcharWithoutSize()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar');
-        $c1->setTable($t1);
+        $c1 = new Field('bar');
+        $c1->setEntity($t1);
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
         $c1->getDomain()->replaceSize(null);
         $c1->getDomain()->replaceScale(null);
-        $t1->addColumn($c1);
+        $t1->addField($c1);
 
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="VARCHAR" />
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar" type="VARCHAR" />
+    </entity>
 </database>
 EOF;
 
-        $table = $this->getDatabaseFromSchema($schema)->getTable('foo');
-        $c2 = $table->getColumn('bar');
-        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
+        $table = $this->getDatabaseFromSchema($schema)->getEntity('foo');
+        $c2 = $table->getField('bar');
+        $columnDiff = FieldComparator::computeDiff($c1, $c2);
         $expected = false;
         $this->assertSame($expected, $columnDiff);
     }
 
-public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
+public function testGetModifyFieldDDLWithVarcharWithoutSizeAndPlatform()
     {
-        $t1 = new Table('foo');
+        $t1 = new Entity('foo');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column('bar');
-        $c1->setTable($t1);
+        $c1 = new Field('bar');
+        $c1->setEntity($t1);
         $c1->getDomain()->copy($this->getPlatform()->getDomainForType('VARCHAR'));
         $c1->getDomain()->replaceSize(null);
         $c1->getDomain()->replaceScale(null);
-        $t1->addColumn($c1);
+        $t1->addField($c1);
 
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
-    <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar"/>
-    </table>
+    <entity name="foo">
+        <field name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <field name="bar"/>
+    </entity>
 </database>
 EOF;
 
         $xtad = new SchemaReader(null);
         $appData = $xtad->parseString($schema);
         $db = $appData->getDatabase();
-        $table = $db->getTable('foo');
-        $c2 = $table->getColumn('bar');
-        $columnDiff = ColumnComparator::computeDiff($c1, $c2);
+        $table = $db->getEntity('foo');
+        $c2 = $table->getField('bar');
+        $columnDiff = FieldComparator::computeDiff($c1, $c2);
         $expected = false;
         $this->assertSame($expected, $columnDiff);
     }
 
     /**
-     * @dataProvider providerForTestGetModifyColumnRemoveDefaultValueDDL
+     * @dataProvider providerForTestGetModifyFieldRemoveDefaultValueDDL
      */
-    public function testGetModifyColumnRemoveDefaultValueDDL($columnDiffs)
+    public function testGetModifyFieldRemoveDefaultValueDDL($columnDiffs)
     {
         $expected = <<<EOF
 
 ALTER TABLE "test" ALTER COLUMN "test" DROP DEFAULT;
 
 EOF;
-        $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiffs));
+        $this->assertEquals($expected, $this->getPlatform()->getModifyFieldDDL($columnDiffs));
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql3DDL
+     * @dataProvider providerForTestGetModifyEntityRelationsSkipSql3DDL
      */
-    public function testGetModifyTableForeignKeysSkipSql3DDL($databaseDiff)
+    public function testGetModifyEntityRelationsSkipSql3DDL($databaseDiff)
     {
         $this->assertFalse($databaseDiff);
     }
 
     /**
-     * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql4DDL
+     * @dataProvider providerForTestGetModifyEntityRelationsSkipSql4DDL
      */
-    public function testGetModifyTableForeignKeysSkipSql4DDL($databaseDiff)
+    public function testGetModifyEntityRelationsSkipSql4DDL($databaseDiff)
     {
         $this->assertFalse($databaseDiff);
     }

@@ -78,12 +78,7 @@ class SqlDefaultPlatform implements PlatformInterface
     public function getName($object)
     {
         if ($object instanceof Entity) {
-            $commonName = $object->getTableName() ?: $this->toUnderscore($object->getName());
-            if ($schema = $object->guessSchemaName()) {
-                return $schema . $this->getSchemaDelimiter() . $commonName;
-            }
-
-            return $commonName;
+            return $object->getFQTableName();
 
         } else if ($object instanceof Field) {
             if ($object->getColumnName()) {
@@ -423,7 +418,7 @@ class SqlDefaultPlatform implements PlatformInterface
             $this->normalizeEntity($entity);
         }
         foreach ($database->getEntitiesForSql() as $entity) {
-            $ret .= $this->getCommentBlockDDL($entity->getName());
+            $ret .= $this->getCommentBlockDDL($entity->getFQTableName());
             $ret .= $this->getDropEntityDDL($entity);
             $ret .= $this->getAddEntityDDL($entity);
             $ret .= $this->getAddIndicesDDL($entity);
@@ -550,7 +545,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
                 } elseif (in_array($col->getType(), array(PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU))) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
-                    $default .= $defaultValue->getValue();
+                    $default .= $this->quote($defaultValue->getValue());
                 } elseif ($col->isPhpArrayType()) {
                     $value = $this->getPhpArrayString($defaultValue->getValue());
                     if (null === $value) {
@@ -600,9 +595,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
      */
     public function getPrimaryKeyName(Entity $entity)
     {
-        $entityName = $this->getName($entity);
-
-        return $entityName . '_pk';
+        return $entity->getFQTableName() . '_pk';
     }
 
     /**

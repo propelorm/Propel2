@@ -91,6 +91,10 @@ class SchemaReader
         $defaultPackage = null,
         $encoding = 'iso-8859-1'
     ) {
+        if ($defaultPackage && !is_string($defaultPackage)) {
+            throw new \InvalidArgumentException('$defaultPackage should be string.');
+        }
+
         $this->schema = new Schema();
         $this->defaultPackage = $defaultPackage;
         $this->firstPass = true;

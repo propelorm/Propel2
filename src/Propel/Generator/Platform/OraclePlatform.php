@@ -222,7 +222,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($entity)) . ";
         $script = sprintf($pattern,
             $this->quoteIdentifier($relation->getName()),
             $this->getFieldListDDL($relation->getLocalFieldObjects()),
-            $this->quoteIdentifier($relation->getEntity()->getFQTableName()),
+            $this->quoteIdentifier($relation->getForeignEntity()->getFQTableName()),
             $this->getFieldListDDL($relation->getForeignFieldObjects())
         );
         if ($relation->hasOnDelete()) {
@@ -318,8 +318,8 @@ USING INDEX
             $physicalParameters .= ")
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'Entitiespace')) {
-            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Entitiespace');
+        if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
+            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
         }
 
         return $physicalParameters;
