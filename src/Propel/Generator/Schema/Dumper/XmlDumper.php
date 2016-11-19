@@ -108,10 +108,6 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('namespace', $namespace);
         }
 
-        if ($baseClass = $database->getBaseClass()) {
-            $databaseNode->setAttribute('baseClass', $baseClass);
-        }
-
         $defaultAccessorVisibility = $database->getDefaultAccessorVisibility();
         if ($defaultAccessorVisibility !== Database::VISIBILITY_PUBLIC) {
             $databaseNode->setAttribute('defaultAccessorVisibility', $defaultAccessorVisibility);
@@ -193,7 +189,7 @@ class XmlDumper implements DumperInterface
             $entityNode->setAttribute('idMethod', $idMethod);
         }
 
-        if ($tableName = $entity->getTableName()) {
+        if ($tableName = $entity->getCommonTableName()) {
             $entityNode->setAttribute('tableName', $tableName);
         }
 
@@ -212,10 +208,6 @@ class XmlDumper implements DumperInterface
 
         if ($entity->isCrossRef()) {
             $entityNode->setAttribute('isCrossRef', 'true');
-        }
-        
-        if ($baseClass = $entity->getBaseClass()) {
-            $entityNode->setAttribute('baseClass', $baseClass);
         }
 
         if ($entity->isReadOnly()) {

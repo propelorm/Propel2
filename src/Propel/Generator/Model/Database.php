@@ -53,7 +53,6 @@ class Database extends ScopedMappingModel
      */
     private $name;
 
-    private $baseClass;
     private $defaultIdMethod;
 
     /**
@@ -242,28 +241,6 @@ class Database extends ScopedMappingModel
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * Returns the name of the base super class inherited by active record
-     * objects. This parameter is overridden at the entity level.
-     *
-     * @return string
-     */
-    public function getBaseClass()
-    {
-        return $this->baseClass;
-    }
-
-    /**
-     * Sets the name of the base super class inherited by active record objects.
-     * This parameter is overridden at the entity level.
-     *
-     * @param string $class.
-     */
-    public function setBaseClass($class)
-    {
-        $this->baseClass = $class;
     }
 
     /**

@@ -752,37 +752,6 @@ class EntityTest extends ModelTestCase
         $this->assertContains($fk1, $entity->getFieldRelations('author_id'));
     }
 
-    public function testSetBaseClasses()
-    {
-        $entity = new Entity();
-        $entity->setBaseClass('BaseObject');
-
-        $this->assertSame('BaseObject', $entity->getBaseClass());
-    }
-
-    public function testGetBaseClassesFromDatabase()
-    {
-        $database = $this->getDatabaseMock('bookstore');
-        $database
-            ->expects($this->once())
-            ->method('getBaseClass')
-            ->will($this->returnValue('BaseObject'))
-        ;
-
-        $entity = new Entity();
-        $entity->setDatabase($database);
-
-        $this->assertSame('BaseObject', $entity->getBaseClass());
-    }
-
-    public function testGetBaseClassesWithAlias()
-    {
-        $entity = new Entity('books');
-        $entity->setAlias('Book');
-
-        $this->assertSame('Book', $entity->getBaseClass());
-    }
-
     public function testSetAlias()
     {
         $entity = new Entity('books');

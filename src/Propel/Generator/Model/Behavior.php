@@ -237,6 +237,17 @@ class Behavior extends MappingModel
     }
 
     /**
+     * Sets a single parameter by its name.
+     *
+     * @param  string $name
+     * @param  string $value
+     */
+    public function setParameter($name, $value)
+    {
+        $this->parameters[$name] = $value;
+    }
+
+    /**
      * Defines when this behavior must execute its modifyEntity() method
      * relative to other behaviors. The bigger the value is, the later the
      * behavior is executed.

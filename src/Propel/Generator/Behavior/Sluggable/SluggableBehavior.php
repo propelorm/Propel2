@@ -48,7 +48,7 @@ class SluggableBehavior extends Behavior
         //Search a primary string
 
         if (null === $this->getPrimaryStringFieldName() && '' === $this->getParameter('slug_pattern')) {
-            throw new BuildException('Sluggable behavior requires the entity has one primary string at least, to calculate the slug.');
+            throw new BuildException('Sluggable behavior requires the entity has one primary string at least when no slug_pattern is set, to calculate the slug.');
         }
 
         if (!$entity->hasField($this->getParameter('slug_field'))) {

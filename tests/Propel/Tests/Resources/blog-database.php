@@ -2,176 +2,176 @@
 
 use Propel\Generator\Behavior\Sluggable\SluggableBehavior;
 use Propel\Generator\Behavior\Timestampable\TimestampableBehavior;
-use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Field;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Relation;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Entity;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
 
-/* Columns */
-$column11 = new Column('id', 'integer', 7);
-$column11->setAutoIncrement();
-$column11->setNotNull();
-$column11->setPrimaryKey();
-$column12 = new Column('author_id', 'smallint', 3);
-$column12->setNotNull();
-$column13 = new Column('category_id', 'tinyint', 2);
-$column13->setNotNull();
-$column14 = new Column('title', 'varchar', 100);
-$column14->setNotNull();
-$column15 = new Column('body', 'clob');
-$column16 = new Column('average_rating', 'float', 2);
-$column16->setScale(2);
-$column16->setDescription('The post rating in percentage');
+/* Fields */
+$field11 = new Field('id', 'integer', 7);
+$field11->setAutoIncrement();
+$field11->setNotNull();
+$field11->setPrimaryKey();
+$field12 = new Field('authorId', 'smallint', 3);
+$field12->setNotNull();
+$field13 = new Field('categoryId', 'tinyint', 2);
+$field13->setNotNull();
+$field14 = new Field('title', 'varchar', 100);
+$field14->setNotNull();
+$field15 = new Field('body', 'clob');
+$field16 = new Field('averageRating', 'float', 2);
+$field16->setScale(2);
+$field16->setDescription('The post rating in percentage');
 
-$column21 = new Column('id', 'smallint', 3);
-$column21->setAutoIncrement();
-$column21->setNotNull();
-$column21->setPrimaryKey();
-$column22 = new Column('username', 'varchar', 15);
-$column22->setNotNull();
-$column23 = new Column('password', 'varchar', 40);
-$column23->setNotNull();
+$field21 = new Field('id', 'smallint', 3);
+$field21->setAutoIncrement();
+$field21->setNotNull();
+$field21->setPrimaryKey();
+$field22 = new Field('username', 'varchar', 15);
+$field22->setNotNull();
+$field23 = new Field('password', 'varchar', 40);
+$field23->setNotNull();
 
-$column31 = new Column('id', 'tinyint', 2);
-$column31->setAutoIncrement();
-$column31->setNotNull();
-$column31->setPrimaryKey();
-$column32 = new Column('name', 'varchar', 40);
-$column32->setNotNull();
+$field31 = new Field('id', 'tinyint', 2);
+$field31->setAutoIncrement();
+$field31->setNotNull();
+$field31->setPrimaryKey();
+$field32 = new Field('name', 'varchar', 40);
+$field32->setNotNull();
 
-$column41 = new Column('id', 'integer', 7);
-$column41->setAutoIncrement();
-$column41->setNotNull();
-$column41->setPrimaryKey();
-$column42 = new Column('name', 'varchar', 40);
-$column42->setNotNull();
+$field41 = new Field('id', 'integer', 7);
+$field41->setAutoIncrement();
+$field41->setNotNull();
+$field41->setPrimaryKey();
+$field42 = new Field('name', 'varchar', 40);
+$field42->setNotNull();
 
-$column51 = new Column('post_id', 'integer', 7);
-$column51->setNotNull();
-$column51->setPrimaryKey();
-$column52 = new Column('tag_id', 'integer', 7);
-$column52->setNotNull();
-$column52->setPrimaryKey();
+$field51 = new Field('postId', 'integer', 7);
+$field51->setNotNull();
+$field51->setPrimaryKey();
+$field52 = new Field('tagId', 'integer', 7);
+$field52->setNotNull();
+$field52->setPrimaryKey();
 
-$column61 = new Column('id', 'integer', 5);
-$column61->setNotNull();
-$column61->setAutoIncrement();
-$column61->setPrimaryKey();
-$column62 = new Column('title', 'varchar', 150);
-$column62->setNotNull();
-$column63 = new Column('content', 'clob');
-$column63->addVendorInfo(new VendorInfo('mysql', [
+$field61 = new Field('id', 'integer', 5);
+$field61->setNotNull();
+$field61->setAutoIncrement();
+$field61->setPrimaryKey();
+$field62 = new Field('title', 'varchar', 150);
+$field62->setNotNull();
+$field63 = new Field('content', 'clob');
+$field63->addVendorInfo(new VendorInfo('mysql', [
     'Charset' => 'latin1',
     'Collate' => 'latin1_general_ci',
 ]));
-$column64 = new Column('is_published', 'boolean');
-$column64->setNotNull();
-$column64->setDefaultValue('false');
+$field64 = new Field('isPublished', 'boolean');
+$field64->setNotNull();
+$field64->setDefaultValue('false');
 
 /* Foreign Keys */
-$fkAuthorPost = new ForeignKey('fk_post_has_author');
-$fkAuthorPost->addReference('author_id', 'id');
-$fkAuthorPost->setForeignTableCommonName('blog_author');
-$fkAuthorPost->setRefPhpName('Posts');
-$fkAuthorPost->setPhpName('Author');
+$fkAuthorPost = new Relation('fk_post_has_author');
+$fkAuthorPost->addReference('authorId', 'id');
+$fkAuthorPost->setForeignEntityName('BlogAuthor');
+$fkAuthorPost->setRefField('posts');
+$fkAuthorPost->setField('author');
 $fkAuthorPost->setDefaultJoin('Criteria::LEFT_JOIN');
 $fkAuthorPost->setOnDelete('CASCADE');
 
-$fkCategoryPost = new ForeignKey('fk_post_has_category');
-$fkCategoryPost->addReference('category_id', 'id');
-$fkCategoryPost->setForeignTableCommonName('blog_category');
-$fkCategoryPost->setRefPhpName('Posts');
-$fkCategoryPost->setPhpName('Category');
+$fkCategoryPost = new Relation('fk_post_has_category');
+$fkCategoryPost->addReference('categoryId', 'id');
+$fkCategoryPost->setForeignEntityName('BlogCategory');
+$fkCategoryPost->setRefField('posts');
+$fkCategoryPost->setField('category');
 $fkCategoryPost->setDefaultJoin('Criteria::INNER_JOIN');
 $fkCategoryPost->setOnDelete('SETNULL');
 
-$fkPostTag = new ForeignKey('fk_post_has_tags');
-$fkPostTag->addReference('post_id', 'id');
-$fkPostTag->setForeignTableCommonName('blog_post');
-$fkPostTag->setPhpName('Post');
+$fkPostTag = new Relation('fk_post_has_tags');
+$fkPostTag->addReference('postId', 'id');
+$fkPostTag->setForeignEntityName('BlogPost');
+$fkPostTag->setField('post');
 $fkPostTag->setDefaultJoin('Criteria::LEFT_JOIN');
 $fkPostTag->setOnDelete('CASCADE');
 
-$fkTagPost = new ForeignKey('fk_tag_has_posts');
-$fkTagPost->addReference('tag_id', 'id');
-$fkTagPost->setForeignTableCommonName('blog_tag');
-$fkTagPost->setPhpName('Tag');
+$fkTagPost = new Relation('fk_tag_has_posts');
+$fkTagPost->addReference('tagId', 'id');
+$fkTagPost->setForeignEntityName('BlogTag');
+$fkTagPost->setField('tag');
 $fkTagPost->setDefaultJoin('Criteria::LEFT_JOIN');
 $fkTagPost->setOnDelete('CASCADE');
 
 /* Regular Indexes */
 $pageContentFulltextIdx = new Index('page_content_fulltext_idx');
-$pageContentFulltextIdx->setColumns([ [ 'name' => 'content' ] ]);
+$pageContentFulltextIdx->setFields([ [ 'name' => 'content' ] ]);
 $pageContentFulltextIdx->addVendorInfo(new VendorInfo('mysql', array('Index_type' => 'FULLTEXT')));
 
 /* Unique Indexes */
 $authorUsernameUnique = new Unique('author_password_unique_idx');
-$authorUsernameUnique->setColumns([ [ 'name' => 'username', 'size' => '8' ] ]);
+$authorUsernameUnique->setFields([ [ 'name' => 'username', 'size' => '8' ] ]);
 
 /* Behaviors */
 $timestampableBehavior = new TimestampableBehavior();
 $timestampableBehavior->setName('timestampable');
 $sluggableBehavior = new SluggableBehavior();
 $sluggableBehavior->setName('sluggable');
+$sluggableBehavior->setParameter('slug_pattern', '/posts/{Title}');
 
-/* Tables */
-$table1 = new Table('blog_post');
-$table1->setDescription('The list of posts');
-$table1->setNamespace('Blog');
-$table1->setPackage('Acme.Blog');
-$table1->addColumns([ $column11, $column12, $column13, $column14, $column15, $column16 ]);
-$table1->addForeignKeys([ $fkAuthorPost, $fkCategoryPost ]);
-$table1->addBehavior($timestampableBehavior);
-$table1->addBehavior($sluggableBehavior);
+/* Entities */
+$entity1 = new Entity('BlogPost');
+$entity1->setDescription('The list of posts');
+$entity1->setNamespace('Blog');
+$entity1->setPackage('Acme.Blog');
+$entity1->addFields([ $field11, $field12, $field13, $field14, $field15, $field16 ]);
+$entity1->addRelations([ $fkAuthorPost, $fkCategoryPost ]);
+$entity1->addBehavior($timestampableBehavior);
+$entity1->addBehavior($sluggableBehavior);
 
-$table2 = new Table('blog_author');
-$table2->setDescription('The list of authors');
-$table2->setNamespace('Blog');
-$table2->setPackage('Acme.Blog');
-$table2->addColumns([ $column21, $column22, $column23 ]);
-$table2->addUnique($authorUsernameUnique);
+$entity2 = new Entity('BlogAuthor');
+$entity2->setDescription('The list of authors');
+$entity2->setNamespace('Blog');
+$entity2->setPackage('Acme.Blog');
+$entity2->addFields([ $field21, $field22, $field23 ]);
+$entity2->addUnique($authorUsernameUnique);
 
-$table3 = new Table('blog_category');
-$table3->setDescription('The list of categories');
-$table3->setNamespace('Blog');
-$table3->setPackage('Acme.Blog');
-$table3->addColumns([ $column31, $column32 ]);
+$entity3 = new Entity('BlogCategory');
+$entity3->setDescription('The list of categories');
+$entity3->setNamespace('Blog');
+$entity3->setPackage('Acme.Blog');
+$entity3->addFields([ $field31, $field32 ]);
 
-$table4 = new Table('blog_tag');
-$table4->setDescription('The list of tags');
-$table4->setNamespace('Blog');
-$table4->setPackage('Acme.Blog');
-$table4->addColumns([ $column41, $column42 ]);
+$entity4 = new Entity('BlogTag');
+$entity4->setDescription('The list of tags');
+$entity4->setNamespace('Blog');
+$entity4->setPackage('Acme.Blog');
+$entity4->addFields([ $field41, $field42 ]);
 
-$table5 = new Table('blog_post_tag');
-$table5->setNamespace('Blog');
-$table5->setPackage('Acme.Blog');
-$table5->setCrossRef();
-$table5->addColumns([ $column51, $column52 ]);
-$table5->addForeignKeys([ $fkPostTag, $fkTagPost ]);
+$entity5 = new Entity('BlogPostTag');
+$entity5->setNamespace('Blog');
+$entity5->setPackage('Acme.Blog');
+$entity5->setCrossRef();
+$entity5->addFields([ $field51, $field52 ]);
+$entity5->addRelations([ $fkPostTag, $fkTagPost ]);
 
-$table6 = new Table('cms_page');
-$table6->setPhpName('Page');
-$table6->setNamespace('Cms');
-$table6->setBaseClass('Acme\\Model\\PublicationActiveRecord');
-$table6->setPackage('Acme.Cms');
-$table6->addColumns([ $column61, $column62, $column63, $column64 ]);
-$table6->addIndex($pageContentFulltextIdx);
-$table6->addVendorInfo(new VendorInfo('mysql', array('Engine' => 'MyISAM')));
+$entity6 = new Entity('CmsPage');
+$entity6->setName('Page');
+$entity6->setTableName('cms_page');
+$entity6->setNamespace('Cms');
+$entity6->setPackage('Acme.Cms');
+$entity6->addFields([ $field61, $field62, $field63, $field64 ]);
+$entity6->addIndex($pageContentFulltextIdx);
+$entity6->addVendorInfo(new VendorInfo('mysql', array('Engine' => 'MyISAM')));
 
 /* Database */
 $database = new Database('acme_blog', new MysqlPlatform());
 $database->setSchema('acme');
 $database->setTablePrefix('acme_');
 $database->setNamespace('Acme\\Model');
-$database->setBaseClass('Acme\\Model\\ActiveRecord');
 $database->setPackage('Acme');
 $database->setHeavyIndexing();
 $database->addVendorInfo(new VendorInfo('mysql', [ 'Engine' => 'InnoDB', 'Charset' => 'utf8' ]));
-$database->addTables([ $table1, $table2, $table3, $table4, $table5, $table6 ]);
+$database->addEntities([ $entity1, $entity2, $entity3, $entity4, $entity5, $entity6 ]);
 
 return $database;

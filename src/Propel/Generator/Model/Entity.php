@@ -97,7 +97,6 @@ class Entity extends ScopedMappingModel implements IdMethod
     private $readOnly;
     private $isAbstract;
     private $alias;
-    private $baseClass;
     private $fieldsByName;
     private $fieldsByLowercaseName;
 //    private $fieldsByPhpName;
@@ -418,35 +417,6 @@ class Entity extends ScopedMappingModel implements IdMethod
         $this->addIndex($index);
 
         return $index;
-    }
-
-    /**
-     * Returns the name of the base class used for superclass of all objects
-     * of this entity.
-     *
-     * @return string
-     */
-    public function getBaseClass()
-    {
-        if ($this->isAlias() && null === $this->baseClass) {
-            return $this->alias;
-        }
-
-        if (null === $this->baseClass) {
-            return $this->database->getBaseClass();
-        }
-
-        return $this->baseClass;
-    }
-
-    /**
-     * Sets the base class name.
-     *
-     * @param string $class
-     */
-    public function setBaseClass($class)
-    {
-        $this->baseClass = $class;
     }
 
     /**
@@ -952,6 +922,21 @@ class Entity extends ScopedMappingModel implements IdMethod
 
         if ($this->getDatabase()) {
             return $this->getDatabase()->getTablePrefix() . $this->tableName;
+        }
+
+        return $this->tableName;
+    }
+
+    /**
+     * Table name without table prefix.
+     *
+     * @return string
+     */
+    public function getCommonTableName()
+    {
+        if (!$this->tableName) {
+            $shortName = basename($this->name);
+            $this->tableName = NamingTool::toUnderscore($shortName);
         }
 
         return $this->tableName;

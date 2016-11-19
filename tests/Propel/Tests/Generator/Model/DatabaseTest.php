@@ -46,7 +46,6 @@ class DatabaseTest extends ModelTestCase
         $database = new Database();
         $database->loadMapping(array(
             'name'                   => 'bookstore',
-            'baseClass'              => 'CustomBaseObject',
             'defaultIdMethod'        => 'native',
             'heavyIndexing'          => 'true',
             'tablePrefix'            => 'acme_',
@@ -54,7 +53,6 @@ class DatabaseTest extends ModelTestCase
         ));
 
         $this->assertSame('bookstore', $database->getName());
-        $this->assertSame('CustomBaseObject', $database->getBaseClass());
         $this->assertSame('XML', $database->getDefaultStringFormat());
         $this->assertSame('native', $database->getDefaultIdMethod());
         $this->assertSame('acme_', $database->getTablePrefix());
@@ -380,14 +378,6 @@ class DatabaseTest extends ModelTestCase
 
         $this->assertTrue($database->isHeavyIndexing());
         $this->assertTrue($database->getHeavyIndexing());
-    }
-
-    public function testSetBaseClasses()
-    {
-        $database = new Database();
-        $database->setBaseClass('CustomBaseObject');
-
-        $this->assertSame('CustomBaseObject', $database->getBaseClass());
     }
 
     public function testSetDefaultIdMethod()
