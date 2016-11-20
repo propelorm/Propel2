@@ -230,10 +230,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertNotNull($m1_lookup->getCoverImage());
-        rewind($m1->getCoverImage());
-        $this->assertEquals(file_get_contents($blob_path), stream_get_contents($m1->getCoverImage()), 'BLOB was correctly updated');
-        rewind($m1->getCoverImage());
-        $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
+        $this->assertEquals(file_get_contents($blob_path), $m1->getCoverImage(), 'BLOB was correctly updated');
+        $this->assertEquals(md5(file_get_contents($blob_path)), md5($m1_lookup->getCoverImage()), 'BLOB was correctly updated');
         $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
         // now update the BLOB column and save it & check the results
@@ -244,8 +242,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
-        rewind($m2_lookup->getCoverImage());
-        $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
+        $this->assertEquals(md5(file_get_contents($blob2_path)), md5($m2_lookup->getCoverImage()), 'BLOB was correctly overwritten');
 
         // Testing doCount() functionality
         // -------------------------------
@@ -509,7 +506,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // --------------------------
 
         $results = BookQuery::create()
-            ->filterByTitle('Harry%')
+            ->filterByTitle('Harry%', Criteria::LIKE)
             ->find();
         $this->assertEquals(1, count($results));
 
@@ -582,8 +579,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m1_lookup = MediaQuery::create()->findPk($m1_id);
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
-        rewind($m1_lookup->getCoverImage());
-        $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
+        $this->assertEquals(md5(file_get_contents($blob_path)), md5($m1_lookup->getCoverImage()), 'BLOB was correctly updated');
         $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
         // now update the BLOB column and save it & check the results
@@ -593,8 +589,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $m2_lookup = MediaQuery::create()->findPk($m1_id);
         $this->assertNotNull($m2_lookup, 'Can find just-created media item');
 
-        rewind($m2_lookup->getCoverImage());
-        $this->assertEquals(md5(file_get_contents($blob2_path)), md5(stream_get_contents($m2_lookup->getCoverImage())), 'BLOB was correctly overwritten');
+        $this->assertEquals(md5(file_get_contents($blob2_path)), md5($m2_lookup->getCoverImage()), 'BLOB was correctly overwritten');
 
         // Testing count() functionality
         // -------------------------------
