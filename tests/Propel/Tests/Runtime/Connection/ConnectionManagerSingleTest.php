@@ -20,13 +20,13 @@ class ConnectionManagerSingleTest extends BaseTestCase
 {
     public function testGetNameReturnsNullByDefault()
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $this->assertNull($manager->getName());
     }
 
     public function testGetNameReturnsNameSetUsingSetName()
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $manager->setName('foo');
         $this->assertEquals('foo', $manager->getName());
     }
@@ -36,15 +36,15 @@ class ConnectionManagerSingleTest extends BaseTestCase
      */
     public function testGetWriteConnectionFailsIfManagerIsNotConfigured()
     {
-        $manager = new ConnectionManagerSingle();
-        $con = $manager->getWriteConnection(new SqliteAdapter());
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
+        $con = $manager->getWriteConnection();
     }
 
     public function testGetWriteConnectionBuildsConnectionBasedOnConfiguration()
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
-        $con = $manager->getWriteConnection(new SqliteAdapter());
+        $con = $manager->getWriteConnection();
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
         $pdo = $con->getWrappedConnection();
         $this->assertInstanceOf('Propel\Runtime\Connection\PdoConnection', $pdo);
@@ -52,26 +52,26 @@ class ConnectionManagerSingleTest extends BaseTestCase
 
     public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $manager->setName('foo');
         $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
-        $con = $manager->getWriteConnection(new SqliteAdapter());
+        $con = $manager->getWriteConnection();
         $this->assertEquals('foo', $con->getName());
     }
 
     public function testGetReadConnectionReturnsWriteConnection()
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $manager->setConfiguration(array('dsn' => 'sqlite::memory:'));
-        $writeCon = $manager->getWriteConnection(new SqliteAdapter());
-        $readCon  = $manager->getReadConnection(new SqliteAdapter());
+        $writeCon = $manager->getWriteConnection();
+        $readCon  = $manager->getReadConnection();
         $this->assertSame($writeCon, $readCon);
     }
 
     public function testSetConnection()
     {
         $connection = new PdoConnection('sqlite::memory:');
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle(new SqliteAdapter());
         $manager->setConnection($connection);
         $conn = $manager->getWriteConnection();
         $this->assertSame($connection, $conn);

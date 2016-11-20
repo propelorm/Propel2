@@ -10,12 +10,13 @@
 
 namespace Propel\Tests\Runtime\Connection;
 
+use Propel\Runtime\Configuration;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\AuthorEntityMap;
+use Propel\Tests\Bookstore\Map\BookEntityMap;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
@@ -37,7 +38,8 @@ class PropelPDOTest extends BookstoreTestBase
 {
     protected function setUp()
     {
-        $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        parent::setUp();
+        $this->con = Configuration::getCurrentConfiguration()->getConnectionManager(BookEntityMap::DATABASE_NAME)->getWriteConnection();
     }
 
     protected function tearDown()
@@ -46,7 +48,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testSetAttribute()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $this->assertFalse($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
         $con->setAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES, true);
         $this->assertTrue($con->getAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES));
@@ -57,12 +59,12 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testCommitBeforeFetch()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        AuthorTableMap::doDeleteAll($con);
+        $con = $this->con;
+        AuthorQuery::create()->deleteAll();
         $a = new Author();
         $a->setFirstName('Test');
         $a->setLastName('User');
-        $a->save($con);
+        $a->save();
 
         $con->beginTransaction();
         $stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
@@ -83,7 +85,7 @@ class PropelPDOTest extends BookstoreTestBase
 
 	public function testPdoSignature()
 	{
-		$con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+		$con = $this->con;
 		$stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
 		$stmt->execute();
 		$stmt->fetchAll(\PDO::FETCH_COLUMN, 0); // should not throw exception: Third parameter not allowed for PDO::FETCH_COLUMN
@@ -99,12 +101,12 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testCommitAfterFetch()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
-        AuthorTableMap::doDeleteAll($con);
+        $con = $this->con;
+        AuthorQuery::create()->deleteAll();
         $a = new Author();
         $a->setFirstName('Test');
         $a->setLastName('User');
-        $a->save($con);
+        $a->save();
 
         $con->beginTransaction();
         $stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
@@ -121,7 +123,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testNestedTransactionCommit()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is equal to 0 before transaction');
@@ -137,7 +139,7 @@ class PropelPDOTest extends BookstoreTestBase
             $a = new Author();
             $a->setFirstName('Test');
             $a->setLastName('User');
-            $a->save($con);
+            $a->save();
             $authorId = $a->getId();
             $this->assertNotNull($authorId, "Expected valid new author ID");
 
@@ -151,7 +153,7 @@ class PropelPDOTest extends BookstoreTestBase
                 $a2 = new Author();
                 $a2->setFirstName('Test2');
                 $a2->setLastName('User2');
-                $a2->save($con);
+                $a2->save();
                 $authorId2 = $a2->getId();
                 $this->assertNotNull($authorId2, "Expected valid new author ID");
 
@@ -175,7 +177,7 @@ class PropelPDOTest extends BookstoreTestBase
             throw $e;
         }
 
-        AuthorTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNotNull($at, "Committed transaction is persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);
@@ -187,7 +189,7 @@ class PropelPDOTest extends BookstoreTestBase
      */
     public function testNestedTransactionRollBackRethrow()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $con->beginTransaction();
@@ -196,7 +198,7 @@ class PropelPDOTest extends BookstoreTestBase
             $a = new Author();
             $a->setFirstName('Test');
             $a->setLastName('User');
-            $a->save($con);
+            $a->save();
             $authorId = $a->getId();
 
             $this->assertNotNull($authorId, "Expected valid new author ID");
@@ -228,7 +230,7 @@ class PropelPDOTest extends BookstoreTestBase
         $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction decremented after transaction rollback');
         $this->assertFalse($con->isInTransaction(), 'PropelPDO is no longer in transaction after transaction rollback');
 
-        AuthorTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
     }
@@ -239,7 +241,7 @@ class PropelPDOTest extends BookstoreTestBase
      */
     public function testNestedTransactionRollBackSwallow()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $con->beginTransaction();
@@ -248,7 +250,7 @@ class PropelPDOTest extends BookstoreTestBase
             $a = new Author();
             $a->setFirstName('Test');
             $a->setLastName('User');
-            $a->save($con);
+            $a->save();
 
             $authorId = $a->getId();
             $this->assertNotNull($authorId, "Expected valid new author ID");
@@ -259,7 +261,7 @@ class PropelPDOTest extends BookstoreTestBase
                 $a2 = new Author();
                 $a2->setFirstName('Test2');
                 $a2->setLastName('User2');
-                $a2->save($con);
+                $a2->save();
                 $authorId2 = $a2->getId();
                 $this->assertNotNull($authorId2, "Expected valid new author ID");
 
@@ -273,7 +275,7 @@ class PropelPDOTest extends BookstoreTestBase
             $a3 = new Author();
             $a3->setFirstName('Test2');
             $a3->setLastName('User2');
-            $a3->save($con);
+            $a3->save();
 
             $authorId3 = $a3->getId();
             $this->assertNotNull($authorId3, "Expected valid new author ID");
@@ -285,7 +287,7 @@ class PropelPDOTest extends BookstoreTestBase
             $con->rollback();
         }
 
-        AuthorTableMap::clearInstancePool();
+        AuthorEntityMap::clearInstancePool();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);
@@ -296,7 +298,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testNestedTransactionForceRollBack()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         // main transaction
@@ -305,7 +307,7 @@ class PropelPDOTest extends BookstoreTestBase
         $a = new Author();
         $a->setFirstName('Test');
         $a->setLastName('User');
-        $a->save($con);
+        $a->save();
         $authorId = $a->getId();
 
         // nested transaction
@@ -314,7 +316,7 @@ class PropelPDOTest extends BookstoreTestBase
         $a2 = new Author();
         $a2->setFirstName('Test2');
         $a2->setLastName('User2');
-        $a2->save($con);
+        $a2->save();
         $authorId2 = $a2->getId();
 
         // force rollback
@@ -323,7 +325,7 @@ class PropelPDOTest extends BookstoreTestBase
         $this->assertEquals(0, $con->getNestedTransactionCount(), 'nested transaction is null after nested transaction forced rollback');
         $this->assertFalse($con->isInTransaction(), 'PropelPDO is not in transaction after nested transaction force rollback');
 
-        AuthorTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         $at = AuthorQuery::create()->findPk($authorId);
         $this->assertNull($at, "Rolled back transaction is not persisted in database");
         $at2 = AuthorQuery::create()->findPk($authorId2);
@@ -332,24 +334,24 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testLatestQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $con->setLastExecutedQuery(123);
         $this->assertEquals(123, $con->getLastExecutedQuery(), 'PropelPDO has getter and setter for last executed query');
     }
 
     public function testLatestQueryMoreThanTenArgs()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $c = new Criteria();
-        $c->add(BookTableMap::FIELD_ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
-        $books = BookQuery::create(null, $c)->find($con);
+        $c->add(BookEntityMap::FIELD_ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
+        $books = BookQuery::create(null, $c)->find();
         $expected = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.id IN (1,1,1,1,1,1,1,1,1,1,1,1)");
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
     }
 
     public function testQueryCount()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $count = $con->getQueryCount();
         $con->incrementQueryCount();
         $this->assertEquals($count + 1, $con->getQueryCount(), 'PropelPDO has getter and incrementer for query count');
@@ -357,7 +359,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testUseDebug()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $con->useDebug(false);
         $stmtClass = $con->getAttribute(PDO::ATTR_STATEMENT_CLASS);
         $expectedClass = (defined('HHVM_VERSION') ? '\\' : '') . 'Propel\Runtime\Adapter\Pdo\PdoStatement';
@@ -370,22 +372,22 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugLatestQuery()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $c = new Criteria();
-        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookEntityMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
 
-        $books = BookQuery::create(null, $c)->find($con);
+        $books = BookQuery::create(null, $c)->find();
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO does not update the last executed query when useLogging is false');
 
         $con->useDebug(true);
-        $books = BookQuery::create(null, $c)->find($con);
+        $books = BookQuery::create(null, $c)->find();
         $latestExecutedQuery = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.title LIKE 'Harry%s'");
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query when useLogging is true');
 
-        BookTableMap::doDeleteAll($con);
+        BookQuery::create()->doDeleteAll();
         $latestExecutedQuery = $this->getSql("DELETE FROM book");
         $this->assertEquals($latestExecutedQuery, $con->getLastExecutedQuery(), 'PropelPDO updates the last executed query on delete operations');
 
@@ -410,21 +412,21 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugQueryCount()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
         $c = new Criteria();
-        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookEntityMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
 
-        $books = BookQuery::create(null, $c)->find($con);
+        $books = BookQuery::create(null, $c)->find();
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
 
         $con->useDebug(true);
-        $books = BookQuery::create(null, $c)->find($con);
+        $books = BookQuery::create(null, $c)->find();
         $this->assertEquals(1, $con->getQueryCount(), 'PropelPDO updates the query count when useLogging is true');
 
-        BookTableMap::doDeleteAll($con);
+        BookQuery::create()->doDeleteAll();
         $this->assertEquals(2, $con->getQueryCount(), 'PropelPDO updates the query count on delete operations');
 
         $sql = 'DELETE FROM book WHERE 1=1';
@@ -448,7 +450,7 @@ class PropelPDOTest extends BookstoreTestBase
 
     public function testDebugLog()
     {
-        $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        $con = $this->con;
 
         // save data to return to normal state after test
         $logger = $con->getLogger();
@@ -494,13 +496,13 @@ class PropelPDOTest extends BookstoreTestBase
         $con->beginTransaction();
 
         $c = new Criteria();
-        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookEntityMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
-        $books = BookQuery::create(null, $c)->find($con);
+        $books = BookQuery::create(null, $c)->find();
         $latestExecutedQuery = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.title LIKE 'Harry%s'");
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs queries and populates bound parameters in debug mode');
 
-        BookTableMap::doDeleteAll($con);
+        BookQuery::create()->doDeleteAll();
         $latestExecutedQuery = $this->getSql("DELETE FROM book");
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs deletion queries in debug mode');
 

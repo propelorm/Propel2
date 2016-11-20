@@ -36,6 +36,9 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
      */
     protected $connection;
 
+    /**
+     * @var AdapterInterface
+     */
     protected $adapter;
 
     function __construct(AdapterInterface $adapter)
@@ -104,7 +107,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
     {
         if (null === $this->connection) {
             $this->connection = ConnectionFactory::create($this->configuration, $this->adapter);
-            if ($this->connection instanceof LoggerAwareInterface) {
+            if ($this->logger && $this->connection instanceof LoggerAwareInterface) {
                 $this->connection->setLogger($this->logger);
             }
             $this->connection->setName($this->getName());

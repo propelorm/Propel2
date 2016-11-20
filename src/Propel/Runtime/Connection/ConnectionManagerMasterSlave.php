@@ -49,7 +49,20 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface, Logger
      */
     protected $isForceMasterConnection = false;
 
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
+
+    /**
+     * @var AdapterInterface
+     */
+    protected $adapter;
+
+    function __construct(AdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+    }
 
     /**
      * @param string $name The datasource name associated to this connection
@@ -149,16 +162,14 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface, Logger
      *
      * If no master connection exist yet, open it using the write configuration.
      *
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
-     *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection()
     {
         if (null === $this->writeConnection) {
-            $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
+            $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $this->adapter);
             $this->writeConnection->setName($this->getName());
-            if ($this->writeConnection instanceof LoggerAwareInterface) {
+            if ($this->logger && $this->writeConnection instanceof LoggerAwareInterface) {
                 $this->writeConnection->setLogger($this->logger);
             }
         }
@@ -172,25 +183,23 @@ class ConnectionManagerMasterSlave implements ConnectionManagerInterface, Logger
      * If no slave connection exist yet, choose one configuration randomly in the
      * read configuration to open it.
      *
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
-     *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection()
     {
         if ($this->isForceMasterConnection()) {
-            return $this->getWriteConnection($adapter);
+            return $this->getWriteConnection();
         }
         if (null === $this->readConnection) {
             if (null === $this->readConfiguration) {
-                $this->readConnection = $this->getWriteConnection($adapter);
+                $this->readConnection = $this->getWriteConnection();
             } else {
                 $keys = array_keys($this->readConfiguration);
                 $key = $keys[mt_rand(0, count($keys) - 1)];
                 $configuration = $this->readConfiguration[$key];
-                $this->readConnection = ConnectionFactory::create($configuration, $adapter);
+                $this->readConnection = ConnectionFactory::create($configuration, $this->adapter);
                 $this->readConnection->setName($this->getName());
-                if ($this->readConnection instanceof LoggerAwareInterface) {
+                if ($this->logger && $this->readConnection instanceof LoggerAwareInterface) {
                     $this->readConnection->setLogger($this->logger);
                 }
             }
