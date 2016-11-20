@@ -3,6 +3,7 @@
 namespace Propel\Generator\Builder\Om\Component\Proxy;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 
 /**
@@ -12,52 +13,68 @@ use Propel\Generator\Builder\Om\Component\NamingTrait;
  */
 class MagicMethods extends BuildComponent
 {
+    use CrossRelationTrait;
+
     public function process()
     {
 
         $body = '
 ';
 
+        $loadableProperties = [];
+        $codePerField = [];
+
         foreach ($this->getEntity()->getFields() as $field) {
-            $fieldName = $field->getName();
-
-            $entityLazyLoading = '';
-            $fieldLazyLoading = '';
-
-            if ($field->isLazyLoad()) {
-                $loadMethod = 'load' . ucfirst($fieldName);
-
-                $fieldLazyLoading = "
-    if (method_exists(\$this, '$loadMethod')) {
-        \$this->\$name = \$this->$loadMethod();
-    } else {
-        \$this->\$name = \$this->_repository->getEntityMap()->{$loadMethod}(\$this);
-    }";
-            } else {
-                $entityLazyLoading = '$this->_repository->getEntityMap()->load($this);';
+            if (!$field->isLazyLoad()) {
+                continue;
             }
+            $loadableProperties[] = $field->getName();
+        }
 
+
+        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+            foreach ($crossRelation->getRelations() as $relation) {
+                $loadableProperties[] = $this->getCrossRelationRelationVarName($relation);
+            }
+        }
+
+        foreach ($loadableProperties as $fieldName) {
+            $fieldLazyLoading = "\$this->_repository->getEntityMap()->loadField(\$this, '$fieldName');";
+            $codePerField[$fieldName] = $fieldLazyLoading;
+        }
+
+        foreach ($this->getEntity()->getFields() as $field) {
+            if ($field->isLazyLoad()) {
+                continue;
+            }
+            $codePerField[$field->getName()] = '$this->_repository->getEntityMap()->load($this);';
+        }
+
+        foreach ($this->getEntity()->getRelations() as $relation) {
+            $codePerField[$relation->getField()] = '$this->_repository->getEntityMap()->load($this);';
+        }
+
+        foreach ($codePerField as $fieldName => $code) {
             $body .= "
 if (!isset(\$this->__duringInitializing__) && '{$fieldName}' === \$name && !isset(\$this->{$fieldName})) {
 
     \$this->__duringInitializing__ = true;
 
-    $entityLazyLoading
-    $fieldLazyLoading
+    $code
 
     unset(\$this->__duringInitializing__);
 }
 ";
         }
 
-        $getBody =  $body . "
+        $getBody = $body . "
 return \$this->\$name;
 ";
         $this->addMethod('__get')
             ->addSimpleParameter('name')
             ->setBody($getBody);
 
-        $setBody =  $body . "
+        $setBody = $body . "
 \$this->\$name = \$value;
 ";
         $this->addMethod('__set')

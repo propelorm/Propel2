@@ -92,6 +92,10 @@ class SessionRound
      */
     public function persist($entity, $deep = false)
     {
+        if ($this->isInCommit()) {
+            throw new \RuntimeException('Can not persist entity when SessionRound is committing.');
+        }
+
         $id = spl_object_hash($entity);
         $this->getConfiguration()->debug('persist(' . get_class($entity) . ', ' . var_export($deep, true) . ')');
 
@@ -131,6 +135,10 @@ class SessionRound
      */
     public function remove($entity)
     {
+        if ($this->isInCommit()) {
+            throw new \RuntimeException('Can not remove entity when SessionRound is committing.');
+        }
+
         $id = spl_object_hash($entity);
 
         if ($this->getSession()->isRemoved($id)) {
@@ -253,6 +261,7 @@ class SessionRound
             );
             try {
                 $persister->persist($entities);
+
                 $this->getConfiguration()->debug(
                     sprintf('persist-post: %d $this->persistQueue', count($this->persistQueue))
                 );

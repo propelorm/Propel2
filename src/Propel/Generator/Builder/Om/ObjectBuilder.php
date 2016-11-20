@@ -43,6 +43,7 @@ class ObjectBuilder extends AbstractBuilder
         $this->applyComponent('Object\\PropertyGetterMethods');
         $this->applyComponent('Object\\RelationGetterMethods');
         $this->applyComponent('Object\\CrossRelationGetterMethods');
+        $this->applyComponent('Object\\CrossRelationSetterMethods');
 
         if ($this->getEntity()->isActiveRecord()) {
             $this->applyComponent('Object\\CrossRelationCountMethods');

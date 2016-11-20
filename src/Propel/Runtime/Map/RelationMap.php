@@ -158,7 +158,7 @@ class RelationMap
     }
 
     /**
-     * @return mixed
+     * @return string[]
      */
     public function getFieldMappingIncoming()
     {
@@ -166,7 +166,7 @@ class RelationMap
     }
 
     /**
-     * @param mixed $fieldMappingIncoming
+     * @param string[] $fieldMappingIncoming
      */
     public function setFieldMappingIncoming($fieldMappingIncoming)
     {
@@ -353,6 +353,34 @@ class RelationMap
                 $h[$this->localFields[$i]->getFullyQualifiedName()] = $this->foreignFields[$i]->getFullyQualifiedName();
             } else {
                 $h[$this->foreignFields[$i]->getFullyQualifiedName()] = $this->localFields[$i]->getFullyQualifiedName();
+            }
+        }
+
+        return $h;
+    }
+
+    /**
+     * Get an associative array mapping local field names to foreign field names
+     * The arrangement of the returned array depends on the $direction parameter:
+     *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
+     *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
+     *
+     * @param  int   $direction How the associative array must return fields
+     * @return string[] Associative array (local => foreign) of field names
+     */
+    public function getFieldNameObjectMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
+    {
+        $h = array();
+        if (RelationMap::LEFT_TO_RIGHT === $direction
+            && RelationMap::MANY_TO_ONE === $this->getType()) {
+            $direction = RelationMap::LOCAL_TO_FOREIGN;
+        }
+
+        for ($i = 0, $size = count($this->localFields); $i < $size; $i++) {
+            if (RelationMap::LOCAL_TO_FOREIGN === $direction) {
+                $h[$this->localFields[$i]->getName()] = $this->foreignFields[$i]->getName();
+            } else {
+                $h[$this->foreignFields[$i]->getName()] = $this->localFields[$i]->getName();
             }
         }
 

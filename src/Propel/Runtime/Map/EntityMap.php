@@ -13,8 +13,11 @@ namespace Propel\Runtime\Map;
 use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\NamingTool;
+use Propel\Runtime\ActiveQuery\Join;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Configuration;
+use Propel\Runtime\DataFetcher\PDODataFetcher;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\Exception\FieldNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
@@ -245,6 +248,15 @@ abstract class EntityMap
     }
 
     /**
+     * @return ModelCriteria
+     */
+    public function createQuery()
+    {
+        $class = static::QUERY_CLASS;
+        return new $class;
+    }
+
+    /**
      * @return DatabaseMap
      */
     public function getDatabaseMap()
@@ -393,8 +405,6 @@ abstract class EntityMap
     abstract public function getPropIsset();
 
     abstract public function persistDependencies(Session $session, $entity, $deep = false);
-
-    abstract public function createProxy();
 
     /**
      * @return object
@@ -581,25 +591,96 @@ abstract class EntityMap
      */
     public function getReference()
     {
-        $object = $this->createProxy();
-        $writer = $this->getEntityMap()->getPropWriter();
-        $unsetter = $this->getEntityMap()->getPropUnsetter();
         $pks = func_get_args();
-
+        $object = $this->createProxy();
         $object->__duringInitializing__ = true;
+        $writer = $this->getEntityMap()->getPropWriter();
 
         $i = 0;
         foreach ($this->getEntityMap()->getFields() as $fieldMap) {
             if ($fieldMap->isPrimaryKey()) {
                 $writer($object, $fieldMap->getName(), $pks[$i++]);
-            } else {
-                $unsetter($object, $fieldMap->getName());
             }
         }
 
         unset($object->__duringInitializing__);
 
         return $object;
+    }
+
+    public function createProxy()
+    {
+        $reflection = new \ReflectionClass(static::PROXY_CLASS);
+        $object = $reflection->newInstanceWithoutConstructor();
+        $object->__duringInitializing__ = true;
+        $object->_repository = $this->getRepository();
+
+        $unsetter = $this->getEntityMap()->getPropUnsetter();
+
+        foreach ($this->getEntityMap()->getFields() as $fieldMap) {
+            $unsetter($object, $fieldMap->getName());
+        }
+
+        foreach ($this->getEntityMap()->getRelations() as $relation) {
+            $unsetter($object, $relation->getName());
+        }
+
+        unset($object->__duringInitializing__);
+
+        return $object;
+    }
+
+    public function loadField($entity, $fieldName)
+    {
+        $writer = $this->getPropWriter();
+        $reader = $this->getPropReader();
+
+        if ($this->hasRelation($fieldName)) {
+            $relation = $this->getRelation($fieldName);
+            
+            if ($relation->isManyToMany()) {
+
+                $query = $relation->getForeignEntity()->createQuery();
+
+                $join = new ModelJoin();
+                $join->setEntityMap($relation->getMiddleEntity());
+                $join->setLeftTableName($relation->getMiddleEntity()->getFullClassName());
+
+                //first only supported
+                $outgoing = current($relation->getFieldMappingOutgoing());
+                foreach ($outgoing as $middleField => $foreignField) {
+                    $join->addCondition($middleField, $relation->getForeignEntity()->getField($foreignField)->getFullyQualifiedName());
+                }
+
+                $query->addJoinObject($join, 'pivot');
+
+                foreach ($relation->getFieldMappingIncoming() as $middleField => $entityField) {
+                    $query->addJoinCondition(
+                        'pivot',
+                        $relation->getMiddleEntity()->getField($middleField)->getFullyQualifiedName(). ' = ?',
+                        $reader($entity, $entityField)
+                    );
+                }
+
+                $writer($entity, $fieldName, $query->find());
+                return;
+            }
+
+            throw new \RuntimeException('Not implemented yet');
+            return;
+        }
+
+        $field = $this->getField($fieldName);
+        $fieldType = $this->getConfiguration()->getFieldType($field->getType());
+
+        $query = $this->buildPkeyCriteria($entity);
+        $query->addSelectField($field->getFullyQualifiedName());
+        $query->limit(1);
+        $dataFetcher = $query->doSelect();
+
+        $value = $dataFetcher->fetchField();
+        $value = $fieldType->databaseToProperty($value, $field);
+        $writer($entity, $fieldName, $value);
     }
 
     /**

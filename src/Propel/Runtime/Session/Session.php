@@ -224,7 +224,7 @@ class Session
     public function enterNewRound()
     {
         $this->currentRound++;
-        $this->getConfiguration()->debug('enter new round (' . $this->currentRound . ')');
+        $this->getConfiguration()->debug('enter new round (' . $this->currentRound . ') +++++++++++++++');
 
         return $this->rounds[$this->currentRound] = new SessionRound($this, $this->currentRound);
     }
@@ -296,8 +296,9 @@ class Session
                     $allBusy &= $round->isInCommit();
                 }
                 if (!$round->isCommitted() && !$round->isInCommit()) {
-//                    $this->currentCommitRound = $idx;
-                    $this->getConfiguration()->debug('commit round (' . $idx . ')');
+                    $this->currentCommitRound = $idx;
+                    $this->getConfiguration()->debug('');
+                    $this->getConfiguration()->debug('commit round (' . $idx . ') >>>>>>>>>>>>>>>>>> >>>>>>>>>>>>>>>>>> >>>>>>>>>>>>>>>>>');
                     try {
                         $round->commit();
                     } catch (\Exception $e) {
@@ -305,7 +306,9 @@ class Session
                         $this->closed = true;
                         throw $e;
                     }
-                    $this->getConfiguration()->debug('close round (' . $idx . ')');
+                    $this->currentRound--;
+                    $this->getConfiguration()->debug('close round (' . $idx . ')  <<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<');
+                    $this->getConfiguration()->debug('');
                     continue;
                 }
             }

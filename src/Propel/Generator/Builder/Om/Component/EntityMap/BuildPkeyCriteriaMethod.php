@@ -49,6 +49,10 @@ throw new LogicException('The {$this->getObjectClassName()} entity has no primar
 
 
             foreach ($this->getEntity()->getRelations() as $relation) {
+                if (!$relation->isLocalPrimaryKey()) {
+                    continue;
+                }
+
                 $className = $relation->getForeignEntity()->getFullClassName();
                 $propertyName = $this->getRelationVarName($relation);
 

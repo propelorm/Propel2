@@ -21,6 +21,7 @@ class PersistDependenciesMethod extends BuildComponent
 
         $body = '
 $reader = $this->getPropReader();
+$isset = $this->getPropIsset();
 ';
 
         foreach ($this->getEntity()->getRelations() as $relation) {
@@ -32,7 +33,7 @@ $reader = $this->getPropReader();
             }
 
             $body .= "
-if (\$relationEntity = \$reader(\$entity, '$relationName')) {
+if (\$isset(\$entity, '$relationName') && \$relationEntity = \$reader(\$entity, '$relationName')) {
     \$session->persist(\$relationEntity, \$deep);
 }
 ";
@@ -46,7 +47,7 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
 
             if ($relation->isLocalPrimaryKey()) {
                 $body .= "//ref one-to-one {$relation->getEntity()->getFullClassName()}
-if (\$relationEntity = \$reader(\$entity, '$relationName')) {
+if (\$isset(\$entity, '$relationName') && \$relationEntity = \$reader(\$entity, '$relationName')) {
     \$session->persist(\$relationEntity, \$deep);
 }
 ";
@@ -57,7 +58,7 @@ if (\$relationEntity = \$reader(\$entity, '$relationName')) {
                 if (!in_array($relationName, $alreadyAdded)) {
                     $body .= "
 //ref one-to-many {$relation->getEntity()->getFullClassName()}
-if (\$relationEntities = \$reader(\$entity, '$relationName')) {
+if (\$isset(\$entity, '$relationName') && \$relationEntities = \$reader(\$entity, '$relationName')) {
     foreach (\$relationEntities as \$relationEntity) {
         \$session->persist(\$relationEntity, \$deep);
     }
@@ -79,7 +80,7 @@ if (\$relationEntities = \$reader(\$entity, '$relationName')) {
 
             $body .= "
 // cross relation {$crossRelation->getMiddleEntity()->getFullClassName()} (to $to)
-if (\$relationEntities = \$reader(\$entity, '$varName')) {
+if (\$isset(\$entity, '$varName') && \$relationEntities = \$reader(\$entity, '$varName')) {
     foreach (\$relationEntities as \$relationEntity) {
         \$session->persist(\$relationEntity, \$deep);
     }

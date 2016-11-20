@@ -56,7 +56,7 @@ class BuildRelationsMethod extends BuildComponent
 
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
             $relationName = var_export($this->getCrossRelationVarName($crossRelation), true);
-            $pluralName = var_export( $this->getCrossRelationVarName($crossRelation, true), true);
+            $pluralName = var_export($this->getCrossRelationVarName($crossRelation), true);
             $target = var_export($crossRelation->getForeignEntity()->getFullClassName(), true);
             
             $onDelete = $crossRelation->getIncomingRelation()->hasOnDelete() ? "'" . $crossRelation->getIncomingRelation()->getOnDelete() . "'" : 'null';
@@ -83,6 +83,7 @@ class BuildRelationsMethod extends BuildComponent
 
             $mapping = var_export($mapping, true);
             $body .= "
+//cross relation
 \$this->addRelation($relationName, $target, RelationMap::MANY_TO_MANY, $mapping, $onDelete, $onUpdate, $pluralName);";
         }
 

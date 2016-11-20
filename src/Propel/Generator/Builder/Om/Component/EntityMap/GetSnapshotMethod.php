@@ -7,6 +7,7 @@ use gossi\codegen\model\PhpConstant;
 use gossi\codegen\model\PhpParameter;
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 use Propel\Generator\Model\Field;
@@ -19,8 +20,7 @@ use Propel\Generator\Model\Relation;
  */
 class GetSnapshotMethod extends BuildComponent
 {
-    use NamingTrait;
-    use RelationTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -50,7 +50,7 @@ if (\$isset(\$entity, '$fieldName')){
             $fieldName = $this->getRelationVarName($relation);
             $foreignEntityClass = $relation->getForeignEntity()->getFullClassName();
             $body .= "
-if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
+if (\$isset(\$entity, '$fieldName') && \$foreignEntity = \$reader(\$entity, '$fieldName')) {
     \$foreignEntityReader = \$this->getConfiguration()->getEntityMap('$foreignEntityClass')->getPropReader();
 ";
             $emptyBody = '';
@@ -90,6 +90,23 @@ if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
 ";
         }
 
+        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+            foreach ($crossRelation->getRelations() as $relation) {
+                $varName = $this->getCrossRelationRelationVarName($relation);
+
+                $body .= "
+// cross relation to {$crossRelation->getForeignEntity()->getFullClassName()} via {$crossRelation->getMiddleEntity()->getFullClassName()}
+if (\$isset(\$entity, '$varName')) {
+    \$foreignEntities = \$reader(\$entity, '$varName') ?: [];
+    if (\$foreignEntities instanceof \\Propel\\Runtime\\Collection\\Collection) {
+        \$foreignEntities = \$foreignEntities->getData();
+    }
+    
+    \$snapshot['$varName'] = \$foreignEntities;
+}
+";
+            }
+        }
 
         $body .= "
 return \$snapshot;

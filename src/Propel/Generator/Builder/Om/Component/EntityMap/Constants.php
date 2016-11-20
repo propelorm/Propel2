@@ -40,6 +40,17 @@ class Constants extends BuildComponent
         $constant->setValue($entity->getFullClassName());
         $this->getDefinition()->setConstant($constant);
 
+
+        $constant = new PhpConstant('QUERY_CLASS');
+        $constant->setDescription("The full query class name");
+        $constant->setValue($this->getQueryClassName(true));
+        $this->getDefinition()->setConstant($constant);
+
+        $constant = new PhpConstant('PROXY_CLASS');
+        $constant->setDescription("The full proxy class name");
+        $constant->setValue($this->getProxyClassName(true));
+        $this->getDefinition()->setConstant($constant);
+
         if ($this->getEntity()->hasSchema()) {
             $constant = new PhpConstant('SCHEMA_NAME');
             $constant->setDescription("The schema name of the underlying database this table belongs to.");

@@ -5,7 +5,9 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
+use Propel\Generator\Model\CrossRelation;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\OraclePlatform;
@@ -13,7 +15,7 @@ use Propel\Generator\Platform\SqlsrvPlatform;
 
 class LazyLoadingMethods extends BuildComponent
 {
-    use NamingTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -21,6 +23,31 @@ class LazyLoadingMethods extends BuildComponent
             if ($field->isLazyLoad()) {
                 $this->addLazyLoader($field);
             }
+        }
+    }
+
+
+    /**
+     * @param CrossRelation $crossRelation
+     */
+    protected function addCrossRelationLoader(CrossRelation $crossRelation)
+    {
+        $objectClassName = $this->getObjectClassName();
+
+        foreach ($crossRelation->getRelations() as $relation) {
+            $methodName = 'load' . ucfirst($this->getCrossRelationRelationVarName($relation));
+
+            $body = "
+\$query = \$this->getConfiguration()->getEntityMap('{$relation->getForeignEntity()->getFullClassName()}')->createQuery();
+
+
+
+return \$query->find();
+";
+
+            $this->addMethod($methodName)
+                ->addSimpleParameter('entity', $objectClassName)
+                ->setBody($body);
         }
     }
 

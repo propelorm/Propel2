@@ -27,12 +27,12 @@ $writer = $this->getPropWriter();
 
         foreach ($fields as $fieldName) {
             $body .= "
-                if (\$value = \$reader(\$entity, '$fieldName')) {
-                    \$autoIncrementValues->$fieldName = \$value;
-                } else {
-                    \$writer(\$entity, '$fieldName', \$autoIncrementValues->$fieldName);
-                    \$autoIncrementValues->$fieldName++;
-                }
+if (\$value = \$reader(\$entity, '$fieldName')) {
+    \$autoIncrementValues->$fieldName = \$value;
+} else {
+    \$writer(\$entity, '$fieldName', \$autoIncrementValues->$fieldName);
+    \$autoIncrementValues->$fieldName++;
+}
             ";
         }
 

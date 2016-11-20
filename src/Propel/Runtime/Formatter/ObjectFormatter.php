@@ -105,6 +105,7 @@ class ObjectFormatter extends AbstractFormatter
         // main object
         $columnIndex = 0;
         $obj = $this->getEntityMap()->populateObject($row, $columnIndex, $this->getDataFetcher()->getIndexType());
+        $this->getEntityMap()->getConfiguration()->getSession()->addToFirstLevelCache($obj);
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
@@ -114,6 +115,7 @@ class ObjectFormatter extends AbstractFormatter
             }
 
             $joinedObject = $modelWith->getEntityMap()->populateObject($row, $columnIndex, $this->getDataFetcher()->getIndexType());
+            $this->getEntityMap()->getConfiguration()->getSession()->addToFirstLevelCache($joinedObject);
 
             if (null !== $modelWith->getLeftName() && !isset($hydrationChain[$modelWith->getLeftName()])) {
                 continue;

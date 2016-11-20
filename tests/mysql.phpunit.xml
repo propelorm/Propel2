@@ -19,6 +19,7 @@
   <php>
     <env name="DB" value="mysql"/>
     <env name="DB_USER" value="root"/>
+    <env name="DB_PW" value=""/>
   </php>
 
   <filter>

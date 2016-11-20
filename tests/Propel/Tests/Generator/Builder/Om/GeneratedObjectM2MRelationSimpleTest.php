@@ -90,8 +90,6 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
     /**
      * ####################################
      * 2. addFriend, removeFriend
-     *
-     * @group test
      */
     public function test2()
     {
@@ -223,7 +221,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
 
 
         //same with new instances.
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         /** @var \Relation1User $newHansObject */
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $friend1 = \Relation1UserQuery::create()->findOneByName('Friend 1');
@@ -270,7 +268,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertCount(2, $hans->getFriends());
 
         //db prepared, work now with new objects.
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         /** @var \Relation1User $newHansObject */
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $friend1 = \Relation1UserQuery::create()->findOneByName('Friend 1');
@@ -317,7 +315,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertCount(1, $hans->getFriends());
 
         //db prepared, work now with new objects.
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         /** @var \Relation1User $newHansObject */
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $friend1 = \Relation1UserQuery::create()->findOneByName('Friend 1');
@@ -365,7 +363,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertCount(2, $hans->getFriends());
 
         //db prepared, work now with new objects.
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         /** @var \Relation1User $newHansObject */
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $friend1 = \Relation1UserQuery::create()->findOneByName('Friend 1');
@@ -377,7 +375,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertEquals($friend2, $newHansObject->getFriends()->getFirst());
         $newHansObject->save();
 
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $this->assertCount(1, $newHansObject->getFriends());
 
@@ -514,7 +512,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertEquals(2, \Relation1UserQuery::create()->filterByWho($hans)->count(), 'Hans has two friends.');
         $this->assertEquals('Friend 1', \Relation1UserQuery::create()->filterByWho($hans)->findOne()->getName(), 'Hans\'s first friend is Friend 1.');
 
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $this->assertCount(2, $newHansObject->getFriends(), 'two friends');
 
@@ -551,7 +549,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $this->assertEquals(1, \Relation1UserQuery::create()->filterByWho($hans)->count(), 'Hans has one friend.');
 
         //get new instance of $hans and fire addFriend
-        \Map\Relation1UserTableMap::clearInstancePool();
+        Configuration::getCurrentConfiguration()->getSession()->clearFirstLevelCache();
         /** @var $newHansObject \Relation1User */
         $newHansObject = \Relation1UserQuery::create()->findOneByName('hans');
         $friend2 = (new \Relation1User())->setName('Friend 2');

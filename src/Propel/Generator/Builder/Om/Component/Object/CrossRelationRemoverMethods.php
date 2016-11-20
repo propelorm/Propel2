@@ -46,14 +46,19 @@ class CrossRelationRemoverMethods extends BuildComponent
             $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
             list ($signature, , $normalizedShortSignature, $phpDoc) = $this->getCrossRelationAddMethodInformation($crossRelation, $relation);
 
+            $crossObjectName = '$' . $this->getRelationVarName($relation);
+            $getterName = $this->getCrossRefRelationGetterName($crossRelation, $relation);
+
             $body = <<<EOF
-if (\$this->get{$relNamePlural}()->contains({$normalizedShortSignature})) {
-    \$this->{$collName}->remove({$normalizedShortSignature});
+if (false !== \$pos = \$this->get{$relNamePlural}()->search({$normalizedShortSignature})) {
+    \$this->{$collName}->remove(\$pos);
+    
+    //remove back reference
+    {$crossObjectName}->get{$getterName}()->removeObject(\$this);
 }
 
 return \$this;
 EOF;
-
 
             $description = <<<EOF
 Dissociate a $crossObjectClassName from this object

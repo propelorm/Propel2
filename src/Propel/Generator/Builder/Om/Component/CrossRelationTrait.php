@@ -68,7 +68,7 @@ trait CrossRelationTrait
      *
      * @return string
      */
-    protected function getCrossRelationVarName(CrossRelation $crossRelation, $plural = false)
+    protected function getCrossRelationVarName(CrossRelation $crossRelation, $plural = true)
     {
         return lcfirst($this->getCrossRelationPhpName($crossRelation, $plural));
     }
@@ -291,10 +291,10 @@ trait CrossRelationTrait
     protected function getCrossRelationAddMethodInformation(CrossRelation $crossRelation, $relation = null)
     {
         if ($relation instanceof Relation) {
-            $crossObjectName = '$' . lcfirst($this->getRelationPhpName($relation));
+            $crossObjectName = '$' . $this->getRelationVarName($relation);
             $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
 
-            $parameter = new PhpParameter(lcfirst($this->getRelationPhpName($relation)));
+            $parameter = new PhpParameter($this->getRelationVarName($relation));
             $parameter->setType($crossObjectClassName);
             if ($relation->isAtLeastOneLocalFieldRequired()) {
                 $parameter->setDefaultValue(null);

@@ -5,6 +5,7 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RelationTrait;
 
@@ -15,8 +16,7 @@ use Propel\Generator\Builder\Om\Component\RelationTrait;
  */
 class BuildChangeSetMethod extends BuildComponent
 {
-    use NamingTrait;
-    use RelationTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -42,11 +42,10 @@ $originValues = $this->getLastKnownValues($id);
             if ($field->isLazyLoad()) {
                 //if not set in originValues and not loaded in $entity then there's no need to compare those and
                 //execute with it extra queries
-                $lazyLoaded = '_' . $fieldName . '_loaded';
 
                 $body .= "
 \$lazyLastLoaded = isset(\$originValues['$fieldName']);
-\$lazyNowLoaded = \$isset(\$entity, '$lazyLoaded');
+\$lazyNowLoaded = \$isset(\$entity, '$fieldName');
 if (false === \$lazyLastLoaded && false === \$lazyNowLoaded) {
     //both, initial population and lifetime value have not been set,
     //so there can't be any difference.
@@ -107,6 +106,39 @@ if (\$foreignEntity = \$reader(\$entity, '$fieldName')) {
 }
 ";
         }
+
+        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+            foreach ($crossRelation->getRelations() as $relation) {
+                $varName = $this->getCrossRelationRelationVarName($relation);
+
+                $body .= "
+// cross relation to {$crossRelation->getForeignEntity()->getFullClassName()} via {$crossRelation->getMiddleEntity()->getFullClassName()}
+\$lazyLastLoaded = isset(\$originValues['$varName']);
+\$lazyNowLoaded = \$isset(\$entity, '$varName');
+if (false === \$lazyLastLoaded && false === \$lazyNowLoaded) {
+    //both, initial population and lifetime value have not been set,
+    //so there can't be any difference.
+} else {
+    \$foreignEntities = \$reader(\$entity, '$varName') ?: [];
+    if (\$foreignEntities instanceof \\Propel\\Runtime\\Collection\\Collection) {
+        \$foreignEntities = \$foreignEntities->getData();
+    }
+    
+    if (!isset(\$originValues['$varName'])) {
+        \$lastValue = null;
+    } else {
+        \$lastValue = \$originValues['$varName'];
+    }
+    
+    if (\$foreignEntities !== \$lastValue) {
+        \$changed = true;
+        \$changes['$varName'] = \$foreignEntities;
+    }
+}
+";
+            }
+        }
+
 
         $body .= '
 if ($changed) {

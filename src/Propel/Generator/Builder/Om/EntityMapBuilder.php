@@ -72,9 +72,6 @@ class EntityMapBuilder extends AbstractBuilder
         $this->applyComponent('EntityMap\\BuildChangeSetMethod');
         $this->applyComponent('EntityMap\\BuildPkeyCriteriaMethod');
 
-        $this->applyComponent('EntityMap\\LazyLoadingMethods');
-        $this->applyComponent('EntityMap\\CreateProxyMethod');
-
         $this->applyComponent('EntityMap\\GenericAccessorMethods');
         $this->applyComponent('EntityMap\\GenericMutatorMethods');
 

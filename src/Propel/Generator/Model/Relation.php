@@ -167,7 +167,7 @@ class Relation extends MappingModel
      */
     public function getField()
     {
-        return $this->field;
+        return $this->field ?: $this->name ?: lcfirst($this->foreignEntityName);
     }
 
     /**

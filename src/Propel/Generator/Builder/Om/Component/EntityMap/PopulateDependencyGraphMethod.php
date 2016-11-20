@@ -23,13 +23,14 @@ class PopulateDependencyGraphMethod extends BuildComponent
     {
         $body = '
 $reader = $this->getPropReader();
+$isset = $this->getPropIsset();
 $dependencies = [];
 ';
 
         foreach ($this->getEntity()->getRelations() as $relation) {
             $relationName = $this->getRelationVarName($relation);
             $body .= "
-if (\$dep = \$reader(\$entity, '$relationName')) {
+if (\$isset(\$entity, '$relationName') && \$dep = \$reader(\$entity, '$relationName')) {
     \$dependencies[] = \$dep;
 }
             ";

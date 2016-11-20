@@ -277,12 +277,6 @@ class SqlPersister implements PersisterInterface
             }
         }
 
-        foreach ($this->entityMap->getRelations() as $relation) {
-            if ($relation->isManyToMany()) {
-                $this->addCrossRelations($inserts, $relation);
-            }
-        }
-
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
 
         if ($this->entityMap->isReloadOnInsert()) {
@@ -290,19 +284,47 @@ class SqlPersister implements PersisterInterface
                 $this->entityMap->load($entity);
             }
         }
+
+        foreach ($this->entityMap->getRelations() as $relation) {
+            if ($relation->isManyToMany()) {
+                $this->getConfiguration()->debug("create many-to-many links {$this->entityMap->getFullClassName()} {$relation->getName()}");
+                $this->addCrossRelations($inserts, $relation);
+            }
+        }
     }
 
+    /**
+     * Ads cross relation entities to the database when necessary for many-to-many relations.
+     *
+     * @param array $inserts
+     * @param RelationMap $relation
+     */
     protected function addCrossRelations($inserts, RelationMap $relation)
     {
         $reader = $this->getEntityMap()->getPropReader();
+        $isset = $this->getEntityMap()->getPropIsset();
 
         foreach ($inserts as $entity) {
 
+            if (!$isset($entity, $relation->getPluralName())) {
+                //we don't update relations when they haven't been loaded.
+                continue;
+            }
+
             $foreignItems = $reader($entity, $relation->getPluralName());
 
+            //delete first
+            $query = $relation->getMiddleEntity()->createQuery();
+            foreach ($relation->getFieldMappingIncoming() as $middleTableField => $myId) {
+                $query->filterBy($middleTableField, $reader($entity, $myId));
+            }
+            $query->delete();
+
             if (null !== $foreignItems && count($foreignItems)) {
+
                 if ($relation->isImplementationDetail()) {
-                    //do manual SQL insert
+                    //do manual SQL insert. It's a implementationDetail when the crossEntity hasn't been created
+                    //in the future it's something like <relation target="user' many>
                 } else {
                     //use Propel entities
                     $writer = $relation->getMiddleEntity()->getPropWriter();
@@ -311,15 +333,25 @@ class SqlPersister implements PersisterInterface
                         $object = $this->getConfiguration()->getEntityMap($relation->getMiddleEntity()->getFullClassName())->createObject();
 
                         $writer($object, $relation->getFieldMappingIncomingName(), $entity);
-                        foreach ($relation->getFieldMappingOutgoing() as $relationName => $mapping ) {
+                        foreach ($relation->getFieldMappingOutgoing() as $relationName => $mapping) {
+                            //todo, when we have multiple outgoing relations, what then?
                             $writer($object, $relationName, $foreignItem);
                         }
+
+                        $this->getConfiguration()->debug("create new many-to-many link {$relation->getMiddleEntity()->getFullClassName()}");
 
                         $this->getSession()->persist($object, true);
                     }
                 }
             }
+
         }
+    }
+    
+    protected function deleteAll(EntityMap $entityMap)
+    {
+        $query = $entityMap->createQuery();
+        $query->doDeleteAll();
     }
 
     /**
@@ -355,6 +387,8 @@ class SqlPersister implements PersisterInterface
         $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
 
+        $updateCrossRelations = [];
+
         foreach($updates as $entity) {
             //regenerate changeSet since PRE_UPDATE/PRE_SAVE could have changed entities
             $changeSet = $this->getEntityMap()->buildChangeSet($entity);
@@ -362,9 +396,20 @@ class SqlPersister implements PersisterInterface
                 $params = [];
                 $sets = [];
                 foreach ($changeSet as $fieldName => $value) {
+                    if ($this->entityMap->hasRelation($fieldName)) {
+                        if ($this->entityMap->getRelation($fieldName)->isManyToMany()) {
+                            $updateCrossRelations[$fieldName][] = $entity;
+                        }
+                        continue;
+                    }
+
                     $columnName = $this->entityMap->getField($fieldName)->getColumnName();
                     $sets[] = $columnName . ' = ?';
                     $params[] = $value;
+                }
+
+                if (!$sets) {
+                    continue;
                 }
 
                 $originValues = $this->getEntityMap()->getLastKnownValues($entity);
@@ -402,10 +447,16 @@ class SqlPersister implements PersisterInterface
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::UPDATE, $event);
 
+
         if ($this->entityMap->isReloadOnInsert()) {
             foreach ($updates as $entity) {
                 $this->entityMap->load($entity);
             }
+        }
+
+        foreach ($updateCrossRelations as $relationName => $entities) {
+            $this->getConfiguration()->debug("update many-to-many links {$this->entityMap->getFullClassName()} $relationName");
+            $this->addCrossRelations($entities, $this->entityMap->getRelation($relationName));
         }
     }
 
