@@ -10,9 +10,10 @@
 
 namespace Propel\Tests\Runtime\Adapter;
 
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\BookEntityMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -25,105 +26,97 @@ class AbstractAdapterTest extends TestCaseFixtures
 {
     public function testTurnSelectColumnsToAliases()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::FIELD_ID);
-        $db->turnSelectColumnsToAliases($c1);
+        $c1->addSelectField(BookEntityMap::FIELD_ID);
+        $db->turnSelectFieldsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
     public function testTurnSelectColumnsToAliasesPreservesAliases()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::FIELD_ID);
-        $c1->addAsColumn('foo', BookTableMap::FIELD_TITLE);
-        $db->turnSelectColumnsToAliases($c1);
+        $c1->addSelectField(BookEntityMap::FIELD_ID);
+        $c1->addAsField('foo', BookEntityMap::FIELD_TITLE);
+        $db->turnSelectFieldsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
-        $c2->addAsColumn('foo', BookTableMap::FIELD_TITLE);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
+        $c2->addAsField('foo', BookEntityMap::FIELD_TITLE);
         $this->assertTrue($c1->equals($c2));
     }
 
     public function testTurnSelectColumnsToAliasesExisting()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::FIELD_ID);
-        $c1->addAsColumn('book_id', BookTableMap::FIELD_ID);
-        $db->turnSelectColumnsToAliases($c1);
+        $c1->addSelectField(BookEntityMap::FIELD_ID);
+        $c1->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
+        $db->turnSelectFieldsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id_1', BookTableMap::FIELD_ID);
-        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id_1', BookEntityMap::FIELD_ID);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
     public function testTurnSelectColumnsToAliasesDuplicate()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::FIELD_ID);
-        $c1->addSelectColumn(BookTableMap::FIELD_ID);
-        $db->turnSelectColumnsToAliases($c1);
+        $c1->addSelectField(BookEntityMap::FIELD_ID);
+        $c1->addSelectField(BookEntityMap::FIELD_ID);
+        $db->turnSelectFieldsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
-        $c2->addAsColumn('book_id_1', BookTableMap::FIELD_ID);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
+        $c2->addAsField('Propel_Tests_Bookstore_Book_id_1', BookEntityMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
     public function testCreateSelectSqlPart()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::FIELD_ID);
-        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
-        $fromClause = array();
-        $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT book.id, book.id AS book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
-        $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+        $c->addSelectField(BookEntityMap::FIELD_ID);
+        $c->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
+        $selectSql = $db->createSelectSqlPart($c);
+        $this->assertEquals('SELECT Propel\Tests\Bookstore\Book.id, Propel\Tests\Bookstore\Book.id AS Propel_Tests_Bookstore_Book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
     }
 
     public function testCreateSelectSqlPartWithFnc()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::FIELD_ID);
-        $c->addAsColumn('book_id', 'IF(1, '.BookTableMap::FIELD_ID.', '.BookTableMap::FIELD_TITLE.')');
-        $fromClause = array();
-        $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT book.id, IF(1, book.id, book.title) AS book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
-        $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+        $c->addSelectField(BookEntityMap::FIELD_ID);
+        $c->addAsField('Propel_Tests_Bookstore_Book_id', 'IF(1, '.BookEntityMap::FIELD_ID.', '.BookEntityMap::FIELD_TITLE.')');
+        $selectSql = $db->createSelectSqlPart($c);
+        $this->assertEquals('SELECT Propel\Tests\Bookstore\Book.id, IF(1, Propel\Tests\Bookstore\Book.id, Propel\Tests\Bookstore\Book.title) AS Propel_Tests_Bookstore_Book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
     }
 
     public function testCreateSelectSqlPartSelectModifier()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::FIELD_ID);
-        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
+        $c->addSelectField(BookEntityMap::FIELD_ID);
+        $c->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
         $c->setDistinct();
-        $fromClause = array();
-        $selectSql = $db->createSelectSqlPart($c, $fromClause);
-        $this->assertEquals('SELECT DISTINCT book.id, book.id AS book_id', $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
-        $this->assertEquals(array('book'), $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+        $selectSql = $db->createSelectSqlPart($c);
+        $this->assertEquals('SELECT DISTINCT Propel\Tests\Bookstore\Book.id, Propel\Tests\Bookstore\Book.id AS Propel_Tests_Bookstore_Book_id', $selectSql, 'createSelectSqlPart() includes the select modifiers in the SELECT clause');
     }
 
     public function testCreateSelectSqlPartAliasAll()
     {
-        $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
+        $db = Configuration::getCurrentConfiguration()->getAdapter(BookEntityMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::FIELD_ID);
-        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
-        $fromClause = array();
-        $selectSql = $db->createSelectSqlPart($c, $fromClause, true);
-        $this->assertEquals('SELECT book.id AS book_id_1, book.id AS book_id', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
-        $this->assertEquals(array(), $fromClause, 'createSelectSqlPart() does not add the tables from an all-aliased list of select columns');
+        $c->addSelectField(BookEntityMap::FIELD_ID);
+        $c->addAsField('Propel_Tests_Bookstore_Book_id', BookEntityMap::FIELD_ID);
+        $selectSql = $db->createSelectSqlPart($c, true);
+        $this->assertEquals('SELECT Propel\Tests\Bookstore\Book.id AS Propel_Tests_Bookstore_Book_id_1, Propel\Tests\Bookstore\Book.id AS Propel_Tests_Bookstore_Book_id', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
     }
 
 }

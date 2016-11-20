@@ -30,20 +30,17 @@ class CollectionConvertTest extends TestCaseFixtures
     protected function setUp()
     {
         parent::setUp();
+
         $book1 = new Book();
         $book1->setId(9012);
         $book1->setTitle('Don Juan');
         $book1->setISBN('0140422161');
         $book1->setPrice(12.99);
-        $book1->setAuthorId(5678);
-        $book1->setPublisherId(1234);
-        $book1->resetModified();
         $book2 = new Book();
         $book2->setId(58);
         $book2->setTitle('Harry Potter and the Order of the Phoenix');
         $book2->setISBN('043935806X');
         $book2->setPrice(10.99);
-        $book2->resetModified();
 
         $this->coll = new ObjectCollection();
         $this->coll->setModel('\Propel\Tests\Bookstore\Book');
@@ -57,20 +54,16 @@ class CollectionConvertTest extends TestCaseFixtures
 <?xml version="1.0" encoding="UTF-8"?>
 <Books>
   <Book>
-    <Id>9012</Id>
-    <Title><![CDATA[Don Juan]]></Title>
+    <id>9012</id>
+    <title><![CDATA[Don Juan]]></title>
     <ISBN><![CDATA[0140422161]]></ISBN>
-    <Price>12.99</Price>
-    <PublisherId>1234</PublisherId>
-    <AuthorId>5678</AuthorId>
+    <price>12.99</price>
   </Book>
   <Book>
-    <Id>58</Id>
-    <Title><![CDATA[Harry Potter and the Order of the Phoenix]]></Title>
+    <id>58</id>
+    <title><![CDATA[Harry Potter and the Order of the Phoenix]]></title>
     <ISBN><![CDATA[043935806X]]></ISBN>
-    <Price>10.99</Price>
-    <PublisherId></PublisherId>
-    <AuthorId></AuthorId>
+    <price>10.99</price>
   </Book>
 </Books>
 
@@ -95,10 +88,6 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromXML($expected);
-        // fix modified columns order
-        foreach ($coll as $book) {
-            $book->resetModified();
-        }
 
         $this->assertEquals($this->coll->getData(), $coll->getData());
     }
@@ -108,19 +97,15 @@ EOF;
         $expected = <<<EOF
 Books:
     -
-        Id: 9012
-        Title: 'Don Juan'
+        id: 9012
+        title: 'Don Juan'
         ISBN: '0140422161'
-        Price: 12.99
-        PublisherId: 1234
-        AuthorId: 5678
+        price: 12.99
     -
-        Id: 58
-        Title: 'Harry Potter and the Order of the Phoenix'
+        id: 58
+        title: 'Harry Potter and the Order of the Phoenix'
         ISBN: 043935806X
-        Price: 10.99
-        PublisherId: null
-        AuthorId: null
+        price: 10.99
 
 EOF;
 
@@ -143,10 +128,6 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromYAML($expected);
-        // fix modified columns order
-        foreach ($coll as $book) {
-            $book->resetModified();
-        }
 
         $this->assertEquals($this->coll->getData(), $coll->getData());
     }
@@ -154,7 +135,7 @@ EOF;
     public function toJsonDataProvider()
     {
         $expected = <<<EOF
-{"Books":[{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678},{"Id":58,"Title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","Price":10.99,"PublisherId":null,"AuthorId":null}]}
+{"Books":[{"id":9012,"title":"Don Juan","ISBN":"0140422161","price":12.99},{"id":58,"title":"Harry Potter and the Order of the Phoenix","ISBN":"043935806X","price":10.99}]}
 EOF;
 
         return array(array($expected));
@@ -176,17 +157,13 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromJSON($expected);
-        // fix modified columns order
-        foreach ($coll as $book) {
-            $book->resetModified();
-        }
 
         $this->assertEquals($this->coll->getData(), $coll->getData());
     }
 
     public function toCsvDataProvider()
     {
-        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId\r\n9012,Don Juan,0140422161,12.99,1234,5678\r\n58,Harry Potter and the Order of the Phoenix,043935806X,10.99,N;,N;\r\n";
+        $expected = "id,title,ISBN,price\r\n9012,Don Juan,0140422161,12.99\r\n58,Harry Potter and the Order of the Phoenix,043935806X,10.99\r\n";
 
         return array(array($expected));
     }
@@ -207,10 +184,6 @@ EOF;
         $coll = new ObjectCollection();
         $coll->setModel('\Propel\Tests\Bookstore\Book');
         $coll->fromCSV($expected);
-        // fix modified columns order
-        foreach ($coll as $book) {
-            $book->resetModified();
-        }
 
         $this->assertEquals($this->coll->getData(), $coll->getData());
     }
@@ -235,8 +208,8 @@ EOF;
 <?xml version="1.0" encoding="UTF-8"?>
 <Publishers>
   <Publisher>
-    <Id>12345</Id>
-    <Name><![CDATA[Penguinoo]]></Name>
+    <id>12345</id>
+    <name><![CDATA[Penguinoo]]></name>
   </Publisher>
 </Publishers>
 

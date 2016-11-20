@@ -51,5 +51,9 @@ class Constants extends BuildComponent
         $constant->setDescription("The full qualified table name (with schema name)");
         $constant->setValue($entity->getFQTableName());
         $this->getDefinition()->setConstant($constant);
+
+        $constant = new PhpConstant('DEFAULT_STRING_FORMAT');
+        $constant->setValue($entity->getDefaultStringFormat());
+        $this->getDefinition()->setConstant($constant);
     }
 }

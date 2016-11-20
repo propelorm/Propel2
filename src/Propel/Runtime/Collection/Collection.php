@@ -12,6 +12,7 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
+use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Propel;
@@ -439,17 +440,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     }
 
     /**
-     * @return string
+     * @return null|EntityMap
      */
-    public function getEntityMapClass()
+    public function getEntityMap()
     {
-        $model = $this->getModel();
-
-        if (empty($model)) {
-            throw new ModelNotFoundException('You must set the collection model before interacting with it');
-        }
-
-        return $this->getFullyQualifiedModel() . '\\Base\\EntityMap';
+        return Configuration::getCurrentConfiguration()->getEntityMap($this->getFullyQualifiedModel());
     }
 
     /**
@@ -487,7 +482,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), EntityMap::TYPE_PHPNAME);
+        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), EntityMap::TYPE_FIELDNAME);
     }
 
     /**
@@ -516,7 +511,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, EntityMap::TYPE_PHPNAME, $includeLazyLoadFields);
+        $array = $this->toArray(null, $usePrefix, EntityMap::TYPE_FIELDNAME, $includeLazyLoadFields);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }
@@ -587,5 +582,22 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     protected function getPluralModelName()
     {
         return $this->getPluralizer()->getPluralForm($this->getModel());
+    }
+
+    /**
+     * Returns a string representation of the current collection.
+     * Based on the string representation of the underlying objects, defined in
+     * the TableMap::DEFAULT_STRING_FORMAT constant
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $format = 'YAML';
+        if ($this->getEntityMap()) {
+            $format = constant(get_class($this->getEntityMap()). '::DEFAULT_STRING_FORMAT');
+
+        }
+        return (string) $this->exportTo($format, false);
     }
 }
