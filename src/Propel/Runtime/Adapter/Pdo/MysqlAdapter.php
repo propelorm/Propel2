@@ -12,7 +12,6 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\FieldMap;
 
 /**
@@ -142,7 +141,7 @@ class MysqlAdapter extends PdoAdapter
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param StatementInterface $stmt
+     * @param \PDOStatement $stmt
      * @param string             $parameter
      * @param mixed              $value
      * @param FieldMap          $cMap
@@ -150,7 +149,7 @@ class MysqlAdapter extends PdoAdapter
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL

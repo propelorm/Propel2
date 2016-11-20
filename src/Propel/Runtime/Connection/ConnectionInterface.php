@@ -165,7 +165,7 @@ interface ConnectionInterface
      *                               database server.
      * @param array  $driver_options
      *
-     * @return \Propel\Runtime\Connection\StatementInterface|bool       A Statement object if the database server
+     * @return \PDOStatement|bool A Statement object if the database server
      *                                                                  successfully prepares, FALSE otherwise.
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */

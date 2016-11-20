@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Adapter;
 
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\FieldMap;
@@ -112,17 +111,17 @@ interface SqlAdapterInterface extends AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param StatementInterface $stmt
+     * @param \PDOStatement $stmt
      * @param array              $params array('field' => ..., 'table' => ..., 'value' => ...)
      * @param DatabaseMap        $dbMap
      */
-    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(\PDOStatement $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameter in a statement,
      * given a FieldMap object to infer the binding type.
      *
-     * @param StatementInterface $stmt      The statement to bind
+     * @param \PDOStatement $stmt      The statement to bind
      * @param string             $parameter Parameter identifier
      * @param mixed              $value     The value to bind
      * @param FieldMap           $fMap      The FieldMap of the field to bind
@@ -130,5 +129,5 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $fMap, $position = null);
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, FieldMap $fMap, $position = null);
 }

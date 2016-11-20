@@ -174,6 +174,11 @@ trait RelationTrait
             $className = $pluralizer->getPluralForm($className);
         }
 
+        //since we have no refField name we need to generate one based on the entity.
+        //this can go wrong when we have two relations to the same entity, as it would generate
+        //same relation name again. so we need to affix the name with the actual $relation->getField()
+        //this is what getRefRelatedBySuffix is doing.
+
         return ucfirst($className . $this->getRefRelatedBySuffix($relation));
     }
 
@@ -186,39 +191,19 @@ trait RelationTrait
      */
     protected static function getRefRelatedBySuffix(Relation $relation)
     {
-        $relField = '';
-        foreach ($relation->getLocalForeignMapping() as $localFieldName => $foreignFieldName) {
-            $localEntity = $relation->getEntity();
-            $localField = $localEntity->getField($localFieldName);
-            if (!$localField) {
-                throw new BuildException(
-                    sprintf('Could not fetch field: %s in entity %s.', $localFieldName, $localEntity->getName())
-                );
-            }
-            $foreignKeysToForeignEntity = $localEntity->getRelationsReferencingEntity(
-                $relation->getForeignEntityName()
-            );
-            if ($relation->getForeignEntityName() == $relation->getEntityName()) {
-                // self referential foreign key
-                $relField .= $relation->getForeignEntity()->getField($foreignFieldName)->getName();
-                if (count($foreignKeysToForeignEntity) > 1) {
-                    // several self-referential foreign keys
-                    $relField .= array_search($relation, $foreignKeysToForeignEntity);
-                }
-            } elseif (count($foreignKeysToForeignEntity) > 1 || count(
-                    $relation->getForeignEntity()->getRelationsReferencingEntity($relation->getEntityName())
-                ) > 0
-            ) {
-                // several foreign keys to the same entity, or symmetrical foreign key in foreign entity
-                $relField .= $localField->getName();
+        $hasOtherRelationToSameEntityAndName = false;
+        foreach ($relation->getEntity()->getRelations() as $otherRelation) {
+            if ($otherRelation !== $relation && $otherRelation->getForeignEntity() === $relation->getForeignEntity()) {
+                $hasOtherRelationToSameEntityAndName = true;
+                break;
             }
         }
 
-        if (!empty($relField)) {
-            $relField = 'RelatedBy' . $relField;
+        if (!$hasOtherRelationToSameEntityAndName) {
+            return '';
         }
 
-        return $relField;
+        return 'By' . ucfirst($relation->getField());
     }
 
     /**

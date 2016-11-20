@@ -362,7 +362,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con = $this->con;
         $con->useDebug(false);
         $stmtClass = $con->getAttribute(PDO::ATTR_STATEMENT_CLASS);
-        $expectedClass = (defined('HHVM_VERSION') ? '\\' : '') . 'Propel\Runtime\Adapter\Pdo\PdoStatement';
+        $expectedClass = defined('HHVM_VERSION') ? '\PdoStatement' : 'PDOStatement';
 
         $this->assertEquals($expectedClass, $stmtClass[0], 'Statement is Propel Statement when debug is false');
         $con->useDebug(true);

@@ -476,7 +476,8 @@ class RelationMap
     {
         $localMapping = array($this->getLeftFields(), $this->getRightFields());
         foreach ($this->getRightEntity()->getRelations() as $relation) {
-            if ($localMapping == array($relation->getRightFields(), $relation->getLeftFields())) {
+            $relationMapping = array($relation->getRightFields(), $relation->getLeftFields());
+            if ($localMapping == $relationMapping) {
                 return $relation;
             }
         }

@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Runtime\Map;
 
+use Propel\Runtime\Configuration;
 use Propel\Tests\Bookstore\Map\BookEntityMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeEntityMap;
 
@@ -26,15 +27,33 @@ use Propel\Tests\TestCaseFixtures;
  */
 class FieldMapTest extends TestCaseFixtures
 {
+    /**
+     * @var DatabaseMap
+     */
     protected $databaseMap;
+
+    /**
+     * @var string
+     */
+    protected $fieldName;
+    /**
+     * @var EntityMap
+     */
+    protected $tmap;
+
+    /**
+     * @var FieldMap
+     */
+    protected $cmap;
 
     protected function setUp()
     {
         parent::setUp();
         $this->dmap = new DatabaseMap('foodb');
-        $this->tmap = new EntityMap('foo', $this->dmap);
-        $this->columnName = 'bar';
-        $this->cmap = new FieldMap($this->columnName, $this->tmap);
+        Configuration::getCurrentConfiguration()->registerDatabase($this->dmap);
+        $this->tmap = $this->getMockForAbstractClass(EntityMap::class, ['foo', 'foodb', Configuration::getCurrentConfiguration()]);
+        $this->fieldName = 'barName';
+        $this->cmap = new FieldMap($this->fieldName, $this->tmap);
     }
 
     protected function tearDown()
@@ -45,16 +64,18 @@ class FieldMapTest extends TestCaseFixtures
 
     public function testConstructor()
     {
-        $this->assertEquals($this->columnName, $this->cmap->getName(), 'constructor sets the column name');
+        $this->assertEquals($this->fieldName, $this->cmap->getName(), 'constructor sets the column name');
         $this->assertEquals($this->tmap, $this->cmap->getEntity(), 'Constructor sets the table map');
         $this->assertNull($this->cmap->getType(), 'A new column map has no type');
     }
 
     public function testPhpName()
     {
-        $this->assertNull($this->cmap->getPhpName(), 'phpName is empty until set');
-        $this->cmap->setPhpName('FooBar');
-        $this->assertEquals('FooBar', $this->cmap->getPhpName(), 'phpName is set by setPhpName()');
+        $this->assertEquals($this->fieldName, $this->cmap->getName(), 'name is empty until set');
+        $this->assertEquals('bar_name', $this->cmap->getColumnName());
+        $this->cmap->setName('fooBar');
+        $this->assertEquals('fooBar', $this->cmap->getName(), '');
+        $this->assertEquals('foo_bar', $this->cmap->getColumnName());
     }
 
     public function testType()
@@ -107,7 +128,7 @@ class FieldMapTest extends TestCaseFixtures
         } catch (ForeignKeyNotFoundException $e) {
             $this->assertTrue(true, 'getRelatedField throws an exception when called on a column with no foreign key');
         }
-        $relatedTmap = $this->dmap->addEntity('foo2');
+        $relatedTmap = $this->getMockForAbstractClass(EntityMap::class, ['foo2', 'foodb', Configuration::getCurrentConfiguration()]);
         // required to let the database map use the foreign EntityMap
         $relatedCmap = $relatedTmap->addField('BAR2', 'Bar2', 'INTEGER');
         $this->cmap->setForeignKey('foo2', 'BAR2');
@@ -121,22 +142,22 @@ class FieldMapTest extends TestCaseFixtures
         $bookEntity = BookEntityMap::getEntityMap();
         $titleField = $bookEntity->getField('TITLE');
         $this->assertNull($titleField->getRelation(), 'getRelation() returns null for non-foreign key columns');
-        $publisherField = $bookEntity->getField('PUBLISHER_ID');
-        $this->assertEquals($publisherField->getRelation(), $bookEntity->getRelation('Publisher'), 'getRelation() returns the RelationMap object for this foreign key');
+        $publisherField = $bookEntity->getField('publisherId');
+        $this->assertEquals($publisherField->getRelation(), $bookEntity->getRelation('publisher'), 'getRelation() returns the RelationMap object for this foreign key');
         $bookstoreEntity = BookstoreEmployeeEntityMap::getEntityMap();
-        $supervisorField = $bookstoreEntity->getField('SUPERVISOR_ID');
-        $this->assertEquals($supervisorField->getRelation(), $supervisorField->getRelation('Supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
+        $supervisorField = $bookstoreEntity->getField('supervisorId');
+        $this->assertEquals($supervisorField->getRelation(), $supervisorField->getRelation('supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
 
     }
 
     public function testNormalizeName()
     {
         $this->assertEquals('', FieldMap::normalizeName(''), 'normalizeFieldName() returns an empty string when passed an empty string');
-        $this->assertEquals('BAR', FieldMap::normalizeName('bar'), 'normalizeFieldName() uppercases the input');
-        $this->assertEquals('BAR_BAZ', FieldMap::normalizeName('bar_baz'), 'normalizeFieldName() does not mind underscores');
+        $this->assertEquals('bar', FieldMap::normalizeName('bar'), 'normalizeFieldName() uppercases the input');
+        $this->assertEquals('bar_baz', FieldMap::normalizeName('bar_baz'), 'normalizeFieldName() does not mind underscores');
         $this->assertEquals('BAR', FieldMap::normalizeName('FOO.BAR'), 'normalizeFieldName() removes table prefix');
         $this->assertEquals('BAR', FieldMap::normalizeName('BAR'), 'normalizeFieldName() leaves normalized column names unchanged');
-        $this->assertEquals('BAR_BAZ', FieldMap::normalizeName('foo.bar_baz'), 'normalizeFieldName() can do all the above at the same time');
+        $this->assertEquals('bar_baz', FieldMap::normalizeName('foo.bar_baz'), 'normalizeFieldName() can do all the above at the same time');
     }
 
     public function testIsPrimaryString()

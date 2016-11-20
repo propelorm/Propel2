@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
 use Propel\Generator\Model\PropelTypes;
@@ -143,10 +144,22 @@ class FieldMap
     }
 
     /**
+     * @param mixed $
+     */
+    public function setName($name)
+    {
+        $this->fieldName = $name;
+    }
+
+    /**
      * @return mixed
      */
     public function getColumnName()
     {
+        if (!$this->columnName) {
+            return NamingTool::toUnderscore($this->getName());
+        }
+
         return $this->columnName;
     }
 

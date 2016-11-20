@@ -14,7 +14,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Generator\Model\PropelTypes;
@@ -206,7 +205,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param StatementInterface $stmt
+     * @param \PDOStatement $stmt
      * @param string             $parameter
      * @param mixed              $value
      * @param FieldMap          $cMap
@@ -214,7 +213,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         if (PropelTypes::CLOB_EMU === $cMap->getType()) {
             return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));

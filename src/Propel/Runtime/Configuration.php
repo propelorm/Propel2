@@ -249,7 +249,7 @@ class Configuration extends GeneratorConfig
     {
         if (!static::$globalConfiguration) {
             throw new RuntimeException(
-                'There is no propel configuration instantiated which could be used for active record entities.'
+                'There is no propel configuration instantiated.'
             );
         }
 
@@ -339,6 +339,10 @@ class Configuration extends GeneratorConfig
     public function getEntityMapsForDatabase($databaseName)
     {
         $entities = [];
+        if (!isset($this->databaseToEntitiesMap[$databaseName])) {
+            return $entities;
+        }
+
         foreach ($this->databaseToEntitiesMap[$databaseName] as $entityClass) {
             $entities[$entityClass] = $this->getEntityMap($entityClass);
         }
@@ -374,6 +378,14 @@ class Configuration extends GeneratorConfig
         }
 
         return $this->databaseMaps[$databaseName];
+    }
+
+    /**
+     * @param DatabaseMap $database
+     */
+    public function registerDatabase(DatabaseMap $database)
+    {
+        $this->databaseMaps[$database->getName()] = $database;
     }
 
     /**
@@ -459,10 +471,8 @@ class Configuration extends GeneratorConfig
             );
         }
 
-        $database = $this->getDatabase($databaseName);
         /** @var EntityMap $map */
-        $map = new $entityMapClass($fullEntityClassName, $database, $this);
-        $database->addEntityMap($map);
+        $map = new $entityMapClass($fullEntityClassName, $databaseName, $this);
         $this->entityMaps[$fullEntityClassName] = $map;
 
         return $map;

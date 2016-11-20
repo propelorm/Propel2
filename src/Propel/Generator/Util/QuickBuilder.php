@@ -28,8 +28,6 @@ use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
-use Propel\Runtime\Connection\StatementInterface;
-use Propel\Runtime\Propel;
 
 class QuickBuilder
 {
@@ -307,7 +305,7 @@ class QuickBuilder
             try {
                 static::$configuration->debug('buildSQL: ' . $statement);
                 $stmt = $con->prepare($statement);
-                if ($stmt instanceof StatementInterface) {
+                if ($stmt instanceof \PDOStatement) {
                     // only execute if has no error
                     $stmt->execute();
                 }

@@ -154,7 +154,7 @@ class Relation extends MappingModel
         }
 
         $this->refName = $this->getAttribute('refName') ?: lcfirst($this->getEntity()->getName());
-        $this->refField = $this->getAttribute('refField') ?: ($this->refName ?: $this->getAttribute('target'));
+        $this->refField = $this->getAttribute('refField');
 
         $this->defaultJoin = $this->getAttribute('defaultJoin');
         $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));

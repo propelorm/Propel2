@@ -13,7 +13,6 @@ namespace Propel\Runtime\Adapter;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Persister\PersisterInterface;

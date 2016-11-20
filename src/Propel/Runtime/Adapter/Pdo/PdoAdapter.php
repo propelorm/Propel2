@@ -15,7 +15,6 @@ use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\PdoConnection;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -528,11 +527,11 @@ abstract class PdoAdapter implements SqlAdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param StatementInterface $stmt
+     * @param \PDOStatement $stmt
      * @param array              $params array('field' => ..., 'entity' => ..., 'value' => ...)
      * @param DatabaseMap        $dbMap
      */
-    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(\PDOStatement $stmt, array $params, DatabaseMap $dbMap)
     {
         $position = 0;
         foreach ($params as $param) {
@@ -558,7 +557,7 @@ abstract class PdoAdapter implements SqlAdapterInterface
      * Binds a value to a positioned parameter in a statement,
      * given a FieldMap object to infer the binding type.
      *
-     * @param StatementInterface $stmt      The statement to bind
+     * @param \PDOStatement $stmt      The statement to bind
      * @param string             $parameter Parameter identifier
      * @param mixed              $value     The value to bind
      * @param FieldMap          $cMap      The FieldMap of the field to bind
@@ -566,7 +565,7 @@ abstract class PdoAdapter implements SqlAdapterInterface
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, FieldMap $cMap, $position = null)
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, FieldMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

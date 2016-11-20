@@ -70,20 +70,6 @@ class DatabaseMap
         return $this->name;
     }
 
-//    /**
-//     * Add a new entity to the database by name.
-//     *
-//     * @param  string $entityName The name of the entity.
-//     *
-//     * @return \Propel\Runtime\Map\EntityMap The newly created EntityMap.
-//     */
-//    public function addEntity($entityName)
-//    {
-//        $this->entities[$entityName] = new EntityMap($entityName, $this);
-//
-//        return $this->entities[$entityName];
-//    }
-
     /**
      * Add a new entity object to the database.
      *
@@ -121,7 +107,7 @@ class DatabaseMap
      */
     public function getEntity($name)
     {
-        if (!isset($this->entities[$name])) {
+        if (!isset($this->entities[$name]) && !isset($this->entitiesByName[$name])) {
             throw new EntityNotFoundException(
                 sprintf(
                     'Cannot fetch EntityMap for undefined entity `%s` [%s]',
@@ -131,7 +117,11 @@ class DatabaseMap
             );
         }
 
-        return $this->entities[$name];
+        if (isset($this->entities[$name])) {
+            return $this->entities[$name];
+        }
+
+        return $this->entitiesByName[$name];
     }
 
     /**

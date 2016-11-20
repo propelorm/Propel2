@@ -11,6 +11,7 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Common\Types\FieldTypeInterface;
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Configuration;
@@ -41,7 +42,7 @@ abstract class EntityMap
 
     /**
      * Like the real property name but with uppercase first character.
-     * 
+     *
      * e.g. 'AuthorId'
      */
     const TYPE_PHPNAME = 'phpName';
@@ -87,7 +88,18 @@ abstract class EntityMap
      */
     protected $entityName;
 
+    /**
+     * Will be filled by the child class.
+     *
+     * @var array
+     */
     protected $fieldNames = [];
+
+    /**
+     * Will be filled by the child class.
+     *
+     * @var array
+     */
     protected $fieldKeys = [];
 
     /**
@@ -150,6 +162,7 @@ abstract class EntityMap
      * @var RelationMap[]
      */
     protected $relations = array();
+    protected $relationsByNormalizedName = array();
 
     /**
      *  Relations are lazy loaded. This property tells if the relations are loaded or not
@@ -211,11 +224,14 @@ abstract class EntityMap
     /**
      * Construct a new EntityMap.
      */
-    public function __construct($name, DatabaseMap $dbMap, Configuration $configuration)
+    public function __construct($name, $databaseName, Configuration $configuration)
     {
-        $this->name = $name;
+        $this->setName($name);
+        $this->setDatabaseName($databaseName);
         $this->setConfiguration($configuration);
         $this->initialize();
+
+        $this->getDatabaseMap()->addEntityMap($this);
     }
 
     /**
@@ -226,6 +242,14 @@ abstract class EntityMap
     public static function getEntityMap()
     {
         return Configuration::getCurrentConfiguration()->getEntityMap(static::ENTITY_CLASS);
+    }
+
+    /**
+     * @return DatabaseMap
+     */
+    public function getDatabaseMap()
+    {
+        return $this->configuration->getDatabase($this->getDatabaseName());
     }
 
     /**
@@ -914,7 +938,7 @@ abstract class EntityMap
      */
     public function getFullClassName()
     {
-        return $this->fullClassName;
+        return $this->fullClassName ?: $this->entityName;
     }
 
     /**
@@ -1453,7 +1477,13 @@ abstract class EntityMap
                 );
             }
         }
+
+        if (isset($this->relations[$name])) {
+            throw new EngineException("A relation with the name $name already exists in {$this->getEntityMap()->getFullClassName()}.");
+        }
+        
         $this->relations[$name] = $relation;
+        $this->relationsByNormalizedName[strtolower($name)] = $relation;
 
         return $relation;
     }
@@ -1463,16 +1493,21 @@ abstract class EntityMap
      * This method will build the relations if they are not built yet
      *
      * @param  string $name The relation name
+     * @param  boolean $normalizeName whether you allow to have a name that is not exact relation's name.
      *
      * @return boolean true if the relation exists
      */
-    public function hasRelation($name)
+    public function hasRelation($name, $normalizeName = true)
     {
         if (!$this->relationsBuilt) {
             $this->buildRelations();
             $this->relationsBuilt = true;
         }
 
+        if ($normalizeName) {
+            $name = strtolower($name);
+            return isset($this->relationsByNormalizedName[$name]);
+        }
         return isset($this->relations[$name]);
     }
 
@@ -1481,19 +1516,30 @@ abstract class EntityMap
      * This method will build the relations if they are not built yet
      *
      * @param  string $name The relation name
+     * @param  boolean $normalizeName whether you allow to have a name that is not exact relation's name.
      *
      * @return \Propel\Runtime\Map\RelationMap                         The relation object
      * @throws \Propel\Runtime\Map\Exception\RelationNotFoundException When called on an inexistent relation
      */
-    public function getRelation($name)
+    public function getRelation($name, $normalizeName = true)
     {
         if (!$this->relationsBuilt) {
             $this->buildRelations();
             $this->relationsBuilt = true;
         }
 
+        $availableNames = implode(', ', array_keys($this->relations));
+
+        if ($normalizeName) {
+            if (!isset($this->relationsByNormalizedName[strtolower($name)])) {
+                throw new RelationNotFoundException(sprintf('Unknown relation %s in %s. [%s]', $name, $this->getEntityMap()->getFullClassName(), $availableNames));
+            }
+
+            return $this->relationsByNormalizedName[strtolower($name)];
+        }
+
         if (!isset($this->relations[$name])) {
-            throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s.', $name));
+            throw new RelationNotFoundException(sprintf('Unknown relation %s in %s. [%s]', $name, $this->getEntityMap()->getFullClassName(), $availableNames));
         }
 
         return $this->relations[$name];
