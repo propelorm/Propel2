@@ -55,8 +55,8 @@ class EntityMapBuilder extends AbstractBuilder
         $this->applyComponent('EntityMap\\BuildFieldsMethod');
         $this->applyComponent('EntityMap\\BuildSqlBulkInsertPartMethod');
         $this->applyComponent('EntityMap\\BuildSqlPrimaryConditionMethod');
-        $this->applyComponent('EntityMap\\HasAutoIncrementMethod');
         $this->applyComponent('EntityMap\\GetAutoIncrementFieldNamesMethod');
+        $this->applyComponent('EntityMap\\GetPrimaryKeyMethod');
         $this->applyComponent('EntityMap\\PopulateAutoIncrementFieldsMethod');
         $this->applyComponent('EntityMap\\PopulateDependencyGraphMethod');
         $this->applyComponent('EntityMap\\PersistDependenciesMethod');
@@ -69,6 +69,11 @@ class EntityMapBuilder extends AbstractBuilder
         $this->applyComponent('EntityMap\\GetSnapshotMethod');
         $this->applyComponent('EntityMap\\IsValidRowMethod');
         $this->applyComponent('EntityMap\\AddSelectFieldsMethod');
+        $this->applyComponent('EntityMap\\BuildChangeSetMethod');
+        $this->applyComponent('EntityMap\\BuildPkeyCriteriaMethod');
+
+        $this->applyComponent('EntityMap\\LazyLoadingMethods');
+        $this->applyComponent('EntityMap\\CreateProxyMethod');
 
         $this->applyComponent('EntityMap\\GenericAccessorMethods');
         $this->applyComponent('EntityMap\\GenericMutatorMethods');

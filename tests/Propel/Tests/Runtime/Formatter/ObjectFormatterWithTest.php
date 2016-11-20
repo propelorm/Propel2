@@ -310,7 +310,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
     public function testFindOneWithOneToManyAndLimit()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->add(BookTableMap::COL_ISBN, '043935806X');
+        $c->add(BookTableMap::FIELD_ISBN, '043935806X');
         $c->leftJoin('Book.Review');
         $c->with('Review');
         $c->limit(5);
@@ -324,7 +324,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->add(BookTableMap::COL_ISBN, '043935806X');
+        $c->add(BookTableMap::FIELD_ISBN, '043935806X');
         $c->leftJoin('Propel\Tests\Bookstore\Book.Review');
         $c->with('Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -381,7 +381,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorTableMap::COL_LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::FIELD_LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -410,7 +410,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         $freud->setLastName("Freud");
         $freud->save($this->con);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorTableMap::COL_LAST_NAME, 'Freud');
+        $c->add(AuthorTableMap::FIELD_LAST_NAME, 'Freud');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book');
         $c->leftJoinWith('Book.Review');
         // should not raise a notice
@@ -477,7 +477,7 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
         AuthorTableMap::clearInstancePool();
         ReviewTableMap::clearInstancePool();
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
-        $c->add(AuthorTableMap::COL_LAST_NAME, 'Rowling');
+        $c->add(AuthorTableMap::FIELD_LAST_NAME, 'Rowling');
         $c->leftJoinWith('Propel\Tests\Bookstore\Author.Book b');
         $c->leftJoinWith('b.Review r');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);

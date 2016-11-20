@@ -34,6 +34,9 @@ class InitializeMethod extends BuildComponent
         \$this->setTableName('" . $entity->getTableName() . "');
         \$this->setAllowPkInsert(". ($entity->isAllowPkInsert() ? 'true' : 'false') . ");
         \$this->setIdentifierQuoting(" . ($entity->isIdentifierQuotingEnabled() ? 'true' : 'false') . ");
+        \$this->setAutoIncrement(" . ($entity->hasAutoIncrement() ? 'true' : 'false') . ");
+        \$this->setReloadOnInsert(" . ($entity->isReloadOnInsert() ? 'true' : 'false') . ");
+        \$this->setReloadOnUpdate(" . ($entity->isReloadOnUpdate() ? 'true' : 'false') . ");
         ";
 
         if ($entity->getIdMethod() == "native") {

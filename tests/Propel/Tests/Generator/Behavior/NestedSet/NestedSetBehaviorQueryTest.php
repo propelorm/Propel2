@@ -570,7 +570,7 @@ class NestedSetBehaviorQueryTest extends TestCase
          */
         $this->assertEquals(array($t1, $t8), NestedSetEntity10Query::create()->retrieveRoots()->getArrayCopy(), 'retrieveRoots() returns the tree roots');
         $c = new Criteria(NestedSetEntity10EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity10EntityMap::COL_TITLE, 't1');
+        $c->add(NestedSetEntity10EntityMap::FIELD_TITLE, 't1');
         $this->assertEquals(array($t1), NestedSetEntity10Query::create()->retrieveRoots($c)->getArrayCopy(), 'retrieveRoots() accepts a Criteria as first parameter');
     }
 

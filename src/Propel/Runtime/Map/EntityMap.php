@@ -12,11 +12,13 @@ namespace Propel\Runtime\Map;
 
 use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Model\NamingTool;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\Exception\FieldNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Session\DependencyGraph;
 use Propel\Runtime\Session\Session;
 
@@ -31,28 +33,32 @@ use Propel\Runtime\Session\Session;
 abstract class EntityMap
 {
     /**
-     * phpname type, the actual name of the property in a entity.
+     * The real property name at the class
+     *
      * e.g. 'authorId'
+     */
+    const TYPE_FIELDNAME = 'fieldName';
+
+    /**
+     * Like the real property name but with uppercase first character.
+     * 
+     * e.g. 'AuthorId'
      */
     const TYPE_PHPNAME = 'phpName';
 
     /**
-     * camelCase type
+     * Column name in the database.
+     *
      * e.g. 'author_id'
      */
     const TYPE_COLNAME = 'colName';
 
     /**
-     * field (entityMap) name type
+     * Column name in the database with table name.
+     *
      * e.g. 'book.author_id'
      */
     const TYPE_FULLCOLNAME = 'fullColName';
-
-    /**
-     * field fieldname type
-     * e.g. 'AuthorId'
-     */
-    const TYPE_FIELDNAME = 'fieldName';
 
     /**
      * num type
@@ -185,6 +191,21 @@ abstract class EntityMap
     /**
      * @var bool
      */
+    protected $autoIncrement = false;
+
+    /**
+     * @var bool
+     */
+    protected $reloadOnInsert = false;
+
+    /**
+     * @var bool
+     */
+    protected $reloadOnUpdate = false;
+
+    /**
+     * @var bool
+     */
     protected $allowPkInsert;
 
     /**
@@ -196,8 +217,6 @@ abstract class EntityMap
         $this->setConfiguration($configuration);
         $this->initialize();
     }
-
-    abstract public function fromArray($entity, array $arr, $keyType = EntityMap::TYPE_FIELDNAME);
 
     /**
      * Active-Record like access to this entityMap. Primarily for prototyping usages.
@@ -314,6 +333,25 @@ abstract class EntityMap
         $this->configuration = $configuration;
     }
 
+    abstract public function fromArray(array $data, $keyType = EntityMap::TYPE_FIELDNAME, $entity = null);
+
+    /**
+     * Build relations
+     * Relations are lazy loaded for performance reasons
+     * This method should be overridden by descendants
+     */
+    abstract public function buildRelations();
+
+    /**
+     * Build fields
+     */
+    abstract public function buildFields();
+
+    /**
+     * @return string[]
+     */
+    abstract public function getAutoIncrementFieldNames();
+
     abstract public function populateDependencyGraph($entity, DependencyGraph $dependencyGraph);
 
     abstract public function populateObject(array $row, &$offset = 0, $indexType = EntityMap::TYPE_NUM, $entity = null);
@@ -324,15 +362,409 @@ abstract class EntityMap
 
     abstract public function getPropWriter();
 
+    abstract public function getPropUnsetter();
+
     abstract public function getPropReader();
 
     abstract public function getPropIsset();
 
     abstract public function persistDependencies(Session $session, $entity, $deep = false);
 
+    abstract public function createProxy();
+
+    /**
+     * @return object
+     */
+    public function createObject()
+    {
+        $reflection = new \ReflectionClass($this->getFullClassName());
+        return $reflection->newInstanceWithoutConstructor();
+    }
+
+    /**
+     * Returns a new ModelCriteria object with configured primary key of $entity.
+     *
+     * @param object $entity
+     * @return ModelCriteria
+     */
+    abstract public function buildPkeyCriteria($entity);
+
+    /**
+     * @param object $entity
+     *
+     * @return array|false Returns false when no changes are detected
+     */
+    abstract public function buildChangeSet($entity);
+
     public function getPersisterClass()
     {
         return '\Propel\Runtime\Persister\SqlPersister';
+    }
+
+    /**
+     * @param object $entity
+     * @param string $fieldName
+     *
+     * @return boolean
+     */
+    public function isFieldModified($entity, $fieldName)
+    {
+        $reader = $this->getEntityMap()->getPropReader();
+        $currentValue = $reader($entity, $fieldName);
+
+        if (!$this->hasKnownValues($entity)) {
+            //it's a not committed entity, see if its value is different that its default
+            $defaultValue = $this->getEntityMap()->getField($fieldName)->getDefaultValue();
+
+            return $defaultValue != $currentValue;
+        }
+
+        $oldValues = $this->getLastKnownValues($entity);
+
+        return $this->getEntityMap()->propertyToSnapshot($currentValue, $fieldName) !== $oldValues[$fieldName];
+    }
+
+    /**
+     * Export the current object properties to a string, using a given parser format
+     * <code>
+     * $book = BookQuery::create()->findPk(9012);
+     * echo $book->exportTo('JSON');
+     *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
+     * </code>
+     *
+     * @param object $entity
+     * @param  mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param  boolean $includeLazyLoadColumns Whether to include lazy load(ed) columns.
+     * @param  boolean $includeForeignObjects Whether to include hydrated related objects
+     * @return string  The exported data
+     */
+    public function exportTo($entity, $parser, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        $array = $this->toArray($entity, EntityMap::TYPE_FIELDNAME, $includeLazyLoadColumns, $includeForeignObjects);
+        return $parser->fromArray($array);
+    }
+
+    /**
+     * @param object $entity
+     * @param boolean $includeLazyLoadColumns Whether to include lazy load(ed) columns.
+     * @param boolean $includeForeignObjects Whether to include hydrated related objects
+     *
+     * @return string  The exported data
+     */
+    public function toXML($entity, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+    {
+        return $this->exportTo($entity, "XML", $includeLazyLoadColumns, $includeForeignObjects);
+    }
+
+    /**
+     * @param object $entity
+     * @param boolean $includeLazyLoadColumns Whether to include lazy load(ed) columns.
+     * @param boolean $includeForeignObjects Whether to include hydrated related objects
+     *
+     * @return string  The exported data
+     */
+    public function toJSON($entity, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+    {
+        return $this->exportTo($entity, "JSON", $includeLazyLoadColumns, $includeForeignObjects);
+    }
+
+    /**
+     * @param object $entity
+     * @param boolean $includeLazyLoadColumns Whether to include lazy load(ed) columns.
+     * @param boolean $includeForeignObjects Whether to include hydrated related objects
+     *
+     * @return string  The exported data
+     */
+    public function toYAML($entity, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+    {
+        return $this->exportTo($entity, "YAML", $includeLazyLoadColumns, $includeForeignObjects);
+    }
+
+    /**
+     * @param object $entity
+     * @param boolean $includeLazyLoadColumns Whether to include lazy load(ed) columns.
+     * @param boolean $includeForeignObjects Whether to include hydrated related objects
+     *
+     * @return string  The exported data
+     */
+    public function toCSV($entity, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+    {
+        return $this->exportTo($entity, "CSV", $includeLazyLoadColumns, $includeForeignObjects);
+    }
+
+
+    /**
+     * Populate the current object from a string, using a given parser format
+     * <code>
+     * \$book = new Book();
+     * \$book->importFrom('JSON', '{\"Id\":9012,\"Title\":\"Don Juan\",\"ISBN\":\"0140422161\",\"Price\":12.99,\"PublisherId\":1234,\"AuthorId\":5678}');
+     * </code>
+     *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME,
+     * EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
+     * The default key type is the column's EntityMap::$defaultKeyType.
+     *
+     * @param mixed $parser A AbstractParser instance,
+     *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data The source data to import from
+     * @param string $keyType The type of keys the array uses.
+     *
+     * @return object
+     */
+    public function importFrom($parser, $data, $keyType = EntityMap::TYPE_FIELDNAME)
+    {
+        if (!$parser instanceof AbstractParser) {
+            $parser = AbstractParser::getParser($parser);
+        }
+
+        return $this->fromArray($parser->toArray($data), $keyType);
+    }
+
+    public function fromXML($data)
+    {
+        return $this->importFrom('XML', $data);
+    }
+
+    public function fromJSON($data)
+    {
+        return $this->importFrom('JSON', $data);
+    }
+
+    public function fromYAML($data)
+    {
+        return $this->importFrom('YAML', $data);
+    }
+
+    public function fromCSV($data)
+    {
+        return $this->importFrom('CSV', $data);
+    }
+
+    /**
+     * Returns a proxy object with configured primary key.
+     * If available in first level cache, it returns the object from the cache.
+     * If you access a property other then primary key it will be completely loaded from
+     * the database (except lazy loading fields).
+     *
+     * @todo, make it work with relations as primary key etc.
+     *
+     * @return object
+     */
+    public function getReference()
+    {
+        $object = $this->createProxy();
+        $writer = $this->getEntityMap()->getPropWriter();
+        $unsetter = $this->getEntityMap()->getPropUnsetter();
+        $pks = func_get_args();
+
+        $object->__duringInitializing__ = true;
+
+        $i = 0;
+        foreach ($this->getEntityMap()->getFields() as $fieldMap) {
+            if ($fieldMap->isPrimaryKey()) {
+                $writer($object, $fieldMap->getName(), $pks[$i++]);
+            } else {
+                $unsetter($object, $fieldMap->getName());
+            }
+        }
+
+        unset($object->__duringInitializing__);
+
+        return $object;
+    }
+
+    /**
+     * Loads all data from the persistence layer and sets all properties
+     *
+     * @param object $entity
+     */
+    public function load($entity)
+    {
+        $dataFetcher = $this
+            ->buildPkeyCriteria($entity)
+            ->doSelect();
+
+        $row = $dataFetcher->fetch();
+        $indexStart = 0;
+        $this->populateObject($row, $indexStart, $dataFetcher->getIndexType(), $entity);
+    }
+
+    /**
+     * Returns the primary key values from the object as array or directly when the
+     * entity has only one primary key.
+     *
+     * @todo, what if a primary key is a relation?
+     *
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function getPK($entity)
+    {
+        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $pk = null;
+        $normalizedValues = $this->getEntityMap()->getSnapshot($entity);
+
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $normalizedValues[$primaryKeyField->getName()];
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pk[] = $normalizedValues[$primaryKeyField->getName()];
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * @param object $entity
+     * @return array
+     */
+    public function toArray($entity)
+    {
+        $array = [];
+        $reader = $this->getPropReader();
+
+        $reflection = new \ReflectionClass($entity);
+        foreach ($reflection->getProperties() as $property) {
+            $array[$property->getName()] = $reader($entity, $property->getName());
+        }
+
+        return $array;
+    }
+
+    /**
+     * Returns the primary key values from the an array as array or directly when the
+     * entity has only one primary key.
+     *
+     * @todo, what if a primary key is a relation?
+     *
+     * @param array $entity
+     *
+     * @return array
+     */
+    public function getPKFromArray(array $entity)
+    {
+        $primaryKeyFields = $this->getEntityMap()->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $pk = null;
+
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $entity[$primaryKeyField->getName()];
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pks[] = $entity[$primaryKeyField->getName()];
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * @todo, to improve performance pre-compile this stuff
+     *
+     * @param object $entity
+     *
+     * @return array
+     */
+    public function getOriginPK($entity)
+    {
+        $entityMap = $this->getEntityMap();
+        $primaryKeyFields = $entityMap->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        $pk = null;
+
+        $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
+        if ($singlePk) {
+            $primaryKeyField = current($primaryKeyFields);
+            $pk = $entityMap->snapshotToProperty(
+                $lastKnownValues[$primaryKeyField->getName()],
+                $primaryKeyField->getName()
+            );
+        } else {
+            $pk = [];
+            foreach ($primaryKeyFields as $primaryKeyField) {
+                $pks[] = $entityMap->snapshotToProperty(
+                    $lastKnownValues[$primaryKeyField->getName()],
+                    $primaryKeyField->getName()
+                );
+            }
+        }
+
+        return $pk;
+    }
+
+    /**
+     * @todo, to improve performance pre-compile this stuff
+     *
+     * @param array $entities
+     *
+     * @return array
+     */
+    public function getOriginPKs(array $entities)
+    {
+        $pks = [];
+        $entityMap = $this->getEntityMap();
+        $primaryKeyFields = $entityMap->getPrimaryKeys();
+        $singlePk = 1 === count($primaryKeyFields);
+
+        foreach ($entities as $entity) {
+            $lastKnownValues = $this->getConfiguration()->getSession()->getLastKnownValues($entity, true);
+            $pk = [];
+
+            if ($singlePk) {
+                $primaryKeyField = current($primaryKeyFields);
+                $pk = $entityMap->snapshotToProperty(
+                    $lastKnownValues[$primaryKeyField->getName()],
+                    $primaryKeyField->getName()
+                );
+            } else {
+                foreach ($primaryKeyFields as $primaryKeyField) {
+                    $pks[] = $entityMap->snapshotToProperty(
+                        $lastKnownValues[$primaryKeyField->getName()],
+                        $primaryKeyField->getName()
+                    );
+                }
+            }
+
+            $pks[] = $pk;
+        }
+
+        return $pks;
+    }
+
+    /**
+     * @param object $entity
+     * @param bool $orCreate
+     *
+     * @return array
+     */
+    public function getLastKnownValues($entity, $orCreate = false)
+    {
+        return $this->getConfiguration()->getSession()->getLastKnownValues($entity, $orCreate);
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function hasKnownValues($entity)
+    {
+        return $this->getConfiguration()->getSession()->hasKnownValues($entity);
     }
 
     /**
@@ -349,6 +781,62 @@ abstract class EntityMap
      */
     public function initialize()
     {
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAutoIncrement()
+    {
+        return $this->autoIncrement;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasAutoIncrement()
+    {
+        return $this->autoIncrement;
+    }
+
+    /**
+     * @param boolean $autoIncrement
+     */
+    public function setAutoIncrement($autoIncrement)
+    {
+        $this->autoIncrement = $autoIncrement;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isReloadOnInsert()
+    {
+        return $this->reloadOnInsert;
+    }
+
+    /**
+     * @param boolean $reloadOnInsert
+     */
+    public function setReloadOnInsert($reloadOnInsert)
+    {
+        $this->reloadOnInsert = $reloadOnInsert;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isReloadOnUpdate()
+    {
+        return $this->reloadOnUpdate;
+    }
+
+    /**
+     * @param boolean $reloadOnUpdate
+     */
+    public function setReloadOnUpdate($reloadOnUpdate)
+    {
+        $this->reloadOnUpdate = $reloadOnUpdate;
     }
 
     /**
@@ -527,35 +1015,6 @@ abstract class EntityMap
     }
 
     /**
-     * Helper method which returns the primary key contained
-     * in the given Criteria object.
-     *
-     * @param  Criteria $criteria A Criteria.
-     *
-     * @return FieldMap If the Criteria object contains a primary key, or null if it doesn't.
-     *
-     * @throws \Propel\Runtime\Exception\RuntimeException
-     */
-    private function getPrimaryKey(Criteria $criteria)
-    {
-        // Assume all the keys are for the same entity.
-        $keys = $criteria->keys();
-        $key = $keys[0];
-        $entityName = $criteria->getEntityName($key);
-
-        $pk = null;
-
-        if (!empty($entityName)) {
-            $pks = $this->getConfiguration()->getEntityMap($entityName)->getPrimaryKeys();
-            if (!empty($pks)) {
-                $pk = array_shift($pks);
-            }
-        }
-
-        return $pk;
-    }
-
-    /**
      * @param object $instance
      *
      * @return \Closure
@@ -582,15 +1041,15 @@ abstract class EntityMap
      */
     public function getClassPropReader($className)
     {
-        if (!isset($this->classReader[$className])) {
-            $this->classReader[$className] = \Closure::bind(
-                function ($object, $prop) {
-                    return $object->$prop;
-                },
-                null,
-                $className
-            );
-        }
+//        if (!isset($this->classReader[$className])) {
+        $this->classReader[$className] = \Closure::bind(
+            function ($object, $prop) {
+                return $object->$prop;
+            },
+            null,
+            $className
+        );
+//        }
 
         return $this->classReader[$className];
     }
@@ -687,8 +1146,7 @@ abstract class EntityMap
         $implementationDetail = false,
         $fkEntity = null,
         $fkField = null
-    )
-    {
+    ) {
         $field = new FieldMap($name, $this);
         $field->setType($type);
         $field->setSize($size);
@@ -744,7 +1202,7 @@ abstract class EntityMap
             $name = FieldMap::normalizeName($name);
         }
 
-        if(isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)])) {
+        if (isset($this->fields[$name]) || isset($this->fieldsByLowercaseName[strtolower($name)])) {
             return true;
         }
         //Maybe it's phpName
@@ -768,7 +1226,8 @@ abstract class EntityMap
             $name = FieldMap::normalizeName($name);
         }
         if (!$this->hasField($name, false)) {
-            throw new FieldNotFoundException(sprintf('Cannot fetch field for undefined field: %s in %s.', $name, $this->getFullClassName()));
+            throw new FieldNotFoundException(sprintf('Cannot fetch field for undefined field: %s in %s.', $name,
+                $this->getFullClassName()));
         }
 
         if (isset($this->fields[$name])) {
@@ -812,8 +1271,7 @@ abstract class EntityMap
         $size = null,
         $defaultValue = null,
         $implementationDetail = false
-    )
-    {
+    ) {
         return $this->addField(
             $fieldName,
             $type,
@@ -848,8 +1306,7 @@ abstract class EntityMap
         $isNotNull = false,
         $size = 0,
         $defaultValue = null
-    )
-    {
+    ) {
         return $this->addField(
             $fieldName,
             $type,
@@ -884,8 +1341,7 @@ abstract class EntityMap
         $isNotNull = false,
         $size = 0,
         $defaultValue = null
-    )
-    {
+    ) {
         return $this->addField(
             $fieldName,
             $type,
@@ -938,28 +1394,6 @@ abstract class EntityMap
     }
 
     /**
-     * Build relations
-     * Relations are lazy loaded for performance reasons
-     * This method should be overridden by descendants
-     */
-    abstract public function buildRelations();
-
-    /**
-     * Build fields
-     */
-    abstract public function buildFields();
-
-    /**
-     * @return boolean
-     */
-    abstract public function hasAutoIncrement();
-
-    /**
-     * @return string[]
-     */
-    abstract public function getAutoIncrementFieldNames();
-
-    /**
      * Adds a RelationMap to the entity
      *
      * @param  string $name The relation name
@@ -981,8 +1415,7 @@ abstract class EntityMap
         $onDelete = null,
         $onUpdate = null,
         $pluralName = null
-    )
-    {
+    ) {
         $relation = new RelationMap($name);
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
@@ -1170,17 +1603,17 @@ abstract class EntityMap
      * Returns an array of field names.
      *
      * @param  string $type The type of fieldnames to return:
-     *                               One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME
-     *                               TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
+     *                               One of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME
+     *                               EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM
      *
      * @return array           A list of field names
      * @throws PropelException
      */
-    public function getFieldNames($type = EntityMap::TYPE_PHPNAME)
+    public function getFieldNames($type = EntityMap::TYPE_FIELDNAME)
     {
         if (!array_key_exists($type, $this->fieldNames)) {
             throw new PropelException(
-                'Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . $type . ' was given.'
+                'Method getFieldNames() expects the parameter \$type to be one of the class constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_COLNAME, EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM. ' . $type . ' was given.'
             );
         }
 
@@ -1191,9 +1624,9 @@ abstract class EntityMap
      * Translates a fieldname to another type
      *
      * @param  string $name field name
-     * @param  string $fromType One of the class type constants TableMap::TYPE_PHPNAME,
-     *                                   TableMap::TYPE_COLNAME TableMap::TYPE_FULLCOLNAME, TableMap::TYPE_FIELDNAME,
-     *                                   TableMap::TYPE_NUM
+     * @param  string $fromType One of the class type constants EntityMap::TYPE_PHPNAME,
+     *                                   EntityMap::TYPE_COLNAME EntityMap::TYPE_FULLCOLNAME, EntityMap::TYPE_FIELDNAME,
+     *                                   EntityMap::TYPE_NUM
      * @param  string $toType One of the class type constants
      *
      * @return string          translated name of the field.
@@ -1235,13 +1668,13 @@ abstract class EntityMap
      *
      * Using this method you can maintain SQL abstraction while using column aliases.
      * <code>
-     *        $c->addAlias("alias1", TableTableMap::TABLE_NAME);
-     *        $c->addJoin(TableTableMap::alias("alias1", TableTableMap::PRIMARY_KEY_COLUMN),
-     *        TableTableMap::PRIMARY_KEY_COLUMN);
+     *        $c->addAlias("alias1", TableEntityMap::TABLE_NAME);
+     *        $c->addJoin(TableEntityMap::alias("alias1", TableEntityMap::PRIMARY_KEY_COLUMN),
+     *        TableEntityMap::PRIMARY_KEY_COLUMN);
      * </code>
      *
      * @param  string $alias The alias for the current table.
-     * @param  string $column The column name for current table. (i.e. BookTableMap::COLUMN_NAME).
+     * @param  string $column The column name for current table. (i.e. BookEntityMap::COLUMN_NAME).
      *
      * @return string
      */

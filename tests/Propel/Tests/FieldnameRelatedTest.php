@@ -324,7 +324,7 @@ class FieldnameRelatedTest extends TestCaseFixtures
             $this->assertEquals(
                 $expected,
                 $result,
-                'expected was: ' . print_r($expected, 1) .
+                "type $type expected was: " . print_r($expected, 1) .
                 'but fromArray() returned ' . print_r($result, 1)
             );
         }

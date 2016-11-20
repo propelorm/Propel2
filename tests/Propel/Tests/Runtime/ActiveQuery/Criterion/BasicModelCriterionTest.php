@@ -37,10 +37,7 @@ class BasicModelCriterionTest extends BaseTestCase
         $this->assertEquals($expected, $params);
     }
 
-    /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
-     */
-    public function testAppendPsToThrowsExceptionWhenBindingAValueToAClauseWithNoQuestionMark()
+    public function testAppendPsToBindingAValueToAClauseWithNoQuestionMark()
     {
         $cton = new BasicModelCriterion(new Criteria(), 'A.COL = B.COL', 'A.COL', 'foo');
 

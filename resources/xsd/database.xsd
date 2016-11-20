@@ -583,7 +583,7 @@
             </xs:element>
 
         </xs:choice>
-        <xs:attribute name="name" type="table_name" use="required">
+        <xs:attribute name="tableName" type="table_name" >
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     The name of the table as it appears in the database.
@@ -597,10 +597,10 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="phpName" type="php_class" use="optional">
+        <xs:attribute name="name" type="php_class" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The name of the ActiveRecord class generated for this table. Defaults to a CamelCase converter. So by default, a table named 'foo_author' receives 'FooAuthor' as phpName.
+                    The name of the entity class generated for this table. Defaults to a CamelCase converter. So by default, a table named 'foo_author' receives 'FooAuthor' as phpName.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

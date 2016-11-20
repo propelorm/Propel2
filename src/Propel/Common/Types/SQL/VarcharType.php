@@ -9,7 +9,7 @@ class VarcharType extends AbstractType
 {
     public function databaseToProperty($value, FieldMap $fieldMap)
     {
-        return (string) $value;
+        return null === $value ? null : (string) $value;
     }
 
     public function propertyToDatabase($value, FieldMap $fieldMap)
@@ -18,6 +18,6 @@ class VarcharType extends AbstractType
             return $value;
         }
 
-        return (string) $value;
+        return null === $value ? null : (string) $value;
     }
 }

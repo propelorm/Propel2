@@ -31,7 +31,7 @@ class Field extends MappingModel
 {
     const DEFAULT_TYPE       = 'VARCHAR';
     const DEFAULT_VISIBILITY = 'public';
-    const CONSTANT_PREFIX    = 'COL_';
+    const CONSTANT_PREFIX    = 'FIELD_';
 
     public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
@@ -582,7 +582,7 @@ class Field extends MappingModel
     }
 
     /**
-     * Returns the full column constant name (e.g. EntityMapName::COL_COLUMN_NAME).
+     * Returns the full column constant name (e.g. EntityMapName::FIELD_COLUMN_NAME).
      *
      * @return string A column constant name for insertion into PHP code
      */
@@ -603,10 +603,10 @@ class Field extends MappingModel
     {
         // was it overridden in schema.xml ?
         if ($this->getEntityMapName()) {
-            return self::CONSTANT_PREFIX.strtoupper($this->getEntityMapName());
+            return self::CONSTANT_PREFIX . strtoupper($this->getEntityMapName());
         }
 
-        return self::CONSTANT_PREFIX.strtoupper($this->getName());
+        return self::CONSTANT_PREFIX . strtoupper(NamingTool::toUnderscore($this->getName()));
     }
 
     /**

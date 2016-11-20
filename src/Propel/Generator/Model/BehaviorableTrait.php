@@ -64,9 +64,11 @@ trait BehaviorableTrait
             if ($this->hasBehavior($behavior->getId()) && $behavior->allowMultiple()) {
                 // the user probably just forgot to specify the "id" attribute
                 if ($behavior->getId() === $behavior->getName()) {
-                    throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.', $behavior->getName()));
+                    throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.',
+                        $behavior->getName()));
                 } else { // or he copy-pasted it and forgot to update it.
-                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
+                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.',
+                        $behavior->getId()));
                 }
             }
 
@@ -81,7 +83,7 @@ trait BehaviorableTrait
         $behavior = new $class();
         if (!($behavior instanceof Behavior)) {
             throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
-                    $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
+                $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
         }
         $behavior->loadMapping($bdata);
 
@@ -103,7 +105,7 @@ trait BehaviorableTrait
     /**
      * check if the given behavior exists
      *
-     * @param  string  $id the behavior id
+     * @param  string $id the behavior id
      * @return boolean True if the behavior exists
      */
     public function hasBehavior($id)
@@ -114,8 +116,8 @@ trait BehaviorableTrait
     /**
      * Get behavior by id
      *
-     * @param  string   $id the behavior id
-     * @return Behavior a behavior object or null if the behavior doesn't exist
+     * @param  string $id the behavior id
+     * @return Behavior|null a behavior object or null if the behavior doesn't exist
      */
     public function getBehavior($id)
     {

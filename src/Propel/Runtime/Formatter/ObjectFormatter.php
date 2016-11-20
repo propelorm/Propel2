@@ -59,7 +59,7 @@ class ObjectFormatter extends AbstractFormatter
 
     public function getCollectionClassName()
     {
-        $collectionClass = $this->getClass().'Collection';
+        $collectionClass = $this->getEntityMap()->getFullClassName().'Collection';
         if (class_exists($collectionClass)) {
             return $collectionClass;
         }
@@ -159,7 +159,7 @@ class ObjectFormatter extends AbstractFormatter
 
         // fields added using withField()
         foreach ($this->getAsFields() as $alias => $clause) {
-            $obj->setVirtualField($alias, $row[$columnIndex]);
+            $obj->$alias = $row[$columnIndex];
             $columnIndex++;
         }
 

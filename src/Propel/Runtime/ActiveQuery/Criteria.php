@@ -994,12 +994,12 @@ class Criteria
                 $rightFieldName = $right;
             }
 
-            if (!$join->getRightEntityName()) {
-                $join->setRightEntityName($rightEntityName);
+            if (!$join->getRightTableName()) {
+                $join->setRightTableName($rightEntityName);
             }
 
-            if (!$join->getRightEntityAlias()) {
-                $join->setRightEntityAlias($rightEntityAlias);
+            if (!$join->getRightTableAlias()) {
+                $join->setRightTableAlias($rightEntityAlias);
             }
 
             $conditionClause = $leftEntityAlias ? $leftEntityAlias . '.' : ($leftEntityName ? $leftEntityName . '.' : '');
@@ -1843,11 +1843,34 @@ class Criteria
         $selectSql = $adapter->createSelectSqlPart($this);
         $this->replaceNames($selectSql);
 
-        if ($this->getPrimaryEntityName()) {
-            $fromClause[] = $this->getPrimaryEntityName();
-        } else {
-            if ($this instanceof BaseModelCriteria) {
-                $fromClause[] = $this->getEntityName();
+        //find FROM table name / $fromClause
+        foreach ($this->getSelectFields() as $select) {
+            // expect every column to be of "table.column" formation
+            // it could be a function:  e.g. MAX(books.price)
+            $tableName = null;
+            $parenPos = strrpos($select, '(');
+            $dotPos = strrpos($select, '.', ($parenPos !== false ? $parenPos : 0));
+            if (false !== $dotPos) {
+                if (false === $parenPos) { // table.column
+                    $tableName = substr($select, 0, $dotPos);
+                } else { // FUNC(table.column)
+                    // functions may contain qualifiers so only take the last
+                    // word as the table name.
+                    // COUNT(DISTINCT books.price)
+                    $tableName = substr($select, $parenPos + 1, $dotPos - ($parenPos + 1));
+                    $lastSpace = strrpos($tableName, ' ');
+                    if (false !== $lastSpace) { // COUNT(DISTINCT books.price)
+                        $tableName = substr($tableName, $lastSpace + 1);
+                    }
+                }
+                // is it a table alias?
+                $tableName2 = $this->getEntityForAlias($tableName);
+                if ($tableName2 !== null) {
+                    $fromClause[] = $tableName2 . ' ' . $tableName;
+                } else {
+                    $fromClause[] = $tableName;
+                }
+                break;
             }
         }
 
@@ -1857,11 +1880,23 @@ class Criteria
         foreach ($this->getJoins() as $join) {
             $join->setAdapter($adapter);
 
-            $fromClause[] = $join->getLeftTableWithAlias();
+            if (!$fromClause) {
+                $fromClause[] = $join->getLeftTableWithAlias();
+            }
             $joinEntities[] = $join->getRightTableWithAlias();
             $joinClauseString = $join->getClause($params);
             $this->replaceNames($joinClauseString);
             $joinClause[] = $joinClauseString;
+        }
+
+        if (!$fromClause) {
+            if ($this->getPrimaryEntityName()) {
+                $fromClause[] = $this->getPrimaryEntityName();
+            } else {
+                if ($this instanceof BaseModelCriteria && $this->getEntityName()) {
+                    $fromClause[] = $this->getEntityName();
+                }
+            }
         }
 
         // add the criteria to WHERE clause
@@ -1993,7 +2028,6 @@ class Criteria
 
         // quote if necessary and replace entity name -> real sql table name
         $fromClause = array_map(array($this, 'quoteTableIdentifierForEntity'), $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map(array($this, 'quoteTableIdentifierForEntity'), $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -2060,7 +2094,7 @@ class Criteria
         //find entity name and ask entityMap if quoting is enabled
         if (!$entityName && false !== ($pos = strpos($string, '.'))) {
             $entityName = substr($string, 0, $pos);
-            $rightSide = substr($string, $pos);
+            $rightSide = substr($string, $pos + 1);
         }
 
         $entityMapName = $entityName;
@@ -2073,7 +2107,11 @@ class Criteria
                 $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
                 if ($rightSide) {
                     $string = $entityMap->getFQTableName();
-                    $string .= $rightSide;
+                    if ($entityMap->hasField($rightSide)) {
+                        $string .= '.' . $entityMap->getField($rightSide)->getColumnName();
+                    } else {
+                        $string .= '.' . $rightSide;
+                    }
                 }
             }
         }
@@ -2096,11 +2134,10 @@ class Criteria
             $alias = substr($string, $pos + 1);
         }
 
-        $dbMap = $this->getConfiguration()->getDatabase($this->getDbName());
         $quoteIdentifier = false;
 
-        if ($dbMap->hasEntity($realEntityName)) {
-            $entityMap = $dbMap->getEntity($realEntityName);
+        if ($this->getConfiguration()->hasEntityMap($realEntityName)) {
+            $entityMap = $this->getConfiguration()->getEntityMap($realEntityName);
 
             $quoteIdentifier = $entityMap->isIdentifierQuotingEnabled();
 
@@ -2155,7 +2192,7 @@ class Criteria
                             $isInString = false;
                         }
                     } elseif (!$isInString) {
-                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+                        $parsedString .= preg_replace_callback('/([\w\\\]+(\.\w+)?)/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
                         $stringToTransform = '';
                         $stringQuotes = $char;
                         $isInString = true;
@@ -2177,7 +2214,7 @@ class Criteria
         }
 
         if ($stringToTransform) {
-            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", array($this, 'doReplaceNameInExpression'), $stringToTransform);
+            $parsedString .= preg_replace_callback('/([\w\\\]+(\.\w+)?)/', array($this, 'doReplaceNameInExpression'), $stringToTransform);
         }
 
         $sql = $parsedString;

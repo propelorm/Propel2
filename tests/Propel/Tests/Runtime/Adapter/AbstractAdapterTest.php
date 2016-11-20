@@ -27,11 +27,11 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::COL_ID);
+        $c1->addSelectColumn(BookTableMap::FIELD_ID);
         $db->turnSelectColumnsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
@@ -39,13 +39,13 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::COL_ID);
-        $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
+        $c1->addSelectColumn(BookTableMap::FIELD_ID);
+        $c1->addAsColumn('foo', BookTableMap::FIELD_TITLE);
         $db->turnSelectColumnsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::COL_ID);
-        $c2->addAsColumn('foo', BookTableMap::COL_TITLE);
+        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
+        $c2->addAsColumn('foo', BookTableMap::FIELD_TITLE);
         $this->assertTrue($c1->equals($c2));
     }
 
@@ -53,13 +53,13 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::COL_ID);
-        $c1->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c1->addSelectColumn(BookTableMap::FIELD_ID);
+        $c1->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $db->turnSelectColumnsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id_1', BookTableMap::COL_ID);
-        $c2->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c2->addAsColumn('book_id_1', BookTableMap::FIELD_ID);
+        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
@@ -67,13 +67,13 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c1 = new Criteria();
-        $c1->addSelectColumn(BookTableMap::COL_ID);
-        $c1->addSelectColumn(BookTableMap::COL_ID);
+        $c1->addSelectColumn(BookTableMap::FIELD_ID);
+        $c1->addSelectColumn(BookTableMap::FIELD_ID);
         $db->turnSelectColumnsToAliases($c1);
 
         $c2 = new Criteria();
-        $c2->addAsColumn('book_id', BookTableMap::COL_ID);
-        $c2->addAsColumn('book_id_1', BookTableMap::COL_ID);
+        $c2->addAsColumn('book_id', BookTableMap::FIELD_ID);
+        $c2->addAsColumn('book_id_1', BookTableMap::FIELD_ID);
         $this->assertTrue($c1->equals($c2));
     }
 
@@ -81,8 +81,8 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.id, book.id AS book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
@@ -93,8 +93,8 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addAsColumn('book_id', 'IF(1, '.BookTableMap::COL_ID.', '.BookTableMap::COL_TITLE.')');
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addAsColumn('book_id', 'IF(1, '.BookTableMap::FIELD_ID.', '.BookTableMap::FIELD_TITLE.')');
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.id, IF(1, book.id, book.title) AS book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
@@ -105,8 +105,8 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $c->setDistinct();
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
@@ -118,8 +118,8 @@ class AbstractAdapterTest extends TestCaseFixtures
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addAsColumn('book_id', BookTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addAsColumn('book_id', BookTableMap::FIELD_ID);
         $fromClause = array();
         $selectSql = $db->createSelectSqlPart($c, $fromClause, true);
         $this->assertEquals('SELECT book.id AS book_id_1, book.id AS book_id', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');

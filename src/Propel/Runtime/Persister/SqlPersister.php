@@ -123,7 +123,7 @@ class SqlPersister implements PersisterInterface
             if ($this->getSession()->isNew($entity)) {
                 $inserts[] = $entity;
             } else {
-                if ($this->getSession()->hasKnownValues($entity) && $changeSet = $this->getRepository()->buildChangeSet($entity)) {
+                if ($this->getSession()->hasKnownValues($entity) && $changeSet = $this->getEntityMap()->buildChangeSet($entity)) {
                     //only add to $updates if really changes are detected
                     $updates[] = $entity;
                 }
@@ -144,6 +144,7 @@ class SqlPersister implements PersisterInterface
         if ($inserts) {
             $this->doInsert($inserts);
         }
+
         if ($updates) {
             $this->doUpdates($updates);
         }
@@ -283,6 +284,12 @@ class SqlPersister implements PersisterInterface
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
+
+        if ($this->entityMap->isReloadOnInsert()) {
+            foreach ($inserts as $entity) {
+                $this->entityMap->load($entity);
+            }
+        }
     }
 
     protected function addCrossRelations($inserts, RelationMap $relation)
@@ -301,7 +308,7 @@ class SqlPersister implements PersisterInterface
                     $writer = $relation->getMiddleEntity()->getPropWriter();
 
                     foreach ($foreignItems as $foreignItem) {
-                        $object = $this->getConfiguration()->getRepository($relation->getMiddleEntity()->getFullClassName())->createObject();
+                        $object = $this->getConfiguration()->getEntityMap($relation->getMiddleEntity()->getFullClassName())->createObject();
 
                         $writer($object, $relation->getFieldMappingIncomingName(), $entity);
                         foreach ($relation->getFieldMappingOutgoing() as $relationName => $mapping ) {
@@ -313,8 +320,6 @@ class SqlPersister implements PersisterInterface
                 }
             }
         }
-
-//        $this->getSession()->commit();
     }
 
     /**
@@ -352,7 +357,7 @@ class SqlPersister implements PersisterInterface
 
         foreach($updates as $entity) {
             //regenerate changeSet since PRE_UPDATE/PRE_SAVE could have changed entities
-            $changeSet = $this->getRepository()->buildChangeSet($entity);
+            $changeSet = $this->getEntityMap()->buildChangeSet($entity);
             if ($changeSet) {
                 $params = [];
                 $sets = [];
@@ -362,7 +367,7 @@ class SqlPersister implements PersisterInterface
                     $params[] = $value;
                 }
 
-                $originValues = $this->getRepository()->getLastKnownValues($entity);
+                $originValues = $this->getEntityMap()->getLastKnownValues($entity);
 
                 foreach ($this->entityMap->getPrimaryKeys() as $pk) {
                     $fieldName = $pk->getName();
@@ -396,6 +401,12 @@ class SqlPersister implements PersisterInterface
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::UPDATE, $event);
+
+        if ($this->entityMap->isReloadOnInsert()) {
+            foreach ($updates as $entity) {
+                $this->entityMap->load($entity);
+            }
+        }
     }
 
     /**

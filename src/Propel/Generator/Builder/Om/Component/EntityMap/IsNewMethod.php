@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Builder\Om\Component\Repository;
+namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\codegen\model\PhpParameter;
 use Mandango\Mondator\Definition\Method;
@@ -23,6 +23,7 @@ class IsNewMethod extends BuildComponent
         $entityClassName = $this->getObjectClassName();
 
         $body = <<<EOF
+return \$this->getConfiguration()->getSession()->isNew(\$entity);
 \$id = spl_object_hash(\$entity);
 if (\$entity instanceof \Propel\Runtime\EntityProxyInterface) {
     if (isset(\$this->deletedIds[\$id])) {

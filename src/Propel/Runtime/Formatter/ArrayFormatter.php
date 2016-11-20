@@ -86,6 +86,11 @@ class ArrayFormatter extends AbstractFormatter
 
         return $result;
     }
+    
+    public function formatObject($object = null)
+    {
+        return $this->entityMap->toArray($object);
+    }
 
     public function isObjectFormatter()
     {
@@ -109,13 +114,13 @@ class ArrayFormatter extends AbstractFormatter
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
         $entityMap = $this->entityMap;
-        $mainKey = $entityMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
-        $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
+        $obj = $this->getSingleObjectFromRow($row, $this->entityName, $col);
+        $mainKey = $this->entityMap->getPK($obj);
 
-        if (!isset($this->alreadyHydratedObjects[$this->class][$mainKey])) {
-            $this->alreadyHydratedObjects[$this->class][$mainKey] = $obj->toArray();
+        if (!isset($this->alreadyHydratedObjects[$this->entityName][$mainKey])) {
+            $this->alreadyHydratedObjects[$this->entityName][$mainKey] = $obj->toArray();
             $mainObjectIsNew = true;
         }
 
@@ -156,7 +161,7 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             if ($modelWith->isPrimary()) {
-                $arrayToAugment = &$this->alreadyHydratedObjects[$this->class][$mainKey];
+                $arrayToAugment = &$this->alreadyHydratedObjects[$this->entityName][$mainKey];
             } else {
                 $arrayToAugment = &$hydrationChain[$modelWith->getLeftName()];
             }
@@ -179,12 +184,12 @@ class ArrayFormatter extends AbstractFormatter
 
         // fields added using withField()
         foreach ($this->getAsFields() as $alias => $clause) {
-            $this->alreadyHydratedObjects[$this->class][$mainKey][$alias] = $row[$col];
+            $this->alreadyHydratedObjects[$this->entityName][$mainKey][$alias] = $row[$col];
             $col++;
         }
 
         if ($mainObjectIsNew) {
-            return $this->alreadyHydratedObjects[$this->class][$mainKey];
+            return $this->alreadyHydratedObjects[$this->entityName][$mainKey];
         }
 
         // we still need to return a reference to something to avoid a warning

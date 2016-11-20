@@ -28,7 +28,7 @@ class RemoveTranslation extends BuildComponent
 if (!\$repository->getConfiguration()->getSession()->isNew(\$this)) {
     \$i18nRepository = {$this->getRepositoryGetter($i18nEntity)};
     \$i18nRepository->createQuery()
-            ->filterByPrimaryKey(array(\$this->getPrimaryKey(), \$locale))
+            ->filterByPrimaryKey(array(\$repository->getEntityMap()->getPrimaryKey(\$this), \$locale))
             ->delete(\$con);
     }
     if (isset(\$this->currentTranslations[\$locale])) {

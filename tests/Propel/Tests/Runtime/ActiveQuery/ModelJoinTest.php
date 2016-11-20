@@ -12,13 +12,13 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Map\BookOpinionTableMap;
-use Propel\Tests\Bookstore\Map\ReaderFavoriteTableMap;
+use Propel\Tests\Bookstore\Map\AuthorEntityMap;
+use Propel\Tests\Bookstore\Map\BookEntityMap;
+use Propel\Tests\Bookstore\Map\BookOpinionEntityMap;
+use Propel\Tests\Bookstore\Map\ReaderFavoriteEntityMap;
 
 use Propel\Runtime\ActiveQuery\ModelJoin;
-use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -28,66 +28,54 @@ use Propel\Tests\TestCaseFixtures;
  */
 class ModelJoinTest extends TestCaseFixtures
 {
-    public function testTableMap()
-    {
-        $join = new ModelJoin();
-        $this->assertNull($join->getTableMap(), 'getTableMap() returns null as long as no table map is set');
-
-        $tmap = new TableMap();
-        $tmap->foo = 'bar';
-
-        $join->setTableMap($tmap);
-        $this->assertEquals($tmap, $join->getTableMap(), 'getTableMap() returns the TableMap previously set by setTableMap()');
-    }
-
     public function testSetRelationMap()
     {
         $join = new ModelJoin();
         $this->assertNull($join->getRelationMap(), 'getRelationMap() returns null as long as no relation map is set');
-        $bookTable = BookTableMap::getTableMap();
-        $relationMap = $bookTable->getRelation('Author');
+        $bookTable = BookEntityMap::getEntityMap();
+        $relationMap = $bookTable->getRelation('author');
         $join->setRelationMap($relationMap);
         $this->assertEquals($relationMap, $join->getRelationMap(), 'getRelationMap() returns the RelationMap previously set by setRelationMap()');
     }
 
-    public function testSetRelationMapDefinesJoinColumns()
+    public function testSetRelationMapDefinesJoinFields()
     {
-        $bookTable = BookTableMap::getTableMap();
+        $bookTable = BookEntityMap::getEntityMap();
         $join = new ModelJoin();
-        $join->setTableMap($bookTable);
-        $join->setRelationMap($bookTable->getRelation('Author'));
-        $this->assertEquals(array(BookTableMap::COL_AUTHOR_ID), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns');
-        $this->assertEquals(array(AuthorTableMap::COL_ID), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns');
+        $join->setEntityMap($bookTable);
+        $join->setRelationMap($bookTable->getRelation('author'));
+        $this->assertEquals(array(BookEntityMap::FIELD_AUTHOR_ID), $join->getLeftFields(), 'setRelationMap() automatically sets the left fields');
+        $this->assertEquals(array(AuthorEntityMap::FIELD_ID), $join->getRightFields(), 'setRelationMap() automatically sets the right fields');
     }
 
     public function testSetRelationMapLeftAlias()
     {
-        $bookTable = BookTableMap::getTableMap();
+        $bookTable = BookEntityMap::getEntityMap();
         $join = new ModelJoin();
-        $join->setTableMap($bookTable);
-        $join->setRelationMap($bookTable->getRelation('Author'), 'b');
-        $this->assertEquals(array('b.author_id'), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns using the left table alias');
-        $this->assertEquals(array(AuthorTableMap::COL_ID), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns');
+        $join->setEntityMap($bookTable);
+        $join->setRelationMap($bookTable->getRelation('author'), 'b');
+        $this->assertEquals(array('b.authorId'), $join->getLeftFields(), 'setRelationMap() automatically sets the left fields using the left table alias');
+        $this->assertEquals(array(AuthorEntityMap::FIELD_ID), $join->getRightFields(), 'setRelationMap() automatically sets the right fields');
     }
 
     public function testSetRelationMapRightAlias()
     {
-        $bookTable = BookTableMap::getTableMap();
+        $bookTable = BookEntityMap::getEntityMap();
         $join = new ModelJoin();
-        $join->setTableMap($bookTable);
-        $join->setRelationMap($bookTable->getRelation('Author'), null, 'a');
-        $this->assertEquals(array(BookTableMap::COL_AUTHOR_ID), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns');
-        $this->assertEquals(array('a.id'), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns  using the right table alias');
+        $join->setEntityMap($bookTable);
+        $join->setRelationMap($bookTable->getRelation('author'), null, 'a');
+        $this->assertEquals(array(BookEntityMap::FIELD_AUTHOR_ID), $join->getLeftFields(), 'setRelationMap() automatically sets the left fields');
+        $this->assertEquals(array('a.id'), $join->getRightFields(), 'setRelationMap() automatically sets the right fields  using the right table alias');
     }
 
     public function testSetRelationMapComposite()
     {
-        $table = ReaderFavoriteTableMap::getTableMap();
+        $table = ReaderFavoriteEntityMap::getEntityMap();
         $join = new ModelJoin();
-        $join->setTableMap($table);
-        $join->setRelationMap($table->getRelation('BookOpinion'));
-        $this->assertEquals(array(ReaderFavoriteTableMap::COL_BOOK_ID, ReaderFavoriteTableMap::COL_READER_ID), $join->getLeftColumns(), 'setRelationMap() automatically sets the left columns for composite relationships');
-        $this->assertEquals(array(BookOpinionTableMap::COL_BOOK_ID, BookOpinionTableMap::COL_READER_ID), $join->getRightColumns(), 'setRelationMap() automatically sets the right columns for composite relationships');
+        $join->setEntityMap($table);
+        $join->setRelationMap($table->getRelation('bookOpinion'));
+        $this->assertEquals(array(ReaderFavoriteEntityMap::FIELD_BOOK_ID, ReaderFavoriteEntityMap::FIELD_READER_ID), $join->getLeftFields(), 'setRelationMap() automatically sets the left fields for composite relationships');
+        $this->assertEquals(array(BookOpinionEntityMap::FIELD_BOOK_ID, BookOpinionEntityMap::FIELD_READER_ID), $join->getRightFields(), 'setRelationMap() automatically sets the right fields for composite relationships');
     }
 
 }

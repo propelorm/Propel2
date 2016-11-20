@@ -10,23 +10,16 @@
 
 namespace Propel\Tests\Helpers\Namespaces;
 
-use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Bse class for tests on the schemas schema
  */
-abstract class NamespacesTestBase extends TestCase
+abstract class NamespacesTestBase extends TestCaseFixtures
 {
     protected function setUp()
     {
-        if (!file_exists(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php')) {
-            $this->markTestSkipped('You must build the namespaced project for this tests to run');
-        }
-    }
-
-    protected function tearDown()
-    {
-        Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+        parent::setUp();
+        require __DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php';
     }
 }

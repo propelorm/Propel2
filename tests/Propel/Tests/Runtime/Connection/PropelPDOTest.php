@@ -341,7 +341,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookTableMap::COL_ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
+        $c->add(BookTableMap::FIELD_ID, array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), Criteria::IN);
         $books = BookQuery::create(null, $c)->find($con);
         $expected = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.id IN (1,1,1,1,1,1,1,1,1,1,1,1)");
         $this->assertEquals($expected, $con->getLastExecutedQuery(), 'PropelPDO correctly replaces arguments in queries');
@@ -372,7 +372,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals('', $con->getLastExecutedQuery(), 'PropelPDO reinitializes the latest query when debug is set to false');
@@ -412,7 +412,7 @@ class PropelPDOTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
         $con->useDebug(false);
         $this->assertEquals(0, $con->getQueryCount(), 'PropelPDO does not update the query count when useLogging is false');
@@ -494,7 +494,7 @@ class PropelPDOTest extends BookstoreTestBase
         $con->beginTransaction();
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, 'Harry%s', Criteria::LIKE);
+        $c->add(BookTableMap::FIELD_TITLE, 'Harry%s', Criteria::LIKE);
 
         $books = BookQuery::create(null, $c)->find($con);
         $latestExecutedQuery = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.title LIKE 'Harry%s'");

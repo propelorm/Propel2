@@ -254,32 +254,12 @@ class I18nBehavior extends Behavior
 
                 $field = $entity->getField($fieldName);
                 $i18nEntity->addField(clone $field);
-
-                // validate behavior: move rules associated to the field
-                if ($entity->hasBehavior('validate')) {
-                    $validateBehavior = $entity->getBehavior('validate');
-                    $params = $validateBehavior->getParametersFromFieldName($fieldName);
-                    $i18nValidateParams = array_merge($i18nValidateParams, $params);
-                    $validateBehavior->removeParametersFromFieldName($fieldName);
-                }
                 // FIXME: also move FKs, and indices on this field
             }
 
             if ($entity->hasField($fieldName)) {
                 $entity->removeField($fieldName);
             }
-        }
-
-        // validate behavior
-        if (count($i18nValidateParams) > 0) {
-            $i18nVbehavior = new ValidateBehavior();
-            $i18nVbehavior->setName('validate');
-            $i18nVbehavior->setParameters($i18nValidateParams);
-            $i18nEntity->addBehavior($i18nVbehavior);
-
-            // current table must have almost 1 validation rule
-            $validate = $entity->getBehavior('validate');
-            $validate->addRuleOnPk();
         }
     }
 

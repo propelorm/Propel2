@@ -57,7 +57,7 @@ class ComputeMethod extends BuildComponent
         $body = "
 \$connection = \$this->getConfiguration()->getConnectionManager('{$foreignEntity->getDatabase()->getName()}')->getWriteConnection();
 \$stmt = \$connection->prepare('$sql');
-\$lastKnownValues = \$this->getLastKnownValues(\$entity, true);
+\$lastKnownValues = \$this->getEntityMap()->getLastKnownValues(\$entity, true);
 ";
 
 foreach ($bindings as $key => $binding) {

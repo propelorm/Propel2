@@ -83,7 +83,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         $this->assertEquals(0, $t2->countChildren(), 'countChildren() returns 0 for leafs');
         $this->assertEquals(2, $t3->countChildren(), 'countChildren() returns the number of children');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $this->assertEquals(1, $t3->countChildren($c), 'countChildren() accepts a criteria as parameter');
     }
 
@@ -102,7 +102,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         $this->assertEquals(0, $t2->countDescendants(), 'countDescendants() returns 0 for leafs');
         $this->assertEquals(4, $t3->countDescendants(), 'countDescendants() returns the number of descendants');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $this->assertEquals(1, $t3->countDescendants($c), 'countDescendants() accepts a criteria as parameter');
     }
 
@@ -223,7 +223,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         ];
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() returns a collection of children');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $children = $t3->getChildren($c);
         $expected = [
             't5' => [7, 12, 2],
@@ -326,7 +326,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         ];
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $descendants = $t3->getDescendants($c);
         $expected = [
             't5' => [7, 12, 2],
@@ -357,7 +357,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         ];
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3', Criteria::NOT_EQUAL);
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $t3->getBranch($c);
         unset($expected['t3']);
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
@@ -383,7 +383,7 @@ class NestedSetBehaviorActiveRecordTest extends TestCase
         ];
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't3');
         $ancestors = $t5->getAncestors($c);
         $expected = [
             't3' => [4, 13, 1],

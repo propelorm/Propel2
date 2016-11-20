@@ -2,6 +2,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
@@ -191,7 +192,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getModelShortName()
     {
-        return static::getShortName($this->entityName);
+        return NamingTool::shortClassName($this->entityName);
     }
 
     /**

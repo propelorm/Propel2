@@ -33,8 +33,6 @@ class ModelWith
 
     protected $relationName;
 
-    protected $relationMethod;
-
     protected $initMethod;
 
     protected $resetPartialMethod = '';
@@ -67,12 +65,10 @@ class ModelWith
         if ($relation->getType() == RelationMap::ONE_TO_MANY) {
             $this->isAdd = $this->isWithOneToMany = true;
             $this->relationName = $relation->getPluralName();
-            $this->relationMethod = 'add' . $relationName;
             $this->initMethod = 'init' . $this->relationName;
             $this->resetPartialMethod = 'resetPartial' . $this->relationName;
         } else {
             $this->relationName = $relationName;
-            $this->relationMethod = 'set' . $relationName;
         }
         $this->rightName = $join->hasRelationAlias() ? $join->getRelationAlias() : $relationName;
         if (!$join->isPrimary()) {
@@ -144,16 +140,6 @@ class ModelWith
         return $this->relationName;
     }
 
-//    public function setRelationMethod($relationMethod)
-//    {
-//        $this->relationMethod = $relationMethod;
-//    }
-//
-//    public function getRelationMethod()
-//    {
-//        return $this->relationMethod;
-//    }
-
     public function setInitMethod($initMethod)
     {
         $this->initMethod = $initMethod;
@@ -203,6 +189,6 @@ class ModelWith
 
     public function __toString()
     {
-        return sprintf('entityName: %s, relationName: %s, relationMethod: %s, leftName: %s, rightName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftName, $this->rightName);
+        return sprintf('entityName: %s, relationName: %s, leftName: %s, rightName: %s', $this->modelName, $this->relationName, $this->leftName, $this->rightName);
     }
 }

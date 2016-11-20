@@ -497,6 +497,11 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($this->getName($entity)) . ";
         } else {
             $ddl[] = $sqlType;
         }
+
+        if ($sqlType == "ENUM") {
+            $ddl[] = '("' . implode('","', $col->getValueSet()) . '")';
+        }
+
         $colinfo = $col->getVendorInfoForType($this->getDatabaseType());
         if ($colinfo->hasParameter('Charset')) {
             $ddl[] = 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));

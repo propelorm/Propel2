@@ -23,6 +23,7 @@ class DependencyGraph {
         $this->session = $session;
         $this->sorter = new GroupedStringSort([], true);
         $this->sorter->setCircularInterceptor([$this, 'interceptor']);
+        $this->sorter->setSameTypeExtraGrouping(true);
     }
 
     public function interceptor($nodes)
@@ -31,7 +32,7 @@ class DependencyGraph {
         foreach ($nodes as $node) {
             $entity = $this->session->getEntityById($node);
             $className = get_class($entity);
-            $pk = $this->session->getConfiguration()->getRepository($className)->getPrimaryKey($entity);
+            $pk = $this->session->getConfiguration()->getEntityMap($className)->getPrimaryKey($entity);
             $entities[] = [$className, $pk];
         }
 

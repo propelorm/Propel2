@@ -300,16 +300,16 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         }
 
         $arr1 = $m->toArray(TableMap::TYPE_COLNAME);
-        $this->assertNotNull($arr1[MediaTableMap::COL_COVER_IMAGE]);
-        $this->assertInternalType('resource', $arr1[MediaTableMap::COL_COVER_IMAGE]);
+        $this->assertNotNull($arr1[MediaTableMap::FIELD_COVER_IMAGE]);
+        $this->assertInternalType('resource', $arr1[MediaTableMap::FIELD_COVER_IMAGE]);
 
         $arr2 = $m->toArray(TableMap::TYPE_COLNAME, false);
-        $this->assertNull($arr2[MediaTableMap::COL_COVER_IMAGE]);
-        $this->assertNull($arr2[MediaTableMap::COL_EXCERPT]);
+        $this->assertNull($arr2[MediaTableMap::FIELD_COVER_IMAGE]);
+        $this->assertNull($arr2[MediaTableMap::FIELD_EXCERPT]);
 
         $diffKeys = array_keys(array_diff($arr1, $arr2));
 
-        $expectedDiff = array(MediaTableMap::COL_COVER_IMAGE, MediaTableMap::COL_EXCERPT);
+        $expectedDiff = array(MediaTableMap::FIELD_COVER_IMAGE, MediaTableMap::FIELD_EXCERPT);
 
         $this->assertEquals($expectedDiff, $diffKeys);
     }
@@ -322,7 +322,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         PublisherTableMap::clearInstancePool();
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, 'Don Juan');
+        $c->add(BookTableMap::FIELD_TITLE, 'Don Juan');
         $books = BookQuery::create(null, $c)->joinWith('Author')->find();
         $book = $books[0];
 

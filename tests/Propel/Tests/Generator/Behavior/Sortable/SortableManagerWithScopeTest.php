@@ -559,8 +559,8 @@ class SortableManagerWithScopeTest extends TestCase
 
         $repository->remove($t1);
 
-        $repository->load($t1_1);
-        $repository->load($t1_2);
+        $repository->getEntityMap()->load($t1_1);
+        $repository->getEntityMap()->load($t1_2);
         $this->assertEquals($t1_1->getRank(), 1);
         $this->assertEquals($t1_2->getRank(), 2);
     }
@@ -625,8 +625,8 @@ class SortableManagerWithScopeTest extends TestCase
 
         $repository->remove($t1);
 
-        $repository->load($t1_1);
-        $repository->load($t1_2);
+        $repository->getEntityMap()->load($t1_1);
+        $repository->getEntityMap()->load($t1_2);
         $this->assertEquals($t1_1->getRank(), 1);
         $this->assertEquals($t1_2->getRank(), 2);
     }

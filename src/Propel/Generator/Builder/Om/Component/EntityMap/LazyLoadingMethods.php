@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Propel\Generator\Builder\Om\Component\Repository;
+namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;

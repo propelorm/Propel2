@@ -364,6 +364,11 @@ DROP TABLE IF EXISTS %s CASCADE;
         } else {
             $ddl[] = $sqlType;
         }
+
+        if ($sqlType == "ENUM") {
+            $ddl[] = '("' . implode('","', $col->getValueSet()) . '")';
+        }
+        
         if ($default = $this->getFieldDefaultValueDDL($col)) {
             $ddl[] = $default;
         }

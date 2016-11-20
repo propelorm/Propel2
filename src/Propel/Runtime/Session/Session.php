@@ -162,7 +162,7 @@ class Session
     public function isChanged($entity)
     {
         if ($this->hasKnownValues($entity)) {
-            return !!$this->getConfiguration()->getRepositoryForEntity($entity)->buildChangeSet($entity);
+            return !!$this->getConfiguration()->getEntityMapForEntity($entity)->buildChangeSet($entity);
         }
 
         return false;
@@ -450,11 +450,11 @@ class Session
      */
     public function addToFirstLevelCache($entity)
     {
-        $repo = $this->getConfiguration()->getRepositoryForEntity($entity);
-        $prefix = $repo->getEntityMap()->getFullClassName();
+        $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
+        $prefix = $entityMap->getFullClassName();
 
-        $originPk = json_encode($repo->getOriginPK($entity));
-        $currentPk = json_encode($repo->getPK($entity));
+        $originPk = json_encode($entityMap->getOriginPK($entity));
+        $currentPk = json_encode($entityMap->getPK($entity));
 
         if (!isset($this->firstLevelCache[$prefix])) {
             $this->firstLevelCache[$prefix] = [];

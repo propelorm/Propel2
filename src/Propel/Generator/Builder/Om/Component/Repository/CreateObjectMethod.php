@@ -19,9 +19,7 @@ class CreateObjectMethod extends BuildComponent
         $entityClassName = $this->getObjectClassName();
 
         $body = <<<EOF
-\$object = new $entityClassName;
-
-return \$object;
+throw \InvalidArgumentException('Not Implemented. Will be removed.');
 EOF;
 
         $this->addMethod('createObject')

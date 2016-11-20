@@ -20,7 +20,7 @@ class GetPrimaryKeyMethod extends BuildComponent
     public function process()
     {
         $body = "
-return \$this->getRepository()->getPrimaryKey(\$this);";
+return \$this->getRepository()->getEntityMap()->getPrimaryKey(\$this);";
 
         $this->addMethod('getPrimaryKey')
             ->setDescription('Returns the current primary key')

@@ -1,10 +1,7 @@
 <?php
 
-namespace Propel\Generator\Builder\Om\Component\Repository;
+namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
-use gossi\codegen\model\PhpParameter;
-use Mandango\Mondator\Definition\Method;
-use Propel\Generator\Builder\ClassDefinition;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Builder\Om\Component\RepositoryTrait;
@@ -21,7 +18,7 @@ class GetPrimaryKeyMethod extends BuildComponent
 
     public function process()
     {
-        $body = '$reader = $this->getEntityMap()->getPropReader();' . PHP_EOL;
+        $body = '$reader = $this->getPropReader();' . PHP_EOL;
 
         $pks = $this->getEntity()->getPrimaryKey();
 

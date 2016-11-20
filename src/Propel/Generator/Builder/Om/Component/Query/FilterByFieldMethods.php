@@ -228,7 +228,7 @@ return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
      */
     protected function addFilterByArrayCol(Field $field)
     {
-        $singularPhpName = $field->getSingularName();
+        $singularPhpName = ucfirst($field->getSingularName());
         $fieldName = $field->getName();
         $variableName = $field->getCamelCaseName();
         $qualifiedName = $field->getFQConstantName();

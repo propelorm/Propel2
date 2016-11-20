@@ -4,6 +4,7 @@ namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\codegen\model\PhpConstant;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
+use Propel\Generator\Builder\Om\Component\CrossRelationTrait;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
 use Propel\Generator\Model\PropelTypes;
 
@@ -14,7 +15,7 @@ use Propel\Generator\Model\PropelTypes;
  */
 class GenericMutatorMethods extends BuildComponent
 {
-    use NamingTrait;
+    use CrossRelationTrait;
 
     public function process()
     {
@@ -40,38 +41,79 @@ The default key type is the column's EntityMap::$defaultKeyType.
 ";
 
         $body = "
-\$writer = \$this->getPropWriter();
-\$keys = \$this->getFieldNames(\$keyType);";
+if (\$keyType !== EntityMap::TYPE_FIELDNAME) {
+    \$data = \$this->translateFieldNames(\$data, \$keyType, EntityMap::TYPE_FIELDNAME);
+}
+        
+\$entity = \$entity ?: \$this->createObject();
+\$writer = \$this->getPropWriter();";
 
         foreach ($this->getEntity()->getFields() as $num => $field) {
-            $propertyName = $field->getName();
+            if ($field->isImplementationDetail()) {
+                continue;
+            }
+
+            $propertyName = var_export($field->getName(), true);
             $setter = 'set' . ucfirst($field->getName());
 
             $body .= "
-//$propertyName
-if (isset(\$arr[\$keys[$num]])) {
-    \$value = \$arr[\$keys[$num]];
+//{$field->getName()}
+if (isset(\$data[$propertyName])) {
+    \$value = \$data[$propertyName];
 } else {
     \$value = null;
 }
 if (method_exists(\$entity, '$setter') && is_callable([\$entity, '$setter'])) {
     \$entity->$setter(\$value);
 } else {
-    \$writer(\$entity, '$propertyName', \$value);
+    \$writer(\$entity, $propertyName, \$value);
 }
         ";
         }
 
+        foreach ($this->getEntity()->getRelations() as $relation) {
+            $propertyName = var_export($this->getRelationVarName($relation), true);
+            $foreignClassName = var_export($relation->getForeignEntity()->getFullClassName(), true);
+
+            $body .= "
+//relation:{{$relation->getName()}}
+if (isset(\$data[$propertyName])) {
+    \$object = \$this->getConfiguration()->getEntityMap($foreignClassName)->fromArray(\$data[$propertyName]);
+    \$writer(\$entity, $propertyName, \$object);
+}
+";
+        }
+
+        foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
+            foreach ($crossRelation->getRelations() as $relation) {
+                $propertyName = var_export($this->getCrossRelationRelationVarName($relation), true);
+                $foreignClassName = var_export($relation->getForeignEntity()->getFullClassName(), true);
+
+                $body .= "
+//cross-relation:{{$relation->getName()}}
+if (isset(\$data[$propertyName])) {
+    \$objects = [];
+    foreach (\$data[$propertyName] as \$object) {
+        if ('*RECURSION*' !== \$object) {
+            \$object = \$this->getConfiguration()->getEntityMap($foreignClassName)->fromArray(\$object);
+        }
+    }
+    \$writer(\$entity, $propertyName, \$objects);
+}
+";
+            }
+        }
+
+        $body .= "
+return \$entity;
+";
+
         $this->getDefinition()->declareUse('Propel\Runtime\Map\EntityMap');
-        $defaultKeyTypeConstant = new PhpConstant("EntityMap::$defaultKeyType");
 
         $this->addMethod('fromArray')
-            ->addSimpleParameter('entity', 'object')
-            ->addSimpleDescParameter('arr', 'array')
-            ->addSimpleDescParameter('keyType', 'string', "The type of fieldname the \$name is of:
-one of the class type constants EntityMap::TYPE_PHPNAME, EntityMap::TYPE_CAMELNAME
-EntityMap::TYPE_COLNAME, EntityMap::TYPE_FIELDNAME, EntityMap::TYPE_NUM.
-Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
+            ->addSimpleDescParameter('data', 'array')
+            ->addSimpleDescParameter('keyType', 'string', 'EntityMap::TYPE_*', PhpConstant::create("EntityMap::TYPE_FIELDNAME"))
+            ->addSimpleDescParameter('entity', 'object', 'pass an object if you dont want to create a new one.', null)
             ->setDescription($description)
             ->setBody($body)
         ;

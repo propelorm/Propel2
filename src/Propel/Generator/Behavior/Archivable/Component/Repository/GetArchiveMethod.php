@@ -33,7 +33,7 @@ if (\$session->isNew(\$entity)) {
 \$archiveRepository = \$this->getConfiguration()->getRepository('$archiveClassName');
 
 \$archive = \$archiveRepository->createQuery()
-    ->filterByPrimaryKey(\$this->getPrimaryKey(\$entity))
+    ->filterByPrimaryKey(\$this->getEntityMap()->getPrimaryKey(\$entity))
     ->findOne();
 
 return \$archive;

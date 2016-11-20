@@ -493,8 +493,8 @@ class SortableBehaviorActiveRecordWithScopeTest extends TestCaseActiveRecord
 
         $t1->delete();
 
-        $repository->load($t1_1);
-        $repository->load($t1_2);
+        $repository->getEntityMap()->load($t1_1);
+        $repository->getEntityMap()->load($t1_2);
         $this->assertEquals($t1_1->getRank(), 1);
         $this->assertEquals($t1_2->getRank(), 2);
     }
@@ -555,8 +555,8 @@ class SortableBehaviorActiveRecordWithScopeTest extends TestCaseActiveRecord
 
         $t1->delete();
 
-        $repository->load($t1_1);
-        $repository->load($t1_2);
+        $repository->getEntityMap()->load($t1_1);
+        $repository->getEntityMap()->load($t1_2);
         $this->assertEquals($t1_1->getRank(), 1);
         $this->assertEquals($t1_2->getRank(), 2);
     }

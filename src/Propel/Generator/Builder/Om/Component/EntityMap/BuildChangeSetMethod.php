@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Propel\Generator\Builder\Om\Component\Repository;
+namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use gossi\docblock\tags\TagFactory;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
@@ -23,8 +23,8 @@ class BuildChangeSetMethod extends BuildComponent
         $body = '
 $changes = [];
 $changed = false;
-$reader = $this->getEntityMap()->getPropReader();
-$isset = $this->getEntityMap()->getPropIsset();
+$reader = $this->getPropReader();
+$isset = $this->getPropIsset();
 $id = spl_object_hash($entity);
 $originValues = $this->getLastKnownValues($id);
 ';
@@ -57,7 +57,7 @@ if (false === \$lazyLastLoaded && false === \$lazyNowLoaded) {
 
             $body .= "
 if (null === \$different) {
-    \$currentValue = \$this->getEntityMap()->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');
+    \$currentValue = \$this->propertyToSnapshot(\$reader(\$entity, '$fieldName'), '$fieldName');
     if (!isset(\$originValues['$fieldName'])) {
         \$lastValue = null;
     } else {
@@ -66,7 +66,7 @@ if (null === \$different) {
     \$different = \$lastValue !== \$currentValue;
 }
 if (\$different) {
-    \$changes['$fieldName'] = \$this->getEntityMap()->propertyToDatabase(\$reader(\$entity, '$fieldName'), '$fieldName');
+    \$changes['$fieldName'] = \$this->propertyToDatabase(\$reader(\$entity, '$fieldName'), '$fieldName');
     \$changed = true;
 }
 ";

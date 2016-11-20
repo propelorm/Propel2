@@ -124,9 +124,9 @@ foreach ($event->getEntitiesToInsert() as $entity) {
 
 //updates
 foreach ($event->getEntitiesToUpdate() as $entity) {
-    $slugModified = $this->isFieldModified($entity, $slugField);
+    $slugModified = $this->getEntityMap()->isFieldModified($entity, $slugField);
     {{#notPermanent}}
-    if ($this->isFieldModified($entity, $primaryStringField) && !$slugModified) {
+    if ($this->getEntityMap()->isFieldModified($entity, $primaryStringField) && !$slugModified) {
         $entity->setSlug($createSlug($entity));
     }
     {{/notPermanent}}

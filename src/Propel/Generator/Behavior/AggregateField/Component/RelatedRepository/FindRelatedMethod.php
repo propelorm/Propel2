@@ -42,7 +42,7 @@ class FindRelatedMethod extends BuildComponent
 \$query = \$repository->createQuery();
 \$this->afCache{$variableName} = \$query
     ->use{$refRelationName}Query()
-        ->filterByPrimaryKeys(\$this->getOriginPKs(\$event->getEntities()))
+        ->filterByPrimaryKeys(\$this->getEntityMap()->getOriginPKs(\$event->getEntities()))
     ->endUse()
     ->find();
 ";

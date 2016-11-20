@@ -25,21 +25,44 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 abstract class AbstractFormatter
 {
+    /**
+     * @var string
+     */
     protected $dbName;
 
+    /**
+     * @var string
+     */
     protected $entityName;
 
+    /**
+     * @var EntityMap
+     */
     protected $entityMap;
 
-    /** @var ModelWith[] $with */
+    /**
+     * @var ModelWith[]
+     */
     protected $with;
 
+    /**
+     * @var array
+     */
     protected $asFields;
 
+    /**
+     * @var bool
+     */
     protected $hasLimit;
 
+    /**
+     * @var object[]
+     */
     protected $currentObjects;
 
+    /**
+     * @var string
+     */
     protected $collectionName;
 
     /**
@@ -145,6 +168,18 @@ abstract class AbstractFormatter
         return $this->asFields;
     }
 
+    /**
+     * Formats an ActiveRecord object
+     *
+     * @param object $object the object to format
+     *
+     * @return object The original record
+     */
+    public function formatObject($object = null)
+    {
+        return $object;
+    }
+
     public function setHasLimit($hasLimit = false)
     {
         $this->hasLimit = $hasLimit;
@@ -164,7 +199,7 @@ abstract class AbstractFormatter
     {
         $collection = new ObjectCollection();
 
-        if ($entityName = $this->getCollectionEntityNameName()) {
+        if ($entityName = $this->getCollectionClassName()) {
             /** @var Collection $collection */
             $collection = new $entityName();
             $collection->setModel($this->entityName);
@@ -174,8 +209,12 @@ abstract class AbstractFormatter
         return $collection;
     }
 
-    public function getCollectionEntityNameName()
+    /**
+     * @return string
+     */
+    public function getCollectionClassName()
     {
+        return '';
     }
 
     abstract public function format(DataFetcherInterface $dataFetcher = null);

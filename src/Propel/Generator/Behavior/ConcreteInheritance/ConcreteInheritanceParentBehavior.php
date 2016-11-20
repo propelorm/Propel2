@@ -84,7 +84,7 @@ if (!\$entity->{$this->getFieldGetter()}()) {
 \$childRepository = \$this->getConfiguration()->getRepository(\$entity->{$this->getFieldGetter()}());
 \$childObject = \$childRepository
     ->createQuery()
-    ->findPk(\$this->getPrimaryKey(\$entity));
+    ->findPk(\$this->getEntityMap()->getPrimaryKey(\$entity));
 return \$childObject;
 ";
         $getChildObject = PhpMethod::create('getChildObject')

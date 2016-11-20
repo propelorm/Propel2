@@ -151,10 +151,7 @@ class BookstoreDataPopulator
         $m1 = new Media();
         $m1->setBook($td);
         $m1->setCoverImage(file_get_contents($blob_path));
-        // CLOB is broken in PDO OCI, see http://pecl.php.net/bugs/bug.php?id=7943
-        if (get_class(Configuration::getCurrentConfiguration()->getAdapter('bookstore')) != "OracleAdapter") {
-            $m1->setExcerpt(file_get_contents($clob_path));
-        }
+        $m1->setExcerpt(file_get_contents($clob_path));
         $m1->save();
 
         // Add book list records
@@ -190,8 +187,8 @@ class BookstoreDataPopulator
         $role->setName("Admin");
 
         $bempacct = new BookstoreEmployeeAccount();
-        $bempacct->setBookstoreEmployee($bemp1);
-        $bempacct->setAcctAccessRole($role);
+        $bempacct->setEmployee($bemp1);
+        $bempacct->setRole($role);
         $bempacct->setLogin("john");
         $bempacct->setPassword("johnp4ss");
         $bempacct->save();
@@ -263,8 +260,10 @@ class BookstoreDataPopulator
         $rf->save();
     }
 
-    public static function depopulate(Configuration $configuration)
+    public static function depopulate()
     {
+        $configuration = Configuration::getCurrentConfiguration();
+
         $entityClasses = array(
             'Propel\Tests\Bookstore\Author',
             'Propel\Tests\Bookstore\Bookstore',

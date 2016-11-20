@@ -43,15 +43,15 @@ class SortableBehaviorQueryTest extends TestCase
         $this->assertTrue(\SortableEntity11Query::create()->orderByRank() instanceof \SortableEntity11Query, 'orderByRank() returns the current query object');
         // default order
         $query = \SortableEntity11Query::create()->orderByRank();
-        $expectedQuery = \SortableEntity11Query::create()->addAscendingOrderByField(\Map\SortableEntity11EntityMap::COL_SORTABLE_RANK);
+        $expectedQuery = \SortableEntity11Query::create()->addAscendingOrderByField(\Map\SortableEntity11EntityMap::FIELD_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank asc');
         // asc order
         $query = \SortableEntity11Query::create()->orderByRank(Criteria::ASC);
-        $expectedQuery = \SortableEntity11Query::create()->addAscendingOrderByField(\Map\SortableEntity11EntityMap::COL_SORTABLE_RANK);
+        $expectedQuery = \SortableEntity11Query::create()->addAscendingOrderByField(\Map\SortableEntity11EntityMap::FIELD_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
         // desc order
         $query = \SortableEntity11Query::create()->orderByRank(Criteria::DESC);
-        $expectedQuery = \SortableEntity11Query::create()->addDescendingOrderByField(\Map\SortableEntity11EntityMap::COL_SORTABLE_RANK);
+        $expectedQuery = \SortableEntity11Query::create()->addDescendingOrderByField(\Map\SortableEntity11EntityMap::FIELD_SORTABLE_RANK);
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 

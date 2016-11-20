@@ -44,7 +44,7 @@ class PreSave extends BuildComponent
 foreach (\$event->getEntities() as \$entity) {
 
     if (!\$entity->$getter()) {
-        \$entity->$setter(\$parentRepository->createObject());
+        \$entity->$setter(\$parentRepository->getEntityMap()->createObject());
     }
 
     \$parent = \$entity->$getter();

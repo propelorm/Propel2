@@ -1,6 +1,6 @@
 <?php
 
-namespace Propel\Generator\Builder\Om\Component\Repository;
+namespace Propel\Generator\Builder\Om\Component\EntityMap;
 
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\NamingTrait;
@@ -34,7 +34,7 @@ class CreateProxyMethod extends BuildComponent
 
         $body = <<<EOF
 \$reflection = new \ReflectionClass('$proxyClass');
-\$unset = \$this->getEntityMap()->getPropUnsetter();
+\$unset = \$this->getPropUnsetter();
 \$object = \$reflection->newInstanceWithoutConstructor();
 \$object->_repository = \$this;
 $unsetLazyLoadProperties

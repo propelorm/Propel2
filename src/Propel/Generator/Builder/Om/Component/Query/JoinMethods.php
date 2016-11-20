@@ -71,7 +71,7 @@ if (\$previousJoin = \$this->getPreviousJoin()) {
 
 // add the ModelJoin to the current object
 if (\$relationAlias) {
-    \$this->addAlias(\$relationAlias, \$relationMap->getRightEntity()->getName());
+    \$this->addAlias(\$relationAlias, \$relationMap->getRightEntity()->getFullClassName());
     \$this->addJoinObject(\$join, \$relationAlias);
 } else {
     \$this->addJoinObject(\$join, '$relationName');

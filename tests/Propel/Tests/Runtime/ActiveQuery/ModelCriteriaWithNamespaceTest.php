@@ -10,6 +10,10 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Foo\Bar\NamespacedBook;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Configuration;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -42,16 +46,16 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
      */
     public function testReplaceNamesWithNamespaces($origClause, $columnPhpName = false, $modifiedClause)
     {
-        $c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', 'Foo\\Bar\\NamespacedBook');
-        $this->doTestReplaceNames($c, \Foo\Bar\Map\NamespacedBookTableMap::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
+        $c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', NamespacedBook::class);
+        $this->doTestReplaceNames($c, Configuration::getCurrentConfiguration()->getEntityMap(NamespacedBook::class),  $origClause, $columnPhpName = false, $modifiedClause);
     }
 
-    public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
+    public function doTestReplaceNames(Criteria $c, EntityMap $entityMap, $origClause, $columnPhpName = false, $modifiedClause)
     {
         $c->replaceNames($origClause);
-        $columns = $c->replacedColumns;
+        $columns = $c->replacedFields;
         if ($columnPhpName) {
-            $this->assertEquals(array($tableMap->getColumnByPhpName($columnPhpName)), $columns);
+            $this->assertEquals(array($entityMap->getField($columnPhpName)), $columns);
         }
         $this->assertEquals($modifiedClause, $origClause);
     }

@@ -82,7 +82,7 @@ if (!isset(\$this->currentTranslations[\$locale])) {
     } else {
         \$i18nRepository = {$this->getRepositoryGetter($behavior->getI18nEntity())};
         \$translation = \$i18nRepository->createQuery()
-            ->filterByPrimaryKey(array(\$this->getPrimaryKey(), \$locale))
+            ->filterByPrimaryKey(array(\$repository->getEntityMap()->getPrimaryKey(\$this), \$locale))
             ->findOneOrCreate(\$con);
         \$this->currentTranslations[\$locale] = \$translation;
     }

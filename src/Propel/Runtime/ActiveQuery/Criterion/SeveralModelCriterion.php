@@ -26,7 +26,7 @@ class SeveralModelCriterion extends AbstractModelCriterion
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
         if (!is_array($this->value)) {
-            throw new InvalidValueException('Only array values are supported by this Criterion');
+            throw new InvalidValueException('Only array values are supported by this Criterion. Got ' . var_export($this->value, true));
         }
         $clause = $this->clause;
         foreach ($this->value as $value) {

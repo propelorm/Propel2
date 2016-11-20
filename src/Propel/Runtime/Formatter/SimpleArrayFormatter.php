@@ -54,6 +54,11 @@ class SimpleArrayFormatter extends AbstractFormatter
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
+    public function formatObject($object = null)
+    {
+        return $this->entityMap->toArray($object);
+    }
+
     public function formatOne(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();

@@ -48,7 +48,7 @@ Defaults to EntityMap::$defaultKeyType.", $defaultKeyTypeConstant)
     {
         $body = "
 {$this->getRepositoryAssignment()}
-return \$repository->getEntityMap()->fromArray(\$this, \$arr, \$keyType);";
+return \$repository->getEntityMap()->fromArray(\$arr, \$keyType, \$this);";
 
         $defaultKeyType = $this->getBuilder()->getDefaultKeyType();
 

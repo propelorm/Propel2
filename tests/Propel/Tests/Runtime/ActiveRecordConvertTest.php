@@ -10,6 +10,8 @@
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
+use Propel\Runtime\Configuration;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
@@ -22,7 +24,15 @@ use Propel\Tests\TestCaseFixtures;
  */
 class ActiveRecordConvertTest extends TestCaseFixtures
 {
+    /**
+     * @var Book
+     */
     private $book;
+
+    /**
+     * @var EntityMap
+     */
+    private $bookEntityMap;
 
     protected function setUp()
     {
@@ -42,6 +52,8 @@ class ActiveRecordConvertTest extends TestCaseFixtures
         $book->setAuthor($author);
         $book->setPublisher($publisher);
         $this->book = $book;
+
+        $this->bookEntityMap = Configuration::getCurrentConfiguration()->getEntityMapForEntity($this->book);
     }
 
     public function toXmlDataProvider()
@@ -49,29 +61,27 @@ class ActiveRecordConvertTest extends TestCaseFixtures
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-  <Id>9012</Id>
-  <Title><![CDATA[Don Juan]]></Title>
+  <id>9012</id>
+  <title><![CDATA[Don Juan]]></title>
   <ISBN><![CDATA[0140422161]]></ISBN>
-  <Price>12.99</Price>
-  <PublisherId>1234</PublisherId>
-  <AuthorId>5678</AuthorId>
-  <Publisher>
-    <Id>1234</Id>
-    <Name><![CDATA[Penguin]]></Name>
-    <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
-    </Books>
-  </Publisher>
-  <Author>
-    <Id>5678</Id>
-    <FirstName><![CDATA[George]]></FirstName>
-    <LastName><![CDATA[Byron]]></LastName>
-    <Email></Email>
-    <Age></Age>
-    <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
-    </Books>
-  </Author>
+  <price>12.99</price>
+  <publisher>
+    <id>1234</id>
+    <name><![CDATA[Penguin]]></name>
+    <books>
+      <book><![CDATA[*RECURSION*]]></book>
+    </books>
+  </publisher>
+  <author>
+    <id>5678</id>
+    <firstName><![CDATA[George]]></firstName>
+    <lastName><![CDATA[Byron]]></lastName>
+    <email></email>
+    <age></age>
+    <books>
+      <book><![CDATA[*RECURSION*]]></book>
+    </books>
+  </author>
 </data>
 
 EOF;
@@ -84,7 +94,7 @@ EOF;
      */
     public function testToXML($expected)
     {
-        $this->assertEquals($expected, $this->book->toXML());
+        $this->assertEquals($expected, $this->bookEntityMap->toXML($this->book));
     }
 
     /**
@@ -92,42 +102,36 @@ EOF;
      */
     public function testFromXML($expected)
     {
-        $book = new Book();
-        $book->fromXML($expected);
-        // FIXME: fromArray() doesn't take related objects into account
-        $book->resetModified();
-        $author = $this->book->getAuthor();
-        $this->book->setAuthor(null);
-        $this->book->setAuthorId($author->getId());
-        $publisher = $this->book->getPublisher();
-        $this->book->setPublisher(null);
-        $this->book->setPublisherId($publisher->getId());
-        $this->book->resetModified();
+        /** @var Book $book */
+        $book = $this->bookEntityMap->fromXML($expected);
 
-        $this->assertEquals($this->book, $book);
+        $this->assertEquals($this->book->getTitle(), $book->getTitle());
+        $this->assertEquals($this->book->getId(), $book->getId());
+        $this->assertEquals($this->book->getPublisher()->getId(), $book->getPublisher()->getId());
+        $this->assertEquals($this->book->getPublisher()->getName(), $book->getPublisher()->getName());
+        $this->assertEquals($this->book->getAuthor()->getId(), $book->getAuthor()->getId());
+        $this->assertEquals($this->book->getAuthor()->getLastName(), $book->getAuthor()->getLastName());
     }
 
     public function toYamlDataProvider()
     {
         $expected = <<<EOF
-Id: 9012
-Title: 'Don Juan'
+id: 9012
+title: 'Don Juan'
 ISBN: '0140422161'
-Price: 12.99
-PublisherId: 1234
-AuthorId: 5678
-Publisher:
-    Id: 1234
-    Name: Penguin
-    Books:
+price: 12.99
+publisher:
+    id: 1234
+    name: Penguin
+    books:
         - '*RECURSION*'
-Author:
-    Id: 5678
-    FirstName: George
-    LastName: Byron
-    Email: null
-    Age: null
-    Books:
+author:
+    id: 5678
+    firstName: George
+    lastName: Byron
+    email: null
+    age: null
+    books:
         - '*RECURSION*'
 
 EOF;
@@ -140,7 +144,7 @@ EOF;
      */
     public function testToYAML($expected)
     {
-        $this->assertEquals($expected, $this->book->toYAML());
+        $this->assertEquals($expected, $this->bookEntityMap->toYAML($this->book));
     }
 
     /**
@@ -148,25 +152,20 @@ EOF;
      */
     public function testFromYAML($expected)
     {
-        $book = new Book();
-        $book->fromYAML($expected);
-        // FIXME: fromArray() doesn't take related objects into account
-        $book->resetModified();
-        $author = $this->book->getAuthor();
-        $this->book->setAuthor(null);
-        $this->book->setAuthorId($author->getId());
-        $publisher = $this->book->getPublisher();
-        $this->book->setPublisher(null);
-        $this->book->setPublisherId($publisher->getId());
-        $this->book->resetModified();
+        $book = $this->bookEntityMap->fromYAML($expected);
 
-        $this->assertEquals($this->book, $book);
+        $this->assertEquals($this->book->getTitle(), $book->getTitle());
+        $this->assertEquals($this->book->getId(), $book->getId());
+        $this->assertEquals($this->book->getPublisher()->getId(), $book->getPublisher()->getId());
+        $this->assertEquals($this->book->getPublisher()->getName(), $book->getPublisher()->getName());
+        $this->assertEquals($this->book->getAuthor()->getId(), $book->getAuthor()->getId());
+        $this->assertEquals($this->book->getAuthor()->getLastName(), $book->getAuthor()->getLastName());
     }
 
     public function toJsonDataProvider()
     {
         $expected = <<<EOF
-{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":["*RECURSION*"]},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":["*RECURSION*"]}}
+{"id":9012,"title":"Don Juan","ISBN":"0140422161","price":12.99,"publisher":{"id":1234,"name":"Penguin","books":["*RECURSION*"]},"author":{"id":5678,"firstName":"George","lastName":"Byron","email":null,"age":null,"books":["*RECURSION*"]}}
 EOF;
 
         return array(array($expected));
@@ -177,7 +176,7 @@ EOF;
      */
     public function testToJSON($expected)
     {
-        $this->assertEquals($expected, $this->book->toJSON());
+        $this->assertEquals($expected, $this->bookEntityMap->toJSON($this->book));
     }
 
     /**
@@ -185,24 +184,19 @@ EOF;
      */
     public function testfromJSON($expected)
     {
-        $book = new Book();
-        $book->fromJSON($expected);
-        // FIXME: fromArray() doesn't take related objects into account
-        $book->resetModified();
-        $author = $this->book->getAuthor();
-        $this->book->setAuthor(null);
-        $this->book->setAuthorId($author->getId());
-        $publisher = $this->book->getPublisher();
-        $this->book->setPublisher(null);
-        $this->book->setPublisherId($publisher->getId());
-        $this->book->resetModified();
+        $book = $this->bookEntityMap->fromJSON($expected);
 
-        $this->assertEquals($this->book, $book);
+        $this->assertEquals($this->book->getTitle(), $book->getTitle());
+        $this->assertEquals($this->book->getId(), $book->getId());
+        $this->assertEquals($this->book->getPublisher()->getId(), $book->getPublisher()->getId());
+        $this->assertEquals($this->book->getPublisher()->getName(), $book->getPublisher()->getName());
+        $this->assertEquals($this->book->getAuthor()->getId(), $book->getAuthor()->getId());
+        $this->assertEquals($this->book->getAuthor()->getLastName(), $book->getAuthor()->getLastName());
     }
 
     public function toCsvDataProvider()
     {
-        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
+        $expected = "id,title,ISBN,price,publisher,author\r\n9012,Don Juan,0140422161,12.99,\"a:3:{s:2:\\\"id\\\";i:1234;s:4:\\\"name\\\";s:7:\\\"Penguin\\\";s:5:\\\"books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"id\\\";i:5678;s:9:\\\"firstName\\\";s:6:\\\"George\\\";s:8:\\\"lastName\\\";s:5:\\\"Byron\\\";s:5:\\\"email\\\";N;s:3:\\\"age\\\";N;s:5:\\\"books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
 
         return array(array($expected));
     }
@@ -212,7 +206,7 @@ EOF;
      */
     public function testToCSV($expected)
     {
-        $this->assertEquals($expected, $this->book->toCSV());
+        $this->assertEquals($expected, $this->bookEntityMap->toCSV($this->book));
     }
 
     /**
@@ -220,19 +214,14 @@ EOF;
      */
     public function testfromCSV($expected)
     {
-        $book = new Book();
-        $book->fromCSV($expected);
-        // FIXME: fromArray() doesn't take related objects into account
-        $book->resetModified();
-        $author = $this->book->getAuthor();
-        $this->book->setAuthor(null);
-        $this->book->setAuthorId($author->getId());
-        $publisher = $this->book->getPublisher();
-        $this->book->setPublisher(null);
-        $this->book->setPublisherId($publisher->getId());
-        $this->book->resetModified();
+        $book = $this->bookEntityMap->fromCSV($expected);
 
-        $this->assertEquals($this->book, $book);
+        $this->assertEquals($this->book->getTitle(), $book->getTitle());
+        $this->assertEquals($this->book->getId(), $book->getId());
+        $this->assertEquals($this->book->getPublisher()->getId(), $book->getPublisher()->getId());
+        $this->assertEquals($this->book->getPublisher()->getName(), $book->getPublisher()->getName());
+        $this->assertEquals($this->book->getAuthor()->getId(), $book->getAuthor()->getId());
+        $this->assertEquals($this->book->getAuthor()->getLastName(), $book->getAuthor()->getLastName());
     }
 
 }

@@ -32,20 +32,12 @@ class FilterByNormalizedListScopeMethod extends BuildComponent
         if ($behavior->hasMultipleScopes()) {
             foreach ($behavior->getScopes() as $idx => $scope) {
                 $body .= "
-//FIXME: this isn't a correct behavior: null should not be treated as string
-if (null === \$scope[$idx]) {
-    \$scope[$idx] = 'NULL';
-}
-\$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
+\$this->\$method({$this->getEntityMapClassName()}::".$this->getEntity()->getField($scope)->getConstantName().", \$scope[$idx], Criteria::EQUAL);
 ";
             }
         } else {
             $body .= "
-//FIXME: this isn't a correct behavior: null should not be treated as string
-if (null === \$scope) {
-    \$scope = 'NULL';
-}
-\$this->\$method({$this->getEntityMapClassName()}::".Field::CONSTANT_PREFIX.strtoupper(current($behavior->getScopes())).", \$scope, Criteria::EQUAL);
+\$this->\$method({$this->getEntityMapClassName()}::".$this->getEntity()->getField(current($behavior->getScopes()))->getConstantName().", \$scope, Criteria::EQUAL);
 ";
         }
 

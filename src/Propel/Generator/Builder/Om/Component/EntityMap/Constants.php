@@ -40,8 +40,6 @@ class Constants extends BuildComponent
         $constant->setValue($entity->getFullClassName());
         $this->getDefinition()->setConstant($constant);
 
-
-
         if ($this->getEntity()->hasSchema()) {
             $constant = new PhpConstant('SCHEMA_NAME');
             $constant->setDescription("The schema name of the underlying database this table belongs to.");

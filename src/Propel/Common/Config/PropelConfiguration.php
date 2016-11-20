@@ -70,17 +70,27 @@ class PropelConfiguration implements ConfigurationInterface
 //                    ->end()
                     ->children()
                         ->scalarNode('varchar')->defaultValue(VarcharType::class)->end()
+                        ->scalarNode('char')->defaultValue(VarcharType::class)->end()
                         ->scalarNode('longvarchar')->defaultValue(VarcharType::class)->end()
                         ->scalarNode('boolean')->defaultValue(BooleanType::class)->end()
+
                         ->scalarNode('integer')->defaultValue(IntegerType::class)->end()
+                        ->scalarNode('bigint')->defaultValue(IntegerType::class)->end()
+                        ->scalarNode('decimal')->defaultValue(IntegerType::class)->end()
+                        ->scalarNode('tinyint')->defaultValue(IntegerType::class)->end()
+
                         ->scalarNode('double')->defaultValue(DoubleType::class)->end()
                         ->scalarNode('float')->defaultValue(DoubleType::class)->end()
+
                         ->scalarNode('datetime')->defaultValue(DateTimeType::class)->end()
                         ->scalarNode('date')->defaultValue(DateTimeType::class)->end()
                         ->scalarNode('time')->defaultValue(DateTimeType::class)->end()
                         ->scalarNode('timestamp')->defaultValue(DateTimeType::class)->end()
+
                         ->scalarNode('lob')->defaultValue(LobType::class)->end()
                         ->scalarNode('clob')->defaultValue(LobType::class)->end()
+                        ->scalarNode('blob')->defaultValue(LobType::class)->end()
+
                         ->scalarNode('object')->defaultValue(ObjectType::class)->end()
                         ->scalarNode('array')->defaultValue(ArrayType::class)->end()
                         ->scalarNode('enum')->defaultValue(EnumType::class)->end()

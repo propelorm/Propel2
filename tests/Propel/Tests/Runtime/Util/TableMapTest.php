@@ -59,8 +59,8 @@ class TableMapTest extends BookstoreTestBase
         $this->assertFalse($c->needsSelectAliases(), 'Empty Criterias don\'t need aliases');
 
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
         $this->assertFalse($c->needsSelectAliases(), 'Criterias with distinct column names don\'t need aliases');
 
         $c = new Criteria();
@@ -68,8 +68,8 @@ class TableMapTest extends BookstoreTestBase
         $this->assertFalse($c->needsSelectAliases(), 'Criterias with only the columns of a model don\'t need aliases');
 
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(AuthorTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(AuthorTableMap::FIELD_ID);
         $this->assertTrue($c->needsSelectAliases(), 'Criterias with common column names do need aliases');
     }
 
@@ -77,9 +77,9 @@ class TableMapTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID);
-        $c->addSelectColumn(AuthorTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addJoin(BookTableMap::FIELD_AUTHOR_ID, AuthorTableMap::FIELD_ID);
+        $c->addSelectColumn(AuthorTableMap::FIELD_ID);
         $c->setLimit(3);
         try {
             $count = $c->doCount($con);
@@ -107,8 +107,8 @@ class TableMapTest extends BookstoreTestBase
 
         $c = new Criteria();
         $c->setIgnoreCase(true);
-        $c->add(BookstoreTableMap::COL_STORE_NAME, 'SortTest%', Criteria::LIKE);
-        $c->addAscendingOrderByColumn(BookstoreTableMap::COL_POPULATION_SERVED);
+        $c->add(BookstoreTableMap::FIELD_STORE_NAME, 'SortTest%', Criteria::LIKE);
+        $c->addAscendingOrderByColumn(BookstoreTableMap::FIELD_POPULATION_SERVED);
 
         $rows = BookstoreQuery::create(null, $c)->find();
         $this->assertEquals('SortTest2', $rows[0]->getStoreName());
@@ -124,11 +124,11 @@ class TableMapTest extends BookstoreTestBase
     {
         $this->markTestSkipped('Famous cross join problem, to be solved one day');
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
 
-        $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
-        $c->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID);
+        $c->addJoin(BookTableMap::FIELD_PUBLISHER_ID, PublisherTableMap::FIELD_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(BookTableMap::FIELD_AUTHOR_ID, AuthorTableMap::FIELD_ID);
 
         $params = array();
         $sql = $c->createSelectSql($params);
@@ -145,12 +145,12 @@ class TableMapTest extends BookstoreTestBase
         }
 
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
-        $c->addSelectColumn(PublisherTableMap::COL_NAME);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
+        $c->addSelectColumn(PublisherTableMap::FIELD_NAME);
         $c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID)');
 
-        $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(BookTableMap::FIELD_PUBLISHER_ID, PublisherTableMap::FIELD_ID, Criteria::LEFT_JOIN);
 
         $c->setOffset(0);
         $c->setLimit(20);
@@ -170,11 +170,11 @@ class TableMapTest extends BookstoreTestBase
         }
 
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
-        $c->addSelectColumn(PublisherTableMap::COL_NAME);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
+        $c->addSelectColumn(PublisherTableMap::FIELD_NAME);
         $c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID)');
-        $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(BookTableMap::FIELD_PUBLISHER_ID, PublisherTableMap::FIELD_ID, Criteria::LEFT_JOIN);
         $c->setOffset(20);
         $c->setLimit(20);
 
@@ -193,11 +193,11 @@ class TableMapTest extends BookstoreTestBase
         }
 
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
-        $c->addSelectColumn(PublisherTableMap::COL_NAME);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
+        $c->addSelectColumn(PublisherTableMap::FIELD_NAME);
         $c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID)');
-        $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(BookTableMap::FIELD_PUBLISHER_ID, PublisherTableMap::FIELD_ID, Criteria::LEFT_JOIN);
         $c->addDescendingOrderByColumn('PublisherName');
         $c->setOffset(20);
         $c->setLimit(20);
@@ -217,13 +217,13 @@ class TableMapTest extends BookstoreTestBase
         }
 
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectColumn(BookTableMap::COL_TITLE);
-        $c->addSelectColumn(PublisherTableMap::COL_NAME);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_TITLE);
+        $c->addSelectColumn(PublisherTableMap::FIELD_NAME);
         $c->addAsColumn('PublisherName','(SELECT MAX(publisher.NAME) FROM publisher WHERE publisher.id = book.PUBLISHER_ID)');
-        $c->addJoin(BookTableMap::COL_PUBLISHER_ID, PublisherTableMap::COL_ID, Criteria::LEFT_JOIN);
+        $c->addJoin(BookTableMap::FIELD_PUBLISHER_ID, PublisherTableMap::FIELD_ID, Criteria::LEFT_JOIN);
         $c->addDescendingOrderByColumn('PublisherName');
-        $c->addAscendingOrderByColumn(BookTableMap::COL_TITLE);
+        $c->addAscendingOrderByColumn(BookTableMap::FIELD_TITLE);
         $c->setOffset(20);
         $c->setLimit(20);
 
@@ -251,8 +251,8 @@ class TableMapTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
-        $c->addJoin(BookTableMap::COL_AUTHOR_ID, AuthorTableMap::COL_ID);
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
+        $c->addJoin(BookTableMap::FIELD_AUTHOR_ID, AuthorTableMap::FIELD_ID);
         $c->doDelete($con);
     }
 
@@ -260,7 +260,7 @@ class TableMapTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
         $c->doDelete($con);
         $expectedSQL = $this->getSql("DELETE FROM book WHERE book.title='War And Peace'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() translates a condition into a WHERE');
@@ -270,8 +270,8 @@ class TableMapTest extends BookstoreTestBase
     {
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
-        $c->add(BookTableMap::COL_ID, 12);
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
+        $c->add(BookTableMap::FIELD_ID, 12);
         $c->doDelete($con);
         $expectedSQL = $this->getSql("DELETE FROM book WHERE book.title='War And Peace' AND book.id=12");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() combines conditions in WHERE with an AND');
@@ -306,16 +306,16 @@ class TableMapTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
-        $c->add(AuthorTableMap::COL_FIRST_NAME, 'Leo');
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
+        $c->add(AuthorTableMap::FIELD_FIRST_NAME, 'Leo');
         $c->doDelete($con);
         $expectedSQL = $this->getSql("DELETE FROM author WHERE author.first_name='Leo'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
         $this->assertEquals($count + 2, $con->getQueryCount(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
 
         $c = new Criteria(BookTableMap::DATABASE_NAME);
-        $c->add(AuthorTableMap::COL_FIRST_NAME, 'Leo');
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
+        $c->add(AuthorTableMap::FIELD_FIRST_NAME, 'Leo');
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
         $c->doDelete($con);
         $expectedSQL = $this->getSql("DELETE FROM book WHERE book.title='War And Peace'");
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'doDelete() issues two DELETE queries when passed conditions on two tables');
@@ -326,7 +326,7 @@ class TableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         $c->setComment('Foo');
-        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->addSelectColumn(BookTableMap::FIELD_ID);
         $expected = $this->getSql('SELECT /* Foo */ book.id FROM book');
         $params = array();
         $this->assertEquals($expected, $c->createSelectSQL($params), 'Criteria::setComment() adds a comment to select queries');
@@ -338,7 +338,7 @@ class TableMapTest extends BookstoreTestBase
         $c1->setPrimaryTableName(BookTableMap::TABLE_NAME);
         $c1->setComment('Foo');
         $c2 = new Criteria();
-        $c2->add(BookTableMap::COL_TITLE, 'Updated Title');
+        $c2->add(BookTableMap::FIELD_TITLE, 'Updated Title');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c1->doUpdate($c2, $con);
         $expected = $this->getSql('UPDATE /* Foo */ book SET title=\'Updated Title\'');
@@ -349,7 +349,7 @@ class TableMapTest extends BookstoreTestBase
     {
         $c = new Criteria();
         $c->setComment('Foo');
-        $c->add(BookTableMap::COL_TITLE, 'War And Peace');
+        $c->add(BookTableMap::FIELD_TITLE, 'War And Peace');
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->doDelete($con);
         $expected = $this->getSql('DELETE /* Foo */ FROM book WHERE book.title=\'War And Peace\'');

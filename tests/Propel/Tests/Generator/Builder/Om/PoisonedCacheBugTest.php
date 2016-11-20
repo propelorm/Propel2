@@ -78,7 +78,7 @@ class PoisonedCacheBugTest extends BookstoreTestBase
     public function testPoisonedCacheWhenDoSelectJoinAuthor()
     {
         $c = new Criteria();
-        $c->add(BookTableMap::COL_ID, $this->books[0]->getId());
+        $c->add(BookTableMap::FIELD_ID, $this->books[0]->getId());
 
         $books = BookQuery::create(null, $c)->joinWithAuthor()->find();
 
@@ -128,7 +128,7 @@ class PoisonedCacheBugTest extends BookstoreTestBase
     public function testModifiedObjectsRemainInTheCollection()
     {
         $c = new Criteria();
-        $c->add(BookTableMap::COL_ID, $this->books[0]->getId());
+        $c->add(BookTableMap::FIELD_ID, $this->books[0]->getId());
 
         $books = BookQuery::create(null, $c)->joinWithAuthor()->find();
         $books[0]->setTitle('Modified');

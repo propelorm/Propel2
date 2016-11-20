@@ -401,7 +401,7 @@ class ModelCriteria extends BaseModelCriteria
 
         if ('*' === $fieldArray) {
             $fieldArray = array();
-            foreach (call_user_func(array($this->entityMap, 'getFieldNames'), EntityMap::TYPE_PHPNAME) as $field) {
+            foreach ($this->getEntityMap()->getFieldNames(EntityMap::TYPE_PHPNAME) as $field) {
                 $fieldArray []= $this->entityName . '.' . $field;
             }
         }
@@ -489,17 +489,19 @@ class ModelCriteria extends BaseModelCriteria
             $entityMap = $this->getEntityMap();
         } else {
             list($leftName, $relationName) = explode('.', $fullName);
-            $shortLeftName = self::getShortName($leftName);
             // find the EntityMap for the left entity using the $leftName
-            if ($leftName === $this->getModelAliasOrName() || $leftName === $this->getModelShortName()) {
+            if ($leftName === $this->getModelAliasOrName() || $leftName === $this->getModelShortName() || $leftName === $this->getEntityName()) {
                 $previousJoin = $this->getPreviousJoin();
                 $entityMap = $this->getEntityMap();
+
             } elseif (isset($this->joins[$leftName])) {
                 $previousJoin = $this->joins[$leftName];
                 $entityMap = $previousJoin->getEntityMap();
-            } elseif (isset($this->joins[$shortLeftName])) {
-                $previousJoin = $this->joins[$shortLeftName];
+
+            } elseif (isset($this->joins[$leftName])) {
+                $previousJoin = $this->joins[$leftName];
                 $entityMap = $previousJoin->getEntityMap();
+
             } else {
                 throw new PropelException('Unknown entity or alias ' . $leftName);
             }
@@ -522,7 +524,7 @@ class ModelCriteria extends BaseModelCriteria
 
         // add the ModelJoin to the current object
         if (null !== $relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightEntity()->getName());
+            $this->addAlias($relationAlias, $relationMap->getRightEntity()->getFullClassName());
             $this->addJoinObject($join, $relationAlias);
         } else {
             $this->addJoinObject($join, $relationName);
@@ -666,7 +668,9 @@ class ModelCriteria extends BaseModelCriteria
             throw new UnknownRelationException('Unknown relation name or alias ' . $relation);
         }
 
+        /** @var ModelJoin $join */
         $join = $this->joins[$relation];
+
         if (RelationMap::MANY_TO_MANY === $join->getRelationMap()->getType()) {
             throw new PropelException(__METHOD__ .' does not allow hydration for many-to-many relationships');
         } elseif (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
@@ -711,7 +715,7 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $clause = trim($clause);
-        $this->reamames($clause);
+        $this->replaceNames($clause);
         // check that the fields of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
             $this->addSelfSelectFields();
@@ -745,7 +749,15 @@ class ModelCriteria extends BaseModelCriteria
             $secondaryCriteria = $join->getEntityMap()->getRepository()->createQuery();
         } else {
             /** @var ModelCriteria $secondaryCriteria */
-            $secondaryCriteria = $this->getConfiguration()->getRepository($secondaryEntityClass)->createQuery();
+            if ($this->getConfiguration()->hasEntityMap($secondaryEntityClass)) {
+                $secondaryCriteria = $this->getConfiguration()->getRepository($secondaryEntityClass)->createQuery();
+            } else {
+                if (is_string($secondaryEntityClass)) {
+                    $secondaryCriteria = new $secondaryEntityClass;
+                } else {
+                    $secondaryCriteria = $secondaryEntityClass;
+                }
+            }
         }
 
         if ($className !== $relationName) {
@@ -893,8 +905,9 @@ class ModelCriteria extends BaseModelCriteria
     {
         //$relation = strtolower($relation);
 
+        /** @var ModelJoin $join */
         $join = $this->joins[$relation];
-        $join->getEntityMap()->addSelectFields($this, $join->getRelationAlias() ?: $relation);
+        $join->getEntityMap()->addSelectFields($this, $join->getRelationAlias());
 
         return $this;
     }
@@ -1038,15 +1051,14 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if (!$ret = $this->findOne()) {
-            $object = $this->getEntityMap()->getRepository()->createObject();
 
             $array = [];
             foreach ($this->keys() as $key) {
-                $array[NamingTool::toUnderscore($key)] = $this->getValue($key);
+                $array[NamingTool::fieldName($key)] = $this->getValue($key);
             }
 
-            $this->getEntityMap()->fromArray($object, $array, EntityMap::TYPE_FULLCOLNAME);
-            return $object;
+            $object = $this->getEntityMap()->fromArray($array);
+            $ret = $this->getFormatter()->formatObject($object);
         }
 
         return $ret;
@@ -1343,9 +1355,9 @@ class ModelCriteria extends BaseModelCriteria
                 }
 
                 if (!$affectedRows = $criteria->basePreDelete($con)) {
-                    $affectedRows = $criteria->doDelete($con);
+                    $affectedRows = $criteria->doDelete();
                 }
-                $criteria->basePostDelete($affectedRows, $con);
+                $criteria->basePostDelete($affectedRows);
 
                 if ($event) {
                     $this->getConfiguration()->getEventDispatcher()->dispatch(Events::DELETE, $event);
@@ -1518,7 +1530,6 @@ class ModelCriteria extends BaseModelCriteria
                 if ($withEvents) {
                     $eventQuery = clone $this;
                     $updates = $eventQuery
-                        ->setEntityAlias(null)
                         ->setFormatter(static::FORMAT_OBJECT)
                         ->find();
                     $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), [], $updates);
@@ -1606,24 +1617,24 @@ class ModelCriteria extends BaseModelCriteria
             // this is enough to determine the type to bind the parameter to
             $colMap = $this->replacedFields[0];
             $value = $this->convertValueForField($value, $colMap);
-            $clauseLen = strlen($clause);
+            $clauseLen = strlen($origin);
             if (null !== $bindingType) {
-                return new RawModelCriterion($this, $clause, $colMap, $value, $this->currentAlias, $bindingType);
+                return new RawModelCriterion($this, $origin, $colMap, $value, $this->currentAlias, $bindingType);
             }
-            if (stripos($clause, 'IN ?') == $clauseLen - 4) {
-                return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            if (stripos($origin, 'IN ?') == $clauseLen - 4) {
+                return new InModelCriterion($this, $origin, $colMap, $value, $this->currentAlias);
             }
-            if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
-                return new LikeModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            if (stripos($origin, 'LIKE ?') == $clauseLen - 6) {
+                return new LikeModelCriterion($this, $origin, $colMap, $value, $this->currentAlias);
             }
-            if (substr_count($clause, '?') > 1) {
-                return new SeveralModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            if (substr_count($origin, '?') > 1) {
+                return new SeveralModelCriterion($this, $origin, $colMap, $value, $this->currentAlias);
             }
 
-            return new BasicModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            return new BasicModelCriterion($this, $origin, $colMap, $value, $this->currentAlias);
         }
         // no field match in clause, must be an expression like '1=1'
-        if (false !== strpos($clause, '?')) {
+        if (false !== strpos($origin, '?')) {
             if (null === $bindingType) {
                 throw new PropelException(sprintf('Cannot determine the field to bind to the parameter in clause "%s".', $origin));
             }
@@ -1659,6 +1670,21 @@ class ModelCriteria extends BaseModelCriteria
     {
         $key = $matches[0];
 
+        if (false === strpos($key, '.')) {
+            //only entityName
+            if (!$this->getConfiguration()->hasEntityMap($key)) {
+                return $key;
+            }
+
+            $entityMap = $this->getConfiguration()->getEntityMap($key);
+
+            if (isset($this->aliases[$key])) {
+                return $key;
+            }
+
+            return $this->quoteIdentifier($entityMap->getFQTableName());
+        }
+        
         list($field, $realFullFieldName) = $this->getFieldFromName($key);
 
         if ($field instanceof FieldMap) {
@@ -1706,7 +1732,12 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $joinName = $prefix;
-        $shortClass = self::getShortName($joinName);
+        $shortClass = NamingTool::shortClassName($joinName);
+
+        if ($this->getEntityForAlias($prefix)) {
+            $this->currentAlias = $prefix;
+            $prefix = $this->getEntityForAlias($prefix);
+        }
 
         if ($prefix === $this->getModelAliasOrName()) {
             // field of the Criteria's model
@@ -1735,19 +1766,7 @@ class ModelCriteria extends BaseModelCriteria
             }
         }
 
-//        if ($entityMap->hasFieldByPhpName($phpName)) {
-//            $field = $entityMap->getFieldByPhpName($phpName);
-//            if (isset($this->aliases[$prefix])) {
-//                $this->currentAlias = $prefix;
-//                $realFieldName = $prefix . '.' . $field->getName();
-//            } else {
-//                $realFieldName = $field->getFullyQualifiedName();
-//            }
-//
-//            return array($field, $realFieldName);
-//        } else
-
-        if ($entityMap->hasField($phpName)) {
+        if ($entityMap && $entityMap->hasField($phpName)) {
             $field = $entityMap->getField($phpName);
             $realColumnName = $field->getFullyQualifierColumnName();
 
@@ -1890,20 +1909,6 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Return the short ClassName for class with namespace
-     *
-     * @param string $fullyQualifiedClassName The fully qualified class name
-     *
-     * @return string The short class name
-     */
-    public static function getShortName($fullyQualifiedClassName)
-    {
-        $namespaceParts = explode('\\', $fullyQualifiedClassName);
-
-        return array_pop($namespaceParts);
-    }
-
-    /**
      * Overrides Criteria::add() to force the use of a true entity alias if it exists
      *
      * @see Criteria::add()
@@ -1934,7 +1939,7 @@ class ModelCriteria extends BaseModelCriteria
 
             $entity = null;
             foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
-                $entityName = $attachedCriterion->getEntity();
+                $entityName = $attachedCriterion->getEntityName();
 
                 $entity = $this->getEntityForAlias($entityName);
                 if (null === $entity) {
@@ -2004,7 +2009,7 @@ class ModelCriteria extends BaseModelCriteria
                 $relation = $arguments[0];
             }
 
-            return $this->joinWith($relation, $joinType);
+            return $this->joinWith(lcfirst($relation), $joinType);
         }
 
         // Maybe it's a magic call to a qualified join method, e.g. 'leftJoin'

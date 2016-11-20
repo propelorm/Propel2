@@ -31,7 +31,7 @@ foreach (\$event->getEntities() as \$entity) {
         continue;
     }
 
-    if (!\$this->isFieldModified(\$entity, '{$behavior->getFieldForParameter('rank_field')->getName()}')) {
+    if (!\$this->getEntityMap()->isFieldModified(\$entity, '{$behavior->getFieldForParameter('rank_field')->getName()}')) {
         \$q = \$this->createQuery();";
         if ($behavior->useScope()) {
             if ($behavior->hasMultipleScopes()) {

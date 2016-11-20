@@ -49,4 +49,26 @@ class NamingTool
     {
         return implode('', array_map('ucfirst', explode('_', $string)));
     }
+
+    /**
+     * App\Model\User -> User
+     *
+     * @param string $fullClassName
+     * @return string
+     */
+    public static function shortClassName($fullClassName)
+    {
+        return basename(str_replace('\\', '/', $fullClassName));
+    }
+
+    /**
+     * App\Model\User.titleName -> titleName
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public static function fieldName($identifier)
+    {
+        return basename(str_replace('.', '/', $identifier));
+    }
 }

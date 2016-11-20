@@ -36,7 +36,7 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
         $this->value = $value;
         $this->setField($field);
         if ($entityAlias) {
-            $this->entity = $entityAlias;
+            $this->setEntityName($entityAlias);
         }
         $this->clause = $clause;
         $this->init($outer);

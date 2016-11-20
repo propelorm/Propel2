@@ -563,7 +563,7 @@ class Join
      */
     public function getRightTableWithAlias()
     {
-        return $this->rightTableAlias ? $this->getRightTableName() . ' ' . $this->rightTableAlias : $this->getRightTableName();
+        return $this->rightTableAlias ? ($this->getRightTableName() . ' ' . $this->rightTableAlias) : $this->getRightTableName();
     }
 
     /**

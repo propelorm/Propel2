@@ -27,9 +27,9 @@ class BuildSqlBulkInsertPartMethod extends BuildComponent
 
         $body = '
 $params = [];
+$placeholder = [];
 $entityReader = $this->getPropReader();
         ';
-        $placeholder = [];
 
         foreach ($this->getEntity()->getFields() as $field) {
             if ($field->isImplementationDetail()) {
@@ -38,7 +38,6 @@ $entityReader = $this->getPropReader();
             if (!$this->getEntity()->isAllowPkInsert() && $field->isAutoIncrement()) {
                 continue;
             }
-            $placeholder[] = '?';
             $fieldName = $field->getName();
             $propertyName = $field->getName();
 
@@ -66,8 +65,6 @@ if (null !== \$value) {
                 default:
             }
 
-            $body .= $this->getTypeCasting($field);
-
             if ($field->isLobType()) {
                 $body .= "
 if (is_resource(\$value)) {
@@ -76,69 +73,82 @@ if (is_resource(\$value)) {
 ";
             }
 
+            $default = 'NULL';
+            if ($field->getDefaultValue() && $field->getDefaultValue()->isExpression()) {
+                $default = $field->getDefaultValue()->getValue();
+            }
+
+            $default = var_export($default, true);
+
             $body .= "
 \$value = \$this->propertyToDatabase(\$value, '{$fieldName}');
-\$params['{$fieldName}'] = \$value;
-\$outgoingParams[] = \$value;
+if (null !== \$value) {
+    \$params['{$fieldName}'] = \$value;
+    \$outgoingParams[] = \$value;
+    \$placeholder[] = '?';
+} else {
+    \$placeholder[] = $default;
+}
 //end field:$fieldName
 ";
         }
 
         foreach ($this->getEntity()->getRelations() as $relation) {
-            $className = $this->getClassNameFromEntity($relation->getForeignEntity(), true);
+            $className = $relation->getForeignEntity()->getFullClassName();
             $propertyName = $this->getRelationVarName($relation);
-            $placeholder[] = '?';
 
             $body .= "
 //relation:$propertyName
-\$foreignEntityReader = \$this->getClassPropReader('$className');";
-
+\$foreignEntityReader = \$this->getClassPropReader('$className');
+\$foreignEntity = \$entityReader(\$entity, '$propertyName');
+";
             foreach ($relation->getFieldObjectsMapArray() as $map) {
                 /** @var Field $localField */
                 /** @var Field $foreignField */
                 list ($localField, $foreignField) = $map;
                 $foreignFieldName = $foreignField->getName();
 
-                $typeCasting = $this->getTypeCasting($foreignField);
-
                 $body .= "
-if (\$foreignEntity = \$entityReader(\$entity, '$propertyName')) {
-";
-
-                if (isset($foreignField->foreignRelation)) {
-                    /** @var Relation $foreignRelation */
-                    $foreignRelation = $foreignField->foreignRelation;
-                    $relationFieldName = $foreignRelation->getField();
-                    $relationEntityName = $foreignRelation->getForeignEntity()->getFullClassName();
-                    $body .= "
-    \$foreignForeignEntityReader = \$this->getClassPropReader('$relationEntityName');
-    \$foreignForeignEntity = \$foreignEntityReader(\$foreignEntity, '{$relationFieldName}');
-    \$value = \$foreignForeignEntityReader(\$foreignForeignEntity, '{$foreignField->foreignRelationFieldName}');
-                    ";
-                } else {
-                    $body .= "
-    \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
-                }
-
-                $body .= "
-    $typeCasting
-} else {
-    \$value = null;
+\$value = null;
+if (\$foreignEntity) {
+    \$value = \$foreignEntityReader(\$foreignEntity, '{$foreignFieldName}');
 }
-//dsfasdfasfd
+
 if (!isset(\$params['{$localField->getName()}'])) {
     \$params['{$localField->getName()}'] = \$value; //{$localField->getName()}
     \$outgoingParams[] = \$value;
+    \$placeholder[] = '?';
 }
 ";
+
+//                if (isset($foreignField->foreignRelation)) {
+//                    /** @var Relation $foreignRelation */
+//                    $foreignRelation = $foreignField->foreignRelation;
+//                    $relationFieldName = $foreignRelation->getField();
+//                    $relationEntityName = $foreignRelation->getForeignEntity()->getFullClassName();
+//                    $body .= "
+//    \$foreignForeignEntity = \$foreignEntityReader(\$foreignEntity, '{$foreignFieldName}');
+//    \$value = \$foreignForeignEntityReader(\$foreignForeignEntity, '{$foreignField->foreignRelationFieldName}');
+//                    ";
+//                } else {
+//                    $body .= "
+//    \$value = \$foreignEntityReader(\$foreignEntity, '$foreignFieldName');";
+//                }
             }
+
+//            $body .= "
+//    $typeCasting
+//} else {
+//    \$value = null;
+//}
+//
+//";
             $body .= "
 //end relation:$propertyName";
         }
 
-        $placeholder = var_export('(' . implode(', ', $placeholder). ')', true);
         $body .= "
-return $placeholder;
+return '(' . implode(',', \$placeholder) . ')';
         ";
 
         $paramsParam = new PhpParameter('outgoingParams');
@@ -149,20 +159,5 @@ return $placeholder;
             ->addSimpleParameter('entity')
             ->addParameter($paramsParam)
             ->setBody($body);
-    }
-
-    protected function getTypeCasting(Field $field)
-    {
-        if ($field->isNumericType()) {
-            return "
-\$value += 0; //cast to numeric";
-        }
-
-        if ($field->isBooleanType()) {
-            return "
-\$value = \$value ? 1 : 0; //cast to bool";
-        }
-
-        return "";
     }
 }

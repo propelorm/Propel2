@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Types\FieldTypeInterface;
 use Propel\Generator\Config\GeneratorConfig;
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
@@ -120,6 +121,7 @@ class Configuration extends GeneratorConfig
      * @var string[]
      */
     protected $entityToDatabaseMap = [];
+    protected $entityShortNameToDatabaseMap = [];
     protected $databaseToEntitiesMap = [];
 
     /**
@@ -306,6 +308,9 @@ class Configuration extends GeneratorConfig
         foreach ((array)$fullEntityClassName as $fullEntityClassName) {
             $this->entityToDatabaseMap[$fullEntityClassName] = $databaseName;
             $this->databaseToEntitiesMap[$databaseName][] = $fullEntityClassName;
+
+            $shortName = basename(str_replace('\\', '/', $fullEntityClassName));
+            $this->entityShortNameToDatabaseMap[$shortName][$databaseName] = $fullEntityClassName;
         }
     }
 
@@ -396,7 +401,7 @@ class Configuration extends GeneratorConfig
      */
     public function hasEntityMap($fullEntityClassName)
     {
-        return isset($this->entityToDatabaseMap[$fullEntityClassName]);
+        return isset($this->entityToDatabaseMap[$fullEntityClassName]) || isset($this->entityShortNameToDatabaseMap[$fullEntityClassName]);
     }
 
     /**
@@ -408,6 +413,19 @@ class Configuration extends GeneratorConfig
     public function getEntityMap($fullEntityClassName, $returnNull = false)
     {
         $fullEntityClassName = trim($fullEntityClassName, '\\');
+
+        if (isset($this->entityShortNameToDatabaseMap[$fullEntityClassName])) {
+            if (count($this->entityShortNameToDatabaseMap[$fullEntityClassName]) > 1) {
+                throw new RuntimeException(sprintf(
+                    'Requested entity %s is ambiguous [%s]. Please specify the full qualified name.',
+                    $fullEntityClassName,
+                    implode(', ', $this->entityShortNameToDatabaseMap[$fullEntityClassName])
+                ));
+            }
+
+            $fullEntityClassName = current($this->entityShortNameToDatabaseMap[$fullEntityClassName]);
+        }
+
         if (!isset($this->entityToDatabaseMap[$fullEntityClassName])) {
             if ($returnNull) {
                 return null;

@@ -73,12 +73,12 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 
         // print "Attempting to delete [multi-table] by found pk: ";
         $c = new Criteria();
-        $c->add(BookTableMap::COL_ID, $hp->getId());
+        $c->add(BookTableMap::FIELD_ID, $hp->getId());
         // The only way for multi-delete to work currently
         // is to specify the author_id and publisher_id (i.e. the fkeys
         // have to be in the criteria).
-        $c->add(AuthorTableMap::COL_ID, $hp->getAuthorId());
-        $c->add(PublisherTableMap::COL_ID, $hp->getPublisherId());
+        $c->add(AuthorTableMap::FIELD_ID, $hp->getAuthorId());
+        $c->add(PublisherTableMap::FIELD_ID, $hp->getPublisherId());
         $c->setSingleRecord(true);
         BookTableMap::doDelete($c);
 
@@ -95,9 +95,9 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
     {
         //print "Attempting to delete books by complex criteria: ";
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookTableMap::COL_ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::FIELD_ISBN, "043935806X");
+        $cn->addOr($c->getNewCriterion(BookTableMap::FIELD_ISBN, "0380977427"));
+        $cn->addOr($c->getNewCriterion(BookTableMap::FIELD_ISBN, "0140422161"));
         $c->add($cn);
         BookTableMap::doDelete($c);
 
@@ -319,7 +319,7 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
     public function testDoDeleteAll_SetNull()
     {
         $c = new Criteria();
-        $c->add(BookTableMap::COL_AUTHOR_ID, null, Criteria::NOT_EQUAL);
+        $c->add(BookTableMap::FIELD_AUTHOR_ID, null, Criteria::NOT_EQUAL);
 
         // 1) make sure there are some books with valid authors
         $this->assertGreaterThan(0, count(BookQuery::create()->filterByAuthorId(null, Criteria::NOT_EQUAL)->find()) > 0, "Expect some book.author_id columns that are not NULL.");
@@ -400,7 +400,7 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
         $name = "A Sample Publisher - " . time();
 
         $values = new Criteria();
-        $values->add(PublisherTableMap::COL_NAME, $name);
+        $values->add(PublisherTableMap::FIELD_NAME, $name);
         PublisherTableMap::doInsert($values);
 
         $matches = PublisherQuery::create()->filterByName($name)->find();

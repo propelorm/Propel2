@@ -5,7 +5,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="../../../resources/xsd/database.xsd">
 
-    <entity name="Foo\Bar\NamespacedBook" description="Book Table" namespace="Foo\Bar">
+    <entity name="NamespacedBook" tableName="book" description="Book Table" namespace="Foo\Bar">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
         <field name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
         <field name="ISBN" required="true" type="VARCHAR" size="24" description="ISBN Number" />

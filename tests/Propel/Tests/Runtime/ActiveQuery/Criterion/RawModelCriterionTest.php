@@ -46,7 +46,7 @@ class RawModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL = :p1', $ps);
         $expected = array(
-            array('table' => null, 'value' => 1, 'type' => PDO::PARAM_INT)
+            array('entity' => null, 'value' => 1, 'type' => PDO::PARAM_INT)
         );
         $this->assertEquals($expected, $params);
     }
@@ -61,7 +61,7 @@ class RawModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL = :p1', $ps);
         $expected = array(
-            array('table' => null, 'value' => 1, 'type' => PDO::PARAM_STR)
+            array('entity' => null, 'value' => 1, 'type' => PDO::PARAM_STR)
         );
         $this->assertEquals($expected, $params);
     }

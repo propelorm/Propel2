@@ -207,11 +207,6 @@ XML;
 
     protected function getFixturesArrayWithScope($scope = null)
     {
-        //FIXME: this isn't a correct behavior: null should not be treated as string
-        if (null === $scope) {
-            $scope = 'NULL';
-        }
-
         $ts  = \SortableEntity12Query::create()->filterByMyScopeField($scope)->orderByPosition()->find();
         $ret = array();
         foreach ($ts as $t) {

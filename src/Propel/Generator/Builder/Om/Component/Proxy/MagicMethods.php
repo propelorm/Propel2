@@ -31,10 +31,10 @@ class MagicMethods extends BuildComponent
     if (method_exists(\$this, '$loadMethod')) {
         \$this->\$name = \$this->$loadMethod();
     } else {
-        \$this->\$name = \$this->_repository->{$loadMethod}(\$this);
+        \$this->\$name = \$this->_repository->getEntityMap()->{$loadMethod}(\$this);
     }";
             } else {
-                $entityLazyLoading = '$this->_repository->load($this);';
+                $entityLazyLoading = '$this->_repository->getEntityMap()->load($this);';
             }
 
             $body .= "

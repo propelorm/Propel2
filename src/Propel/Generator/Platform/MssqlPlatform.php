@@ -48,7 +48,7 @@ class MssqlPlatform extends SqlDefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "VARBINARY(MAX)"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "VARBINARY(MAX)"));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "VARCHAR(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "VARCHAR(MAX)"));
     }
 
     public function getMaxFieldNameLength()

@@ -10,12 +10,14 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\Configuration;
 use Propel\Tests\Helpers\BaseTestCase;
 
 use Propel\Runtime\Propel;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Symfony\Component\Finder\Adapter\AbstractAdapter;
 
 /**
  * Test class for Join.
@@ -25,27 +27,13 @@ use Propel\Runtime\ActiveQuery\Join;
  */
 class JoinTest extends BaseTestCase
 {
-    /**
-     * DB adapter saved for later.
-     *
-     * @var AbstractAdapter
-     */
-    private $savedAdapter;
-
     protected function setUp()
     {
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
 
-        $this->savedAdapter = Propel::getServiceContainer()->getAdapter(null);
-        Propel::getServiceContainer()->setAdapter(null, new SqliteAdapter());
+        Configuration::getCurrentConfigurationOrCreate()->setAdapter('default', new SqliteAdapter());
     }
 
-    protected function tearDown()
-    {
-        Propel::getServiceContainer()->setAdapter(null, $this->savedAdapter);
-        parent::tearDown();
-    }
 
     public function testEmptyConditions()
     {
@@ -58,8 +46,8 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->addCondition('foo', 'bar');
         $this->assertEquals('=', $j->getOperator());
-        $this->assertEquals('foo', $j->getLeftColumn());
-        $this->assertEquals('bar', $j->getRightColumn());
+        $this->assertEquals('foo', $j->getLeftField());
+        $this->assertEquals('bar', $j->getRightField());
     }
 
     public function testGetConditions()
@@ -88,8 +76,8 @@ class JoinTest extends BaseTestCase
             array('left' => 'baz', 'operator' => '=', 'right' => 'bal')
         );
         $this->assertEquals(array('=', '='), $j->getOperators());
-        $this->assertEquals(array('foo', 'baz'), $j->getLeftColumns());
-        $this->assertEquals(array('bar', 'bal'), $j->getRightColumns());
+        $this->assertEquals(array('foo', 'baz'), $j->getLeftFields());
+        $this->assertEquals(array('bar', 'bal'), $j->getRightFields());
         $this->assertEquals($expect, $j->getConditions());
     }
 
@@ -98,8 +86,8 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->addExplicitCondition('a', 'foo', null, 'b', 'bar', null);
         $this->assertEquals('=', $j->getOperator());
-        $this->assertEquals('a.foo', $j->getLeftColumn());
-        $this->assertEquals('b.bar', $j->getRightColumn());
+        $this->assertEquals('a.foo', $j->getLeftField());
+        $this->assertEquals('b.bar', $j->getRightField());
         $this->assertEquals('a', $j->getLeftTableName());
         $this->assertEquals('b', $j->getRightTableName());
         $this->assertNull($j->getLeftTableAlias());
@@ -121,8 +109,8 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->addExplicitCondition('a', 'foo', 'Alias', 'b', 'bar', 'Blias');
         $this->assertEquals('=', $j->getOperator());
-        $this->assertEquals('Alias.foo', $j->getLeftColumn());
-        $this->assertEquals('Blias.bar', $j->getRightColumn());
+        $this->assertEquals('Alias.foo', $j->getLeftField());
+        $this->assertEquals('Blias.bar', $j->getRightField());
         $this->assertEquals('a', $j->getLeftTableName());
         $this->assertEquals('b', $j->getRightTableName());
         $this->assertEquals('Alias', $j->getLeftTableAlias());
@@ -134,8 +122,8 @@ class JoinTest extends BaseTestCase
         $j = new Join();
         $j->addExplicitCondition('a', 'foo', null, 'b', 'bar', null, '>=');
         $this->assertEquals('>=', $j->getOperator());
-        $this->assertEquals('a.foo', $j->getLeftColumn());
-        $this->assertEquals('b.bar', $j->getRightColumn());
+        $this->assertEquals('a.foo', $j->getLeftField());
+        $this->assertEquals('b.bar', $j->getRightField());
     }
 
     public function testEmptyJoinType()

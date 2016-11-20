@@ -116,7 +116,7 @@ if (\$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLev
 if (\$entity) {
     \$obj = \$entity;
 } else {
-    \$obj = \$this->getRepository()->createProxy();
+    \$obj = \$this->createProxy();
 }
 \$obj->__duringInitializing__ = true;
 \$objectValues = [];
@@ -222,21 +222,21 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 
             $body .= "
 if (\$exist) {
-    \$relationProxy = \$this->getConfiguration()->getRepository('$className')->getReference($relationPkArguments);
-    \$relationProxyWriter = \$this->getConfiguration()->getEntityMap('$className')->getPropWriter();
+    \$relationProxy = \$this->getConfiguration()->getEntityMap('$className')->getReference($relationPkArguments);
+//    \$relationProxyWriter = \$this->getConfiguration()->getEntityMap('$className')->getPropWriter();
 ";
 
-            foreach ($relation->getFieldObjectsMapping() as $mapping) {
-                /** @var Field $local */
-                $local = $mapping['local'];
-                /** @var Field $foreign */
-                $foreign = $mapping['foreign'];
-
-                $pkName = $foreign->getName();
-                $localName = $local->getName();
-                $body .= "
-    \$relationProxyWriter(\$relationProxy, '$pkName', \$objectValues['$localName']);";
-            }
+//            foreach ($relation->getFieldObjectsMapping() as $mapping) {
+//                /** @var Field $local */
+//                $local = $mapping['local'];
+//                /** @var Field $foreign */
+//                $foreign = $mapping['foreign'];
+//
+//                $pkName = $foreign->getName();
+//                $localName = $local->getName();
+//                $body .= "
+//    \$relationProxyWriter(\$relationProxy, '$pkName', \$objectValues['$localName']);";
+//            }
 
 
             $body .= "

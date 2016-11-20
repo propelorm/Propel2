@@ -25,7 +25,7 @@ class FieldTest extends ModelTestCase
 
         $this->assertSame('title', $field->getName());
         $this->assertEmpty($field->getAutoIncrementString());
-        $this->assertSame('COL_TITLE', $field->getConstantName());
+        $this->assertSame('FIELD_TITLE', $field->getConstantName());
         $this->assertSame('public', $field->getMutatorVisibility());
         $this->assertSame('public', $field->getAccessorVisibility());
         $this->assertFalse($field->getSize());
@@ -723,8 +723,8 @@ class FieldTest extends ModelTestCase
         $field->setEntityMapName('created_at');
 
         $this->assertSame('created_at', $field->getEntityMapName());
-        $this->assertSame('COL_CREATED_AT', $field->getConstantName());
-        $this->assertSame('ArticleEntityMap::COL_CREATED_AT', $field->getFQConstantName());
+        $this->assertSame('FIELD_CREATED_AT', $field->getConstantName());
+        $this->assertSame('ArticleEntityMap::FIELD_CREATED_AT', $field->getFQConstantName());
     }
 
     public function testSetDefaultPhpName()

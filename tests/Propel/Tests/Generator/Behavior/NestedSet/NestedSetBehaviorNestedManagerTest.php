@@ -46,7 +46,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(0, $manager->countChildren($obj), 'Return 0 if new node');
 
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $this->assertEquals(1, $manager->countChildren($t3, $c), 'countChildren() accepts a criteria as parameter');
     }
 
@@ -64,7 +64,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals(0, $manager->countDescendants($t7), 'countDescendants() returns 0 for leafs');
 
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $this->assertEquals(1, $manager->countDescendants($t3, $c), 'countDescendants() accepts a criteria as parameter');
     }
 
@@ -204,7 +204,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals($expected, $this->dumpNodes($children, true), 'getChildren() accepts a connection as parameter');
 
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $children = $manager->getChildren($t3, $c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -227,7 +227,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals($t6, $manager->getFirstChild($t5, null, $con), 'getFirstChild() accept a connection as parameter');
 
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't4');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't4');
 
         $this->assertEquals($t4, $manager->getFirstChild($t3, $c), 'getFirstChild() accepts a criteria as parameter');
     }
@@ -247,7 +247,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         $this->assertEquals($t7, $manager->getLastChild($t5, null, $con), 'getFirstChild() accept a connection as parameter');
 
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
 
         $this->assertEquals($t5, $manager->getLastChild($t3, $c), 'getFirstChild() accepts a criteria as parameter');
     }
@@ -319,7 +319,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns an array of descendants');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't5');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't5');
         $descendants = $manager->getDescendants($t3, $c);
         $expected = array(
             't5' => array(7, 12, 2),
@@ -378,7 +378,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() returns an array of descendants, including the current node');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3', Criteria::NOT_EQUAL);
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't3', Criteria::NOT_EQUAL);
         $descendants = $manager->getBranch($t3, $c);
         unset($expected['t3']);
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getBranch() accepts a criteria as first parameter');
@@ -405,7 +405,7 @@ class NestedSetBehaviorNestedManagerTest extends TestCase
         );
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns an array of ancestors');
         $c = new Criteria(NestedSetEntity9EntityMap::DATABASE_NAME);
-        $c->add(NestedSetEntity9EntityMap::COL_TITLE, 't3');
+        $c->add(NestedSetEntity9EntityMap::FIELD_TITLE, 't3');
         $ancestors = $manager->getAncestors($t5, $c);
         $expected = array(
             't3' => array(4, 13, 1),

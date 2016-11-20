@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
-
 /**
  * Specialized ModelCriterion used for traditional expressions,
  * e.g. entity.field = ? or entity.field >= ? etc.
