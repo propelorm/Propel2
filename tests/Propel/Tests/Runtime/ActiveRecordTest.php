@@ -10,63 +10,58 @@
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
-use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\ActiveBook;
 use Propel\Tests\TestCase;
+use Propel\Tests\TestCaseFixtures;
 
 /**
  * Test class for ActiveRecord.
  *
  * @author François Zaninotto
  */
-class ActiveRecordTest extends TestCase
+class ActiveRecordTest extends TestCaseFixtures
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        include_once(__DIR__.'/ActiveRecordTestClasses.php');
-    }
-
     public function testGetVirtualColumns()
     {
-        $b = new TestableActiveRecord();
-        $this->assertEquals(array(), $b->getVirtualColumns(), 'getVirtualColumns() returns an empty array for new objects');
-        $b->virtualColumns = array('foo' => 'bar');
-        $this->assertEquals(array('foo' => 'bar'), $b->getVirtualColumns(), 'getVirtualColumns() returns an associative array of virtual columns');
+        $b = new ActiveBook();
+        $this->assertEquals(array(), $b->getVirtualFields(), 'getVirtualFields() returns an empty array for new objects');
+        $b->foo = 'bar';
+        $this->assertEquals(array('foo' => 'bar'), $b->getVirtualFields(), 'getVirtualFields() returns an associative array of virtual columns');
     }
 
     public function testHasVirtualColumn()
     {
-        $b = new TestableActiveRecord();
-        $this->assertFalse($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns false if the virtual column is not set');
-        $b->virtualColumns = array('foo' => 'bar');
-        $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set');
-        $b->virtualColumns = array('foo' => null);
-        $this->assertTrue($b->hasVirtualColumn('foo'), 'hasVirtualColumn() returns true if the virtual column is set and has NULL value');
+        $b = new ActiveBook();
+        $this->assertFalse($b->hasVirtualField('foo'), 'hasVirtualField() returns false if the virtual column is not set');
+        $b->foo = 'bar';
+        $this->assertTrue($b->hasVirtualField('foo'), 'hasVirtualField() returns true if the virtual column is set');
+        $b->foo = null;
+        $this->assertTrue($b->hasVirtualField('foo'), 'hasVirtualField() returns true if the virtual column is set and has NULL value');
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @expectedException \InvalidArgumentException
      */
     public function testGetVirtualColumnWrongKey()
     {
-        $b = new TestableActiveRecord();
-        $b->getVirtualColumn('foo');
+        $b = new ActiveBook();
+        $b->getVirtualField('foo');
     }
 
     public function testGetVirtualColumn()
     {
-        $b = new TestableActiveRecord();
-        $b->virtualColumns = array('foo' => 'bar');
-        $this->assertEquals('bar', $b->getVirtualColumn('foo'), 'getVirtualColumn() returns a virtual column value based on its key');
+        $b = new ActiveBook();
+        $b->foo = 'bar';
+        $this->assertEquals('bar', $b->getVirtualField('foo'), 'getVirtualField() returns a virtual column value based on its key');
     }
 
     public function testSetVirtualColumn()
     {
-        $b = new TestableActiveRecord();
+        $b = new ActiveBook();
         $b->setVirtualColumn('foo', 'bar');
-        $this->assertEquals('bar', $b->getVirtualColumn('foo'), 'setVirtualColumn() sets a virtual column value based on its key');
+        $this->assertEquals('bar', $b->getVirtualField('foo'), 'setVirtualColumn() sets a virtual column value based on its key');
         $b->setVirtualColumn('foo', 'baz');
-        $this->assertEquals('baz', $b->getVirtualColumn('foo'), 'setVirtualColumn() can modify the value of an existing virtual column');
+        $this->assertEquals('baz', $b->getVirtualField('foo'), 'setVirtualColumn() can modify the value of an existing virtual column');
         $this->assertEquals($b, $b->setVirtualColumn('foo', 'bar'), 'setVirtualColumn() returns the current object');
     }
 }

@@ -33,25 +33,15 @@ class ActiveRecordTraitBuilder extends AbstractBuilder
     public function buildClass()
     {
         $this->definition = new PhpTrait($this->getFullClassName());
+        $this->getDefinition()->addTrait('\Propel\Runtime\ActiveRecordTrait');
 
         if ($this->isAddGenericMutators()) {
             $this->applyComponent('ActiveRecordTrait\\BooleanAccessorMethods');
-            $this->applyComponent('ActiveRecordTrait\\GetPropelConfigurationMethod');
-            $this->applyComponent('ActiveRecordTrait\\ReloadMethod');
-            $this->applyComponent('ActiveRecordTrait\\SaveMethod');
-            $this->applyComponent('ActiveRecordTrait\\IsNewMethod');
-            $this->applyComponent('ActiveRecordTrait\\DeleteMethod');
-        }
-
-        if ($this->isAddGenericMutators()) {
             $this->applyComponent('ActiveRecordTrait\\GenericMutatorMethods');
         }
 
         if ($this->isAddGenericAccessors()) {
             $this->applyComponent('ActiveRecordTrait\\GenericAccessorMethods');
         }
-
-        $this->applyComponent('ActiveRecordTrait\\GetRepositoryMethod');
-        $this->applyComponent('ActiveRecordTrait\\GetPrimaryKeyMethod');
     }
 }

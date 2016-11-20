@@ -12,6 +12,15 @@
         <relation target="Author" onDelete="setnull" onUpdate="cascade"/>
     </entity>
 
+    <entity name="ActiveBook" description="Book Table" activeRecord="true">
+        <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id"/>
+        <field name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true"/>
+        <field name="ISBN" required="true" type="VARCHAR" size="24" description="ISBN Number" primaryString="false"/>
+        <field name="price" required="false" type="FLOAT" description="Price of the book."/>
+        <relation target="Publisher" onDelete="setnull"/>
+        <relation target="Author" onDelete="setnull" onUpdate="cascade"/>
+    </entity>
+
     <entity name="Publisher" description="Publisher Table" defaultStringFormat="XML">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"
                description="Publisher Id"/>
