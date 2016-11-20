@@ -156,7 +156,8 @@ abstract class BuildComponent
             return true;
         }
 
-        return isset($this->getDefinition()->getUseStatements()[$className]);
+        $statements = $this->getDefinition()->getUseStatements();
+        return isset($statements[$className]);
     }
 
     protected function addConstructorBody($bodyPart)

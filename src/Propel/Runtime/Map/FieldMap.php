@@ -70,6 +70,11 @@ class FieldMap
     protected $relatedFieldName = '';
 
     /**
+     * @var bool
+     */
+    protected $lazyLoad = false;
+
+    /**
      * The EntityMap for this field
      */
     protected $entity;
@@ -169,6 +174,22 @@ class FieldMap
     public function setColumnName($columnName)
     {
         $this->columnName = $columnName;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isLazyLoad()
+    {
+        return $this->lazyLoad;
+    }
+
+    /**
+     * @param boolean $lazyLoad
+     */
+    public function setLazyLoad($lazyLoad)
+    {
+        $this->lazyLoad = $lazyLoad;
     }
 
     /**

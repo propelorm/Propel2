@@ -666,11 +666,21 @@ abstract class EntityMap
                 return;
             }
 
-            throw new \RuntimeException('Not implemented yet');
+            //todo, implement loading of only the relation, not hydrating the whole field
+            $this->load($entity);
+//            throw new \RuntimeException('Not implemented yet');
             return;
         }
 
         $field = $this->getField($fieldName);
+        if (!$field->isLazyLoad()) {
+            //when a field that has not lazyLoad activated is requested to load (using __set)
+            //then this means we it is a reference object which should be hydrated now completely
+            $this->load($entity);
+            return;
+        }
+        
+        
         $fieldType = $this->getConfiguration()->getFieldType($field->getType());
 
         $query = $this->buildPkeyCriteria($entity);

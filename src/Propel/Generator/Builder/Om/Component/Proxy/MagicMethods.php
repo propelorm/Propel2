@@ -25,9 +25,6 @@ class MagicMethods extends BuildComponent
         $codePerField = [];
 
         foreach ($this->getEntity()->getFields() as $field) {
-            if (!$field->isLazyLoad()) {
-                continue;
-            }
             $loadableProperties[] = $field->getName();
         }
 
@@ -37,21 +34,13 @@ class MagicMethods extends BuildComponent
                 $loadableProperties[] = $this->getCrossRelationRelationVarName($relation);
             }
         }
+        foreach ($this->getEntity()->getRelations() as $relation) {
+            $loadableProperties[] = $relation->getField();
+        }
 
         foreach ($loadableProperties as $fieldName) {
             $fieldLazyLoading = "\$this->_repository->getEntityMap()->loadField(\$this, '$fieldName');";
             $codePerField[$fieldName] = $fieldLazyLoading;
-        }
-
-        foreach ($this->getEntity()->getFields() as $field) {
-            if ($field->isLazyLoad()) {
-                continue;
-            }
-            $codePerField[$field->getName()] = '$this->_repository->getEntityMap()->load($this);';
-        }
-
-        foreach ($this->getEntity()->getRelations() as $relation) {
-            $codePerField[$relation->getField()] = '$this->_repository->getEntityMap()->load($this);';
         }
 
         foreach ($codePerField as $fieldName => $code) {

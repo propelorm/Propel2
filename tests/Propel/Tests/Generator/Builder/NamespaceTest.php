@@ -161,9 +161,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertEquals($publisher->getId(), $publisher2->getId());
     }
 
-    /**
-     * @group test
-     */
     public function testFindWithOneToMany()
     {
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
@@ -183,6 +180,9 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertEquals($book->getId(), $book2->getId());
     }
 
+    /**
+     * @group test
+     */
     public function testManyToMany()
     {
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();

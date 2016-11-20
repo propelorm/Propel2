@@ -101,6 +101,10 @@ class BuildFieldsMethod extends BuildComponent
                 $body .= "
 \$this->getField('$fieldName')->setAutoIncrement(true);";
             }
+            if ($field->isLazyLoad()) {
+                $body .= "
+\$this->getField('$fieldName')->setLazyLoad(true);";
+            }
 
             $body .= "
 \$this->getField('$fieldName')->setColumnName('$columnName');";
