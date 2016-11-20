@@ -230,7 +230,9 @@ class QuickBuilder
             $sqliteFile = 'latest_quickbuilder_sqlite.db';
             $reflection = new \ReflectionClass('\Propel\Tests\TestCase');
             $sqliteFile = realpath(dirname($reflection->getFileName()) . '/../../') . '/' . $sqliteFile;
-            unlink($sqliteFile);
+            if (file_exists($sqliteFile)) {
+                unlink($sqliteFile);
+            }
             $dsn = 'sqlite:' . $sqliteFile;
         }
         if (null === $adapter) {
@@ -240,32 +242,28 @@ class QuickBuilder
             $classTargets = $this->classTargets;
         }
 
-        $pdo = new PdoConnection($dsn, $user, $pass);
-        $con = new ConnectionWrapper($pdo);
-        $adapter->initConnection($con, []);
+        static::$configuration = Configuration::getCurrentConfigurationOrCreate();
+        static::$configuration->closeConnections();
 
-        $connectionManager = new ConnectionManagerSingle(new SqliteAdapter());
-        $connectionManager->setConnection($con);
+        $connectionConfiguration = [
+            'dsn' => $dsn,
+            'user' => $user,
+            'password' => $pass
+        ];
 
-        if (Configuration::$globalConfiguration) {
-            static::$configuration = Configuration::$globalConfiguration;
-        } else {
-            Configuration::$globalConfiguration = static::$configuration = new Configuration();
+        if (static::$configuration->hasConnectionManager($this->getDatabase()->getName())) {
+            //overwriting a connection with a wrong incompatible adapter could go horrible wrong, so we forbid it.
+            throw new \InvalidArgumentException('Could not build due to already existing connection-manager ' . $this->getDatabase()->getName());
         }
 
-//        if (static::$configuration->hasConnectionManager($this->getDatabase()->getName())) {
-//            overwriting a connection with a wrong incompatible adapter could go horrible wrong, so we forbid it.
-//            throw new \InvalidArgumentException('Could not build due to already existing connection-manager ' . $this->getDatabase()->getName());
-//        }
-//
-//        if (static::$configuration->hasAdapter($this->getDatabase()->getName())) {
-//            throw new \InvalidArgumentException('Could not build due to already existing an adapter ' . $this->getDatabase()->getName());
-//        }
+        if (static::$configuration->hasAdapter($this->getDatabase()->getName())) {
+            throw new \InvalidArgumentException('Could not build due to already existing an adapter ' . $this->getDatabase()->getName());
+        }
 
-        static::$configuration->setConnectionManager($this->getDatabase()->getName(), $connectionManager);
         static::$configuration->setAdapter($this->getDatabase()->getName(), $adapter);
+        static::$configuration->buildConnectionManager($this->getDatabase()->getName(), $connectionConfiguration);
 
-        $this->buildSQL($con);
+        $this->buildSQL(static::$configuration->getConnectionManager($this->getDatabase()->getName())->getWriteConnection());
         $this->buildClasses($classTargets, true);
 
         $this->registerEntities(static::$configuration);

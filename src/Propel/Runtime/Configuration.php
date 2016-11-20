@@ -710,7 +710,16 @@ class Configuration extends GeneratorConfig
         $manager->setConfiguration($connection);
         $manager->setLogger($this->getLogger());
 
+        $this->connectionManager[$name] = $manager;
+        
         return $manager;
+    }
+
+    public function closeConnections()
+    {
+        foreach ($this->connectionManager as $connectionManager) {
+            $connectionManager->closeConnections();
+        }
     }
 
     /**

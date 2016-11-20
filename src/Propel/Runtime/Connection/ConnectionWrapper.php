@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;

@@ -30,7 +30,7 @@ class ConnectionFactory
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
      * @throws Exception\ConnectionException
      */
-    public static function create(array $configuration = array(), AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
+    public static function create(array $configuration, AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
     {
         if (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];

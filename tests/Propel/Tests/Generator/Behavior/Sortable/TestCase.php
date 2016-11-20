@@ -32,7 +32,7 @@ class TestCase extends BaseTestCase
 
         if (!class_exists('\SortableEntity11')) {
             $schema = <<<XML
-<database name="bookstore-behavior" defaultIdMethod="native">
+<database name="Sortable-testCase" defaultIdMethod="native">
 
     <entity name="SortableEntity11">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -82,10 +82,10 @@ class TestCase extends BaseTestCase
 
 </database>
 XML;
-            $this->configuration = QuickBuilder::buildSchema($schema);
-        } else {
-            $this->configuration = Configuration::getCurrentConfiguration();
+            QuickBuilder::buildSchema($schema);
         }
+
+        $this->configuration = Configuration::getCurrentConfiguration();
     }
     
     public function getConfiguration()

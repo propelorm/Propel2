@@ -133,7 +133,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $t1->save();
         $this->assertLessThan($tsave, $t1->getUpdatedAt('U'));
         $this->assertFalse(
-            $this->getConfiguration()->getRepositoryForEntity($t1)->isFieldModified($t1, 'updatedAt'),
+            $this->getConfiguration()->getEntityMapForEntity($t1)->isFieldModified($t1, 'updatedAt'),
             'updatedAt should not be modified after save call'
         );
         // let's save it a second time; the updated_at should be changed
@@ -240,7 +240,7 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     public function testDisableUpdatedAt()
     {
         $schema = <<<EOF
-<database name="timestampable_database">
+<database name="TimestampableBehaviorTest:testDisableUpdatedAt">
     <entity name="EntityWithoutUpdatedAt" activeRecord="true">
         <field name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <field name="name" type="varchar" />
@@ -254,7 +254,7 @@ EOF;
 
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
-        $builder->build();
+        $builder->build('sqlite:memory:');
 
         $this->assertTrue(method_exists('EntityWithoutUpdatedAt', 'getCreatedAt'));
         $this->assertTrue(method_exists('EntityWithoutUpdatedAt', 'setCreatedAt'));
@@ -271,7 +271,7 @@ EOF;
     public function testDisableCreatedAt()
     {
         $schema = <<<EOF
-<database name="timestampable_database">
+<database name="TimestampableBehaviorTest:testDisableCreatedAt">
     <entity name="EntityWithoutCreatedAt" activeRecord="true">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="name" type="varchar" />
@@ -285,7 +285,7 @@ EOF;
 
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
-        $builder->build();
+        $builder->build('sqlite:memory:');
 
         $this->assertFalse(method_exists('EntityWithoutCreatedAt', 'getCreatedAt'));
         $this->assertFalse(method_exists('EntityWithoutCreatedAt', 'setCreatedAt'));

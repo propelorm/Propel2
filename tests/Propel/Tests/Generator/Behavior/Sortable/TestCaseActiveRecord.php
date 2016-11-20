@@ -32,7 +32,7 @@ class TestCaseActiveRecord extends BaseTestCase
 
         if (!class_exists('\SortableEntity11')) {
             $schema = <<<XML
-<database name="bookstore-behavior" defaultIdMethod="native" activeRecord="true">
+<database name="Sortable:TestCaseActiveRecord" defaultIdMethod="native" activeRecord="true">
 
     <entity name="SortableEntity11">
         <field name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />

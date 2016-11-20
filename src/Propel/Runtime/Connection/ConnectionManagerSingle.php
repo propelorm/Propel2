@@ -87,14 +87,14 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
      */
     public function setConnection(ConnectionInterface $connection)
     {
-        $this->setConfiguration(null);
+        $this->setConfiguration([]);
         $this->connection = $connection;
     }
 
     /**
-     * @param $configuration
+     * @param array $configuration
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration(array $configuration)
     {
         $this->configuration = $configuration;
         $this->closeConnections();
@@ -121,7 +121,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface, LoggerAware
      */
     public function getReadConnection()
     {
-        return $this->getWriteConnection($this->adapter);
+        return $this->getWriteConnection();
     }
 
     public function closeConnections()

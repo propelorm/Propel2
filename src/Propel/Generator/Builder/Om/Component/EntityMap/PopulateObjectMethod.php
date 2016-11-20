@@ -105,7 +105,7 @@ if (EntityMap::TYPE_NUM === \$indexType) {
 
         $body .= "
 \$hashcode = json_encode(\$pk);
-if (\$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLevelCache('{$this->getEntity()->getFullClassName()}', \$hashcode)) {
+if (null === \$entity && \$object = \$this->getConfiguration()->getSession()->getInstanceFromFirstLevelCache('{$this->getEntity()->getFullClassName()}', \$hashcode)) {
     \$offset += $fieldCount;
     return \$object;
 }

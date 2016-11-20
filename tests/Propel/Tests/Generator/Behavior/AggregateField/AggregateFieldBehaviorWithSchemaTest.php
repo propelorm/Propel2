@@ -65,7 +65,7 @@ class AggregateFieldBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry1->setBookstore($store);
         $entry1->setBookstoreContest($contest);
         $entry1->setCustomer($customer1);
-        $entry1->save(null, true); // skip reload to avoid #1151 for now
+        $entry1->save();
 
         $this->assertEquals(1, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method computes the aggregate function on related objects');
 
@@ -76,7 +76,7 @@ class AggregateFieldBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $entry2->setBookstore($store);
         $entry2->setBookstoreContest($contest);
         $entry2->setCustomer($customer2);
-        $entry2->save(null, true); // skip reload to avoid #1151 for now
+        $entry2->save();
 
         $this->assertEquals(2, $bookstoreRepository->computeTotalContestEntries($store), 'The compute method computes the aggregate function on related objects');
         $entry1->delete();
