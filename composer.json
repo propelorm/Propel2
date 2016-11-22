@@ -27,7 +27,8 @@
         "psr/log": "~1.0",
         "gossi/php-code-generator": "dev-master",
         "mustache/mustache": "~2.6",
-        "marcj/topsort": "^0.2.0"
+        "marcj/topsort": "^0.2.0",
+        "bramus/monolog-colored-line-formatter": "~2.0"
     },
     "require-dev": {
         "behat/behat": "~2.4",

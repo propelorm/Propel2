@@ -116,7 +116,7 @@ class SqlPersister implements PersisterInterface
     /**
      * @param object[] $entities
      */
-    public function persist($entities)
+    public function commit($entities)
     {
         $inserts = $updates = [];
         foreach ($entities as $entity) {
@@ -129,17 +129,20 @@ class SqlPersister implements PersisterInterface
                 }
             }
         }
+        $this->getConfiguration()->debug(sprintf(
+            ' COMMIT PERSISTER with %d entities of %s', count($entities), $this->getEntityMap()->getFullClassName()
+        ), Configuration::LOG_GREEN);
 
         if (!$inserts && !$updates) {
-            $this->getConfiguration()->debug(sprintf('No changes detected'));
+            $this->getConfiguration()->debug(sprintf('   No changes detected'), Configuration::LOG_GREEN);
             return;
         }
 
-        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
-        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
+//        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
+//        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
 
-        $this->getConfiguration()->debug(sprintf('doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()));
-        $this->getConfiguration()->debug(sprintf('doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()));
+        $this->getConfiguration()->debug(sprintf('   doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
+        $this->getConfiguration()->debug(sprintf('   doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
 
         if ($inserts) {
             $this->doInsert($inserts);
@@ -149,7 +152,7 @@ class SqlPersister implements PersisterInterface
             $this->doUpdates($updates);
         }
 
-        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
+//        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
     }
 
     /**
@@ -195,7 +198,6 @@ class SqlPersister implements PersisterInterface
 
         $event = new InsertEvent($this->getSession(), $this->entityMap, $inserts);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_INSERT, $event);
-
 
         $fieldObjects = $this->entityMap->getFields();
         $fields = [];
@@ -287,7 +289,6 @@ class SqlPersister implements PersisterInterface
 
         foreach ($this->entityMap->getRelations() as $relation) {
             if ($relation->isManyToMany()) {
-                $this->getConfiguration()->debug("create many-to-many links {$this->entityMap->getFullClassName()} {$relation->getName()}");
                 $this->addCrossRelations($inserts, $relation);
             }
         }
@@ -301,13 +302,19 @@ class SqlPersister implements PersisterInterface
      */
     protected function addCrossRelations($inserts, RelationMap $relation)
     {
+        //todo, make sure the symmetrical relation hasn't been saved yet.
+        //if so, we return immediately since we would save the cross entities twice.
+
         $reader = $this->getEntityMap()->getPropReader();
         $isset = $this->getEntityMap()->getPropIsset();
 
         foreach ($inserts as $entity) {
 
+            $debugName = "{$this->entityMap->getFullClassName()} {$relation->getName()}";
+
             if (!$isset($entity, $relation->getPluralName())) {
                 //we don't update relations when they haven't been loaded.
+                $this->getConfiguration()->debug("many-to-many $debugName: no update, since not loaded.");
                 continue;
             }
 
@@ -317,14 +324,18 @@ class SqlPersister implements PersisterInterface
             $query = $relation->getMiddleEntity()->createQuery();
             foreach ($relation->getFieldMappingIncoming() as $middleTableField => $myId) {
                 $query->filterBy($middleTableField, $reader($entity, $myId));
+                $debugName .= " $myId=" . $reader($entity, $myId);
             }
             $query->delete();
 
             if (null !== $foreignItems && count($foreignItems)) {
 
+                $this->getConfiguration()->debug("many-to-many $debugName: update with " . count($foreignItems) . " foreign items.");
+
                 if ($relation->isImplementationDetail()) {
                     //do manual SQL insert. It's a implementationDetail when the crossEntity hasn't been created
                     //in the future it's something like <relation target="user' many>
+                    throw new RuntimeException('Relation as implementation detail not implemented yet.');
                 } else {
                     //use Propel entities
                     $writer = $relation->getMiddleEntity()->getPropWriter();
@@ -338,11 +349,11 @@ class SqlPersister implements PersisterInterface
                             $writer($object, $relationName, $foreignItem);
                         }
 
-                        $this->getConfiguration()->debug("create new many-to-many link {$relation->getMiddleEntity()->getFullClassName()}");
-
                         $this->getSession()->persist($object, true);
                     }
                 }
+            } else {
+                $this->getConfiguration()->debug("many-to-many $debugName: no update, since no items.");
             }
 
         }
@@ -454,8 +465,11 @@ class SqlPersister implements PersisterInterface
             }
         }
 
+        if ($updateCrossRelations) {
+            $this->getConfiguration()->debug(sprintf('many-to-many update %d entities', count($updateCrossRelations)));
+        }
+
         foreach ($updateCrossRelations as $relationName => $entities) {
-            $this->getConfiguration()->debug("update many-to-many links {$this->entityMap->getFullClassName()} $relationName");
             $this->addCrossRelations($entities, $this->entityMap->getRelation($relationName));
         }
     }

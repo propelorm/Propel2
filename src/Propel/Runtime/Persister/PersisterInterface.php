@@ -4,6 +4,6 @@ namespace Propel\Runtime\Persister;
 
 interface PersisterInterface
 {
-    public function persist($entities);
+    public function commit($entities);
     public function remove($entities);
 }

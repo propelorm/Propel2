@@ -97,9 +97,13 @@ class SessionRound
         }
 
         $id = spl_object_hash($entity);
-        $this->getConfiguration()->debug('persist(' . get_class($entity) . ', ' . var_export($deep, true) . ')');
 
         if (!isset($this->persistQueue[$id])) {
+
+            if ($this->getConfiguration()->isDebug()) {
+                $currentPk = json_encode($this->getConfiguration()->getEntityMapForEntity($entity)->getPK($entity));
+                $this->getConfiguration()->debug('success persist(' . get_class($entity) . "/$currentPk, " . var_export($deep, true) . ')');
+            }
 
             $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
 
@@ -117,13 +121,18 @@ class SessionRound
                 }
             }
 
-            $event = new PersistEvent($this->getSession(), $entityMap, $entity);
-            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
+//            $event = new PersistEvent($this->getSession(), $entityMap, $entity);
+//            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_PERSIST, $event);
             $this->persistQueue[$id] = $entity;
-            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PERSIST, $event);
+//            $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PERSIST, $event);
 
             if ($deep) {
                 $entityMap->persistDependencies($this->getSession(), $entity, true);
+            }
+        } else {
+            if ($this->getConfiguration()->isDebug()) {
+                $currentPk = json_encode($this->getConfiguration()->getEntityMapForEntity($entity)->getPK($entity));
+                $this->getConfiguration()->debug('failed persist(' . get_class($entity) . "/$currentPk, " . var_export($deep, true) . ') because already in persist queue.');
             }
         }
 
@@ -238,9 +247,36 @@ class SessionRound
 
         $list = $dependencyGraph->getList();
         $sortedGroups = $dependencyGraph->getGroups();
-        $this->getConfiguration()->debug(
-            sprintf('doPersist(): %d groups, with %d items', count($sortedGroups), count($list))
-        );
+
+        if ($this->getConfiguration()->isDebug()) {
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug(" ######################  SessionRound[{$this->getIdx()}]::doPersist() START ###################### ", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug(sprintf('%d groups, with %d items', count($sortedGroups), count($list)), Configuration::LOG_CYAN);
+            foreach ($sortedGroups as $idx => $group) {
+                $entityIds = array_slice($list, $group->position, $group->length);
+                $firstEntity = $this->persistQueue[$entityIds[0]];
+                $persister = $this->getConfiguration()->getEntityPersisterForEntity($this->getSession(), $firstEntity);
+
+                $newItems = 0;
+                foreach ($entityIds as $entityId) {
+                    if ($this->getSession()->isNew($this->persistQueue[$entityId])) {
+                        $newItems++;
+                    }
+                }
+
+                $this->getConfiguration()->debug(sprintf('Group #%d: %d [%d insert, %d update] items for %s using %s',
+                    $idx+1,
+                    count($entityIds),
+                    $newItems,
+                    count($entityIds) - $newItems,
+                    $this->getConfiguration()->getEntityMapForEntity($firstEntity)->getFullClassName(),
+                    get_class($persister)),
+                    Configuration::LOG_CYAN);
+            }
+            $this->getConfiguration()->debug("");
+            $this->getConfiguration()->debug("");
+        }
 
         foreach ($sortedGroups as $group) {
             $entityIds = array_slice($list, $group->position, $group->length);
@@ -253,18 +289,9 @@ class SessionRound
                 $entity = $this->persistQueue[$entityId];
                 $entities[] = $entity;
             }
-            $this->getConfiguration()->debug(
-                sprintf('persist-pre: %d $this->persistQueue', count($this->persistQueue))
-            );
-            $this->getConfiguration()->debug(
-                sprintf('Persister::persist() with %d items of %s', $group->length, $group->type)
-            );
-            try {
-                $persister->persist($entities);
 
-                $this->getConfiguration()->debug(
-                    sprintf('persist-post: %d $this->persistQueue', count($this->persistQueue))
-                );
+            try {
+                $persister->commit($entities);
 
                 foreach ($entityIds as $entityId) {
                     $entity = $this->persistQueue[$entityId];
@@ -277,6 +304,15 @@ class SessionRound
                 }
                 throw $e;
             }
+        }
+
+        if ($this->getConfiguration()->isDebug()) {
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug(" ######################  SessionRound[{$this->getIdx()}]::doPersist() END ###################### ", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+            $this->getConfiguration()->debug("", Configuration::LOG_CYAN);
+
         }
 
         $this->persistQueue = [];

@@ -78,23 +78,23 @@ class Session
     {
         $this->configuration = $configuration;
 
-        $self = $this;
-        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, function() use ($self) {
-            //if PRE_SAVE hooks added new rounds, commit those first
-            $self->commit();
-        }, -128);
-        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_INSERT, function() use ($self) {
-            //if PRE_SAVE hooks added new rounds, commit those first
-            $self->commit();
-        }, -128);
-        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_UPDATE, function() use ($self) {
-            //if PRE_SAVE hooks added new rounds, commit those first
-            $self->commit();
-        }, -128);
-        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
-            //if PRE_SAVE hooks added new rounds, commit those first
-            $self->commit();
-        }, -128);
+//        $self = $this;
+//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, function() use ($self) {
+//            //if PRE_SAVE hooks added new rounds, commit those first
+//            $self->commit();
+//        }, -128);
+//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_INSERT, function() use ($self) {
+//            //if PRE_SAVE hooks added new rounds, commit those first
+//            $self->commit();
+//        }, -128);
+//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_UPDATE, function() use ($self) {
+//            //if PRE_SAVE hooks added new rounds, commit those first
+//            $self->commit();
+//        }, -128);
+//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
+//            //if PRE_SAVE hooks added new rounds, commit those first
+//            $self->commit();
+//        }, -128);
     }
 
     /**
@@ -213,6 +213,8 @@ class Session
     {
         if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
+
+            $this->getConfiguration()->debug(" NEW ROUND for remove(" . $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName(). ")", Configuration::LOG_PURPLE);
         }
 
         $this->getCurrentRound()->remove($entity);
@@ -224,7 +226,6 @@ class Session
     public function enterNewRound()
     {
         $this->currentRound++;
-        $this->getConfiguration()->debug('enter new round (' . $this->currentRound . ') +++++++++++++++');
 
         return $this->rounds[$this->currentRound] = new SessionRound($this, $this->currentRound);
     }
@@ -263,8 +264,16 @@ class Session
      */
     public function persist($entity, $deep = false)
     {
+        $this->getConfiguration()->debug(sprintf(
+            " persist to round #%d, is inCommit=%s (%s)",
+            $this->currentRound,
+            var_export($this->getCurrentRound()->isInCommit(), true),
+            $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName()
+        ), Configuration::LOG_PURPLE);
+
         if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
+            $this->getConfiguration()->debug(" NEW ROUND for persist(" . $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName() . ")", Configuration::LOG_PURPLE);
         }
 
         $this->knownEntities[spl_object_hash($entity)] = $entity;
@@ -284,6 +293,8 @@ class Session
             throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset() to open it again.');
         }
 
+        $this->getConfiguration()->debug("COMMIT START", Configuration::LOG_PURPLE);
+
         $allCommitted = false;
 
         while (true) {
@@ -297,8 +308,7 @@ class Session
                 }
                 if (!$round->isCommitted() && !$round->isInCommit()) {
                     $this->currentCommitRound = $idx;
-                    $this->getConfiguration()->debug('');
-                    $this->getConfiguration()->debug('commit round (' . $idx . ') >>>>>>>>>>>>>>>>>> >>>>>>>>>>>>>>>>>> >>>>>>>>>>>>>>>>>');
+                    $this->getConfiguration()->debug("  Round=$idx COMMIT", Configuration::LOG_PURPLE);
                     try {
                         $round->commit();
                     } catch (\Exception $e) {
@@ -306,23 +316,28 @@ class Session
                         $this->closed = true;
                         throw $e;
                     }
-                    $this->currentRound--;
-                    $this->getConfiguration()->debug('close round (' . $idx . ')  <<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<');
-                    $this->getConfiguration()->debug('');
-                    continue;
+                    $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
                 }
             }
 
             if ($allCommitted || $allBusy) {
+                if ($allCommitted) {
+                    $this->getConfiguration()->debug(" All committed", Configuration::LOG_PURPLE);
+                }
+                if ($allBusy) {
+                    $this->getConfiguration()->debug(" All busy", Configuration::LOG_PURPLE);
+                }
                 break;
             }
         }
 
         if ($allCommitted) {
-            $this->getConfiguration()->debug('close all rounds. ' . count($this->rounds) . ' rounds committed');
+            $this->getConfiguration()->debug(' CLOSED ALL ROUNDS, ' . count($this->rounds) . ' rounds committed', Configuration::LOG_PURPLE);
             $this->currentRound = -1;
             $this->rounds = [];
         }
+
+        $this->getConfiguration()->debug("COMMIT END", Configuration::LOG_PURPLE);
     }
 
     /**

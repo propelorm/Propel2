@@ -2,6 +2,8 @@
 
 namespace Propel\Runtime;
 
+use Bramus\Ansi\ControlSequences\EscapeSequences\Enums\SGR;
+use Bramus\Monolog\Formatter\ColoredLineFormatter;
 use Monolog\Logger;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Types\FieldTypeInterface;
@@ -82,6 +84,42 @@ class Configuration extends GeneratorConfig
      * A constant defining 'Debug-level messages' logging level
      */
     const LOG_DEBUG = 100;
+
+    /**
+     * Red Foreground Color
+     * @type string
+     */
+    const LOG_RED = '31';
+
+    /**
+     * Green Foreground Color
+     * @type string
+     */
+    const LOG_GREEN = '32';
+
+    /**
+     * Yellow Foreground Color
+     * @type string
+     */
+    const LOG_YELLOW = '33';
+
+    /**
+     * Blue Foreground Color
+     * @type string
+     */
+    const LOG_BLUE = '34';
+
+    /**
+     * Purple Foreground Color
+     * @type string
+     */
+    const LOG_PURPLE = '35';
+
+    /**
+     * Cyan Foreground Color
+     * @type string
+     */
+    const LOG_CYAN = '36';
 
     /**
      * Connections configured in the `runtime` section of the configuration file
@@ -807,16 +845,46 @@ class Configuration extends GeneratorConfig
 
     /**
      * @param string $message
+     * @param int|null $color LOG_* constants, like Configuration::LOG_BLUE
      */
-    public function debug($message)
+    public function debug($message, $color = null)
     {
-        list(, $caller) = debug_backtrace();
-        $class = $caller['class'];
+        list($firstCaller, $secondCaller) = debug_backtrace();
+        $class = $secondCaller['class'];
+        $method = $secondCaller['function'];
         $additional = '';
         if ('Propel\Runtime\Session\SessionRound' === $class) {
-            $additional = sprintf(', round=%d', $caller['object']->getIdx());
+            $additional = sprintf(', round=%d', $secondCaller['object']->getIdx());
         }
-        $this->log(sprintf('[%s:%d%s] %s', $class, $caller['line'], $additional, $message));
+
+        $line = sprintf('[%s::%s +%d%s]', $class, $method, $firstCaller['line'], $additional);
+        $line = $this->colorizeMessage($line, [SGR::STYLE_UNDERLINE]) . ' ';
+
+        if ($color) {
+            $line .= $this->colorizeMessage($message, $color);
+        } else {
+            $line .= $message;
+        }
+        $this->log($line);
+    }
+
+    /**
+     * @param string $message
+     * @param string $color
+     * @return string
+     */
+    public function colorizeMessage($message, $color)
+    {
+        $ansi = new \Bramus\Ansi\Ansi(new \Bramus\Ansi\Writers\BufferWriter());
+
+        if (!is_array($color)) {
+            $color = array($color, SGR::STYLE_INTENSITY_FAINT);
+        }
+
+        $start = $ansi->sgr($color)->get();
+        $end = $ansi->reset()->get();
+
+        return $start . $message . $end;
     }
 
     /**
@@ -860,6 +928,7 @@ class Configuration extends GeneratorConfig
             $handler = new \Monolog\Handler\StreamHandler(
                 'php://output'
             );
+            $handler->setFormatter(new ColoredLineFormatter());
             $logger->pushHandler($handler);
 
             return $logger;
