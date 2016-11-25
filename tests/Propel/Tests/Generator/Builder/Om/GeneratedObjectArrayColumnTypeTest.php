@@ -126,6 +126,14 @@ EOF;
         $this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
     }
 
+    public function testGetterForArrayWithOnlyOneZeroValue()
+    {
+        $e = new ComplexColumnTypeEntity2();
+        $value = [0];
+        $e->setTags($value);
+        $this->assertEquals($value, $e->getTags());
+    }
+
     public function testSetterResetValue()
     {
         $e = new ComplexColumnTypeEntity2();
