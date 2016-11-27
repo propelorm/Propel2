@@ -2,11 +2,11 @@
 
 namespace Propel\Generator\Builder\Om\Component;
 
-use gossi\codegen\model\PhpMethod;
+use gossi\codegen\model\PhpConstant;
 use gossi\codegen\model\PhpProperty;
 use Propel\Generator\Builder\Om\AbstractBuilder;
 use Propel\Generator\Builder\PhpModel\ClassDefinition;
-use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Builder\PhpModel\MethodDefinition;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Platform\PlatformInterface;
 
@@ -88,7 +88,12 @@ abstract class BuildComponent
     protected function addProperty($name, $defaultValue = null, $visibility = 'protected')
     {
         $property = new PhpProperty($name);
-        $property->setDefaultValue($defaultValue);
+        if (is_array($defaultValue)) {
+            $defaultValue = PhpConstant::create('[]', null, true);
+        }
+
+        $property->setValue($defaultValue);
+
         $property->setVisibility($visibility);
         $this->getDefinition()->setProperty($property);
 
@@ -99,15 +104,11 @@ abstract class BuildComponent
      * @param string $name
      * @param string $visibility
      *
-     * @return PhpMethod
+     * @return MethodDefinition
      */
     protected function addMethod($name, $visibility = 'public')
     {
-//        if ($this->getDefinition()->hasMethod($name)) {
-//            throw new \InvalidArgumentException(sprintf('Method %s already exists in class %s', $name, $this->getDefinition()->getName()));
-//        }
-
-        $method = new PhpMethod($name);
+        $method = new MethodDefinition($name);
         $method->setVisibility($visibility);
         $this->getDefinition()->setMethod($method);
 

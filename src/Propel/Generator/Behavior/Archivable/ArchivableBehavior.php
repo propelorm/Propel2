@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use gossi\codegen\model\PhpConstant;
 use gossi\codegen\model\PhpProperty;
 use Propel\Generator\Builder\Om\ActiveRecordTraitBuilder;
 use Propel\Generator\Builder\Om\Component\ComponentTrait;
@@ -163,7 +164,7 @@ class ArchivableBehavior extends Behavior
     {
         $archiveExcludePersist = new PhpProperty('archiveExcludePersist');
         $archiveExcludePersist->setType('array');
-        $archiveExcludePersist->setDefaultValue([]);
+        $archiveExcludePersist->setValue(PhpConstant::create('[]'));
         $builder->getDefinition()->setProperty($archiveExcludePersist);
 
         $archiveExcludeDelete = clone $archiveExcludePersist;

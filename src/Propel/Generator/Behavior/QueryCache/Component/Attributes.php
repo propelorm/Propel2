@@ -9,6 +9,7 @@
 
 namespace Propel\Generator\Behavior\QueryCache\Component;
 
+use gossi\codegen\model\PhpConstant;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 
 class Attributes extends BuildComponent
@@ -20,7 +21,7 @@ class Attributes extends BuildComponent
         $cacheBackend = $this->addProperty('cacheBackend')->setStatic(true);
 
         if ('backend' == $this->getBehavior()->getParameter('backend')) {
-            $cacheBackend->setDefaultValue([]);
+            $cacheBackend->setValue(PhpConstant::create('[]'));
         }
     }
 

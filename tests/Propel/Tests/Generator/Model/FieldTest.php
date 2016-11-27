@@ -303,8 +303,8 @@ class FieldTest extends ModelTestCase
     public function testClearRelations()
     {
         $fks = array(
-            $this->getMock('Propel\Generator\Model\Relation'),
-            $this->getMock('Propel\Generator\Model\Relation'),
+            $this->createMock('Propel\Generator\Model\Relation'),
+            $this->createMock('Propel\Generator\Model\Relation'),
         );
 
         $entity = $this->getEntityMock('books');

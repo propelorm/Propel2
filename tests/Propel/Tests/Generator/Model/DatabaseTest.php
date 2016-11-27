@@ -72,7 +72,7 @@ class DatabaseTest extends ModelTestCase
         $platform = $this->getPlatformMock();
         $platform
             ->expects($this->any())
-            ->method('getMaxColumnNameLength')
+            ->method('getMaxFieldNameLength')
             ->will($this->returnValue(64))
         ;
         $platform

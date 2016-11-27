@@ -82,8 +82,6 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
     {
         AggregateCommentQuery::create()->deleteAll();
         AggregatePostQuery::create()->deleteAll();
-        /** @var BaseAggregatePostRepository $aggregatePostRepository */
-        $aggregatePostRepository = $this->getConfiguration()->getRepository(AggregatePostEntityMap::ENTITY_CLASS);
 
         $post = new AggregatePost();
         $post->save();

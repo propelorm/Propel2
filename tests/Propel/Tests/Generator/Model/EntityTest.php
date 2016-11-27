@@ -307,8 +307,8 @@ class EntityTest extends ModelTestCase
             ->will($this->returnValue(true))
         ;
 
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
+        $children[] = $this->createMock('Propel\Generator\Model\Inheritance');
+        $children[] = $this->createMock('Propel\Generator\Model\Inheritance');
 
         $field
             ->expects($this->any())
@@ -874,12 +874,6 @@ class EntityTest extends ModelTestCase
             ->expects($this->any())
             ->method('isLazyLoad')
             ->will($this->returnValue($options['lazy']))
-        ;
-
-        $field
-            ->expects($this->any())
-            ->method('getPhpName')
-            ->will($this->returnValue($options['phpName']))
         ;
 
         $field

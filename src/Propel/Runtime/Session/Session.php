@@ -78,23 +78,11 @@ class Session
     {
         $this->configuration = $configuration;
 
-//        $self = $this;
-//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, function() use ($self) {
-//            //if PRE_SAVE hooks added new rounds, commit those first
-//            $self->commit();
-//        }, -128);
-//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_INSERT, function() use ($self) {
-//            //if PRE_SAVE hooks added new rounds, commit those first
-//            $self->commit();
-//        }, -128);
-//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_UPDATE, function() use ($self) {
-//            //if PRE_SAVE hooks added new rounds, commit those first
-//            $self->commit();
-//        }, -128);
-//        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, function() use ($self) {
-//            //if PRE_SAVE hooks added new rounds, commit those first
-//            $self->commit();
-//        }, -128);
+        //if PRE_* hooks added new rounds, commit those first
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_SAVE, [$this, 'commit']);
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_INSERT, [$this, 'commit']);
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_UPDATE, [$this, 'commit']);
+        $this->getConfiguration()->getEventDispatcher()->addListener(Events::PRE_DELETE, [$this, 'commit']);
     }
 
     /**
@@ -264,16 +252,30 @@ class Session
      */
     public function persist($entity, $deep = false)
     {
-        $this->getConfiguration()->debug(sprintf(
-            " persist to round #%d, is inCommit=%s (%s)",
-            $this->currentRound,
-            var_export($this->getCurrentRound()->isInCommit(), true),
-            $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName()
-        ), Configuration::LOG_PURPLE);
+        if ($this->getConfiguration()->isDebug()) {
+            $this->getConfiguration()->debug(
+                sprintf(
+                    " persist to round #%d, is inCommit=%s (%s/%s, #%s)",
+                    $this->currentRound,
+                    var_export($this->getCurrentRound()->isInCommit(), true),
+                    $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName(),
+                    json_encode($this->getConfiguration()->getEntityMapForEntity($entity)->getPK($entity)),
+                    substr(md5(spl_object_hash($entity)), 0, 9)
+                ),
+                Configuration::LOG_PURPLE
+            );
+        }
 
         if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
-            $this->getConfiguration()->debug(" NEW ROUND for persist(" . $this->getConfiguration()->getEntityMapForEntity($entity)->getFullClassName() . ")", Configuration::LOG_PURPLE);
+            if ($this->getConfiguration()->isDebug()) {
+                $this->getConfiguration()->debug(
+                    " NEW ROUND for persist(" . $this->getConfiguration()->getEntityMapForEntity(
+                        $entity
+                    )->getFullClassName() . ")",
+                    Configuration::LOG_PURPLE
+                );
+            }
         }
 
         $this->knownEntities[spl_object_hash($entity)] = $entity;
@@ -293,41 +295,42 @@ class Session
             throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset() to open it again.');
         }
 
-        $this->getConfiguration()->debug("COMMIT START", Configuration::LOG_PURPLE);
+        $rounds = count($this->rounds);
+        $this->getConfiguration()->debug("COMMIT START, $rounds rounds.", Configuration::LOG_PURPLE);
 
-        $allCommitted = false;
+        $allCommitted = true;
+        $allBusy = true;
 
-        while (true) {
-            $allCommitted = true;
-            $allBusy = true;
+        //we can't use foreach() because during $round->commit()
+        //$this->rounds can be changed.
+//        foreach ($this->rounds as $idx => $round) {
+        for ($idx = 0; $idx < count($this->rounds); $idx++) {
+            $round = $this->rounds[$idx];
 
-            foreach ($this->rounds as $idx => $round) {
-                $allCommitted &= $round->isCommitted();
-                if (!$round->isCommitted()) {
-                    $allBusy &= $round->isInCommit();
+            if (!$round->isCommitted() && !$round->isInCommit()) {
+                $this->currentCommitRound = $idx;
+                $this->getConfiguration()->debug("  Round=$idx COMMIT", Configuration::LOG_PURPLE);
+                try {
+                    $round->commit();
+                } catch (\Exception $e) {
+                    $this->getConfiguration()->debug('force close session');
+                    $this->closed = true;
+                    throw $e;
                 }
-                if (!$round->isCommitted() && !$round->isInCommit()) {
-                    $this->currentCommitRound = $idx;
-                    $this->getConfiguration()->debug("  Round=$idx COMMIT", Configuration::LOG_PURPLE);
-                    try {
-                        $round->commit();
-                    } catch (\Exception $e) {
-                        $this->getConfiguration()->debug('force close session');
-                        $this->closed = true;
-                        throw $e;
-                    }
-                    $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
-                }
+                $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
             }
+            $allCommitted &= $round->isCommitted();
+            if (!$round->isCommitted()) {
+                $allBusy &= $round->isInCommit();
+            }
+        }
 
-            if ($allCommitted || $allBusy) {
-                if ($allCommitted) {
-                    $this->getConfiguration()->debug(" All committed", Configuration::LOG_PURPLE);
-                }
-                if ($allBusy) {
-                    $this->getConfiguration()->debug(" All busy", Configuration::LOG_PURPLE);
-                }
-                break;
+        if ($allCommitted || $allBusy) {
+            if ($allCommitted) {
+                $this->getConfiguration()->debug(" All committed", Configuration::LOG_PURPLE);
+            }
+            if ($allBusy) {
+                $this->getConfiguration()->debug(" All busy", Configuration::LOG_PURPLE);
             }
         }
 

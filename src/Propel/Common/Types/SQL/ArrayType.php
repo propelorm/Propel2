@@ -2,6 +2,7 @@
 
 namespace Propel\Common\Types\SQL;
 
+use gossi\codegen\model\PhpConstant;
 use Propel\Common\Types\AbstractType;
 use Propel\Common\Types\BuildableFieldTypeInterface;
 use Propel\Generator\Builder\Om\AbstractBuilder;
@@ -30,10 +31,8 @@ class ArrayType extends AbstractType implements BuildableFieldTypeInterface
         if ($builder instanceof ObjectBuilder) {
             $property = $builder->getDefinition()->getProperty($field->getName());
 
-            if ($field->isPhpArrayType()) {
-                if (!is_array($property->getValue())) {
-                    $property->setValue([]);
-                }
+            if (!$property->hasValue()) {
+                $property->setValue(PhpConstant::create('[]'));
             }
         }
     }

@@ -40,9 +40,12 @@ class ConfigurationManager
      * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
      *                          It's useful when passing configuration parameters from command line.
      */
-    public function __construct($filename = null, $extraConf = array())
+    public function __construct($filename = './', $extraConf = array())
     {
-        $this->load($filename, $extraConf);
+        if (null !== $filename) {
+            $this->load($filename, $extraConf);
+        }
+
         $this->process();
     }
 
@@ -178,7 +181,12 @@ class ConfigurationManager
             }
 
             if ($numFiles > 1) {
-                throw new InvalidArgumentException('Propel expects only one configuration file');
+                $realPath = realpath($fileName);
+                throw new InvalidArgumentException(
+                    sprintf('Propel expects only one configuration file in %s. Found %s',
+                    $realPath,
+                    implode(', ', $files)
+                ));
             } elseif ($numFiles === 0) {
                 $this->config = $extraConf;
                 return;

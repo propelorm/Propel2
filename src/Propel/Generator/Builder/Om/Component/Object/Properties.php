@@ -2,6 +2,8 @@
 
 namespace Propel\Generator\Builder\Om\Component\Object;
 
+use gossi\codegen\model\PhpConstant;
+use gossi\codegen\model\PhpProperty;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 use Propel\Generator\Builder\Om\Component\ComponentHelperTrait;
 use Propel\Generator\Model\Field;
@@ -64,24 +66,28 @@ class Properties extends BuildComponent
 
         $description[] = "The value for the $name field.";
 
-        $defaultValue = null;
+        $property = PhpProperty::create($name)
+            ->setType($cpType);
+
         if ($field->getDefaultValue()) {
             if ($field->getDefaultValue()->isExpression()) {
                 $expression = $field->getDefaultValue()->getValue();
                 $description[] = "Note: this field has a database default value of: (expression) $expression";
+                $defaultValue = PhpConstant::create($expression);
+                $property->setValue($defaultValue);
             } else {
                 $defaultValue = $field->getDefaultValue()->getValue();
+                $property->setValue($defaultValue);
+
                 if ($field->isPhpArrayType()) {
                     $defaultValue = $this->getDefaultValueString($field);
+                    $defaultValue = PhpConstant::create(var_export($defaultValue, true));
+                    $property->setValue($defaultValue);
                 }
             }
         }
 
-
-        $this->addProperty($name)
-            ->setType($cpType)
-            ->setDescription($description)
-            ->setValue($defaultValue)
-        ;
+        $property->setDescription($description);
+        $this->getDefinition()->setProperty($property);
     }
 }

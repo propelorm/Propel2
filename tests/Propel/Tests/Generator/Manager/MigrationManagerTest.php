@@ -20,7 +20,7 @@ class MigrationManagerTest extends TestCase
 
         $connections = $generatorConfig->getBuildConnections();
 
-        $migrationManager = $this->getMock('Propel\Generator\Manager\MigrationManager', ['getMigrationTimestamps']);
+        $migrationManager = $this->createMock('Propel\Generator\Manager\MigrationManager', ['getMigrationTimestamps']);
         $migrationManager->setGeneratorConfig($generatorConfig);
         $migrationManager->setConnections($connections);
         $migrationManager->setMigrationTable('migration');

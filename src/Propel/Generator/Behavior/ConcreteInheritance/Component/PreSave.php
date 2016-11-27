@@ -58,7 +58,6 @@ EOF;
                     continue;
                 }
 
-                $getter = 'get' . $primaryKey->getMethodName();
                 $code .= "
     if (null === \$reader(\$entity, '{$primaryKey->getName()}')) {
         \$excludeFields[] = '{$primaryKey->getName()}';

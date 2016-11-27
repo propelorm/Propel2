@@ -56,11 +56,11 @@ class FieldStaticProperties extends BuildComponent
         ];
 
         $constant = new PhpProperty('fieldNames');
-        $constant->setDefaultValue($fieldNamesProperty);
+        $constant->setExpression(var_export($fieldNamesProperty, true));
         $this->getDefinition()->setProperty($constant);
 
         $constant = new PhpProperty('fieldKeys');
-        $constant->setDefaultValue($fieldKeysProperty);
+        $constant->setExpression(var_export($fieldKeysProperty, true));
         $this->getDefinition()->setProperty($constant);
     }
 }

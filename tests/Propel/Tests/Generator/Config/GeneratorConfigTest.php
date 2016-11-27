@@ -175,7 +175,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     public function testGetConfiguredBuilder()
     {
-        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $stubEntity = $this->createMock('\\Propel\\Generator\\Model\\Entity');
         $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
@@ -186,7 +186,7 @@ class GeneratorConfigTest extends ConfigTestCase
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubEntity = $this->getMock('\\Propel\\Generator\\Model\\Entity');
+        $stubEntity = $this->createMock('\\Propel\\Generator\\Model\\Entity');
         $actual = $this->generatorConfig->getConfiguredBuilder($stubEntity, 'bad_type');
     }
 

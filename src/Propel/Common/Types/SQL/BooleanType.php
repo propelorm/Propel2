@@ -9,11 +9,11 @@ class BooleanType extends AbstractType
 {
     public function databaseToProperty($value, FieldMap $fieldMap)
     {
-        return $value;
+        return $value ? true : false;
     }
 
     public function propertyToDatabase($value, FieldMap $fieldMap)
     {
-        return $value;
+        return (int) $value;
     }
 }

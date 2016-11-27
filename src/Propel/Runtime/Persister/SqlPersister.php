@@ -138,8 +138,8 @@ class SqlPersister implements PersisterInterface
             return;
         }
 
-//        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
-//        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
+        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
+        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
 
         $this->getConfiguration()->debug(sprintf('   doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
         $this->getConfiguration()->debug(sprintf('   doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
@@ -152,7 +152,7 @@ class SqlPersister implements PersisterInterface
             $this->doUpdates($updates);
         }
 
-//        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
+        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
     }
 
     /**

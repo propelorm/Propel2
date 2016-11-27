@@ -9,6 +9,7 @@
 
 namespace Propel\Generator\Behavior\Sortable\Component\Repository;
 
+use gossi\codegen\model\PhpConstant;
 use Propel\Generator\Behavior\Sortable\SortableBehavior;
 use Propel\Generator\Builder\Om\Component\BuildComponent;
 
@@ -22,7 +23,7 @@ class Attributes extends BuildComponent
     {
         $this->addProperty('sortableQueries')
             ->setType('array', 'Array of queries to execute while saving into the database')
-            ->setDefaultValue([]);
+            ->setValue(PhpConstant::create('[]'));
 
         $this->addProperty('sortableManager', null)
             ->setType('SortableManagerInterface')
