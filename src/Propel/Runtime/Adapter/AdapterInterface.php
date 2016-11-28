@@ -39,7 +39,7 @@ interface AdapterInterface
     /**
      * @return PersisterInterface
      */
-    public function getPersister($session, $entityMap);
+    public function getPersister($session);
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.

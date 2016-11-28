@@ -54,11 +54,6 @@ class SchemaTest extends ModelTestCase
     public function testJoinMultipleSchemasWithSameDatabase()
     {
         $behavior = $this->getBehaviorMock('sluggable');
-        $behavior
-            ->expects($this->any())
-            ->method('hasBehavior')
-            ->will($this->returnValue(false))
-        ;
 
         $tables[] = $this->getEntityMock('books');
         $tables[] = $this->getEntityMock('authors');
@@ -147,7 +142,7 @@ class SchemaTest extends ModelTestCase
         ;
         $config
             ->expects($this->any())
-            ->method('getConfiguredPlatform')
+            ->method('createPlatformForDatabase')
             ->with($this->equalTo(null), $this->equalTo('bookstore'))
             ->will($this->returnValue($this->getPlatformMock()))
         ;

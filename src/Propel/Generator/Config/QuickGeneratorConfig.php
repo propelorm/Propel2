@@ -94,14 +94,6 @@ class QuickGeneratorConfig extends GeneratorConfig implements GeneratorConfigInt
         return new StandardEnglishPluralizer();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
-    {
-        return null;
-    }
-
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {

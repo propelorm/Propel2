@@ -120,17 +120,17 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             $conn     = $manager->getAdapterConnection($name);
-            $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
+            $platform = $generatorConfig->createPlatformForDatabase($conn, $name);
 
             if (!$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
                 continue;
             }
 
-            $additionalTables = [];
-            foreach ($appDatabase->getTables() as $table) {
-                if ($table->getSchema() && $table->getSchema() != $appDatabase->getSchema()) {
-                    $additionalTables[] = $table;
+            $additionalEntities = [];
+            foreach ($appDatabase->getEntities() as $entity) {
+                if ($entity->getSchema() && $entity->getSchema() != $appDatabase->getSchema()) {
+                    $additionalEntities[] = $entity;
                 }
             }
 
@@ -144,7 +144,7 @@ class MigrationDiffCommand extends AbstractCommand
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 
             $parser   = $generatorConfig->getConfiguredSchemaParser($conn);
-            $nbTables = $parser->parse($database, $additionalTables);
+            $nbTables = $parser->parse($database, $additionalEntities);
 
             $reversedSchema->addDatabase($database);
             $totalNbTables += $nbTables;
@@ -198,7 +198,7 @@ class MigrationDiffCommand extends AbstractCommand
                 ));
             }
 
-            $platform               = $generatorConfig->getConfiguredPlatform(null, $name);
+            $platform = $generatorConfig->createPlatformForDatabase($name);
             if ($input->getOption('disable-identifier-quoting')) {
                 $platform->setIdentifierQuoting(false);
             }

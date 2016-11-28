@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Persister;
 
 
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\EntityProxyInterface;
@@ -32,25 +33,26 @@ class SqlPersister implements PersisterInterface
     protected $updates;
 
     /**
-     * @var EntityMap
-     */
-    protected $entityMap;
-
-    /**
      * @var Session
      */
     protected $session;
+
+    /**
+     * Map of inserted table names, to track bi-direciton many-to-many relations so the pivot table
+     * is not deleted twice.
+     *
+     * @var boolean[]
+     */
+    protected $insertedManyToManyRelation = [];
 
     /**
      * @var object
      */
     protected $autoIncrementValues;
 
-    public function __construct(Session $session, EntityMap $entityMap)
+    public function __construct(Session $session)
     {
         $this->session = $session;
-        $this->entityMap = $entityMap;
-        $this->repository = $session->getConfiguration()->getRepository($entityMap->getFullClassName());
     }
 
     /**
@@ -59,14 +61,6 @@ class SqlPersister implements PersisterInterface
     protected function getConfiguration()
     {
         return $this->getSession()->getConfiguration();
-    }
-
-    /**
-     * @return \Propel\Runtime\Repository\Repository
-     */
-    protected function getRepository()
-    {
-        return $this->session->getConfiguration()->getRepository($this->entityMap->getFullClassName());
     }
 
     /**
@@ -80,24 +74,24 @@ class SqlPersister implements PersisterInterface
     /**
      * @param object[] $entities
      */
-    public function remove($entities)
+    public function remove(EntityMap $entityMap, $entities)
     {
         if (!$entities) {
             return false;
         }
 
-        $event = new DeleteEvent($this->getSession(), $this->entityMap, $entities);
+        $event = new DeleteEvent($this->getSession(), $entityMap, $entities);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_DELETE, $event);
 
         $whereClauses = [];
         $params = [];
         foreach ($entities as $entity) {
-            $whereClauses[] = '(' . $this->entityMap->buildSqlPrimaryCondition($entity, $params) . ')';
+            $whereClauses[] = '(' . $entityMap->buildSqlPrimaryCondition($entity, $params) . ')';
         }
 
-        $query = sprintf('DELETE FROM %s WHERE %s', $this->getFQTableName(), implode(' OR ', $whereClauses));
+        $query = sprintf('DELETE FROM %s WHERE %s', $entityMap->getFQTableName(), implode(' OR ', $whereClauses));
 
-        $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
+        $connection = $this->getSession()->getConfiguration()->getConnectionManager($entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
 
         $stmt = $connection->prepare($query);
@@ -116,21 +110,22 @@ class SqlPersister implements PersisterInterface
     /**
      * @param object[] $entities
      */
-    public function commit($entities)
+    public function commit(EntityMap $entityMap, $entities)
     {
         $inserts = $updates = [];
         foreach ($entities as $entity) {
             if ($this->getSession()->isNew($entity)) {
                 $inserts[] = $entity;
             } else {
-                if ($this->getSession()->hasKnownValues($entity) && $changeSet = $this->getEntityMap()->buildChangeSet($entity)) {
+                if ($this->getSession()->hasKnownValues($entity) && $changeSet = $entityMap->buildChangeSet($entity)) {
                     //only add to $updates if really changes are detected
                     $updates[] = $entity;
                 }
             }
         }
+
         $this->getConfiguration()->debug(sprintf(
-            ' COMMIT PERSISTER with %d entities of %s', count($entities), $this->getEntityMap()->getFullClassName()
+            ' COMMIT PERSISTER with %d entities of %s', count($entities), $entityMap->getFullClassName()
         ), Configuration::LOG_GREEN);
 
         if (!$inserts && !$updates) {
@@ -138,18 +133,28 @@ class SqlPersister implements PersisterInterface
             return;
         }
 
-        $event = new SaveEvent($this->getSession(), $this->entityMap, $inserts, $updates);
+        $event = new SaveEvent($this->getSession(), $entityMap, $inserts, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
 
-        $this->getConfiguration()->debug(sprintf('   doInsert(%d) for %s', count($inserts), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
-        $this->getConfiguration()->debug(sprintf('   doUpdates(%d) for %s', count($updates), $this->entityMap->getFullClassName()), Configuration::LOG_GREEN);
+
+        $name = $entityMap->getFullClassName();
+        foreach ($inserts as $entity) {
+            $name .= ', #' . substr(md5(spl_object_hash($entity)), 0, 9);
+        }
+        $this->getConfiguration()->debug(sprintf('   doInsert(%d) for %s', count($inserts), $name), Configuration::LOG_GREEN);
+
+        $name = $entityMap->getFullClassName();
+        foreach ($updates as $entity) {
+            $name .= ', #' . substr(md5(spl_object_hash($entity)), 0, 9);
+        }
+        $this->getConfiguration()->debug(sprintf('   doUpdates(%d) for %s', count($updates), $name), Configuration::LOG_GREEN);
 
         if ($inserts) {
-            $this->doInsert($inserts);
+            $this->doInsert($entityMap, $inserts);
         }
 
         if ($updates) {
-            $this->doUpdates($updates);
+            $this->doUpdates($entityMap, $updates);
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::SAVE, $event);
@@ -158,15 +163,15 @@ class SqlPersister implements PersisterInterface
     /**
      * @param ConnectionInterface $connection
      */
-    protected function prepareAutoIncrement(ConnectionInterface $connection, $count)
+    protected function prepareAutoIncrement(EntityMap $entityMap, ConnectionInterface $connection, $count)
     {
-        $fieldNames = $this->entityMap->getAutoIncrementFieldNames();
+        $fieldNames = $entityMap->getAutoIncrementFieldNames();
         $object = [];
 
         if (1 < count($fieldNames)) {
             throw new RuntimeException(
                 sprintf('Entity `%s` has more than one autoIncrement field. This is currently not supported'),
-                $this->entityMap->getFullClassName()
+                $entityMap->getFullClassName()
             );
         }
 
@@ -178,7 +183,7 @@ class SqlPersister implements PersisterInterface
         $this->getConfiguration()->debug("prepareAutoIncrement lastInsertId=$lastInsertId, for $count items");
         $object[$firstFieldName] = $lastInsertId;
 
-        $this->getConfiguration()->debug('prepareAutoIncrement for ' . $this->entityMap->getFullClassName(). ': ' . json_encode($object));
+        $this->getConfiguration()->debug('prepareAutoIncrement for ' . $entityMap->getFullClassName(). ': ' . json_encode($object));
         $this->autoIncrementValues = (object)$object;
     }
 
@@ -187,22 +192,22 @@ class SqlPersister implements PersisterInterface
      *
      * @throws PersisterException
      */
-    protected function doInsert(array $inserts)
+    protected function doInsert(EntityMap $entityMap, array $inserts)
     {
         if (!$inserts) {
             return;
         }
 
-        $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
+        $connection = $this->getSession()->getConfiguration()->getConnectionManager($entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
 
-        $event = new InsertEvent($this->getSession(), $this->entityMap, $inserts);
+        $event = new InsertEvent($this->getSession(), $entityMap, $inserts);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_INSERT, $event);
 
-        $fieldObjects = $this->entityMap->getFields();
+        $fieldObjects = $entityMap->getFields();
         $fields = [];
         foreach ($fieldObjects as $field) {
-            if (!$this->entityMap->isAllowPkInsert() && $field->isAutoIncrement()) {
+            if (!$entityMap->isAllowPkInsert() && $field->isAutoIncrement()) {
                 continue;
             }
             if ($field->isImplementationDetail()) {
@@ -211,7 +216,7 @@ class SqlPersister implements PersisterInterface
             $fields[$field->getColumnName()] = $field->getColumnName();
         }
 
-        foreach ($this->entityMap->getRelations() as $relation) {
+        foreach ($entityMap->getRelations() as $relation) {
             if ($relation->isOutgoingRelation()) {
                 foreach ($relation->getLocalFields() as $field) {
                     $fields[$field->getColumnName()] = $field->getColumnName();
@@ -219,7 +224,7 @@ class SqlPersister implements PersisterInterface
             }
         }
 
-        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $this->getFQTableName(), implode(', ', $fields));
+        $sql = sprintf('INSERT INTO %s (%s) VALUES ', $entityMap->getFQTableName(), implode(', ', $fields));
 
         $params = [];
         $firstRound = true;
@@ -231,7 +236,7 @@ class SqlPersister implements PersisterInterface
             }
 
             $this->getSession()->setPersisted(spl_object_hash($entity));
-            $sql .= $this->entityMap->buildSqlBulkInsertPart($entity, $params);
+            $sql .= $entityMap->buildSqlBulkInsertPart($entity, $params);
         }
 
         $paramsReplace = $params;
@@ -250,12 +255,12 @@ class SqlPersister implements PersisterInterface
             $stmt = $connection->prepare($sql);
             $stmt->execute($params);
 
-            if ($this->entityMap->hasAutoIncrement()) {
-                $this->prepareAutoIncrement($connection, count($inserts));
+            if ($entityMap->hasAutoIncrement()) {
+                $this->prepareAutoIncrement($entityMap, $connection, count($inserts));
             }
         } catch (\Exception $e) {
             if ($e instanceof \PDOException) {
-                if ($normalizedException = $this->normalizePdoException($e)) {
+                if ($normalizedException = $this->normalizePdoException($entityMap, $e)) {
                     throw $normalizedException;
                 }
             }
@@ -266,32 +271,37 @@ class SqlPersister implements PersisterInterface
 
             throw new RuntimeException(sprintf(
                 'Can not execute INSERT query for entity %s: %s [%s]',
-                $this->entityMap->getFullClassName(),
+                $entityMap->getFullClassName(),
                 $sql,
                 implode(',', $paramsReplace)
             ), 0, $e);
         }
 
-        if ($this->entityMap->hasAutoIncrement()) {
+        if ($entityMap->hasAutoIncrement()) {
             foreach ($inserts as $entity) {
                 $this->getConfiguration()->debug(sprintf('set auto-increment value %s for %s', json_encode($this->autoIncrementValues), get_class($entity)));
-                $this->entityMap->populateAutoIncrementFields($entity, $this->autoIncrementValues);
+                $entityMap->populateAutoIncrementFields($entity, $this->autoIncrementValues);
             }
         }
 
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::INSERT, $event);
 
-        if ($this->entityMap->isReloadOnInsert()) {
+        if ($entityMap->isReloadOnInsert()) {
             foreach ($inserts as $entity) {
-                $this->entityMap->load($entity);
+                $entityMap->load($entity);
             }
         }
 
-        foreach ($this->entityMap->getRelations() as $relation) {
+        foreach ($entityMap->getRelations() as $relation) {
             if ($relation->isManyToMany()) {
-                $this->addCrossRelations($inserts, $relation);
+                $this->addCrossRelations($entityMap, $inserts, $relation);
             }
         }
+    }
+
+    public function sessionCommitEnd()
+    {
+        $this->insertedManyToManyRelation = [];
     }
 
     /**
@@ -300,17 +310,18 @@ class SqlPersister implements PersisterInterface
      * @param array $inserts
      * @param RelationMap $relation
      */
-    protected function addCrossRelations($inserts, RelationMap $relation)
+    protected function addCrossRelations(EntityMap $entityMap, $inserts, RelationMap $relation)
     {
         //todo, make sure the symmetrical relation hasn't been saved yet.
         //if so, we return immediately since we would save the cross entities twice.
 
-        $reader = $this->getEntityMap()->getPropReader();
-        $isset = $this->getEntityMap()->getPropIsset();
+        $reader = $entityMap->getPropReader();
+        $isset = $entityMap->getPropIsset();
 
         foreach ($inserts as $entity) {
 
-            $debugName = "{$this->entityMap->getFullClassName()} {$relation->getName()}";
+            $id = substr(md5(spl_object_hash($entity)), 0, 9);
+            $debugName = "{$entityMap->getFullClassName()} #$id {$relation->getName()}";
 
             if (!$isset($entity, $relation->getPluralName())) {
                 //we don't update relations when they haven't been loaded.
@@ -341,14 +352,35 @@ class SqlPersister implements PersisterInterface
                     $writer = $relation->getMiddleEntity()->getPropWriter();
 
                     foreach ($foreignItems as $foreignItem) {
+
+                        //check if already added this session
+                        $id = NamingTool::shortEntityId($entity) . '.' . NamingTool::shortEntityId($foreignItem);
+                        if (isset($this->insertedManyToManyRelation[$id])){
+                            continue;
+                        }
+                        var_dump('insertedManyToManyRelation not found for ' . $id);
+
+                        //check if already added this session
+                        $id = NamingTool::shortEntityId($foreignItem) . '.' . NamingTool::shortEntityId($entity);
+                        if (isset($this->insertedManyToManyRelation[$id])){
+                            continue;
+                        }
+
+                        var_dump('insertedManyToManyRelation not found for ' . $id);
+                        var_dump(array_keys($this->insertedManyToManyRelation));
+
                         $object = $this->getConfiguration()->getEntityMap($relation->getMiddleEntity()->getFullClassName())->createObject();
 
                         $writer($object, $relation->getFieldMappingIncomingName(), $entity);
                         foreach ($relation->getFieldMappingOutgoing() as $relationName => $mapping) {
                             //todo, when we have multiple outgoing relations, what then?
+                            //a: then $foreignItem needs to be an array and CombinedObjectColleciton is necessary.
                             $writer($object, $relationName, $foreignItem);
                         }
 
+                        $foreignId = NamingTool::shortEntityId($foreignItem);
+                        $this->getConfiguration()->debug("many-to-many $debugName: created relation entry to #$foreignId via #" . NamingTool::shortEntityId($object));
+                        $this->insertedManyToManyRelation[$id] = true;
                         $this->getSession()->persist($object, true);
                     }
                 }
@@ -358,7 +390,7 @@ class SqlPersister implements PersisterInterface
 
         }
     }
-    
+
     protected function deleteAll(EntityMap $entityMap)
     {
         $query = $entityMap->createQuery();
@@ -370,51 +402,44 @@ class SqlPersister implements PersisterInterface
      *
      * @return PersisterException|null
      */
-    protected function normalizePdoException(\PDOException $PDOException)
+    protected function normalizePdoException(EntityMap $entityMap, \PDOException $PDOException)
     {
     }
 
-    /**
-     * @return EntityMap
-     */
-    public function getEntityMap()
-    {
-        return $this->entityMap;
-    }
 
-    protected function doUpdates(array $updates)
+    protected function doUpdates(EntityMap $entityMap, array $updates)
     {
-        $event = new UpdateEvent($this->getSession(), $this->entityMap, $updates);
+        $event = new UpdateEvent($this->getSession(), $entityMap, $updates);
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_UPDATE, $event);
 
         //todo, use CASE WHEN THEN to improve performance
-        $sqlStart = 'UPDATE ' . $this->getFQTableName();
+        $sqlStart = 'UPDATE ' . $entityMap->getFQTableName();
         $where = [];
-        foreach ($this->entityMap->getPrimaryKeys() as $pk) {
+        foreach ($entityMap->getPrimaryKeys() as $pk) {
             $where[] = $pk->getColumnName() . ' = ?';
         }
 
         $where = ' WHERE ' . implode(' AND ', $where);
-        $connection = $this->getSession()->getConfiguration()->getConnectionManager($this->entityMap->getDatabaseName());
+        $connection = $this->getSession()->getConfiguration()->getConnectionManager($entityMap->getDatabaseName());
         $connection = $connection->getWriteConnection();
 
         $updateCrossRelations = [];
 
         foreach($updates as $entity) {
             //regenerate changeSet since PRE_UPDATE/PRE_SAVE could have changed entities
-            $changeSet = $this->getEntityMap()->buildChangeSet($entity);
+            $changeSet = $entityMap->buildChangeSet($entity);
             if ($changeSet) {
                 $params = [];
                 $sets = [];
                 foreach ($changeSet as $fieldName => $value) {
-                    if ($this->entityMap->hasRelation($fieldName)) {
-                        if ($this->entityMap->getRelation($fieldName)->isManyToMany()) {
+                    if ($entityMap->hasRelation($fieldName)) {
+                        if ($entityMap->getRelation($fieldName)->isManyToMany()) {
                             $updateCrossRelations[$fieldName][] = $entity;
                         }
                         continue;
                     }
 
-                    $columnName = $this->entityMap->getField($fieldName)->getColumnName();
+                    $columnName = $entityMap->getField($fieldName)->getColumnName();
                     $sets[] = $columnName . ' = ?';
                     $params[] = $value;
                 }
@@ -423,11 +448,11 @@ class SqlPersister implements PersisterInterface
                     continue;
                 }
 
-                $originValues = $this->getEntityMap()->getLastKnownValues($entity);
+                $originValues = $entityMap->getLastKnownValues($entity);
 
-                foreach ($this->entityMap->getPrimaryKeys() as $pk) {
+                foreach ($entityMap->getPrimaryKeys() as $pk) {
                     $fieldName = $pk->getName();
-                    $params[] = $this->entityMap->snapshotToProperty($originValues[$fieldName], $fieldName);
+                    $params[] = $entityMap->snapshotToProperty($originValues[$fieldName], $fieldName);
                 }
 
                 $query = $sqlStart . ' SET ' . implode(', ', $sets).$where;
@@ -459,9 +484,9 @@ class SqlPersister implements PersisterInterface
         $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::UPDATE, $event);
 
 
-        if ($this->entityMap->isReloadOnInsert()) {
+        if ($entityMap->isReloadOnInsert()) {
             foreach ($updates as $entity) {
-                $this->entityMap->load($entity);
+                $entityMap->load($entity);
             }
         }
 
@@ -470,15 +495,7 @@ class SqlPersister implements PersisterInterface
         }
 
         foreach ($updateCrossRelations as $relationName => $entities) {
-            $this->addCrossRelations($entities, $this->entityMap->getRelation($relationName));
+            $this->addCrossRelations($entityMap, $entities, $entityMap->getRelation($relationName));
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getFQTableName()
-    {
-        return $this->entityMap->getFQTableName();
     }
 }

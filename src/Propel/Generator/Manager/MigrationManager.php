@@ -129,7 +129,7 @@ class MigrationManager extends AbstractManager
         $migrationTimestamps = array();
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
-            $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
+            $platform = $this->getGeneratorConfig()->createPlatformForDatabase($conn);
             if (!$platform->supportsMigrations()) {
                 continue;
             }

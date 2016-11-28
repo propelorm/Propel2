@@ -269,7 +269,6 @@ abstract class AbstractManager
         $schemas = array();
         $totalNbEntities   = 0;
         $dataModelFiles  = $this->getSchemas();
-//        $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
         if (empty($dataModelFiles)) {
             throw new BuildException('No schema files were found (matching your schema fileset definition).');

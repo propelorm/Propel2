@@ -185,7 +185,7 @@ class ReverseManager extends AbstractManager
         $this->log('Reading database structure...');
 
         $database = new Database($this->getDatabaseName());
-        $database->setPlatform($config->getConfiguredPlatform($connection));
+        $database->setPlatform($config->createPlatformForDatabase($connection));
         $database->setDefaultIdMethod(IdMethod::NATIVE);
 
         $parser   = $config->getConfiguredSchemaParser($connection);

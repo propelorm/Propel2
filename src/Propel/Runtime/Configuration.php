@@ -539,6 +539,8 @@ class Configuration extends GeneratorConfig
         return $this->getEntityPersister($session, $entityName);
     }
 
+    protected $persister = [];
+
     /**
      * @param string  $entityName
      * @param Session $session
@@ -547,11 +549,14 @@ class Configuration extends GeneratorConfig
      */
     public function getEntityPersister(Session $session, $entityName)
     {
-        $entityMap = $this->getEntityMap($entityName);
         $database = $this->getDatabaseForEntityClass($entityName);
-        $adapter = $this->getAdapter($database->getName());
 
-        return $adapter->getPersister($session, $entityMap);
+        if (!isset($this->persister[$database->getName()])) {
+            $adapter = $this->getAdapter($database->getName());
+            $this->persister[$database->getName()] = $adapter->getPersister($session);
+        }
+
+        return $this->persister[$database->getName()];
     }
 
     /**
@@ -852,10 +857,14 @@ class Configuration extends GeneratorConfig
         list($firstCaller, $secondCaller) = debug_backtrace();
         $class = $secondCaller['class'];
         $method = $secondCaller['function'];
+
         $additional = '';
-        if ('Propel\Runtime\Session\SessionRound' === $class) {
-            $additional = sprintf(', round=%d', $secondCaller['object']->getIdx());
+        if ($this->getSession()->commitDepth) {
+            $additional = sprintf(', commit-depth=%d', $this->getSession()->commitDepth);
         }
+//        if ('Propel\Runtime\Session\SessionRound' === $class) {
+//            $additional .= sprintf(', round=%d', $secondCaller['object']->getIdx());
+//        }
 
         $line = sprintf('[%s::%s +%d%s]', $class, $method, $firstCaller['line'], $additional);
         $line = $this->colorizeMessage($line, [SGR::STYLE_UNDERLINE]) . ' ';

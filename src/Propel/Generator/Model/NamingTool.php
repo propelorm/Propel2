@@ -71,4 +71,15 @@ class NamingTool
     {
         return basename(str_replace('.', '/', $identifier));
     }
+
+    /**
+     * Returns a short unique-enough id for debugging purposes.
+     *
+     * @param object $entity
+     * @return string
+     */
+    public static function shortEntityId($entity)
+    {
+        return substr(md5(spl_object_hash($entity)), 0, 9);
+    }
 }

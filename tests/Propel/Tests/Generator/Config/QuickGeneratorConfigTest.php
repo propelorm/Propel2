@@ -50,11 +50,6 @@ class QuickGeneratorConfigTest extends TestCase
         $this->assertInstanceOf('\\Propel\\Common\\Pluralizer\\StandardEnglishPluralizer', $actual);
     }
 
-    public function testGetConfiguredPlatform()
-    {
-        $this->assertNull($this->generatorConfig->getConfiguredPlatform());
-    }
-
     public function testGetBehaviorLocator()
     {
         $actual = $this->generatorConfig->getBehaviorLocator();

@@ -35,6 +35,11 @@ class Session
     protected $currentCommitRound = -1;
 
     /**
+     * @var int
+     */
+    public $commitDepth = 0;
+
+    /**
      * @var array
      */
     protected $knownEntities = [];
@@ -70,6 +75,11 @@ class Session
      * @var Configuration
      */
     protected $configuration;
+
+    /**
+     * @var \SplObjectStorage
+     */
+    protected $involvedPersister;
 
     /**
      * @param Configuration $configuration
@@ -238,13 +248,13 @@ class Session
 //        return $this->currentRound >= 0;
 //    }
 
-    /**
-     * @return int
-     */
-    public function getCurrentCommitRoundIndex()
-    {
-        return $this->currentCommitRound;
-    }
+//    /**
+//     * @return int
+//     */
+//    public function getCurrentCommitRoundIndex()
+//    {
+//        return $this->currentCommitRound;
+//    }
 
     /**
      * @param object $entity
@@ -252,6 +262,19 @@ class Session
      */
     public function persist($entity, $deep = false)
     {
+
+        if ($this->getCurrentRound()->isInCommit()) {
+            $this->enterNewRound();
+            if ($this->getConfiguration()->isDebug()) {
+                $this->getConfiguration()->debug(
+                    " NEW ROUND for persist(" . $this->getConfiguration()->getEntityMapForEntity(
+                        $entity
+                    )->getFullClassName() . ")",
+                    Configuration::LOG_PURPLE
+                );
+            }
+        }
+
         if ($this->getConfiguration()->isDebug()) {
             $this->getConfiguration()->debug(
                 sprintf(
@@ -266,20 +289,13 @@ class Session
             );
         }
 
-        if ($this->getCurrentRound()->isInCommit()) {
-            $this->enterNewRound();
-            if ($this->getConfiguration()->isDebug()) {
-                $this->getConfiguration()->debug(
-                    " NEW ROUND for persist(" . $this->getConfiguration()->getEntityMapForEntity(
-                        $entity
-                    )->getFullClassName() . ")",
-                    Configuration::LOG_PURPLE
-                );
-            }
-        }
-
         $this->knownEntities[spl_object_hash($entity)] = $entity;
         $this->getCurrentRound()->persist($entity, $deep);
+    }
+
+    public function addInvolvedPersister($persister)
+    {
+        $this->involvedPersister->attach($persister);
     }
 
     /**
@@ -295,52 +311,48 @@ class Session
             throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset() to open it again.');
         }
 
-        $rounds = count($this->rounds);
-        $this->getConfiguration()->debug("COMMIT START, $rounds rounds.", Configuration::LOG_PURPLE);
+        if ($this->commitDepth === 0) {
+            $this->involvedPersister = new \SplObjectStorage();
+        }
 
-        $allCommitted = true;
-        $allBusy = true;
+        $this->commitDepth++;
+        $rounds = count($this->rounds);
+        $this->getConfiguration()->debug("COMMIT START #{$this->commitDepth}, $rounds rounds.", Configuration::LOG_PURPLE);
 
         //we can't use foreach() because during $round->commit()
         //$this->rounds can be changed.
-//        foreach ($this->rounds as $idx => $round) {
         for ($idx = 0; $idx < count($this->rounds); $idx++) {
             $round = $this->rounds[$idx];
 
-            if (!$round->isCommitted() && !$round->isInCommit()) {
-                $this->currentCommitRound = $idx;
-                $this->getConfiguration()->debug("  Round=$idx COMMIT", Configuration::LOG_PURPLE);
-                try {
-                    $round->commit();
-                } catch (\Exception $e) {
-                    $this->getConfiguration()->debug('force close session');
-                    $this->closed = true;
-                    throw $e;
-                }
-                $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
+            if ($round->isCommitted() || $round->isInCommit()) {
+                continue;
             }
-            $allCommitted &= $round->isCommitted();
-            if (!$round->isCommitted()) {
-                $allBusy &= $round->isInCommit();
+
+            $this->currentCommitRound = $idx;
+            $this->getConfiguration()->debug("  Round=$idx COMMIT", Configuration::LOG_PURPLE);
+            try {
+                $round->commit();
+            } catch (\Exception $e) {
+                $this->getConfiguration()->debug('force close session');
+                $this->closed = true;
+                throw $e;
             }
+
+            $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
         }
 
-        if ($allCommitted || $allBusy) {
-            if ($allCommitted) {
-                $this->getConfiguration()->debug(" All committed", Configuration::LOG_PURPLE);
-            }
-            if ($allBusy) {
-                $this->getConfiguration()->debug(" All busy", Configuration::LOG_PURPLE);
-            }
-        }
 
-        if ($allCommitted) {
+        if ($this->commitDepth - 1 === 0) {
             $this->getConfiguration()->debug(' CLOSED ALL ROUNDS, ' . count($this->rounds) . ' rounds committed', Configuration::LOG_PURPLE);
             $this->currentRound = -1;
             $this->rounds = [];
+            foreach ($this->involvedPersister as $persister) {
+                $persister->sessionCommitEnd();
+            }
         }
 
-        $this->getConfiguration()->debug("COMMIT END", Configuration::LOG_PURPLE);
+        $this->getConfiguration()->debug("COMMIT END #{$this->commitDepth}", Configuration::LOG_PURPLE);
+        $this->commitDepth--;
     }
 
     /**

@@ -4,12 +4,15 @@ namespace Propel\Common\Types\SQL;
 
 use gossi\codegen\model\PhpMethod;
 use Propel\Common\Types\AbstractType;
+use Propel\Common\Types\BuildableFieldTypeInterface;
+use Propel\Generator\Builder\Om\AbstractBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Field;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Util\PropelDateTime;
 
-class DateTimeType extends AbstractType
+class DateTimeType extends AbstractType implements BuildableFieldTypeInterface
 {
     public function decorateGetterMethod(PhpMethod $method, Field $field)
     {
@@ -60,5 +63,20 @@ EOF;
         }
 
         return $value;
+    }
+
+    public function build(AbstractBuilder $builder, Field $field)
+    {
+        if ($builder instanceof ObjectBuilder) {
+            $property = $builder->getDefinition()->getProperty($field->getName());
+
+            if ($field->hasDefaultValue()) {
+
+                if ($field->getDefaultValue()->isExpression() && strtoupper($field->getDefaultValue()->getValue()) === 'CURRENT_TIMESTAMP') {
+                    $property->unsetExpression();
+                    $property->unsetValue();
+                }
+            }
+        }
     }
 }

@@ -22,9 +22,9 @@ use Propel\Runtime\Persister\SQL\SQLitePersister;
 class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
 {
 
-    public function getPersister($session, $entityMap)
+    public function getPersister($session)
     {
-        return new SQLitePersister($session, $entityMap);
+        return new SQLitePersister($session);
     }
 
     /**

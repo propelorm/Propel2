@@ -28,9 +28,9 @@ use Propel\Generator\Model\PropelTypes;
  */
 abstract class PdoAdapter implements SqlAdapterInterface
 {
-    public function getPersister($session, $entityMap)
+    public function getPersister($session)
     {
-        return new SqlPersister($session, $entityMap);
+        return new SqlPersister($session);
     }
 
     /**

@@ -100,7 +100,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * {@inheritdoc}
      */
-    public function createPlatformForDatabase($name = null)
+    public function createPlatformForDatabase($name = null, ConnectionInterface $con = null)
     {
         if (isset($this->get()['generator']['platformClass'])) {
             $class = $this->get()['generator']['platformClass'];
@@ -109,7 +109,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
 
         $buildConnection = $this->getBuildConnection($name);
 
-        return $this->createPlatform($buildConnection['adapter']);
+        return $this->createPlatform($buildConnection['adapter'], $con);
     }
 
     /**

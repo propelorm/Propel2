@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Persister\SQL;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Persister\Exception\UniqueConstraintException;
 use Propel\Runtime\Persister\SqlPersister;
@@ -18,10 +19,10 @@ class SQLitePersister extends SqlPersister
      *
      * @return string
      */
-    protected function readAutoIncrement(ConnectionInterface $connection)
+    protected function readAutoIncrement(EntityMap $entityMap, ConnectionInterface $connection)
     {
 
-        $autoIncrementField = current($this->entityMap->getPrimaryKeys());
+        $autoIncrementField = current($entityMap->getPrimaryKeys());
         $tableName = $autoIncrementField->getEntity()->getFQTableName();
 
         $stmt = $connection->prepare("SELECT seq FROM sqlite_sequence WHERE name = ?");
@@ -36,13 +37,13 @@ class SQLitePersister extends SqlPersister
         return $this->readAutoincrementWithoutSequenceTable($autoIncrementField, $connection);
     }
 
-    protected function normalizePdoException(\PDOException $PDOException)
+    protected function normalizePdoException(EntityMap $entityMap, \PDOException $PDOException)
     {
         $message = $PDOException->getMessage();
 
         if (false !== strpos($message, 'Integrity constraint violation:')) {
             if(preg_match('/UNIQUE constraint failed: ([^\.]+)\.([^\.]+)/', $message, $matches)) {
-                return UniqueConstraintException::createForField($this->getEntityMap(), $matches[2]);
+                return UniqueConstraintException::createForField($entityMap, $matches[2]);
             }
         }
 

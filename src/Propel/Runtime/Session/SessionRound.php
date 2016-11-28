@@ -8,7 +8,8 @@ use Propel\Runtime\Event\CommitEvent;
 use Propel\Runtime\Event\PersistEvent;
 use Propel\Runtime\Events;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\UnitOfWork;
+use Propel\Runtime\Map\EntityMap;
+use Propel\Runtime\Persister\PersisterInterface;
 
 /**
  *
@@ -36,7 +37,7 @@ class SessionRound
     /**
      * @var boolean
      */
-    protected $inCommit;
+    protected $inCommit = false;
 
     /**
      * @var boolean
@@ -213,14 +214,20 @@ class SessionRound
     protected function doDelete()
     {
         $removeGroups = [];
+        /** @var PersisterInterface[] $persisterMap */
         $persisterMap = [];
+
+        /** @var EntityMap[] $entityMaps */
+        $entityMaps = [];
 
         foreach ($this->removeQueue as $entity) {
             $entityClass = get_class($entity);
 
             if (!isset($persisterMap[$entityClass])) {
                 $persister = $this->getConfiguration()->getEntityPersisterForEntity($this->getSession(), $entity);
+                $entityMap = $this->getConfiguration()->getEntityMapForEntity($entity);
                 $persisterMap[$entityClass] = $persister;
+                $entityMaps[$entityClass] = $entityMap;
             }
 
             $removeGroups[$entityClass][] = $entity;
@@ -228,7 +235,7 @@ class SessionRound
 
         foreach ($removeGroups as $entities) {
             $entityClass = get_class($entities[0]);
-            $persisterMap[$entityClass]->remove($entities);
+            $persisterMap[$entityClass]->remove($entityMaps[$entityClass], $entities);
         }
 
         $this->removeQueue = [];
@@ -281,7 +288,9 @@ class SessionRound
         foreach ($sortedGroups as $group) {
             $entityIds = array_slice($list, $group->position, $group->length);
             $firstEntity = $this->persistQueue[$entityIds[0]];
+            $entityMap = $this->getConfiguration()->getEntityMapForEntity($firstEntity);
             $persister = $this->getConfiguration()->getEntityPersisterForEntity($this->getSession(), $firstEntity);
+            $this->getSession()->addInvolvedPersister($persister);
 
             $entities = [];
 
@@ -291,7 +300,7 @@ class SessionRound
             }
 
             try {
-                $persister->commit($entities);
+                $persister->commit($entityMap, $entities);
 
                 foreach ($entityIds as $entityId) {
                     $entity = $this->persistQueue[$entityId];
