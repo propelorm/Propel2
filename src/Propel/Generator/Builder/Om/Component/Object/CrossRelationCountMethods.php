@@ -32,12 +32,10 @@ class CrossRelationCountMethods extends BuildComponent
         $refRelation = $crossRelation->getIncomingRelation();
         $selfRelationName = $this->getRelationPhpName($refRelation, $plural = false);
 
-        $multi = 1 < count($crossRelation->getRelations()) || !!$crossRelation->getUnclassifiedPrimaryKeys();
-
         $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
         $crossRefEntityName = $crossRelation->getMiddleEntity()->getName();
 
-        if ($multi) {
+        if ($crossRelation->isPolymorphic()) {
             list($relatedObjectClassName) = $this->getCrossRelationInformation($crossRelation);
             $collName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
             $relatedQueryClassName = $this->getClassNameFromBuilder(
@@ -91,7 +89,7 @@ EOF;
             ->setType('integer')
             ->setTypeDescription("the number of related $relatedObjectClassName objects");
 
-        if ($multi) {
+        if ($crossRelation->isPolymorphic()) {
             $relatedName = $this->getCrossRelationPhpName($crossRelation, true);
             $firstRelation = $crossRelation->getRelations()[0];
             $firstRelationName = $this->getRelationPhpName($firstRelation, true);
@@ -107,12 +105,6 @@ EOF;
                 $phpDoc
             );
 
-            $signature = array_map(
-                function (PhpParameter $item) {
-                    $item->setDefaultValue(null);
-                },
-                $signature
-            );
             $phpDoc = implode(', ', $phpDoc);
             $shortSignature = implode(', ', $shortSignature);
 
@@ -131,6 +123,7 @@ EOF;
                 ->setType('integer');
 
             foreach ($signature as $parameter) {
+                $parameter->setValue(null);
                 $method->addParameter($parameter);
             }
         }

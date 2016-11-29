@@ -25,7 +25,7 @@ class GeneratedObjectM2MRelationThreePKs2Test extends PlatformDatabaseBuildTimeB
 
         if (!class_exists('\RelationpkUserQuery')) {
             $schema = '
-    <database name="migration" schema="migration">
+    <database name="migration" schema="migration" activeRecord="true">
         <table name="relationpk_user_group" isCrossRef="true">
             <column name="user_id" type="integer" primaryKey="true"/>
             <column name="group_id" type="integer" primaryKey="true"/>
@@ -90,13 +90,14 @@ class GeneratedObjectM2MRelationThreePKs2Test extends PlatformDatabaseBuildTimeB
         $admins->setName('Admins');
 
         $hans->addGroup($admins, 'standard');
-        $this->assertCount(1, $hans->getGroupPositions());
-        $this->assertEquals([$admins, 'standard'], $hans->getGroupPositions()->getFirst());
+        $this->assertCount(1, $hans->getGroups());
+        $this->assertEquals([$admins, 'standard'], $hans->getGroups()->getFirst());
 
-        $this->assertCount(1, $admins->getUserPositions());
-        $this->assertEquals([$hans, 'standard'], $admins->getUserPositions()->getFirst());
+        $this->assertCount(1, $admins->getUsers());
+        $this->assertEquals([$hans, 'standard'], $admins->getUsers()->getFirst());
 
         $hans->save();
+        var_dump(iterator_to_array($hans->getGroups('standard')));
         $this->assertEquals([$admins], iterator_to_array($hans->getGroups('standard')));
 
         $this->assertEquals(1, \RelationpkUserGroupQuery::create()->count(), 'We have one connection.');

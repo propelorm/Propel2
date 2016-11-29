@@ -66,10 +66,6 @@ class BuildRelationsMethod extends BuildComponent
             foreach ($crossRelation->getRelations() as $relation) {
                 $fieldMapping[$relation->getField()] = array_merge($relation->getLocalForeignMapping(), $fieldMapping);
             }
-            $primaryKeys = [];
-            foreach ($crossRelation->getUnclassifiedPrimaryKeys() as $pk) {
-                $primaryKeys[] = $pk->getName();
-            }
 
             $mapping = [
                 'via' => $crossRelation->getMiddleEntity()->getFullClassName(),
@@ -78,7 +74,7 @@ class BuildRelationsMethod extends BuildComponent
                 'fieldMappingIncomingName' => $crossRelation->getIncomingRelation()->getField(),
                 'fieldMappingIncoming' => $crossRelation->getIncomingRelation()->getLocalForeignMapping(),
                 'fieldMappingOutgoing' => $fieldMapping,
-                'fieldMappingPrimaryKeys' => $crossRelation->getUnclassifiedPrimaryKeys(),
+                'fieldMappingPrimaryKeys' => $crossRelation->getUnclassifiedPrimaryKeyNames(),
             ];
 
             $mapping = var_export($mapping, true);

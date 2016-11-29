@@ -20,34 +20,22 @@ class CrossRelationAdderMethods extends BuildComponent
     {
         // many-to-many relationships
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
-            $this->addCrossFKAdd($crossRelation);
+            $this->addCrossAdd($crossRelation);
         }
     }
 
-    protected function addCrossFKAdd(CrossRelation $crossRelation)
+    protected function addCrossAdd(CrossRelation $crossRelation)
     {
-        $refFK = $crossRelation->getIncomingRelation();
+        $relation = $crossRelation->getOutgoingRelation();
+        $collName = $this->getRelationVarName($relation, true);
 
-        foreach ($crossRelation->getRelations() as $relation) {
-            $relSingleNamePlural = $this->getRelationPhpName($relation, $plural = true);
-            $relSingleName = $this->getRelationPhpName($relation, $plural = false);
-            $collSingleName = $this->getRelationVarName($relation, true);
+        $relatedObjectClassName = $this->getRelationPhpName($relation, false);
+        $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
 
-            $relCombineNamePlural = $this->getCrossRelationPhpName($crossRelation, $plural = true);
-            $relCombineName = $this->getCrossRelationPhpName($crossRelation, $plural = false);
-            $collCombinationVarName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
+        list ($signature, , $normalizedShortSignature) = $this->getCrossRelationAddMethodInformation($crossRelation, $relation);
 
-            $collName = 1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys() ? $collCombinationVarName : $collSingleName;
-            $relNamePlural = ucfirst(1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys() ? $relCombineNamePlural : $relSingleNamePlural);
-            $relName = ucfirst(1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys() ? $relCombineName : $relSingleName);
-
-            $foreignEntity = $refFK->getEntity();
-            $relatedObjectClassName = $this->getRelationPhpName($relation, false);
-            $crossObjectClassName = $this->getClassNameFromEntity($relation->getForeignEntity());
-            list ($signature, , $normalizedShortSignature) = $this->getCrossRelationAddMethodInformation($crossRelation, $relation);
-
-            $body = <<<EOF
-if (!\$this->get{$relNamePlural}()->contains({$normalizedShortSignature})) {
+        $body = <<<EOF
+if (!\$this->{$collName}->contains({$normalizedShortSignature})) {
     \$this->{$collName}->push({$normalizedShortSignature});
     
     //setup bidirectional relation
@@ -58,23 +46,20 @@ return \$this;
 EOF;
 
 
-            $description = <<<EOF
+        $description = <<<EOF
 Associate a $crossObjectClassName to this object
-through the {$foreignEntity->getFullClassName()} cross reference entity.
+through the {$crossRelation->getMiddleEntity()->getFullClassName()} cross reference entity.
 EOF;
 
+        $method = $this->addMethod('add' . $relatedObjectClassName)
+            ->setDescription($description)
+            ->setType($this->getObjectClassName())
+            ->setTypeDescription("The current object (for fluent API support)")
+            ->setBody($body)
+        ;
 
-            $method = $this->addMethod('add' . $relatedObjectClassName)
-                ->setDescription($description)
-                ->setType($this->getObjectClassName())
-                ->setTypeDescription("The current object (for fluent API support)")
-                ->setBody($body)
-            ;
-
-            foreach ($signature as $parameter) {
-                $method->addParameter($parameter);
-            }
-
+        foreach ($signature as $parameter) {
+            $method->addParameter($parameter);
         }
     }
 
@@ -82,13 +67,16 @@ EOF;
     {
         $body = '';
         $setterName = 'add' . $this->getRelationPhpName($crossRelation->getIncomingRelation(), false);
+        $relation = $crossRelation->getOutgoingRelation();
 
-        foreach ($crossRelation->getRelations() as $relation) {
-            $varName = $this->getRelationVarName($relation);
+        $varName = $this->getRelationVarName($relation);
+        $normalizedShortSignature = [];
+        $this->extractCrossInformation($crossRelation, $relation, $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
+        array_unshift($normalizedShortSignature, '$this');
+        $normalizedShortSignature = implode(', ', $normalizedShortSignature);
 
-            $body .= "
-\${$varName}->{$setterName}(\$this);";
-        }
+        $body .= "
+    \${$varName}->{$setterName}($normalizedShortSignature);";
 
         return $body;
     }

@@ -65,6 +65,7 @@ trait CrossRelationTrait
 
     /**
      * @param  CrossRelation $crossRelation
+     * @deprecated use getRelationVarName instead with $crossRelation->getOutgoingRelation()
      *
      * @return string
      */
@@ -76,6 +77,8 @@ trait CrossRelationTrait
     /**
      * @param  CrossRelation $crossRelation
      * @param  bool          $plural
+     *
+     * @deprecated use getRelationPhpName instead with $crossRelation->getOutgoingRelation()
      *
      * @return string
      */

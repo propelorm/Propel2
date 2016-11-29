@@ -73,7 +73,7 @@ class CrossRelation
 
     /**
      * @param Relation $relation
-     * @param Entity      $crossEntity
+     * @param Entity $crossEntity
      */
     public function __construct(Relation $relation, Entity $crossEntity)
     {
@@ -91,7 +91,7 @@ class CrossRelation
     }
 
     /**
-     * The foreign key from the middle-entity to the target entity.
+     * The relation from the middle-entity to the left entity.
      *
      * @return Relation
      */
@@ -107,11 +107,7 @@ class CrossRelation
      */
     public function getForeignEntity()
     {
-        $relations = $this->getRelations();
-
-        /** @var Relation $relation */
-        $relation = reset($relations);
-        return $relation->getForeignEntity();
+        return $this->getOutgoingRelation()->getForeignEntity();
     }
 
     /**
@@ -164,6 +160,18 @@ class CrossRelation
     }
 
     /**
+     * This relation is polymorphic when we have more than the primary keys that are necessary
+     * to links left and right entity. Those additional primary keys can be another relation
+     * or a simple primary key like a 'type'.
+     *
+     * @return bool
+     */
+    public function isPolymorphic()
+    {
+        return 1 < count($this->getRelations()) || $this->getUnclassifiedPrimaryKeys();
+    }
+
+    /**
      * Returns all primary keys of middle-entity which are not already covered by at least on of our cross relation collection.
      *
      * @return Field[]
@@ -191,6 +199,19 @@ class CrossRelation
         }
 
         return $pks;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getUnclassifiedPrimaryKeyNames()
+    {
+        $names = [];
+        foreach ($this->getUnclassifiedPrimaryKeys() as $primaryKey) {
+            $names[] = $primaryKey->getName();
+        }
+
+        return $names;
     }
 
     /**
@@ -225,6 +246,19 @@ class CrossRelation
     public function getRelations()
     {
         return $this->relations;
+    }
+
+    /**
+     * Returns the first outgoing relation.
+     *
+     * Note: When this cross relation has more than one relation, it becomes a polymorphic relation. This means
+     * that this method returns the relation from the middle-entity to the right entity.
+     *
+     * @return Relation
+     */
+    public function getOutgoingRelation()
+    {
+        return $this->relations[0];
     }
 
     /**

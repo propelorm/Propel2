@@ -28,38 +28,22 @@ class CrossRelationProperties extends BuildComponent
      */
     protected function addCrossRelationAttributes(CrossRelation $crossRelation)
     {
-        if (1 < count($crossRelation->getRelations()) || $crossRelation->getUnclassifiedPrimaryKeys()) {
-
-            list($names) = $this->getCrossRelationInformation($crossRelation);
-            $varName = 'combination' . ucfirst($this->getCrossRelationVarName($crossRelation));
-
-            $this->addProperty($varName)
-                ->setType('ObjectCombinationCollection')
-                ->setTypeDescription("Cross CombinationCollection to store aggregation of $names combinations.");
-
-            $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
-
-            if ($crossRelation->getEntity()->isActiveRecord()) {
-                $partialVarName = $varName . 'Partial';
-
-                $this->addProperty($partialVarName)
-                    ->setType('boolean')
-                    ->setTypeDescription("");
-            }
-
-            return;
-        }
-
-        $relation = $crossRelation->getRelations()[0];
-        $className = $this->getClassNameFromEntity($relation->getForeignEntity());
+        $relation = $crossRelation->getOutgoingRelation();
+        $className = $relation->getForeignEntity()->getFullClassName();
         $varName = $this->getCrossRelationRelationVarName($relation);
 
         $this->addProperty($varName)
-            ->setType("ObjectCollection|{$className}[]")
-            ->setTypeDescription("Cross Collection to store aggregation of $className objects.");
+            ->setType("ObjectCollection|\\{$className}[]")
+            ->setTypeDescription("Cross Collection to store aggregation of \\$className objects.");
 
-        $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
-        $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
+
+        if ($crossRelation->isPolymorphic()) {
+            $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCombinationCollection');
+            $this->addConstructorBody("\$this->$varName = new ObjectCombinationCollection();");
+        } else {
+            $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
+            $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
+        }
 
         if ($crossRelation->getEntity()->isActiveRecord()) {
             $partialVarName = $varName . 'Partial';

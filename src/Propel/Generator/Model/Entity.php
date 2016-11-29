@@ -630,9 +630,7 @@ class Entity extends ScopedMappingModel implements IdMethod
             if ($refRelation->getEntity()->isCrossRef()) {
                 $crossRelation = new CrossRelation($refRelation, $this);
                 foreach ($refRelation->getOtherFks() as $relation) {
-                    if ($relation->isAtLeastOneLocalPrimaryKeyIsRequired() &&
-                        $crossRelation->isAtLeastOneLocalPrimaryKeyNotCovered($relation)
-                    ) {
+                    if ($relation->isAtLeastOneLocalPrimaryKeyIsRequired() && $crossRelation->isAtLeastOneLocalPrimaryKeyNotCovered($relation)) {
                         $crossRelation->addRelation($relation);
                     }
                 }
