@@ -228,41 +228,12 @@ class Session
         return $this->rounds[$this->currentRound] = new SessionRound($this, $this->currentRound);
     }
 
-//    /**
-//     *
-//     */
-//    public function closeRound()
-//    {
-//        if ($this->hasOpenRounds()) {
-//            $this->getConfiguration()->debug('close round (' . $this->currentRound . ')');
-//            unset($this->rounds[$this->currentRound]);
-//            $this->currentRound--;
-//        }
-//    }
-
-//    /**
-//     * @return bool
-//     */
-//    public function hasOpenRounds()
-//    {
-//        return $this->currentRound >= 0;
-//    }
-
-//    /**
-//     * @return int
-//     */
-//    public function getCurrentCommitRoundIndex()
-//    {
-//        return $this->currentCommitRound;
-//    }
-
     /**
      * @param object $entity
      * @param boolean $deep Whether all attached entities(relations) should be persisted too.
      */
     public function persist($entity, $deep = false)
     {
-
         if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
             if ($this->getConfiguration()->isDebug()) {
@@ -308,7 +279,7 @@ class Session
         }
 
         if ($this->closed) {
-            throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset() to open it again.');
+            throw new SessionClosedException('Session is closed due to an exception. Repair its failure and call reset()/repaired() to open it again.');
         }
 
         if ($this->commitDepth === 0) {
@@ -335,12 +306,12 @@ class Session
             } catch (\Exception $e) {
                 $this->getConfiguration()->debug('force close session');
                 $this->closed = true;
+                $this->commitDepth = 0;
                 throw $e;
             }
 
             $this->getConfiguration()->debug("  Round=$idx COMMIT DONE", Configuration::LOG_PURPLE);
         }
-
 
         if ($this->commitDepth - 1 === 0) {
             $this->getConfiguration()->debug(' CLOSED ALL ROUNDS, ' . count($this->rounds) . ' rounds committed', Configuration::LOG_PURPLE);
@@ -361,6 +332,11 @@ class Session
     public function isClosed()
     {
         return $this->closed;
+    }
+
+    public function repaired()
+    {
+        $this->closed = false;
     }
 
     /**

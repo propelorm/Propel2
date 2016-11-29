@@ -180,9 +180,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertEquals($book->getId(), $book2->getId());
     }
 
-    /**
-     * @group test
-     */
     public function testManyToMany()
     {
         \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
@@ -199,7 +196,6 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book2->save();
 
 
-        var_dump('1 ---------------------------------------------');
         $bookClub1 = new \Baz\NamespacedBookClub();
         $bookClub1->addNamespacedBook($book1);
         $bookClub1->addNamespacedBook($book2);
@@ -208,14 +204,10 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(2, $nbRels);
 
-        die('fixed?');
-
-        var_dump('2 ---------------------------------------------');
         $bookClub2 = new \Baz\NamespacedBookClub();
         $bookClub2->addNamespacedBook($book1);
         $bookClub2->setGroupLeader('Someone2');
         $bookClub2->save();
-        var_dump('3 ---------------------------------------------');
 
         $this->assertEquals(2, $book1->countNamespacedBookClubs());
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
@@ -227,6 +219,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
             ->joinWith('namespacedBookListRel.namespacedBookClub')
             ->orderByTitle()
             ->find();
+        $this->assertEquals(2, count($books));
     }
 
     public function testUseQuery()

@@ -358,16 +358,12 @@ class SqlPersister implements PersisterInterface
                         if (isset($this->insertedManyToManyRelation[$id])){
                             continue;
                         }
-                        var_dump('insertedManyToManyRelation not found for ' . $id);
 
                         //check if already added this session
                         $id = NamingTool::shortEntityId($foreignItem) . '.' . NamingTool::shortEntityId($entity);
                         if (isset($this->insertedManyToManyRelation[$id])){
                             continue;
                         }
-
-                        var_dump('insertedManyToManyRelation not found for ' . $id);
-                        var_dump(array_keys($this->insertedManyToManyRelation));
 
                         $object = $this->getConfiguration()->getEntityMap($relation->getMiddleEntity()->getFullClassName())->createObject();
 

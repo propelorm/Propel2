@@ -39,8 +39,8 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
     public function setUp()
     {
+        parent::setUp();
         if (!class_exists('ConcreteContentSetPkQuery')) {
-            parent::setUp();
 
             $schema = <<<EOF
 <database name="concrete_content_set_pk" activeRecord="true">
@@ -283,6 +283,7 @@ EOF;
     /**
      * @expectedException \Propel\Runtime\Persister\Exception\UniqueConstraintException
      * @expectedExceptionMessage Unique constraint failure for field id in entity ConcreteContentSetPk
+     * @group test
      */
     public function testSetPKOnNewObjectWithPkAlreadyInParentTable()
     {
@@ -298,6 +299,9 @@ EOF;
         $article->save();
     }
 
+    /**
+     * @group test
+     */
     public function testSetPkAllowPkInsertIsFalse()
     {
         ConcreteContentQuery::create()->deleteAll();
