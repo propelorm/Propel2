@@ -292,7 +292,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
 
     }
 
-    /*
+    /**
      * ####################################
      * 7. removeFriend, setFriends
      */
@@ -332,6 +332,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
         $friends[] = $friend2 = (new \Relation1User())->setName('Friend 2');
         $newHansObject->setFriends($friends);
         $this->assertCount(2, $newHansObject->getFriends());
+
         $newHansObject->save();
         $this->assertEquals(3, \Relation1UserQuery::create()->count(), 'We have three users.');
         $this->assertEquals(2, \Relation1UserFriendQuery::create()->count(), 'We have two connections.');

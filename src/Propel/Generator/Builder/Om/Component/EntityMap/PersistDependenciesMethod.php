@@ -70,19 +70,32 @@ if (\$isset(\$entity, '$relationName') && \$relationEntities = \$reader(\$entity
         }
 
         foreach ($this->getEntity()->getCrossRelations() as $crossRelation) {
-            $varName = $this->getRefRelationCollVarName($crossRelation->getIncomingRelation());
+            $varName = $this->getRelationVarName($crossRelation->getOutgoingRelation(), true);
 
-            $to = [];
-            foreach ($crossRelation->getRelations() as $relation) {
-                $to[] = $relation->getForeignEntity()->getFullClassName();
-            }
-            $to = implode(', ', $to);
+            $to = $crossRelation->getOutgoingRelation()->getForeignEntity()->getFullClassName();
 
             $body .= "
 // cross relation {$crossRelation->getMiddleEntity()->getFullClassName()} (to $to)
 if (\$isset(\$entity, '$varName') && \$relationEntities = \$reader(\$entity, '$varName')) {
     foreach (\$relationEntities as \$relationEntity) {
-        \$session->persist(\$relationEntity, \$deep);
+";
+            if ($crossRelation->isPolymorphic()) {
+                foreach ($crossRelation->getRelations() as $idx => $relation) {
+                    $class = '\\' . $relation->getForeignEntity()->getFullClassName();
+                    $body .= "
+        //$idx is from type $class
+        if (!isset(\$relationEntity[$idx]) || !(\$relationEntity[$idx] instanceof $class)) {
+            throw new \\UnexpectedValueException('In ObjectCombinationCollection the $idx needs to be $class'); 
+        }
+        \$session->persist(\$relationEntity[$idx], \$deep);";
+                }
+
+            } else {
+                $body .= "
+        \$session->persist(\$relationEntity, \$deep);";
+            }
+
+            $body .= "
     }
 }
 ";

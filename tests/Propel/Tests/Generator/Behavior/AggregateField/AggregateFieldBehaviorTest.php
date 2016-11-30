@@ -127,6 +127,9 @@ class AggregateFieldBehaviorTest extends BookstoreTestBase
         $this->assertEquals(0, $poll->getVotesCount());
     }
 
+    /**
+     * @group test
+     */
     public function testUpdateRelatedWithQuery()
     {
         list($poll, $item1, $item2) = $this->populatePoll();

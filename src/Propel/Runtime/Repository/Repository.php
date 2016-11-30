@@ -10,6 +10,7 @@ use Propel\Runtime\Event\SaveEvent;
 use Propel\Runtime\Event\UpdateEvent;
 use Propel\Runtime\Events;
 use Propel\Runtime\Map\EntityMap;
+use Propel\Runtime\Session\Session;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -167,6 +168,14 @@ abstract class Repository
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    /**
+     * @return Session
+     */
+    public function getSession()
+    {
+        return $this->getConfiguration()->getSession();
     }
 
     /**

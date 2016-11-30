@@ -24,14 +24,8 @@ class UpdateRelatedMethod extends BuildComponent
     {
         /** @var AggregateFieldRelationBehavior $behavior */
         $behavior = $this->getBehavior();
-
-
         $relation = $behavior->getRelation();
-//        $relationName = $behavior->getRelationName();
-        $refRelationName = $this->getRefRelationPhpName($relation);
-
         $relationName = $behavior->getRelationName();
-//        $variableName = $relationName . ucfirst($behavior->getParameter('aggregate_name'));
         $updateMethodName = $behavior->getParameter('update_method');
         $aggregateName = ucfirst($behavior->getParameter('aggregate_name'));
 

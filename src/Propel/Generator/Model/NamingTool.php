@@ -75,11 +75,12 @@ class NamingTool
     /**
      * Returns a short unique-enough id for debugging purposes.
      *
-     * @param object $entity
+     * @param object|string $entity
      * @return string
      */
     public static function shortEntityId($entity)
     {
-        return substr(md5(spl_object_hash($entity)), 0, 9);
+        $id = is_string($entity) ? $entity : spl_object_hash($entity);
+        return substr(md5($id), 0, 9);
     }
 }

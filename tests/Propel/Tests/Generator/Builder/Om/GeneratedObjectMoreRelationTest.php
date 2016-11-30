@@ -218,7 +218,6 @@ EOF;
 
     /**
      * Basic deletion of a 1-to-n relation through set<RelationName>().
-     *
      */
     public function testContentsDeletion()
     {
@@ -230,6 +229,7 @@ EOF;
 
         $contentCollection[] = $content;
 
+        /** @var \MoreRelationTest\Page $page */
         $page = \MoreRelationTest\PageQuery::create()->findOne();
         $id = $page->getId();
 

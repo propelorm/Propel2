@@ -112,6 +112,9 @@ class SqlPersister implements PersisterInterface
      */
     public function commit(EntityMap $entityMap, $entities)
     {
+        $event = new SaveEvent($this->getSession(), $entityMap, $entities);
+        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
+
         $inserts = $updates = [];
         foreach ($entities as $entity) {
             if ($this->getSession()->isNew($entity)) {
@@ -132,10 +135,6 @@ class SqlPersister implements PersisterInterface
             $this->getConfiguration()->debug(sprintf('   No changes detected'), Configuration::LOG_GREEN);
             return;
         }
-
-        $event = new SaveEvent($this->getSession(), $entityMap, $inserts, $updates);
-        $this->getSession()->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
-
 
         $name = $entityMap->getFullClassName();
         foreach ($inserts as $entity) {
@@ -353,15 +352,17 @@ class SqlPersister implements PersisterInterface
 
                     foreach ($foreignItems as $foreignItem) {
 
-                        //check if already added this session
-                        $id = NamingTool::shortEntityId($entity) . '.' . NamingTool::shortEntityId($foreignItem);
-                        if (isset($this->insertedManyToManyRelation[$id])){
-                            continue;
+                        $id = [spl_object_hash($entity)];
+
+                        if ($relation->isPolymorphic()) {
+                            throw new RuntimeException('Polymorphic not implemented.');
+                        } else {
+                            $id[] = spl_object_hash($foreignItem);
                         }
 
-                        //check if already added this session
-                        $id = NamingTool::shortEntityId($foreignItem) . '.' . NamingTool::shortEntityId($entity);
-                        if (isset($this->insertedManyToManyRelation[$id])){
+                        sort($id);
+                        $id = implode("\0", $id);
+                        if (isset($this->insertedManyToManyRelation[$id])) {
                             continue;
                         }
 

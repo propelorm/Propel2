@@ -47,27 +47,18 @@ Returns the number of related $className objects.
 EOF;
 
         $body = <<<EOF
-\$partial = \$this->{$collName}Partial && !\$this->isNew();
-if (null === \$this->$collName || null !== \$criteria || \$partial) {
-    if (\$this->isNew() && null === \$this->$collName) {
-        return 0;
-    }
-
-    if (\$partial && !\$criteria) {
-        return count(\$this->get$relCol());
-    }
-
-    \$query = $fkQueryClassName::create(null, \$criteria);
-    if (\$distinct) {
-        \$query->distinct();
-    }
-
-    return \$query
-        ->filterBy{$this->getRelationPhpName($refRelation)}(\$this)
-        ->count();
+if (func_num_args() === 0 || \$this->isNew()) {
+    return count(\$this->$collName);
 }
 
-return count(\$this->$collName);
+\$query = $fkQueryClassName::create(null, \$criteria);
+if (\$distinct) {
+    \$query->distinct();
+}
+
+return \$query
+    ->filterBy{$this->getRelationPhpName($refRelation)}(\$this)
+    ->count();
 EOF;
 
 

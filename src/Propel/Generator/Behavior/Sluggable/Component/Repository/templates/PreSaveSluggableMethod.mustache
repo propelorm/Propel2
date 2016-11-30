@@ -97,39 +97,22 @@ $createSlug = function($entity) use ($makeSlugUnique, $cleanupSlugPart, $limitSl
     return $slug;
 };
 
+
 $slugs = [];
-foreach ($event->getEntitiesToInsert() as $entity) {
-    $slug = $entity->getSlug();
-    if (null === $slug || '' === $slug) {
-        $slug = $createSlug($entity);
-    } else {
-        $slug = $cleanupSlugPart($slug);
-        $slug = $limitSlugSize($slug);
-        $slug = $makeSlugUnique($slug{{#scopeField}}, '{{separator}}', false, $entity->getScope(){{/scopeField}});
-    }
 
-    while (true) {
-        if (!isset($slugs[$slug])) {
-            $slugs[$slug] = $entity;
-            break;
+foreach ($event->getEntities() as $entity) {
+    $slugModified = true;
+
+    if (!$this->getSession()->isNew($entity)) {
+        //update, so check if field has been changed.
+        $slugModified = $this->getEntityMap()->isFieldModified($entity, $slugField);
+
+        {{#notPermanent}}
+        if ($this->getEntityMap()->isFieldModified($entity, $primaryStringField) && !$slugModified) {
+            $entity->setSlug($createSlug($entity));
         }
-
-        //create another slug
-        $slug = $incrementSlug($slug{{#pattern}}, '/'{{/pattern}});
+        {{/notPermanent}}
     }
-
-    $slugs[$slug] = $entity;
-}
-
-
-//updates
-foreach ($event->getEntitiesToUpdate() as $entity) {
-    $slugModified = $this->getEntityMap()->isFieldModified($entity, $slugField);
-    {{#notPermanent}}
-    if ($this->getEntityMap()->isFieldModified($entity, $primaryStringField) && !$slugModified) {
-        $entity->setSlug($createSlug($entity));
-    }
-    {{/notPermanent}}
 
     if ($slugModified) {
         $slug = $entity->getSlug();

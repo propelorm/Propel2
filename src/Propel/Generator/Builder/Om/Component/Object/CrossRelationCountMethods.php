@@ -56,28 +56,18 @@ to the current object by way of the $crossRefEntityName cross-reference entity.
 EOF;
 
         $body = <<<EOF
-\$partial = \$this->{$collName}Partial && !\$this->isNew();
-if (null === \$this->$collName || null !== \$criteria || \$partial) {
-    if (\$this->isNew() && null === \$this->$collName) {
-        return 0;
-    } else {
-
-        if (\$partial && !\$criteria) {
-            return count(\$this->get$relatedName());
-        }
-
-        \$query = $relatedQueryClassName::create(null, \$criteria);
-        if (\$distinct) {
-            \$query->distinct();
-        }
-
-        return \$query
-            ->filterBy{$selfRelationName}(\$this)
-            ->count();
-    }
-} else {
+if (func_num_args() === 0 || \$this->isNew()) {
     return count(\$this->$collName);
 }
+        
+\$query = $relatedQueryClassName::create(null, \$criteria);
+if (\$distinct) {
+    \$query->distinct();
+}
+
+return \$query
+    ->filterBy{$selfRelationName}(\$this)
+    ->count();
 EOF;
 
 

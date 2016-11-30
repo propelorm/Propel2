@@ -73,16 +73,14 @@ class Properties extends BuildComponent
             if ($field->getDefaultValue()->isExpression()) {
                 $expression = $field->getDefaultValue()->getValue();
                 $description[] = "Note: this field has a database default value of: (expression) $expression";
-                $defaultValue = PhpConstant::create($expression);
-                $property->setValue($defaultValue);
+                $property->setExpression($expression);
             } else {
                 $defaultValue = $field->getDefaultValue()->getValue();
                 $property->setValue($defaultValue);
 
                 if ($field->isPhpArrayType()) {
                     $defaultValue = $this->getDefaultValueString($field);
-                    $defaultValue = PhpConstant::create(var_export($defaultValue, true));
-                    $property->setValue($defaultValue);
+                    $property->setExpression(var_export($defaultValue, true));
                 }
             }
         }

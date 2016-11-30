@@ -136,21 +136,11 @@ class Relation extends MappingModel
     {
         $this->foreignEntityName = $this->getAttribute('target') ?: $this->getAttribute('target');
 
-//        $this->foreignSchemaName = $this->getAttribute('targetSchema');
-
         $this->name = $this->getAttribute('name');
         $this->field = $this->getAttribute('field');
 
-        if (!$this->field) {
-            $this->field = $this->name;
-        }
-
-        if (!$this->field) {
-            $this->field = lcfirst($this->getAttribute('target'));
-        }
-
-        if (!$this->field) {
-            throw new \InvalidArgumentException('field or target value empty for relation');
+        if (!$this->foreignEntityName) {
+            throw new \InvalidArgumentException('target value empty for relation');
         }
 
         $this->refName = $this->getAttribute('refName') ?: lcfirst($this->getEntity()->getName());
@@ -167,7 +157,15 @@ class Relation extends MappingModel
      */
     public function getField()
     {
-        return $this->field ?: $this->name ?: lcfirst($this->foreignEntityName);
+        $field = $this->field;
+
+        if (!$field) {
+            if ($this->hasName()) {
+                $field = $this->name;
+            }
+        }
+
+        return $field ?: lcfirst($this->foreignEntityName);
     }
 
     /**

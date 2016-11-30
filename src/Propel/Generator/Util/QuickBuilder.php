@@ -248,7 +248,8 @@ class QuickBuilder
         $connectionConfiguration = [
             'dsn' => $dsn,
             'user' => $user,
-            'password' => $pass
+            'password' => $pass,
+            'classname' => '\Propel\Runtime\Connection\DebugPDO'
         ];
 
         if (static::$configuration->hasConnectionManager($this->getDatabase()->getName())) {

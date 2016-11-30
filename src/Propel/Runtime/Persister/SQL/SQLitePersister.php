@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Persister\SQL;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\EntityMap;
 use Propel\Runtime\Map\FieldMap;
 use Propel\Runtime\Persister\Exception\UniqueConstraintException;
@@ -10,8 +11,36 @@ use Propel\Runtime\Persister\SqlPersister;
 
 class SQLitePersister extends SqlPersister
 {
+
     /**
-     * Return the next value of an autoincrement field.
+     * @param ConnectionInterface $connection
+     */
+    protected function prepareAutoIncrement(EntityMap $entityMap, ConnectionInterface $connection, $count)
+    {
+        $fieldNames = $entityMap->getAutoIncrementFieldNames();
+        $object = [];
+
+        if (1 < count($fieldNames)) {
+            throw new RuntimeException(
+                sprintf('Entity `%s` has more than one autoIncrement field. This is currently not supported'),
+                $entityMap->getFullClassName()
+            );
+        }
+
+        $firstFieldName = $fieldNames[0];
+
+        $nextAutoIncrement = $this->readAutoIncrement($entityMap, $connection);
+
+        $this->getConfiguration()->debug("prepareAutoIncrement SQLite lastInsertId=$nextAutoIncrement, for $count items");
+        $object[$firstFieldName] = $nextAutoIncrement - $count + 1;
+
+        $this->getConfiguration()->debug('prepareAutoIncrement for ' . $entityMap->getFullClassName(). ': ' . json_encode($object));
+        $this->autoIncrementValues = (object)$object;
+    }
+
+
+    /**
+     * Return the last value of an autoincrement field.
      *
      * @see http://www.sqlite.org/fileformat2.html#seqtab
      *
@@ -21,7 +50,6 @@ class SQLitePersister extends SqlPersister
      */
     protected function readAutoIncrement(EntityMap $entityMap, ConnectionInterface $connection)
     {
-
         $autoIncrementField = current($entityMap->getPrimaryKeys());
         $tableName = $autoIncrementField->getEntity()->getFQTableName();
 
@@ -31,7 +59,7 @@ class SQLitePersister extends SqlPersister
         $value = (integer) $stmt->fetchColumn();
 
         if ($value > 0) {
-            return $value + 1;
+            return $value;
         }
 
         return $this->readAutoincrementWithoutSequenceTable($autoIncrementField, $connection);
@@ -47,7 +75,7 @@ class SQLitePersister extends SqlPersister
             }
         }
 
-        return parent::normalizePdoException($PDOException);
+        return parent::normalizePdoException($entityMap, $PDOException);
     }
 
     /**
@@ -77,7 +105,7 @@ EOF;
         $value = (integer) $stmt->fetchColumn();
 
         if ($value > 0) {
-            return $value + 1;
+            return $value;
         }
 
         return 1;

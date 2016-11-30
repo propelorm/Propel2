@@ -1532,7 +1532,7 @@ class ModelCriteria extends BaseModelCriteria
                     $updates = $eventQuery
                         ->setFormatter(static::FORMAT_OBJECT)
                         ->find();
-                    $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), [], $updates);
+                    $event = new SaveEvent($this->getConfiguration()->getSession(), $this->getEntityMap(), $updates);
                     $this->getConfiguration()->getEventDispatcher()->dispatch(Events::PRE_SAVE, $event);
                 }
             }

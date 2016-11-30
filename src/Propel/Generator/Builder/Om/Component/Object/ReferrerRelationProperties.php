@@ -51,11 +51,6 @@ class ReferrerRelationProperties extends BuildComponent
 
             $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
             $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
-
-            if ($refRelation->getEntity()->isActiveRecord()) {
-                $this->addProperty($this->getRefRelationCollVarName($refRelation).'Partial')
-                    ->setType('boolean');
-            }
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Propel\Runtime\Session;
 
 use Propel\Common\Types\FieldTypeInterface;
+use Propel\Generator\Model\NamingTool;
 use Propel\Runtime\Configuration;
 use Propel\Runtime\Events;
 use Propel\Runtime\Exception\SessionClosedException;
@@ -181,6 +182,7 @@ class Session
      */
     public function setPersisted($id)
     {
+        $this->getConfiguration()->debug("Set as persisted #" . NamingTool::shortEntityId($id), Configuration::LOG_PURPLE);
         $this->persisted[$id] = true;
     }
 
@@ -234,6 +236,10 @@ class Session
      */
     public function persist($entity, $deep = false)
     {
+        if (null === $entity) {
+            return;
+        }
+
         if ($this->getCurrentRound()->isInCommit()) {
             $this->enterNewRound();
             if ($this->getConfiguration()->isDebug()) {

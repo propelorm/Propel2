@@ -148,23 +148,6 @@ class TestCaseFixtures extends TestCase
         return $this->configuration;
     }
 
-    /**
-     * @param string $entityClass
-     * @param array $entitiesToInsert
-     * @param array $entitiesToUpdate
-     *
-     * @return SaveEvent
-     */
-    public function getNewSaveEvent($entityClass, $entitiesToInsert, $entitiesToUpdate)
-    {
-        return new SaveEvent(
-            $this->getConfiguration()->getSession(),
-            $this->getConfiguration()->getEntityMap($entityClass),
-            $entitiesToInsert,
-            $entitiesToUpdate
-            );
-    }
-
     protected function getLastBuildMode()
     {
         if ($this->lastBuildMode) {

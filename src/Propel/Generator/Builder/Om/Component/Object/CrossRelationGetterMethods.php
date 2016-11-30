@@ -101,87 +101,63 @@ EOF;
         );
 
         $body = "
-\$partial = \$this->{$collVarName}Partial && !\$this->isNew();
-if (null === \$this->$collVarName || null !== \$criteria || \$partial) {
-    if (\$this->isNew()) {
-        // return empty collection
-        if (null === \$this->$collVarName) {
-//            \$this->initBla();
-        }
-    } else {
+if (func_num_args() === 0 || \$this->isNew()) {
+    return \$this->$collVarName;
+}
 
-        \$query = $relatedQueryClassName::create(null, \$criteria)
-            ->filterBy{$selfRelationName}(\$this)";
+\$query = $relatedQueryClassName::create(null, \$criteria)
+    ->filterBy{$selfRelationName}(\$this)";
 
         foreach ($crossRelation->getRelations() as $fk) {
             $varName = $this->getRelationPhpName($fk, $plural = false);
             $body .= "
-            ->join{$varName}()";
+    ->join{$varName}()";
         }
 
         foreach ($crossRelation->getUnclassifiedPrimaryKeyNames() as $name) {
             $filterByName = ucfirst($name);
             $body .= "
-            ->filterBy{$filterByName}(\$$name)
+    ->filterBy{$filterByName}(\$$name)
             ";
         }
 
         $body .= "
-                ;
+;
 
-        \$items = \$query->find();
-        \$$collVarName = new ObjectCombinationCollection();
-        foreach (\$items as \$item) {
-            \$combination = [];
+\$items = \$query->find();
+\$$collVarName = new ObjectCombinationCollection();
+foreach (\$items as \$item) {
+    \$combination = [];
 ";
 
         foreach ($crossRelation->getRelations() as $fk) {
             $varName = $this->getRelationPhpName($fk, $plural = false);
             $body .= "
-            \$combination[] = \$item->get{$varName}();";
+    \$combination[] = \$item->get{$varName}();";
         }
 
         foreach ($crossRelation->getUnclassifiedPrimaryKeys() as $pk) {
             $varName = ucfirst($pk->getName());
             $body .= "
-            \$combination[] = \$item->get{$varName}();";
+    \$combination[] = \$item->get{$varName}();";
         }
 
         $body .= "
-            \${$collVarName}[] = \$combination;
-        }
-
-        if (null !== \$criteria) {
-            return \$$collVarName;
-        }
-
-        if (\$partial && \$this->{$collVarName}) {
-            //make sure that already added objects gets added to the list of the database.
-            foreach (\$this->{$collVarName} as \$obj) {
-                if (!call_user_func_array([\${$collVarName}, 'contains'], \$obj)) {
-                    \${$collVarName}[] = \$obj;
-                }
-            }
-        }
-
-        \$this->$collVarName = \$$collVarName;
-        \$this->{$collVarName}Partial = false;
-    }
+    \${$collVarName}[] = \$combination;
 }
 
-return \$this->$collVarName;
+return \$$collVarName;
 ";
-
-        $objectClassName = $this->getObjectClassName();
 
         $description = <<<EOF
 Gets a combined collection of {$crossRelation->getForeignEntity()->getFullClassName()} objects related by a many-to-many relationship
 to the current object by way of the {$crossRelation->getMiddleEntity()->getFullClassName()} cross-reference entity.
 
-If the \$criteria is not null, it is used to always fetch the results from the database.
-Otherwise the results are fetched from the database the first time, then cached.
-Next time the same method is called without \$criteria, the cached collection is returned.
-If this $objectClassName is new, it will return an empty collection or the current collection; the criteria is ignored on a new object.
+This method has filter arguments and additional functionality due to fact that you activated "activeRecord".
+As soon as you pass arguments into this method it hits always the database instead of returning the current list.
+Please note: if you changed this relation and you haven't saved it yet, those changes are not reflected in this result.
+
+If this object is not saved yet, all arguments are ignored and the current list is returned (no database query is executed).
 EOF;
 
 //        $method = $this->addMethod('get' . $relatedName)
@@ -218,8 +194,8 @@ EOF;
 //the correct return value. Use get$relatedName() to get the current internal state.
 //$phpDoc
 //EOF;
-//
-        $items = [$crossRelation->getForeignEntity()->getFullClassName()];
+
+        $items = [];
         foreach ($crossRelation->getRelations() as $relation) {
             $items[] = $relation->getForeignEntity()->getFullClassName();
         }
@@ -260,37 +236,14 @@ EOF;
             $collName = $this->getCrossRelationRelationVarName($relation);
 
             $body = <<<EOF
-\$partial = \$this->{$collName}Partial && !\$this->isNew();
-if (null === \$this->$collName || null !== \$criteria || \$partial) {
-    if (\$this->isNew()) {
-        // return empty collection
-        if (null === \$this->$collName) {
-            \$this->init{$relatedName}();
-        }
-    } else {
-
-        \$query = $relatedQueryClassName::create(null, \$criteria)
-            ->filterBy{$selfRelationName}(\$this);
-        \$$collName = \$query->find(\$con);
-        if (null !== \$criteria) {
-            return \$$collName;
-        }
-
-        if (\$partial && \$this->{$collName}) {
-            //make sure that already added objects gets added to the list of the database.
-            foreach (\$this->{$collName} as \$obj) {
-                if (!\${$collName}->contains(\$obj)) {
-                    \${$collName}[] = \$obj;
-                }
-            }
-        }
-
-        \$this->$collName = \$$collName;
-        \$this->{$collName}Partial = false;
-    }
+if (func_num_args() === 0 || \$this->isNew()) {
+    return \$this->$collName;
 }
 
-return \$this->$collName;
+\$query = $relatedQueryClassName::create(null, \$criteria)
+    ->filterBy{$selfRelationName}(\$this);
+
+return \$query->find(\$con);
 EOF;
 
             $objectClassName = $this->getObjectClassName();

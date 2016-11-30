@@ -1529,7 +1529,8 @@ abstract class EntityMap
         $fieldMapping = array(),
         $onDelete = null,
         $onUpdate = null,
-        $pluralName = null
+        $pluralName = null,
+        $polymorphic = false
     ) {
         $relation = new RelationMap($name);
         $relation->setType($type);
@@ -1568,6 +1569,8 @@ abstract class EntityMap
                 );
             }
         }
+
+        $relation->setPolymorphic($polymorphic);
 
         if (isset($this->relations[$name])) {
             throw new EngineException("A relation with the name $name already exists in {$this->getEntityMap()->getFullClassName()}.");

@@ -303,7 +303,7 @@ class SchemaReader
                         //backwards compatibility
                         $attributes['target'] = ucfirst(NamingTool::toCamelCase($attributes['foreignTable']));
                         if (isset($attributes['phpName'])) {
-                            $attributes['field'] = $attributes['phpName'];
+                            $attributes['field'] = lcfirst($attributes['phpName']);
                         } else {
                             $attributes['field'] = NamingTool::toCamelCase($attributes['foreignTable']);
                         }

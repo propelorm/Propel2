@@ -71,6 +71,11 @@ class RelationMap
     protected $fieldMappingPrimaryKeys;
 
     /**
+     * @var boolean
+     */
+    protected $polymorphic = false;
+
+    /**
      * @var FieldMap[]
      */
     protected $localFields = array();
@@ -219,6 +224,22 @@ class RelationMap
     public function setFieldMappingIncomingName($fieldMappingIncomingName)
     {
         $this->fieldMappingIncomingName = $fieldMappingIncomingName;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPolymorphic()
+    {
+        return $this->polymorphic;
+    }
+
+    /**
+     * @param boolean $polymorphic
+     */
+    public function setPolymorphic($polymorphic)
+    {
+        $this->polymorphic = $polymorphic;
     }
 
     /**

@@ -44,13 +44,5 @@ class CrossRelationProperties extends BuildComponent
             $this->getDefinition()->declareUse('Propel\Runtime\Collection\ObjectCollection');
             $this->addConstructorBody("\$this->$varName = new ObjectCollection();");
         }
-
-        if ($crossRelation->getEntity()->isActiveRecord()) {
-            $partialVarName = $varName . 'Partial';
-
-            $this->addProperty($partialVarName)
-                ->setType('boolean')
-                ->setTypeDescription("");
-        }
     }
 } 

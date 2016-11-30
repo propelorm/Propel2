@@ -288,7 +288,8 @@ abstract class AbstractBuilder extends DataModelBuilder
                 $hookBehaviorMethodName = $hookName . ucfirst(NamingTool::toCamelCase($behavior->getId()));
 
                 if ($code) {
-                    $body .= "//behavior hook {$behavior->getName()}#{$behavior->getId()}\n";
+                    $body .= "\n//behavior hook {$behavior->getName()}#{$behavior->getId()}";
+
                     $method = new PhpMethod($hookBehaviorMethodName);
                     $method->setVisibility('protected');
                     $method->addSimpleParameter('event');

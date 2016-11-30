@@ -19,6 +19,7 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
     public function setUp()
     {
+        $this->markTestSkipped('Polymorphic many-to-many relations will be supported soon.');
         parent::setUp();
 
         if (!class_exists('\Relation2UserQuery')) {

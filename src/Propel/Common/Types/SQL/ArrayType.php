@@ -32,7 +32,7 @@ class ArrayType extends AbstractType implements BuildableFieldTypeInterface
             $property = $builder->getDefinition()->getProperty($field->getName());
 
             if (!$property->hasValue()) {
-                $property->setValue(PhpConstant::create('[]'));
+                $property->setExpression('[]');
             }
         }
     }

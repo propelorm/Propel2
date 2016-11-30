@@ -56,8 +56,7 @@ class AggregateFieldRelationBehavior extends Behavior
         $aggregateName = ucfirst($this->getParameter('aggregate_name'));
 
         return "
-\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntitiesToInsert());
-\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntitiesToUpdate());
+\$this->updateRelated{$relationName}{$aggregateName}(\$event->getEntities());
 ";
     }
 

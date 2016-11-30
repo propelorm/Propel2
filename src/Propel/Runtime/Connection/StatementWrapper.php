@@ -130,7 +130,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
         $return = $this->statement->bindValue($pos, $value, $type);
         if ($this->connection->useDebug) {
             $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-            $valuestr = $type == \PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
+            $valuestr = $type == \PDO::PARAM_LOB ? '[LOB value]' : $value;
             $this->boundValues[$pos] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
             $this->connection->log($msg);
@@ -193,7 +193,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
     {
         $return = $this->statement->execute($input_parameters);
         if ($this->connection->useDebug) {
-            $sql = $this->getExecutedQueryString();
+            $sql = $this->getExecutedQueryString($input_parameters);
             $this->connection->log($sql);
             $this->connection->setLastExecutedQuery($sql);
             $this->connection->incrementQueryCount();
@@ -205,19 +205,30 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
     /**
      * @return string
      */
-    public function getExecutedQueryString()
+    public function getExecutedQueryString($parameters = null)
     {
         $sql = $this->statement->queryString;
+        $parameters = $parameters ?: $this->boundValues;
         $matches = array();
+
         if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
             $size = count($matches[1]);
             for ($i = $size-1; $i >= 0; $i--) {
                 $pos = $matches[1][$i];
-                $sql = str_replace($pos, $this->boundValues[$pos], $sql);
+                $sql = str_replace($pos, var_export($parameters[$pos], true), $sql);
             }
         }
 
-        return $sql;
+        $paramsReplaceReadable = $parameters;
+        $readable = preg_replace_callback('/\?/', function() use (&$paramsReplaceReadable) {
+            $value = array_shift($paramsReplaceReadable);
+            if (is_string($value) && strlen($value) > 64) {
+                $value = substr($value, 0, 64) . '...';
+            }
+            return var_export($value, true);
+        }, $sql);
+
+        return $readable;
     }
 
     /**
