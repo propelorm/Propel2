@@ -5465,8 +5465,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function remove{$relatedObjectClassName}($signature)
     {
-        if (\$this->get{$relCol}()->contains({$shortSignature})) { {$foreignObjectName} = new {$className}();
-";
+        if (\$this->get{$relCol}()->contains({$shortSignature})) {
+            {$foreignObjectName} = new {$className}();";
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
