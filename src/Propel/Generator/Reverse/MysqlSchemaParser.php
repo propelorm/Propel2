@@ -115,15 +115,15 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
             $this->addTableVendorInfo($table);
             
-            //Check if the table is the crosstab of a many-to-many relation
-            $nbPks = count($table->getPrimaryKey());
+         //Check if the table is the crosstab of a many-to-many relation
+        	$nbPks = count($table->getPrimaryKey());
             $nbFks = count($table->getForeignKeys());
             if($nbPks > 1 && $nbFks > 1 && $nbPks == $nbFks) {
-            	$flag = false;
-            	for ($i = 0; $i < count($table->getPrimaryKey()); $i++){
-            		$flag = $table->getPrimaryKey()[$i]->getName() == $table->getForeignKeys()[$i]->getLocalColumnName();
+            	$isCrossRef = true;
+            	foreach ($table->getForeignKeys() as $foreignKey) {
+            		$isCrossRef &= $foreignKey->isForeignPrimaryKey();
             	}
-            	$table->setCrossRef($flag);
+            	$table->setCrossRef($isCrossRef);
             }
         }
 
