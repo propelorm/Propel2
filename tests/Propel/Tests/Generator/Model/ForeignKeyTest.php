@@ -443,6 +443,35 @@ class ForeignKeyTest extends ModelTestCase
         $this->assertSame($normalized, $fk->normalizeFKey($behavior));
     }
 
+    public function testPolymorphicSiblings()
+    {
+        $fk1 = new ForeignKey();
+        $fk2 = new ForeignKey();
+
+        $fk1->addReference([
+            'local' => 'col1',
+            'value' => '123'
+        ]);
+        $fk1->addReference([
+            'local' => 'col2',
+            'foreign' => 'id'
+        ]);
+
+        $fk2->addReference([
+            'local' => 'col2',
+            'foreign' => 'id'
+        ]);
+        $fk2->addReference([
+            'local' => 'col1',
+            'value' => '321'
+        ]);
+
+        $this->assertEquals(sha1('col1|||col2'), $fk1->getPolymorphicSignature());
+        $this->assertEquals(sha1('col1|||col2'), $fk2->getPolymorphicSignature());
+        $this->assertTrue($fk1->isAPolymorphicSiblingRelationship($fk2));
+        $this->assertTrue($fk2->isAPolymorphicSiblingRelationship($fk1));
+    }
+
     public function provideOnActionBehaviors()
     {
         return [
