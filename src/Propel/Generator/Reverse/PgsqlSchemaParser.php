@@ -417,7 +417,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $fk = new ForeignKey($name);
                 $fk->setForeignTableCommonName($foreignTable->getCommonName());
                 if ($table->guessSchemaName() != $foreignTable->guessSchemaName()) {
-                    $fk->setForeignSchemaName($foreignTable->getSchema());
+                     if($foreignTable->getSchema())
+                            $fk->setForeignSchemaName($foreignTable->getSchema());
+                     elseif($foreignTable->getSchema() == 'public')
+                            $fk->setForeignSchemaName("public");
                 }
                 $fk->setOnDelete($ondelete);
                 $fk->setOnUpdate($onupdate);
