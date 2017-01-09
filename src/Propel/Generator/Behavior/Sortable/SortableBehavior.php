@@ -114,6 +114,7 @@ class SortableBehavior extends Behavior
 
             $methodSignature = [];
             $buildScope      = [];
+            $buildScopeVars  = [];
             $paramsDoc       = [];
 
             foreach ($this->getScopes() as $idx => $scope) {
