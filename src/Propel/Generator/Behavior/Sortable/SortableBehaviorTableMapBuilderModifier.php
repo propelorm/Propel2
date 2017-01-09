@@ -38,6 +38,8 @@ class SortableBehaviorTableMapBuilderModifier
         if ($this->behavior->useScope()) {
 
             if ($this->behavior->hasMultipleScopes()) {
+                $col = [];
+                
                 foreach ($this->behavior->getScopes() as $scope) {
                     $col[] = "$tableName.".strtoupper($scope);
                 }
