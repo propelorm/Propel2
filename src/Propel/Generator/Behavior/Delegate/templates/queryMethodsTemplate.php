@@ -5,7 +5,7 @@
 * <code>
     * $query->filterBy<?=$phpName?>(1234); // WHERE <?=$fieldName?> = 1234
     * $query->filterBy<?=$phpName?>(array(12, 34)); // WHERE <?=$fieldName?> IN (12, 34)
-    * $query->filterBy<?=$phpName?>(array('min' => 12)); // WHERE <?=$fieldName?> > 12
+    * $query->filterBy<?=$phpName?>(array('min' => 12)); // WHERE <?=$fieldName?> >= 12
     * </code>
 *
 * @param     mixed $value The value to use as filter.
