@@ -522,7 +522,7 @@ DROP SEQUENCE %s CASCADE;
             }
         }
 
-        if (isset($changedProperties['size']) || isset($changedProperties['type']) || isset($changedProperties['scale'])) {
+        if (isset($changedProperties['size']) || isset($changedProperties['type']) || isset($changedProperties['sqlType']) || isset($changedProperties['scale'])) {
 
             $sqlType = $toColumn->getDomain()->getSqlType();
 
