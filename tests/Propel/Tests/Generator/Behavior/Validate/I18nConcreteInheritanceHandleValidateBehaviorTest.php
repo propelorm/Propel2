@@ -83,6 +83,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         // 1st is for ValidateTriggerFiction (base)
         // 2nd is for ValidateTriggerBook (base)
+        // I'm not sure if this is needed. We should not care about validator internals
         $this->assertCount(2, $fictionMetadatas);
 
         $expectedValidatorGroups = array(
@@ -90,13 +91,13 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
             'ValidateTriggerBook',
         );
 
-        // iterate over metadatas and constarints
+        // iterate over metadatas and constarints.
+        // If constraint match with expected constraint -> remove it form expectations list
         // We are looking for our regex validations
         foreach ($fictionMetadatas as $fictionmetadata) {
             /* @var $constraint \Symfony\Component\Validator\Mapping\PropertyMetadata */
             foreach ($fictionmetadata->getConstraints() as $constraint) {
                 if ($constraint instanceof \Symfony\Component\Validator\Constraints\Regex) {
-                    // is this correct ?
                     $expectedValidatorGroups = array_diff($expectedValidatorGroups, $constraint->groups);
                 }
             }
