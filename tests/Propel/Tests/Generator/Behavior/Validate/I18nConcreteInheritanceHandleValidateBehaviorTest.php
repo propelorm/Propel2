@@ -80,15 +80,30 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertTrue(in_array('isbn', $fictionMetadata->getConstrainedProperties(), true));
 
         $fictionMetadatas = $fictionMetadata->getPropertyMetadata('isbn');
-        $this->assertCount(1, $fictionMetadatas);
 
-        $fictionConstraints = $fictionMetadatas[0]->getConstraints();
-        $this->assertCount(2, $fictionConstraints);
-        $this->assertTrue(in_array('ValidateTriggerFiction', $fictionConstraints[0]->groups));
-        $this->assertTrue(in_array('ValidateTriggerBook', $fictionConstraints[0]->groups));
-        $this->assertTrue(in_array('ValidateTriggerFiction', $fictionConstraints[1]->groups));
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $fictionConstraints[0]);
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $fictionConstraints[1]);
+        // 1st is for ValidateTriggerFiction (base)
+        // 2nd is for ValidateTriggerBook (base)
+        // I'm not sure if this is needed. We should not care about validator internals
+        $this->assertCount(2, $fictionMetadatas);
+
+        $expectedValidatorGroups = array(
+            'ValidateTriggerFiction',
+            'ValidateTriggerBook',
+        );
+
+        // iterate over metadatas and constarints.
+        // If constraint match with expected constraint -> remove it form expectations list
+        // We are looking for our regex validations
+        foreach ($fictionMetadatas as $fictionmetadata) {
+            /* @var $constraint \Symfony\Component\Validator\Mapping\PropertyMetadata */
+            foreach ($fictionmetadata->getConstraints() as $constraint) {
+                if ($constraint instanceof \Symfony\Component\Validator\Constraints\Regex) {
+                    $expectedValidatorGroups = array_diff($expectedValidatorGroups, $constraint->groups);
+                }
+            }
+        }
+
+        $this->assertEmpty($expectedValidatorGroups);
 
         $comic = 'Propel\Tests\Bookstore\Behavior\ValidateTriggerComic';
 
@@ -101,21 +116,42 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         $comicMetadatas['isbn'] = $comicMetadata->getPropertyMetadata('isbn');
         $comicMetadatas['bar']  = $comicMetadata->getPropertyMetadata('bar');
-        $this->assertCount(1, $comicMetadatas['isbn']);
-        $this->assertCount(1, $comicMetadatas['bar']);
 
-        $comicConstraintsIsbn = $comicMetadatas['isbn'][0]->getConstraints();
-        $this->assertCount(2, $comicConstraintsIsbn);
-        $this->assertTrue(in_array('ValidateTriggerComic', $comicConstraintsIsbn[0]->groups));
-        $this->assertTrue(in_array('ValidateTriggerBook', $comicConstraintsIsbn[0]->groups));
-        $this->assertTrue(in_array('ValidateTriggerComic', $comicConstraintsIsbn[1]->groups));
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $comicConstraintsIsbn[0]);
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Regex', $comicConstraintsIsbn[1]);
+        $expectedComicValidators = array(
+            'ValidateTriggerComic',
+            'ValidateTriggerComic',
+            'ValidateTriggerBook',
+        );
 
-        $comicConstraintsBar = $comicMetadatas['bar'][0]->getConstraints();
-        $this->assertCount(2,$comicConstraintsBar);
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\NotNull', $comicConstraintsBar[0]);
-        $this->assertInstanceOf('Symfony\Component\Validator\Constraints\Type', $comicConstraintsBar[1]);
+        foreach ($comicMetadatas['isbn'] as $metadata) {
+            /* @var $metadata \Symfony\Component\Validator\Mapping\PropertyMetadata */
+            foreach ($metadata->getConstraints() as $constraint) {
+                if ($constraint instanceof \Symfony\Component\Validator\Constraints\Regex) {
+                    $expectedComicValidators = array_diff($expectedComicValidators, $constraint->groups);
+                }
+            }
+        }
+
+        $this->assertEmpty($expectedComicValidators);
+
+        $comicMetadataBar = $comicMetadatas['bar'];
+
+        $expectedComicBarValidatorTypes = array(
+            0 => 'Symfony\Component\Validator\Constraints\NotNull',
+            1 => 'Symfony\Component\Validator\Constraints\Type',
+        );
+        foreach ($comicMetadataBar as $metadata) {
+            $constraints = $metadata->getConstraints();
+            foreach ($constraints as $constraint) {
+                if ($constraint instanceof \Symfony\Component\Validator\Constraints\NotNull) {
+                    unset($expectedComicBarValidatorTypes[0]);
+                } elseif ($constraint instanceof \Symfony\Component\Validator\Constraints\Type) {
+                    unset($expectedComicBarValidatorTypes[1]);
+                }
+            }
+        }
+
+        $this->assertEmpty($expectedComicBarValidatorTypes);
     }
 
     public function testConcreteInheritanceAndI18nBehaviorHandlesValidateBehavior()
