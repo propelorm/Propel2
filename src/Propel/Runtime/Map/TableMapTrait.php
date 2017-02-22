@@ -58,8 +58,8 @@ trait TableMapTrait
         $toNames = static::getFieldNames($toType);
         $newRow = [];
         foreach ($row as $name => $field) {
-            if ($key = static::$fieldKeys[$fromType][$name]) {
-                $newRow[$toNames[$key]] = $field;
+            if (isset(static::$fieldKeys[$fromType][$name])) {
+                $newRow[$toNames[static::$fieldKeys[$fromType][$name]]] = $field;
             } else {
                 $newRow[$name] = $field;
             }
