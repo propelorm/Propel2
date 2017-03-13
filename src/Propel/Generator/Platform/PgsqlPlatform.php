@@ -31,7 +31,12 @@ use Propel\Generator\Model\Diff\ColumnDiff;
  */
 class PgsqlPlatform extends DefaultPlatform
 {
-
+    
+    /**
+     * @var boolean whether the identifier quoting is enabled
+     */
+    protected $isIdentifierQuotingEnabled = true;
+	
     /**
      * @var string
      */
