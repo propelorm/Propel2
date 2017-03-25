@@ -299,7 +299,8 @@ class SchemaReader
 
             switch ($name) {
                 case 'index-column':
-                    $this->currIndex->addColumn($attributes);
+                    $column = $this->currIndex->getTable()->getColumn($attributes['name']);
+                    $this->currIndex->addColumn($column);
                     break;
 
                 case 'vendor':
@@ -314,7 +315,8 @@ class SchemaReader
 
             switch ($name) {
                 case 'unique-column':
-                    $this->currUnique->addColumn($attributes);
+                    $column = $this->currUnique->getTable()->getColumn($attributes['name']);
+                    $this->currUnique->addColumn($column);
                     break;
 
                 case 'vendor':
