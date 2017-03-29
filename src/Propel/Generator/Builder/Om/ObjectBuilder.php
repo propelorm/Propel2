@@ -2551,7 +2551,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isTemporalType()) {
                 $script .= "
-        if (\$result[\$keys[$num]] instanceof \DateTime) {
+        if (\$result[\$keys[$num]] instanceof \DateTimeInterface) {
             \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('c');
         }
         ";
