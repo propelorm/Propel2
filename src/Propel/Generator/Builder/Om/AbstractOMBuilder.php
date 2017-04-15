@@ -603,6 +603,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * The difference between this method and the getRefFKPhpNameAffix() method is that in this method the
      * classname in the affix is the foreign table classname.
      *
+     * If plural=true and phpName is set then the phpName value is returned directly.
+     *
      * @param  ForeignKey $fk     The local FK that we need a name for.
      * @param  boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return string
@@ -610,10 +612,6 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getFKPhpNameAffix(ForeignKey $fk, $plural = false)
     {
         if ($fk->getPhpName()) {
-            if ($plural) {
-                return $this->getPluralizer()->getPluralForm($fk->getPhpName());
-            }
-
             return $fk->getPhpName();
         }
 
@@ -870,20 +868,21 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * The difference between this method and the getFKPhpNameAffix() method is that in this method the
      * classname in the affix is the classname of the local fkey table.
      *
+     * If plural=true and refPhpName is set then the refPhpName value is returned directly.
+     *
      * @param  ForeignKey $fk     The referrer FK that we need a name for.
      * @param  boolean    $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      * @return string
      */
     public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false)
     {
-        $pluralizer = $this->getPluralizer();
         if ($fk->getRefPhpName()) {
-            return $plural ? $pluralizer->getPluralForm($fk->getRefPhpName()) : $fk->getRefPhpName();
+            return $fk->getRefPhpName();
         }
 
         $className = $fk->getTable()->getPhpName();
         if ($plural) {
-            $className = $pluralizer->getPluralForm($className);
+            $className = $this->getPluralizer()->getPluralForm($className);
         }
 
         return $className . $this->getRefRelatedBySuffix($fk);
