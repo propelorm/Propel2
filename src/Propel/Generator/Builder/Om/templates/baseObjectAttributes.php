@@ -9,7 +9,7 @@
      * attribute to determine whether this object has been deleted.
      * @var boolean
      */
-    protected $deleted = false;
+    protected $isDeleted = false;
 
     /**
      * The columns that have been modified in current object.
