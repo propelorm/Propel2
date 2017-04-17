@@ -784,8 +784,8 @@ class Database extends ScopedMappingModel
                 }
             }
         }
-        ksort($behaviors);
         if (count($behaviors)) {
+            ksort($behaviors);
             $nextBehavior = $behaviors[key($behaviors)][0];
         }
 
