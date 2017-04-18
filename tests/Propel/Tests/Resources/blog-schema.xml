@@ -13,8 +13,8 @@
       <column name="body" phpName="Body" type="clob"/>
       <column name="average_rating" phpName="AverageRating" type="float" size="2" scale="2" description="The post rating in percentage"/>
       <column name="price_without_decimal_places" phpName="PriceWithoutDecimalPlaces" type="DECIMAL" size="10" scale="0" description="The Price without decimal places"/>
-      <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
-      <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+      <column name="created_at" phpName="CreatedAt" type="TIMESTAMP" size="6"/>
+      <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP" size="6"/>
       <column name="slug" phpName="Slug" type="VARCHAR" size="255"/>
       <foreign-key foreignTable="blog_author" name="fk_post_has_author" phpName="Author" refPhpName="Posts" defaultJoin="Criteria::LEFT_JOIN" onDelete="CASCADE">
         <reference local="author_id" foreign="id"/>
