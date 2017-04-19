@@ -38,6 +38,17 @@ class XmlToArrayConverterTest extends ConfigTestCase
     }
 
     /**
+     * @dataProvider providerForXmlToArrayConverterXmlInclusions
+     */
+    public function testConvertFromFileWithXmlInclusion($xmlLoad, $xmlInclude, $expected)
+    {
+        $this->dumpTempFile('testconvert.xml', $xmlLoad);
+        $this->dumpTempFile('testconvert_include.xml', $xmlInclude);
+        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/testconvert.xml');
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
      * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml
      */
