@@ -3837,7 +3837,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $relCol = $this->getRefFKPhpNameAffix($refFK, true);
                 $script .= "
         if ('$relationName' == \$relationName) {
-            return \$this->init$relCol();
+            \$this->init$relCol();
+            return;
         }";
             }
         }
