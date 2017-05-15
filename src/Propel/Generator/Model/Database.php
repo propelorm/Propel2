@@ -655,7 +655,9 @@ class Database extends ScopedMappingModel
                 $namespace .= '\\'.$table->getNamespace();
             }
 
-            $table->setNamespace($namespace);
+            if ($this->getNamespace() !== $namespace) {
+                $table->setNamespace($namespace);
+            }
         }
 
         return $namespace;
