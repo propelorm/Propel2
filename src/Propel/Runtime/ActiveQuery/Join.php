@@ -419,7 +419,7 @@ class Join
      */
     public function getLeftTableAliasOrName()
     {
-        return $this->leftTableAlias ? $this->leftTableAlias : $this->leftTableName;
+        return $this->leftTableAlias ?: $this->leftTableName;
     }
 
     /**
@@ -543,7 +543,7 @@ class Join
      */
     public function getRightTableAliasOrName()
     {
-        return $this->rightTableAlias ? $this->rightTableAlias : $this->rightTableName;
+        return $this->rightTableAlias ?: $this->rightTableName;
     }
 
     /**

@@ -70,7 +70,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     public function getDefaultKeyType()
     {
-        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ? $this->getBuildProperty('generator.objectModel.defaultKeyType') : 'phpName';
+        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ?: 'phpName';
 
         return "TYPE_".strtoupper($defaultKeyType);
     }
@@ -3425,7 +3425,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
             }
             $script .= "
-        return " . join(' && ', $tests) . ";";
+        return " . implode(' && ', $tests) . ";";
         }
         $script .= "
     }
@@ -4406,7 +4406,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function addCrossFkScheduledForDeletion(&$script, CrossForeignKeys $crossFKs)
     {
-        $multipleFks = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multipleFks = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
         $scheduledForDeletionVarName = $this->getCrossScheduledForDeletionVarName($crossFKs);
         $queryClassName = $this->getNewStubQueryBuilder($crossFKs->getMiddleTable())->getClassname();
 
@@ -5067,7 +5067,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $scheduledForDeletionVarName = $this->getCrossScheduledForDeletionVarName($crossFKs);
 
-        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
 
         $relatedNamePlural = $this->getCrossFKsPhpNameAffix($crossFKs, true);
         $relatedName       = $this->getCrossFKsPhpNameAffix($crossFKs, false);
@@ -5145,7 +5145,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $refFK = $crossFKs->getIncomingForeignKey();
         $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
 
-        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
 
         $relatedName       = $this->getCrossFKsPhpNameAffix($crossFKs, true);
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();

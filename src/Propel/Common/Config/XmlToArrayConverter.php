@@ -133,9 +133,9 @@ class XmlToArrayConverter
         //handle numeric values
         if (is_numeric($value)) {
             if (ctype_digit($value)) {
-                $value = intval($value);
+                $value = (int)$value;
             } else {
-                $value = floatval($value);
+                $value = (float)$value;
             }
         }
 
