@@ -48,6 +48,8 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
+            } elseif (PropelTypes::JSON === $col->getType()) {
+                $this->addJsonAccessor($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
             } elseif ($col->isSetType()) {
@@ -93,6 +95,8 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                     $this->addAddArrayElement($script, $col);
                     $this->addRemoveArrayElement($script, $col);
                 }
+            } elseif (PropelTypes::JSON === $col->getType()) {
+                $this->addJsonMutator($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumMutator($script, $col);
             } elseif ($col->isSetType()) {
