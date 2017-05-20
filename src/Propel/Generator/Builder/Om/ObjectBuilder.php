@@ -187,6 +187,12 @@ class ObjectBuilder extends AbstractObjectBuilder
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
             $defaultValue = array_search($val, $valueSet);
+        } elseif ($column->isNativeEnumType()) {
+            $valueSet = $column->getValueSet();
+            if (!in_array($val, $valueSet)) {
+                throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
+            }
+            $defaultValue = '"'.$val.'"';
         } elseif ($column->isSetType()) {
             $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
@@ -1135,15 +1141,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        if (null === \$this->$clo) {
+        if (null === \$this->$clo || (is_string(\$this->$clo) && \$this->$clo == \"\")) {
             return null;
         }
         \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+        ".(!$column->isNativeEnumType() ? "
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
 
-        return \$valueSet[\$this->$clo];";
+        return \$valueSet[\$this->$clo];" : "
+        if (array_search(\$this->$clo, \$valueSet) === false) {
+            throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
+        }
+        return \$this->$clo;");
     }
 
     /**
@@ -1913,7 +1924,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (!in_array(\$v, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
             }
-            \$v = array_search(\$v, \$valueSet);
+            ".($col->isNativeEnumType() ? '' : '$v = array_search($v, $valueSet);')."
         }
 
         if (\$this->$clo !== \$v) {
@@ -2277,6 +2288,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
                     $script .= "
             \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
+                } elseif ($col->isEnumType()) {
+                    $script .= "
+            \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
+                } elseif ($col->isNativeEnumType()) {
+                    $script .= "
+            \$this->$clo = (null !== \$col) ? \$col : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
@@ -2828,7 +2845,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
             case $i:";
 
-            if (PropelTypes::ENUM === $col->getType()) {
+            if (PropelTypes::ENUM === $col->getType() || PropelTypes::NENUM === $col->getType()) {
                 $script .= "
                 \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
                 if (isset(\$valueSet[\$value])) {

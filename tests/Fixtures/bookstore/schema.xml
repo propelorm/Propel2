@@ -346,6 +346,8 @@
         <column name="title" type="VARCHAR" />
         <column name="style" type="ENUM" valueSet="novel, essay, poetry" />
         <column name="style2" type="SET" valueSet="novel, essay, poetry" />
+        <column name="style3" type="NENUM" valueSet="novel, essay, poetry" />
+        <column name="style4" type="NENUM" valueSet="novel, essay, poetry" defaultValue="essay"/>	
         <column name="tags" type="ARRAY" />
     </table>
 

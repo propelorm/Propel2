@@ -375,6 +375,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } else {
             $ddl[] = $sqlType;
         }
+        if ($sqlType == "ENUM") {
+            $ddl[] = "(\"".implode("\",\"", $col->getValueSet())."\")";
+        }
         if ($default = $this->getColumnDefaultValueDDL($col)) {
             $ddl[] = $default;
         }
@@ -407,6 +410,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
+                } elseif ($col->getType() == PropelTypes::NENUM) {
+                    $default .= $this->quote($defaultValue->getValue());
                 } elseif ($col->isSetType()) {
                     $val = trim($defaultValue->getValue());
                     $values = [];

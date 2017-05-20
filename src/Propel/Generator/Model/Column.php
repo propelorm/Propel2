@@ -1165,7 +1165,7 @@ class Column extends MappingModel
      */
     public function isValueSetType()
     {
-        return ($this->isEnumType() || $this->isSetType());
+        return ($this->isEnumType() || $this->isNativeEnumType() || $this->isSetType());
     }
 
     /**
@@ -1176,6 +1176,16 @@ class Column extends MappingModel
     public function isEnumType()
     {
         return PropelTypes::ENUM === $this->getType();
+    }
+
+   /**
+     * Returns whether or not this column is an Native ENUM (NENUM) column.
+     *
+     * @return boolean
+     */
+    public function isNativeEnumType()
+    {
+        return PropelTypes::NENUM === $this->getType();
     }
 
     /**

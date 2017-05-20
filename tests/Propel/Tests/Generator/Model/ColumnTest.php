@@ -252,6 +252,7 @@ class ColumnTest extends ModelTestCase
             ['BOOLEAN', 1, 'true'],
             ['BOOLEAN', 0, 'false'],
             ['ENUM', 'foo,bar', "'foo,bar'"],
+            ['NENUM', 'foo,bar', "'foo,bar'"],            
         ];
     }
 
@@ -452,6 +453,7 @@ class ColumnTest extends ModelTestCase
             ['OBJECT', \PDO::PARAM_LOB],
             ['ARRAY', \PDO::PARAM_STR],
             ['ENUM', \PDO::PARAM_INT],
+            ['NENUM', \PDO::PARAM_STR],            
             ['BU_DATE', \PDO::PARAM_STR],
             ['BU_TIMESTAMP', \PDO::PARAM_STR],
         ];
@@ -478,6 +480,27 @@ class ColumnTest extends ModelTestCase
         $this->assertContains('BAR', $column->getValueSet());
     }
 
+    public function testNativeEnumType()
+    {
+        $domain = $this->getDomainMock();
+        $domain
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue('NENUM'))
+        ;
+        
+        $column = new Column();
+        $column->setDomain($domain);
+        $column->setType('NENUM');
+        $column->setValueSet(['FOO', 'BAR']);
+        
+        $this->assertSame('string', $column->getPhpType());
+        $this->assertTrue($column->isPhpPrimitiveType());
+        $this->assertTrue($column->isNativeEnumType());
+        $this->assertContains('FOO', $column->getValueSet());
+        $this->assertContains('BAR', $column->getValueSet());
+    }
+    
     public function testSetType()
     {
         $domain = $this->getDomainMock();
