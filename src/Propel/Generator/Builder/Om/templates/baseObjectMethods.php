@@ -171,6 +171,8 @@
      * @param  string  $msg
      * @param  int     $priority One of the Propel::LOG_* logging levels
      * @return boolean
+     *
+     * @deprecated
      */
     protected function log($msg, $priority = Propel::LOG_INFO)
     {
