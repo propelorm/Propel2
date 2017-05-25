@@ -777,16 +777,17 @@ class Database extends ScopedMappingModel
         // order the behaviors according to Behavior::$tableModificationOrder
         $behaviors = [];
         $nextBehavior = null;
+        $lowestModificationOrder = PHP_INT_MAX;
         foreach ($this->tables as $table) {
             foreach ($table->getBehaviors() as $behavior) {
                 if (!$behavior->isTableModified()) {
-                    $behaviors[$behavior->getTableModificationOrder()][] = $behavior;
+                    $modificationOrder = $behavior->getTableModificationOrder();
+                    if ($modificationOrder < $lowestModificationOrder) {
+                        $lowestModificationOrder = $modificationOrder;
+                        $nextBehavior = $behavior;
+                    }
                 }
             }
-        }
-        ksort($behaviors);
-        if (count($behaviors)) {
-            $nextBehavior = $behaviors[key($behaviors)][0];
         }
 
         return $nextBehavior;
