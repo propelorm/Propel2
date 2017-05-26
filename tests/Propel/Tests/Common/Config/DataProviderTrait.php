@@ -312,4 +312,30 @@ EOF
             ]
         ];
     }
+
+    public function providerForXmlToArrayConverterXmlInclusions() {
+        return [
+            [
+                <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="named" defaultIdMethod="native">
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                href="testconvert_include.xml"
+                xpointer="xpointer( /database/* )"
+                />
+</database>
+XML
+                , <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="mixin" defaultIdMethod="native">
+    <table name="book" phpName="Book"/>
+</database>
+XML
+            , ['table' => [
+                'name' => 'book',
+                'phpName' => 'Book',
+            ]]
+            ],
+        ];
+    }
 }
