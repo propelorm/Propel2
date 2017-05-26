@@ -378,9 +378,11 @@
     <table name="release_pool">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
         <column name="record_label_id" type="INTEGER" required="true"/>
+        <column name="record_label_abbr" type="VARCHAR" size="5" required="true"/>
         <column name="name" type="VARCHAR" />
         <foreign-key foreignTable="record_label" onDelete="cascade">
             <reference local="record_label_id" foreign="id" />
+            <reference local="record_label_abbr" foreign="abbr" />
         </foreign-key>
     </table>
 
