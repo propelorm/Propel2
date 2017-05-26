@@ -51,6 +51,7 @@ class PropelTypes
     const ENUM          = 'ENUM';
     const SET           = 'SET';
     const GEOMETRY      = 'GEOMETRY';
+    const JSON          = 'JSON';
 
     const CHAR_NATIVE_TYPE          = 'string';
     const VARCHAR_NATIVE_TYPE       = 'string';
@@ -82,6 +83,7 @@ class PropelTypes
     const ENUM_NATIVE_TYPE          = 'int';
     const SET_NATIVE_TYPE           = 'int';
     const GEOMETRY_NATIVE_TYPE      = 'resource';
+    const JSON_TYPE                 = 'string';
 
     /**
      * Propel mapping types.
@@ -121,6 +123,7 @@ class PropelTypes
         self::BU_DATE,
         self::BU_TIMESTAMP,
         self::SET,
+        self::JSON,
     ];
 
     /**
@@ -159,6 +162,7 @@ class PropelTypes
         self::ENUM          => self::ENUM_NATIVE_TYPE,
         self::SET           => self::SET_NATIVE_TYPE,
         self::GEOMETRY      => self::GEOMETRY,
+        self::JSON          => self::JSON_TYPE,
     ];
 
     /**
@@ -204,6 +208,7 @@ class PropelTypes
         // numeric timestamps on Windows.
         self::BU_DATE       => \PDO::PARAM_STR,
         self::BU_TIMESTAMP  => \PDO::PARAM_STR,
+        self::JSON          => \PDO::PARAM_STR,
     ];
 
     private static $pdoTypeNames = [
@@ -291,6 +296,7 @@ class PropelTypes
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
+            self::JSON,
         ]);
     }
 
