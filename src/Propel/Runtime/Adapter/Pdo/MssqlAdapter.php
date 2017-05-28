@@ -144,7 +144,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
         $selectText = 'SELECT ';
 
-        preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
+        preg_match('/\Aselect (.+?) from (.*)/si', $sql, $selectSegment);
         if (3 === count($selectSegment)) {
             $selectStatement = trim($selectSegment[1]);
             $fromStatement = trim($selectSegment[2]);
