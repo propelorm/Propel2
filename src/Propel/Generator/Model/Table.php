@@ -977,7 +977,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $idx = new Index();
         $idx->loadMapping($index);
-        foreach((array)@$index['columns'] as $column) {
+        foreach((array)$index['columns'] as $column) {
             $idx->addColumn($column);
         }
 
