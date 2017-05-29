@@ -3748,8 +3748,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $relCol2 = $this->getFKPhpNameAffix($fk2, false);
 
-            if ( $this->getRelatedBySuffix($refFK) != "" &&
-            ($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
+            if ( static::getRelatedBySuffix($refFK) != "" &&
+            (static::getRelatedBySuffix($refFK) == static::getRelatedBySuffix($fk2))) {
                 $doJoinGet = false;
             }
 

@@ -312,7 +312,7 @@ class MigrationManager extends AbstractManager
     public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = "", $suffix = "")
     {
         $timeInWords = date('Y-m-d H:i:s', $timestamp);
-        $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
+        $migrationAuthor = ($author = static::getUser()) ? 'by ' . $author : '';
         $migrationClassName = $this->getMigrationClassName($timestamp, $suffix);
         $migrationUpString = var_export($migrationsUp, true);
         $migrationDownString = var_export($migrationsDown, true);

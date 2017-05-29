@@ -622,7 +622,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $className = $this->getPluralizer()->getPluralForm($className);
         }
 
-        return $className . $this->getRelatedBySuffix($fk);
+        return $className . static::getRelatedBySuffix($fk);
     }
 
     /**
@@ -886,7 +886,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $className = $pluralizer->getPluralForm($className);
         }
 
-        return $className . $this->getRefRelatedBySuffix($fk);
+        return $className . static::getRefRelatedBySuffix($fk);
     }
 
     protected static function getRefRelatedBySuffix(ForeignKey $fk)
