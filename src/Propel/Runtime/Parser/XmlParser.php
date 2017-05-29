@@ -181,7 +181,7 @@ class XmlParser extends AbstractParser
                     $array[$elementNames[$name]] = $array[$name];
                     unset($array[$name]);
                 }
-                $elementNames[$name] += 1;
+                ++$elementNames[$name];
                 $index = $elementNames[$name];
             } else {
                 $elementNames[$name] = 0;
