@@ -187,7 +187,7 @@ CREATE SCHEMA %s;
 ';
 
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
-        };
+        }
     }
 
     public function getUseSchemaDDL(Table $table)
