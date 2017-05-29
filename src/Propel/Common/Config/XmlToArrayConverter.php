@@ -110,7 +110,7 @@ class XmlToArrayConverter
 
             // if the $k is already in our children list, we need to transform
             // it into an array, else we add it as a value
-            if (!in_array($k, array_keys($ar))) {
+            if (!array_key_exists($k, $ar)) {
                 $ar[$k] = $child;
             } else {
                 // (This only applies to nested nodes that do not have an @id attribute)
