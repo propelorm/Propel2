@@ -71,9 +71,7 @@ class XmlToArrayConverter
             throw new XmlParseException($errors);
         }
 
-        $conf = self::simpleXmlToArray($xml);
-
-        return $conf;
+        return self::simpleXmlToArray($xml);
     }
 
     /**
