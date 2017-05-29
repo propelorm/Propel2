@@ -97,7 +97,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     protected function getParentClassName()
     {
-        if (is_null($this->getChild()->getAncestor())) {
+        if (null === $this->getChild()->getAncestor()) {
             return $this->getNewStubQueryBuilder($this->getTable())->getUnqualifiedClassName();
         }
 
