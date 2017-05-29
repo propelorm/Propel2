@@ -214,7 +214,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $column->getDomain()->replaceScale($scale);
 
             if (null !== $default) {
-                if ("'" !== $default[0] && strpos($default, '(')) {
+                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                     if ('datetime(CURRENT_TIMESTAMP, \'localtime\')' === $default) {
                             $default = 'CURRENT_TIMESTAMP';
