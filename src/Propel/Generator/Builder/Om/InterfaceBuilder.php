@@ -73,6 +73,8 @@ interface ' .$this->getUnqualifiedClassName(). '
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
      */
     protected function addClassBody(&$script)
     {

@@ -177,6 +177,8 @@ class ModelCriteria extends BaseModelCriteria
      *                      Or an array of condition names
      * @param mixed $value  A value for the condition
      *
+     * @param null  $bindingType
+     *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function where($clause, $value = null, $bindingType = null)
@@ -211,6 +213,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *                      Or an array of condition names
      * @param mixed $value  A value for the condition
+     *
+     * @param null  $bindingType
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -525,6 +529,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Add another condition to an already added join
+     *
      * @example
      * <code>
      * $query->join('Book.Author');
@@ -536,7 +541,10 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed  $value    An optional value to bind to the clause
      * @param string $operator The operator to use to add the condition. Defaults to 'AND'
      *
+     * @param null   $bindingType
+     *
      * @return $this|ModelCriteria The current object, for fluid interface
+     * @throws PropelException
      */
     public function addJoinCondition($name, $clause, $value = null, $operator = null, $bindingType = null)
     {
@@ -589,8 +597,12 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Add a join object to the Criteria
+     *
      * @see Criteria::addJoinObject()
+     *
      * @param Join $join A join object
+     *
+     * @param null $name
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -1760,7 +1772,10 @@ class ModelCriteria extends BaseModelCriteria
      * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
      * @param mixed  $value  A value for the condition
      *
+     * @param null   $bindingType
+     *
      * @return AbstractCriterion a Criterion object
+     * @throws PropelException
      */
     protected function getCriterionForClause($clause, $value, $bindingType = null)
     {
@@ -1890,6 +1905,8 @@ class ModelCriteria extends BaseModelCriteria
      * </code>
      *
      * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
+     *
+     * @param bool   $failSilently
      *
      * @return array List($columnMap, $realColumnName)
      */
@@ -2027,12 +2044,15 @@ class ModelCriteria extends BaseModelCriteria
         }
     }
 
-
-
     /**
      * Special case for subquery columns
      *
+     * @param      $class
+     * @param      $phpName
+     * @param bool $failSilently
+     *
      * @return array List($columnMap, $realColumnName)
+     * @throws PropelException
      */
     protected function getColumnFromSubQuery($class, $phpName, $failSilently = true)
     {
@@ -2117,12 +2137,14 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Overrides Criteria::add() to force the use of a true table alias if it exists
      *
-     * @see Criteria::add()
-     * @param string $column   The colName of column to run the condition on (e.g. BookTableMap::ID)
+     * @see      Criteria::add()
+     *
+     * @param        $p1
      * @param mixed  $value
      * @param string $operator A String, like Criteria::EQUAL.
      *
      * @return $this|ModelCriteria A modified Criteria object.
+     * @internal param string $column The colName of column to run the condition on (e.g. BookTableMap::ID)
      */
     public function addUsingAlias($p1, $value = null, $operator = null)
     {
@@ -2178,6 +2200,12 @@ class ModelCriteria extends BaseModelCriteria
      * Supports findByXXX(), findOneByXXX(), requireOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
      * where XXX is a column phpName.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
+     *
+     * @param $name
+     * @param $arguments
+     *
+     * @return mixed|ModelCriteria
+     * @throws PropelException
      */
     public function __call($name, $arguments)
     {

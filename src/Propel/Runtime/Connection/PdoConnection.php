@@ -43,6 +43,11 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * Creates a PDO instance representing a connection to a database.
+     *
+     * @param            $dsn
+     * @param null       $user
+     * @param null       $password
+     * @param array|null $options
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {

@@ -89,6 +89,8 @@ interface PlatformInterface
     public function getDomainForType($propelType);
 
     /**
+     * @param $notNull
+     *
      * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
      *                or <code>NOT NULL</code>.
      */
@@ -101,12 +103,18 @@ interface PlatformInterface
 
     /**
      * Returns the DDL SQL for a Column object.
+     *
+     * @param Column $col
+     *
      * @return string
      */
     public function getColumnDDL(Column $col);
 
     /**
      * Returns the SQL for the default value of a Column object.
+     *
+     * @param Column $col
+     *
      * @return string
      */
     public function getColumnDefaultValueDDL(Column $col);
@@ -127,6 +135,9 @@ interface PlatformInterface
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
+     * @param Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table);
@@ -251,11 +262,17 @@ interface PlatformInterface
      */
     public function normalizeTable(Table $table);
 
-
     /**
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param Column $column
+     * @param        $identifier
+     * @param        $columnValueAccessor
+     * @param string $tab
+     *
+     * @return
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ');
 

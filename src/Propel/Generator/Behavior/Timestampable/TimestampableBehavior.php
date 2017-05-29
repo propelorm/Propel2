@@ -78,6 +78,8 @@ class TimestampableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preUpdate
      *
+     * @param $builder
+     *
      * @return string The code to put at the hook
      */
     public function preUpdate($builder)
@@ -97,6 +99,8 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add code in ObjectBuilder::preInsert
+     *
+     * @param $builder
      *
      * @return string The code to put at the hook
      */

@@ -360,8 +360,10 @@ class Criteria
     /**
      * Returns the column name associated with an alias (AS-column).
      *
-     * @param  string $alias
+     * @param $as
+     *
      * @return string $string
+     * @internal param string $alias
      */
     public function getColumnForAs($as)
     {
@@ -498,6 +500,9 @@ class Criteria
      * a transaction.  This is here primarily to support the oid type in
      * postgresql.  Though it can be used to require any single sql statement
      * to use a transaction.
+     *
+     * @param $v
+     *
      * @return void
      */
     public function setUseTransaction($v)
@@ -689,7 +694,9 @@ class Criteria
      * any SELECT columns or WHERE columns.  This must be explicitly
      * set, of course, in order to be useful.
      *
-     * @param string $v
+     * @param $tableName
+     *
+     * @internal param string $v
      */
     public function setPrimaryTableName($tableName)
     {
@@ -1534,7 +1541,10 @@ class Criteria
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return boolean
+     *
+     * @param $crit
+     *
+     * @return bool
      */
     public function equals($crit)
     {
@@ -1755,6 +1765,11 @@ class Criteria
      *  - addAnd(column, value, comparison)
      *  - addAnd(column, value)
      *  - addAnd(Criterion)
+     *
+     * @param      $p1
+     * @param null $p2
+     * @param null $p3
+     * @param bool $preferColumnCondition
      *
      * @return $this|Criteria A modified Criteria object.
      */
@@ -2062,6 +2077,8 @@ class Criteria
      * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $tableMap->isIdentifierQuotingEnabled.
      *
      * @param string $string
+     * @param string $tableName
+     *
      * @return string
      */
     public function quoteIdentifier($string, $tableName = '')

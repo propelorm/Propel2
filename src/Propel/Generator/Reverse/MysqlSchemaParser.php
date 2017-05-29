@@ -173,8 +173,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Factory method creating a Column object
      * based on a row from the 'show columns from ' MySQL query result.
      *
-     * @param  array  $row An associative array with the following keys:
+     * @param  array $row  An associative array with the following keys:
      *                     Field, Type, Null, Key, Default, Extra.
+     * @param Table  $table
+     *
      * @return Column
      */
     public function getColumnFromRow($row, Table $table)
@@ -271,6 +273,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     *
+     * @param Table $table
      */
     protected function addForeignKeys(Table $table)
     {
@@ -367,6 +371,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
      */
     protected function addIndexes(Table $table)
     {
@@ -417,6 +423,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param Table $table
      */
     protected function addPrimaryKey(Table $table)
     {

@@ -65,6 +65,8 @@ class ClassTools
     /**
      * Gets the baseClass path if specified for table/db.
      *
+     * @param Table $table
+     *
      * @return string
      */
     public static function getBaseClass(Table $table)
@@ -74,6 +76,8 @@ class ClassTools
 
     /**
      * Gets the interface path if specified for table.
+     *
+     * @param Table $table
      *
      * @return string
      */

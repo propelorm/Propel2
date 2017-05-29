@@ -494,6 +494,9 @@ DROP INDEX %s ON %s;
 
     /**
      * Builds the DDL SQL for an Index object.
+     *
+     * @param Index $index
+     *
      * @return string
      */
     public function getIndexDDL(Index $index)
@@ -582,6 +585,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
+     * @param DatabaseDiff $databaseDiff
+     *
      * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
@@ -614,6 +619,10 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     /**
      * Builds the DDL SQL to rename a table
+     *
+     * @param $fromTableName
+     * @param $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
@@ -631,6 +640,8 @@ RENAME TABLE %s TO %s;
     /**
      * Builds the DDL SQL to remove a column
      *
+     * @param Column $column
+     *
      * @return string
      */
     public function getRemoveColumnDDL(Column $column)
@@ -647,6 +658,10 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to rename a column
+     *
+     * @param Column $fromColumn
+     * @param Column $toColumn
+     *
      * @return string
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
@@ -657,6 +672,8 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to modify a column
      *
+     * @param ColumnDiff $columnDiff
+     *
      * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -666,6 +683,10 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to change a column
+     *
+     * @param Column $fromColumn
+     * @param Column $toColumn
+     *
      * @return string
      */
     public function getChangeColumnDDL(Column $fromColumn, Column $toColumn)
@@ -680,8 +701,11 @@ ALTER TABLE %s CHANGE %s %s;
             $this->getColumnDDL($toColumn)
         );
     }
+
     /**
      * Builds the DDL SQL to modify a list of columns
+     *
+     * @param ColumnDiff[] $columnDiffs
      *
      * @return string
      */

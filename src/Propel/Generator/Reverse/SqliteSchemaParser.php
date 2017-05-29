@@ -298,6 +298,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
      */
     protected function addIndexes(Table $table)
     {

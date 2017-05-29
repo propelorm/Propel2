@@ -167,6 +167,9 @@ class TableMap
 
     /**
      * Construct a new TableMap.
+     *
+     * @param null $name
+     * @param null $dbMap
      */
     public function __construct($name = null, $dbMap = null)
     {
@@ -797,6 +800,8 @@ class TableMap
     }
 
     /**
+     * @param Criteria $criteria
+     *
      * @return array|null null if not covered by only pk
      */
     public function extractPrimaryKey(Criteria $criteria)

@@ -215,7 +215,9 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the NOT NULL string for the configured RDBMS.
      *
-     * @return string.
+     * @param $notNull
+     *
+     * @return string .
      */
     public function getNullString($notNull)
     {
@@ -270,6 +272,8 @@ class DefaultPlatform implements PlatformInterface
      * Returns the DDL SQL to add the tables of a database
      * together with index and foreign keys
      *
+     * @param Database $database
+     *
      * @return string
      */
     public function getAddTablesDDL(Database $database)
@@ -310,6 +314,9 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Builds the DDL SQL to drop a table
+     *
+     * @param Table $table
+     *
      * @return string
      */
     public function getDropTableDDL(Table $table)
@@ -322,6 +329,8 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
     /**
      * Builds the DDL SQL to add a table
      * without index and foreign keys
+     *
+     * @param Table $table
      *
      * @return string
      */
@@ -362,6 +371,9 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
 
     /**
      * Builds the DDL SQL for a Column object.
+     *
+     * @param Column $col
+     *
      * @return string
      */
     public function getColumnDDL(Column $col)
@@ -390,6 +402,9 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
 
     /**
      * Returns the SQL for the default value of a Column object
+     *
+     * @param Column $col
+     *
      * @return string
      */
     public function getColumnDefaultValueDDL(Column $col)
@@ -432,15 +447,20 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
 
     /**
      * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+     *
      * @example
      * <code>
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param array Column[] or string[]
-     * @param string $delim The delimiter to use in separating the column names.
+     *
+     * @param Column[]|\string[] $columns
+     * @param string             $delimiter
      *
      * @return string
+     * @internal param Column[] $array or string[]
+     * @internal param string $delim The delimiter to use in separating the column names.
+     *
      */
     public function getColumnListDDL($columns, $delimiter = ',')
     {
@@ -456,6 +476,8 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
     /**
      * Returns the name of a table primary key.
      *
+     * @param Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyName(Table $table)
@@ -467,6 +489,8 @@ DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
 
     /**
      * Returns the SQL for the primary key of a Table object.
+     *
+     * @param Table $table
      *
      * @return string
      */
@@ -660,6 +684,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL for a ForeignKey object.
+     *
+     * @param ForeignKey $fk
+     *
      * @return string
      */
     public function getForeignKeyDDL(ForeignKey $fk)
@@ -711,6 +738,8 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
+     * @param DatabaseDiff $databaseDiff
+     *
      * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
@@ -746,6 +775,10 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL to rename a table
+     *
+     * @param $fromTableName
+     * @param $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
@@ -763,6 +796,8 @@ ALTER TABLE %s RENAME TO %s;
     /**
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
+     *
+     * @param TableDiff $tableDiff
      *
      * @return string
      */
@@ -866,6 +901,8 @@ ALTER TABLE %s%s;
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
      *
+     * @param TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTableColumnsDDL(TableDiff $tableDiff)
@@ -895,6 +932,8 @@ ALTER TABLE %s%s;
      * Builds the DDL SQL to alter a table's primary key
      * based on a TableDiff instance
      *
+     * @param TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTablePrimaryKeyDDL(TableDiff $tableDiff)
@@ -912,6 +951,8 @@ ALTER TABLE %s%s;
     /**
      * Builds the DDL SQL to alter a table's indices
      * based on a TableDiff instance
+     *
+     * @param TableDiff $tableDiff
      *
      * @return string
      */
@@ -940,6 +981,8 @@ ALTER TABLE %s%s;
      * Builds the DDL SQL to alter a table's foreign keys
      * based on a TableDiff instance
      *
+     * @param TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTableForeignKeysDDL(TableDiff $tableDiff)
@@ -966,6 +1009,8 @@ ALTER TABLE %s%s;
     /**
      * Builds the DDL SQL to remove a column
      *
+     * @param Column $column
+     *
      * @return string
      */
     public function getRemoveColumnDDL(Column $column)
@@ -982,6 +1027,9 @@ ALTER TABLE %s DROP COLUMN %s;
 
     /**
      * Builds the DDL SQL to rename a column
+     *
+     * @param Column $fromColumn
+     * @param Column $toColumn
      *
      * @return string
      */
@@ -1000,6 +1048,8 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
 
     /**
      * Builds the DDL SQL to modify a column
+     *
+     * @param ColumnDiff $columnDiff
      *
      * @return string
      */
@@ -1052,6 +1102,8 @@ ALTER TABLE %s MODIFY
 
     /**
      * Builds the DDL SQL to remove a column
+     *
+     * @param Column $column
      *
      * @return string
      */
@@ -1227,6 +1279,7 @@ ALTER TABLE %s ADD
     {
         return false;
     }
+
     /**
      * Returns the Boolean value for the RDBMS.
      *
@@ -1236,8 +1289,10 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param  mixed $tf A Boolean or string representation of Boolean ('y', 'true').
+     * @param mixed $b
+     *
      * @return mixed
+     * @internal param mixed $tf A Boolean or string representation of Boolean ('y', 'true').
      */
     public function getBooleanString($b)
     {
@@ -1308,6 +1363,13 @@ ALTER TABLE %s ADD
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param Column $column
+     * @param        $identifier
+     * @param        $columnValueAccessor
+     * @param string $tab
+     *
+     * @return mixed
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
@@ -1343,6 +1405,14 @@ $stmt->bindValue(%s, %s, %s);',
      * <code>
      * $this->id = $con->lastInsertId();
      * </code>
+     *
+     * @param        $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param null   $phpType
+     *
+     * @return string
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {

@@ -356,6 +356,13 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param Column $column
+     * @param        $identifier
+     * @param        $columnValueAccessor
+     * @param string $tab
+     *
+     * @return mixed|string
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
@@ -378,6 +385,14 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Get the PHP snippet for getting a Pk from the database.
      * Warning: duplicates logic from OracleAdapter::getId().
      * Any code modification here must be ported there.
+     *
+     * @param        $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param null   $phpType
+     *
+     * @return mixed|string
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {

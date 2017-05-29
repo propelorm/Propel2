@@ -653,6 +653,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Forward any call to a method not found to the wrapped connection.
+     *
+     * @param $method
+     * @param $args
+     *
+     * @return mixed
      */
     public function __call($method, $args)
     {

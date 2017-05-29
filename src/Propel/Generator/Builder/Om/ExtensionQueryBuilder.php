@@ -76,6 +76,8 @@ class ' .$this->getUnqualifiedClassName()." extends $baseClassName
      * if you want to change that behavior.
      *
      * @see QueryBuilder::addClassBody()
+     *
+     * @param string $script
      */
 
     protected function addClassBody(&$script)
@@ -96,8 +98,11 @@ class ' .$this->getUnqualifiedClassName()." extends $baseClassName
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     *
+     * @param  string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param null    $modifier
+     *
+     * @return bool
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {

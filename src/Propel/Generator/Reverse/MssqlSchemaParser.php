@@ -160,6 +160,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     *
+     * @param Table $table
      */
     protected function addForeignKeys(Table $table)
     {
@@ -202,6 +204,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
      */
     protected function addIndexes(Table $table)
     {
@@ -246,6 +250,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param Table $table
      */
     protected function addPrimaryKey(Table $table)
     {

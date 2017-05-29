@@ -261,13 +261,10 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      * Return an instance of $className
      *
      * @param string $className     The name of the class to return an instance
+     * @param null   $arguments
      * @param string $interfaceName The name of the interface to be implemented by the returned class
      *
      * @return mixed
-     * @throws \Propel\Generator\Exception\ClassNotFoundException   if the class doesn't exists
-     * @throws \Propel\Generator\Exception\InvalidArgumentException if the interface doesn't exists
-     * @throws \Propel\Generator\Exception\BuildException           if the class isn't an implementation of the given
-     *                                                              interface
      */
     private function getInstance($className, $arguments = null, $interfaceName = null)
     {

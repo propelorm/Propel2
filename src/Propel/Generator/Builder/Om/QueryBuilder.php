@@ -227,6 +227,8 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
      */
     protected function addClassBody(&$script)
     {
@@ -301,6 +303,8 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
     /**
      * Adds the entityNotFoundExceptionClass property which is necessary for the `requireOne` method
      * of the `ModelCriteria`
+     *
+     * @param $script
      */
     protected function addEntityNotFoundExceptionClass(&$script)
     {
@@ -1406,7 +1410,12 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds a joinRelated method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     * @param        $fkTable
+     * @param        $queryClass
+     * @param        $relationName
+     * @param        $joinType
      */
     protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1479,7 +1488,12 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds a useRelatedQuery method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     * @param Table  $fkTable
+     * @param        $queryClass
+     * @param        $relationName
+     * @param        $joinType
      */
     protected function addUseRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1723,8 +1737,11 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     *
+     * @param  string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param null    $modifier
+     *
+     * @return bool
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
     {
@@ -1733,8 +1750,10 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
+     *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string &$script  The script will be modified in this method.
+     * @param string $tab
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
     {

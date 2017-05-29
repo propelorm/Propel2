@@ -37,8 +37,8 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see parent::initConnection()
      *
-     * @param \PDO  $con
-     * @param array $settings
+     * @param \PDO|ConnectionInterface $con
+     * @param array                    $settings
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {

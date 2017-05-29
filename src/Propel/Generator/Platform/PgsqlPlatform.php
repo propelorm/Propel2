@@ -464,8 +464,11 @@ ALTER TABLE %s RENAME TO %s;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
+     *
+     * @param ColumnDiff $columnDiff
+     *
      * @return string
-     * @see DefaultPlatform::getModifyColumnDDL
+     * @see        DefaultPlatform::getModifyColumnDDL
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -621,8 +624,11 @@ DROP SEQUENCE %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
+     *
+     * @param ColumnDiff[] $columnDiffs
+     *
      * @return string
-     * @see DefaultPlatform::getModifyColumnsDDL
+     * @see        DefaultPlatform::getModifyColumnsDDL
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -638,8 +644,11 @@ DROP SEQUENCE %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
+     *
+     * @param Column[] $columns
+     *
      * @return string
-     * @see DefaultPlatform::getAddColumnsDLL
+     * @see        DefaultPlatform::getAddColumnsDLL
      */
     public function getAddColumnsDDL($columns)
     {
@@ -655,8 +664,11 @@ DROP SEQUENCE %s CASCADE;
      * Overrides the implementation from DefaultPlatform
      *
      * @author     Niklas Närhinen <niklas@narhinen.net>
+     *
+     * @param Index $index
+     *
      * @return string
-     * @see DefaultPlatform::getDropIndexDDL
+     * @see        DefaultPlatform::getDropIndexDDL
      */
     public function getDropIndexDDL(Index $index)
     {
@@ -678,6 +690,14 @@ DROP SEQUENCE %s CASCADE;
      * Get the PHP snippet for getting a Pk from the database.
      * Warning: duplicates logic from PgsqlAdapter::getId().
      * Any code modification here must be ported there.
+     *
+     * @param        $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param null   $phpType
+     *
+     * @return mixed|string
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {

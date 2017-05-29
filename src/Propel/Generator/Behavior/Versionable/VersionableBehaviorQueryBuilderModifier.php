@@ -71,6 +71,8 @@ static $isVersioningEnabled = true;
     /**
      * Get the getter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related getter, e.g. 'getVersion'
      */
     protected function getColumnGetter($name = 'version_column')
@@ -80,6 +82,8 @@ static $isVersioningEnabled = true;
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */

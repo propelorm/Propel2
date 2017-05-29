@@ -45,6 +45,8 @@ class BehaviorLocator
     /**
      * Searches a composer file
      *
+     * @param $fileName
+     *
      * @return SplFileInfo the found composer file or null if composer file isn't found
      */
     private function findComposerFile($fileName)

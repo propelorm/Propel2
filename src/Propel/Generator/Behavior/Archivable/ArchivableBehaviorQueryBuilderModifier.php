@@ -73,6 +73,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function queryMethods($builder)
@@ -92,6 +94,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     protected function addArchive($builder)
@@ -103,6 +107,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnUpdate($builder)
@@ -111,6 +117,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addUpdateWithoutArchive($builder)
@@ -119,6 +127,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnDelete($builder)
@@ -127,6 +137,8 @@ if ($this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)

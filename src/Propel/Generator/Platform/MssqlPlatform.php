@@ -77,9 +77,11 @@ class MssqlPlatform extends DefaultPlatform
 
     /**
      * Returns the DDL SQL to add the tables of a database
-     * together with index and foreign keys. 
-     * Since MSSQL always checks it the tables in foreign key definitions exist, 
+     * together with index and foreign keys.
+     * Since MSSQL always checks it the tables in foreign key definitions exist,
      * the foreign key DDLs are moved after all tables are created
+     *
+     * @param Database $database
      *
      * @return string
      */

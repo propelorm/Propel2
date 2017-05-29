@@ -275,6 +275,10 @@ class CsvParser extends AbstractParser
 
     /**
      * Checks whether a value from CSV output is serialized
+     *
+     * @param $input
+     *
+     * @return int
      */
     protected function isSerialized($input)
     {

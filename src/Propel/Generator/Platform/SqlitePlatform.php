@@ -333,6 +333,9 @@ PRAGMA foreign_keys = ON;
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
+     * @param Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table)

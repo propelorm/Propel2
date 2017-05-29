@@ -25,7 +25,9 @@ class FileLocator extends BaseFileLocator
      * By default, the locator looks for configuration file in the current directory (where bin/propel script is running)
      * or in a 'conf' or 'config' subdirectory.
      *
-     * @param null array $configDirectories The directories list where to look for configuration file(s)
+     * @param null $configDirectories
+     *
+     * @internal param array $null $configDirectories The directories list where to look for configuration file(s)
      */
     public function __construct($configDirectories = null)
     {

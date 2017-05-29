@@ -428,6 +428,10 @@ class QuickBuilder
 
     /**
      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     *
+     * @param $source
+     *
+     * @return string
      */
     public function fixNamespaceDeclarations($source)
     {

@@ -103,6 +103,8 @@ class SluggableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preSave
      *
+     * @param $builder
+     *
      * @return string The code to put at the hook
      */
     public function preSave($builder)

@@ -250,6 +250,8 @@ protected $oldScope;
     /**
      * Get the wraps for getter/setter, if the rank column has not the default name
      *
+     * @param $script
+     *
      * @return string
      */
     protected function addRankAccessors(&$script)
@@ -280,6 +282,8 @@ public function setRank(\$v)
 
     /**
      * Get the wraps for getter/setter, if the scope column has not the default name
+     *
+     * @param $script
      *
      * @return string
      */

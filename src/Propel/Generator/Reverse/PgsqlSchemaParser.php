@@ -327,6 +327,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     *
+     * @param Table $table
+     * @param       $oid
      */
     protected function addForeignKeys(Table $table, $oid)
     {
@@ -437,6 +440,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
+     * @param       $oid
      */
     protected function addIndexes(Table $table, $oid)
     {
@@ -499,6 +505,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param Table $table
+     * @param       $oid
      */
     protected function addPrimaryKey(Table $table, $oid)
     {
