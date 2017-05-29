@@ -1786,7 +1786,7 @@ class ModelCriteria extends BaseModelCriteria
                     return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
                 }
             }
-            if (stripos($clause, '& ?') !== false) {
+            if (strpos($clause, '& ?') !== false) {
                 return new BinaryModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
             }
             if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
