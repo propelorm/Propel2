@@ -46,7 +46,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      */
     public function getPackage()
     {
-        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage());
+        return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
 
     /**

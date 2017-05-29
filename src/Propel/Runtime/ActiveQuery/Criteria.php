@@ -2008,7 +2008,7 @@ class Criteria
 
         // from / join tables quoted if it is necessary
         $fromClause = array_map([$this, 'quoteIdentifierTable'], $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map([$this, 'quoteIdentifierTable'], $joinClause);
+        $joinClause = $joinClause ?: array_map([$this, 'quoteIdentifierTable'], $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {

@@ -221,7 +221,7 @@ class Schema
                     $platform = $config->getConfiguredPlatform(null, $database->getName());
                 }
 
-                $database->setPlatform($platform ? $platform : $this->platform);
+                $database->setPlatform($platform ?: $this->platform);
             }
             $this->databases[] = $database;
 
