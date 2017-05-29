@@ -51,7 +51,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
         $pdoOptions = [];
         if (is_array($options)) {
             foreach ($options as $key => $option) {
-                $index = (is_numeric($key)) ? $key : constant('self::' . $key);
+                $index = is_numeric($key) ? $key : constant('self::' . $key);
                 $pdoOptions[$index] = $option;
             }
         }

@@ -139,7 +139,7 @@ class ConfigurationManager
     {
         $dirs = $this->getDirs($fileName);
 
-        if ((null === $fileName) || (is_dir($fileName))) {
+        if ((null === $fileName) || is_dir($fileName)) {
             $fileName = self::CONFIG_FILE_NAME;
         }
 

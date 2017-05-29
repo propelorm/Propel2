@@ -363,7 +363,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return true;
             }
 
-            if ((false !== strpos($class, 'Query'))) {
+            if (false !== strpos($class, 'Query')) {
                 return true;
             }
 

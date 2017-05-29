@@ -345,12 +345,12 @@ class QuickBuilder
         }
         if ($separate) {
             foreach ($includes as $tempFile) {
-                include($tempFile);
+                include $tempFile;
             }
         } else {
             $tempFile = $dir . join('_', $allCodeName).'.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
-            include($tempFile);
+            include $tempFile;
         }
     }
 

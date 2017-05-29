@@ -274,7 +274,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $autoincrement = null;
 
             // if column has a default
-            if ((strlen(trim($default)) > 0)) {
+            if (strlen(trim($default)) > 0) {
                 if (!preg_match('/^nextval\(/', $default)) {
                     $strDefault= preg_replace('/::[\W\D]*/', '', $default);
                 } else {

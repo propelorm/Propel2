@@ -142,7 +142,7 @@ abstract class FileLoader extends BaseFileLoader
 
     private function isResolved()
     {
-        return ($this->resolved);
+        return $this->resolved;
     }
 
     /**
