@@ -93,7 +93,7 @@ class ArrayCollection extends Collection
 
         foreach ($this as $key => $element) {
             $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = call_user_func($callable, array_values($element));
+            $ret[$key] = $callable(array_values($element));
         }
 
         return $ret;

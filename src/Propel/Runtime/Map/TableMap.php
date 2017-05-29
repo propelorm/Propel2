@@ -769,7 +769,7 @@ class TableMap
     {
         $callable   = [$classname::TABLE_MAP, 'getFieldnames'];
 
-        return call_user_func($callable, $type);
+        return $callable($type);
     }
 
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
