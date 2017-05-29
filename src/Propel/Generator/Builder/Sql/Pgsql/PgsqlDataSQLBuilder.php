@@ -60,8 +60,8 @@ class PgsqlDataSQLBuilder extends DataSQLBuilder
         $sql = '';
         if ($table->hasAutoIncrementPrimaryKey() && $table->getIdMethod() == IdMethod::NATIVE) {
             $seqname = $this->getPlatform()->getSequenceName($table);
-            $sql .= "SELECT pg_catalog.setval('$seqname', ".((int) $this->maxSeqVal).");
-";
+            $sql .= "SELECT pg_catalog.setval('$seqname', ".((int) $this->maxSeqVal). ');
+';
         }
 
         return $sql;

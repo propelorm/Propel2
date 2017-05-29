@@ -39,7 +39,7 @@ class InModelCriterion extends AbstractModelCriterion
         if (count($bindParams)) {
             $sb .= str_replace('?', '(' . implode(',', $bindParams) . ')', $this->clause);
         } else {
-            $sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1<>1" : "1=1";
+            $sb .= (stripos($this->clause, ' NOT IN ') === false) ? '1<>1' : '1=1';
         }
         unset($value, $valuesLength);
     }

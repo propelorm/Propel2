@@ -41,7 +41,7 @@ class Propel
     /**
      * A constant for <code>default</code>.
      */
-    const DEFAULT_NAME = "default";
+    const DEFAULT_NAME = 'default';
 
     /**
      * A constant defining 'System is unusable' logging level

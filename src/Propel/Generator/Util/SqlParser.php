@@ -215,7 +215,7 @@ class SqlParser
                     $isAfterBackslash = true;
                     break;
                 case "'":
-                case "\"":
+                case '"':
                     if ($isInString && $stringQuotes == $char) {
                         if (!$isAfterBackslash) {
                             $isInString = false;

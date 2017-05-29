@@ -308,14 +308,12 @@ class ConfigurationManager
 
             foreach ($this->config[$section]['connections'] as $connection) {
                 if (!array_key_exists($connection, $this->config['database']['connections'])) {
-                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). ".
-                        "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). ". 'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
                 }
             }
 
             if (!array_key_exists($defaultConnection = $this->config[$section]['defaultConnection'], $this->config['database']['connections'])) {
-                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). ".
-                    "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). ". 'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
             }
         }
     }

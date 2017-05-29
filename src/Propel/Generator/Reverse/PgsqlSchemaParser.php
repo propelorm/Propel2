@@ -166,13 +166,13 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND n.nspname IN ($searchPath)";
 
         } elseif ($database->getSchema()) {
-            $sql .= "
-            AND n.nspname = ?";
+            $sql .= '
+            AND n.nspname = ?';
             $params[] = $database->getSchema();
         }
 
-        $sql .= "
-          ORDER BY relname";
+        $sql .= '
+          ORDER BY relname';
         $stmt = $this->dbh->prepare($sql);
 
         $stmt->execute($params);
@@ -440,7 +440,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table, $oid)
     {
-        $stmt = $this->dbh->prepare("SELECT
+        $stmt = $this->dbh->prepare('SELECT
             DISTINCT ON(cls.relname)
             cls.relname as idxname,
             indkey,
@@ -448,15 +448,15 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             FROM pg_index idx
             JOIN pg_class cls ON cls.oid=indexrelid
             WHERE indrelid = ? AND NOT indisprimary
-            ORDER BY cls.relname");
+            ORDER BY cls.relname');
 
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
-        $stmt2 = $this->dbh->prepare("SELECT a.attname
+        $stmt2 = $this->dbh->prepare('SELECT a.attname
             FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
             WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
-            ORDER BY a.attnum");
+            ORDER BY a.attnum');
 
         $indexes = [];
 
@@ -482,7 +482,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
                 $indexes[$name]->setTable($table);
                 $indexes[$name]->addColumn([
-                    "name" => $row2['attname']
+                    'name' => $row2['attname']
                 ]);
 
             }
@@ -503,7 +503,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     protected function addPrimaryKey(Table $table, $oid)
     {
 
-        $stmt = $this->dbh->prepare("SELECT
+        $stmt = $this->dbh->prepare('SELECT
             DISTINCT ON(cls.relname)
             cls.relname as idxname,
             indkey,
@@ -511,7 +511,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             FROM pg_index idx
             JOIN pg_class cls ON cls.oid=indexrelid
             WHERE indrelid = ? AND indisprimary
-            ORDER BY cls.relname");
+            ORDER BY cls.relname');
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
@@ -520,10 +520,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
-                $stmt2 = $this->dbh->prepare("SELECT a.attname
+                $stmt2 = $this->dbh->prepare('SELECT a.attname
                     FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
                     WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
-                    ORDER BY a.attnum");
+                    ORDER BY a.attnum');
                 $stmt2->bindValue(1, $oid);
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();

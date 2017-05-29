@@ -842,7 +842,7 @@ class Database extends ScopedMappingModel
         foreach ($this->getTables() as $table) {
             $columns = [];
             foreach ($table->getColumns() as $column) {
-                $columns[] = sprintf("      %s %s %s %s %s %s",
+                $columns[] = sprintf('      %s %s %s %s %s %s',
                     $column->getName(),
                     $column->getType(),
                     $column->getSize() ? '(' . $column->getSize() . ')' : '',
@@ -855,7 +855,7 @@ class Database extends ScopedMappingModel
 
             $fks = [];
             foreach ($table->getForeignKeys() as $fk) {
-                $fks[] = sprintf("      %s to %s.%s (%s => %s)",
+                $fks[] = sprintf('      %s to %s.%s (%s => %s)',
                     $fk->getName(),
                     $fk->getForeignSchemaName(),
                     $fk->getForeignTableCommonName(),
@@ -870,7 +870,7 @@ class Database extends ScopedMappingModel
                 foreach ($index->getColumns() as $indexColumnName) {
                     $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
                 }
-                $indices[] = sprintf("      %s (%s)",
+                $indices[] = sprintf('      %s (%s)',
                     $index->getName(),
                     join(', ', $indexColumns)
                 );
@@ -878,7 +878,7 @@ class Database extends ScopedMappingModel
 
             $unices = [];
             foreach ($table->getUnices() as $index) {
-                $unices[] = sprintf("      %s (%s)",
+                $unices[] = sprintf('      %s (%s)',
                     $index->getName(),
                     join(', ', $index->getColumns())
                 );

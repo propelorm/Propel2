@@ -314,7 +314,7 @@ class QuickBuilder
         $classes = $classTargets === null ? ['tablemap', 'object', 'query', 'objectstub', 'querystub'] : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
-        $dir = sys_get_temp_dir() . "/propelQuickBuild-" . Propel::VERSION .  "-$dirHash/";
+        $dir = sys_get_temp_dir() . '/propelQuickBuild-' . Propel::VERSION .  "-$dirHash/";
 
         if (!is_dir($dir)) {
             mkdir($dir);

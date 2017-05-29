@@ -145,23 +145,23 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
 
     protected function addSlugSetter(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the setter for slug value
  *
  * @param   string
- * @return  \$this|" . $this->getTable()->getPhpName() . "
+ * @return  $this|' . $this->getTable()->getPhpName() . '
  */
-public function setSlug(\$v)
+public function setSlug($v)
 {
-    return \$this->" . $this->getColumnSetter() . "(\$v);
+    return $this->' . $this->getColumnSetter() . '($v);
 }
-";
+';
     }
 
     protected function addSlugGetter(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the getter for slug value
  *
@@ -169,14 +169,14 @@ public function setSlug(\$v)
  */
 public function getSlug()
 {
-    return \$this->" . $this->getColumnGetter() . "();
+    return $this->' . $this->getColumnGetter() . '();
 }
-";
+';
     }
 
     protected function addCreateSlug(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Create a unique slug based on the object
  *
@@ -184,19 +184,19 @@ public function getSlug()
  */
 protected function createSlug()
 {
-    \$slug = \$this->createRawSlug();
-    \$slug = \$this->limitSlugSize(\$slug);
-    \$slug = \$this->makeSlugUnique(\$slug);
+    $slug = $this->createRawSlug();
+    $slug = $this->limitSlugSize($slug);
+    $slug = $this->makeSlugUnique($slug);
 
-    return \$slug;
+    return $slug;
 }
-";
+';
     }
 
     protected function addCreateRawSlug(&$script)
     {
         $pattern = $this->getParameter('slug_pattern');
-        $script .= "
+        $script .= '
 /**
  * Create the slug from the appropriate columns
  *
@@ -204,15 +204,15 @@ protected function createSlug()
  */
 protected function createRawSlug()
 {
-    ";
+    ';
         if ($pattern) {
             $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart($this->get', '()) . \''], $pattern). "';";
         } else {
-            $script .= "return \$this->cleanupSlugPart(\$this->__toString());";
+            $script .= 'return $this->cleanupSlugPart($this->__toString());';
         }
-        $script .= "
+        $script .= '
 }
-";
+';
 
         return $script;
     }
@@ -299,16 +299,16 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
 protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter('separator') . "', \$alreadyExists = false)
 {";
         $getter = $this->getColumnGetter();
-        $script .= "
-    if (!\$alreadyExists) {
-        \$slug2 = \$slug;
+        $script .= '
+    if (!$alreadyExists) {
+        $slug2 = $slug;
     } else {
-        \$slug2 = \$slug . \$separator;";
+        $slug2 = $slug . $separator;';
 
         if (null == $this->getParameter('slug_pattern')) {
-            $script .= "
+            $script .= '
 
-        \$count = " . $this->builder->getStubQueryBuilder()->getClassName() . "::create()
+        $count = ' . $this->builder->getStubQueryBuilder()->getClassName() . "::create()
             ->filterBySlug(\$this->$getter())
             ->filterByPrimaryKey(\$this->getPrimaryKey())
         ->count();
@@ -336,8 +336,8 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         }
         // watch out: some of the columns may be hidden by the soft_delete behavior
         if ($this->table->hasBehavior('soft_delete')) {
-            $script .= "
-        ->includeDeleted()";
+            $script .= '
+        ->includeDeleted()';
         }
         $script .= "
     ;
@@ -363,14 +363,14 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         return \$slug2 . '1';
     }
 
-    \$slugNum = substr(\$object->" . $getter . "(), strlen(\$slug) + 1);
-    if (0 == \$slugNum[0]) {
-        \$slugNum[0] = 1;
+    \$slugNum = substr(\$object->" . $getter . '(), strlen($slug) + 1);
+    if (0 == $slugNum[0]) {
+        $slugNum[0] = 1;
     }
 
-    return \$slug2 . (\$slugNum + 1);
+    return $slug2 . ($slugNum + 1);
 }
-";
+';
     }
 
     public function queryMethods($builder)
@@ -388,36 +388,36 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
 
     protected function addFilterBySlug(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Filter the query on the slug column
  *
- * @param     string \$slug The value to use as filter.
+ * @param     string $slug The value to use as filter.
  *
- * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return    $this|' . $this->builder->getQueryClassName() . ' The current query, for fluid interface
  */
-public function filterBySlug(\$slug)
+public function filterBySlug($slug)
 {
-    return \$this->addUsingAlias(" . $this->builder->getColumnConstant($this->getColumnForParameter('slug_column')) . ", \$slug, Criteria::EQUAL);
+    return $this->addUsingAlias(' . $this->builder->getColumnConstant($this->getColumnForParameter('slug_column')) . ', $slug, Criteria::EQUAL);
 }
-";
+';
     }
 
     protected function addFindOneBySlug(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Find one object based on its slug
  *
- * @param     string \$slug The value to use as filter.
- * @param     ConnectionInterface \$con The optional connection object
+ * @param     string $slug The value to use as filter.
+ * @param     ConnectionInterface $con The optional connection object
  *
- * @return    " . $this->builder->getObjectClassName() . " the result, formatted by the current formatter
+ * @return    ' . $this->builder->getObjectClassName() . ' the result, formatted by the current formatter
  */
-public function findOneBySlug(\$slug, \$con = null)
+public function findOneBySlug($slug, $con = null)
 {
-    return \$this->filterBySlug(\$slug)->findOne(\$con);
+    return $this->filterBySlug($slug)->findOne($con);
 }
-";
+';
     }
 }

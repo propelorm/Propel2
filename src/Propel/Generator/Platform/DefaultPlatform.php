@@ -314,9 +314,9 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getDropTableDDL(Table $table)
     {
-        return "
-DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
-";
+        return '
+DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
+';
     }
 
     /**
@@ -343,15 +343,15 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 %sCREATE TABLE %s
 (
     %s
 );
-";
+';
 
         return sprintf($pattern,
             $tableDescription,
@@ -489,9 +489,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             return '';
         }
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP CONSTRAINT %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -511,9 +511,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             return '';
         }
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -545,9 +545,9 @@ ALTER TABLE %s ADD %s;
      */
     public function getAddIndexDDL(Index $index)
     {
-        $pattern = "
+        $pattern = '
 CREATE %sINDEX %s ON %s (%s);
-";
+';
 
         return sprintf($pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
@@ -565,9 +565,9 @@ CREATE %sINDEX %s ON %s (%s);
      */
     public function getDropIndexDDL(Index $index)
     {
-        $pattern = "
+        $pattern = '
 DROP INDEX %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($index->getFQName())
@@ -627,9 +627,9 @@ DROP INDEX %s;
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
@@ -648,9 +648,9 @@ ALTER TABLE %s ADD %s;
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP CONSTRAINT %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
@@ -667,9 +667,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "CONSTRAINT %s
+        $pattern = 'CONSTRAINT %s
     FOREIGN KEY (%s)
-    REFERENCES %s (%s)";
+    REFERENCES %s (%s)';
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
@@ -677,12 +677,12 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
         if ($fk->hasOnUpdate()) {
-            $script .= "
-    ON UPDATE " . $fk->getOnUpdate();
+            $script .= '
+    ON UPDATE ' . $fk->getOnUpdate();
         }
         if ($fk->hasOnDelete()) {
-            $script .= "
-    ON DELETE " . $fk->getOnDelete();
+            $script .= '
+    ON DELETE ' . $fk->getOnDelete();
         }
 
         return $script;
@@ -690,19 +690,19 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     public function getCommentLineDDL($comment)
     {
-        $pattern = "-- %s
-";
+        $pattern = '-- %s
+';
 
         return sprintf($pattern, $comment);
     }
 
     public function getCommentBlockDDL($comment)
     {
-        $pattern = "
+        $pattern = '
 -----------------------------------------------------------------------
 -- %s
 -----------------------------------------------------------------------
-";
+';
 
         return sprintf($pattern, $comment);
     }
@@ -750,9 +750,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s RENAME TO %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fromTableName),
@@ -836,9 +836,9 @@ ALTER TABLE %s RENAME TO %s;
             }
 
             if (0 < count($columnChanges)) {
-                $ret .= sprintf("
+                $ret .= sprintf('
 ALTER TABLE %s%s;
-",
+',
                     $this->quoteIdentifier($toTable->getName()), implode(',', $columnChanges));
             }
         }
@@ -970,9 +970,9 @@ ALTER TABLE %s%s;
      */
     public function getRemoveColumnDDL(Column $column)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP COLUMN %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
@@ -987,9 +987,9 @@ ALTER TABLE %s DROP COLUMN %s;
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s RENAME COLUMN %s TO %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
@@ -1006,9 +1006,9 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
         $toColumn = $columnDiff->getToColumn();
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s MODIFY %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($toColumn->getTable()->getName()),
@@ -1034,15 +1034,15 @@ ALTER TABLE %s MODIFY %s;
             $lines[] = $this->getColumnDDL($toColumn);
         }
 
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s MODIFY
 (
     %s
 );
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -1057,9 +1057,9 @@ ALTER TABLE %s MODIFY
      */
     public function getAddColumnDDL(Column $column)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
@@ -1084,15 +1084,15 @@ ALTER TABLE %s ADD %s;
             $lines[] = $this->getColumnDDL($column);
         }
 
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD
 (
     %s
 );
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -1309,11 +1309,11 @@ ALTER TABLE %s ADD
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         $script = '';
         if ($column->isTemporalType()) {
-            $columnValueAccessor = $columnValueAccessor . " ? " . $columnValueAccessor . "->format(\""  . $this->getTimestampFormatter() . "\") : null";
+            $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getTimestampFormatter() . '") : null';
         } elseif ($column->isLobType()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.
@@ -1324,8 +1324,8 @@ if (is_resource($columnValueAccessor)) {
         }
 
         $script .= sprintf(
-            "
-\$stmt->bindValue(%s, %s, %s);",
+            '
+$stmt->bindValue(%s, %s, %s);',
             $identifier,
             $columnValueAccessor,
             PropelTypes::getPdoTypeString($column->getType())
@@ -1344,11 +1344,11 @@ if (is_resource($columnValueAccessor)) {
      * $this->id = $con->lastInsertId();
      * </code>
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
         return sprintf(
-            "
-%s%s = %s%s->lastInsertId(%s);",
+            '
+%s%s = %s%s->lastInsertId(%s);',
             $tab,
             $columnValueMutator,
             $connectionVariableName,

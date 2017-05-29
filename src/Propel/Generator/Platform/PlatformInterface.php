@@ -28,17 +28,17 @@ interface PlatformInterface
     /**
      * Constant for auto-increment id method.
      */
-    const IDENTITY = "identity";
+    const IDENTITY = 'identity';
 
     /**
      * Constant for sequence id method.
      */
-    const SEQUENCE = "sequence";
+    const SEQUENCE = 'sequence';
 
     /**
      * Constant for serial id method (postgresql).
      */
-    const SERIAL = "serial";
+    const SERIAL = 'serial';
 
     /**
      * Sets a database connection to use (for quoting, etc.).
@@ -257,7 +257,7 @@ interface PlatformInterface
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ");
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ');
 
     /**
      * @return boolean

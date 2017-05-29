@@ -26,7 +26,7 @@ class GraphvizManager extends AbstractManager
         foreach ($this->getDatabases() as $database) {
             $dotSyntax = "digraph G {\n";
 
-            $this->log("db: " . $database->getName());
+            $this->log('db: ' . $database->getName());
 
             // print the tables
             foreach ($database->getTables() as $tbl) {
@@ -84,7 +84,7 @@ class GraphvizManager extends AbstractManager
     {
         $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $baseFilename . '.schema.dot';
 
-        $this->log("Writing dot file to " . $file);
+        $this->log('Writing dot file to ' . $file);
 
         file_put_contents($file, $dotSyntax);
     }

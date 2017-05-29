@@ -226,7 +226,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (!$propelType) {
             $propelType = Column::DEFAULT_TYPE;
             $sqlType = $row['Type'];
-            $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+            $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type (' .$nativeType. ') that Propel does not support.');
         }
 
         // Special case for TINYINT(1) which is a BOOLEAN

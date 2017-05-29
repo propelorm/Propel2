@@ -139,9 +139,9 @@ class PgsqlPlatform extends DefaultPlatform
     {
         if ($table->getIdMethod() == IdMethod::NATIVE
          && $table->getIdMethodParameters() != null) {
-            $pattern = "
+            $pattern = '
 CREATE SEQUENCE %s;
-";
+';
 
             return sprintf($pattern,
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
@@ -153,9 +153,9 @@ CREATE SEQUENCE %s;
     {
         if ($table->getIdMethod() == IdMethod::NATIVE
          && $table->getIdMethodParameters() != null) {
-            $pattern = "
+            $pattern = '
 DROP SEQUENCE %s;
-";
+';
 
             return sprintf($pattern,
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
@@ -182,9 +182,9 @@ DROP SEQUENCE %s;
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
-            $pattern = "
+            $pattern = '
 CREATE SCHEMA %s;
-";
+';
 
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
         };
@@ -194,9 +194,9 @@ CREATE SCHEMA %s;
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
-            $pattern = "
+            $pattern = '
 SET search_path TO %s;
-";
+';
 
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
         }
@@ -206,9 +206,9 @@ SET search_path TO %s;
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
-            return "
+            return '
 SET search_path TO public;
-";
+';
         }
     }
 
@@ -242,9 +242,9 @@ SET search_path TO public;
      */
     public function getBeginDDL()
     {
-        return "
+        return '
 BEGIN;
-";
+';
     }
     
     /**
@@ -252,9 +252,9 @@ BEGIN;
      */
     public function getEndDDL()
     {
-        return "
+        return '
 COMMIT;
-";
+';
     }
 
     /**
@@ -290,23 +290,23 @@ COMMIT;
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        $sep = ",
-    ";
-        $pattern = "
+        $sep = ',
+    ';
+        $pattern = '
 CREATE TABLE %s
 (
     %s
 );
-";
+';
         $ret .= sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines)
         );
 
         if ($table->hasDescription()) {
-            $pattern = "
+            $pattern = '
 COMMENT ON TABLE %s IS %s;
-";
+';
             $ret .= sprintf($pattern,
                 $this->quoteIdentifier($table->getName()),
                 $this->quote($table->getDescription())
@@ -331,9 +331,9 @@ COMMENT ON TABLE %s IS %s;
 
     protected function getAddColumnComment(Column $column)
     {
-        $pattern = "
+        $pattern = '
 COMMENT ON COLUMN %s.%s IS %s;
-";
+';
         if ($description = $column->getDescription()) {
             return sprintf($pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
@@ -347,9 +347,9 @@ COMMENT ON COLUMN %s.%s IS %s;
     {
         $ret = '';
         $ret .= $this->getUseSchemaDDL($table);
-        $pattern = "
+        $pattern = '
 DROP TABLE IF EXISTS %s CASCADE;
-";
+';
         $ret .= sprintf($pattern, $this->quoteIdentifier($table->getName()));
         $ret .= $this->getDropSequenceDDL($table);
         $ret .= $this->getResetSchemaDDL($table);
@@ -414,9 +414,9 @@ DROP TABLE IF EXISTS %s CASCADE;
             $toTableName = substr($toTableName, $pos + 1);
         }
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s RENAME TO %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fromTableName),
@@ -480,9 +480,9 @@ ALTER TABLE %s RENAME TO %s;
 
         $colName = $this->quoteIdentifier($toColumn->getName());
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ALTER COLUMN %s;
-";
+';
 
         if (isset($changedProperties['autoIncrement'])) {
             $tableName = $table->getName();
@@ -497,9 +497,9 @@ ALTER TABLE %s ALTER COLUMN %s;
 
                 //add sequence
                 if (!$fromTable->getDatabase()->hasSequence($seqName)) {
-                    $this->createOrDropSequences .= sprintf("
+                    $this->createOrDropSequences .= sprintf('
 CREATE SEQUENCE %s;
-",
+',
                         $seqName
                     );
                     $fromTable->getDatabase()->addSequence($seqName);
@@ -512,9 +512,9 @@ CREATE SEQUENCE %s;
 
                 //remove sequence
                 if ($fromTable->getDatabase()->hasSequence($seqName)) {
-                    $this->createOrDropSequences .= sprintf("
+                    $this->createOrDropSequences .= sprintf('
 DROP SEQUENCE %s CASCADE;
-",
+',
                         $seqName
                     );
                     $fromTable->getDatabase()->removeSequence($seqName);
@@ -603,7 +603,7 @@ DROP SEQUENCE %s CASCADE;
         }
 
         if ('DATE' === $fromSqlType && 'TIME' === $toSqlType) {
-            return " USING NULL";
+            return ' USING NULL';
         }
 
         if ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) {
@@ -614,7 +614,7 @@ DROP SEQUENCE %s CASCADE;
             return '';
         }
 
-        return " USING NULL";
+        return ' USING NULL';
     }
 
     /**
@@ -661,9 +661,9 @@ DROP SEQUENCE %s CASCADE;
     public function getDropIndexDDL(Index $index)
     {
         if ($index instanceof Unique) {
-            $pattern = "
+            $pattern = '
     ALTER TABLE %s DROP CONSTRAINT %s;
-    ";
+    ';
 
             return sprintf($pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
@@ -679,7 +679,7 @@ DROP SEQUENCE %s CASCADE;
      * Warning: duplicates logic from PgsqlAdapter::getId().
      * Any code modification here must be ported there.
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
         if (!$sequenceName) {
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');

@@ -185,7 +185,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * @param string &$script  The script will be modified in this method.
      * @param string $tab
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
+    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
     {
         $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
     }

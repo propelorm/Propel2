@@ -44,7 +44,7 @@ class MigrationDiffCommand extends AbstractCommand
             ->addOption('skip-removed-table', null, InputOption::VALUE_NONE,      'Option to skip removed table from the migration')
             ->addOption('skip-tables',        null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'List of excluded tables', [])
             ->addOption('disable-identifier-quoting', null, InputOption::VALUE_NONE, 'Disable identifier quoting in SQL queries for reversed database tables.')
-            ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
+            ->addOption('comment', 'm',  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
             ->addOption('suffix',             null, InputOption::VALUE_OPTIONAL,  'A suffix for the migration class', '')
             ->setName('migration:diff')
             ->setAliases(['diff'])

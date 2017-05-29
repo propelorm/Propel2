@@ -83,9 +83,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $script = $namespaceStatement . $script;
         }
 
-        $script =  "<?php
+        $script =  '<?php
 
-" . $script;
+' . $script;
 
         return $this->clean($script);
     }
@@ -463,9 +463,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         $namespace = $this->getNamespace();
         if (!empty($namespace)) {
-            return sprintf("namespace %s;
+            return sprintf('namespace %s;
 
-", $namespace);
+', $namespace);
         }
     }
 
@@ -945,7 +945,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param string $modifier The name of the modifier object providing the method in the behavior
      * @param string &$script  The script will be modified in this method.
      */
-    public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = "        ")
+    public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = '        ')
     {
         $modifierGetter = 'get' . $modifier;
         foreach ($this->getTable()->getBehaviors() as $behavior) {
@@ -960,9 +960,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                     if (!$addedScript) {
                         continue;
                     }
-                    $script .= "
-" . $tab . '// ' . $behavior->getId() . " behavior
-";
+                    $script .= '
+' . $tab . '// ' . $behavior->getId() . ' behavior
+';
                     $script .= preg_replace('/^/m', $tab, $addedScript);
                 }
             }

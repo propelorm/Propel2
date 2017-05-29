@@ -33,15 +33,15 @@ class QueryCacheBehavior extends Behavior
 ";
         switch ($this->getParameter('backend')) {
             case 'backend':
-                $script .= "protected static \$cacheBackend = array();
-            ";
+                $script .= 'protected static $cacheBackend = array();
+            ';
                 break;
             case 'apc':
                 break;
             case 'custom':
             default:
-                $script .= "protected static \$cacheBackend;
-            ";
+                $script .= 'protected static $cacheBackend;
+            ';
                 break;
         }
 
@@ -66,41 +66,41 @@ class QueryCacheBehavior extends Behavior
 
     protected function addSetQueryKey(&$script)
     {
-        $script .= "
-public function setQueryKey(\$key)
+        $script .= '
+public function setQueryKey($key)
 {
-    \$this->queryKey = \$key;
+    $this->queryKey = $key;
 
-    return \$this;
+    return $this;
 }
-";
+';
     }
 
     protected function addGetQueryKey(&$script)
     {
-        $script .= "
+        $script .= '
 public function getQueryKey()
 {
-    return \$this->queryKey;
+    return $this->queryKey;
 }
-";
+';
     }
 
     protected function addCacheContains(&$script)
     {
-        $script .= "
-public function cacheContains(\$key)
-{";
+        $script .= '
+public function cacheContains($key)
+{';
         switch ($this->getParameter('backend')) {
             case 'apc':
-                $script .= "
+                $script .= '
 
-    return apc_fetch(\$key);";
+    return apc_fetch($key);';
                 break;
             case 'array':
-                $script .= "
+                $script .= '
 
-    return isset(self::\$cacheBackend[\$key]);";
+    return isset(self::$cacheBackend[$key]);';
                 break;
             case 'custom':
             default:
@@ -109,24 +109,24 @@ public function cacheContains(\$key)
                 break;
 
         }
-        $script .= "
+        $script .= '
 }
-";
+';
     }
 
     protected function addCacheStore(&$script)
     {
-        $script .= "
-public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('lifetime') . ")
-{";
+        $script .= '
+public function cacheStore($key, $value, $lifetime = ' .$this->getParameter('lifetime') . ')
+{';
         switch ($this->getParameter('backend')) {
             case 'apc':
-                $script .= "
-    apc_store(\$key, \$value, \$lifetime);";
+                $script .= '
+    apc_store($key, $value, $lifetime);';
                 break;
             case 'array':
-                $script .= "
-    self::\$cacheBackend[\$key] = \$value;";
+                $script .= '
+    self::$cacheBackend[$key] = $value;';
                 break;
             case 'custom':
             default:
@@ -134,26 +134,26 @@ public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
                 break;
         }
-        $script .= "
+        $script .= '
 }
-";
+';
     }
 
     protected function addCacheFetch(&$script)
     {
-        $script .= "
-public function cacheFetch(\$key)
-{";
+        $script .= '
+public function cacheFetch($key)
+{';
         switch ($this->getParameter('backend')) {
             case 'apc':
-                $script .= "
+                $script .= '
 
-    return apc_fetch(\$key);";
+    return apc_fetch($key);';
                 break;
             case 'array':
-                $script .= "
+                $script .= '
 
-    return isset(self::\$cacheBackend[\$key]) ? self::\$cacheBackend[\$key] : null;";
+    return isset(self::$cacheBackend[$key]) ? self::$cacheBackend[$key] : null;';
                 break;
             case 'custom':
             default:
@@ -161,24 +161,24 @@ public function cacheFetch(\$key)
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
                 break;
         }
-        $script .= "
+        $script .= '
 }
-";
+';
     }
 
     protected function addDoSelect(&$script)
     {
-        $script .= "
-public function doSelect(ConnectionInterface \$con = null)
+        $script .= '
+public function doSelect(ConnectionInterface $con = null)
 {
     // check that the columns of the main class are already added (if this is the primary ModelCriteria)
-    if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
-        \$this->addSelfSelectColumns();
+    if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+        $this->addSelfSelectColumns();
     }
-    \$this->configureSelectColumns();
+    $this->configureSelectColumns();
 
-    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName ."::DATABASE_NAME);
-    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName ."::DATABASE_NAME);
+    $dbMap = Propel::getServiceContainer()->getDatabaseMap(' . $this->tableClassName . '::DATABASE_NAME);
+    $db = Propel::getServiceContainer()->getAdapter(' . $this->tableClassName ."::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {

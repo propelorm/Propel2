@@ -25,8 +25,8 @@ use Propel\Runtime\Map\ColumnMap;
  */
 abstract class AbstractCriterion
 {
-    const UND = " AND ";
-    const ODER = " OR ";
+    const UND = ' AND ';
+    const ODER = ' OR ';
 
     /** Value of the criterion */
     protected $value;
@@ -102,7 +102,7 @@ abstract class AbstractCriterion
         } catch (\Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
+            Propel::log('Could not get a AdapterInterface, sql may be wrong', Propel::LOG_ERR);
         }
 
         // init $this->realtable
@@ -286,7 +286,7 @@ abstract class AbstractCriterion
         $params = [];
         $this->appendPsTo($sb, $params);
 
-        return "" . $sb;
+        return '' . $sb;
     }
 
     /**

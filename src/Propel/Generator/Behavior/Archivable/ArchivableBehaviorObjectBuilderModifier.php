@@ -39,16 +39,16 @@ class ArchivableBehaviorObjectBuilderModifier
     {
         $script = '';
         if ($this->behavior->isArchiveOnInsert()) {
-            $script .= "protected \$archiveOnInsert = true;
-";
+            $script .= 'protected $archiveOnInsert = true;
+';
         }
         if ($this->behavior->isArchiveOnUpdate()) {
-            $script .= "protected \$archiveOnUpdate = true;
-";
+            $script .= 'protected $archiveOnUpdate = true;
+';
         }
         if ($this->behavior->isArchiveOnDelete()) {
-            $script .= "protected \$archiveOnDelete = true;
-";
+            $script .= 'protected $archiveOnDelete = true;
+';
         }
 
         return $script;
@@ -60,11 +60,11 @@ class ArchivableBehaviorObjectBuilderModifier
     public function postInsert($builder)
     {
         if ($this->behavior->isArchiveOnInsert()) {
-            return "if (\$this->archiveOnInsert) {
-    \$this->archive(\$con);
+            return 'if ($this->archiveOnInsert) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnInsert = true;
-}";
+    $this->archiveOnInsert = true;
+}';
         }
     }
 
@@ -74,11 +74,11 @@ class ArchivableBehaviorObjectBuilderModifier
     public function postUpdate($builder)
     {
         if ($this->behavior->isArchiveOnUpdate()) {
-            return "if (\$this->archiveOnUpdate) {
-    \$this->archive(\$con);
+            return 'if ($this->archiveOnUpdate) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnUpdate = true;
-}";
+    $this->archiveOnUpdate = true;
+}';
         }
     }
 

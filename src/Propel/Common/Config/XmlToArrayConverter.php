@@ -31,7 +31,7 @@ class XmlToArrayConverter
     public static function convert($xmlToParse)
     {
         if (!is_string($xmlToParse)) {
-            throw new InvalidArgumentException("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
+            throw new InvalidArgumentException('XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml');
         }
 
         $isFile = file_exists($xmlToParse);
@@ -152,10 +152,10 @@ class XmlToArrayConverter
 
         // handle booleans specially
         $lwr = strtolower($value);
-        if ($lwr === "false") {
+        if ($lwr === 'false') {
             return false;
         }
-        if ($lwr === "true") {
+        if ($lwr === 'true') {
             return true;
         }
 

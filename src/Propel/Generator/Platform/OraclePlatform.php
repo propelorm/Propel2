@@ -126,15 +126,15 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
             $lines[] = $this->getUniqueDDL($unique);
         }
 
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 %sCREATE TABLE %s
 (
     %s
 )%s;
-";
+';
         $ret = sprintf($pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
@@ -158,10 +158,10 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
     public function getAddSequencesDDL(Table $table)
     {
         if ('native' === $table->getIdMethod()) {
-            $pattern = "
+            $pattern = '
 CREATE SEQUENCE %s
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
-";
+';
 
             return sprintf($pattern,
                 $this->quoteIdentifier($this->getSequenceName($table))
@@ -171,13 +171,13 @@ CREATE SEQUENCE %s
 
     public function getDropTableDDL(Table $table)
     {
-        $ret = "
-DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
-";
+        $ret = '
+DROP TABLE ' . $this->quoteIdentifier($table->getName(), $table) . ' CASCADE CONSTRAINTS;
+';
         if ($table->getIdMethod() == IdMethod::NATIVE) {
-            $ret .= "
-DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
-";
+            $ret .= '
+DROP SEQUENCE ' . $this->quoteIdentifier($this->getSequenceName($table)) . ';
+';
         }
 
         return $ret;
@@ -218,8 +218,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "CONSTRAINT %s
-    FOREIGN KEY (%s) REFERENCES %s (%s)";
+        $pattern = 'CONSTRAINT %s
+    FOREIGN KEY (%s) REFERENCES %s (%s)';
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
@@ -227,8 +227,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
             $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
         if ($fk->hasOnDelete()) {
-            $script .= "
-    ON DELETE " . $fk->getOnDelete();
+            $script .= '
+    ON DELETE ' . $fk->getOnDelete();
         }
 
         return $script;
@@ -283,44 +283,44 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         }
 
         if ($isPrimaryKey) {
-            $physicalParameters = "
+            $physicalParameters = '
 USING INDEX
-";
-            $prefix = "PK";
+';
+            $prefix = 'PK';
         } else {
             $physicalParameters = "\n";
-            $prefix = "";
+            $prefix = '';
         }
 
         if ($vendorSpecific->hasParameter($prefix.'PCTFree')) {
-            $physicalParameters .= "PCTFREE " . $vendorSpecific->getParameter($prefix.'PCTFree') . "
-";
+            $physicalParameters .= 'PCTFREE ' . $vendorSpecific->getParameter($prefix.'PCTFree') . '
+';
         }
         if ($vendorSpecific->hasParameter($prefix.'InitTrans')) {
-            $physicalParameters .= "INITRANS " . $vendorSpecific->getParameter($prefix.'InitTrans') . "
-";
+            $physicalParameters .= 'INITRANS ' . $vendorSpecific->getParameter($prefix.'InitTrans') . '
+';
         }
         if ($vendorSpecific->hasParameter($prefix.'MinExtents') || $vendorSpecific->hasParameter($prefix.'MaxExtents') || $vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
-            $physicalParameters .= "STORAGE
+            $physicalParameters .= 'STORAGE
 (
-";
+';
             if ($vendorSpecific->hasParameter($prefix.'MinExtents')) {
-                $physicalParameters .= "    MINEXTENTS " . $vendorSpecific->getParameter($prefix.'MinExtents') . "
-";
+                $physicalParameters .= '    MINEXTENTS ' . $vendorSpecific->getParameter($prefix.'MinExtents') . '
+';
             }
             if ($vendorSpecific->hasParameter($prefix.'MaxExtents')) {
-                $physicalParameters .= "    MAXEXTENTS " . $vendorSpecific->getParameter($prefix.'MaxExtents') . "
-";
+                $physicalParameters .= '    MAXEXTENTS ' . $vendorSpecific->getParameter($prefix.'MaxExtents') . '
+';
             }
             if ($vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
-                $physicalParameters .= "    PCTINCREASE " . $vendorSpecific->getParameter($prefix.'PCTIncrease') . "
-";
+                $physicalParameters .= '    PCTINCREASE ' . $vendorSpecific->getParameter($prefix.'PCTIncrease') . '
+';
             }
-            $physicalParameters .= ")
-";
+            $physicalParameters .= ')
+';
         }
         if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
-            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
+            $physicalParameters .= 'TABLESPACE ' . $vendorSpecific->getParameter($prefix.'Tablespace');
         }
 
         return $physicalParameters;
@@ -339,9 +339,9 @@ USING INDEX
             return '';
         }
 
-        $pattern = "
+        $pattern = '
 CREATE %sINDEX %s ON %s (%s)%s;
-";
+';
 
         return sprintf($pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
@@ -357,12 +357,12 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
             return sprintf(
-                "%s\$stmt->bindParam(%s, %s, %s, strlen(%s));
-",
+                '%s$stmt->bindParam(%s, %s, %s, strlen(%s));
+',
                 $tab,
                 $identifier,
                 $columnValueAccessor,
@@ -379,7 +379,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::getId().
      * Any code modification here must be ported there.
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');

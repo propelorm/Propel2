@@ -164,8 +164,11 @@ class IniFileLoader extends FileLoader
             }
 
             $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
-        } else if (is_string($value) && in_array(strtolower($value), array("true", "false"))) {
-            $config[$key] = (strtolower($value) === "true");
+        } else if (is_string($value) && in_array(strtolower($value), array(
+                'true',
+                'false'
+            ))) {
+            $config[$key] = (strtolower($value) === 'true');
         } else if ($value === (string)(int) $value) {
             $config[$key] = (int) $value;
         } else if ($value === (string)(float) $value) {

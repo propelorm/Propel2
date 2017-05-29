@@ -134,7 +134,7 @@ class PDODataFetcher extends AbstractDataFetcher
                 // SQLITE does not support rowCount() in 3.x on SELECTs anymore
                 // so emulate it
                 if (null === $this->cachedCount) {
-                    $sql = sprintf("SELECT COUNT(*) FROM (%s)", $lastQuery);
+                    $sql = sprintf('SELECT COUNT(*) FROM (%s)', $lastQuery);
                     $stmt = $this->dataObject->getConnection()->prepare($sql);
                     $stmt->execute($this->dataObject->getBoundValues());
                     $count = $stmt->fetchColumn();

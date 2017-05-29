@@ -33,12 +33,12 @@ class VersionableBehaviorQueryBuilderModifier
 
     public function queryAttributes()
     {
-        return "
+        return '
 /**
  * Whether the versioning is enabled
  */
-static \$isVersioningEnabled = true;
-";
+static $isVersioningEnabled = true;
+';
     }
 
     protected function getParameter($key)
@@ -106,13 +106,13 @@ static \$isVersioningEnabled = true;
 
     protected function addFilterByVersion(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the filter on the version column
  *
- * @param     integer \$version
- * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
- * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @param     integer $version
+ * @param     string  $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+ * @return    $this|' . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function filterByVersion(\$version = null, \$comparison = null)
 {
@@ -123,12 +123,12 @@ public function filterByVersion(\$version = null, \$comparison = null)
 
     protected function addOrderByVersion(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the order on the version column
  *
- * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
- * @return  \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @param   string $order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
+ * @return  $this|' . $this->builder->getQueryClassName() . " The current query, for fluid interface
  */
 public function orderByVersion(\$order = Criteria::ASC)
 {
@@ -139,7 +139,7 @@ public function orderByVersion(\$order = Criteria::ASC)
 
     protected function addIsVersioningEnabled()
     {
-        return "
+        return '
 /**
  * Checks whether versioning is enabled
  *
@@ -147,34 +147,34 @@ public function orderByVersion(\$order = Criteria::ASC)
  */
 static public function isVersioningEnabled()
 {
-    return self::\$isVersioningEnabled;
+    return self::$isVersioningEnabled;
 }
-";
+';
     }
 
     protected function addEnableVersioning()
     {
-        return "
+        return '
 /**
  * Enables versioning
  */
 static public function enableVersioning()
 {
-    self::\$isVersioningEnabled = true;
+    self::$isVersioningEnabled = true;
 }
-";
+';
     }
 
     protected function addDisableVersioning()
     {
-        return "
+        return '
 /**
  * Disables versioning
  */
 static public function disableVersioning()
 {
-    self::\$isVersioningEnabled = false;
+    self::$isVersioningEnabled = false;
 }
-";
+';
     }
 }

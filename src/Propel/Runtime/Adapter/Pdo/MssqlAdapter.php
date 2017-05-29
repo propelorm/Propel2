@@ -80,7 +80,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("dbo.RegexMatch(%s, %s", $left, $right);
+        return sprintf('dbo.RegexMatch(%s, %s', $left, $right);
     }
 
     /**

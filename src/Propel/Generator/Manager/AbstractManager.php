@@ -374,8 +374,8 @@ abstract class AbstractManager
             // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
-                if ("true" === $referenceOnly) {
-                    $tableNode->setAttribute("skipSql", "true");
+                if ('true' === $referenceOnly) {
+                    $tableNode->setAttribute('skipSql', 'true');
                 }
                 $databaseNode->appendChild($dom->importNode($tableNode, true));
             }

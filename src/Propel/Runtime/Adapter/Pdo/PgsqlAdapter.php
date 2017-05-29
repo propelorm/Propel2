@@ -45,7 +45,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("%s ~* %s", $left, $right);
+        return sprintf('%s ~* %s', $left, $right);
     }
 
     /**
@@ -59,7 +59,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function subString($s, $pos, $len)
     {
-        return "substring($s from $pos" . ($len > -1 ? "for $len" : "") . ")";
+        return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
 
     /**
@@ -94,7 +94,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function getId(ConnectionInterface $con, $name = null)
     {
         if (null === $name) {
-            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 

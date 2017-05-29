@@ -2018,9 +2018,9 @@ class Criteria
         // build from-clause
         $from = '';
         if (!empty($joinClause) && count($fromClause) > 1) {
-            $from .= implode(" CROSS JOIN ", $fromClause);
+            $from .= implode(' CROSS JOIN ', $fromClause);
         } else {
-            $from .= implode(", ", $fromClause);
+            $from .= implode(', ', $fromClause);
         }
 
         $from .= $joinClause ? ' ' . implode(' ', $joinClause) : '';
@@ -2295,7 +2295,7 @@ class Criteria
             try {
                 $id = $db->getId($con, $keyInfo);
             } catch (\Exception $e) {
-                throw new PropelException("Unable to get autoincrement id.", 0, $e);
+                throw new PropelException('Unable to get autoincrement id.', 0, $e);
             }
         }
 
@@ -2393,7 +2393,7 @@ class Criteria
                     $updateTable = $tableName;
                 }
                 $sql .= $this->quoteIdentifierTable($updateTable);
-                $sql .= " SET ";
+                $sql .= ' SET ';
                 $p = 1;
                 foreach ($updateTablesColumns[$tableName] as $col) {
                     $updateColumnName = substr($col, strrpos($col, '.') + 1);
@@ -2583,7 +2583,7 @@ class Criteria
         // be executed per table)
         $tables = $this->getTablesColumns();
         if (empty($tables)) {
-            throw new PropelException("Cannot delete from an empty Criteria");
+            throw new PropelException('Cannot delete from an empty Criteria');
         }
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.

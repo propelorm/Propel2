@@ -1579,7 +1579,7 @@ class ModelCriteria extends BaseModelCriteria
 
         try {
             $tableName = $this->quoteIdentifierTable($tableName);
-            $sql = "DELETE FROM " . $tableName;
+            $sql = 'DELETE FROM ' . $tableName;
             $stmt = $con->prepare($sql);
 
             $stmt->execute();

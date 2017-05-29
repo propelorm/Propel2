@@ -61,8 +61,8 @@ class ConfigConvertCommand extends AbstractCommand
         $options['profiler'] = $configManager->getConfigProperty('runtime.profiler');
 
         $phpConf = ArrayToPhpConverter::convert($options);
-        $phpConf = "<?php
-" . $phpConf;
+        $phpConf = '<?php
+' . $phpConf;
 
         if (file_exists($outputFilePath)) {
             $currentContent = file_get_contents($outputFilePath);
