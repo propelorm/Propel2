@@ -159,7 +159,7 @@ ALTER TABLE %s ADD %s;
 
                     //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
-                    || false !== array_search(
+                    || in_array(
                         $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
                     || substr(trim($column->getDefaultValue()), 0, 1) == '('
 
