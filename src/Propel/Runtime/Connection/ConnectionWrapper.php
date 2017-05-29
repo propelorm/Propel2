@@ -317,12 +317,10 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function getAttribute($attribute)
     {
-        switch ($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                return $this->isCachePreparedStatements;
-                break;
-            default:
-                return $this->connection->getAttribute($attribute);
+        if ($attribute == self::PROPEL_ATTR_CACHE_PREPARES) {
+            return $this->isCachePreparedStatements;
+        } else {
+            return $this->connection->getAttribute($attribute);
         }
     }
 
@@ -350,12 +348,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             }
             $attribute = constant($attribute);
         }
-        switch ($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                $this->isCachePreparedStatements = $value;
-                break;
-            default:
-                $this->connection->setAttribute($attribute, $value);
+
+        if ($attribute == self::PROPEL_ATTR_CACHE_PREPARES) {
+            $this->isCachePreparedStatements = $value;
+        } else {
+            $this->connection->setAttribute($attribute, $value);
         }
     }
 

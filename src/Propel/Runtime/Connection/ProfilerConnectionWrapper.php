@@ -64,14 +64,12 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      */
     public function setAttribute($attribute, $value)
     {
-        switch ($attribute) {
-            case 'isSlowOnly':
-                // Set whether the connection must only log slow queries.
-                // The slow threshold must be set on the profiler (100ms by default).
-                $this->isSlowOnly = $value;
-                break;
-            default:
-                parent::setAttribute($attribute, $value);
+        if ($attribute == 'isSlowOnly') {
+            // Set whether the connection must only log slow queries.
+            // The slow threshold must be set on the profiler (100ms by default).
+            $this->isSlowOnly = $value;
+        } else {
+            parent::setAttribute($attribute, $value);
         }
     }
 

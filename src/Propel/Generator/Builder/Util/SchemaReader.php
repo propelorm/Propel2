@@ -160,20 +160,17 @@ class SchemaReader
     {
         $parentTag = $this->peekCurrentSchemaTag();
         if (false === $parentTag) {
-            switch ($name) {
-                case 'database':
-                    if ($this->isExternalSchema()) {
-                        $this->currentPackage = isset($attributes['package']) ? $attributes['package'] : null;
-                        if (null === $this->currentPackage) {
-                            $this->currentPackage = $this->defaultPackage;
-                        }
-                    } else {
-                        $this->currDB = $this->schema->addDatabase($attributes);
+            if ($name == 'database') {
+                if ($this->isExternalSchema()) {
+                    $this->currentPackage = isset($attributes['package']) ? $attributes['package'] : null;
+                    if (null === $this->currentPackage) {
+                        $this->currentPackage = $this->defaultPackage;
                     }
-                    break;
-
-                default:
-                    $this->_throwInvalidTagException($parser, $name);
+                } else {
+                    $this->currDB = $this->schema->addDatabase($attributes);
+                }
+            } else {
+                $this->_throwInvalidTagException($parser, $name);
             }
         } elseif ('database' === $parentTag) {
             switch ($name) {
@@ -326,23 +323,17 @@ class SchemaReader
             }
         } elseif ($parentTag == 'behavior') {
 
-            switch ($name) {
-                case 'parameter':
-                    $this->currBehavior->addParameter($attributes);
-                    break;
-
-                default:
-                    $this->_throwInvalidTagException($parser, $name);
+            if ($name == 'parameter') {
+                $this->currBehavior->addParameter($attributes);
+            } else {
+                $this->_throwInvalidTagException($parser, $name);
             }
         } elseif ('vendor' === $parentTag) {
 
-            switch ($name) {
-                case 'parameter':
-                    $this->currVendorObject->setParameter($attributes['name'], $attributes['value']);
-                    break;
-
-                default:
-                    $this->_throwInvalidTagException($parser, $name);
+            if ($name == 'parameter') {
+                $this->currVendorObject->setParameter($attributes['name'], $attributes['value']);
+            } else {
+                $this->_throwInvalidTagException($parser, $name);
             }
         } else {
             // it must be an invalid tag
