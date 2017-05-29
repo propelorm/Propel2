@@ -33,7 +33,7 @@ class MssqlPropelPDO extends PropelPDO
         $return = true;
         $opcount = $this->getNestedTransactionCount();
         if ($opcount === 0) {
-            $return = self::exec('BEGIN TRANSACTION');
+            $return = $this->exec('BEGIN TRANSACTION');
             if ($this->useDebug) {
                 $this->log('Begin transaction', null, __METHOD__);
             }
@@ -61,7 +61,7 @@ class MssqlPropelPDO extends PropelPDO
                 if ($this->isUncommitable) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
                 } else {
-                    $return = self::exec('COMMIT TRANSACTION');
+                    $return = $this->exec('COMMIT TRANSACTION');
                     if ($this->useDebug) {
                         $this->log('Commit transaction', null, __METHOD__);
                     }
@@ -88,7 +88,7 @@ class MssqlPropelPDO extends PropelPDO
         $opcount = $this->getNestedTransactionCount();
         if ($opcount > 0) {
             if ($opcount === 1) {
-                $return = self::exec('ROLLBACK TRANSACTION');
+                $return = $this->exec('ROLLBACK TRANSACTION');
                 if ($this->useDebug) {
                     $this->log('Rollback transaction', null, __METHOD__);
                 }
@@ -117,7 +117,7 @@ class MssqlPropelPDO extends PropelPDO
         if ($opcount > 0) {
             // If we're in a transaction, always roll it back
             // regardless of nesting level.
-            $return = self::exec('ROLLBACK TRANSACTION');
+            $return = $this->exec('ROLLBACK TRANSACTION');
 
             // reset nested transaction count to 0 so that we don't
             // try to commit (or rollback) the transaction outside this scope.
@@ -137,7 +137,7 @@ class MssqlPropelPDO extends PropelPDO
      */
     public function lastInsertId($seqname = null)
     {
-        $result = self::query('SELECT SCOPE_IDENTITY()');
+        $result = $this->query('SELECT SCOPE_IDENTITY()');
 
         return (int) $result->fetchColumn();
     }
