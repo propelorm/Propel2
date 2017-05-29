@@ -252,7 +252,7 @@ class DefaultPlatform implements PlatformInterface
             if (empty($idMethodParams)) {
                 if (strlen($table->getName() . '_SEQ') > $maxIdentifierLength) {
                     if (!isset($longNamesMap[$table->getName()])) {
-                        $longNamesMap[$table->getName()] = strval(count($longNamesMap) + 1);
+                        $longNamesMap[$table->getName()] = (string)(count($longNamesMap) + 1);
                     }
                     $result = substr($table->getName(), 0, $maxIdentifierLength - strlen('_SEQ_' . $longNamesMap[$table->getName()])) . '_SEQ_' . $longNamesMap[$table->getName()];
                 } else {
@@ -1409,7 +1409,7 @@ $stmt->bindValue(%s, %s, %s);',
 
         foreach ($table->getColumns() as $column) {
             if ($column->getSize() && $defaultSize = $this->getDefaultTypeSize($column->getType())) {
-                if (null === $column->getScale() && intval($column->getSize()) === $defaultSize) {
+                if (null === $column->getScale() && (int)$column->getSize() === $defaultSize) {
                     $column->setSize(null);
                 }
             }
