@@ -857,8 +857,8 @@ class Database extends ScopedMappingModel
                     $fk->getName(),
                     $fk->getForeignSchemaName(),
                     $fk->getForeignTableCommonName(),
-                    join(', ', $fk->getLocalColumns()),
-                    join(', ', $fk->getForeignColumns())
+                    implode(', ', $fk->getLocalColumns()),
+                    implode(', ', $fk->getForeignColumns())
                 );
             }
 
@@ -870,7 +870,7 @@ class Database extends ScopedMappingModel
                 }
                 $indices[] = sprintf('      %s (%s)',
                     $index->getName(),
-                    join(', ', $indexColumns)
+                    implode(', ', $indexColumns)
                 );
             }
 
@@ -878,7 +878,7 @@ class Database extends ScopedMappingModel
             foreach ($table->getUnices() as $index) {
                 $unices[] = sprintf('      %s (%s)',
                     $index->getName(),
-                    join(', ', $index->getColumns())
+                    implode(', ', $index->getColumns())
                 );
             }
 

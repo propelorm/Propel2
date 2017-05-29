@@ -3459,7 +3459,7 @@ abstract class ' .$this->getUnqualifiedClassName().$parentClass. ' implements Ac
                 $tests[]= '(null === $this->get' . $pkey->getPhpName() . '())';
             }
             $script .= '
-        return ' . join(' && ', $tests) . ';';
+        return ' . implode(' && ', $tests) . ';';
         }
         $script .= '
     }
