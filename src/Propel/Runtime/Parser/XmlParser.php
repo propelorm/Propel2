@@ -102,7 +102,7 @@ class XmlParser extends AbstractParser
                 $key = $rootElement->nodeName;
 
                 // Books => Book
-                if (substr($key, -1, 1) === 's') {
+                if ($key[strlen($key) - 1] === 's') {
                     $key = substr($key, 0, strlen($key) - 1);
                 }
             }

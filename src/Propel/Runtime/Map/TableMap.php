@@ -676,7 +676,7 @@ class TableMap
      */
     protected function getColumnOrValue($value, TableMap $table)
     {
-        if (':' === substr($value, 0, 1)) {
+        if (':' === $value[0]) {
             return $table->getColumn(substr($value, 1));
         }
 

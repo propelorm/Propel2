@@ -309,7 +309,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             }
 
             if (null !== $default) {
-                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+                if ("'" !== $default[0] && strpos($default, '(')) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;

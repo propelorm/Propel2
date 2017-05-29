@@ -161,7 +161,7 @@ ALTER TABLE %s ADD %s;
                     //or an expression in parentheses.
                     || in_array(
                         $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
-                    || substr(trim($column->getDefaultValue()), 0, 1) == '('
+                    || trim($column->getDefaultValue())[0] == '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
                     || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
