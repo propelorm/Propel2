@@ -2231,8 +2231,8 @@ class ModelCriteria extends BaseModelCriteria
                 if (!isset($arguments[0])) {
                     $arguments[0] = null;
                 }
-                array_push($arguments, $joinType);
-                $method = lcfirst(substr($name, $pos));
+                $arguments[] = $joinType;
+                $method      = lcfirst(substr($name, $pos));
 
                 return call_user_func_array([$this, $method], $arguments);
             }
