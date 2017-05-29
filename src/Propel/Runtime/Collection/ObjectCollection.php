@@ -453,7 +453,7 @@ class ObjectCollection extends Collection
 
         $hashCode = $this->getHashCode($value);
 
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->data[] = $value;
             end($this->data);
             $pos = key($this->data);

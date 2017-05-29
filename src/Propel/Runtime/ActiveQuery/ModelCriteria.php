@@ -1827,13 +1827,13 @@ class ModelCriteria extends BaseModelCriteria
             }
         } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif (PropelTypes::ENUM === $colMap->getType() && !is_null($value)) {
+        } elseif (PropelTypes::ENUM === $colMap->getType() && null !== $value) {
             if (is_array($value)) {
                 $value = array_map([$colMap, 'getValueSetKey'], $value);
             } else {
                 $value = $colMap->getValueSetKey($value);
             }
-        } elseif ($colMap->isSetType() && !is_null($value)) {
+        } elseif ($colMap->isSetType() && null !== $value) {
             try {
                 $value = SetColumnConverter::convertToInt($value, $colMap->getValueSet());
             } catch (SetColumnConverterException $e) {
@@ -1995,13 +1995,13 @@ class ModelCriteria extends BaseModelCriteria
 
     public function configureSelectColumns()
     {
-        if (is_null($this->select)) {
+        if (null === $this->select) {
             // leave early
             return;
         }
 
         // select() needs the PropelSimpleArrayFormatter if no formatter given
-        if (is_null($this->formatter)) {
+        if (null === $this->formatter) {
             $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
         }
 

@@ -106,7 +106,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->data[] = $value;
         } else {
             $this->data[$offset] = $value;
