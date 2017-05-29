@@ -193,13 +193,13 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $selColCount = count($selColArr) - 1;
 
             // make sure the current column isn't * or an aggregate
-            if ($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
+            if ($selColArr[0] != '*' && false === strpos($selColArr[0], '(')) {
                 if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
 
                 // use the alias if one was present otherwise use the column name
-                $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
+                $alias = (false === stripos($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
                 // don't quote the identifier if it is already quoted
                 if ('[' !== $alias[0]) {
                     $alias = $this->quoteIdentifier($alias);
@@ -215,7 +215,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                 $outerSelect .= $alias . ', ';
             } else {
                 // aggregate columns must always have an alias clause
-                if (!stristr($selCol, ' AS ')) {
+                if (false === stripos($selCol, ' AS ')) {
                     throw new MalformedClauseException('MssqlAdapter::applyLimit() requires aggregate columns to have an Alias clause');
                 }
 
