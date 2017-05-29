@@ -196,7 +196,7 @@ class ColumnMap
      */
     public function getPdoType()
     {
-        return PropelTypes::getPdoType($this->type);
+        return PropelTypes::getPDOType($this->type);
     }
 
     /**

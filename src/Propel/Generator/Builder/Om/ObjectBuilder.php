@@ -4139,7 +4139,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
-     * @return \$this|".$this->getObjectClassname()." The current object (for fluent API support)
+     * @return \$this|".$this->getObjectClassName()." The current object (for fluent API support)
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -4235,7 +4235,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * @param  {$className} \${$lowerRelatedObjectClassName} The $className object to remove.
-     * @return \$this|". $this->getObjectClassname() ." The current object (for fluent API support)
+     * @return \$this|". $this->getObjectClassName() ." The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
     {
@@ -4442,7 +4442,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $multipleFks = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
         $scheduledForDeletionVarName = $this->getCrossScheduledForDeletionVarName($crossFKs);
-        $queryClassName = $this->getNewStubQueryBuilder($crossFKs->getMiddleTable())->getClassname();
+        $queryClassName = $this->getNewStubQueryBuilder($crossFKs->getMiddleTable())->getClassName();
 
         $crossPks = $crossFKs->getMiddleTable()->getPrimaryKey();
 
@@ -4598,7 +4598,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $relatedName            = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $lowerRelatedName       = lcfirst($relatedName);
         $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = false));
-        $queryClassName         = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
+        $queryClassName         = $this->getNewStubQueryBuilder($refFK->getTable())->getClassName();
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
@@ -4634,7 +4634,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $this->addCrossFKClear($script, $crossFKs);
             $this->addCrossFKInit($script, $crossFKs);
-            $this->addCrossFKisLoaded($script, $crossFKs);
+            $this->addCrossFKIsLoaded($script, $crossFKs);
             $this->addCrossFKCreateQuery($script, $crossFKs);
             $this->addCrossFKGet($script, $crossFKs);
             $this->addCrossFKSet($script, $crossFKs);
@@ -5127,7 +5127,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param  Collection \${$inputCollection} A Propel collection.
      * @param  ConnectionInterface \$con Optional connection object
-     * @return \$this|" . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName() . " The current object (for fluent API support)
      */
     public function set{$relatedNamePlural}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -5303,7 +5303,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Associate a $crossObjectClassName to this object
      * through the " . $tblFK->getName() . " cross reference table.
      * $phpDoc
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return " . $this->getObjectClassName() . " The current object (for fluent API support)
      */
     public function add{$relatedObjectClassName}($signature)
     {
@@ -5496,7 +5496,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Remove $names of this object
      * through the {$tblFK->getName()} cross reference table.
      * $phpDoc
-     * @return " . $this->getObjectClassname() . " The current object (for fluent API support)
+     * @return " . $this->getObjectClassName() . " The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($signature)
     {

@@ -324,7 +324,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             if (strtoupper($child->getClassName()) != $child->getConstantSuffix()) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $fqcn . "';
+    const CLASSKEY_".strtoupper($child->getClassName())." = '" . $fqcn . "';
 ";
             }
 

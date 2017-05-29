@@ -130,7 +130,7 @@ class VersionableBehavior extends Behavior
                 if ($columnInVersionTable->hasReferrers()) {
                     $columnInVersionTable->clearReferrers();
                 }
-                if ($columnInVersionTable->isAutoincrement()) {
+                if ($columnInVersionTable->isAutoIncrement()) {
                     $columnInVersionTable->setAutoIncrement(false);
                 }
                 $versionTable->addColumn($columnInVersionTable);

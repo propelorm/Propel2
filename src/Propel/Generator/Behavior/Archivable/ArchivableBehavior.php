@@ -87,7 +87,7 @@ class ArchivableBehavior extends Behavior
                 if ($columnInArchiveTable->hasReferrers()) {
                     $columnInArchiveTable->clearReferrers();
                 }
-                if ($columnInArchiveTable->isAutoincrement()) {
+                if ($columnInArchiveTable->isAutoIncrement()) {
                     $columnInArchiveTable->setAutoIncrement(false);
                 }
                 $archiveTable->addColumn($columnInArchiveTable);

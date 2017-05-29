@@ -70,7 +70,7 @@ class PropelDateTime extends \DateTime
     {
         $dateTime = \DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
         
-        $dateTime->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+        $dateTime->setTimezone(new \DateTimeZone(date_default_timezone_get()));
         
         return $dateTime;
     }
@@ -121,7 +121,7 @@ class PropelDateTime extends \DateTime
                 $dateTimeObject = \DateTime::createFromFormat($format, $value, new \DateTimeZone('UTC'));
                 // timezone must be explicitly specified and then changed
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
-                $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+                $dateTimeObject->setTimezone(new \DateTimeZone(date_default_timezone_get()));
             } else {
                 if (null === $timeZone) {
                     // stupid DateTime constructor signature
@@ -148,7 +148,7 @@ class PropelDateTime extends \DateTime
         // We need to use a string without a time zone, due to
         // PHP bug: http://bugs.php.net/bug.php?id=40743
         $this->dateString = $this->format('Y-m-d H:i:s');
-        $this->tzString = $this->getTimeZone()->getName();
+        $this->tzString = $this->getTimezone()->getName();
 
         return ['dateString', 'tzString'];
     }

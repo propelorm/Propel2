@@ -267,14 +267,14 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
         }
         foreach ($this->getTable()->getForeignKeys() as $fk) {
-            $this->addFilterByFK($script, $fk);
+            $this->addFilterByFk($script, $fk);
             $this->addJoinFk($script, $fk);
-            $this->addUseFKQuery($script, $fk);
+            $this->addUseFkQuery($script, $fk);
         }
         foreach ($this->getTable()->getReferrers() as $refFK) {
-            $this->addFilterByRefFK($script, $refFK);
+            $this->addFilterByRefFk($script, $refFK);
             $this->addJoinRefFk($script, $refFK);
-            $this->addUseRefFKQuery($script, $refFK);
+            $this->addUseRefFkQuery($script, $refFK);
         }
         foreach ($this->getTable()->getCrossFks() as $crossFKs) {
             $this->addFilterByCrossFK($script, $crossFKs);
