@@ -737,7 +737,8 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if ($className !== $relationName) {
-            $secondaryCriteria->setModelAlias($relationName, $relationName == $this->joins[$relationName]->getRelationMap()->getName() ? false : true);
+            $secondaryCriteria->setModelAlias($relationName, $relationName != $this->joins[$relationName]->getRelationMap()
+                                                                                                         ->getName());
         }
 
         $secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);
