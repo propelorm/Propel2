@@ -225,8 +225,7 @@ class ValidateBehavior extends Behavior
                 }
 
                 $opt = var_export($properties['options'], true);
-                $opt = str_replace("\n", '', $opt);
-                $opt = str_replace('  ', '', $opt);
+                $opt = str_replace(["\n", '  '], '', $opt);
                 $properties['options'] = $opt;
             }
 
