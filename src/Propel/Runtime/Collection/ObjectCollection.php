@@ -405,8 +405,7 @@ class ObjectCollection extends Collection
     {
         if (isset($this->data[$offset])) {
             if (is_object($this->data[$offset])) {
-                unset($this->indexSplHash[spl_object_hash($this->data[$offset])]);
-                unset($this->index[$this->getHashCode($this->data[$offset])]);
+                unset($this->indexSplHash[spl_object_hash($this->data[$offset])], $this->index[$this->getHashCode($this->data[$offset])]);
             }
             unset($this->data[$offset]);
         }
@@ -463,8 +462,7 @@ class ObjectCollection extends Collection
             $this->indexSplHash[spl_object_hash($value)] = $hashCode;
         } else {
             if (isset($this->data[$offset])) {
-                unset($this->indexSplHash[spl_object_hash($this->data[$offset])]);
-                unset($this->index[$this->getHashCode($this->data[$offset])]);
+                unset($this->indexSplHash[spl_object_hash($this->data[$offset])], $this->index[$this->getHashCode($this->data[$offset])]);
             }
 
             $this->index[$hashCode] = $offset;

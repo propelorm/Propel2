@@ -60,8 +60,7 @@ class ArrayToPhpConverter
                 if (isset($params['dsn'])) {
                     $masterConfigurationSetter = isset($params['slaves']) ? 'setWriteConfiguration' : 'setConfiguration';
                     $connection = $params;
-                    unset($connection['adapter']);
-                    unset($connection['slaves']);
+                    unset($connection['adapter'], $connection['slaves']);
                     $conf .= "
 \$manager->{$masterConfigurationSetter}(". var_export($connection, true) . ');';
                 }

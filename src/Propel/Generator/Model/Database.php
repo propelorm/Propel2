@@ -537,9 +537,7 @@ class Database extends ScopedMappingModel
                 }
             }
 
-            unset($this->tablesByName[$table->getName()]);
-            unset($this->tablesByLowercaseName[strtolower($table->getName())]);
-            unset($this->tablesByPhpName[$table->getPhpName()]);
+            unset($this->tablesByName[$table->getName()], $this->tablesByLowercaseName[strtolower($table->getName())], $this->tablesByPhpName[$table->getPhpName()]);
         }
     }
 

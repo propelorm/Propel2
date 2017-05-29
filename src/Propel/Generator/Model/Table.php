@@ -583,10 +583,7 @@ class Table extends ScopedMappingModel implements IdMethod
             throw new EngineException(sprintf('No column named %s found in table %s.', $column->getName(), $this->getName()));
         }
 
-        unset($this->columns[$pos]);
-        unset($this->columnsByName[$column->getName()]);
-        unset($this->columnsByLowercaseName[strtolower($column->getName())]);
-        unset($this->columnsByPhpName[$column->getPhpName()]);
+        unset($this->columns[$pos], $this->columnsByName[$column->getName()], $this->columnsByLowercaseName[strtolower($column->getName())], $this->columnsByPhpName[$column->getPhpName()]);
 
         $this->adjustColumnPositions();
 
