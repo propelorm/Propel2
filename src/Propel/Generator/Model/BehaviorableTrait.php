@@ -65,9 +65,10 @@ trait BehaviorableTrait
                 // the user probably just forgot to specify the "id" attribute
                 if ($behavior->getId() === $behavior->getName()) {
                     throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.', $behavior->getName()));
-                } else { // or he copy-pasted it and forgot to update it.
-                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
                 }
+
+                // or he copy-pasted it and forgot to update it.
+                throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
             }
 
             $this->registerBehavior($behavior);

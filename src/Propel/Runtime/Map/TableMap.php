@@ -678,9 +678,9 @@ class TableMap
     {
         if (':' === substr($value, 0, 1)) {
             return $table->getColumn(substr($value, 1));
-        } else {
-            return $value;
         }
+
+        return $value;
     }
 
     /**

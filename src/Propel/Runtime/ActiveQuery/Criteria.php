@@ -1589,9 +1589,9 @@ class Criteria
                 }
 
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         return false;

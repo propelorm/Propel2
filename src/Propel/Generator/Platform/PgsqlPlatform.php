@@ -669,9 +669,9 @@ DROP SEQUENCE %s CASCADE;
                 $this->quoteIdentifier($index->getTable()->getName()),
                 $this->quoteIdentifier($index->getName())
             );
-        } else {
-            return parent::getDropIndexDDL($index);
         }
+
+        return parent::getDropIndexDDL($index);
     }
 
     /**

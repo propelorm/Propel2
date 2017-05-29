@@ -124,12 +124,12 @@ class PhpParser
                             $this->knownMethodCache[$methodName] = $methodCode;
 
                             return $methodCode;
-                        } else {
-                            // If it's the closing bracket of the function, reset `$isInFunction`
-                            $isInFunction = false;
-                            $methodCode = '';
-                            $buffer = '';
                         }
+
+                        // If it's the closing bracket of the function, reset `$isInFunction`
+                        $isInFunction = false;
+                        $methodCode   = '';
+                        $buffer       = '';
                     }
                 }
             } else {

@@ -35,7 +35,9 @@ trait InstancePoolTrait
             }
 
             return (string) $pk;
-        } elseif (is_scalar($value)) {
+        }
+
+        if (is_scalar($value)) {
             // assume we've been passed a primary key
             return (string) $value;
         }

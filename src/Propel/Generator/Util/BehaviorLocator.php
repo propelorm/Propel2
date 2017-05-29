@@ -229,9 +229,9 @@ class BehaviorLocator
                         'class' => $extra['class'],
                         'package' => $package['name']
                     ];
-                } else {
-                    throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
                 }
+
+                throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
             }
         }
 

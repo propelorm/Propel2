@@ -60,12 +60,11 @@ class MssqlPropelPDO extends PropelPDO
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
-                } else {
-                    $return = $this->exec('COMMIT TRANSACTION');
-                    if ($this->useDebug) {
-                        $this->log('Commit transaction', null, __METHOD__);
-                    }
+                }
 
+                $return = $this->exec('COMMIT TRANSACTION');
+                if ($this->useDebug) {
+                    $this->log('Commit transaction', null, __METHOD__);
                 }
             }
             $this->nestedTransactionCount--;

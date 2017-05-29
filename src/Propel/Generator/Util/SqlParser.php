@@ -246,11 +246,11 @@ class SqlParser
                     // delimiter has changed so return current sql if any
                     if ($parsedString) {
                         return $parsedString;
-                    } else {
-                        // reset helper variable
-                        $lowercaseString = '';
-                        continue;
                     }
+
+                    // reset helper variable
+                    $lowercaseString = '';
+                    continue;
                 }
                 // get next characters if we have multiple characters in delimiter
                 $nextChars = '';

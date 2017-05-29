@@ -228,9 +228,9 @@ abstract class PdoAdapter
 
         if ($table) {
             return $this->quoteIdentifierTable($table) . '.' . $this->quoteIdentifier($column);
-        } else {
-            return $this->quoteIdentifier($column);
         }
+
+        return $this->quoteIdentifier($column);
     }
 
     /**

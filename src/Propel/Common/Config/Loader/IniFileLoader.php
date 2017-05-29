@@ -151,7 +151,9 @@ class IniFileLoader extends FileLoader
 
             if (!strlen($pieces[0]) || !strlen($pieces[1])) {
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
-            } elseif (!isset($config[$pieces[0]])) {
+            }
+
+            if (!isset($config[$pieces[0]])) {
                 if ($pieces[0] === '0' && !empty($config)) {
                     $config = [$pieces[0] => $config];
                 } else {

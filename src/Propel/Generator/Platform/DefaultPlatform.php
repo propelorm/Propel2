@@ -1131,9 +1131,9 @@ ALTER TABLE %s ADD
     {
         if ($con = $this->getConnection()) {
             return $con->quote($text);
-        } else {
-            return "'" . $this->disconnectedEscapeText($text) . "'";
         }
+
+        return "'" . $this->disconnectedEscapeText($text) . "'";
     }
 
     /**

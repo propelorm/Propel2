@@ -29,7 +29,9 @@ class ClassTools
     {
         if (false !== $pos = strrpos($qualifiedName, '.')) {
             return substr($qualifiedName, $pos + 1); // start just after '.'
-        } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {
+        }
+
+        if (false !== $pos = strrpos($qualifiedName, '\\')) {
             return substr($qualifiedName, $pos + 1);
         } else {
             return $qualifiedName;  // there is no '.' in the qualified name

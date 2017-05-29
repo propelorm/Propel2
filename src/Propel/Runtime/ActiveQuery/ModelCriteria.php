@@ -659,7 +659,9 @@ class ModelCriteria extends BaseModelCriteria
         $join = $this->joins[$relation];
         if (RelationMap::MANY_TO_MANY === $join->getRelationMap()->getType()) {
             throw new PropelException(__METHOD__ .' does not allow hydration for many-to-many relationships');
-        } elseif (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
+        }
+
+        if (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
             // For performance reasons, the formatters will use a special routine in this case
             $this->isWithOneToMany = true;
         }
@@ -1936,7 +1938,9 @@ class ModelCriteria extends BaseModelCriteria
             }
 
             return [$column, $realColumnName];
-        } elseif ($tableMap->hasColumn($phpName)) {
+        }
+
+        if ($tableMap->hasColumn($phpName)) {
             $column = $tableMap->getColumn($phpName);
             $realColumnName = $column->getFullyQualifiedName();
 
@@ -2038,7 +2042,9 @@ class ModelCriteria extends BaseModelCriteria
             $realColumnName = $class.'.'.$column->getName();
 
             return [$column, $realColumnName];
-        } elseif (isset($subQueryCriteria->asColumns[$phpName])) {
+        }
+
+        if (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column
             return [null, $class.'.'.$phpName];
         } elseif ($failSilently) {

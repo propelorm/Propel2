@@ -4399,11 +4399,11 @@ abstract class ' .$this->getUnqualifiedClassName().$parentClass. ' implements Ac
     {
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             return 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)) . 'ScheduledForDeletion';
-        } else {
-            $fkName = lcfirst($this->getFKPhpNameAffix($crossFKs->getCrossForeignKeys()[0], true));
-
-            return "{$fkName}ScheduledForDeletion";
         }
+
+        $fkName = lcfirst($this->getFKPhpNameAffix($crossFKs->getCrossForeignKeys()[0], true));
+
+        return "{$fkName}ScheduledForDeletion";
     }
 
     protected function addCrossFkScheduledForDeletionAttribute(&$script, ForeignKey $crossFK)

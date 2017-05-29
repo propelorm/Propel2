@@ -327,9 +327,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 //we already requested Child.$class and its in use too,
                 //so use the fqcn
                 return ($namespace ? '\\' . $namespace : '') .  '\\' . $class;
-            } else {
-                $autoAliasName = 'Child' . $class;
             }
+
+            $autoAliasName = 'Child' . $class;
 
             return $this->declareClassNamespace($class, $namespace, $autoAliasName);
         }
@@ -776,7 +776,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
             if (is_array($crossFKToIgnore) && in_array($fk, $crossFKToIgnore)) {
                 continue;
-            } else if ($fk === $crossFKToIgnore) {
+            }
+
+            if ($fk === $crossFKToIgnore) {
                 continue;
             }
 
