@@ -10,6 +10,6 @@
 
 namespace Propel\Common\Config\Exception;
 
-class IniParseException extends RuntimeException implements ExceptionInterface
+class IniParseException extends RuntimeException
 {
 }

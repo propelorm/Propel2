@@ -10,6 +10,6 @@
 
 namespace Propel\Common\Config\Exception;
 
-class InputOutputException extends RuntimeException implements ExceptionInterface
+class InputOutputException extends RuntimeException
 {
 }

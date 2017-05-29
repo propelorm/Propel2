@@ -10,7 +10,7 @@
 
 namespace Propel\Common\Config\Exception;
 
-class XmlParseException extends RuntimeException implements ExceptionInterface
+class XmlParseException extends RuntimeException
 {
     /**
      * Create an exception based on LibXMLError objects

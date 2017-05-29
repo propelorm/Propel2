@@ -16,7 +16,7 @@ namespace Propel\Generator\Exception;
  *
  * @author Hugo Hamon <webmaster@apprendre-php.com> (Propel)
  */
-class DiffException extends RuntimeException implements ExceptionInterface
+class DiffException extends RuntimeException
 {
 
 }

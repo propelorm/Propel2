@@ -13,6 +13,6 @@ namespace Propel\Runtime\Exception;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class ClassNotFoundException extends RuntimeException implements ExceptionInterface
+class ClassNotFoundException extends RuntimeException
 {
 }

@@ -22,7 +22,7 @@ use Propel\Runtime\Map\DatabaseMap;
  *
  * @author Benjamin Runnels
  */
-class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
+class SqlsrvAdapter extends MssqlAdapter
 {
     /**
      * @see parent::initConnection()
