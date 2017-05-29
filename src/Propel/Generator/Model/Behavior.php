@@ -333,7 +333,7 @@ class Behavior extends MappingModel
         $filePath = $this->getDirname() . $templateDir . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
-            $filePath = $filePath . '.php';
+            $filePath .= '.php';
             if (!file_exists($filePath)) {
                 throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
                     $filename,

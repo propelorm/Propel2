@@ -2180,8 +2180,8 @@ class ModelCriteria extends BaseModelCriteria
             if (0 === strpos($name, $method)) {
                 $columns = substr($name, strlen($method));
                 if (in_array($method, ['findBy', 'findOneBy', 'requireOneBy']) && strpos($columns, 'And') !== false) {
-                    $method = $method . 'Array';
-                    $columns = explode('And', $columns);
+                    $method     .= 'Array';
+                    $columns    = explode('And', $columns);
                     $conditions = [];
                     foreach ($columns as $column) {
                         $conditions[$column] = array_shift($arguments);

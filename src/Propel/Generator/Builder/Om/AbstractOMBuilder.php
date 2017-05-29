@@ -1000,7 +1000,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $filePath = __DIR__ . $templateDir . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
-            $filePath = $filePath . '.php';
+            $filePath .= '.php';
             if (!file_exists($filePath)) {
                 throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory', $filename, __DIR__ . $templateDir));
             }
@@ -1057,7 +1057,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         // end of line
         if (strlen($content) && "\n" != substr($content, -1)) {
-            $content = $content."\n";
+            $content .= "\n";
         }
 
         return $content;
