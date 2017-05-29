@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
@@ -89,7 +91,7 @@ class ArchivableBehaviorObjectBuilderModifier
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
      *
-     * @param $builder
+     * @param AbstractOMBuilder $builder
      *
      * @return string the PHP code to be added to the builder
      */
