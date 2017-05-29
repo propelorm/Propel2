@@ -30,11 +30,14 @@ class NestedSetBehaviorObjectBuilderModifier
     /** @var ObjectBuilder */
     protected $builder;
 
+    protected $queryClassName;
     protected $objectClassName;
+    protected $useScope;
 
     public function __construct(NestedSetBehavior $behavior)
     {
         $this->behavior = $behavior;
+        $this->useScope = $behavior->useScope();
         $this->table    = $behavior->getTable();
     }
 
@@ -53,24 +56,30 @@ class NestedSetBehaviorObjectBuilderModifier
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    protected function processBuilder(ObjectBuilder $builder)
+    {
+        $this->queryClassName  = $builder->getQueryClassName();
+        $this->objectClassName = $builder->getObjectClassName();
+    }
+
     protected function setBuilder(ObjectBuilder $builder)
     {
         $this->builder = $builder;
+        $this->processBuilder($builder);
     }
 
     public function preSave(ObjectBuilder $builder)
     {
-        $queryClassName  = $builder->getQueryClassName();
-        $objectClassName = $builder->getObjectClassName();
+        $this->processBuilder($builder);
 
         $script = "if (\$this->isNew() && \$this->isRoot()) {
     // check if no other root exist in, the tree
-    \$rootExists = $queryClassName::create()
-        ->addUsingAlias($objectClassName::LEFT_COL, 1, Criteria::EQUAL)";
+    \$rootExists = {$this->queryClassName}::create()
+        ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
 
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
-        ->addUsingAlias($objectClassName::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL)";
+        ->addUsingAlias({$this->objectClassName}::SCOPE_COL, \$this->getScopeValue(), Criteria::EQUAL)";
         }
 
         $script .= "
@@ -78,7 +87,7 @@ class NestedSetBehaviorObjectBuilderModifier
     if (\$rootExists) {
             throw new PropelException(";
 
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "sprintf('A root node already exists in this tree with scope \"%s\".', \$this->getScopeValue())";
         } else {
             $script .= "'A root node already exists in this tree. To allow multiple root nodes, add the `use_scope` parameter in the nested_set behavior tag.'";
@@ -94,10 +103,8 @@ class NestedSetBehaviorObjectBuilderModifier
 
     public function preDelete(ObjectBuilder $builder)
     {
-        $queryClassName = $builder->getQueryClassName();
-
         return "if (\$this->isRoot()) {
-    throw new PropelException('Deletion of a root node is disabled for nested sets. Use $queryClassName::deleteTree(" . ($this->behavior->useScope() ? '$scope' : '') . ") instead to delete an entire tree');
+    throw new PropelException('Deletion of a root node is disabled for nested sets. Use {$this->queryClassName}::deleteTree(" . ($this->useScope ? '$scope' : '') . ") instead to delete an entire tree');
 }
 
 if (\$this->isInTree()) {
@@ -108,11 +115,11 @@ if (\$this->isInTree()) {
 
     public function postDelete(ObjectBuilder $builder)
     {
-        $queryClassName = $builder->getQueryClassName();
+        $this->processBuilder($builder);
 
         return "if (\$this->isInTree()) {
     // fill up the room that was used by the node
-    $queryClassName::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->behavior->useScope() ? ", \$this->getScopeValue()" : "") . ", \$con);
+    {$this->queryClassName}::shiftRLValues(-2, \$this->getRightValue() + 1, null" . ($this->useScope ? ", \$this->getScopeValue()" : "") . ", \$con);
 }
 ";
     }
@@ -448,7 +455,7 @@ public function isLeaf()
  */
 public function isDescendantOf($objectClassName \$parent)
 {";
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
     if (\$this->getScopeValue() !== \$parent->getScopeValue()) {
         return false; //since the `this` and \$parent are in different scopes, there's no way that `this` is be a descendant of \$parent.
@@ -518,21 +525,18 @@ public function setParent($objectClassName \$parent = null)
 
     protected function addGetParent(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets parent node for the current object if it exists
  * The result is cached so further calls to the same method don't issue any queries
  *
  * @param  ConnectionInterface \$con Connection to use.
- * @return $objectClassName|null Propel object if exists else null
+ * @return {$this->objectClassName}|null Propel object if exists else null
  */
 public function getParent(ConnectionInterface \$con = null)
 {
     if (null === \$this->aNestedSetParent && \$this->hasParent()) {
-        \$this->aNestedSetParent = {$queryClassName}::create()
+        \$this->aNestedSetParent = {$this->queryClassName}::create()
             ->ancestorsOf(\$this)
             ->orderByLevel(true)
             ->findOne(\$con);
@@ -545,8 +549,6 @@ public function getParent(ConnectionInterface \$con = null)
 
     protected function addHasPrevSibling(&$script)
     {
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Determines if the node has previous sibling
@@ -556,13 +558,13 @@ public function getParent(ConnectionInterface \$con = null)
  */
 public function hasPrevSibling(ConnectionInterface \$con = null)
 {
-    if (!{$queryClassName}::isValid(\$this)) {
+    if (!{$this->queryClassName}::isValid(\$this)) {
         return false;
     }
 
-    return $queryClassName::create()
+    return {$this->queryClassName}::create()
         ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
         }
@@ -574,21 +576,18 @@ public function hasPrevSibling(ConnectionInterface \$con = null)
 
     protected function addGetPrevSibling(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets previous sibling for the given node if it exists
  *
  * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null         Propel object if exists else null
+ * @return     {$this->objectClassName}|null         Propel object if exists else null
  */
 public function getPrevSibling(ConnectionInterface \$con = null)
 {
-    return $queryClassName::create()
+    return {$this->queryClassName}::create()
         ->filterBy" . $this->getColumnPhpName('right_column') . "(\$this->getLeftValue() - 1)";
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
         }
@@ -600,8 +599,6 @@ public function getPrevSibling(ConnectionInterface \$con = null)
 
     protected function addHasNextSibling(&$script)
     {
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Determines if the node has next sibling
@@ -611,13 +608,13 @@ public function getPrevSibling(ConnectionInterface \$con = null)
  */
 public function hasNextSibling(ConnectionInterface \$con = null)
 {
-    if (!{$queryClassName}::isValid(\$this)) {
+    if (!{$this->queryClassName}::isValid(\$this)) {
         return false;
     }
 
-    return $queryClassName::create()
+    return {$this->queryClassName}::create()
         ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
         }
@@ -629,21 +626,18 @@ public function hasNextSibling(ConnectionInterface \$con = null)
 
     protected function addGetNextSibling(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets next sibling for the given node if it exists
  *
  * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null         Propel object if exists else null
+ * @return     {$this->objectClassName}|null         Propel object if exists else null
  */
 public function getNextSibling(ConnectionInterface \$con = null)
 {
-    return $queryClassName::create()
+    return {$this->queryClassName}::create()
         ->filterBy" . $this->getColumnPhpName('left_column') . "(\$this->getRightValue() + 1)";
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .= "
         ->inTree(\$this->getScopeValue())";
         }
@@ -691,7 +685,6 @@ public function initNestedSetChildren()
 
     protected function addNestedSetChildAdd(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
         $objectName      = '$' . $this->table->getCamelCaseName();
 
         $script .= "
@@ -700,11 +693,11 @@ public function initNestedSetChildren()
  * Beware that this doesn't insert a node in the tree.
  * This method is only used to facilitate children hydration.
  *
- * @param      $objectClassName $objectName
+ * @param      {$this->objectClassName} $objectName
  *
  * @return     void
  */
-public function addNestedSetChild($objectClassName $objectName)
+public function addNestedSetChild({$this->objectClassName} $objectName)
 {
     if (null === \$this->collNestedSetChildren) {
         \$this->initNestedSetChildren();
@@ -734,16 +727,13 @@ public function hasChildren()
 
     protected function addGetChildren(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets the children of the given node
  *
  * @param      Criteria  \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @return     ObjectCollection|{$this->objectClassName}[] List of {$this->objectClassName} objects
  */
 public function getChildren(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
@@ -752,7 +742,7 @@ public function getChildren(Criteria \$criteria = null, ConnectionInterface \$co
             // return empty collection
             \$this->initNestedSetChildren();
         } else {
-            \$collNestedSetChildren = $queryClassName::create(null, \$criteria)
+            \$collNestedSetChildren = {$this->queryClassName}::create(null, \$criteria)
                 ->childrenOf(\$this)
                 ->orderByBranch()
                 ->find(\$con);
@@ -770,8 +760,6 @@ public function getChildren(Criteria \$criteria = null, ConnectionInterface \$co
 
     protected function addCountChildren(&$script)
     {
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets number of children for the given node
@@ -786,7 +774,7 @@ public function countChildren(Criteria \$criteria = null, ConnectionInterface \$
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
             return 0;
         } else {
-            return $queryClassName::create(null, \$criteria)
+            return {$this->queryClassName}::create(null, \$criteria)
                 ->childrenOf(\$this)
                 ->count(\$con);
         }
@@ -799,22 +787,20 @@ public function countChildren(Criteria \$criteria = null, ConnectionInterface \$
 
     protected function addGetFirstChild(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
         $script .= "
 /**
  * Gets the first child of the given node
  *
  * @param      Criteria \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null First child or null if this is a leaf
+ * @return     {$this->objectClassName}|null First child or null if this is a leaf
  */
 public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return null;
     } else {
-        return $queryClassName::create(null, \$criteria)
+        return {$this->queryClassName}::create(null, \$criteria)
             ->childrenOf(\$this)
             ->orderByBranch()
             ->findOne(\$con);
@@ -825,23 +811,20 @@ public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$
 
     protected function addGetLastChild(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets the last child of the given node
  *
  * @param      Criteria \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null Last child or null if this is a leaf
+ * @return     {$this->objectClassName}|null Last child or null if this is a leaf
  */
 public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return null;
     } else {
-        return $queryClassName::create(null, \$criteria)
+        return {$this->queryClassName}::create(null, \$criteria)
             ->childrenOf(\$this)
             ->orderByBranch(true)
             ->findOne(\$con);
@@ -852,9 +835,6 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
 
     protected function addGetSiblings(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets the siblings of the given node
@@ -863,14 +843,14 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
  * @param Criteria            \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
  *
- * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @return ObjectCollection|{$this->objectClassName}[] List of {$this->objectClassName} objects
  */
 public function getSiblings(\$includeNode = false, Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$this->isRoot()) {
         return array();
     } else {
-        \$query = $queryClassName::create(null, \$criteria)
+        \$query = {$this->queryClassName}::create(null, \$criteria)
             ->childrenOf(\$this->getParent(\$con))
             ->orderByBranch();
         if (!\$includeNode) {
@@ -885,23 +865,20 @@ public function getSiblings(\$includeNode = false, Criteria \$criteria = null, C
 
     protected function addGetDescendants(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets descendants for the given node
  *
  * @param      Criteria \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @return     ObjectCollection|{{$this->objectClassName}}[] List of {$this->objectClassName} objects
  */
 public function getDescendants(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return array();
     } else {
-        return $queryClassName::create(null, \$criteria)
+        return {$this->queryClassName}::create(null, \$criteria)
             ->descendantsOf(\$this)
             ->orderByBranch()
             ->find(\$con);
@@ -912,8 +889,6 @@ public function getDescendants(Criteria \$criteria = null, ConnectionInterface \
 
     protected function addCountDescendants(&$script)
     {
-        $queryClassName = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets number of descendants for the given node
@@ -928,7 +903,7 @@ public function countDescendants(Criteria \$criteria = null, ConnectionInterface
         // save one query
         return 0;
     } else {
-        return $queryClassName::create(null, \$criteria)
+        return {$this->queryClassName}::create(null, \$criteria)
             ->descendantsOf(\$this)
             ->count(\$con);
     }
@@ -938,20 +913,17 @@ public function countDescendants(Criteria \$criteria = null, ConnectionInterface
 
     protected function addGetBranch(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets descendants for the given node, plus the current node
  *
  * @param      Criteria \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @return     ObjectCollection|{$this->objectClassName}[] List of {$this->objectClassName} objects
  */
 public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
-    return $queryClassName::create(null, \$criteria)
+    return {$this->queryClassName}::create(null, \$criteria)
         ->branchOf(\$this)
         ->orderByBranch()
         ->find(\$con);
@@ -961,9 +933,6 @@ public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con 
 
     protected function addGetAncestors(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
-
         $script .= "
 /**
  * Gets ancestors for the given node, starting with the root node
@@ -971,7 +940,7 @@ public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con 
  *
  * @param      Criteria \$criteria Criteria to filter results.
  * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @return     ObjectCollection|{$this->objectClassName}[] List of {$this->objectClassName} objects
  */
 public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
@@ -979,7 +948,7 @@ public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$c
         // save one query
         return array();
     } else {
-        return $queryClassName::create(null, \$criteria)
+        return {$this->queryClassName}::create(null, \$criteria)
             ->ancestorsOf(\$this)
             ->orderByBranch()
             ->find(\$con);
@@ -990,22 +959,20 @@ public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$c
 
     protected function addAddChild(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Inserts the given \$child node as first child of current
  * The modifications in the current object and the tree
  * are not persisted until the child object is saved.
  *
- * @param      $objectClassName \$child    Propel object for child node
+ * @param      {$this->objectClassName} \$child    Propel object for child node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function addChild($objectClassName \$child)
+public function addChild({$this->objectClassName} \$child)
 {
     if (\$this->isNew()) {
-        throw new PropelException('A $objectClassName object must not be new to accept children.');
+        throw new PropelException('A {$this->objectClassName} object must not be new to accept children.');
     }
     \$child->insertAsFirstChildOf(\$this);
 
@@ -1016,9 +983,7 @@ public function addChild($objectClassName \$child)
 
     protected function addInsertAsFirstChildOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
         $queryClassName  = $this->builder->getQueryClassName(true);
-        $useScope        = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -1026,14 +991,14 @@ public function addChild($objectClassName \$child)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$parent    Propel object for parent node
+ * @param      {$this->objectClassName} \$parent    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function insertAsFirstChildOf($objectClassName \$parent)
+public function insertAsFirstChildOf({$this->objectClassName} \$parent)
 {
     if (\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must not already be in the tree to be inserted. Use the moveToFirstChildOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must not already be in the tree to be inserted. Use the moveToFirstChildOf() instead.');
     }
     \$left = \$parent->getLeftValue() + 1;
     // Update node properties
@@ -1041,7 +1006,7 @@ public function insertAsFirstChildOf($objectClassName \$parent)
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$parent->getLevel() + 1);";
 
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
     \$scope = \$parent->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1054,7 +1019,7 @@ public function insertAsFirstChildOf($objectClassName \$parent)
     // Keep the tree modification query for the save() transaction
     \$this->nestedSetQueries[] = array(
         'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
-        'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
+        'arguments' => array(\$left" . ($this->useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
 
     return \$this;
@@ -1065,17 +1030,15 @@ public function insertAsFirstChildOf($objectClassName \$parent)
     protected function addInsertAsLastChildOf()
     {
         return $this->behavior->renderTemplate('objectInsertAsLastChildOf', [
-            'objectClassName' => $this->builder->getObjectClassName(),
+            'objectClassName' => $this->objectClassName,
             'queryClassName'  => $this->builder->getQueryClassName(true),
-            'useScope'        => $this->behavior->useScope(),
+            'useScope'        => $this->useScope,
         ]);
     }
 
     protected function addInsertAsPrevSiblingOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
         $queryClassName  = $this->builder->getQueryClassName(true);
-        $useScope        = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -1083,21 +1046,21 @@ public function insertAsFirstChildOf($objectClassName \$parent)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$sibling    Propel object for parent node
+ * @param      {$this->objectClassName} \$sibling    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function insertAsPrevSiblingOf($objectClassName \$sibling)
+public function insertAsPrevSiblingOf({$this->objectClassName} \$sibling)
 {
     if (\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
+        throw new PropelException('A ({$this->objectClassName} object must not already be in the tree to be inserted. Use the moveToPrevSiblingOf() instead.');
     }
     \$left = \$sibling->getLeftValue();
     // Update node properties
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$sibling->getLevel());";
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
     \$scope = \$sibling->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1106,7 +1069,7 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
     // Keep the tree modification query for the save() transaction
     \$this->nestedSetQueries []= array(
         'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
-        'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
+        'arguments' => array(\$left" . ($this->useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
 
     return \$this;
@@ -1116,9 +1079,7 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
 
     protected function addInsertAsNextSiblingOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
         $queryClassName  = $this->builder->getQueryClassName(true);
-        $useScope        = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -1126,21 +1087,21 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$sibling    Propel object for parent node
+ * @param      {$this->objectClassName} \$sibling    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function insertAsNextSiblingOf($objectClassName \$sibling)
+public function insertAsNextSiblingOf({$this->objectClassName} \$sibling)
 {
     if (\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must not already be in the tree to be inserted. Use the moveToNextSiblingOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must not already be in the tree to be inserted. Use the moveToNextSiblingOf() instead.');
     }
     \$left = \$sibling->getRightValue() + 1;
     // Update node properties
     \$this->setLeftValue(\$left);
     \$this->setRightValue(\$left + 1);
     \$this->setLevel(\$sibling->getLevel());";
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
     \$scope = \$sibling->getScopeValue();
     \$this->setScopeValue(\$scope);";
@@ -1149,7 +1110,7 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
     // Keep the tree modification query for the save() transaction
     \$this->nestedSetQueries []= array(
         'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
-        'arguments' => array(\$left" . ($useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
+        'arguments' => array(\$left" . ($this->useScope ? ", \$scope" : "") . ", \$this->isNew() ? null : \$this)
     );
 
     return \$this;
@@ -1159,21 +1120,20 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
 
     protected function addMoveToFirstChildOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
         $script .= "
 /**
  * Moves current node and its subtree to be the first child of \$parent
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$parent    Propel object for parent node
+ * @param      {$this->objectClassName} \$parent    Propel object for parent node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterface \$con = null)
+public function moveToFirstChildOf({$this->objectClassName} \$parent, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
     }";
 
         $script .= "
@@ -1181,7 +1141,7 @@ public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterfac
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$parent->getLevel() - \$this->getLevel() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+    \$this->moveSubtreeTo(\$parent->getLeftValue() + 1, \$parent->getLevel() - \$this->getLevel() + 1" . ($this->useScope ? ", \$parent->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1190,22 +1150,20 @@ public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterfac
 
     protected function addMoveToLastChildOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Moves current node and its subtree to be the last child of \$parent
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$parent    Propel object for parent node
+ * @param      {$this->objectClassName} \$parent    Propel object for parent node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface \$con = null)
+public function moveToLastChildOf({$this->objectClassName} \$parent, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
     }";
 
         $script .= "
@@ -1213,7 +1171,7 @@ public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface
         throw new PropelException('Cannot move a node as child of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$parent->getRightValue(), \$parent->getLevel() - \$this->getLevel() + 1" . ($this->behavior->useScope() ? ", \$parent->getScopeValue()" : "") . ", \$con);
+    \$this->moveSubtreeTo(\$parent->getRightValue(), \$parent->getLevel() - \$this->getLevel() + 1" . ($this->useScope ? ", \$parent->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1222,22 +1180,20 @@ public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface
 
     protected function addMoveToPrevSiblingOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Moves current node and its subtree to be the previous sibling of \$sibling
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$sibling    Propel object for sibling node
+ * @param      {$this->objectClassName} \$sibling    Propel object for sibling node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterface \$con = null)
+public function moveToPrevSiblingOf({$this->objectClassName} \$sibling, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
     }
     if (\$sibling->isRoot()) {
         throw new PropelException('Cannot move to previous sibling of a root node.');
@@ -1248,7 +1204,7 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterf
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$sibling->getLeftValue(), \$sibling->getLevel() - \$this->getLevel()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
+    \$this->moveSubtreeTo(\$sibling->getLeftValue(), \$sibling->getLevel() - \$this->getLevel()" . ($this->useScope ? ", \$sibling->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1257,22 +1213,20 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterf
 
     protected function addMoveToNextSiblingOf(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Moves current node and its subtree to be the next sibling of \$sibling
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$sibling    Propel object for sibling node
+ * @param      {$this->objectClassName} \$sibling    Propel object for sibling node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this|{$this->objectClassName} The current Propel object
  */
-public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterface \$con = null)
+public function moveToNextSiblingOf({$this->objectClassName} \$sibling, ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
-        throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
+        throw new PropelException('A {$this->objectClassName} object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
     }
     if (\$sibling->isRoot()) {
         throw new PropelException('Cannot move to next sibling of a root node.');
@@ -1283,7 +1237,7 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
         throw new PropelException('Cannot move a node as sibling of one of its subtree nodes.');
     }
 
-    \$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$sibling->getLevel() - \$this->getLevel()" . ($this->behavior->useScope() ? ", \$sibling->getScopeValue()" : "") . ", \$con);
+    \$this->moveSubtreeTo(\$sibling->getRightValue() + 1, \$sibling->getLevel() - \$this->getLevel()" . ($this->useScope ? ", \$sibling->getScopeValue()" : "") . ", \$con);
 
     return \$this;
 }
@@ -1292,9 +1246,7 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
 
     protected function addMoveSubtreeTo(&$script)
     {
-        $queryClassName = $this->builder->getQueryClassName();
         $tableMapClass  = $this->builder->getTableMapClass();
-        $useScope       = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -1304,12 +1256,12 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
  * @param      int    \$levelDelta Delta to add to the levels
  * @param      ConnectionInterface \$con        Connection to use.
  */
-protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ", \$targetScope = null" : "") . ", ConnectionInterface \$con = null)
+protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->useScope ? ", \$targetScope = null" : "") . ", ConnectionInterface \$con = null)
 {
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
 
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
     \$scope = \$this->getScopeValue();
 
@@ -1326,28 +1278,28 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClass::DATABASE_NAME);
     }
 
-    \$con->transaction(function () use (\$con, \$treeSize, \$destLeft, \$left, \$right, \$levelDelta" . ($useScope ? ", \$scope, \$targetScope" : "") . ") {
+    \$con->transaction(function () use (\$con, \$treeSize, \$destLeft, \$left, \$right, \$levelDelta" . ($this->useScope ? ", \$scope, \$targetScope" : "") . ") {
         \$preventDefault = false;
 
         // make room next to the target for the subtree
-        $queryClassName::shiftRLValues(\$treeSize, \$destLeft, null" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+        {$this->queryClassName}::shiftRLValues(\$treeSize, \$destLeft, null" . ($this->useScope ? ", \$targetScope" : "") . ", \$con);
 ";
 
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
         if (\$targetScope != \$scope) {
 
             //move subtree to < 0, so the items are out of scope.
-            $queryClassName::shiftRLValues(-\$right, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+            {$this->queryClassName}::shiftRLValues(-\$right, \$left, \$right" . ($this->useScope ? ", \$scope" : "") . ", \$con);
 
             //update scopes
-            $queryClassName::setNegativeScope(\$targetScope, \$con);
+            {$this->queryClassName}::setNegativeScope(\$targetScope, \$con);
 
             //update levels
-            $queryClassName::shiftLevel(\$levelDelta, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+            {$this->queryClassName}::shiftLevel(\$levelDelta, \$left - \$right, 0" . ($this->useScope ? ", \$targetScope" : "") . ", \$con);
 
             //move the subtree to the target
-            $queryClassName::shiftRLValues((\$right - \$left) + \$destLeft, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+            {$this->queryClassName}::shiftRLValues((\$right - \$left) + \$destLeft, \$left - \$right, 0" . ($this->useScope ? ", \$targetScope" : "") . ", \$con);
 
 
             \$preventDefault = true;
@@ -1365,20 +1317,20 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
 
             if (\$levelDelta) {
                 // update the levels of the subtree
-                $queryClassName::shiftLevel(\$levelDelta, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+                {$this->queryClassName}::shiftLevel(\$levelDelta, \$left, \$right" . ($this->useScope ? ", \$scope" : "") . ", \$con);
             }
 
             // move the subtree to the target
-            $queryClassName::shiftRLValues(\$destLeft - \$left, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+            {$this->queryClassName}::shiftRLValues(\$destLeft - \$left, \$left, \$right" . ($this->useScope ? ", \$scope" : "") . ", \$con);
         }
 ";
 
         $script .= "
         // remove the empty room at the previous location of the subtree
-        $queryClassName::shiftRLValues(-\$treeSize, \$right + 1, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+        {$this->queryClassName}::shiftRLValues(-\$treeSize, \$right + 1, null" . ($this->useScope ? ", \$scope" : "") . ", \$con);
 
         // update all loaded nodes
-        $queryClassName::updateLoadedNodes(null, \$con);
+        {$this->queryClassName}::updateLoadedNodes(null, \$con);
     });
 }
 ";
@@ -1386,16 +1338,13 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
 
     protected function addDeleteDescendants(&$script)
     {
-        $objectClassName = $this->builder->getObjectClassName();
-        $queryClassName  = $this->builder->getQueryClassName();
         $tableMapClass   = $this->builder->getTableMapClass();
-        $useScope        = $this->behavior->useScope();
 
         $script .= "
 /**
  * Deletes all descendants for the given node
  * Instance pooling is wiped out by this command,
- * so existing $objectClassName instances are probably invalid (except for the current one)
+ * so existing {$this->objectClassName} instances are probably invalid (except for the current one)
  *
  * @param      ConnectionInterface \$con Connection to use.
  *
@@ -1412,20 +1361,20 @@ public function deleteDescendants(ConnectionInterface \$con = null)
     }
     \$left = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
-        if ($useScope) {
+        if ($this->useScope) {
             $script .= "
     \$scope = \$this->getScopeValue();";
         }
         $script .= "
 
-    return \$con->transaction(function () use (\$con, \$left, \$right" . ($useScope ? ", \$scope" : "") . ") {
+    return \$con->transaction(function () use (\$con, \$left, \$right" . ($this->useScope ? ", \$scope" : "") . ") {
         // delete descendant nodes (will empty the instance pool)
-        \$ret = $queryClassName::create()
+        \$ret = {$this->queryClassName}::create()
             ->descendantsOf(\$this)
             ->delete(\$con);
 
         // fill up the room that was used by descendants
-        $queryClassName::shiftRLValues(\$left - \$right + 1, \$right, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+        {$this->queryClassName}::shiftRLValues(\$left - \$right + 1, \$right, null" . ($this->useScope ? ", \$scope" : "") . ", \$con);
 
         // fix the right value for the current node, which is now a leaf
         \$this->setRightValue(\$left + 1);
@@ -1438,8 +1387,8 @@ public function deleteDescendants(ConnectionInterface \$con = null)
 
     public function objectAttributes(ObjectBuilder $builder)
     {
+        $this->processBuilder($builder);
         $tableName = $this->table->getName();
-        $objectClassName = $builder->getObjectClassName();
 
         $script = "
 /**
@@ -1456,7 +1405,7 @@ protected \$collNestedSetChildren = null;
 
 /**
  * Internal cache for parent node
- * @var        null|$objectClassName
+ * @var        null|{$this->objectClassName}
  */
 protected \$aNestedSetParent = null;
 
@@ -1476,7 +1425,7 @@ const RIGHT_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('ri
 const LEVEL_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('level_column') . "';
 ";
 
-        if ($this->behavior->useScope()) {
+        if ($this->useScope) {
             $script .=     "
 /**
  * Scope column for the set
