@@ -74,8 +74,11 @@ class OracleSchemaParser extends AbstractSchemaParser
 
     /**
      * Searches for tables in the database. Maybe we want to search also the views.
+     *
      * @param Database $database The Database model class to add tables to.
      * @param Table[]  $additionalTables
+     *
+     * @return int
      */
     public function parse(Database $database, array $additionalTables = [])
     {

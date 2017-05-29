@@ -487,6 +487,8 @@ class ObjectCollection extends Collection
      * Returns the result of $object->hashCode() if available or uses spl_object_hash($object).
      *
      * @param mixed $object
+     *
+     * @return string
      */
     protected function getHashCode($object)
     {

@@ -700,7 +700,10 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds the findPk method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     *
+     * @return string
      */
     protected function addFindPkComplex(&$script)
     {
@@ -737,7 +740,10 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds the findPks method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     *
+     * @return string
      */
     protected function addFindPks(&$script)
     {
@@ -796,7 +802,10 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds the filterByPrimaryKey method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     *
+     * @return string
      */
     protected function addFilterByPrimaryKey(&$script)
     {
@@ -850,7 +859,10 @@ abstract class ".$this->getUnqualifiedClassName(). ' extends ' . $parentClass . 
 
     /**
      * Adds the filterByPrimaryKey method for this object.
+     *
      * @param string &$script The script will be modified in this method.
+     *
+     * @return string
      */
     protected function addFilterByPrimaryKeys(&$script)
     {

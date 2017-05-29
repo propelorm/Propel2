@@ -37,7 +37,9 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * Sets a new fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH). Returns previous fetch style.
+     *
      * @var integer
+     * @return int
      */
     public function setStyle($style) {
         $old_style = $this->style;
@@ -47,7 +49,9 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * Returns current fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH).
+     *
      * @var integer
+     * @return int
      */
     public function getStyle() {
         return $this->style;

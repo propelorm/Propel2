@@ -184,6 +184,8 @@ class BehaviorLocator
      * Finds all behaviors by parsing composer.lock file
      *
      * @param SplFileInfo $composerLock
+     *
+     * @return array
      */
     private function loadBehaviors($composerLock)
     {

@@ -131,6 +131,8 @@ class SqlManager extends AbstractManager
 
     /**
      * @param string $datasource A datasource name.
+     *
+     * @return bool
      */
     public function insertSql($datasource = null)
     {

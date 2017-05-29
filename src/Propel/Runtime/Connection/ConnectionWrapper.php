@@ -327,8 +327,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g.
+     *                          'PDO::ATTR_CASE')
      * @param mixed  $value
+     *
+     * @return bool|void
      */
     public function setAttribute($attribute, $value)
     {

@@ -42,6 +42,8 @@ class NameFactory
      *
      * @param string $name The fully qualified class name of the name
      *                     generation algorithm to retrieve.
+     *
+     * @return mixed
      */
     protected static function getAlgorithm($name)
     {

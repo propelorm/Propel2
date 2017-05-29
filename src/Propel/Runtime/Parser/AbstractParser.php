@@ -78,6 +78,8 @@ abstract class AbstractParser
      *
      * @param string $data The file content
      * @param string $path Path of the file to create
+     *
+     * @return bool|int
      */
     public function dump($data, $path = null)
     {

@@ -254,6 +254,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * Explain Plan compute query getter
      *
      * @param string $query query to explain
+     *
+     * @return string
      */
     public function getExplainPlanQuery($query)
     {

@@ -61,6 +61,8 @@ abstract class FileLoader extends BaseFileLoader
      * Replaces parameter placeholders (%name%) by their values for all parameters.
      *
      * @param array $configuration The configuration array to resolve
+     *
+     * @return array|void
      */
     public function resolveParams(array $configuration)
     {
@@ -104,8 +106,10 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Check if a resource has a given extension
      *
-     * @param $ext mixed  An extension or an arrayof extensions
+     * @param $ext       mixed  An extension or an arrayof extensions
      * @param $resource  string A resource
+     *
+     * @return bool
      */
     protected function checkSupports($ext, $resource)
     {

@@ -307,7 +307,9 @@ class TableDiff
      *
      * @param string $columnName
      *
-     * @param Column
+     * @param        Column
+     *
+     * @return mixed
      */
     public function getRemovedColumn($columnName)
     {
