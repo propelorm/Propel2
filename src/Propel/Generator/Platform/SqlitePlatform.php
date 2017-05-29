@@ -203,7 +203,7 @@ DROP TABLE %s;
         $newTable        = clone $tableDiff->getToTable();
 
         $originTableName = $originTable->getName();
-        $tempTableName   = $newTable->getCommonName().'__temp__'.uniqid('', true);
+        $tempTableName   = $newTable->getCommonName().'__temp__'.uniqid();
 
         $originTableFields = $this->getColumnListDDL($originTable->getColumns());
 
