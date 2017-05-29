@@ -130,7 +130,7 @@ class PDODataFetcher extends AbstractDataFetcher
     {
         if ($this->dataObject && 'sqlite' === $this->dataObject->getConnection()->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
             $lastQuery = $this->dataObject->getStatement()->queryString;
-            if ('SELECT ' === substr(trim(strtoupper($lastQuery)), 0, 7)) {
+            if ('SELECT ' === substr(strtoupper(trim($lastQuery)), 0, 7)) {
                 // SQLITE does not support rowCount() in 3.x on SELECTs anymore
                 // so emulate it
                 if (null === $this->cachedCount) {

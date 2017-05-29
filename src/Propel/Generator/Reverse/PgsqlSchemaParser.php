@@ -295,7 +295,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $size = null;
             }
 
-            if ('SERIAL' === substr(strtoupper($type), 0, 6)) {
+            if ('SERIAL' === strtoupper(substr($type, 0, 6))) {
                 $autoincrement = true;
                 $default = null;
             }
