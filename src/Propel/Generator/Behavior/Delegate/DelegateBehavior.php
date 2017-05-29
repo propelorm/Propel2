@@ -215,11 +215,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
             $fks[] = $fk->getForeignColumnName();
         }
 
-        if (in_array($column->getName(), $fks) || $table->hasColumn($column->getName())) {
-            return true;
-        }
-
-        return false;
+        return in_array($column->getName(), $fks) || $table->hasColumn($column->getName());
     }
 
     public function queryAttributes()
