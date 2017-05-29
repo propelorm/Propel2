@@ -13,8 +13,8 @@ namespace Propel\Common\Config;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 use Propel\Common\Config\Loader\DelegatingLoader;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class ConfigurationManager

@@ -10,12 +10,12 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Runtime\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>

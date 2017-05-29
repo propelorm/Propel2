@@ -11,15 +11,15 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a list of Propel objects

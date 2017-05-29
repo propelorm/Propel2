@@ -10,13 +10,10 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Common\Config\ConfigurationManager;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>

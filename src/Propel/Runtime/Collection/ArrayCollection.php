@@ -12,8 +12,8 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Class for iterating over a list of Propel objects stored as arrays

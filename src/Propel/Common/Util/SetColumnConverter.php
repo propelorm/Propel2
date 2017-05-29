@@ -11,7 +11,6 @@
 namespace Propel\Common\Util;
 use Propel\Common\Exception\SetColumnConverterException;
 
-
 /**
  * Class converts SET column values between integer and string/array representation.
  *

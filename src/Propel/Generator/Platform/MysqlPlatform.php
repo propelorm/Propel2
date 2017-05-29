@@ -14,14 +14,14 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\ColumnDiff;
+use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\DatabaseDiff;
 
 /**
  * MySql PlatformInterface implementation.

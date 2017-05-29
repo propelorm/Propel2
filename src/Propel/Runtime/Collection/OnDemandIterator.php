@@ -12,10 +12,10 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Formatter\ObjectFormatter;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Formatter\ObjectFormatter;
+use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time

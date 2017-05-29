@@ -10,11 +10,11 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Propel;
 
 /**
  * This is an "inner" class that describes an object in the criteria.

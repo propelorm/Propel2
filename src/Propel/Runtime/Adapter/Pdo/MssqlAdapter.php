@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\SqlAdapterInterface;
-use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
+use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is used to connect to a MSSQL database.

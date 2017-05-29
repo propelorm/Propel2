@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Manager;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * This manager creates the Object Model classes based on the XML schema file.

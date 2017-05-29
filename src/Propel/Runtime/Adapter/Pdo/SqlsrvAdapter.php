@@ -10,10 +10,9 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\SqlAdapterInterface;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 

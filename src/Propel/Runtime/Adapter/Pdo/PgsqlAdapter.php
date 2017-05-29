@@ -11,13 +11,13 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDOStatement;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is used to connect to PostgreSQL databases.

@@ -11,16 +11,16 @@
 namespace Propel\Generator\Command;
 
 use Propel\Common\Config\ConfigurationManager;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Schema;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\Output;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>

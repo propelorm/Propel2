@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Util;
 
-use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
 
 /**

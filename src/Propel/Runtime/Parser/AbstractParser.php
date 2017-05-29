@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Parser;
 
-use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Exception\FileNotFoundException;
 
 /**

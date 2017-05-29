@@ -11,7 +11,6 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\ForeignKey;
-
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 

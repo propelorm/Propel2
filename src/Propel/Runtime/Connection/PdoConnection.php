@@ -10,8 +10,8 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.

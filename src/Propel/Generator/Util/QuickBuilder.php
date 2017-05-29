@@ -21,9 +21,9 @@ use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
-use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
 
 class QuickBuilder

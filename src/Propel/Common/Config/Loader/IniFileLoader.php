@@ -10,8 +10,8 @@
 
 namespace Propel\Common\Config\Loader;
 
-use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\IniParseException;
+use Propel\Common\Config\Exception\InvalidArgumentException;
 
 /**
  * IniFileLoader loads parameters from INI files.

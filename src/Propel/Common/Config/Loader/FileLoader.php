@@ -14,8 +14,8 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\FileLocator;
-use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 
 /**
  * Abstract class used by all file-based loaders.

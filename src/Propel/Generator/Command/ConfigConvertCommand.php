@@ -11,10 +11,10 @@
 namespace Propel\Generator\Command;
 
 use Propel\Common\Config\ConfigurationManager;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Propel\Generator\Config\ArrayToPhpConverter;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigConvertCommand extends AbstractCommand
 {

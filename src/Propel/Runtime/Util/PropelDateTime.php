@@ -10,7 +10,7 @@
 
 namespace Propel\Runtime\Util;
 
-use \DateTimeZone;
+use DateTimeZone;
 use Propel\Runtime\Exception\PropelException;
 
 /**

@@ -15,8 +15,8 @@ use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Generator\Util\BehaviorLocator;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 interface GeneratorConfigInterface
 {

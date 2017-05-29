@@ -1,12 +1,12 @@
 <?php
 namespace Propel\Generator\Util;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
+use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\BehaviorNotFoundException;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\PhpNameGenerator;
-use Propel\Generator\Exception\BehaviorNotFoundException;
-use Propel\Generator\Config\GeneratorConfigInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Service class to find composer and installed packages

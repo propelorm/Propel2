@@ -11,8 +11,8 @@
 namespace Propel\Generator\Manager;
 
 use Propel\Generator\Exception\BuildException;
-use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Schema\Dumper\DumperInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 

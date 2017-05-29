@@ -10,10 +10,10 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * TableMap is used to model a table in a database.

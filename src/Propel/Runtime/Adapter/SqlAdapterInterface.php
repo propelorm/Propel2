@@ -10,9 +10,9 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Interface for adapters.

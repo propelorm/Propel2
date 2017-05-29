@@ -10,9 +10,9 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * ColumnMap is used to model a column of a table in a database.

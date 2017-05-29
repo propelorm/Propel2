@@ -10,9 +10,6 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-
 /**
  * RelationMap is used to model a database relationship.
  *

@@ -18,12 +18,11 @@ use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Generator\Util\BehaviorLocator;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Generator\Util\BehaviorLocator;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for

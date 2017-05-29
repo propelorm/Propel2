@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelWith;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
 
 /**
  * Abstract class for query formatter

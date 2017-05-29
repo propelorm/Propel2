@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Oracle adapter.

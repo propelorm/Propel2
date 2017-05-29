@@ -10,10 +10,9 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
+use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
-
-use \PDO;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 
 /**
  * Specialized Criterion used for custom expressions with a typed binding, e.g. 'foobar = ?'

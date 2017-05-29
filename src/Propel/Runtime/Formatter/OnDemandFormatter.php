@@ -10,12 +10,11 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\OnDemandCollection;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Object formatter for Propel query

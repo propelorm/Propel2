@@ -10,20 +10,20 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
-use Propel\Runtime\Adapter\Pdo\PdoAdapter;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
+use Propel\Runtime\Adapter\Pdo\PdoAdapter;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\PropelConditionalProxy;
 
 /**
  * This is a utility class for holding criteria information for a query.

@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**

@@ -10,11 +10,11 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Psr\Log\LoggerInterface;
+use Propel\Runtime\Propel;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
