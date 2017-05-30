@@ -842,7 +842,7 @@ class Database extends ScopedMappingModel
             foreach ($table->getColumns() as $column) {
 
                 $columns[] = sprintf("      %s %s %s %s %s %s %s",
-                    $column->getName(),
+                    $column->getName(), 
                     $column->getType(),
                     $column->getSize() ? '(' . $column->getSize() . ')' : '',
                     $column->isPrimaryKey() ? 'PK' : '',
