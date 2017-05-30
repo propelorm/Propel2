@@ -849,7 +849,7 @@ class Database extends ScopedMappingModel
                     $column->isPrimaryKey() ? 'PK' : '',
                     $column->isNotNull() ? 'NOT NULL' : '',
                     $column->getDefaultValueString() ? "'".$column->getDefaultValueString()."'" : '',
-                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : ''
+                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '' 
                 );
             }
 
