@@ -159,9 +159,9 @@ ALTER TABLE %s ADD %s;
 
                     //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
-                    || in_array(
+                    || false !== array_search(
                         $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
-                    || trim($column->getDefaultValue())[0] == '('
+                    || substr(trim($column->getDefaultValue()), 0, 1) == '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
                     || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
