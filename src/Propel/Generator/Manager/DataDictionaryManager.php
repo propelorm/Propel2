@@ -33,7 +33,7 @@ class DataDictionaryManager extends AbstractManager
         foreach ($this->getDatabases() as $database) {
             $MdSyntax = "# Data Dictionary for " .  $database->getName() ."\n";
             $this->log("db: " . $database->getName());
-            $MdSyntax = "# Table of Contents <a name=\"TOC\"></a>\n";
+            $MdSyntax = "<a name=\"TOC\"></a>\n# Table of Contents\n";
             
             $tableCount=1;
             
@@ -52,7 +52,7 @@ class DataDictionaryManager extends AbstractManager
             foreach ($tables as $tbl) {
                 $this->log("\t+ " . $tbl->getName());
                 
-                $MdSyntax .= "## Table: " . $tbl->getName() . "<a name=\"".$this->getAnchorName($tbl->getName())."\"></a>\n";
+                $MdSyntax .= "<a name=\"".$this->getAnchorName($tbl->getName())."\"></a>\n## Table: " . $tbl->getName() . "\n";
                 $MdSyntax .= "[Table of Contents](#TOC)\n\n";
                 
                 if ($tbl->getDescription())
