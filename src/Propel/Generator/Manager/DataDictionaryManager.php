@@ -70,10 +70,11 @@ class DataDictionaryManager extends AbstractManager
                     $columnRow[0] = $col->getName();
                     $columnRow[1] = $col->getPhpName();
                     if (count($col->getForeignKeys()) > 0) {
-                       foreach ($col->getForeignKeys() as $fk)
-                       {
-                         $columnRow[2] .= '[FK] [' . $fk->getForeignTableName() .'](#'.$this->getAnchorName($fk->getForeignTableName()).')';
-                       }
+                      $columnRow[2] = '';
+                      foreach ($col->getForeignKeys() as $fk)
+                      {
+                        $columnRow[2] .= '[FK] [' . $fk->getForeignTableName() .'](#'.$this->getAnchorName($fk->getForeignTableName()).')';
+                      }
                       
                     } elseif ($col->isPrimaryKey()) {
                        $columnRow[2] =  ' [PK]';
