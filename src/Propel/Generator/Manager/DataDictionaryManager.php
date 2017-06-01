@@ -89,49 +89,6 @@ class DataDictionaryManager extends AbstractManager
                     
                     $MdSyntax .= "|".join("|",$columnRow)."|\n";
                 }
-                
-                /*
-                    if (count($col->getForeignKeys()) > 0) {
-                        $dotSyntax .= ' [FK]';
-                    } elseif ($col->isPrimaryKey()) {
-                        $dotSyntax .= ' [PK]';
-                    }
-                    $dotSyntax .= '\l';
-                }
-                $dotSyntax .= '}", shape=record];';
-                $dotSyntax .= "\n";
-
-     
-            }
-
-            // print the relations
-            $count = 0;
-            $dotSyntax .= "\n";
-            foreach ($database->getTables() as $tbl) {
-                foreach ($tbl->getForeignKeys() as $fk) {
-                    $dotSyntax .= 'node'.$tbl->getName();
-                    $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
-                    $label = [];
-                    foreach ($fk->getMapping() as $map) {
-                        list ($localColumn, $foreignValueOrColumn) = $map;
-                        $labelString = $localColumn->getName().'=';
-                        if ($foreignValueOrColumn instanceof Column) {
-                            $labelString .= $foreignValueOrColumn->getName();
-                        } else {
-                            $labelString .= var_export($foreignValueOrColumn, true);
-                        }
-
-                        $label[] = $labelString;
-                    }
-                    $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
-                    $dotSyntax .= "\n";
-                }
-
-                $count++;
-            }
-
-            $dotSyntax .= "}\n";*/
-                
             }
 
             $this->writeMd($MdSyntax, $database->getName());
