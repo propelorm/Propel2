@@ -19,8 +19,13 @@ use Propel\Generator\Model\Column;
  */
 class DataDictionaryManager extends AbstractManager
 {
-    private $dictionaryColumns = ["Column Name","PHP Name", "Primary Key","Format","Length","Description"];
-  
+    private $dictionaryColumns = ["Column Name","PHP Name", "PK/FK","Format","Length","Description"];
+    
+    private function getAnchorName($name)
+    {
+      return preg_replace('/[^A-Z|a-z]/','-',$name);
+    }
+    
     public function build()
     {
         $count = 0;
@@ -39,7 +44,7 @@ class DataDictionaryManager extends AbstractManager
             });
             
             foreach ($tables as $tbl) {
-                $MdSyntax .= $tableCount.". [" . $tbl->getName() . "](#". preg_replace('/[^A-Z|a-z]/','-',$tbl->getName()) .")\n";
+                $MdSyntax .= $tableCount.". [" . $tbl->getName() . "](#". $this->getAnchorName($tbl->getName()) .")\n";
                 $tableCount ++;
             }
 
@@ -47,7 +52,7 @@ class DataDictionaryManager extends AbstractManager
             foreach ($tables as $tbl) {
                 $this->log("\t+ " . $tbl->getName());
                 
-                $MdSyntax .= "## Table: " . $tbl->getName() . "<a name=\"".preg_replace('/[^A-Z|a-z]/','-',$tbl->getName())."\"></a>\n";
+                $MdSyntax .= "## Table: " . $tbl->getName() . "<a name=\"".$this->getAnchorName($tbl->getName())."\"></a>\n";
                 $MdSyntax .= "[Table of Contents](#TOC)\n\n";
                 
                 if ($tbl->getDescription())
@@ -64,7 +69,20 @@ class DataDictionaryManager extends AbstractManager
                     $columnRow = [];
                     $columnRow[0] = $col->getName();
                     $columnRow[1] = $col->getPhpName();
-                    $columnRow[2] = ($col->isPrimaryKey() ? "YES":"NO");
+                    if (count($col->getForeignKeys()) > 0) {
+                       foreach ($col->getForeignKeys() as $fk)
+                       {
+                         $columnRow[2] .= '[FK] [' . $fk->getForeignTableName() .'](#'.$this->getAnchorName($fk->getForeignTableName()).')';
+                       }
+                      
+                    } elseif ($col->isPrimaryKey()) {
+                       $columnRow[2] =  ' [PK]';
+                    }
+                    else
+                    {
+                      $columnRow[2] = "";
+                    }
+                      
                     $columnRow[3] = $col->getType();
                     $columnRow[4] = $col->getSize();
                     $columnRow[5] = $col->getDescription();
