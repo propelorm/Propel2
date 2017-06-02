@@ -3135,38 +3135,40 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
             }
         }
-
-        $script .= "
+        $deep = '';
+        $deepStart = "
         if (\$deep) {  // also de-associate any related objects?
 ";
 
         foreach ($table->getForeignKeys() as $fk) {
             $varName = $this->getFKVarName($fk);
-            $script .= "
+            $deep .= "
             \$this->".$varName." = null;";
         }
 
         foreach ($table->getReferrers() as $refFK) {
             if ($refFK->isLocalPrimaryKey()) {
-                $script .= "
+                $deep .= "
             \$this->".$this->getPKRefFKVarName($refFK)." = null;
 ";
             } else {
-                $script .= "
+                $deep .= "
             \$this->".$this->getRefFKCollVarName($refFK)." = null;
 ";
             }
         }
 
         foreach ($table->getCrossFks() as $crossFKs) {
-            $script .= "
+            $deep .= "
             \$this->" . $this->getCrossFKsVarName($crossFKs). " = null;";
         }
 
-        $script .= "
+        $deepEnd = "
         } // if (deep)
     }
 ";
+
+        $script .= $deep ? $deepStart . $deep . $deepEnd : '';
     } // addReload()
 
     /**
@@ -6449,19 +6451,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      boolean \$deep Whether to also clear the references on all referrer objects.
      */
     public function clearAllReferences(\$deep = false)
-    {
+    {";
+        $deepStart = "
         if (\$deep) {";
+        $deep = '';
         $vars = [];
         foreach ($this->getTable()->getReferrers() as $refFK) {
             if ($refFK->isLocalPrimaryKey()) {
                 $varName = $this->getPKRefFKVarName($refFK);
-                $script .= "
+                $deep .= "
             if (\$this->$varName) {
                 \$this->{$varName}->clearAllReferences(\$deep);
             }";
             } else {
                 $varName = $this->getRefFKCollVarName($refFK);
-                $script .= "
+                $deep .= "
             if (\$this->$varName) {
                 foreach (\$this->$varName as \$o) {
                     \$o->clearAllReferences(\$deep);
@@ -6475,7 +6479,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
                 $varName = 'combination' . ucfirst($varName);
             }
-            $script .= "
+            $deep .= "
             if (\$this->$varName) {
                 foreach (\$this->$varName as \$o) {
                     \$o->clearAllReferences(\$deep);
@@ -6484,9 +6488,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $vars[] = $varName;
         }
 
-        $script .= "
+        $deepEnd = "
         } // if (\$deep)
 ";
+        $script .= $deep ? $deepStart . $deep . $deepEnd : '';
 
         $this->applyBehaviorModifier('objectClearReferences', $script, "        ");
 
