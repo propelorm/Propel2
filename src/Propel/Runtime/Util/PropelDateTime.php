@@ -85,7 +85,7 @@ class PropelDateTime extends \DateTime
     {
         $mtime = microtime(true);
 
-        return str_replace(',', '.', $mtime);
+        return number_format($mtime, 6, '.', '');
     }
 
     /**
