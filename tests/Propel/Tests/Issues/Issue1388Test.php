@@ -44,15 +44,6 @@ EOF;
 
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
-
-        try {
-            $builder->buildClasses(null, true);
-            $noExceptionThrown = true;
-        } catch (\Exception $e) {
-            $noExceptionThrown = false;
-        }
-
-        $this->assertTrue($noExceptionThrown);
-
+        $builder->buildClasses(null, true);
     }
 }
