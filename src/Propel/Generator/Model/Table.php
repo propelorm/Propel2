@@ -791,7 +791,7 @@ class Table extends ScopedMappingModel implements IdMethod
                 $foreignPrimaryKeys = $foreignTable->getPrimaryKey();
                 // check all keys are referenced in foreign key
                 foreach ($foreignPrimaryKeys as $foreignPrimaryKey) {
-                    if (!$foreignPrimaryKey->hasReferrer($foreignKey) && $throwErrors) {
+                    if (!$foreignPrimaryKey->hasReferrer($foreignKey) && !$foreignKey->isSkipSql() && $throwErrors) {
                         // foreign primary key is not being referenced in foreign key
                         throw new BuildException(sprintf(
                             'Table "%s" contains a foreign key to table "%s" but does not have a reference to foreign primary key "%s"',
