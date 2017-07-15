@@ -56,7 +56,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
 
     protected function addHasChildObject(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Whether or not this object is the parent of a child object
  *
@@ -64,14 +64,14 @@ class ConcreteInheritanceParentBehavior extends Behavior
  */
 public function hasChildObject()
 {
-    return \$this->" . $this->getColumnGetter() . "() !== null;
+    return $this->' . $this->getColumnGetter() . '() !== null;
 }
-";
+';
     }
 
     protected function addGetChildObject(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Get the child object of this object
  *
@@ -79,14 +79,14 @@ public function hasChildObject()
  */
 public function getChildObject()
 {
-    if (!\$this->hasChildObject()) {
+    if (!$this->hasChildObject()) {
         return null;
     }
-    \$childObjectClass = \$this->" . $this->getColumnGetter() . "();
-    \$childObject = PropelQuery::from(\$childObjectClass)->findPk(\$this->getPrimaryKey());
+    $childObjectClass = $this->' . $this->getColumnGetter() . '();
+    $childObject = PropelQuery::from($childObjectClass)->findPk($this->getPrimaryKey());
 
-    return \$childObject->hasChildObject() ? \$childObject->getChildObject() : \$childObject;
+    return $childObject->hasChildObject() ? $childObject->getChildObject() : $childObject;
 }
-";
+';
     }
 }

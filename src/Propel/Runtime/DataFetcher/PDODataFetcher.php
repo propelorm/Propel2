@@ -37,7 +37,9 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * Sets a new fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH). Returns previous fetch style.
+     *
      * @var integer
+     * @return int
      */
     public function setStyle($style) {
         $old_style = $this->style;
@@ -47,7 +49,9 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * Returns current fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH).
+     *
      * @var integer
+     * @return int
      */
     public function getStyle() {
         return $this->style;
@@ -58,7 +62,7 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function fetch($style = null)
     {
-        if (is_null($style)) {
+        if (null === $style) {
             $style = $this->style;
         }
         return $this->getDataObject()->fetch($style);
@@ -130,11 +134,11 @@ class PDODataFetcher extends AbstractDataFetcher
     {
         if ($this->dataObject && 'sqlite' === $this->dataObject->getConnection()->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
             $lastQuery = $this->dataObject->getStatement()->queryString;
-            if ('SELECT ' === substr(trim(strtoupper($lastQuery)), 0, 7)) {
+            if ('SELECT ' === substr(strtoupper(trim($lastQuery)), 0, 7)) {
                 // SQLITE does not support rowCount() in 3.x on SELECTs anymore
                 // so emulate it
                 if (null === $this->cachedCount) {
-                    $sql = sprintf("SELECT COUNT(*) FROM (%s)", $lastQuery);
+                    $sql = sprintf('SELECT COUNT(*) FROM (%s)', $lastQuery);
                     $stmt = $this->dataObject->getConnection()->prepare($sql);
                     $stmt->execute($this->dataObject->getBoundValues());
                     $count = $stmt->fetchColumn();

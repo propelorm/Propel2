@@ -11,13 +11,13 @@
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Model\ColumnDefaultValue;
 
 /**
  * Mysql database schema parser.
@@ -173,8 +173,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Factory method creating a Column object
      * based on a row from the 'show columns from ' MySQL query result.
      *
-     * @param  array  $row An associative array with the following keys:
+     * @param  array $row  An associative array with the following keys:
      *                     Field, Type, Null, Key, Default, Extra.
+     * @param Table  $table
+     *
      * @return Column
      */
     public function getColumnFromRow($row, Table $table)
@@ -226,7 +228,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (!$propelType) {
             $propelType = Column::DEFAULT_TYPE;
             $sqlType = $row['Type'];
-            $this->warn("Column [" . $table->getName() . "." . $name. "] has a column type (".$nativeType.") that Propel does not support.");
+            $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type (' .$nativeType. ') that Propel does not support.');
         }
 
         // Special case for TINYINT(1) which is a BOOLEAN
@@ -251,7 +253,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $default = 'false';
                 }
             }
-            if (in_array($default, ['CURRENT_TIMESTAMP'])) {
+            if ('CURRENT_TIMESTAMP' == $default) {
                 $type = ColumnDefaultValue::TYPE_EXPR;
             } else {
                 $type = ColumnDefaultValue::TYPE_VALUE;
@@ -271,6 +273,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     *
+     * @param Table $table
      */
     protected function addForeignKeys(Table $table)
     {
@@ -367,6 +371,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
      */
     protected function addIndexes(Table $table)
     {
@@ -417,6 +423,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param Table $table
      */
     protected function addPrimaryKey(Table $table)
     {

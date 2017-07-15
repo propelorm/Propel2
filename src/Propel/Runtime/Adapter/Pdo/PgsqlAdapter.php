@@ -11,13 +11,13 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDOStatement;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -45,7 +45,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("%s ~* %s", $left, $right);
+        return sprintf('%s ~* %s', $left, $right);
     }
 
     /**
@@ -59,7 +59,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function subString($s, $pos, $len)
     {
-        return "substring($s from $pos" . ($len > -1 ? "for $len" : "") . ")";
+        return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
 
     /**
@@ -94,7 +94,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function getId(ConnectionInterface $con, $name = null)
     {
         if (null === $name) {
-            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
+            throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 
@@ -254,6 +254,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * Explain Plan compute query getter
      *
      * @param string $query query to explain
+     *
+     * @return string
      */
     public function getExplainPlanQuery($query)
     {

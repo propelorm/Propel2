@@ -12,9 +12,9 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Map\TableMap;
 
 /**

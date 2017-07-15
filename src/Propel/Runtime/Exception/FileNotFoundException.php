@@ -13,7 +13,7 @@ namespace Propel\Runtime\Exception;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class FileNotFoundException extends RuntimeException implements ExceptionInterface
+class FileNotFoundException extends RuntimeException
 {
     /**
      * @param string $path The path to the file that was not found

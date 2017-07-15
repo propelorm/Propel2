@@ -12,15 +12,14 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\RuntimeException;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a list of Propel elements
@@ -106,7 +105,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->data[] = $value;
         } else {
             $this->data[$offset] = $value;

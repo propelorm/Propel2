@@ -12,6 +12,6 @@ namespace Propel\Generator\Exception;
 /**
  * @author Cristiano Cinotti <cristianocinotti@gmail.com>
  */
-class ConstraintNotFoundException extends ClassNotFoundException implements ExceptionInterface
+class ConstraintNotFoundException extends ClassNotFoundException
 {
 }

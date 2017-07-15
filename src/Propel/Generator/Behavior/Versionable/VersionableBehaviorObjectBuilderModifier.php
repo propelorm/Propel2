@@ -65,6 +65,8 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * Get the getter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related getter, e.g. 'getVersion'
      */
     protected function getColumnGetter($name = 'version_column')
@@ -74,6 +76,8 @@ class VersionableBehaviorObjectBuilderModifier
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */
@@ -93,18 +97,18 @@ class VersionableBehaviorObjectBuilderModifier
         \$this->{$this->getColumnSetter('version_created_at_column')}(time());
     }";
         }
-        $script .= "
-    \$createVersion = true; // for postSave hook
-}";
+        $script .= '
+    $createVersion = true; // for postSave hook
+}';
 
         return $script;
     }
 
     public function postSave($builder)
     {
-        return "if (isset(\$createVersion)) {
-    \$this->addVersion(\$con);
-}";
+        return 'if (isset($createVersion)) {
+    $this->addVersion($con);
+}';
     }
 
     public function postDelete($builder)
@@ -131,13 +135,13 @@ class VersionableBehaviorObjectBuilderModifier
 
     protected function addEnforceVersionAttribute(&$script)
     {
-        $script .= "
+        $script .= '
 
 /**
  * @var bool
  */
-protected \$enforceVersion = false;
-        ";
+protected $enforceVersion = false;
+        ';
     }
 
     public function objectMethods($builder)
@@ -167,23 +171,23 @@ protected \$enforceVersion = false;
 
     protected function addVersionSetter(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the setter for version value
  *
  * @param   string
- * @return  \$this|" . $this->table->getPhpName() . "
+ * @return  $this|' . $this->table->getPhpName() . '
  */
-public function setVersion(\$v)
+public function setVersion($v)
 {
-    return \$this->" . $this->getColumnSetter() . "(\$v);
+    return $this->' . $this->getColumnSetter() . '($v);
 }
-";
+';
     }
 
     protected function addVersionGetter(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Wrap the getter for version value
  *
@@ -191,9 +195,9 @@ public function setVersion(\$v)
  */
 public function getVersion()
 {
-    return \$this->" . $this->getColumnGetter() . "();
+    return $this->' . $this->getColumnGetter() . '();
 }
-";
+';
     }
 
     protected function addEnforceVersioning(&$script)
@@ -290,11 +294,11 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
             }
         }
 
-        $script .= "
+        $script .= '
 
     return false;
 }
-";
+';
     }
 
     protected function addAddVersion(&$script)
@@ -316,8 +320,8 @@ public function addVersion(ConnectionInterface \$con = null)
 
     \$version = new {$versionARClassName}();";
         foreach ($this->table->getColumns() as $col) {
-            $script .= "
-    \$version->set" . $col->getPhpName() . "(\$this->get" . $col->getPhpName() . "());";
+            $script .= '
+    $version->set' . $col->getPhpName() . '($this->get' . $col->getPhpName() . '());';
         }
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
@@ -357,12 +361,12 @@ public function addVersion(ConnectionInterface \$con = null)
                 ";
             }
         }
-            $script .= "
-    \$version->save(\$con);
+            $script .= '
+    $version->save($con);
 
-    return \$version;
+    return $version;
 }
-";
+';
     }
 
     protected function addToVersion(&$script)
@@ -414,8 +418,8 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
     \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionColumnName}()] = \$this;";
 
         foreach ($this->table->getColumns() as $col) {
-            $script .= "
-    \$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
+            $script .= '
+    $this->set' . $col->getPhpName() . '($version->get' . $col->getPhpName() . '());';
         }
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
@@ -484,11 +488,11 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         }
     }";
         }
-        $script .= "
+        $script .= '
 
-    return \$this;
+    return $this;
 }
-";
+';
     }
 
     protected function addGetLastVersionNumber(&$script)
@@ -518,19 +522,19 @@ public function getLastVersionNumber(ConnectionInterface \$con = null)
 
     protected function addIsLastVersion(&$script)
     {
-        $script .= "
+        $script .= '
 /**
  * Checks whether the current object is the latest one
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param   ConnectionInterface $con The ConnectionInterface connection to use.
  *
  * @return  Boolean
  */
-public function isLastVersion(ConnectionInterface \$con = null)
+public function isLastVersion(ConnectionInterface $con = null)
 {
-    return \$this->getLastVersionNumber(\$con) == \$this->getVersion();
+    return $this->getLastVersionNumber($con) == $this->getVersion();
 }
-";
+';
     }
 
     protected function addGetOneVersion(&$script)

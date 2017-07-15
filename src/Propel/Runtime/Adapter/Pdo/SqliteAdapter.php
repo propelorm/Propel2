@@ -107,7 +107,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . $limit . ($offset > 0 ? ' OFFSET ' . $offset : '');
         } elseif ($offset > 0) {
-            $sql .= sprintf(' LIMIT -1 OFFSET %i', $offset);
+            $sql .= sprintf(' LIMIT -1 OFFSET %u', $offset);
         }
     }
 

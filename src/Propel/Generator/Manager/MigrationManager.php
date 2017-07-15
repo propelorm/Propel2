@@ -272,20 +272,20 @@ class MigrationManager extends AbstractManager
         return $this->getOldestDatabaseVersion();
     }
 
-    public function getMigrationClassName($timestamp, $suffix = "")
+    public function getMigrationClassName($timestamp, $suffix = '')
     {
         $className = sprintf('PropelMigration_%d', $timestamp);
-        if ($suffix === "") {
+        if ($suffix === '') {
             $suffix = $this->findMigrationClassNameSuffix($timestamp);
         }
-        if ($suffix !== "") {
+        if ($suffix !== '') {
             $className .= '_' . $suffix;
         }
         return $className;
     }
 
     public function findMigrationClassNameSuffix($timestamp) {
-        $suffix = "";
+        $suffix = '';
         $path = $this->getWorkingDirectory();
         if (is_dir($path)) {
             $files = scandir($path);
@@ -309,10 +309,10 @@ class MigrationManager extends AbstractManager
         return new $className();
     }
 
-    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = "", $suffix = "")
+    public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = '', $suffix = '')
     {
         $timeInWords = date('Y-m-d H:i:s', $timestamp);
-        $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
+        $migrationAuthor = ($author = static::getUser()) ? 'by ' . $author : '';
         $migrationClassName = $this->getMigrationClassName($timestamp, $suffix);
         $migrationUpString = var_export($migrationsUp, true);
         $migrationDownString = var_export($migrationsDown, true);
@@ -379,7 +379,7 @@ EOP;
         return $migrationClassBody;
     }
 
-    public function getMigrationFileName($timestamp, $suffix = "")
+    public function getMigrationFileName($timestamp, $suffix = '')
     {
         return sprintf('%s.php', $this->getMigrationClassName($timestamp, $suffix));
     }

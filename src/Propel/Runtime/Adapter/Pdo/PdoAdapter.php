@@ -10,6 +10,8 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Generator\Model\PropelTypes;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -17,9 +19,7 @@ use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Base for PDO database adapters.
@@ -69,7 +69,7 @@ abstract class PdoAdapter
             $con = new PdoConnection($dsn, $user, $password, $driver_options);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : []);
         } catch (\PDOException $e) {
-            throw new AdapterException("Unable to open PDO connection", 0, $e);
+            throw new AdapterException('Unable to open PDO connection', 0, $e);
         }
 
         return $con;
@@ -80,7 +80,7 @@ abstract class PdoAdapter
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("%s REGEXP %s", $left, $right);
+        return sprintf('%s REGEXP %s', $left, $right);
     }
 
     /**
@@ -228,9 +228,9 @@ abstract class PdoAdapter
 
         if ($table) {
             return $this->quoteIdentifierTable($table) . '.' . $this->quoteIdentifier($column);
-        } else {
-            return $this->quoteIdentifier($column);
         }
+
+        return $this->quoteIdentifier($column);
     }
 
     /**

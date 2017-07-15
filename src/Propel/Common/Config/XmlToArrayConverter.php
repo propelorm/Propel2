@@ -31,7 +31,7 @@ class XmlToArrayConverter
     public static function convert($xmlToParse)
     {
         if (!is_string($xmlToParse)) {
-            throw new InvalidArgumentException("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
+            throw new InvalidArgumentException('XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml');
         }
 
         $isFile = file_exists($xmlToParse);
@@ -71,9 +71,7 @@ class XmlToArrayConverter
             throw new XmlParseException($errors);
         }
 
-        $conf = self::simpleXmlToArray($xml);
-
-        return $conf;
+        return self::simpleXmlToArray($xml);
     }
 
     /**
@@ -112,7 +110,7 @@ class XmlToArrayConverter
 
             // if the $k is already in our children list, we need to transform
             // it into an array, else we add it as a value
-            if (!in_array($k, array_keys($ar))) {
+            if (!array_key_exists($k, $ar)) {
                 $ar[$k] = $child;
             } else {
                 // (This only applies to nested nodes that do not have an @id attribute)
@@ -144,18 +142,18 @@ class XmlToArrayConverter
         //handle numeric values
         if (is_numeric($value)) {
             if (ctype_digit($value)) {
-                $value = intval($value);
+                $value = (int)$value;
             } else {
-                $value = floatval($value);
+                $value = (float)$value;
             }
         }
 
         // handle booleans specially
         $lwr = strtolower($value);
-        if ($lwr === "false") {
+        if ($lwr === 'false') {
             return false;
         }
-        if ($lwr === "true") {
+        if ($lwr === 'true') {
             return true;
         }
 

@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Oracle adapter.
@@ -37,8 +37,8 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see parent::initConnection()
      *
-     * @param \PDO  $con
-     * @param array $settings
+     * @param \PDO|ConnectionInterface $con
+     * @param array                    $settings
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -71,7 +71,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("REGEXP_LIKE(%s, %s)", $left, $right);
+        return sprintf('REGEXP_LIKE(%s, %s)', $left, $right);
     }
 
     /**
@@ -183,7 +183,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         // add the select columns back
         foreach ($selectColumns as $id => $clause) {
             // Generate a unique alias
-            $baseAlias = "ORA_COL_ALIAS_".$id;
+            $baseAlias = 'ORA_COL_ALIAS_' .$id;
             $alias = $baseAlias;
             // If it already exists, add a unique suffix
             $i = 0;

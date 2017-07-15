@@ -18,12 +18,11 @@ use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Generator\Util\BehaviorLocator;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Generator\Util\BehaviorLocator;
 
 /**
  * A class that holds build properties and provide a class loading mechanism for
@@ -260,12 +259,11 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * Return an instance of $className
      *
-     * @param string $className The name of the class to return an instance
+     * @param string $className     The name of the class to return an instance
+     * @param null   $arguments
      * @param string $interfaceName The name of the interface to be implemented by the returned class
      *
-     * @throws \Propel\Generator\Exception\ClassNotFoundException   if the class doesn't exists
-     * @throws \Propel\Generator\Exception\InvalidArgumentException if the interface doesn't exists
-     * @throws \Propel\Generator\Exception\BuildException           if the class isn't an implementation of the given interface
+     * @return mixed
      */
     private function getInstance($className, $arguments = null, $interfaceName = null)
     {

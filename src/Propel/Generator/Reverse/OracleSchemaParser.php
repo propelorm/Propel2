@@ -74,8 +74,11 @@ class OracleSchemaParser extends AbstractSchemaParser
 
     /**
      * Searches for tables in the database. Maybe we want to search also the views.
+     *
      * @param Database $database The Database model class to add tables to.
      * @param Table[]  $additionalTables
+     *
+     * @return int
      */
     public function parse(Database $database, array $additionalTables = [])
     {
@@ -140,7 +143,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 // this is an Oracle internal column - prune
                 continue;
             }
-            $size = $row['DATA_PRECISION'] ? $row['DATA_PRECISION'] : $row['DATA_LENGTH'];
+            $size = $row['DATA_PRECISION'] ?: $row['DATA_LENGTH'];
             $scale = $row['DATA_SCALE'];
             $default = $row['DATA_DEFAULT'];
             $type = $row['DATA_TYPE'];

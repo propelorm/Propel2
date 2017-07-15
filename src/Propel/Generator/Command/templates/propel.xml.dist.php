@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<?xml version = '1.0' encoding = 'ISO-8859-1' standalone = 'no'?>
 <!--
     When you're part of a team, you could want to define a common configuration file and commit it into your VCS. But, of
     course, there can be some properties you don't want to share, e.g. database passwords. Propel helps you and looks for

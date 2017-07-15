@@ -10,7 +10,7 @@
 
 namespace Propel\Generator\Util;
 
-use \Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
@@ -215,7 +215,7 @@ class SqlParser
                     $isAfterBackslash = true;
                     break;
                 case "'":
-                case "\"":
+                case '"':
                     if ($isInString && $stringQuotes == $char) {
                         if (!$isAfterBackslash) {
                             $isInString = false;
@@ -246,11 +246,11 @@ class SqlParser
                     // delimiter has changed so return current sql if any
                     if ($parsedString) {
                         return $parsedString;
-                    } else {
-                        // reset helper variable
-                        $lowercaseString = '';
-                        continue;
                     }
+
+                    // reset helper variable
+                    $lowercaseString = '';
+                    continue;
                 }
                 // get next characters if we have multiple characters in delimiter
                 $nextChars = '';

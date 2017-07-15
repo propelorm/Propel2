@@ -50,7 +50,10 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return boolean
+     *
+     * @param $obj
+     *
+     * @return bool
      */
     public function equals($obj)
     {

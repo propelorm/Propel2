@@ -10,11 +10,11 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Psr\Log\LoggerInterface;
+use Propel\Runtime\Propel;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
@@ -317,20 +317,21 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function getAttribute($attribute)
     {
-        switch ($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                return $this->isCachePreparedStatements;
-                break;
-            default:
-                return $this->connection->getAttribute($attribute);
+        if ($attribute == self::PROPEL_ATTR_CACHE_PREPARES) {
+            return $this->isCachePreparedStatements;
+        } else {
+            return $this->connection->getAttribute($attribute);
         }
     }
 
     /**
      * Set an attribute.
      *
-     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g.
+     *                          'PDO::ATTR_CASE')
      * @param mixed  $value
+     *
+     * @return bool|void
      */
     public function setAttribute($attribute, $value)
     {
@@ -350,12 +351,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             }
             $attribute = constant($attribute);
         }
-        switch ($attribute) {
-            case self::PROPEL_ATTR_CACHE_PREPARES:
-                $this->isCachePreparedStatements = $value;
-                break;
-            default:
-                $this->connection->setAttribute($attribute, $value);
+
+        if ($attribute == self::PROPEL_ATTR_CACHE_PREPARES) {
+            $this->isCachePreparedStatements = $value;
+        } else {
+            $this->connection->setAttribute($attribute, $value);
         }
     }
 
@@ -642,7 +642,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         do {
             $callingMethod = $backtrace[$i]['function'];
             $i++;
-        } while ($callingMethod == "log" && $i < $stackSize);
+        } while ($callingMethod == 'log' && $i < $stackSize);
 
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;
@@ -653,6 +653,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Forward any call to a method not found to the wrapped connection.
+     *
+     * @param $method
+     * @param $args
+     *
+     * @return mixed
      */
     public function __call($method, $args)
     {

@@ -537,9 +537,7 @@ class Database extends ScopedMappingModel
                 }
             }
 
-            unset($this->tablesByName[$table->getName()]);
-            unset($this->tablesByLowercaseName[strtolower($table->getName())]);
-            unset($this->tablesByPhpName[$table->getPhpName()]);
+            unset($this->tablesByName[$table->getName()], $this->tablesByLowercaseName[strtolower($table->getName())], $this->tablesByPhpName[$table->getPhpName()]);
         }
     }
 
@@ -842,8 +840,9 @@ class Database extends ScopedMappingModel
         foreach ($this->getTables() as $table) {
             $columns = [];
             foreach ($table->getColumns() as $column) {
+
                 $columns[] = sprintf("      %s %s %s %s %s %s %s",
-                    $column->getName(),
+                    $column->getName(), 
                     $column->getType(),
                     $column->getSize() ? '(' . $column->getSize() . ')' : '',
                     $column->isPrimaryKey() ? 'PK' : '',
@@ -855,12 +854,12 @@ class Database extends ScopedMappingModel
 
             $fks = [];
             foreach ($table->getForeignKeys() as $fk) {
-                $fks[] = sprintf("      %s to %s.%s (%s => %s)",
+                $fks[] = sprintf('      %s to %s.%s (%s => %s)',
                     $fk->getName(),
                     $fk->getForeignSchemaName(),
                     $fk->getForeignTableCommonName(),
-                    join(', ', $fk->getLocalColumns()),
-                    join(', ', $fk->getForeignColumns())
+                    implode(', ', $fk->getLocalColumns()),
+                    implode(', ', $fk->getForeignColumns())
                 );
             }
 
@@ -870,17 +869,17 @@ class Database extends ScopedMappingModel
                 foreach ($index->getColumns() as $indexColumnName) {
                     $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
                 }
-                $indices[] = sprintf("      %s (%s)",
+                $indices[] = sprintf('      %s (%s)',
                     $index->getName(),
-                    join(', ', $indexColumns)
+                    implode(', ', $indexColumns)
                 );
             }
 
             $unices = [];
             foreach ($table->getUnices() as $index) {
-                $unices[] = sprintf("      %s (%s)",
+                $unices[] = sprintf('      %s (%s)',
                     $index->getName(),
-                    join(', ', $index->getColumns())
+                    implode(', ', $index->getColumns())
                 );
             }
 

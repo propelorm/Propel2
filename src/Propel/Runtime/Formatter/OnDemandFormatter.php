@@ -10,12 +10,11 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\OnDemandCollection;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
 
 /**
  * Object formatter for Propel query
@@ -115,7 +114,7 @@ class OnDemandFormatter extends ObjectFormatter
             // in which case it should not be related to the previous object
             if (null === $endObject || $endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
-                    call_user_func([$startObject, $modelWith->getInitMethod()], false);
+                    $startObject->{$modelWith->getInitMethod()}(false);
                 }
                 continue;
             }
@@ -124,7 +123,7 @@ class OnDemandFormatter extends ObjectFormatter
             } else {
                 $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
             }
-            call_user_func([$startObject, $modelWith->getRelationMethod()], $endObject);
+            $startObject->{$modelWith->getRelationMethod()}($endObject);
         }
         foreach ($this->getAsColumns() as $alias => $clause) {
             $obj->setVirtualColumn($alias, $row[$col]);

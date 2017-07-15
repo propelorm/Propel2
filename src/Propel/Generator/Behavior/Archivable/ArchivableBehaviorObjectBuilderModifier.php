@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
@@ -35,20 +37,20 @@ class ArchivableBehaviorObjectBuilderModifier
     /**
      * @return string the PHP code to be added to the builder
      */
-    public function objectAttributes($builder)
+    public function objectAttributes()
     {
         $script = '';
         if ($this->behavior->isArchiveOnInsert()) {
-            $script .= "protected \$archiveOnInsert = true;
-";
+            $script .= 'protected $archiveOnInsert = true;
+';
         }
         if ($this->behavior->isArchiveOnUpdate()) {
-            $script .= "protected \$archiveOnUpdate = true;
-";
+            $script .= 'protected $archiveOnUpdate = true;
+';
         }
         if ($this->behavior->isArchiveOnDelete()) {
-            $script .= "protected \$archiveOnDelete = true;
-";
+            $script .= 'protected $archiveOnDelete = true;
+';
         }
 
         return $script;
@@ -57,28 +59,28 @@ class ArchivableBehaviorObjectBuilderModifier
     /**
      * @return string the PHP code to be added to the builder
      */
-    public function postInsert($builder)
+    public function postInsert()
     {
         if ($this->behavior->isArchiveOnInsert()) {
-            return "if (\$this->archiveOnInsert) {
-    \$this->archive(\$con);
+            return 'if ($this->archiveOnInsert) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnInsert = true;
-}";
+    $this->archiveOnInsert = true;
+}';
         }
     }
 
     /**
      * @return string the PHP code to be added to the builder
      */
-    public function postUpdate($builder)
+    public function postUpdate()
     {
         if ($this->behavior->isArchiveOnUpdate()) {
-            return "if (\$this->archiveOnUpdate) {
-    \$this->archive(\$con);
+            return 'if ($this->archiveOnUpdate) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnUpdate = true;
-}";
+    $this->archiveOnUpdate = true;
+}';
         }
     }
 
@@ -88,6 +90,8 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
+     *
+     * @param AbstractOMBuilder $builder
      *
      * @return string the PHP code to be added to the builder
      */
@@ -102,6 +106,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function objectMethods($builder)
@@ -123,6 +129,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addGetArchive($builder)
@@ -134,6 +142,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addArchive($builder)
@@ -147,10 +157,9 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
-     *
      * @return string the PHP code to be added to the builder
      */
-    public function addRestoreFromArchive($builder)
+    public function addRestoreFromArchive()
     {
         return $this->behavior->renderTemplate('objectRestoreFromArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),
@@ -161,6 +170,8 @@ class ArchivableBehaviorObjectBuilderModifier
      * Generates a method to populate the current AR object based on an archive object.
      * This method is necessary because the archive's copyInto() may include the archived_at column
      * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
+     *
+     * @param $builder
      *
      * @return string the PHP code to be added to the builder
      */
@@ -177,7 +188,7 @@ class ArchivableBehaviorObjectBuilderModifier
     /**
      * @return string the PHP code to be added to the builder
      */
-    public function addSaveWithoutArchive($builder)
+    public function addSaveWithoutArchive()
     {
         return $this->behavior->renderTemplate('objectSaveWithoutArchive', [
             'objectClassName'   => $this->builder->getObjectClassName(),
@@ -189,7 +200,7 @@ class ArchivableBehaviorObjectBuilderModifier
     /**
      * @return string the PHP code to be added to the builder
      */
-    public function addDeleteWithoutArchive($builder)
+    public function addDeleteWithoutArchive()
     {
         return $this->behavior->renderTemplate('objectDeleteWithoutArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),

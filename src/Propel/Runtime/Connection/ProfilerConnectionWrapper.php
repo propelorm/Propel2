@@ -59,19 +59,20 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * Overrides the parent setAttribute to support the isSlowOnly attribute.
      *
-     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g.
+     *                          'PDO::ATTR_CASE')
      * @param mixed  $value
+     *
+     * @return void
      */
     public function setAttribute($attribute, $value)
     {
-        switch ($attribute) {
-            case 'isSlowOnly':
-                // Set whether the connection must only log slow queries.
-                // The slow threshold must be set on the profiler (100ms by default).
-                $this->isSlowOnly = $value;
-                break;
-            default:
-                parent::setAttribute($attribute, $value);
+        if ($attribute == 'isSlowOnly') {
+            // Set whether the connection must only log slow queries.
+            // The slow threshold must be set on the profiler (100ms by default).
+            $this->isSlowOnly = $value;
+        } else {
+            parent::setAttribute($attribute, $value);
         }
     }
 

@@ -35,12 +35,12 @@ class ArchivableBehaviorQueryBuilderModifier
     {
         $script = '';
         if ($this->behavior->isArchiveOnUpdate()) {
-            $script .= "protected \$archiveOnUpdate = true;
-";
+            $script .= 'protected $archiveOnUpdate = true;
+';
         }
         if ($this->behavior->isArchiveOnDelete()) {
-            $script .= "protected \$archiveOnDelete = true;
-";
+            $script .= 'protected $archiveOnDelete = true;
+';
         }
 
         return $script;
@@ -49,30 +49,32 @@ class ArchivableBehaviorQueryBuilderModifier
     public function preDeleteQuery($builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
-            return "
-if (\$this->archiveOnDelete) {
-    \$this->archive(\$con);
+            return '
+if ($this->archiveOnDelete) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnDelete = true;
+    $this->archiveOnDelete = true;
 }
-";
+';
         }
     }
 
     public function postUpdateQuery($builder)
     {
         if ($this->behavior->isArchiveOnUpdate()) {
-            return "
-if (\$this->archiveOnUpdate) {
-    \$this->archive(\$con);
+            return '
+if ($this->archiveOnUpdate) {
+    $this->archive($con);
 } else {
-    \$this->archiveOnUpdate = true;
+    $this->archiveOnUpdate = true;
 }
-";
+';
         }
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function queryMethods($builder)
@@ -92,6 +94,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     protected function addArchive($builder)
@@ -103,6 +107,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnUpdate($builder)
@@ -111,6 +117,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addUpdateWithoutArchive($builder)
@@ -119,6 +127,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnDelete($builder)
@@ -127,6 +137,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)

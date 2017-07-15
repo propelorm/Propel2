@@ -96,10 +96,10 @@ class SqlitePlatform extends DefaultPlatform
         parent::setGeneratorConfig($generatorConfig);
 
         if (null !== ($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey'))) {
-            $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);;
+            $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);
         }
         if (null !== ($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround'))) {
-            $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);;;
+            $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);
         }
     }
 
@@ -112,9 +112,9 @@ class SqlitePlatform extends DefaultPlatform
     public function getAddColumnsDDL($columns)
     {
         $ret = '';
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD %s;
-";
+';
         foreach ($columns as $column) {
             $tableName = $column->getTable()->getName();
             $ret .= sprintf($pattern,
@@ -191,13 +191,13 @@ ALTER TABLE %s ADD %s;
      */
     public function getMigrationTableDDL(TableDiff $tableDiff)
     {
-        $pattern = "
+        $pattern = '
 CREATE TEMPORARY TABLE %s AS SELECT %s FROM %s;
 DROP TABLE %s;
 %s
 INSERT INTO %s (%s) SELECT %s FROM %s;
 DROP TABLE %s;
-";
+';
 
         $originTable     = clone $tableDiff->getFromTable();
         $newTable        = clone $tableDiff->getToTable();
@@ -333,6 +333,9 @@ PRAGMA foreign_keys = ON;
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
+     * @param Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
@@ -473,21 +476,21 @@ PRAGMA foreign_keys = ON;
                 if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
-                $lines[] = str_replace("
-    ", "
-        ", $this->getForeignKeyDDL($foreignKey));
+                $lines[] = str_replace('
+    ', '
+        ', $this->getForeignKeyDDL($foreignKey));
             }
         }
 
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 %sCREATE TABLE %s
 (
     %s
 );
-";
+';
 
         return sprintf($pattern,
             $tableDescription,
@@ -502,7 +505,7 @@ PRAGMA foreign_keys = ON;
             return;
         }
 
-        $pattern = "FOREIGN KEY (%s) REFERENCES %s (%s)";
+        $pattern = 'FOREIGN KEY (%s) REFERENCES %s (%s)';
 
         $script = sprintf($pattern,
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
@@ -511,12 +514,12 @@ PRAGMA foreign_keys = ON;
         );
 
         if ($fk->hasOnUpdate()) {
-            $script .= "
-    ON UPDATE " . $fk->getOnUpdate();
+            $script .= '
+    ON UPDATE ' . $fk->getOnUpdate();
         }
         if ($fk->hasOnDelete()) {
-            $script .= "
-    ON DELETE " . $fk->getOnDelete();
+            $script .= '
+    ON DELETE ' . $fk->getOnDelete();
         }
 
         return $script;

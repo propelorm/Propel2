@@ -35,24 +35,24 @@ class MssqlPlatform extends DefaultPlatform
     {
         parent::initialize();
 
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, "INT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, "INT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, "FLOAT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, "VARCHAR(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, "VARCHAR(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, "DATE"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, "TIME"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, "DATETIME2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, "DATETIME2"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, "BINARY(7132)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, "VARBINARY(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, "VARBINARY(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, "VARBINARY(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, "VARBINARY(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, "VARCHAR(MAX)"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, "TINYINT"));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, "INT"));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::INTEGER, 'INT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'INT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DOUBLE, 'FLOAT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'VARCHAR(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'VARCHAR(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'TIME'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_TIMESTAMP, 'DATETIME2'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BINARY(7132)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'VARBINARY(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'VARBINARY(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BLOB, 'VARBINARY(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::OBJECT, 'VARBINARY(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'VARCHAR(MAX)'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
     }
 
     public function getMaxColumnNameLength()
@@ -77,9 +77,11 @@ class MssqlPlatform extends DefaultPlatform
 
     /**
      * Returns the DDL SQL to add the tables of a database
-     * together with index and foreign keys. 
-     * Since MSSQL always checks it the tables in foreign key definitions exist, 
+     * together with index and foreign keys.
+     * Since MSSQL always checks it the tables in foreign key definitions exist,
      * the foreign key DDLs are moved after all tables are created
+     *
+     * @param Database $database
      *
      * @return string
      */
@@ -109,8 +111,8 @@ class MssqlPlatform extends DefaultPlatform
         foreach ($table->getForeignKeys() as $fk) {
             $ret .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='" . $fk->getName() . "')
-    ALTER TABLE " . $this->quoteIdentifier($table->getName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($fk->getName()) . ";
-";
+    ALTER TABLE " . $this->quoteIdentifier($table->getName()) . ' DROP CONSTRAINT ' . $this->quoteIdentifier($fk->getName()) . ';
+';
         }
 
         self::$dropCount++;
@@ -118,7 +120,7 @@ IF EXISTS (SELECT 1 FROM sysobjects WHERE type ='RI' AND name='" . $fk->getName(
         $ret .= "
 IF EXISTS (SELECT 1 FROM sysobjects WHERE type = 'U' AND name = '" . $table->getName() . "')
 BEGIN
-    DECLARE @reftable_" . self::$dropCount . " nvarchar(60), @constraintname_" . self::$dropCount . " nvarchar(60)
+    DECLARE @reftable_" . self::$dropCount . ' nvarchar(60), @constraintname_' . self::$dropCount . " nvarchar(60)
     DECLARE refcursor CURSOR FOR
     select reftables.name tablename, cons.name constraintname
         from sysobjects tables,
@@ -130,17 +132,17 @@ BEGIN
             and reftables.id = ref.fkeyid
             and tables.name = '" . $table->getName() . "'
     OPEN refcursor
-    FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+    FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ', @constraintname_' . self::$dropCount . "
     while @@FETCH_STATUS = 0
     BEGIN
-        exec ('alter table '+@reftable_" . self::$dropCount . "+' drop constraint '+@constraintname_" . self::$dropCount . ")
-        FETCH NEXT from refcursor into @reftable_" . self::$dropCount . ", @constraintname_" . self::$dropCount . "
+        exec ('alter table '+@reftable_" . self::$dropCount . "+' drop constraint '+@constraintname_" . self::$dropCount . ')
+        FETCH NEXT from refcursor into @reftable_' . self::$dropCount . ', @constraintname_' . self::$dropCount . '
     END
     CLOSE refcursor
     DEALLOCATE refcursor
-    DROP TABLE " . $this->quoteIdentifier($table->getName()) . "
+    DROP TABLE ' . $this->quoteIdentifier($table->getName()) . '
 END
-";
+';
 
         return $ret;
     }
@@ -162,12 +164,12 @@ END
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "
+        $pattern = '
 BEGIN
 ALTER TABLE %s ADD %s
 END
 ;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
@@ -223,7 +225,7 @@ END
     public function hasSize($sqlType)
     {
         $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
-        return !(in_array($sqlType, $nosize));
+        return !in_array($sqlType, $nosize);
     }
 
     /**

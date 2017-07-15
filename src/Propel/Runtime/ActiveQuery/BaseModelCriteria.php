@@ -2,11 +2,11 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
 
 class BaseModelCriteria extends Criteria implements \IteratorAggregate
 {
@@ -189,7 +189,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      */
     public function getModelAliasOrName()
     {
-        return $this->modelAlias ? $this->modelAlias : $this->modelName;
+        return $this->modelAlias ?: $this->modelName;
     }
 
     /**

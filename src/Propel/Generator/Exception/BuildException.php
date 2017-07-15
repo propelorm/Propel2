@@ -10,6 +10,6 @@
 
 namespace Propel\Generator\Exception;
 
-class BuildException extends RuntimeException implements ExceptionInterface
+class BuildException extends RuntimeException
 {
 }

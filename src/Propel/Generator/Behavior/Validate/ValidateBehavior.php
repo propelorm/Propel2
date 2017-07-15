@@ -212,9 +212,9 @@ class ValidateBehavior extends Behavior
             if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
                 if (!class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
                     throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
-                } else {
-                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
                 }
+
+                $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
             } else {
                 $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
             }
@@ -225,8 +225,7 @@ class ValidateBehavior extends Behavior
                 }
 
                 $opt = var_export($properties['options'], true);
-                $opt = str_replace("\n", '', $opt);
-                $opt = str_replace('  ', '', $opt);
+                $opt = str_replace(["\n", '  '], '', $opt);
                 $properties['options'] = $opt;
             }
 

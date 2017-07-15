@@ -10,11 +10,11 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Propel;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -25,8 +25,8 @@ use Propel\Runtime\Map\ColumnMap;
  */
 abstract class AbstractCriterion
 {
-    const UND = " AND ";
-    const ODER = " OR ";
+    const UND = ' AND ';
+    const ODER = ' OR ';
 
     /** Value of the criterion */
     protected $value;
@@ -102,16 +102,18 @@ abstract class AbstractCriterion
         } catch (\Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
+            Propel::log('Could not get a AdapterInterface, sql may be wrong', Propel::LOG_ERR);
         }
 
         // init $this->realtable
         $realtable = $criteria->getTableForAlias($this->table);
-        $this->realtable = $realtable ? $realtable : $this->table;
+        $this->realtable = $realtable ?: $this->table;
     }
 
     /**
      * Set the $column and $table properties based on a column name or object
+     *
+     * @param $column
      */
     protected function setColumn($column)
     {
@@ -286,7 +288,7 @@ abstract class AbstractCriterion
         $params = [];
         $this->appendPsTo($sb, $params);
 
-        return "" . $sb;
+        return '' . $sb;
     }
 
     /**
@@ -300,7 +302,10 @@ abstract class AbstractCriterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return boolean
+     *
+     * @param $obj
+     *
+     * @return bool
      */
     public function equals($obj)
     {
@@ -355,6 +360,10 @@ abstract class AbstractCriterion
     /**
      * method supporting recursion through all criterions to give
      * us a string array of tables from each criterion
+     *
+     * @param AbstractCriterion $c
+     * @param array             $s
+     *
      * @return void
      */
     private function addCriterionTable(AbstractCriterion $c, array &$s)

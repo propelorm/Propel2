@@ -12,8 +12,8 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Class for iterating over a list of Propel objects stored as arrays
@@ -93,7 +93,7 @@ class ArrayCollection extends Collection
 
         foreach ($this as $key => $element) {
             $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = call_user_func($callable, array_values($element));
+            $ret[$key] = $callable(array_values($element));
         }
 
         return $ret;

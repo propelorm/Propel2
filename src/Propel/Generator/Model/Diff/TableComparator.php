@@ -245,13 +245,11 @@ class TableComparator
                 if ($sameName) {
                     if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
                         //no changes
-                        unset($fromTableIndices[$fromTableIndexPos]);
-                        unset($toTableIndices[$toTableIndexPos]);
+                        unset($fromTableIndices[$fromTableIndexPos], $toTableIndices[$toTableIndexPos]);
                     } else {
                         // same name, but different columns
                         $this->tableDiff->addModifiedIndex($fromTableIndex->getName(), $fromTableIndex, $toTableIndex);
-                        unset($fromTableIndices[$fromTableIndexPos]);
-                        unset($toTableIndices[$toTableIndexPos]);
+                        unset($fromTableIndices[$fromTableIndexPos], $toTableIndices[$toTableIndexPos]);
                         $indexDifferences++;
                     }
                 }
@@ -293,13 +291,11 @@ class TableComparator
                     $fromTableFk->getName() == $toTableFk->getName();
                 if ($sameName && !$toTableFk->isPolymorphic()) {
                     if (false === ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive)) {
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
+                        unset($fromTableFks[$fromTableFkPos], $toTableFks[$toTableFkPos]);
                     } else {
                         // same name, but different columns
                         $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
+                        unset($fromTableFks[$fromTableFkPos], $toTableFks[$toTableFkPos]);
                         $fkDifferences++;
                     }
                 }

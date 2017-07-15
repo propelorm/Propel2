@@ -10,20 +10,20 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
-use Propel\Runtime\Adapter\Pdo\PdoAdapter;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\LogicException;
-use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
+use Propel\Runtime\Adapter\Pdo\PdoAdapter;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\PropelConditionalProxy;
 
 /**
  * This is a utility class for holding criteria information for a query.
@@ -360,8 +360,10 @@ class Criteria
     /**
      * Returns the column name associated with an alias (AS-column).
      *
-     * @param  string $alias
+     * @param $as
+     *
      * @return string $string
+     * @internal param string $alias
      */
     public function getColumnForAs($as)
     {
@@ -498,6 +500,9 @@ class Criteria
      * a transaction.  This is here primarily to support the oid type in
      * postgresql.  Though it can be used to require any single sql statement
      * to use a transaction.
+     *
+     * @param $v
+     *
      * @return void
      */
     public function setUseTransaction($v)
@@ -689,7 +694,9 @@ class Criteria
      * any SELECT columns or WHERE columns.  This must be explicitly
      * set, of course, in order to be useful.
      *
-     * @param string $v
+     * @param $tableName
+     *
+     * @internal param string $v
      */
     public function setPrimaryTableName($tableName)
     {
@@ -1534,7 +1541,10 @@ class Criteria
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return boolean
+     *
+     * @param $crit
+     *
+     * @return bool
      */
     public function equals($crit)
     {
@@ -1589,9 +1599,9 @@ class Criteria
                 }
 
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         }
 
         return false;
@@ -1755,6 +1765,11 @@ class Criteria
      *  - addAnd(column, value, comparison)
      *  - addAnd(column, value)
      *  - addAnd(Criterion)
+     *
+     * @param      $p1
+     * @param null $p2
+     * @param null $p3
+     * @param bool $preferColumnCondition
      *
      * @return $this|Criteria A modified Criteria object.
      */
@@ -2008,7 +2023,7 @@ class Criteria
 
         // from / join tables quoted if it is necessary
         $fromClause = array_map([$this, 'quoteIdentifierTable'], $fromClause);
-        $joinClause = $joinClause ? $joinClause : array_map([$this, 'quoteIdentifierTable'], $joinClause);
+        $joinClause = $joinClause ?: array_map([$this, 'quoteIdentifierTable'], $joinClause);
 
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
@@ -2018,9 +2033,9 @@ class Criteria
         // build from-clause
         $from = '';
         if (!empty($joinClause) && count($fromClause) > 1) {
-            $from .= implode(" CROSS JOIN ", $fromClause);
+            $from .= implode(' CROSS JOIN ', $fromClause);
         } else {
-            $from .= implode(", ", $fromClause);
+            $from .= implode(', ', $fromClause);
         }
 
         $from .= $joinClause ? ' ' . implode(' ', $joinClause) : '';
@@ -2062,6 +2077,8 @@ class Criteria
      * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $tableMap->isIdentifierQuotingEnabled.
      *
      * @param string $string
+     * @param string $tableName
+     *
      * @return string
      */
     public function quoteIdentifier($string, $tableName = '')
@@ -2295,7 +2312,7 @@ class Criteria
             try {
                 $id = $db->getId($con, $keyInfo);
             } catch (\Exception $e) {
-                throw new PropelException("Unable to get autoincrement id.", 0, $e);
+                throw new PropelException('Unable to get autoincrement id.', 0, $e);
             }
         }
 
@@ -2393,7 +2410,7 @@ class Criteria
                     $updateTable = $tableName;
                 }
                 $sql .= $this->quoteIdentifierTable($updateTable);
-                $sql .= " SET ";
+                $sql .= ' SET ';
                 $p = 1;
                 foreach ($updateTablesColumns[$tableName] as $col) {
                     $updateColumnName = substr($col, strrpos($col, '.') + 1);
@@ -2583,7 +2600,7 @@ class Criteria
         // be executed per table)
         $tables = $this->getTablesColumns();
         if (empty($tables)) {
-            throw new PropelException("Cannot delete from an empty Criteria");
+            throw new PropelException('Cannot delete from an empty Criteria');
         }
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.

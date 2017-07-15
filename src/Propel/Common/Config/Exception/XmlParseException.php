@@ -10,7 +10,7 @@
 
 namespace Propel\Common\Config\Exception;
 
-class XmlParseException extends RuntimeException implements ExceptionInterface
+class XmlParseException extends RuntimeException
 {
     /**
      * Create an exception based on LibXMLError objects
@@ -23,14 +23,14 @@ class XmlParseException extends RuntimeException implements ExceptionInterface
         $numErrors = count($errors);
 
         if (1 == $numErrors) {
-            $message = "An error occurred ";
+            $message = 'An error occurred ';
         } elseif ($numErrors >1) {
-            $message = "Some errors occurred ";
+            $message = 'Some errors occurred ';
         }
         $message .= "while parsing XML configuration file:\n";
 
         foreach ($errors as $error) {
-            $message .= " - ";
+            $message .= ' - ';
 
             switch ($error->level) {
                 case LIBXML_ERR_WARNING:

@@ -13,24 +13,11 @@ namespace Propel\Runtime\ActiveQuery;
 use Propel\Common\Exception\SetColumnConverterException;
 use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\EntityNotFoundException;
-use Propel\Runtime\Exception\RuntimeException;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\ClassNotFoundException;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\UnexpectedValueException;
-use Propel\Runtime\Map\ColumnMap;
-use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\PropelModelPager;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
@@ -38,7 +25,20 @@ use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
 use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\EntityNotFoundException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\PropelModelPager;
 
 /**
  * This class extends the Criteria by adding runtime introspection abilities
@@ -177,6 +177,8 @@ class ModelCriteria extends BaseModelCriteria
      *                      Or an array of condition names
      * @param mixed $value  A value for the condition
      *
+     * @param null  $bindingType
+     *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
     public function where($clause, $value = null, $bindingType = null)
@@ -211,6 +213,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *                      Or an array of condition names
      * @param mixed $value  A value for the condition
+     *
+     * @param null  $bindingType
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -525,6 +529,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Add another condition to an already added join
+     *
      * @example
      * <code>
      * $query->join('Book.Author');
@@ -536,7 +541,10 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed  $value    An optional value to bind to the clause
      * @param string $operator The operator to use to add the condition. Defaults to 'AND'
      *
+     * @param null   $bindingType
+     *
      * @return $this|ModelCriteria The current object, for fluid interface
+     * @throws PropelException
      */
     public function addJoinCondition($name, $clause, $value = null, $operator = null, $bindingType = null)
     {
@@ -589,8 +597,12 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Add a join object to the Criteria
+     *
      * @see Criteria::addJoinObject()
+     *
      * @param Join $join A join object
+     *
+     * @param null $name
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */
@@ -659,7 +671,9 @@ class ModelCriteria extends BaseModelCriteria
         $join = $this->joins[$relation];
         if (RelationMap::MANY_TO_MANY === $join->getRelationMap()->getType()) {
             throw new PropelException(__METHOD__ .' does not allow hydration for many-to-many relationships');
-        } elseif (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
+        }
+
+        if (RelationMap::ONE_TO_MANY === $join->getRelationMap()->getType()) {
             // For performance reasons, the formatters will use a special routine in this case
             $this->isWithOneToMany = true;
         }
@@ -735,7 +749,8 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if ($className !== $relationName) {
-            $secondaryCriteria->setModelAlias($relationName, $relationName == $this->joins[$relationName]->getRelationMap()->getName() ? false : true);
+            $secondaryCriteria->setModelAlias($relationName, $relationName != $this->joins[$relationName]->getRelationMap()
+                                                                                                         ->getName());
         }
 
         $secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);
@@ -1579,7 +1594,7 @@ class ModelCriteria extends BaseModelCriteria
 
         try {
             $tableName = $this->quoteIdentifierTable($tableName);
-            $sql = "DELETE FROM " . $tableName;
+            $sql = 'DELETE FROM ' . $tableName;
             $stmt = $con->prepare($sql);
 
             $stmt->execute();
@@ -1757,7 +1772,10 @@ class ModelCriteria extends BaseModelCriteria
      * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
      * @param mixed  $value  A value for the condition
      *
+     * @param null   $bindingType
+     *
      * @return AbstractCriterion a Criterion object
+     * @throws PropelException
      */
     protected function getCriterionForClause($clause, $value, $bindingType = null)
     {
@@ -1783,7 +1801,7 @@ class ModelCriteria extends BaseModelCriteria
                     return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
                 }
             }
-            if (stripos($clause, '& ?') !== false) {
+            if (strpos($clause, '& ?') !== false) {
                 return new BinaryModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
             }
             if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
@@ -1824,13 +1842,13 @@ class ModelCriteria extends BaseModelCriteria
             }
         } elseif ('ARRAY' === $colMap->getType() && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
-        } elseif (PropelTypes::ENUM === $colMap->getType() && !is_null($value)) {
+        } elseif (PropelTypes::ENUM === $colMap->getType() && null !== $value) {
             if (is_array($value)) {
                 $value = array_map([$colMap, 'getValueSetKey'], $value);
             } else {
                 $value = $colMap->getValueSetKey($value);
             }
-        } elseif ($colMap->isSetType() && !is_null($value)) {
+        } elseif ($colMap->isSetType() && null !== $value) {
             try {
                 $value = SetColumnConverter::convertToInt($value, $colMap->getValueSet());
             } catch (SetColumnConverterException $e) {
@@ -1888,6 +1906,8 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
      *
+     * @param bool   $failSilently
+     *
      * @return array List($columnMap, $realColumnName)
      */
     protected function getColumnFromName($phpName, $failSilently = true)
@@ -1936,7 +1956,9 @@ class ModelCriteria extends BaseModelCriteria
             }
 
             return [$column, $realColumnName];
-        } elseif ($tableMap->hasColumn($phpName)) {
+        }
+
+        if ($tableMap->hasColumn($phpName)) {
             $column = $tableMap->getColumn($phpName);
             $realColumnName = $column->getFullyQualifiedName();
 
@@ -1990,13 +2012,13 @@ class ModelCriteria extends BaseModelCriteria
 
     public function configureSelectColumns()
     {
-        if (is_null($this->select)) {
+        if (null === $this->select) {
             // leave early
             return;
         }
 
         // select() needs the PropelSimpleArrayFormatter if no formatter given
-        if (is_null($this->formatter)) {
+        if (null === $this->formatter) {
             $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
         }
 
@@ -2022,12 +2044,15 @@ class ModelCriteria extends BaseModelCriteria
         }
     }
 
-
-
     /**
      * Special case for subquery columns
      *
+     * @param      $class
+     * @param      $phpName
+     * @param bool $failSilently
+     *
      * @return array List($columnMap, $realColumnName)
+     * @throws PropelException
      */
     protected function getColumnFromSubQuery($class, $phpName, $failSilently = true)
     {
@@ -2038,7 +2063,9 @@ class ModelCriteria extends BaseModelCriteria
             $realColumnName = $class.'.'.$column->getName();
 
             return [$column, $realColumnName];
-        } elseif (isset($subQueryCriteria->asColumns[$phpName])) {
+        }
+
+        if (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column
             return [null, $class.'.'.$phpName];
         } elseif ($failSilently) {
@@ -2110,12 +2137,14 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Overrides Criteria::add() to force the use of a true table alias if it exists
      *
-     * @see Criteria::add()
-     * @param string $column   The colName of column to run the condition on (e.g. BookTableMap::ID)
+     * @see      Criteria::add()
+     *
+     * @param        $p1
      * @param mixed  $value
      * @param string $operator A String, like Criteria::EQUAL.
      *
      * @return $this|ModelCriteria A modified Criteria object.
+     * @internal param string $column The colName of column to run the condition on (e.g. BookTableMap::ID)
      */
     public function addUsingAlias($p1, $value = null, $operator = null)
     {
@@ -2171,6 +2200,12 @@ class ModelCriteria extends BaseModelCriteria
      * Supports findByXXX(), findOneByXXX(), requireOneByXXX(), filterByXXX(), orderByXXX(), and groupByXXX() methods,
      * where XXX is a column phpName.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
+     *
+     * @param $name
+     * @param $arguments
+     *
+     * @return mixed|ModelCriteria
+     * @throws PropelException
      */
     public function __call($name, $arguments)
     {
@@ -2180,8 +2215,8 @@ class ModelCriteria extends BaseModelCriteria
             if (0 === strpos($name, $method)) {
                 $columns = substr($name, strlen($method));
                 if (in_array($method, ['findBy', 'findOneBy', 'requireOneBy']) && strpos($columns, 'And') !== false) {
-                    $method = $method . 'Array';
-                    $columns = explode('And', $columns);
+                    $method     .= 'Array';
+                    $columns    = explode('And', $columns);
                     $conditions = [];
                     foreach ($columns as $column) {
                         $conditions[$column] = array_shift($arguments);
@@ -2224,8 +2259,8 @@ class ModelCriteria extends BaseModelCriteria
                 if (!isset($arguments[0])) {
                     $arguments[0] = null;
                 }
-                array_push($arguments, $joinType);
-                $method = lcfirst(substr($name, $pos));
+                $arguments[] = $joinType;
+                $method      = lcfirst(substr($name, $pos));
 
                 return call_user_func_array([$this, $method], $arguments);
             }

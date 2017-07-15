@@ -10,7 +10,6 @@
 namespace Propel\Common\Exception;
 use Exception;
 
-
 /**
  * Exception for Propel\Common\Util\SetColumnConverter class.
  * 

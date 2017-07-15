@@ -10,7 +10,7 @@
 
 namespace Propel\Common\Config\Exception;
 
-class JsonParseException extends RuntimeException implements ExceptionInterface
+class JsonParseException extends RuntimeException
 {
     /**
      * Create an exception based on error codes returned by json_last_error function

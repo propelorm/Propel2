@@ -2,9 +2,9 @@
 
 namespace Propel\Generator\Command\Helper;
 
+use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
 
 class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterface
 {
@@ -73,9 +73,9 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     {
         if ($default) {
             return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
-        } else {
-            return sprintf('<info>%s</info>: ', $question);
         }
+
+        return sprintf('<info>%s</info>: ', $question);
     }
 
     /**

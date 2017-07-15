@@ -10,17 +10,20 @@
 
 namespace Propel\Runtime\ServiceContainer;
 
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
+use Monolog\Logger;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
-use Propel\Runtime\Exception\UnexpectedValueException;
-use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Propel;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -445,6 +448,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get a logger instance
      *
+     * @param string $name
+     *
      * @return LoggerInterface
      */
     public function getLogger($name = 'defaultLogger')
@@ -475,14 +480,14 @@ class StandardServiceContainer implements ServiceContainerInterface
         $configuration = $this->loggerConfigurations[$name];
         switch ($configuration['type']) {
             case 'stream':
-                $handler = new \Monolog\Handler\StreamHandler(
+                $handler = new StreamHandler(
                     $configuration['path'],
                     isset($configuration['level']) ? $configuration['level'] : null,
                     isset($configuration['bubble']) ? $configuration['bubble'] : null
                 );
                 break;
             case 'rotating_file':
-                $handler = new \Monolog\Handler\RotatingFileHandler(
+                $handler = new RotatingFileHandler(
                     $configuration['path'],
                     isset($configuration['max_files']) ? $configuration['max_files'] : null,
                     isset($configuration['level']) ? $configuration['level'] : null,
@@ -490,7 +495,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                 );
                 break;
             case 'syslog':
-                $handler = new \Monolog\Handler\SyslogHandler(
+                $handler = new SyslogHandler(
                     $configuration['ident'],
                     isset($configuration['facility']) ? $configuration['facility'] : null,
                     isset($configuration['level']) ? $configuration['level'] : null,

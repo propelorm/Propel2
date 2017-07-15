@@ -13,6 +13,6 @@ namespace Propel\Generator\Exception;
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class BehaviorNotFoundException extends ClassNotFoundException implements ExceptionInterface
+class BehaviorNotFoundException extends ClassNotFoundException
 {
 }

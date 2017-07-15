@@ -144,10 +144,14 @@ class DatabaseComparator
     /**
      * Returns the computed difference between two database objects.
      *
-     * @param  Database             $fromDatabase
-     * @param  Database             $toDatabase
-     * @param  boolean              $caseInsensitive
-     * @return DatabaseDiff|Boolean
+     * @param  Database $fromDatabase
+     * @param  Database $toDatabase
+     * @param  boolean  $caseInsensitive
+     * @param bool      $withRenaming
+     * @param bool      $removeTable
+     * @param array     $excludedTables
+     *
+     * @return bool|DatabaseDiff
      */
     public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false, $withRenaming = false, $removeTable = true, $excludedTables = [])
     {

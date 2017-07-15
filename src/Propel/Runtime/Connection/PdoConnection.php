@@ -10,8 +10,8 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
@@ -43,6 +43,11 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * Creates a PDO instance representing a connection to a database.
+     *
+     * @param            $dsn
+     * @param null       $user
+     * @param null       $password
+     * @param array|null $options
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
@@ -51,7 +56,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
         $pdoOptions = [];
         if (is_array($options)) {
             foreach ($options as $key => $option) {
-                $index = (is_numeric($key)) ? $key : constant('self::' . $key);
+                $index = is_numeric($key) ? $key : constant('self::' . $key);
                 $pdoOptions[$index] = $option;
             }
         }

@@ -83,9 +83,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $script = $namespaceStatement . $script;
         }
 
-        $script =  "<?php
+        $script =  '<?php
 
-" . $script;
+' . $script;
 
         return $this->clean($script);
     }
@@ -106,6 +106,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Creates a $obj = new Book(); code snippet. Can be used by frameworks, for instance, to
      * extend this behavior, e.g. initialize the object after creating the instance or so.
+     *
+     * @param $objName
+     * @param $clsName
      *
      * @return string Some code
      */
@@ -196,7 +199,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getPackage()
     {
-        $pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
+        $pkg = ($this->getTable()->getPackage() ?: $this->getDatabase()->getPackage());
         if (!$pkg) {
             $pkg = $this->getBuildProperty('generator.targetPackage');
         }
@@ -327,9 +330,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 //we already requested Child.$class and its in use too,
                 //so use the fqcn
                 return ($namespace ? '\\' . $namespace : '') .  '\\' . $class;
-            } else {
-                $autoAliasName = 'Child' . $class;
             }
+
+            $autoAliasName = 'Child' . $class;
 
             return $this->declareClassNamespace($class, $namespace, $autoAliasName);
         }
@@ -363,19 +366,19 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return true;
             }
 
-            if ((false !== strpos($class, 'Query'))) {
+            if (false !== strpos($class, 'Query')) {
                 return true;
             }
 
             // force alias for model without namespace
-            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) {
+            if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
         }
 
         if ('Base' === $namespace && '' === $this->getNamespace()) {
             // force alias for model without namespace
-            if (false === array_search($class, $this->whiteListOfDeclaredClasses, true)) {
+            if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
         }
@@ -463,9 +466,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         $namespace = $this->getNamespace();
         if (!empty($namespace)) {
-            return sprintf("namespace %s;
+            return sprintf('namespace %s;
 
-", $namespace);
+', $namespace);
         }
     }
 
@@ -622,7 +625,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $className = $this->getPluralizer()->getPluralForm($className);
         }
 
-        return $className . $this->getRelatedBySuffix($fk);
+        return $className . static::getRelatedBySuffix($fk);
     }
 
     /**
@@ -776,7 +779,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
             if (is_array($crossFKToIgnore) && in_array($fk, $crossFKToIgnore)) {
                 continue;
-            } else if ($fk === $crossFKToIgnore) {
+            }
+
+            if ($fk === $crossFKToIgnore) {
                 continue;
             }
 
@@ -835,6 +840,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix
      * will be appended.
      *
+     * @param ForeignKey $fk
+     *
      * @return string
      */
     protected static function getRelatedBySuffix(ForeignKey $fk)
@@ -886,7 +893,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $className = $pluralizer->getPluralForm($className);
         }
 
-        return $className . $this->getRefRelatedBySuffix($fk);
+        return $className . static::getRefRelatedBySuffix($fk);
     }
 
     protected static function getRefRelatedBySuffix(ForeignKey $fk)
@@ -941,11 +948,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
+     *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      * @param string &$script  The script will be modified in this method.
+     * @param string $tab
      */
-    public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = "        ")
+    public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = '        ')
     {
         $modifierGetter = 'get' . $modifier;
         foreach ($this->getTable()->getBehaviors() as $behavior) {
@@ -960,9 +969,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                     if (!$addedScript) {
                         continue;
                     }
-                    $script .= "
-" . $tab . '// ' . $behavior->getId() . " behavior
-";
+                    $script .= '
+' . $tab . '// ' . $behavior->getId() . ' behavior
+';
                     $script .= preg_replace('/^/m', $tab, $addedScript);
                 }
             }
@@ -1000,7 +1009,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $filePath = __DIR__ . $templateDir . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
-            $filePath = $filePath . '.php';
+            $filePath .= '.php';
             if (!file_exists($filePath)) {
                 throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory', $filename, __DIR__ . $templateDir));
             }
@@ -1057,7 +1066,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         // end of line
         if (strlen($content) && "\n" != substr($content, -1)) {
-            $content = $content."\n";
+            $content .= "\n";
         }
 
         return $content;

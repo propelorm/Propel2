@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Parser;
 
-use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Exception\FileNotFoundException;
 
 /**
@@ -69,9 +67,8 @@ abstract class AbstractParser
 
         ob_start();
         include $path;
-        $contents = ob_get_clean();
 
-        return $contents;
+        return ob_get_clean();
     }
 
     /**
@@ -79,6 +76,8 @@ abstract class AbstractParser
      *
      * @param string $data The file content
      * @param string $path Path of the file to create
+     *
+     * @return bool|int
      */
     public function dump($data, $path = null)
     {

@@ -10,10 +10,10 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * TableMap is used to model a table in a database.
@@ -167,6 +167,9 @@ class TableMap
 
     /**
      * Construct a new TableMap.
+     *
+     * @param null $name
+     * @param null $dbMap
      */
     public function __construct($name = null, $dbMap = null)
     {
@@ -676,11 +679,11 @@ class TableMap
      */
     protected function getColumnOrValue($value, TableMap $table)
     {
-        if (':' === substr($value, 0, 1)) {
+        if (':' === $value[0]) {
             return $table->getColumn(substr($value, 1));
-        } else {
-            return $value;
         }
+
+        return $value;
     }
 
     /**
@@ -769,7 +772,7 @@ class TableMap
     {
         $callable   = [$classname::TABLE_MAP, 'getFieldnames'];
 
-        return call_user_func($callable, $type);
+        return $callable($type);
     }
 
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
@@ -797,6 +800,8 @@ class TableMap
     }
 
     /**
+     * @param Criteria $criteria
+     *
      * @return array|null null if not covered by only pk
      */
     public function extractPrimaryKey(Criteria $criteria)

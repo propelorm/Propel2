@@ -10,8 +10,8 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException;
 
 /**
  * Specialized Criterion used for traditional expressions,

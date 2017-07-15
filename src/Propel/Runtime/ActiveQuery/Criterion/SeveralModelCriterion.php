@@ -49,6 +49,12 @@ class SeveralModelCriterion extends AbstractModelCriterion
     /**
      * Replace only once
      * taken from http://www.php.net/manual/en/function.str-replace.php
+     *
+     * @param $search
+     * @param $replace
+     * @param $subject
+     *
+     * @return string
      */
     protected static function strReplaceOnce($search, $replace, $subject)
     {

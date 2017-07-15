@@ -11,15 +11,15 @@
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a list of Propel objects
@@ -405,8 +405,7 @@ class ObjectCollection extends Collection
     {
         if (isset($this->data[$offset])) {
             if (is_object($this->data[$offset])) {
-                unset($this->indexSplHash[spl_object_hash($this->data[$offset])]);
-                unset($this->index[$this->getHashCode($this->data[$offset])]);
+                unset($this->indexSplHash[spl_object_hash($this->data[$offset])], $this->index[$this->getHashCode($this->data[$offset])]);
             }
             unset($this->data[$offset]);
         }
@@ -454,7 +453,7 @@ class ObjectCollection extends Collection
 
         $hashCode = $this->getHashCode($value);
 
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->data[] = $value;
             end($this->data);
             $pos = key($this->data);
@@ -463,8 +462,7 @@ class ObjectCollection extends Collection
             $this->indexSplHash[spl_object_hash($value)] = $hashCode;
         } else {
             if (isset($this->data[$offset])) {
-                unset($this->indexSplHash[spl_object_hash($this->data[$offset])]);
-                unset($this->index[$this->getHashCode($this->data[$offset])]);
+                unset($this->indexSplHash[spl_object_hash($this->data[$offset])], $this->index[$this->getHashCode($this->data[$offset])]);
             }
 
             $this->index[$hashCode] = $offset;
@@ -489,6 +487,8 @@ class ObjectCollection extends Collection
      * Returns the result of $object->hashCode() if available or uses spl_object_hash($object).
      *
      * @param mixed $object
+     *
+     * @return string
      */
     protected function getHashCode($object)
     {

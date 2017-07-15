@@ -14,14 +14,14 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\ColumnDiff;
+use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\DatabaseDiff;
 
 /**
  * MySql PlatformInterface implementation.
@@ -157,19 +157,19 @@ class MysqlPlatform extends DefaultPlatform
 
     public function getBeginDDL()
     {
-        return "
+        return '
 # This is a fix for InnoDB in MySQL >= 4.1.x
-# It \"suspends judgement\" for fkey relationships until are tables are set.
+# It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
-";
+';
     }
 
     public function getEndDDL()
     {
-        return "
+        return '
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
-";
+';
     }
 
     /**
@@ -226,9 +226,9 @@ SET FOREIGN_KEY_CHECKS = 1;
                 if ($foreignKey->isSkipSql() || $foreignKey->isPolymorphic()) {
                     continue;
                 }
-                $lines[] = str_replace("
-    ", "
-        ", $this->getForeignKeyDDL($foreignKey));
+                $lines[] = str_replace('
+    ', '
+        ', $this->getForeignKeyDDL($foreignKey));
             }
         }
 
@@ -248,15 +248,15 @@ SET FOREIGN_KEY_CHECKS = 1;
         }
 
         $tableOptions = $tableOptions ? ' ' . implode(' ', $tableOptions) : '';
-        $sep = ",
-    ";
+        $sep = ',
+    ';
 
-        $pattern = "
+        $pattern = '
 CREATE TABLE %s
 (
     %s
 ) %s=%s%s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -313,7 +313,7 @@ CREATE TABLE %s
             }
 
             // if we have a param value, then parse it out
-            if (!is_null($parameterValue)) {
+            if (null !== $parameterValue) {
                 // if the value is numeric or is parameter is in $noQuotedValue, then there is no need for quotes
                 if (!is_numeric($parameterValue) && !isset($noQuotedValue[$name])) {
                     $parameterValue = $this->quote($parameterValue);
@@ -328,9 +328,9 @@ CREATE TABLE %s
 
     public function getDropTableDDL(Table $table)
     {
-        return "
-DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
-";
+        return '
+DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getName()) . ';
+';
     }
 
     public function getColumnDDL(Column $col)
@@ -445,9 +445,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             return '';
         }
 
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP PRIMARY KEY;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName())
@@ -462,9 +462,9 @@ ALTER TABLE %s DROP PRIMARY KEY;
      */
     public function getAddIndexDDL(Index $index)
     {
-        $pattern = "
+        $pattern = '
 CREATE %sINDEX %s ON %s (%s);
-";
+';
 
         return sprintf($pattern,
             $this->getIndexType($index),
@@ -482,9 +482,9 @@ CREATE %sINDEX %s ON %s (%s);
      */
     public function getDropIndexDDL(Index $index)
     {
-        $pattern = "
+        $pattern = '
 DROP INDEX %s ON %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($index->getName()),
@@ -494,6 +494,9 @@ DROP INDEX %s ON %s;
 
     /**
      * Builds the DDL SQL for an Index object.
+     *
+     * @param Index $index
+     *
      * @return string
      */
     public function getIndexDDL(Index $index)
@@ -557,9 +560,9 @@ DROP INDEX %s ON %s;
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return;
         }
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP FOREIGN KEY %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
@@ -569,11 +572,11 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     public function getCommentBlockDDL($comment)
     {
-        $pattern = "
+        $pattern = '
 -- ---------------------------------------------------------------------
 -- %s
 -- ---------------------------------------------------------------------
-";
+';
 
         return sprintf($pattern, $comment);
     }
@@ -581,6 +584,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
     /**
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
+     *
+     * @param DatabaseDiff $databaseDiff
      *
      * @return string
      */
@@ -614,13 +619,17 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     /**
      * Builds the DDL SQL to rename a table
+     *
+     * @param $fromTableName
+     * @param $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
     {
-        $pattern = "
+        $pattern = '
 RENAME TABLE %s TO %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fromTableName),
@@ -631,13 +640,15 @@ RENAME TABLE %s TO %s;
     /**
      * Builds the DDL SQL to remove a column
      *
+     * @param Column $column
+     *
      * @return string
      */
     public function getRemoveColumnDDL(Column $column)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s DROP %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
@@ -647,6 +658,10 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to rename a column
+     *
+     * @param Column $fromColumn
+     * @param Column $toColumn
+     *
      * @return string
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
@@ -657,6 +672,8 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to modify a column
      *
+     * @param ColumnDiff $columnDiff
+     *
      * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -666,13 +683,17 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to change a column
+     *
+     * @param Column $fromColumn
+     * @param Column $toColumn
+     *
      * @return string
      */
     public function getChangeColumnDDL(Column $fromColumn, Column $toColumn)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s CHANGE %s %s;
-";
+';
 
         return sprintf($pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
@@ -680,8 +701,11 @@ ALTER TABLE %s CHANGE %s %s;
             $this->getColumnDDL($toColumn)
         );
     }
+
     /**
      * Builds the DDL SQL to modify a list of columns
+     *
+     * @param ColumnDiff[] $columnDiffs
      *
      * @return string
      */
@@ -704,19 +728,19 @@ ALTER TABLE %s CHANGE %s %s;
      */
     public function getAddColumnDDL(Column $column)
     {
-        $pattern = "
+        $pattern = '
 ALTER TABLE %s ADD %s %s;
-";
+';
         $tableColumns = $column->getTable()->getColumns();
 
         // Default to add first if no column is found before the current one
-        $insertPositionDDL = "FIRST";
+        $insertPositionDDL = 'FIRST';
         foreach ($tableColumns as $i => $tableColumn) {
             // We found the column, use the one before it if it's not the first
             if ($tableColumn->getName() == $column->getName()) {
                 // We have a column that is not the first one
                 if ($i > 0) {
-                    $insertPositionDDL = "AFTER " . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
+                    $insertPositionDDL = 'AFTER ' . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
                 }
                 break;
             }
@@ -802,14 +826,14 @@ ALTER TABLE %s ADD %s %s;
         return '`' . strtr($text, ['.' => '`.`']) . '`';
     }
 
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
         if ($column->getPDOType() === \PDO::PARAM_BOOL) {
             return sprintf(
-                "
-%s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
+                '
+%s$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);',
                 $tab,
                 $identifier,
                 $columnValueAccessor

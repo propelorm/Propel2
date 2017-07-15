@@ -28,7 +28,7 @@ class BinaryModelCriterion extends AbstractModelCriterion
             $bindParam = ':p' . count($params);
             $sb .= str_replace('?', $bindParam, $this->clause);
         } else {
-            $sb .= (stripos($this->clause, '= 0') !== false) ? '1=1' : '1<>1';
+            $sb .= (strpos($this->clause, '= 0') !== false) ? '1=1' : '1<>1';
         }
     }
 }

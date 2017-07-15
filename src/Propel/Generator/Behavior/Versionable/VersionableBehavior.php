@@ -107,7 +107,7 @@ class VersionableBehavior extends Behavior
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
-        $versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getOriginCommonName() . '_version');
+        $versionTableName = $this->getParameter('version_table') ?: ($table->getOriginCommonName() . '_version');
         if (!$database->hasTable($versionTableName)) {
             // create the version table
             $versionTable = $database->addTable([
@@ -130,7 +130,7 @@ class VersionableBehavior extends Behavior
                 if ($columnInVersionTable->hasReferrers()) {
                     $columnInVersionTable->clearReferrers();
                 }
-                if ($columnInVersionTable->isAutoincrement()) {
+                if ($columnInVersionTable->isAutoIncrement()) {
                     $columnInVersionTable->setAutoIncrement(false);
                 }
                 $versionTable->addColumn($columnInVersionTable);

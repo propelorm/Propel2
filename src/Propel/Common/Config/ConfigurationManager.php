@@ -13,8 +13,8 @@ namespace Propel\Common\Config;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 use Propel\Common\Config\Loader\DelegatingLoader;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class ConfigurationManager
@@ -139,7 +139,7 @@ class ConfigurationManager
     {
         $dirs = $this->getDirs($fileName);
 
-        if ((null === $fileName) || (is_dir($fileName))) {
+        if ((null === $fileName) || is_dir($fileName)) {
             $fileName = self::CONFIG_FILE_NAME;
         }
 
@@ -178,13 +178,13 @@ class ConfigurationManager
      * and add default values.
      *
      * @param array $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
-     *                         the constructor to pass a built-in array of configuration, without load it from file. I.e.
-     *                         Propel\Generator\Config\QuickGeneratorConfig class.
+     *                         the constructor to pass a built-in array of configuration, without load it from file.
+     *                         I.e. Propel\Generator\Config\QuickGeneratorConfig class.
      */
     protected function process($extraConf = null)
     {
         if (null === $extraConf && count($this->config) <= 0) {
-            return null;
+            return;
         }
 
         $processor = new Processor();
@@ -308,14 +308,12 @@ class ConfigurationManager
 
             foreach ($this->config[$section]['connections'] as $connection) {
                 if (!array_key_exists($connection, $this->config['database']['connections'])) {
-                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). ".
-                        "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). ". 'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
                 }
             }
 
             if (!array_key_exists($defaultConnection = $this->config[$section]['defaultConnection'], $this->config['database']['connections'])) {
-                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). ".
-                    "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). ". 'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
             }
         }
     }

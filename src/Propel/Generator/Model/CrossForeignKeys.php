@@ -193,7 +193,7 @@ class CrossForeignKeys
      */
     public function hasCrossForeignKeys()
     {
-        return !!$this->crossForeignKeys;
+        return (bool)$this->crossForeignKeys;
     }
 
     /**

@@ -124,32 +124,29 @@ class PhpParser
                             $this->knownMethodCache[$methodName] = $methodCode;
 
                             return $methodCode;
-                        } else {
-                            // If it's the closing bracket of the function, reset `$isInFunction`
-                            $isInFunction = false;
-                            $methodCode = '';
-                            $buffer = '';
                         }
+
+                        // If it's the closing bracket of the function, reset `$isInFunction`
+                        $isInFunction = false;
+                        $methodCode   = '';
+                        $buffer       = '';
                     }
                 }
             } else {
                 // Tokens consisting of (possibly) more than one character.
                 list($id, $text) = $token;
-                switch ($id) {
-                    case T_FUNCTION:
-                        // If we encounter the keyword 'function', flip the `isInFunction` flag to
-                        // true and reset the `buffer`
-                        $isInFunction = true;
-                        $methodCode .= $buffer . $text;
-                        $buffer = '';
-                        break;
-                    default:
-                        if ($isInFunction) {
-                            $methodCode .= $text;
-                        } else {
-                            $buffer .= $text;
-                        }
-                        break;
+                if ($id == T_FUNCTION) {
+                    // If we encounter the keyword 'function', flip the `isInFunction` flag to
+                    // true and reset the `buffer`
+                    $isInFunction = true;
+                    $methodCode   .= $buffer . $text;
+                    $buffer       = '';
+                } else {
+                    if ($isInFunction) {
+                        $methodCode .= $text;
+                    } else {
+                        $buffer .= $text;
+                    }
                 }
             }
         }

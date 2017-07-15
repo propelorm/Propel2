@@ -10,8 +10,8 @@
 
 namespace Propel\Common\Config\Loader;
 
-use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\IniParseException;
+use Propel\Common\Config\Exception\InvalidArgumentException;
 
 /**
  * IniFileLoader loads parameters from INI files.
@@ -151,7 +151,9 @@ class IniFileLoader extends FileLoader
 
             if (!strlen($pieces[0]) || !strlen($pieces[1])) {
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
-            } elseif (!isset($config[$pieces[0]])) {
+            }
+
+            if (!isset($config[$pieces[0]])) {
                 if ($pieces[0] === '0' && !empty($config)) {
                     $config = [$pieces[0] => $config];
                 } else {
@@ -164,8 +166,11 @@ class IniFileLoader extends FileLoader
             }
 
             $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
-        } else if (is_string($value) && in_array(strtolower($value), array("true", "false"))) {
-            $config[$key] = (strtolower($value) === "true");
+        } else if (is_string($value) && in_array(strtolower($value), array(
+                'true',
+                'false'
+            ))) {
+            $config[$key] = (strtolower($value) === 'true');
         } else if ($value === (string)(int) $value) {
             $config[$key] = (int) $value;
         } else if ($value === (string)(float) $value) {

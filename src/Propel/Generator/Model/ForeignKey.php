@@ -721,6 +721,8 @@ class ForeignKey extends MappingModel
     /**
      * Returns a foreign column object.
      *
+     * @param int $index
+     *
      * @return Column
      */
     public function getForeignColumn($index = 0)

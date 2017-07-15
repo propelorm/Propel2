@@ -180,10 +180,10 @@ class ConcreteInheritanceBehavior extends Behavior
     public function preSave()
     {
         if ($this->isCopyData()) {
-            $script = "\$parent = \$this->getSyncParent(\$con);
-\$parent->save(\$con);
-\$this->setPrimaryKey(\$parent->getPrimaryKey());
-";
+            $script = '$parent = $this->getSyncParent($con);
+$parent->save($con);
+$this->setPrimaryKey($parent->getPrimaryKey());
+';
 
             if ($this->getCopyToChild()) {
                 $script .= "\$this->syncParentToChild(\$parent);\n";
@@ -196,8 +196,8 @@ class ConcreteInheritanceBehavior extends Behavior
     public function postDelete($script)
     {
         if ($this->isCopyData()) {
-            return "\$this->getParentOrCreate(\$con)->delete(\$con);
-";
+            return '$this->getParentOrCreate($con)->delete($con);
+';
         }
     }
 
@@ -265,44 +265,44 @@ public function syncParentToChild($parentClass \$parent)
             ";
         }
 
-        $script .= "
+        $script .= '
 }
-";
+';
     }
 
     protected function addObjectGetParentOrCreate(&$script)
     {
         $parentTable = $this->getParentTable();
         $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
-        $script .= "
+        $script .= '
 /**
- * Get or Create the parent " . $parentClass . " object of the current object
+ * Get or Create the parent ' . $parentClass . ' object of the current object
  *
- * @return    " . $parentClass . " The parent object
+ * @return    ' . $parentClass . ' The parent object
  */
-public function getParentOrCreate(\$con = null)
+public function getParentOrCreate($con = null)
 {
-    if (\$this->isNew()) {
-        if (\$this->isPrimaryKeyNull()) {
-            \$parent = new " . $parentClass . "();
-            \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
+    if ($this->isNew()) {
+        if ($this->isPrimaryKeyNull()) {
+            $parent = new ' . $parentClass . '();
+            $parent->set' . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
 
             return \$parent;
         } else {
-            \$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
-            if (null === \$parent || null !== \$parent->getDescendantClass()) {
-                \$parent = new " . $parentClass . "();
-                \$parent->setPrimaryKey(\$this->getPrimaryKey());
-                \$parent->set" . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
+            \$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . '::create()->findPk($this->getPrimaryKey(), $con);
+            if (null === $parent || null !== $parent->getDescendantClass()) {
+                $parent = new ' . $parentClass . '();
+                $parent->setPrimaryKey($this->getPrimaryKey());
+                $parent->set' . $this->getParentTable()->getColumn($this->getParameter('descendant_column'))->getPhpName() . "('" . $this->builder->getStubObjectBuilder()->getQualifiedClassName() . "');
             }
 
             return \$parent;
         }
     } else {
-        return " . $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . "::create()->findPk(\$this->getPrimaryKey(), \$con);
+        return " . $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($parentTable)) . '::create()->findPk($this->getPrimaryKey(), $con);
     }
 }
-";
+';
     }
 
     protected function addObjectGetSyncParent(&$script)
@@ -310,16 +310,16 @@ public function getParentOrCreate(\$con = null)
         $parentTable = $this->getParentTable();
         $pkeys = $parentTable->getPrimaryKey();
         $cptype = $pkeys[0]->getPhpType();
-        $script .= "
+        $script .= '
 /**
- * Create or Update the parent " . $parentTable->getPhpName() . " object
+ * Create or Update the parent ' . $parentTable->getPhpName() . ' object
  * And return its primary key
  *
- * @return    " . $cptype . " The primary key of the parent object
+ * @return    ' . $cptype . ' The primary key of the parent object
  */
-public function getSyncParent(\$con = null)
+public function getSyncParent($con = null)
 {
-    \$parent = \$this->getParentOrCreate(\$con);";
+    $parent = $this->getParentOrCreate($con);';
         foreach ($parentTable->getColumns() as $column) {
             if ($column->isPrimaryKey() || $column->getName() == $this->getParameter('descendant_column')) {
                 continue;
@@ -333,15 +333,15 @@ public function getSyncParent(\$con = null)
                 continue;
             }
             $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
-            $script .= "
-    if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
-        \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
-    }";
+            $script .= '
+    if ($this->get' . $refPhpName . '() && $this->get' . $refPhpName . '()->isNew()) {
+        $parent->set' . $refPhpName . '($this->get' . $refPhpName . '());
+    }';
         }
-        $script .= "
+        $script .= '
 
-    return \$parent;
+    return $parent;
 }
-";
+';
     }
 }

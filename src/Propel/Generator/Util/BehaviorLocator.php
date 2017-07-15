@@ -1,12 +1,12 @@
 <?php
 namespace Propel\Generator\Util;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
+use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\BehaviorNotFoundException;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\PhpNameGenerator;
-use Propel\Generator\Exception\BehaviorNotFoundException;
-use Propel\Generator\Config\GeneratorConfigInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Service class to find composer and installed packages
@@ -44,6 +44,8 @@ class BehaviorLocator
 
     /**
      * Searches a composer file
+     *
+     * @param $fileName
      *
      * @return SplFileInfo the found composer file or null if composer file isn't found
      */
@@ -184,6 +186,8 @@ class BehaviorLocator
      * Finds all behaviors by parsing composer.lock file
      *
      * @param SplFileInfo $composerLock
+     *
+     * @return array
      */
     private function loadBehaviors($composerLock)
     {
@@ -229,9 +233,9 @@ class BehaviorLocator
                         'class' => $extra['class'],
                         'package' => $package['name']
                     ];
-                } else {
-                    throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
                 }
+
+                throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
             }
         }
 

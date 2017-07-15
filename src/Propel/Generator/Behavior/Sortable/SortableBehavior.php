@@ -124,7 +124,7 @@ class SortableBehavior extends Behavior
 
                 $buildScope[]     = "    \$scope[] = $param;\n";
                 $buildScopeVars[] = "    $param = \$scope[$idx];\n";
-                $paramsDoc[]      = " * @param     ".$column->getPhpType()." $param Scope value for column `".$column->getPhpName()."`";
+                $paramsDoc[]      = ' * @param     ' .$column->getPhpType()." $param Scope value for column `".$column->getPhpName(). '`';
 
                 if (!$column->isNotNull()) {
                     $param .= ' = null';

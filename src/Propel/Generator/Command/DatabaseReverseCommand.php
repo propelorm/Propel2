@@ -10,12 +10,12 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Manager\ReverseManager;
 use Propel\Generator\Schema\Dumper\XmlDumper;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Propel\Generator\Manager\ReverseManager;
 
 /**
  * @author William Durand <william.durand1@gmail.com>

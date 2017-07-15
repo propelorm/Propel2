@@ -21,9 +21,9 @@ use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
-use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
@@ -314,7 +314,7 @@ class QuickBuilder
         $classes = $classTargets === null ? ['tablemap', 'object', 'query', 'objectstub', 'querystub'] : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
-        $dir = sys_get_temp_dir() . "/propelQuickBuild-" . Propel::VERSION .  "-$dirHash/";
+        $dir = sys_get_temp_dir() . '/propelQuickBuild-' . Propel::VERSION .  "-$dirHash/";
 
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -345,12 +345,12 @@ class QuickBuilder
         }
         if ($separate) {
             foreach ($includes as $tempFile) {
-                include($tempFile);
+                include $tempFile;
             }
         } else {
-            $tempFile = $dir . join('_', $allCodeName).'.php';
+            $tempFile = $dir . implode('_', $allCodeName).'.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
-            include($tempFile);
+            include $tempFile;
         }
     }
 
@@ -428,6 +428,10 @@ class QuickBuilder
 
     /**
      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     *
+     * @param $source
+     *
+     * @return string
      */
     public function fixNamespaceDeclarations($source)
     {

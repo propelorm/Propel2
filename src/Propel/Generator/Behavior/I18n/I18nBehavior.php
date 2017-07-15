@@ -10,11 +10,11 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Behavior\Validate\ValidateBehavior;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Behavior\Validate\ValidateBehavior;
 
 /**
  * Allows translation of text columns through transparent one-to-many

@@ -109,7 +109,9 @@ class DatabaseDiff
      * Returns an added table by its name.
      *
      * @param string $name
-     * @param Table
+     * @param        Table
+     *
+     * @return mixed
      */
     public function getAddedTable($name)
     {
@@ -171,7 +173,9 @@ class DatabaseDiff
      * Returns a removed table.
      *
      * @param string $name
-     * @param Table
+     * @param        Table
+     *
+     * @return mixed
      */
     public function getRemovedTable($name)
     {

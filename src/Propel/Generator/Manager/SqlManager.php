@@ -131,6 +131,8 @@ class SqlManager extends AbstractManager
 
     /**
      * @param string $datasource A datasource name.
+     *
+     * @return bool
      */
     public function insertSql($datasource = null)
     {
@@ -161,7 +163,7 @@ class SqlManager extends AbstractManager
 
         foreach ($statementsToInsert as $database => $sqls) {
             if (!$this->hasConnection($database)) {
-                $this->log(sprintf("No connection available for %s database", $database));
+                $this->log(sprintf('No connection available for %s database', $database));
                 continue;
             }
 
@@ -194,7 +196,7 @@ class SqlManager extends AbstractManager
     {
         $buildConnection = $this->getConnection($datasource);
 
-        $dsn = str_replace("@DB@", $datasource, $buildConnection['dsn']);
+        $dsn = str_replace('@DB@', $datasource, $buildConnection['dsn']);
 
         // Set user + password to null if they are empty strings or missing
         $username = isset($buildConnection['user']) && $buildConnection['user'] ? $buildConnection['user'] : null;

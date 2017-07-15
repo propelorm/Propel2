@@ -40,7 +40,7 @@ class ConnectionFactory
         try {
             $adapterConnection = $adapter->getConnection($configuration);
         } catch (AdapterException $e) {
-            throw new ConnectionException("Unable to open connection", 0, $e);
+            throw new ConnectionException('Unable to open connection', 0, $e);
         }
         /** @var ConnectionInterface $connection */
         $connection = new $connectionClass($adapterConnection);

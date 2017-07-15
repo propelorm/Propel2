@@ -120,7 +120,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
             $q->offset($offset);
 
             if ($hasMaxRecordLimit) {
-                $maxRecordLimit = $maxRecordLimit - $offset;
+                $maxRecordLimit -= $offset;
                 if ($maxRecordLimit > $this->getMaxPerPage()) {
                     $q->limit($this->getMaxPerPage());
                 } else {

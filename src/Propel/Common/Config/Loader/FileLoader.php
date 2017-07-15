@@ -14,8 +14,8 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\FileLocator;
-use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 
 /**
  * Abstract class used by all file-based loaders.
@@ -61,11 +61,13 @@ abstract class FileLoader extends BaseFileLoader
      * Replaces parameter placeholders (%name%) by their values for all parameters.
      *
      * @param array $configuration The configuration array to resolve
+     *
+     * @return array|null
      */
     public function resolveParams(array $configuration)
     {
         if ($this->resolved) {
-            return;
+            return null;
         }
 
         $this->config = $configuration;
@@ -104,8 +106,10 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Check if a resource has a given extension
      *
-     * @param $ext mixed  An extension or an arrayof extensions
+     * @param $ext       mixed  An extension or an arrayof extensions
      * @param $resource  string A resource
+     *
+     * @return bool
      */
     protected function checkSupports($ext, $resource)
     {
@@ -142,7 +146,7 @@ abstract class FileLoader extends BaseFileLoader
 
     private function isResolved()
     {
-        return ($this->resolved);
+        return $this->resolved;
     }
 
     /**

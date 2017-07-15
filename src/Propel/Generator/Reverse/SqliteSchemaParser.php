@@ -15,8 +15,8 @@ use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -298,6 +298,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param Table $table
      */
     protected function addIndexes(Table $table)
     {

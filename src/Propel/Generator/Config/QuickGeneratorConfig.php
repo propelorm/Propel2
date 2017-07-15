@@ -16,8 +16,8 @@ use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
-use \Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Generator\Util\BehaviorLocator;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {

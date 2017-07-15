@@ -10,9 +10,9 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * ColumnMap is used to model a column of a table in a database.
@@ -196,7 +196,7 @@ class ColumnMap
      */
     public function getPdoType()
     {
-        return PropelTypes::getPdoType($this->type);
+        return PropelTypes::getPDOType($this->type);
     }
 
     /**
@@ -488,8 +488,11 @@ class ColumnMap
     /**
      * Performs DB-specific ignore case, but only if the column type necessitates it.
      *
-     * @param string                                   $str The expression we want to apply the ignore case formatting to (e.g. the column name).
+     * @param string                                   $str The expression we want to apply the ignore case formatting
+     *                                                      to (e.g. the column name).
      * @param \Propel\Runtime\Adapter\AdapterInterface $db
+     *
+     * @return string
      */
     public function ignoreCase($str, AdapterInterface $db)
     {

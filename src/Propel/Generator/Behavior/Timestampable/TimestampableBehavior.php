@@ -78,6 +78,8 @@ class TimestampableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preUpdate
      *
+     * @param $builder
+     *
      * @return string The code to put at the hook
      */
     public function preUpdate($builder)
@@ -87,8 +89,8 @@ class TimestampableBehavior extends Behavior
                 ? 'time()'
                 : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
             ;
-            return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+            return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ')) {
+    $this->' . $this->getColumnSetter('update_column') . "(${valueSource});
 }";
         }
 
@@ -97,6 +99,8 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add code in ObjectBuilder::preInsert
+     *
+     * @param $builder
      *
      * @return string The code to put at the hook
      */
@@ -109,9 +113,9 @@ class TimestampableBehavior extends Behavior
                 ? 'time()'
                 : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
             ;
-            $script .= "
-if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('create_column') . "(${valueSource});
+            $script .= '
+if (!$this->isColumnModified(' . $this->getColumnConstant('create_column', $builder) . ')) {
+    $this->' . $this->getColumnSetter('create_column') . "(${valueSource});
 }";
         }
 
@@ -120,9 +124,9 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
                 ? 'time()'
                 : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
             ;
-            $script .= "
-if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+            $script .= '
+if (!$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ')) {
+    $this->' . $this->getColumnSetter('update_column') . "(${valueSource});
 }";
         }
 
@@ -139,15 +143,15 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
 /**
  * Mark the current object so that the update date doesn't get updated during next save
  *
- * @return     \$this|" . $builder->getObjectClassName() . " The current object (for fluent API support)
+ * @return     \$this|" . $builder->getObjectClassName() . ' The current object (for fluent API support)
  */
 public function keepUpdateDateUnchanged()
 {
-    \$this->modifiedColumns[" . $this->getColumnConstant('update_column', $builder) . "] = true;
+    $this->modifiedColumns[' . $this->getColumnConstant('update_column', $builder) . '] = true;
 
-    return \$this;
+    return $this;
 }
-";
+';
     }
 
     public function queryMethods($builder)

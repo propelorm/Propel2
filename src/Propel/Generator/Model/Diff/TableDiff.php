@@ -307,7 +307,9 @@ class TableDiff
      *
      * @param string $columnName
      *
-     * @param Column
+     * @param        Column
+     *
+     * @return mixed
      */
     public function getRemovedColumn($columnName)
     {
@@ -452,7 +454,9 @@ class TableDiff
      * Add a removed Pk column
      *
      * @param string $columnName
-     * @param Column $removedColumn
+     * @param Column $removedPkColumn
+     *
+     * @internal param Column $removedColumn
      */
     public function addRemovedPkColumn($columnName, Column $removedPkColumn)
     {
@@ -695,7 +699,9 @@ class TableDiff
      * Adds a removed foreign key column.
      *
      * @param string     $fkName
-     * @param ForeignKey $removedColumn
+     * @param ForeignKey $removedFk
+     *
+     * @internal param ForeignKey $removedColumn
      */
     public function addRemovedFk($fkName, ForeignKey $removedFk)
     {
