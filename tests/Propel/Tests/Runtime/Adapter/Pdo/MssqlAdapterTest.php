@@ -204,4 +204,30 @@ class MssqlAdapterTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Regression: Ensure correct parsing when `from` is used as a non-keyword
+     * e.g. as a column name
+     */
+    public function testApplyLimitWithFromNonKeyword()
+    {
+        $c = new Criteria();
+        BookTableMap::addSelectColumns($c);
+
+        $c->addAsColumn(
+            'date_from',
+            '(SELECT GETDATE())'
+        );
+
+        $c->setOffset(0);
+        $c->setLimit(10);
+
+        $params = [];
+        $sql = $c->createSelectSql($params);
+
+        // Expect a well-formed query where the `date_from` column remains untouched
+        $expected = 'SELECT TOP 10 book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, (SELECT GETDATE()) AS date_from FROM book';
+
+        $this->assertEquals($expected, $sql);
+    }
 }
