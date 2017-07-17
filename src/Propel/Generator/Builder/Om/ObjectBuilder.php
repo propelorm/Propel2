@@ -1807,8 +1807,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorOpen($script, $col);
 
         $script .= "
-        \$this->$clo = json_encode(\$v);
-        \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+        if (is_string(\$v)) {
+            \$v = json_decode(\$v, true);
+        }
+        if (\$v != json_decode(\$this->$clo, true)) {
+            \$this->$clo = json_encode(\$v);
+            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+        }
 ";
         $this->addMutatorClose($script, $col);
     }
