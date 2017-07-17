@@ -1512,6 +1512,37 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
+     * Adds the open of the mutator (setter) method for a JSON column.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    protected function addJsonMutatorOpen(&$script, Column $column)
+    {
+        $this->addJsonMutatorComment($script, $column);
+        $this->addMutatorOpenOpen($script, $column);
+        $this->addMutatorOpenBody($script, $column);
+    }
+
+    /**
+     * Adds the comment for a mutator.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addJsonMutatorComment(&$script, Column $column)
+    {
+        $clo = $column->getLowercasedName();
+        $script .= "
+    /**
+     * Set the value of [$clo] column.
+     * ".$column->getDescription()."
+     * @param string|array \$v new value
+     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     */";
+    }
+
+    /**
      * Adds the comment for a mutator.
      *
      * @param string &$script
@@ -1804,7 +1835,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo = $col->getLowercasedName();
 
-        $this->addMutatorOpen($script, $col);
+        $this->addJsonMutatorOpen($script, $col);
 
         $script .= "
         if (is_string(\$v)) {
