@@ -170,7 +170,7 @@ class ObjectBuilder extends AbstractObjectBuilder
             $fmt = $this->getTemporalFormatter($column);
             try {
                 if (!($this->getPlatform() instanceof MysqlPlatform &&
-                ($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
+                    ($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
                     // while technically this is not a default value of NULL,
                     // this seems to be closest in meaning.
                     $defDt = new \DateTime($val);
@@ -970,17 +970,40 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     protected function addJsonAccessor(&$script, Column $column)
     {
-        $this->addDefaultAccessorComment($script, $column);
+        $this->addJsonAccessorComment($script, $column);
         $this->addDefaultAccessorOpen($script, $column);
         $this->addJsonAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
+    }
+
+    /**
+     * Add the comment for a json accessor method (a getter).
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addJsonAccessorComment(&$script, Column $column)
+    {
+        $clo=$column->getLowercasedName();
+
+        $script .= "
+    /**
+     * Get the [$clo] column value.
+     * ".$column->getDescription();
+        if ($column->isLazyLoad()) {
+            $script .= "
+     * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
+        }
+        $script .= "
+     * @return object
+     */";
     }
 
     protected function addJsonAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
         $script .= "
-        return json_decode(\$this->$clo, true);";
+        return json_decode(\$this->$clo);";
     }
 
     /**
@@ -1537,7 +1560,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Set the value of [$clo] column.
      * ".$column->getDescription()."
-     * @param string|array \$v new value
+     * @param string|array|object \$v new value
      * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
      */";
     }
@@ -1825,7 +1848,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorClose($script, $col);
     }
 
-     /**
+    /**
      * Adds a setter for Json columns.
      * @param string &$script The script will be modified in this method.
      * @param Column $col     The current column.
@@ -1838,10 +1861,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addJsonMutatorOpen($script, $col);
 
         $script .= "
-        if (is_string(\$v)) {
-            \$v = json_decode(\$v, true);
+        if (is_array(\$v)) {
+            \$v = json_decode(json_encode(\$v));
         }
-        if (\$v != json_decode(\$this->$clo, true)) {
+        if (is_string(\$v)) {
+            \$v = json_decode(\$v);
+        }
+        if (\$v != json_decode(\$this->$clo)) {
             \$this->$clo = json_encode(\$v);
             \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
         }
@@ -2015,7 +2041,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for SET column mutator.
-     * 
+     *
      * @param string &$script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
@@ -2675,9 +2701,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addToArrayKeyLookUp($phpName, Table $table, $plural)
     {
         if($phpName == "") {
-            $phpName = $table->getPhpName();  
+            $phpName = $table->getPhpName();
         }
-        
+
         $camelCaseName = $table->getCamelCaseName();
         $fieldName = $table->getName();
 
@@ -3707,7 +3733,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         ksort($localColumns); // restoring the order of the foreign PK
         $localColumns = count($localColumns) > 1 ?
-                ('array('.implode(', ', $localColumns).')') : reset($localColumns);
+            ('array('.implode(', ', $localColumns).')') : reset($localColumns);
 
         $script .= "
 
@@ -3785,7 +3811,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $relCol2 = $this->getFKPhpNameAffix($fk2, false);
 
             if ( $this->getRelatedBySuffix($refFK) != "" &&
-            ($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
+                ($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
                 $doJoinGet = false;
             }
 
@@ -4527,7 +4553,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
 ";
 
-                $script .= "
+            $script .= "
                     $queryClassName::create()
                         ->filterByPrimaryKeys(\$pks)
                         ->delete(\$con);
@@ -4599,7 +4625,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
                 $script .= "
                     //\$combination[$combinationIdx] = {$pk->getPhpName()}; Nothing to save.";
-                    $combinationIdx++;
+                $combinationIdx++;
             }
 
             $script .= "
@@ -4640,20 +4666,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
                 if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {";
 
-            if ($refFK->isLocalColumnsRequired() || ForeignKey::CASCADE === $refFK->getOnDelete()) {
-                $script .= "
+        if ($refFK->isLocalColumnsRequired() || ForeignKey::CASCADE === $refFK->getOnDelete()) {
+            $script .= "
                     $queryClassName::create()
                         ->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
                         ->delete(\$con);";
-            } else {
-                $script .= "
+        } else {
+            $script .= "
                     foreach (\$this->{$lowerRelatedName}ScheduledForDeletion as \${$lowerSingleRelatedName}) {
                         // need to save related object because we set the relation to null
                         \${$lowerSingleRelatedName}->save(\$con);
                     }";
-            }
+        }
 
-            $script .= "
+        $script .= "
                     \$this->{$lowerRelatedName}ScheduledForDeletion = null;
                 }
             }
@@ -4872,8 +4898,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
         $signature = array_map(function($item) {
-                return $item . ' = null';
-            }, $signature);
+            return $item . ' = null';
+        }, $signature);
         $signature = implode(', ', $signature);
         $phpDoc = implode(', ', $phpDoc);
 
@@ -4981,11 +5007,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
                 \$query = $relatedQueryClassName::create(null, \$criteria)
                     ->filterBy{$selfRelationName}(\$this)";
-                foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                    $varName = $this->getFKPhpNameAffix($fk, $plural = false);
-                    $script .= "
+            foreach ($crossFKs->getCrossForeignKeys() as $fk) {
+                $varName = $this->getFKPhpNameAffix($fk, $plural = false);
+                $script .= "
                     ->join{$varName}()";
-                }
+            }
 
             $script .= "
                 ;
@@ -5043,8 +5069,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
             $signature = array_map(function($item) {
-                    return $item . ' = null';
-                }, $signature);
+                return $item . ' = null';
+            }, $signature);
             $signature = implode(', ', $signature);
             $phpDoc = implode(', ', $phpDoc);
             $shortSignature = implode(', ', $shortSignature);
@@ -5280,8 +5306,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
             $signature = array_map(function($item) {
-                    return $item . ' = null';
-                }, $signature);
+                return $item . ' = null';
+            }, $signature);
             $signature = implode(', ', $signature);
             $phpDoc = implode(', ', $phpDoc);
             $shortSignature = implode(', ', $shortSignature);
@@ -5538,36 +5564,36 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         if (\$this->get{$relCol}()->contains({$shortSignature})) {
             {$foreignObjectName} = new {$className}();";
-            foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-                $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
-                $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
+        foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
+            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
-                $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
-                $script .= "
+            $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $script .= "
             {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
 
-                $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
+            $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
-                $getterName = $this->getCrossRefFKGetterName($crossFKs, $crossFK);
-                $getterRemoveObjectName = $this->getCrossRefFKRemoveObjectNames($crossFKs, $crossFK);
+            $getterName = $this->getCrossRefFKGetterName($crossFKs, $crossFK);
+            $getterRemoveObjectName = $this->getCrossRefFKRemoveObjectNames($crossFKs, $crossFK);
 
-                $script .= "
+            $script .= "
             if (\${$lowerRelatedObjectClassName}->is{$getterName}Loaded()) {
                 //remove the back reference if available
                 \${$lowerRelatedObjectClassName}->get$getterName()->removeObject($getterRemoveObjectName);
             }\n";
 
-            }
+        }
 
-            foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $primaryKey) {
-                $paramName = lcfirst($primaryKey->getPhpName());
-                $script .= "
-            {$foreignObjectName}->set{$primaryKey->getPhpName()}(\$$paramName);";
-            }
+        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $primaryKey) {
+            $paramName = lcfirst($primaryKey->getPhpName());
             $script .= "
+            {$foreignObjectName}->set{$primaryKey->getPhpName()}(\$$paramName);";
+        }
+        $script .= "
             {$foreignObjectName}->set{$this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey())}(\$this);";
 
-             $script .= "
+        $script .= "
             \$this->remove{$refKObjectClassName}(clone {$foreignObjectName});
             {$foreignObjectName}->clear();
 
@@ -5779,7 +5805,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } else {
             $script .= $this->addDoInsertBodyRaw();
         }
-            $script .= "
+        $script .= "
         \$this->setNew(false);
     }
 ";
@@ -6150,8 +6176,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
                 }
                 \$this->postSave(\$con);";
-                $this->applyBehaviorModifier('postSave', $script, "                ");
-                $script .= "
+            $this->applyBehaviorModifier('postSave', $script, "                ");
+            $script .= "
                 ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
             } else {
                 \$affectedRows = 0;
@@ -6390,9 +6416,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // Note: we're no longer resetting non-autoincrement primary keys to default values
         // due to: http://propel.phpdb.org/trac/ticket/618
         foreach ($autoIncCols as $col) {
-                $coldefval = $col->getPhpDefaultValue();
-                $coldefval = var_export($coldefval, true);
-                $script .= "
+            $coldefval = $col->getPhpDefaultValue();
+            $coldefval = var_export($coldefval, true);
+            $script .= "
             \$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value";
         } // foreach
         $script .= "
@@ -6590,8 +6616,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->applyBehaviorModifier('objectCall', $behaviorCallScript, "    ");
 
         $script .= $this->renderTemplate('baseObjectMethodMagicCall', [
-                'behaviorCallScript' => $behaviorCallScript
-                ]);
+            'behaviorCallScript' => $behaviorCallScript
+        ]);
     }
 
     protected function getDateTimeClass(Column $column)
