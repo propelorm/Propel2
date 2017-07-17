@@ -980,7 +980,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {
         $clo = $column->getLowercasedName();
         $script .= "
-        return json_decode(\$this->$clo);";
+        return json_decode(\$this->$clo, true);";
     }
 
     /**
