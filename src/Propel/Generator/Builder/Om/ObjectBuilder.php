@@ -1887,7 +1887,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (is_array(\$v)) {
             \$v = json_decode(json_encode(\$v));
         }
-        if (is_string(\$v)) {
+        elseif (is_string(\$v)) {
             \$v = json_decode(\$v);
         }
         if (\$v != json_decode(\$this->$clo)) {

@@ -29,7 +29,7 @@ class GeneratedObjectJsonColumnTypeTest extends TestCase
 <database name="generated_object_complex_type_test_json">
     <table name="complex_column_type_json_entity">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="JSON" sqlType="json" />
+        <column name="bar" type="JSON" sqlType="json" default='{"defaultKey":"defaultValue"}'/>
     </table>
 </database>
 EOF;
@@ -49,11 +49,12 @@ EOF;
     {
         $this->assertTrue(method_exists('ComplexColumnTypeJsonEntity', 'getBar'));
         $e = new \ComplexColumnTypeJsonEntity();
-        $this->assertNull($e->getBar());
+        $this->assertInstanceOf('stdClass', $e->getBar());
         $e = new \PublicComplexColumnTypeJsonEntity();
         $e->bar = '{"key":"value"}';
         $this->assertTrue($e->getBar() instanceof \stdClass);
         $this->assertEquals('value', $e->getBar()->key);
+        $this->assertEquals('value', $e->getBar(true)['key']);
     }
 
     public function testSetter()
@@ -66,6 +67,38 @@ EOF;
         $this->assertEquals('{"key":"value"}', $e->bar);
         $e->setBar(null);
         $this->assertNull($e->getBar());
+    }
+    
+    public function testIsModified()
+    {
+      $this->assertTrue(method_exists('ComplexColumnTypeJsonEntity', 'setBar'));
+      $e = new \PublicComplexColumnTypeJsonEntity();
+      $e->setBar(array(
+          'key' => 'value'
+      ));
+      $this->assertTrue($e->isModified());
+      
+      $e = new \PublicComplexColumnTypeJsonEntity();
+      $e->setBar(array(
+          'defaultKey' => 'defaultValue'
+      ));
+      $this->assertFalse($e->isModified());
+      
+      $e->setBar('{"defaultKey":"defaultValue"}');
+      $this->assertFalse($e->isModified());
+      
+      $e->setBar('{"defaultKey"  :  "defaultValue"}');
+      $this->assertFalse($e->isModified());
+      
+      $e->setBar((object)array(
+          'defaultKey' => 'defaultValue'
+      ));
+      $this->assertFalse($e->isModified());
+      
+      $e->setBar((object)array(
+          'key' => 'value'
+      ));
+      $this->assertTrue($e->isModified());
     }
 
     public function testValueIsPersisted()
