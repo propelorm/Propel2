@@ -971,7 +971,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addJsonAccessor(&$script, Column $column)
     {
         $this->addJsonAccessorComment($script, $column);
-        $this->addDefaultAccessorOpen($script, $column);
+        $this->addJsonAccessorOpen($script, $column);
         $this->addJsonAccessorBody($script, $column);
         $this->addDefaultAccessorClose($script);
     }
@@ -989,7 +989,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Get the [$clo] column value.
-     * ".$column->getDescription();
+     * ".$column->getDescription() ."
+     * @param bool \$asArray Returns the JSON data as array instead of object
+     ";
         if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
@@ -999,11 +1001,32 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */";
     }
 
+    /**
+     * Adds the function declaration for a JSON accessor.
+     *
+     * @param string &$script
+     * @param Column $column
+     */
+    public function addJsonAccessorOpen(&$script, Column $column)
+    {
+        $cfc = $column->getPhpName();
+        $visibility = $column->getAccessorVisibility();
+
+        $script .= "
+    ".$visibility." function get$cfc(\$asArray = false";
+        if ($column->isLazyLoad()) {
+            $script .= ", ConnectionInterface \$con = null";
+        }
+
+        $script .= ")
+    {";
+    }
+
     protected function addJsonAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
         $script .= "
-        return json_decode(\$this->$clo);";
+        return json_decode(\$this->$clo, \$asArray);";
     }
 
     /**
