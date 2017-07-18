@@ -1013,7 +1013,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    ".$visibility." function get$cfc(\$asArray = false";
+    ".$visibility." function get$cfc(\$asArray = true";
         if ($column->isLazyLoad()) {
             $script .= ", ConnectionInterface \$con = null";
         }
@@ -1887,7 +1887,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (is_array(\$v)) {
             \$v = json_decode(json_encode(\$v));
         }
-        elseif (is_string(\$v)) {
+        if (is_string(\$v)) {
             \$v = json_decode(\$v);
         }
         if (\$v != json_decode(\$this->$clo)) {

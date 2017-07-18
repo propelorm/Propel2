@@ -49,12 +49,12 @@ EOF;
     {
         $this->assertTrue(method_exists('ComplexColumnTypeJsonEntity', 'getBar'));
         $e = new \ComplexColumnTypeJsonEntity();
-        $this->assertInstanceOf('stdClass', $e->getBar());
+        $this->assertInstanceOf('stdClass', $e->getBar(false));
         $e = new \PublicComplexColumnTypeJsonEntity();
         $e->bar = '{"key":"value"}';
-        $this->assertTrue($e->getBar() instanceof \stdClass);
-        $this->assertEquals('value', $e->getBar()->key);
-        $this->assertEquals('value', $e->getBar(true)['key']);
+        $this->assertInstanceOf('stdClass', $e->getBar(false));
+        $this->assertEquals('value', $e->getBar(false)->key);
+        $this->assertEquals('value', $e->getBar()['key']);
     }
 
     public function testSetter()
@@ -110,7 +110,8 @@ EOF;
         $e->save();
         \Map\ComplexColumnTypeJsonEntityTableMap::clearInstancePool();
         $e = \ComplexColumnTypeJsonEntityQuery::create()->findOne();
-        $this->assertEquals('value', $e->getBar()->key);
+        $this->assertEquals('value', $e->getBar(false)->key);
+        $this->assertEquals('value', $e->getBar()['key']);
     }
 
     public function testValueIsCopied()
@@ -121,6 +122,7 @@ EOF;
         ));
         $e2 = new \ComplexColumnTypeJsonEntity();
         $e1->copyInto($e2);
-        $this->assertEquals('value', $e2->getBar()->key);
+        $this->assertEquals('value', $e2->getBar()['key']);
+        $this->assertEquals('value', $e2->getBar(false)->key);
     }
 }
