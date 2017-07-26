@@ -847,11 +847,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
                         $script .= '
-        $pks[] = (' . $col->getPhpType() . ') ' . "\$row[
+        $pks[] = ' . ($col->isPhpObjectType() ? 'new ' . $col->getPhpType() . '(' : '(' . $col->getPhpType() . ') ') . "\$row[
             \$indexType == TableMap::TYPE_NUM
                 ? $n + \$offset
                 : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)
-        ];";
+        ]" . ($col->isPhpObjectType() ? ')' : '') . ';';
                     }
                     $n++;
                 }
@@ -866,11 +866,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
-                        $pk = '(' . $col->getPhpType() . ') ' . "\$row[
+                        $pk = ($col->isPhpObjectType() ? 'new ' . $col->getPhpType() . '(' : '(' . $col->getPhpType() . ') ') . "\$row[
             \$indexType == TableMap::TYPE_NUM
                 ? $n + \$offset
                 : self::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)
-        ]";
+        ]" . ($col->isPhpObjectType() ? ')' : '');
                     }
                     $n++;
                 }
