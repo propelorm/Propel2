@@ -43,8 +43,7 @@
     ],
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev",
-            "dev-fix-json-equality": "2.0-dev"
+            "dev-master": "2.0-dev"
         }
     }
 }
