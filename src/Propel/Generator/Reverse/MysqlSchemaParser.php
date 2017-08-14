@@ -161,7 +161,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
-        $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
+        $stmt = $this->dbh->query(sprintf('SHOW FULL COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $column = $this->getColumnFromRow($row, $table);
@@ -184,6 +184,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $autoincrement = (false !== strpos($row['Extra'], 'auto_increment'));
         $size = null;
         $scale = null;
+        $description = $row['Comment'];
         $sqlType = false;
 
         $regexp = '/^
@@ -260,6 +261,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
         $column->setAutoIncrement($autoincrement);
         $column->setNotNull(!$isNullable);
+        $column->setDescription($description);
 
         if ($this->addVendorInfo) {
             $vi = $this->getNewVendorInfoObject($row);
