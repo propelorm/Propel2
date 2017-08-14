@@ -302,7 +302,7 @@ class Profiler
             return 0;
         }
 
-        $significantDecimals = floor($significantFigures - log10(abs($number)));
+        $significantDecimals = (int) floor($significantFigures - log10(abs($number)));
         $magnitude = pow(10, $significantDecimals);
         $shifted = round($number * $magnitude);
 
