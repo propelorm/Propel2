@@ -16,6 +16,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Generator\Model\Column;
 
 /**
  * MS SQL PlatformInterface implementation.
@@ -202,14 +203,64 @@ END
             $this->quoteIdentifier($fk->getForeignTableName()),
             $this->getColumnListDDL($fk->getForeignColumnObjects())
         );
-        if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) {
+        if ($fk->hasOnUpdate() && $fk->getOnUpdate()) {
             $script .= ' ON UPDATE ' . $fk->getOnUpdate();
         }
-        if ($fk->hasOnDelete() && $fk->getOnDelete() != ForeignKey::SETNULL) {
+        if ($fk->hasOnDelete() && $fk->getOnDelete()) {
             $script .= ' ON DELETE '.  $fk->getOnDelete();
         }
 
         return $script;
+    }
+
+    /**
+     * Builds the DDL SQL to rename a column
+     *
+     * @return string
+     */
+    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
+    {
+        $fromColumnName = $this->quoteIdentifier($fromColumn->getTable()->getName().".".$fromColumn->getName());
+        $toColumnName = $this->quoteIdentifier($toColumn->getName());
+
+        $script = "
+EXEC sp_rename $fromColumnName, $toColumnName, 'COLUMN';
+        ";
+
+        return $script;
+    }
+
+    /**
+     * Builds the DDL SQL to add a list of columns
+     *
+     * @param  Column[] $columns
+     * @return string
+     */
+    public function getAddColumnsDDL($columns)
+    {
+        $lines = [];
+        $table = null;
+        foreach ($columns as $column) {
+            if (null === $table) {
+                $table = $column->getTable();
+            }
+            $lines[] = $this->getColumnDDL($column);
+        }
+
+        $sep = ",
+    ";
+
+        $pattern = "
+ALTER TABLE %s ADD
+
+    %s
+;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($table->getName()),
+            implode($sep, $lines)
+        );
     }
 
     /**
@@ -231,7 +282,7 @@ END
      */
     public function doQuoting($text)
     {
-        return '[' . strtr($text, ['.' => '].[']) . ']';
+        return "[$text]";
     }
 
     public function getTimestampFormatter()
