@@ -11,6 +11,7 @@
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
@@ -252,6 +253,58 @@ EXEC sp_rename $fromColumnName, $toColumnName, 'COLUMN';
 
         $pattern = "
 ALTER TABLE %s ADD
+
+    %s
+;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($table->getName()),
+            implode($sep, $lines)
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to modify a column
+     *
+     * @return string
+     */
+    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    {
+        $toColumn = $columnDiff->getToColumn();
+        $pattern = "
+ALTER TABLE %s ALTER COLUMN %s;
+";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($toColumn->getTable()->getName()),
+            $this->getColumnDDL($toColumn)
+        );
+    }
+
+    /**
+     * Builds the DDL SQL to modify a list of columns
+     *
+     * @param  ColumnDiff[] $columnDiffs
+     * @return string
+     */
+    public function getModifyColumnsDDL($columnDiffs)
+    {
+        $lines = [];
+        $table = null;
+        foreach ($columnDiffs as $columnDiff) {
+            $toColumn = $columnDiff->getToColumn();
+            if (null === $table) {
+                $table = $toColumn->getTable();
+            }
+            $lines[] = $this->getColumnDDL($toColumn);
+        }
+
+        $sep = ",
+    ";
+
+        $pattern = "
+ALTER TABLE %s ALTER COLUMN
 
     %s
 ;
