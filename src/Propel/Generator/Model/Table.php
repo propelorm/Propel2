@@ -786,7 +786,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
             // check for incomplete foreign key references when foreign table
             // has a composite primary key
-            if ($foreignTable->hasCompositePrimaryKey()) {
+            if (!is_null($foreignTable) && $foreignTable->hasCompositePrimaryKey()) {
                 // get composite foreign key's keys
                 $foreignPrimaryKeys = $foreignTable->getPrimaryKey();
                 // check all keys are referenced in foreign key
