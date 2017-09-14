@@ -14,6 +14,7 @@ use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
@@ -215,6 +216,78 @@ END
     }
 
     /**
+     * Builds the DDL SQL to drop a foreign key.
+     *
+     * @param  ForeignKey $fk
+     * @return string
+     */
+    public function getDropForeignKeyDDL(ForeignKey $fk)
+    {
+        if ($fk->isSkipSql() || $fk->isPolymorphic()) {
+            return;
+        }
+
+        $sql = "
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name='" . $fk->getName() . "')
+    ALTER TABLE " . $this->quoteIdentifier($fk->getTable()->getName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($fk->getName()) . ";
+";
+
+        return $sql;
+    }
+
+    /**
+     * Returns the DDL SQL to add an Index.
+     *
+     * @param  Index  $index
+     * @return string
+     */
+    public function getAddIndexDDL(Index $index)
+    {
+        // Unique indexes must be treated as constraints
+        if ($index->isUnique()) {
+            return "\nALTER TABLE " . $this->quoteIdentifier($index->getTable()->getName()) . " ADD " . $this->getUniqueDDL($index).";\n";
+
+        } else {
+            $pattern = "
+CREATE INDEX %s ON %s (%s);
+";
+
+            return sprintf($pattern,
+                $this->quoteIdentifier($index->getName()),
+                $this->quoteIdentifier($index->getTable()->getName()),
+                $this->getColumnListDDL($index->getColumnObjects())
+            );
+        }
+    }
+
+    /**
+     * Builds the DDL SQL to drop an Index.
+     *
+     * @param  Index  $index
+     * @return string
+     */
+    public function getDropIndexDDL(Index $index)
+    {
+        // Unique indexes must be treated as constraints
+        if ($index->isUnique()) {
+            $sql = "
+IF EXISTS (SELECT 1 FROM sysobjects WHERE name='" . $index->getFQName() . "')
+    ALTER TABLE " . $this->quoteIdentifier($index->getTable()->getName()) . " DROP CONSTRAINT " . $this->quoteIdentifier($index->getFQName()) . ";
+";
+
+            return $sql;
+        }
+
+        $pattern = "\nDROP INDEX %s ON %s;\n";
+
+        return sprintf($pattern,
+            $this->quoteIdentifier($index->getFQName()),
+            $this->quoteIdentifier($index->getTable()->getName())
+        );
+
+    }
+
+    /**
      * Builds the DDL SQL to rename a column
      *
      * @return string
@@ -248,15 +321,9 @@ EXEC sp_rename $fromColumnName, $toColumnName, 'COLUMN';
             $lines[] = $this->getColumnDDL($column);
         }
 
-        $sep = ",
-    ";
+        $sep = ",\n";
 
-        $pattern = "
-ALTER TABLE %s ADD
-
-    %s
-;
-";
+        $pattern = "\nALTER TABLE %s ADD %s;";
 
         return sprintf($pattern,
             $this->quoteIdentifier($table->getName()),
@@ -272,9 +339,7 @@ ALTER TABLE %s ADD
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
         $toColumn = $columnDiff->getToColumn();
-        $pattern = "
-ALTER TABLE %s ALTER COLUMN %s;
-";
+        $pattern = "ALTER TABLE %s ALTER COLUMN %s;\n";
 
         return sprintf($pattern,
             $this->quoteIdentifier($toColumn->getTable()->getName()),
@@ -297,23 +362,12 @@ ALTER TABLE %s ALTER COLUMN %s;
             if (null === $table) {
                 $table = $toColumn->getTable();
             }
-            $lines[] = $this->getColumnDDL($toColumn);
+            $lines[] = $this->getModifyColumnDDL($columnDiff);
         }
 
-        $sep = ",
-    ";
+        $sep = "";
 
-        $pattern = "
-ALTER TABLE %s ALTER COLUMN
-
-    %s
-;
-";
-
-        return sprintf($pattern,
-            $this->quoteIdentifier($table->getName()),
-            implode($sep, $lines)
-        );
+        return "\n" . implode($sep, $lines);
     }
 
     /**
