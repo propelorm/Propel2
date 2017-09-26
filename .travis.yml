@@ -5,6 +5,7 @@ php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
   - nightly
 
 env:
@@ -41,6 +42,10 @@ matrix:
       env: DB=mysql MARIADB=5.5
       addons:
         mariadb: 5.5
+    - php: 7.2
+      env: DB=mysql MARIADB=5.5
+      addons:
+        mariadb: 5.5
 
     - php: 5.5
       env: DB=mysql MARIADB=10.0
@@ -55,6 +60,10 @@ matrix:
       addons:
         mariadb: 10.0
     - php: 7.1
+      env: DB=mysql MARIADB=10.0
+      addons:
+        mariadb: 10.0    
+    - php: 7.2
       env: DB=mysql MARIADB=10.0
       addons:
         mariadb: 10.0
@@ -88,6 +97,10 @@ matrix:
       env: DB=pgsql POSTGRES=9.1
       addons:
         postgresql: 9.1
+    - php: 7.2
+      env: DB=pgsql POSTGRES=9.1
+      addons:
+        postgresql: 9.1    
 
     - php: 5.5
       env: DB=pgsql POSTGRES=9.2
@@ -105,6 +118,10 @@ matrix:
       env: DB=pgsql POSTGRES=9.2
       addons:
         postgresql: 9.2
+    - php: 7.2
+      env: DB=pgsql POSTGRES=9.2
+      addons:
+        postgresql: 9.2    
 
     - php: 5.5
       env: DB=pgsql POSTGRES=9.3
@@ -122,6 +139,11 @@ matrix:
       env: DB=pgsql POSTGRES=9.3
       addons:
         postgresql: 9.3
+    - php: 7.2
+      env: DB=pgsql POSTGRES=9.3
+      addons:
+        postgresql: 9.3
+
 
 
     - php: 5.5
@@ -140,6 +162,11 @@ matrix:
       env: DB=pgsql POSTGRES=9.4
       addons:
         postgresql: 9.4
+    - php: 7.2
+      env: DB=pgsql POSTGRES=9.4
+      addons:
+        postgresql: 9.4
+        
 
 
   allow_failures:
