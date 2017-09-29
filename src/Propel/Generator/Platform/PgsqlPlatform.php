@@ -15,6 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Domain;
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\PropelTypes;
@@ -236,7 +237,23 @@ SET search_path TO public;
 
         return $ret;
     }
-    
+
+    public function getForeignKeyDDL(ForeignKey $fk) {
+        $script = parent::getForeignKeyDDL($fk);
+
+        $pgVendorInfo = $fk->getVendorInfoForType('pgsql');
+        if($pgVendorInfo) {
+            if(filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
+                $script .= ' DEFERRABLE';
+                if(filter_var($pgVendorInfo->getParameter("initiallyDeferred"), FILTER_VALIDATE_BOOLEAN)) {
+                    $script .= ' INITIALLY DEFERRED';
+                }
+            }
+        }
+
+        return $script;
+    }
+
     /**
      * @return string
      */
