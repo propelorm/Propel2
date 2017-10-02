@@ -2527,7 +2527,7 @@ class Criteria
             $stmt->execute();
         } catch (\Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql));
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
         return $con->getDataFetcher($stmt);
