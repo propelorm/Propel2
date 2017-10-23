@@ -30,12 +30,14 @@ trait InstancePoolTrait
     public static function getInstanceKey($value)
     {
         if (!($value instanceof Criteria) && is_object($value)) {
-            if (count($pk = $value->getPrimaryKey()) > 1 || is_object($value->getPrimaryKey())) {
+            $pk = $value->getPrimaryKey();
+            if(is_object($pk) || (is_numeric($pk) && $pk > 1) || (is_array($pk) && count($pk) > 1)) {
                 $pk = serialize($pk);
             }
-
             return (string) $pk;
-        } elseif (is_scalar($value)) {
+        }
+
+        else if (is_scalar($value)) {
             // assume we've been passed a primary key
             return (string) $value;
         }
