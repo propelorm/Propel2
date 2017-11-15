@@ -145,8 +145,10 @@ class PropelModelPager implements \IteratorAggregate, \Countable
                 $newQueryKey = sprintf('%s offset %s limit %s', $queryKey, $this->getQuery()->getOffset(), $this->getQuery()->getLimit());
                 $this->getQuery()->setQueryKey($newQueryKey);
             }
-            
+                        
             $this->results = $this->getQuery()
+                ->offset($this->getPage() * $this->getMaxPerPage())
+                ->limit($this->getMaxPerPage())
                 ->find($this->con)
             ;
         }
