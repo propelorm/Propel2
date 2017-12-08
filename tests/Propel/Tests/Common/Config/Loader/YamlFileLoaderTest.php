@@ -13,6 +13,7 @@ namespace Propel\Tests\Common\Config\Loader;
 use Propel\Common\Config\Loader\YamlFileLoader;
 use Propel\Common\Config\FileLocator;
 use Propel\Tests\Common\Config\ConfigTestCase;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 class YamlFileLoaderTest extends ConfigTestCase
 {
@@ -68,9 +69,9 @@ only plain
 text
 EOF;
         $this->dumpTempFile('nonvalid.yaml', $content);
-
-        @$this->loader->load('nonvalid.yaml');
+        $this->loader->load('nonvalid.yaml');
     }
+
 
     public function testYamlFileIsEmpty()
     {

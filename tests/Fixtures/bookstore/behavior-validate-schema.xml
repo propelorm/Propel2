@@ -16,7 +16,7 @@
         </foreign-key>
         <behavior name="validate">
             <parameter name="rule1" value="{column: title, validator: NotNull}" />
-            <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
+            <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
             <parameter name="rule3" value="{column: isbn, validator: Unique, options: {message: Column isbn must be unique}}" />
         </behavior>
     </table>
