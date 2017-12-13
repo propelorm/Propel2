@@ -106,6 +106,34 @@ class MssqlPlatform extends DefaultPlatform
         return $ret;
     }
 
+    /**
+     * Builds the DDL SQL for a Column object AFTER a mutation
+     * This is required since MSSQL doesnt support the same column definition
+     * when mutating a column vs creating a column
+     *
+     * @return string
+     */
+    public function getChangeColumnDDL(Column $col)
+    {
+        $domain = $col->getDomain();
+
+        $ddl = [$this->quoteIdentifier($col->getName())];
+        $sqlType = $domain->getSqlType();
+        if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
+            $ddl[] = $sqlType . $col->getSizeDefinition();
+        } else {
+            $ddl[] = $sqlType;
+        }
+        if ($notNull = $this->getNullString($col->isNotNull())) {
+            $ddl[] = $notNull;
+        }
+        if ($autoIncrement = $col->getAutoIncrementString()) {
+            $ddl[] = $autoIncrement;
+        }
+
+        return implode(' ', $ddl);
+    }
+
     public function getDropTableDDL(Table $table)
     {
         $ret = '';
@@ -338,13 +366,37 @@ EXEC sp_rename $fromColumnName, $toColumnName, 'COLUMN';
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
-        $toColumn = $columnDiff->getToColumn();
-        $pattern = "ALTER TABLE %s ALTER COLUMN %s;\n";
+        $script = '';
 
-        return sprintf($pattern,
+        // default value changes requires default value constraint dropping
+        if ($this->alterColumnRequiresDropDefaultConstraint($columnDiff)) {
+            $dropDefaultContraintSql = $this->getDropDefaultConstraintDDL($columnDiff->getFromColumn());
+            $script .= $dropDefaultContraintSql;
+        }
+
+        $toColumn = $columnDiff->getToColumn();
+        $changed = $columnDiff->getChangedProperties();
+
+        // default value changed
+        if (isset($changed['defaultValueValue']) || isset($changed['defaultValueType'])) {
+            $defaultValueForColumnDDL = $this->getColumnDefaultValueDDL($toColumn);
+            if (strlen(trim($defaultValueForColumnDDL)) > 0) {
+                $pattern = "ALTER TABLE %s ADD $defaultValueForColumnDDL FOR %s;\n";
+                $script .= sprintf(
+                    $pattern,
+                    $this->quoteIdentifier($toColumn->getTable()->getName()),
+                    $this->quoteIdentifier($toColumn->getName())
+                );
+            }
+        }
+
+        $pattern = "ALTER TABLE %s ALTER COLUMN %s;\n";
+        $script .= sprintf($pattern,
             $this->quoteIdentifier($toColumn->getTable()->getName()),
-            $this->getColumnDDL($toColumn)
+            $this->getChangeColumnDDL($toColumn)
         );
+
+        return $script;
     }
 
     /**
@@ -395,5 +447,58 @@ EXEC sp_rename $fromColumnName, $toColumnName, 'COLUMN';
     public function getTimestampFormatter()
     {
         return 'Y-m-d H:i:s';
+    }
+
+    /**
+     * @param Column $column
+     * @return string
+     */
+    public function getDropDefaultConstraintDDL(Column $column)
+    {
+        $tableName = $column->getTableName();
+        $colName = $column->getName();
+
+        $script = "IF EXISTS (SELECT d.name FROM sys.tables t JOIN sys.default_constraints d on d.parent_object_id = t.object_id JOIN sys.columns c on c.object_id = t.object_id AND c.column_id = d.parent_column_id WHERE t.name = '".$tableName."' AND c.name = '".$colName."')
+BEGIN
+DECLARE @constraintName nvarchar(100), @cmd nvarchar(1000)
+SET @constraintName = (SELECT d.name FROM sys.tables t JOIN sys.default_constraints d on d.parent_object_id = t.object_id JOIN sys.columns c on c.object_id = t.object_id AND c.column_id = d.parent_column_id WHERE t.name = '".$tableName."' AND c.name = '".$colName."')
+SET @CMD = 'ALTER TABLE {$this->quoteIdentifier($tableName)} DROP CONSTRAINT ' + @constraintName
+EXEC (@CMD)
+END;\n";
+
+        return $script;
+    }
+
+    /**
+     * Checks whether a column alteration requires dropping its default constraint first.
+     *
+     * Different to other database vendors SQL Server implements column default values
+     * as constraints and therefore changes in a column's default value as well as changes
+     * in a column's type require dropping the default constraint first before being to
+     * alter the particular column to the new definition.
+     *
+     * @param ColumnDiff $columnDiff The column diff to evaluate.
+     *
+     * @return boolean True if the column alteration requires dropping its default constraint first, false otherwise.
+     */
+    private function alterColumnRequiresDropDefaultConstraint(ColumnDiff $columnDiff)
+    {
+        // We can only decide whether to drop an existing default constraint
+        // if we know the original default value.
+        if (!$columnDiff->getFromColumn() instanceof Column) {
+            return false;
+        }
+        // We only need to drop an existing default constraint if we know the
+        // column was defined with a default value before.
+        if (!$columnDiff->getFromColumn()->hasDefaultValue()) {
+            return false;
+        }
+        // We need to drop an existing default constraint if the column was
+        // defined with a default value before and it has changed.
+        if (!$columnDiff->getFromColumn()->hasDefaultValue() && $columnDiff->getToColumn()->hasDefaultValue()) {
+            return false;
+        }
+
+        return true;
     }
 }
