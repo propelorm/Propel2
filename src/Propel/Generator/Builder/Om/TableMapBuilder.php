@@ -1057,7 +1057,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             \$cls = " . $this->getTableMapClass() . "::OM_CLASS;";
         } else {
             $script .= "
-            \$cls = static::getOMClass(\$row, \$offset, false);";
+            \$cls = static::getOMClass(\$row, \$offset);
+            \$cls = preg_replace('#\.#', '\\\\', \$cls);";
         }
         $script .= "
             /** @var {$this->getObjectClassName()} \$obj */
