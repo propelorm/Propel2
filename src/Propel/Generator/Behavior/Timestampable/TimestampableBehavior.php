@@ -102,12 +102,13 @@ class TimestampableBehavior extends Behavior
      */
     public function preInsert($builder)
     {
-        $script = '';
+        $script = '$time = time();
+$highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();';
 
         if ($this->withCreatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('create_column'))->getType()) === 'INTEGER'
-                ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+                ? '$time'
+                : '$highPrecision'
             ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
@@ -117,8 +118,8 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
 
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
-                ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+                ? '$time'
+                : '$highPrecision'
             ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
