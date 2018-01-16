@@ -3,6 +3,9 @@ propel:
   general:
     project: bookstore
 
+  paths:
+    schemaDir: ../../reversecommand
+
   database:
     connections:
       bookstore:
@@ -44,6 +47,10 @@ propel:
         #Propel specific settings
         settings:
           charset: utf8
+
+  reverse:
+    connection: bookstore
+    namespace: \ReverseVendor\ReversePackageWithConfDir
 
   generator:
     defaultConnection: bookstore
