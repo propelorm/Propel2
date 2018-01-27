@@ -325,17 +325,9 @@ class InitCommand extends AbstractCommand
         /* Check if it runs in Symfony3 env — than use QuestionHelper, because DialogHelper is absent */
         if (class_exists('\Symfony\Component\Console\Helper\QuestionHelper')) {
             $helper = new ConsoleHelper3($input, $output);
-            $inputStream = $this->getHelper('question')->getInputStream();
         } else {
             $helper = new ConsoleHelper($input, $output);
-            $inputStream = $this->getHelper('dialog')->getInputStream();
         }
-
-        /* Console input testing magic: we pass hinted input to custom Propel helper */
-        if (is_resource($inputStream)) {
-            $helper->setInputStream($inputStream);
-        }
-
         $this->getHelperSet()->set($helper);
 
         return $helper;
