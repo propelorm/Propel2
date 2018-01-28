@@ -34,6 +34,11 @@ class PropelDateTime extends \DateTime
      */
     private $tzString;
 
+    /**
+     * @var null|\DateTime
+     */
+    private static $highPrecisionDateTime;
+
     protected static function isTimestamp($value)
     {
         if (!is_numeric($value)) {
@@ -73,6 +78,23 @@ class PropelDateTime extends \DateTime
         $dateTime->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         
         return $dateTime;
+    }
+
+    /**
+     * Get a DateTime object with milliseconds resolution.
+     *
+     * @param null $time
+     * @param bool $isSetNew
+     *
+     * @return \DateTime
+     */
+    public static function createSameHighPrecision($time = null, $isSetNew = false)
+    {
+        if (self::$highPrecisionDateTime === null || $isSetNew) {
+            self::$highPrecisionDateTime = self::createHighPrecision($time);
+        }
+
+        return self::$highPrecisionDateTime;
     }
 
     /**

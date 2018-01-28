@@ -85,7 +85,7 @@ class TimestampableBehavior extends Behavior
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
                 ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision(1)'
             ;
             return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
@@ -105,20 +105,20 @@ class TimestampableBehavior extends Behavior
         $script = '';
 
         if ($this->withCreatedAt()) {
-            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('create_column'))->getType()) === 'INTEGER'
+            $createdValueSource = strtoupper($this->getTable()->getColumn($this->getParameter('create_column'))->getType()) === 'INTEGER'
                 ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+                : '\\Propel\\Runtime\\Util\\PropelDateTime::createSameHighPrecision(1)'
             ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('create_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('create_column') . "(${$createdValueSource });
 }";
         }
 
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
                 ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+                : '\\Propel\\Runtime\\Util\\PropelDateTime::createSameHighPrecision('.!isset($createdValueSource ).')'
             ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
