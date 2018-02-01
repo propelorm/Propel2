@@ -399,7 +399,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function select($columnArray)
     {
-        if (!count($columnArray) || empty($columnArray)) {
+        if (empty($columnArray)) {
             throw new PropelException('You must ask for at least one column');
         }
 
