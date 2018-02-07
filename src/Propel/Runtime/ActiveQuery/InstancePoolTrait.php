@@ -31,8 +31,8 @@ trait InstancePoolTrait
     {
         if (!($value instanceof Criteria) && is_object($value)) {
             $pk = $value->getPrimaryKey();
-
-            if(is_object($pk) || (is_array($pk) && count($pk) > 1)) {
+            if (((is_array($pk) || $pk instanceof \Countable) && count($pk) > 1)
+                || is_object($pk)) {
                 $pk = serialize($pk);
             }
 
