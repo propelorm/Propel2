@@ -808,7 +808,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Get the [optionally formatted] temporal [$clo] column value.
      * {$column->getDescription()}
      *
-     * @param      string \$format The date/time format string (either date()-style or strftime()-style).
+     * @param      string|null \$format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw $dateTimeClass object will be returned.
      *
      * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
