@@ -1064,14 +1064,81 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
     }
 
-    public function testLimit()
+    public function testDefaultLimit()
     {
         $c = new Criteria();
         $this->assertEquals(-1, $c->getLimit(), 'Limit is -1 by default');
+    }
 
-        $c2 = $c->setLimit(1);
-        $this->assertEquals(1, $c->getLimit(), 'Limit is set by setLimit');
+    /**
+     * @dataProvider dataLimit
+     */
+    public function testLimit($limit, $expected)
+    {
+        $c = new Criteria();
+        $c2 = $c->setLimit($limit);
+
+        $this->assertSame($expected, $c->getLimit(), 'Correct limit is set by setLimit()');
         $this->assertSame($c, $c2, 'setLimit() returns the current Criteria');
+    }
+
+    public function dataLimit()
+    {
+        return array(
+            'Negative value' => array(
+                'limit'    => -1,
+                'expected' => -1
+            ),
+            'Zero' => array(
+                'limit'    => 0,
+                'expected' => 0
+            ),
+
+            'Small integer' => array(
+                'limit'    => 38427,
+                'expected' => 38427
+            ),
+            'Small integer as a string' => array(
+                'limit'    => '38427',
+                'expected' => 38427
+            ),
+
+            'Largest 32-bit integer' => array(
+                'limit'    => 2147483647,
+                'expected' => 2147483647
+            ),
+            'Largest 32-bit integer as a string' => array(
+                'limit'    => '2147483647',
+                'expected' => 2147483647
+            ),
+
+            'Largest 64-bit integer' => array(
+                'limit'    => 9223372036854775807,
+                'expected' => 9223372036854775807
+            ),
+            'Largest 64-bit integer as a string' => array(
+                'limit'    => '9223372036854775807',
+                'expected' => 9223372036854775807
+            ),
+
+            'Decimal value' => array(
+                'limit'    => 123.9,
+                'expected' => 123
+            ),
+            'Decimal value as a string' => array(
+                'limit'    => '123.9',
+                'expected' => 123
+            ),
+
+            'Non-numeric string' => array(
+                'limit'    => 'foo',
+                'expected' => 0
+            ),
+            'Injected SQL' => array(
+                'limit'    => '3;DROP TABLE abc',
+                'expected' => 3
+            ),
+        );
     }
 
     public function testCombineAndFilterBy()
