@@ -364,6 +364,17 @@ abstract class AbstractManager
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
+            // when this is not readable like './some/other/schema.xml' or '../../extra/schema.xml'
+            if (!is_readable($include)) {
+                // find in the relative path
+                foreach ($this->getGeneratorConfig()->getConfigProperty('paths') as $path) {
+                    if (is_readable($path . DIRECTORY_SEPARATOR . $include)) {
+                        $include = realpath($path . DIRECTORY_SEPARATOR . $include);
+                        break;
+                    }
+                }
+            }
+
             if (!is_readable($include)) {
                 throw new BuildException("External schema '$include' does not exist");
             }
