@@ -178,7 +178,6 @@ class VersionableBehavior extends Behavior
             }
         }
 
-        /** @var ForeignKey $fk */
         foreach ($this->getVersionableReferrers() as $fk) {
             $fkTableName = $fk->getTable()->getCommonName();
             $fkIdsColumnName = $fkTableName . '_ids';
@@ -239,7 +238,7 @@ class VersionableBehavior extends Behavior
 
     public function getReferrerIdsColumn(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
+        $fkTableName = $fk->getTable()->getCommonName();
         $fkIdsColumnName = $fkTableName . '_ids';
 
         return $this->versionTable->getColumn($fkIdsColumnName);
@@ -247,7 +246,7 @@ class VersionableBehavior extends Behavior
 
     public function getReferrerVersionsColumn(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
+        $fkTableName = $fk->getTable()->getCommonName();
         $fkIdsColumnName = $fkTableName . '_versions';
 
         return $this->versionTable->getColumn($fkIdsColumnName);
