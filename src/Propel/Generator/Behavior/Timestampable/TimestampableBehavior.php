@@ -83,8 +83,12 @@ class TimestampableBehavior extends Behavior
     public function preUpdate($builder)
     {
         if ($this->withUpdatedAt()) {
+            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
+                ? 'time()'
+                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+            ;
             return "if (\$this->isModified() && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
+    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
 }";
         }
 
@@ -98,19 +102,28 @@ class TimestampableBehavior extends Behavior
      */
     public function preInsert($builder)
     {
-        $script = '';
+        $script = '$time = time();
+$highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();';
 
         if ($this->withCreatedAt()) {
+            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('create_column'))->getType()) === 'INTEGER'
+                ? '$time'
+                : '$highPrecision'
+            ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('create_column') . "(\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
+    \$this->" . $this->getColumnSetter('create_column') . "(${valueSource});
 }";
         }
 
         if ($this->withUpdatedAt()) {
+            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
+                ? '$time'
+                : '$highPrecision'
+            ;
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision());
+    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
 }";
         }
 

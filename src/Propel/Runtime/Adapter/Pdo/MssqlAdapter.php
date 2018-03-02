@@ -140,15 +140,31 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         // split the select and from clauses out of the original query
-        $selectSegment = [];
-
+        $selectStatement = '';
+        $fromStatement = '';
         $selectText = 'SELECT ';
+        $selectTextLen = strlen($selectText);
 
-        preg_match('/\Aselect(.*)from(.*)/si', $sql, $selectSegment);
-        if (3 === count($selectSegment)) {
-            $selectStatement = trim($selectSegment[1]);
-            $fromStatement = trim($selectSegment[2]);
-        } else {
+        // Ensure that subqueries are ignored while iterating the SELECT list
+        // and that the first non-subquery FROM statement is our split
+        $parenthesisMatch = 0;
+        $len = strlen($sql);
+
+        for ($i = $selectTextLen; $i < $len; $i++) {
+            if ('(' === $sql[$i]) {
+                $parenthesisMatch++;
+            } else if (')' === $sql[$i]) {
+                $parenthesisMatch--;
+            } else if (0 === $parenthesisMatch && $i === stripos($sql, ' from ', $i)) {
+                // If we hit a 'from' clause outside of matching parenthesis, split the
+                // query string into `SELECT $selectStatement FROM $fromStatement`
+                $selectStatement = trim(substr($sql, $selectTextLen, $i - $selectTextLen));
+                $fromStatement = trim(substr($sql, $i + 6));
+                break;
+            }
+        }
+
+        if (empty($selectStatement) || empty($fromStatement)) {
             throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
         }
 

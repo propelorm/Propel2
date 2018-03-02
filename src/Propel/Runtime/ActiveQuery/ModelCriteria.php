@@ -273,7 +273,7 @@ class ModelCriteria extends BaseModelCriteria
      *   $c->groupBy(array('Book.AuthorId', 'Book.AuthorName'))
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_NAME)
-     * 
+     *
      * @param mixed $columnName an array of columns name (e.g. array('Book.AuthorId', 'Book.AuthorName')) or a single column name (e.g. 'Book.AuthorId')
      *
      * @return $this|ModelCriteria The current object, for fluid interface
@@ -283,19 +283,19 @@ class ModelCriteria extends BaseModelCriteria
         if (empty($columnName)) {
             throw new PropelException('You must ask for at least one column');
         }
-        
+
         if (!is_array($columnName)) {
             $columnName = array($columnName);
         }
-        
+
         foreach ($columnName as $column) {
             list(, $realColumnName) = $this->getColumnFromName($column, false);
             $this->addGroupByColumn($realColumnName);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Adds a GROUP BY clause for all columns of a model to the query
      * Examples:
@@ -399,7 +399,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function select($columnArray)
     {
-        if (!count($columnArray) || empty($columnArray)) {
+        if (empty($columnArray)) {
             throw new PropelException('You must ask for at least one column');
         }
 
@@ -2197,16 +2197,19 @@ class ModelCriteria extends BaseModelCriteria
 
         // Maybe it's a magic call to a qualified joinWith method, e.g. 'leftJoinWith' or 'joinWithAuthor'
         if (false !== ($pos = stripos($name, 'joinWith'))) {
+            $joinType = null;
+
             $type = substr($name, 0, $pos);
             if (in_array($type, ['left', 'right', 'inner'])) {
                 $joinType = strtoupper($type) . ' JOIN';
-            } else {
-                $joinType = Criteria::INNER_JOIN;
             }
 
             $relation = substr($name, $pos + 8);
             if (!$relation) {
                 $relation = $arguments[0];
+                $joinType = isset($arguments[1]) ? $arguments[1] : $joinType;
+            } else {
+                $joinType = isset($arguments[0]) ? $arguments[0] : $joinType;
             }
 
             return $this->joinWith($relation, $joinType);

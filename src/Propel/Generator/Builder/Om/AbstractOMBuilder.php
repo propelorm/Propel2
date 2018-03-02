@@ -1028,6 +1028,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     private function clean($content)
     {
+        // line feed
+        $content = str_replace("\r\n", "\n", $content);
+     
         // trailing whitespaces
         $content = preg_replace('/[ \t]*$/m', '', $content);
 
@@ -1035,9 +1038,6 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $content = preg_replace_callback('/^([ \t]+)/m', function ($matches) use ($content) {
             return str_replace("\t", '    ', $matches[0]);
         }, $content);
-
-        // line feed
-        $content = str_replace("\r\n", "\n", $content);
 
         // Unused "use" statements
         preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_SET_ORDER);

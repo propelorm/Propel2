@@ -12,7 +12,6 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -122,6 +121,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
+        $offset = (int) $offset;
+        $limit = (int) $limit;
+
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
         } elseif ($offset > 0) {
@@ -143,15 +145,15 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param StatementInterface $stmt
-     * @param string             $parameter
-     * @param mixed              $value
-     * @param ColumnMap          $cMap
-     * @param null|integer       $position
+     * @param \PDOStatement $stmt
+     * @param string        $parameter
+     * @param mixed         $value
+     * @param ColumnMap     $cMap
+     * @param null|integer  $position
      *
      * @return boolean
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL

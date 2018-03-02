@@ -23,6 +23,7 @@ use Propel\Common\Config\Exception\IniParseException;
  */
 class IniFileLoader extends FileLoader
 {
+
     /**
      * Separator for nesting levels of configuration data identifiers.
      *
@@ -58,7 +59,7 @@ class IniFileLoader extends FileLoader
      */
     public function load($file, $type = null)
     {
-        $ini = parse_ini_file($this->getPath($file), true);
+        $ini = parse_ini_file($this->getPath($file), true, INI_SCANNER_RAW);
 
         if (false === $ini) {
             throw new InvalidArgumentException("The configuration file '$file' has invalid content.");
@@ -71,8 +72,8 @@ class IniFileLoader extends FileLoader
     }
 
     /**
-     * Parse data from the configuration array, to transform nested sections into associative arrays.
-     *
+     * Parse data from the configuration array, to transform nested sections into associative arrays
+     * and to fix int/float/bool typing
      * @param  array $data
      * @return array
      */
@@ -163,6 +164,12 @@ class IniFileLoader extends FileLoader
             }
 
             $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
+        } else if (is_string($value) && in_array(strtolower($value), array("true", "false"))) {
+            $config[$key] = (strtolower($value) === "true");
+        } else if ($value === (string)(int) $value) {
+            $config[$key] = (int) $value;
+        } else if ($value === (string)(float) $value) {
+            $config[$key] = (float) $value;
         } else {
             $config[$key] = $value;
         }

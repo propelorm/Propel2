@@ -542,6 +542,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="referenceOnly" type="xs:boolean" default="true" use="optional">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    If set to true, instructs Propel to take the tables from the external schema into account in SQL.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="table">

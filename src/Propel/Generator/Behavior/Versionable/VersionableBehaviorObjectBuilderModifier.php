@@ -343,7 +343,7 @@ public function addVersion(ConnectionInterface \$con = null)
             if (!$fk->isLocalPrimaryKey()) {
                 $script .= "
 
-    if (\$object && \$relateds = \$object->toKeyValue('{$fk->getForeignColumn()->getPhpName()}', 'Version')) {
+    if (\$object && \$relateds = \$object->toKeyValue('{$fk->getTable()->getFirstPrimaryKeyColumn()->getPhpName()}', 'Version')) {
         \$version->set{$idsColumn->getPhpName()}(array_keys(\$relateds));
         \$version->set{$versionsColumn->getPhpName()}(array_values(\$relateds));
     }
@@ -457,7 +457,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
             $relatedVersionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($foreignVersionTable));
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
-            $fkColumn = $fk->getForeignColumn();
+            $fkColumn = $foreignTable->getFirstPrimaryKeyColumn();
             $fkVersionColumn = $foreignVersionTable->getColumn($this->behavior->getParameter('version_column'));
 
             $script .= "

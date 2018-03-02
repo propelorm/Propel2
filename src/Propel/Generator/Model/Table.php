@@ -784,6 +784,25 @@ class Table extends ScopedMappingModel implements IdMethod
                 }
             }
 
+            // check for incomplete foreign key references when foreign table
+            // has a composite primary key
+            if ($foreignTable->hasCompositePrimaryKey()) {
+                // get composite foreign key's keys
+                $foreignPrimaryKeys = $foreignTable->getPrimaryKey();
+                // check all keys are referenced in foreign key
+                foreach ($foreignPrimaryKeys as $foreignPrimaryKey) {
+                    if (!$foreignPrimaryKey->hasReferrer($foreignKey) && $throwErrors) {
+                        // foreign primary key is not being referenced in foreign key
+                        throw new BuildException(sprintf(
+                            'Table "%s" contains a foreign key to table "%s" but does not have a reference to foreign primary key "%s"',
+                            $this->getName(),
+                            $foreignTable->getName(),
+                            $foreignPrimaryKey->getName()
+                        ));
+                    }
+                }
+            }
+
             if ($this->getPlatform() instanceof MysqlPlatform) {
                 $this->addExtraIndices();
             }

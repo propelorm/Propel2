@@ -10,7 +10,7 @@
         <column name="author_id" required="false" type="INTEGER" description="Foreign Key Author" />
         <behavior name="validate">
             <parameter name="rule1" value="{column: title, validator: NotNull}" />
-            <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
+            <parameter name="rule2" value="{column: isbn, validator: Regex, options: {pattern: &quot;/[^\\d-]+/&quot;, match: false, message: Please enter a valid ISBN }}" />
         </behavior>
         <behavior name="i18n">
              <parameter name="i18n_columns" value="title" />

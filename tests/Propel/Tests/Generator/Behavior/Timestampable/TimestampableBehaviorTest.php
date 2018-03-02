@@ -65,9 +65,12 @@ class TimestampableBehaviorTest extends BookstoreTestBase
     {
         $t1 = new Table2();
         $this->assertNull($t1->getUpdatedAt());
-        $tsave = time();
         $t1->save();
-        $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable sets updated_column to time() on creation');
+        $this->assertEquals(
+            $t1->getUpdatedAt(),
+            $t1->getCreatedAt(),
+            'Timestampable sets updated_column same created_column on creation'
+        );
         sleep(1);
         $t1->setTitle('foo');
         $tupdate = time();

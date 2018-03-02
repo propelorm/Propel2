@@ -46,9 +46,10 @@ class ObjectFormatter extends AbstractFormatter
             foreach ($dataFetcher as $row) {
                 $object = $this->getAllObjectsFromRow($row);
                 $pk     = $object->getPrimaryKey();
+                $serializedPk = serialize($pk);
 
-                if (!isset($this->objects[serialize($pk)])) {
-                    $this->objects[serialize($pk)] = $object;
+                if (!isset($this->objects[$serializedPk])) {
+                    $this->objects[$serializedPk] = $object;
                     $collection[] = $object;
                 }
             }
@@ -111,11 +112,12 @@ class ObjectFormatter extends AbstractFormatter
         list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
 
         $pk = $obj->getPrimaryKey();
+        $serializedPk = serialize($pk);
 
-        if (isset($this->objects[serialize($pk)])) {
+        if (isset($this->objects[$serializedPk])) {
             //if instance pooling is disabled, we need to make sure we're working on the correct (already fetched) object
             //so one-to-many relations are correctly loaded.
-            $obj = $this->objects[serialize($pk)];
+            $obj = $this->objects[$serializedPk];
         }
 
         // related objects added using with()

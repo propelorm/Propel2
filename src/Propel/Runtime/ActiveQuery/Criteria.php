@@ -871,7 +871,7 @@ class Criteria
                 throw new LogicException(sprintf('Cannot combine unknown condition %s', $key));
             }
         }
-        $firstCriterion = array_shift($namedCriterions);
+        $firstCriterion = clone array_shift($namedCriterions);
         foreach ($namedCriterions as $criterion) {
             $firstCriterion->$operatorMethod($criterion);
         }
@@ -1259,8 +1259,7 @@ class Criteria
      */
     public function setLimit($limit)
     {
-        // TODO: do we enforce int here? 32bit issue if we do
-        $this->limit = $limit;
+        $this->limit = (int) $limit;
 
         return $this;
     }
@@ -1278,8 +1277,7 @@ class Criteria
     /**
      * Set offset.
      *
-     * @param  int            $offset An int with the value for offset.  (Note this values is
-     *                        cast to a 32bit integer and may result in truncation)
+     * @param  int            $offset An int with the value for offset.
      * @return $this|Criteria Modified Criteria object (for fluent API)
      */
     public function setOffset($offset)
@@ -2527,7 +2525,7 @@ class Criteria
             $stmt->execute();
         } catch (\Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
-            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql));
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
 
         return $con->getDataFetcher($stmt);

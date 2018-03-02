@@ -254,6 +254,24 @@ class FileLoaderTest extends TestCase
         putenv('integer');
     }
 
+    public function testResolveEmptyEnvironmentVariable()
+    {
+        putenv('home=');
+
+        $config = [
+            'home' => '%env.home%'
+        ];
+
+        $expected = [
+            'home' => ''
+        ];
+
+        $this->assertEquals($expected, $this->loader->resolveParams($config));
+
+        //cleanup environment
+        putenv('home');
+    }
+
     public function testResourceNameIsNotStringReturnsFalse()
     {
         $this->assertFalse($this->loader->checkSupports('ini', null));

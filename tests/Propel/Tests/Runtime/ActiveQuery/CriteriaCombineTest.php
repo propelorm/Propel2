@@ -386,4 +386,104 @@ class CriteriaCombineTest extends BaseTestCase
         $this->assertEquals($expect, $result);
         $this->assertEquals($expect_params, $params);
     }
+
+    public function testClonedCriteriaNotAffected()
+    {
+
+        $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+        $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
+        $this->c->combine(['cond1', 'cond2'], Criteria::LOGICAL_AND, 'cond12');
+        $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+        $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
+        $this->c->combine(['cond3', 'cond4'], Criteria::LOGICAL_AND, 'cond34');
+
+        $clonedCriteria = clone $this->c;
+
+        $expect1 = $this->getSql("SELECT  FROM ");
+
+        $params1 = [];
+        $result1 = $this->c->createSelectSql($params1);
+
+        $this->assertEquals($expect1, $result1);
+
+        $this->c->combine(['cond12', 'cond34'], Criteria::LOGICAL_OR);
+
+        $expect2 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
+        $expect_params = [
+            ['table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'],
+            ['table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'],
+            ['table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'],
+            ['table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'],
+        ];
+
+        $params2 = [];
+        $result2 = $this->c->createSelectSql($params2);
+
+        $this->assertEquals($expect2, $result2);
+        $this->assertEquals($expect_params, $params2);
+
+        // Cloned criteria should not be affected
+
+        $params3 = [];
+        $result3 = $clonedCriteria->createSelectSql($params3);
+
+        $this->assertEquals($expect1, $result3);
+
+    }
+
+
+    public function testClonedCriteriaNotAffected2() {
+
+        $this->c->addCond('cond1', "INVOICE.COST1", "1000", Criteria::GREATER_EQUAL);
+        $this->c->addCond('cond2', "INVOICE.COST2", "2000", Criteria::LESS_EQUAL);
+        $this->c->combine(['cond1', 'cond2'], Criteria::LOGICAL_AND, 'cond12');
+        $this->c->addCond('cond3', "INVOICE.COST3", "8000", Criteria::GREATER_EQUAL);
+        $this->c->addCond('cond4', "INVOICE.COST4", "9000", Criteria::LESS_EQUAL);
+        $this->c->combine(['cond3', 'cond4'], Criteria::LOGICAL_AND, 'cond34');
+
+        $clonedCriteria = clone $this->c;
+
+        $expect1 = $this->getSql("SELECT  FROM ");
+
+        $params1 = [];
+        $result1 = $this->c->createSelectSql($params1);
+
+        $this->assertEquals($expect1, $result1);
+
+        $this->c->addCond('cond5', "INVOICE.COST5", "5000", Criteria::GREATER_EQUAL);
+        $this->c->combine(['cond34', 'cond5'], Criteria::LOGICAL_AND);
+
+        $expect2 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST3>=:p1 AND INVOICE.COST4<=:p2) AND INVOICE.COST5>=:p3)");
+        $expect_params2 = [
+            ['table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'],
+            ['table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'],
+            ['table' => 'INVOICE', 'column' => 'COST5', 'value' => '5000'],
+        ];
+
+        $params2 = [];
+        $result2 = $this->c->createSelectSql($params2);
+
+        $this->assertEquals($expect2, $result2);
+        $this->assertEquals($expect_params2, $params2);
+
+        // Cloned criteria should not be affected by the combine of cond34 above
+        // we should still be able to use it in the clone for another combine
+
+        $clonedCriteria->combine(['cond12', 'cond34'], Criteria::LOGICAL_OR);
+
+        $expect3 = $this->getSql("SELECT  FROM INVOICE WHERE ((INVOICE.COST1>=:p1 AND INVOICE.COST2<=:p2) OR (INVOICE.COST3>=:p3 AND INVOICE.COST4<=:p4))");
+        $expect_params3 = [
+            ['table' => 'INVOICE', 'column' => 'COST1', 'value' => '1000'],
+            ['table' => 'INVOICE', 'column' => 'COST2', 'value' => '2000'],
+            ['table' => 'INVOICE', 'column' => 'COST3', 'value' => '8000'],
+            ['table' => 'INVOICE', 'column' => 'COST4', 'value' => '9000'],
+        ];
+
+        $params3 = [];
+        $result3 = $clonedCriteria->createSelectSql($params3);
+
+        $this->assertEquals($expect3, $result3);
+        $this->assertEquals($expect_params3, $params3);
+
+    }
 }

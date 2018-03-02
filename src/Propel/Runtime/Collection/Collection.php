@@ -164,10 +164,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     {
         return new CollectionIterator($this);
     }
-    
+
     /**
      * Count elements in the collection
-     * 
+     *
      * @return int
      */
     public function count()
@@ -602,5 +602,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     protected function getPluralModelName()
     {
         return $this->getPluralizer()->getPluralForm($this->getModel());
+    }
+
+    public function hashCode()
+    {
+        return spl_object_hash($this);
     }
 }

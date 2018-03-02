@@ -288,7 +288,7 @@ class SchemaReader
                     break;
 
                 case 'vendor':
-                    $this->currVendorObject = $this->currUnique->addVendorInfo($attributes);
+                    $this->currVendorObject = $this->currFK->addVendorInfo($attributes);
                     break;
 
                 default:

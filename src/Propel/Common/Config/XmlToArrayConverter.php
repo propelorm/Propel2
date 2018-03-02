@@ -12,6 +12,7 @@ namespace Propel\Common\Config;
 
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\XmlParseException;
+use SimpleXMLElement;
 
 /**
  * Class to convert an xml string to array
@@ -21,9 +22,9 @@ class XmlToArrayConverter
     /**
      * Create a PHP array from the XML file
      *
-     * @param String $xmlFile The XML file or a string containing xml to parse
+     * @param String $xmlToParse The XML file or a string containing xml to parse
      *
-     * @return Array
+     * @return array
      *
      * @throws \Propel\Common\Config\Exception\XmlParseException if parse errors occur
      */
@@ -33,28 +34,38 @@ class XmlToArrayConverter
             throw new InvalidArgumentException("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
         }
 
-        if (file_exists($xmlToParse)) {
-            $xmlToParse = file_get_contents($xmlToParse);
-        }
+        $isFile = file_exists($xmlToParse);
 
         //Empty xml file returns empty array
-        if ('' === $xmlToParse) {
+        if (
+            ($isFile && 0 === filesize($xmlToParse))
+            or (!$isFile && '' === $xmlToParse)
+        ) {
             return [];
         }
 
-        if ($xmlToParse[0] !== '<') {
+        if (
+            ($isFile && file_get_contents($xmlToParse, false, null, 0, 1) !== '<')
+            or (!$isFile && $xmlToParse[0] !== '<')
+        ) {
             throw new InvalidArgumentException('Invalid xml content');
         }
 
-        $currentEntityLoader = libxml_disable_entity_loader(true);
         $currentInternalErrors = libxml_use_internal_errors(true);
 
-        $xml = simplexml_load_string($xmlToParse);
+        if ($isFile) {
+            $xml = simplexml_load_file($xmlToParse);
+            if ($xml instanceof SimpleXMLElement) {
+                dom_import_simplexml($xml)->ownerDocument->xinclude();
+            }
+        } else {
+            $xml = simplexml_load_string($xmlToParse);
+        }
+
         $errors = libxml_get_errors();
 
         libxml_clear_errors();
         libxml_use_internal_errors($currentInternalErrors);
-        libxml_disable_entity_loader($currentEntityLoader);
 
         if (count($errors) > 0) {
             throw new XmlParseException($errors);
@@ -92,6 +103,9 @@ class XmlToArrayConverter
                     $k = self::getConvertedXmlValue($av);
                 } else {
                     // otherwise, just add the attribute like a child element
+                    if (is_string($child)) {
+                        $child = [];
+                    }
                     $child[$ak] = self::getConvertedXmlValue($av);
                 }
             }

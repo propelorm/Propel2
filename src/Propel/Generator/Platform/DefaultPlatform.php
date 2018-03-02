@@ -1352,8 +1352,8 @@ if (is_resource($columnValueAccessor)) {
             $tab,
             $columnValueMutator,
             $connectionVariableName,
-            $sequenceName ? ("'" . $sequenceName . "'") : '',
-            $phpType ? '('.$phpType.') ' : ''
+            $phpType ? '('.$phpType.') ' : '',
+            $sequenceName ? ("'" . $sequenceName . "'") : ''
         );
     }
 

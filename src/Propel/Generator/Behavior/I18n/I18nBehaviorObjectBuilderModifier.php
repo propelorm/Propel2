@@ -34,7 +34,7 @@ class I18nBehaviorObjectBuilderModifier
     public function postDelete($builder)
     {
         $this->builder = $builder;
-        if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->get()['generator']['objectModel']['emulateForeignKeyConstraints']) {
+        if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('generator.objectModel.emulateForeignKeyConstraints')) {
             $i18nTable = $this->behavior->getI18nTable();
 
             return $this->behavior->renderTemplate('objectPostDelete', [
