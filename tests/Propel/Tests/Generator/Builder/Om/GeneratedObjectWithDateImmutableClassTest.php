@@ -83,10 +83,10 @@ EOF;
 
         $ModelA = new \Foo\SomeTableA();
         $ModelA->setCreatedAt(clone $Date);
-        $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('c')], $ModelA->toArray());
+        $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('Y-m-d H:i:s.u')], $ModelA->toArray());
 
         $ModelB = new \Foo\SomeTableB();
         $ModelB->setCreatedAt(clone $Date);
-        $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('c')], $ModelB->toArray());
+        $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('Y-m-d H:i:s.u')], $ModelB->toArray());
     }
 }
