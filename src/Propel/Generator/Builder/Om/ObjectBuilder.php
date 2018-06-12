@@ -1810,22 +1810,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 || (\$dt->format($fmt) === $defaultValue) // or the entered value matches the default
                  ) {";
         } else {
-            switch ($col->getType()) {
-                case 'DATE':
-                    $format = 'Y-m-d';
-                    break;
-                case 'TIME':
-                    $format = 'H:i:s.u';
-                    break;
-                default:
-                    $format = 'Y-m-d H:i:s.u';
-            }
             $script .= "
-            if (\$this->{$clo} === null || \$dt === null || \$dt->format(\"$format\") !== \$this->{$clo}->format(\"$format\")) {";
+            if (\$this->{$clo} === null || \$dt === null || \$this->{$clo}->diff(\$dt)->s > 0) {";
         }
 
         $script .= "
-                \$this->$clo = \$dt === null ? null : clone \$dt;
+                \$tz = \$this->{$clo}->getTimeZone(); 
+                \$this->$clo = \$dt === null ? null : (clone \$dt)->setTimezone(\$tz);
                 \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
             }
         } // if either are not null
