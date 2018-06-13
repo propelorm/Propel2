@@ -19,9 +19,6 @@ use Propel\Generator\Util\QuickBuilder;
  */
 class VersionableBehaviorTest extends TestCase
 {
-
-    const SCHEMA_NAME = 'test';
-
     public function basicSchemaDataProvider()
     {
         $schema = <<<EOF
@@ -34,34 +31,24 @@ class VersionableBehaviorTest extends TestCase
 </database>
 EOF;
 
-        return [
-            ['versionable_behavior_test_0', $schema],
-            [
-                self::SCHEMA_NAME . '§versionable_behavior_test_0',
-                str_replace('<database ', '<database schema="' . self::SCHEMA_NAME . '" ', $schema),
-            ],
-        ];
+        return [[$schema]];
     }
-
 
     /**
      * @dataProvider basicSchemaDataProvider
-     *
-     * @param string $table table name
-     * @param string $schema schema xml
      */
-    public function testModifyTableAddsVersionColumn($table, $schema)
+    public function testModifyTableAddsVersionColumn($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- $table
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS $table;
+DROP TABLE IF EXISTS versionable_behavior_test_0;
 
-CREATE TABLE $table
+CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
@@ -74,7 +61,7 @@ EOF;
 
     public function testModifyTableAddsVersionColumnCustomName()
     {
-        $schema  = <<<EOF
+            $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -107,7 +94,7 @@ EOF;
 
     public function testModifyTableDoesNotAddVersionColumnIfExists()
     {
-        $schema  = <<<EOF
+            $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -158,52 +145,43 @@ EOF;
 </database>
 EOF;
 
-        return [
-            ['versionable_behavior_test', $schema],
-            [
-                self::SCHEMA_NAME . '§versionable_behavior_test',
-                str_replace('<database ', '<database schema="' . self::SCHEMA_NAME . '" ', $schema),
-            ],
-        ];
+        return [[$schema]];
     }
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
-     *
-     * @param string $table table name without prefix
-     * @param string $schema schema xml
      */
-    public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($table, $schema)
+    public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- {$table}_0
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_0;
+DROP TABLE IF EXISTS versionable_behavior_test_0;
 
-CREATE TABLE {$table}_0
+CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
     foreign_id INTEGER,
     version INTEGER DEFAULT 0,
     UNIQUE (id),
-    FOREIGN KEY (foreign_id) REFERENCES {$table}_1 (id)
+    FOREIGN KEY (foreign_id) REFERENCES versionable_behavior_test_1 (id)
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
         $expected = <<<EOF
 
 -----------------------------------------------------------------------
--- {$table}_0_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_0_version;
+DROP TABLE IF EXISTS versionable_behavior_test_0_version;
 
-CREATE TABLE {$table}_0_version
+CREATE TABLE versionable_behavior_test_0_version
 (
     id INTEGER NOT NULL,
     bar INTEGER,
@@ -212,7 +190,7 @@ CREATE TABLE {$table}_0_version
     foreign_id_version INTEGER DEFAULT 0,
     PRIMARY KEY (id,version),
     UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES {$table}_0 (id)
+    FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -221,22 +199,19 @@ EOF;
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
-     *
-     * @param string $table table name without prefix
-     * @param string $schema schema xml
      */
-    public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($table, $schema)
+    public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- {$table}_1
+-- versionable_behavior_test_1
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_1;
+DROP TABLE IF EXISTS versionable_behavior_test_1;
 
-CREATE TABLE {$table}_1
+CREATE TABLE versionable_behavior_test_1
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
@@ -245,26 +220,24 @@ CREATE TABLE {$table}_1
 );
 EOF;
         $this->assertContains($expected, $builder->getSQL());
-
-        $column   = strtr($table, [self::SCHEMA_NAME . '§' => '']);
         $expected = <<<EOF
 
 -----------------------------------------------------------------------
--- {$table}_1_version
+-- versionable_behavior_test_1_version
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_1_version;
+DROP TABLE IF EXISTS versionable_behavior_test_1_version;
 
-CREATE TABLE {$table}_1_version
+CREATE TABLE versionable_behavior_test_1_version
 (
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
-    {$column}_0_ids MEDIUMTEXT,
-    {$column}_0_versions MEDIUMTEXT,
+    versionable_behavior_test_0_ids MEDIUMTEXT,
+    versionable_behavior_test_0_versions MEDIUMTEXT,
     PRIMARY KEY (id,version),
     UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES {$table}_1 (id)
+    FOREIGN KEY (id) REFERENCES versionable_behavior_test_1 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -273,29 +246,26 @@ EOF;
 
     /**
      * @dataProvider basicSchemaDataProvider
-     *
-     * @param string $table table name
-     * @param string $schema schema xml
      */
-    public function testModifyTableAddsVersionTable($table, $schema)
+    public function testModifyTableAddsVersionTable($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- {$table}_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_version;
+DROP TABLE IF EXISTS versionable_behavior_test_0_version;
 
-CREATE TABLE {$table}_version
+CREATE TABLE versionable_behavior_test_0_version
 (
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,version),
     UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES {$table} (id)
+    FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -304,7 +274,7 @@ EOF;
 
     public function testModifyTableAddsVersionTableCustomName()
     {
-        $schema  = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -338,45 +308,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
-    public function testModifyTableAddsVersionTableCustomNameAndCustomSchemaName()
-    {
-        $schema  = <<<EOF
-<database name="versionable_behavior_test_0" schema="test">
-    <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable">
-          <parameter name="version_table" value="foo_ver" />
-        </behavior>
-    </table>
-</database>
-EOF;
-        $builder = new QuickBuilder();
-        $builder->setSchema($schema);
-        $expected = <<<EOF
------------------------------------------------------------------------
--- test§foo_ver
------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS test§foo_ver;
-
-CREATE TABLE test§foo_ver
-(
-    id INTEGER NOT NULL,
-    bar INTEGER,
-    version INTEGER DEFAULT 0 NOT NULL,
-    PRIMARY KEY (id,version),
-    UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES test§versionable_behavior_test_0 (id)
-        ON DELETE CASCADE
-);
-EOF;
-        $this->assertContains($expected, $builder->getSQL());
-    }
-
     public function testModifyTableDoesNotAddVersionTableIfExists()
     {
-        $schema  = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -424,56 +358,6 @@ EOF;
         $this->assertEquals($expected, $builder->getSQL());
     }
 
-    public function testModifyTableDoesNotAddVersionTableIfExistsCustomSchemaName()
-    {
-        $schema  = <<<EOF
-<database name="versionable_behavior_test_0" schema="test">
-    <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
-    </table>
-    <table name="versionable_behavior_test_0_version">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="baz" type="INTEGER" />
-    </table>
-</database>
-EOF;
-        $builder = new QuickBuilder();
-        $builder->setSchema($schema);
-        $expected = <<<EOF
-
------------------------------------------------------------------------
--- test§versionable_behavior_test_0
------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS test§versionable_behavior_test_0;
-
-CREATE TABLE test§versionable_behavior_test_0
-(
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    bar INTEGER,
-    version INTEGER DEFAULT 0,
-    UNIQUE (id)
-);
-
------------------------------------------------------------------------
--- test§versionable_behavior_test_0_version
------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS test§versionable_behavior_test_0_version;
-
-CREATE TABLE test§versionable_behavior_test_0_version
-(
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    baz INTEGER,
-    UNIQUE (id)
-);
-
-EOF;
-        $this->assertEquals($expected, $builder->getSQL());
-    }
-
     public function logSchemaDataProvider()
     {
         $schema = <<<EOF
@@ -490,30 +374,24 @@ EOF;
 </database>
 EOF;
 
-        return [
-            ['versionable_behavior_test_0', $schema],
-            [
-                self::SCHEMA_NAME . '§versionable_behavior_test_0',
-                str_replace('<database ', '<database schema="' . self::SCHEMA_NAME . '" ', $schema),
-            ],
-        ];
+        return [[$schema]];
     }
 
     /**
      * @dataProvider logSchemaDataProvider
      */
-    public function testModifyTableAddsLogColumns($table, $schema)
+    public function testModifyTableAddsLogColumns($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- $table
+-- versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS $table;
+DROP TABLE IF EXISTS versionable_behavior_test_0;
 
-CREATE TABLE $table
+CREATE TABLE versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
@@ -530,18 +408,18 @@ EOF;
     /**
      * @dataProvider logSchemaDataProvider
      */
-    public function testModifyTableAddsVersionTableLogColumns($table, $schema)
+    public function testModifyTableAddsVersionTableLogColumns($schema)
     {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<EOF
 -----------------------------------------------------------------------
--- {$table}_version
+-- versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_version;
+DROP TABLE IF EXISTS versionable_behavior_test_0_version;
 
-CREATE TABLE {$table}_version
+CREATE TABLE versionable_behavior_test_0_version
 (
     id INTEGER NOT NULL,
     bar INTEGER,
@@ -551,7 +429,7 @@ CREATE TABLE {$table}_version
     version_comment VARCHAR(255),
     PRIMARY KEY (id,version),
     UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES {$table} (id)
+    FOREIGN KEY (id) REFERENCES versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
 EOF;
@@ -560,7 +438,7 @@ EOF;
 
     public function testDatabaseLevelBehavior()
     {
-        $schema   = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <behavior name="versionable" />
     <table name="versionable_behavior_test_0">
@@ -587,49 +465,14 @@ CREATE TABLE versionable_behavior_test_0_version
         ON DELETE CASCADE
 );
 EOF;
-        $builder  = new QuickBuilder();
-        $builder->setSchema($schema);
-        $this->assertContains($expected, $builder->getSQL());
-    }
-
-
-    public function testDatabaseLevelBehaviorWithSchemaName()
-    {
-        $schema   = <<<EOF
-<database name="versionable_behavior_test_0" schema="test">
-    <behavior name="versionable" />
-    <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-    </table>
-</database>
-EOF;
-        $expected = <<<EOF
------------------------------------------------------------------------
--- test§versionable_behavior_test_0_version
------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS test§versionable_behavior_test_0_version;
-
-CREATE TABLE test§versionable_behavior_test_0_version
-(
-    id INTEGER NOT NULL,
-    bar INTEGER,
-    version INTEGER DEFAULT 0 NOT NULL,
-    PRIMARY KEY (id,version),
-    UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES test§versionable_behavior_test_0 (id)
-        ON DELETE CASCADE
-);
-EOF;
-        $builder  = new QuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $this->assertContains($expected, $builder->getSQL());
     }
 
     public function testIndicesParameter()
     {
-        $schema   = <<<EOF
+        $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
@@ -657,42 +500,7 @@ CREATE TABLE versionable_behavior_test_0_version
 
 CREATE INDEX versionable_behavior_test_0_version_i_14f552 ON versionable_behavior_test_0_version (bar);
 EOF;
-        $builder  = new QuickBuilder();
-        $builder->setSchema($schema);
-        $this->assertContains($expected, $builder->getSQL());
-    }
-
-    public function testIndicesParameterWithSchemaName()
-    {
-        $schema   = <<<EOF
-<database name="versionable_behavior_test_0" schema="test">
-    <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <index>
-            <index-column name="bar"/>
-        </index>
-        <behavior name="versionable">
-            <parameter name="indices" value="true" />
-        </behavior>
-    </table>
-</database>
-EOF;
-        $expected = <<<EOF
-CREATE TABLE test§versionable_behavior_test_0_version
-(
-    id INTEGER NOT NULL,
-    bar INTEGER,
-    version INTEGER DEFAULT 0 NOT NULL,
-    PRIMARY KEY (id,version),
-    UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES test§versionable_behavior_test_0 (id)
-        ON DELETE CASCADE
-);
-
-CREATE INDEX versionable_behavior_test_0_version_i_14f552 ON test§versionable_behavior_test_0_version (bar);
-EOF;
-        $builder  = new QuickBuilder();
+        $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $this->assertContains($expected, $builder->getSQL());
     }
@@ -715,8 +523,7 @@ EOF;
         $this->assertEmpty($builder->getSQL());
     }
 
-    public function tablePrefixSchemaDataProvider()
-    {
+    public function tablePrefixSchemaDataProvider() {
         $schema = <<<XML
 <database name="versionable_behavior_test_0" tablePrefix="prefix_">
     <table name="versionable_behavior_test_0">
@@ -726,33 +533,26 @@ EOF;
     </table>
 </database>
 XML;
-
-        return [
-            ['prefix_versionable_behavior_test_0', $schema],
-            [
-                self::SCHEMA_NAME . '§prefix_versionable_behavior_test_0',
-                str_replace('<database ', '<database schema="' . self::SCHEMA_NAME . '" ', $schema),
-            ],
-        ];
+        return [[$schema]];
     }
 
 
     /**
      * @dataProvider tablePrefixSchemaDataProvider
      */
-    public function testModifyTableAddsVersionColumnWithPrefix($table, $schema)
+    public function testModifyTableAddsVersionColumnWithPrefix($schema)
     {
 
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
 -----------------------------------------------------------------------
--- $table
+-- prefix_versionable_behavior_test_0
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS $table;
+DROP TABLE IF EXISTS prefix_versionable_behavior_test_0;
 
-CREATE TABLE $table
+CREATE TABLE prefix_versionable_behavior_test_0
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     bar INTEGER,
@@ -762,33 +562,32 @@ CREATE TABLE $table
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
-
     /**
      * @dataProvider tablePrefixSchemaDataProvider
      */
-    public function testModifyTableAddsVersionTableWithPrefix($table, $schema)
-    {
+    public function testModifyTableAddsVersionTableWithPrefix($schema) {
 
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
 -----------------------------------------------------------------------
--- {$table}_version
+-- prefix_versionable_behavior_test_0_version
 -----------------------------------------------------------------------
 
-DROP TABLE IF EXISTS {$table}_version;
+DROP TABLE IF EXISTS prefix_versionable_behavior_test_0_version;
 
-CREATE TABLE {$table}_version
+CREATE TABLE prefix_versionable_behavior_test_0_version
 (
     id INTEGER NOT NULL,
     bar INTEGER,
     version INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,version),
     UNIQUE (id,version),
-    FOREIGN KEY (id) REFERENCES {$table} (id)
+    FOREIGN KEY (id) REFERENCES prefix_versionable_behavior_test_0 (id)
         ON DELETE CASCADE
 );
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
+
 }
