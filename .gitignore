@@ -1,4 +1,3 @@
-.idea/
 vendor/
 composer.phar
 /composer.lock
@@ -41,3 +40,4 @@ tests/Fixtures/fixtures_built
 tests/graphviztest/
 tests/migrationdiff/
 tests/reversecommand/
+/.idea

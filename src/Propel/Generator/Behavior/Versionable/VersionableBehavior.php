@@ -108,7 +108,8 @@ class VersionableBehavior extends Behavior
         $table = $this->getTable();
         $database = $table->getDatabase();
         $versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getOriginCommonName() . '_version');
-        if (!$database->hasTable($versionTableName)) {
+        $this->versionTable = $database->getTable($versionTableName);
+        if (empty($this->versionTable)) {
             // create the version table
             $versionTable = $database->addTable([
                 'name'      => $versionTableName,
@@ -159,8 +160,6 @@ class VersionableBehavior extends Behavior
             $versionColumn->setNotNull(true);
             $versionColumn->setPrimaryKey(true);
             $this->versionTable = $versionTable;
-        } else {
-            $this->versionTable = $database->getTable($versionTableName);
         }
     }
 
