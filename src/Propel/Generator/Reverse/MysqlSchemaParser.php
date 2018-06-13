@@ -18,6 +18,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Runtime\DataFetcher\PDODataFetcher;
 
 /**
  * Mysql database schema parser.
@@ -109,6 +110,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         // Now add indices and constraints.
         foreach ($database->getTables() as $table) {
+            $this->addTableDescription($table);
+            foreach ($table->getColumns() as $column) {
+                $this->addColumnDescription($column);
+            }
             $this->addForeignKeys($table);
             $this->addIndexes($table);
             $this->addPrimaryKey($table);
@@ -268,6 +273,42 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
 
         return $column;
+    }
+
+    /**
+     * Load a comment for this table.
+     * @param Table $table
+     */
+    protected function addTableDescription(Table $table)
+    {
+        $tableName = $this->getPlatform()->quote($table->getName());
+        /** @var PDODataFetcher $dataFetcher */
+        $dataFetcher = $this->dbh->query("
+SELECT table_comment
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema=DATABASE()
+  AND table_name=({$tableName})");
+        list($comment) = $dataFetcher->fetch();
+        if ($comment !== '' && $comment !== null)
+            $table->setDescription($comment);
+    }
+
+    /**
+     * Load a comment for this column.
+     * @param Column $column
+     */
+    protected function addColumnDescription(Column $column) {
+        $tableName = $this->getPlatform()->quote($column->getTableName());
+        $columnName = $this->getPlatform()->quote($column->getName());
+        /** @var PDODataFetcher $dataFetcher */
+        $dataFetcher = $this->dbh->query("
+SELECT column_comment FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_schema=DATABASE()
+  AND table_name=({$tableName})
+  AND column_name=({$columnName})");
+        list($comment) = $dataFetcher->fetch();
+        if ($comment !== '' && $comment !== null)
+            $column->setDescription($comment);
     }
 
     /**
