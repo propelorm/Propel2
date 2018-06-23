@@ -102,11 +102,11 @@ class ArchivableBehavior extends Behavior
                 ]);
             }
             // copy foreign keys if enabled in parameters
-            if ($this->getParameter('archive_foreign_keys')) {
+            if ($this->getParameter('archive_foreign_keys') == 'true') {
                 foreach ($table->getForeignKeys() as $foreignKey) {
                     $copiedForeignKey = clone $foreignKey;
                     // database foreing keys are not required
-                    $copiedForeignKey->setSkipSql($this->getParameter('archive_foreign_keys_skip_sql'));
+                    $copiedForeignKey->setSkipSql($this->getParameter('archive_foreign_keys_skip_sql') == 'true');
                     $archiveTable->addForeignKey($copiedForeignKey);
                 }
             }
