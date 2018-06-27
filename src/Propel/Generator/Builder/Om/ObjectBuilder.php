@@ -4258,6 +4258,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->{$collName} = \${$inputCollection};
         \$this->{$collName}Partial = false;
 
+        \$this->modifiedColumns[\"{$collName}\"] = true;
+        
         return \$this;
     }
 ";
