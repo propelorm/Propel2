@@ -102,6 +102,12 @@ class TableComparator
         $tc->setToTable($toTable);
 
         $differences = 0;
+        if ($fromTable->getDescription() !== $toTable->getDescription()) {
+            $platform = $fromTable->getPlatform() ?: $toTable->getPlatform();
+            if (!$platform || $platform->supportsComment()) {
+                $differences++;
+            }
+        }
         $differences += $tc->compareColumns($caseInsensitive);
         $differences += $tc->comparePrimaryKeys($caseInsensitive);
         $differences += $tc->compareIndices($caseInsensitive);

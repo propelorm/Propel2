@@ -904,6 +904,15 @@ class TableDiff
     }
 
     /**
+     * Returns whether the table description is changed or not.
+     * 
+     * @return boolean
+     */
+    public function isDescriptionChanged() {
+        return $this->fromTable->getDescription() !== $this->toTable->getDescription();
+    }
+
+    /**
      * Returns the reverse diff for this diff.
      *
      * @return TableDiff
@@ -1095,6 +1104,9 @@ class TableDiff
                     $ret .= sprintf("          onDelete: from %s to %s\n", $fromFk->getOnDelete(), $toFk->getOnDelete());
                 }
             }
+        }
+        if ($this->isDescriptionChanged()) {
+            $ret .= sprintf("    description: from %s to %s\n", $this->fromTable->getDescription(), $this->toTable->getDescription());
         }
 
         return $ret;

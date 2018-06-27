@@ -139,6 +139,11 @@ class MysqlPlatform extends DefaultPlatform
 
         return strtolower($mysqlTableType) == 'innodb';
     }
+    
+    public function supportsComment()
+    {
+        return true;
+    }
 
     public function getAddTablesDDL(Database $database)
     {
@@ -610,6 +615,28 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
         }
 
         return $ret;
+    }
+
+    public function getModifyTableDDL(TableDiff $tableDiff)
+    {
+        $ret = parent::getModifyTableDDL($tableDiff);
+
+        if ($tableDiff->isDescriptionChanged()) {
+            $ret .= $this->getModifyCommentDDL($tableDiff->getToTable());
+        }
+
+        return $ret;
+    }
+
+    public function getModifyCommentDDL(Table $toTable)
+    {
+        $pattern = "
+ALTER TABLE %s COMMENT %s;
+";
+        return sprintf($pattern,
+            $this->quoteIdentifier($toTable->getName()),
+            $this->quote($toTable->getDescription())
+        );
     }
 
     /**

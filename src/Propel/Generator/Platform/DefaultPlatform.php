@@ -1227,6 +1227,11 @@ ALTER TABLE %s ADD
     {
         return false;
     }
+
+    public function supportsComment()
+    {
+        return false;
+    }
     /**
      * Returns the Boolean value for the RDBMS.
      *

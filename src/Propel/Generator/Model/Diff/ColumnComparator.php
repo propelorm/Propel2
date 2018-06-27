@@ -95,6 +95,18 @@ class ColumnComparator
             $changedProperties['autoIncrement'] = [ $fromColumn->isAutoIncrement(), $toColumn->isAutoIncrement() ];
         }
 
+        if ($fromColumn->getDescription() !== $toColumn->getDescription()) {
+            $platform = null;
+            if ($fromColumn->hasPlatform()) {
+                $platform = $fromColumn->getPlatform();
+            } else if ($toColumn->hasPlatform()) {
+                $platform = $toColumn->getPlatform();
+            }
+            if (!$platform || $platform->supportsComment()) {
+                $changedProperties['description'] = [ $fromColumn->getDescription(), $toColumn->getDescription() ];
+            }
+        }
+
         return $changedProperties;
     }
 }

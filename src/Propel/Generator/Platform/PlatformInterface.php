@@ -199,6 +199,12 @@ interface PlatformInterface
     public function supportsVarcharWithoutSize();
 
     /**
+     * Whether RDBMS supports COMMENT on tables and comments
+     * @return boolean
+     */
+    public function supportsComment();
+
+    /**
      * Returns the boolean value for the RDBMS.
      *
      * This value should match the boolean value that is set
