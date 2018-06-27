@@ -953,43 +953,6 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Whether at least one foreign column is also the primary key of the foreign table.
-     *
-     * @return boolean True if there is at least one column that is a primary key of the foreign table
-     */
-    public function isAtLeastOneForeignPrimaryKey()
-    {
-        $cols = $this->getForeignPrimaryKeys();
-
-        return 0 !== count($cols);
-    }
-
-    /**
-     * Returns all foreign columns which are also a primary key of the foreign table.
-     *
-     * @return array Column[]
-     */
-    public function getForeignPrimaryKeys()
-    {
-        $lfmap = $this->getLocalForeignMapping();
-        $foreignTable = $this->getForeignTable();
-
-        $foreignPKCols = [];
-        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
-            $foreignPKCols[$fPKCol->getName()] = true;
-        }
-
-        $foreignCols = [];
-        foreach ($this->getLocalColumn() as $colName) {
-            if ($foreignPKCols[$lfmap[$colName]]) {
-                $foreignCols[] = $foreignTable->getColumn($lfmap[$colName]);
-            }
-        }
-
-        return $foreignCols;
-    }
-
-    /**
      * Returns all local columns which are also a primary key of the local table.
      *
      * @return Column[]
