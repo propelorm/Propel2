@@ -230,9 +230,7 @@ class TableDiff
      */
     public function removeAddedColumn($columnName)
     {
-        if (isset($this->addedColumns[$columnName])) {
-            unset($this->addedColumns[$columnName]);
-        }
+        unset($this->addedColumns[$columnName]);
     }
 
     /**
@@ -420,9 +418,7 @@ class TableDiff
      */
     public function removeAddedPkColumn($columnName)
     {
-        if (isset($this->addedPkColumns[$columnName])) {
-            unset($this->addedPkColumns[$columnName]);
-        }
+        unset($this->addedPkColumns[$columnName]);
     }
 
     /**
@@ -466,9 +462,7 @@ class TableDiff
      */
     public function removeRemovedPkColumn($columnName)
     {
-        if (isset($this->removedPkColumns[$columnName])) {
-            unset($this->removedPkColumns[$columnName]);
-        }
+        unset($this->removedPkColumns[$columnName]);
     }
 
     /**
@@ -663,9 +657,7 @@ class TableDiff
      */
     public function removeAddedFk($fkName)
     {
-        if (isset($this->addedFks[$fkName])) {
-            unset($this->addedFks[$fkName]);
-        }
+        unset($this->addedFks[$fkName]);
     }
 
     /**
