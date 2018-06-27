@@ -334,7 +334,7 @@ abstract class AbstractManager
             $this->dataModels = $schemas;
         }
 
-        foreach ($this->dataModels as &$schema) {
+        foreach ($this->dataModels as $schema) {
             $schema->doFinalInitialization();
         }
 
