@@ -366,7 +366,7 @@ abstract class AbstractManager
 
             $relativePath = realpath($srcDir. '/'. $include);
 
-            if (!file_exists($include) && file_exists($relativePath)) {
+            if (file_exists($relativePath)) {
                 $include = $relativePath;
             }
 
