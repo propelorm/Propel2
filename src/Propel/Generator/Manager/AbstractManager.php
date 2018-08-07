@@ -364,6 +364,12 @@ abstract class AbstractManager
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
+            $relativePath = realpath($srcDir. '/'. $include);
+
+            if (!file_exists($include) && file_exists($relativePath)) {
+                $include = $relativePath;
+            }
+
             if (!is_readable($include)) {
                 throw new BuildException("External schema '$include' does not exist");
             }
