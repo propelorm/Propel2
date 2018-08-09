@@ -213,8 +213,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $pkg = $this->getPackage();
 
         if (false !== strpos($pkg, '/')) {
-            $pkg = preg_replace('#\.(map|om)$#', '/\1', $pkg);
-            $pkg = preg_replace('#\.(Map|Om)$#', '/\1', $pkg);
+            $pkg = preg_replace('#\.(map|om|base)$#', '\1', $pkg);
+            $pkg = preg_replace('#\.(Map|Om|Base)$#', '\1', $pkg);
 
             return $pkg;
         }
