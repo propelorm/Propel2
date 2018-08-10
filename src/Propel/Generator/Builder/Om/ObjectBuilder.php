@@ -4166,10 +4166,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria  || \$partial) {
-            if (\$this->isNew() && null === \$this->$collName) {
-                // return empty collection
-                \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+        if (null === \$this->$collName || null !== \$criteria || \$partial) {
+            if (\$this->isNew()) {
+                if (null === \$this->$collName) {
+                    // return empty collection
+                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                }
             } else {
                 \$$collName = $fkQueryClassName::create(null, \$criteria)
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
