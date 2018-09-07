@@ -549,7 +549,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param " . $pkType . " \$key Primary key to use for the query
      * @param ConnectionInterface \$con an optional connection object
      *
-     * @return $class|array|mixed the result, formatted by the current formatter
+     * @return $class the result, formatted by the current formatter
      */
     public function findPk(\$key, ConnectionInterface \$con = null)
     {";
@@ -806,7 +806,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     mixed \$key Primary key to use for the query
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -860,7 +860,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param     array \$keys The list of primary key to use for the query
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterByPrimaryKeys(\$keys)
     {";
@@ -977,7 +977,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * \$query->filterBy$colPhpName('%fooValue%', Criteria::LIKE); // WHERE $colName LIKE '%fooValue%'
      * </code>
      *
-     * @param     string \$$variableName The value to use as filter.";
+     * @param     string|array \$$variableName The value to use as filter.";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
@@ -998,7 +998,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
         $script .= "
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
     {";
@@ -1154,7 +1154,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -1200,7 +1200,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     mixed \$$variableName The value to use as filter
      * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -1405,7 +1405,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param     string \$relationAlias optional alias for the relation
      * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \$this|". $queryClass . " The current query, for fluid interface
+     * @return ". $queryClass . " The current query, for fluid interface
      */
     public function join" . $relationName . "(\$relationAlias = null, \$joinType = " . $joinType . ")
     {
@@ -1541,7 +1541,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param   $class $objectName Object to remove from the list of results
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return " . $this->getQueryClassName() . " The current query, for fluid interface
      */
     public function prune($objectName = null)
     {
