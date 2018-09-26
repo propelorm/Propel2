@@ -3588,8 +3588,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function addFKMethods(&$script)
     {
         foreach ($this->getTable()->getForeignKeys() as $fk) {
-            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()), $fk->getRefPhpName() . 'Child');
-            $this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()), $fk->getRefPhpName() ? $fk->getRefPhpName() : false);
+            $this->declareClassFromBuilder($this->getNewStubObjectBuilder($fk->getForeignTable()), 'Child');
+            $this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()));
             $this->addFKMutator($script, $fk);
             $this->addFKAccessor($script, $fk);
         } // foreach fk
