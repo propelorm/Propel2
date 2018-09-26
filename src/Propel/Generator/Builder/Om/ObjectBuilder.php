@@ -3911,6 +3911,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
         $this->addInitRelations($script, $referrers);
         foreach ($referrers as $refFK) {
+            echo "Declaring {$refFK->getTableName()}";
             $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
             if ($refFK->isLocalPrimaryKey()) {
