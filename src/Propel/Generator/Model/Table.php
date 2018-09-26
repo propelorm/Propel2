@@ -727,7 +727,6 @@ class Table extends ScopedMappingModel implements IdMethod
             
             //  Skip adding to referrers.
             if($foreignKey->isSkipReferrer()) {
-                echo "Skipping reference...";
                 continue;
             }
 
