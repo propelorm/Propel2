@@ -724,6 +724,11 @@ class Table extends ScopedMappingModel implements IdMethod
     public function setupReferrers($throwErrors = false)
     {
         foreach ($this->foreignKeys as $foreignKey) {
+            
+            //  Skip adding to referrers.
+            if($foreignKey->isSkipReferrer()) {
+                continue;
+            }
 
             // table referrers
             $foreignTable = $this->database->getTable($foreignKey->getForeignTableName());

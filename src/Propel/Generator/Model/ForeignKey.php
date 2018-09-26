@@ -101,6 +101,11 @@ class ForeignKey extends MappingModel
     private $skipSql;
 
     /**
+     * @var bool
+     */
+    private $skipReferrer;
+
+    /**
      * @var string
      */
     private $interface;
@@ -128,6 +133,7 @@ class ForeignKey extends MappingModel
         $this->localColumns   = [];
         $this->foreignColumns = [];
         $this->skipSql        = false;
+        $this->skipReferrer   = false;
     }
 
     protected function setupObject()
@@ -135,14 +141,15 @@ class ForeignKey extends MappingModel
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
         $this->foreignSchemaName      = $this->getAttribute('foreignSchema');
 
-        $this->name        = $this->getAttribute('name');
-        $this->phpName     = $this->getAttribute('phpName');
-        $this->refPhpName  = $this->getAttribute('refPhpName');
-        $this->defaultJoin = $this->getAttribute('defaultJoin');
-        $this->interface   = $this->getAttribute('interface');
-        $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
-        $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
-        $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
+        $this->name         = $this->getAttribute('name');
+        $this->phpName      = $this->getAttribute('phpName');
+        $this->refPhpName   = $this->getAttribute('refPhpName');
+        $this->defaultJoin  = $this->getAttribute('defaultJoin');
+        $this->interface    = $this->getAttribute('interface');
+        $this->onUpdate     = $this->normalizeFKey($this->getAttribute('onUpdate'));
+        $this->onDelete     = $this->normalizeFKey($this->getAttribute('onDelete'));
+        $this->skipSql      = $this->booleanValue($this->getAttribute('skipSql'));
+        $this->skipReferrer = $this->booleanValue($this->getAttribute('skipReferrer'));
     }
 
     protected function doNaming()
@@ -903,6 +910,27 @@ class ForeignKey extends MappingModel
     public function isSkipSql()
     {
         return $this->skipSql;
+    }
+
+    /**
+     * Sets whether or not this foreign key should skip code generation on reference model.
+     *
+     * @param boolean $skip
+     */
+    public function setSkipReferrer($skip)
+    {
+        $this->skipReferrer = (boolean) $skip;
+    }
+
+    /**
+     * Returns whether or not reference code on related model must be skipped for this
+     * foreign key.
+     *
+     * @return boolean
+     */
+    public function isSkipReferrer()
+    {
+        return $this->skipReferrer;
     }
 
     /**
