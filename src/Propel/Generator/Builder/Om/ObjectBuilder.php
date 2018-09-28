@@ -3773,6 +3773,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($findPk) {
             $script .= "
             \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()->findPk($localColumns, \$con);";
+        } else if($fk->isSkipReferrer()) {
+            $script .= "
+            \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()
+                ->filterBy{$fk->getForeignColumn()->getPhpName()}(\$this->get{$fk->getLocalColumn()->getPhpName()}()) // here
+                ->findOne(\$con);";
         } else {
             $script .= "
             \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()
