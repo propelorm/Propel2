@@ -3671,23 +3671,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
 
         // Now add bi-directional relationship binding, taking into account whether this is
-        // a one-to-one relationship.
+        // a one-to-one relationship. This is only done if the skip referrer property is not true.
 
-        if ($fk->isLocalPrimaryKey()) {
-            $script .= "
-        // Add binding for other direction of this 1:1 relationship.
-        if (\$v !== null) {
-            \$v->set".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
-        }
+        if(!$fk->isSkipReferrer()) {
+
+            if ($fk->isLocalPrimaryKey()) {
+                $script .= "
+            // Add binding for other direction of this 1:1 relationship.
+            if (\$v !== null) {
+                \$v->set".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
+            }
 ";
-        } else {
-            $script .= "
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the $className object, it will not be re-added.
-        if (\$v !== null) {
-            \$v->add".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
-        }
+            } else {
+                $script .= "
+            // Add binding for other direction of this n:n relationship.
+            // If this object has already been added to the $className object, it will not be re-added.
+            if (\$v !== null) {
+                \$v->add".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
+            }
 ";
+
+            }
 
         }
 
