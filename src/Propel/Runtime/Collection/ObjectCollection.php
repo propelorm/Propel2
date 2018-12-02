@@ -392,12 +392,7 @@ class ObjectCollection extends Collection implements JsonSerializable
 
             $relationsToLoad = explode(".", $relation);
             foreach($relationsToLoad as $relationToLoad) {
-
-                //  Ensure we haven't already loaded the relation.
-                if(in_array($relationToLoad, $loadedRelations)) {
-                    continue;
-                }
-
+                
                 //  Load relation and set collection for the next nested relation.
                 $collection = $collection->populateRelation($relationToLoad);
 
