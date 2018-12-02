@@ -4856,7 +4856,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
 
             $script .= "
-        \$this->{$collName}Partial = true;";
+        \$this->{$collName}Partial = false;";
             if ($relatedObjectClassName) {
                 $script .= "
         \$this->{$collName}->setModel('$relatedObjectClassName');";

@@ -343,12 +343,74 @@ class ObjectCollection extends Collection implements JsonSerializable
         }
         // query the db for the related objects
         $filterMethod = 'filterBy' . $symRelationMap->getName();
-        $relatedObjects = $query
-            ->$filterMethod($this)
-            ->find($con)
-        ;
+        $query = $query->$filterMethod($this);
 
-        if (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
+        $pivotRelationMap = null;
+        $symPivotRelationMap = null;
+        //  Load pivot tables if this is a many to many relationship.
+        if(RelationMap::MANY_TO_MANY === $relationMap->getType()) {
+
+            foreach($relationMap->getLocalTable()->getRelations() as $tempRelation) {
+                if($tempRelation->getLocalTable()->isCrossRef()) {
+                    $pivotRelationMap = $tempRelation;
+                    $query->with($pivotRelationMap->getName());
+                }
+            }
+
+            foreach($relationMap->getForeignTable()->getRelations() as $tempRelation) {
+                if($tempRelation->getLocalTable()->isCrossRef()) {
+                    $symPivotRelationMap = $tempRelation;
+                }
+            }
+
+        }
+
+        $relatedObjects = $query->find($con);
+
+        if (RelationMap::MANY_TO_MANY === $relationMap->getType()) {
+            // initialize the embedded collections of the main objects
+            foreach ($this as $mainObj) {
+                $initter = "init{$relationMap->getPluralName()}";
+                $mainObj->$initter();
+            }
+
+            $localName = $relationMap->getName();
+            $foreignName = $symRelationMap->getName();
+
+            //  Helper methods.
+            $addLocalMethod = 'add' . $localName;
+            $addForeignMethod = 'add' . $foreignName;
+            $getPivotMethod = "get" . $pivotRelationMap->getPluralName();
+
+            $buckets = [];
+
+            //  Group related objects up into buckets 
+            //  based on the pivot table's foreign key.
+            foreach ($relatedObjects as $object) {
+
+                $pivotObjs = $object->$getPivotMethod();
+                foreach($pivotObjs as $pivotObj) {
+                    $getter = "get{$symPivotRelationMap->getRightColumns()[0]->getPhpName()}";
+                    $key = $pivotObj->$getter();
+                    $buckets[$key][] = $object;
+                }
+            }
+
+            //  Using the buckets, add related objects to
+            //  main objects and back relate them as well.
+            foreach($this as $mainObj) {
+                $getter = "get{$symPivotRelationMap->getLeftColumns()[0]->getPhpName()}";
+                $key = $mainObj->$getter();
+
+                if(isset($buckets[$key])) {
+                    foreach($buckets[$key] as $object) {
+                        $mainObj->$addLocalMethod($object);
+                        $object->$addForeignMethod($mainObj);
+                    }
+                }
+            }
+
+        } else if (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
             // initialize the embedded collections of the main objects
             $relationName = $relationMap->getName();
             foreach ($this as $mainObj) {
