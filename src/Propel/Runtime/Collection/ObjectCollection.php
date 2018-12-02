@@ -20,13 +20,14 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use JsonSerializable;
 
 /**
  * Class for iterating over a list of Propel objects
  *
  * @author Francois Zaninotto
  */
-class ObjectCollection extends Collection
+class ObjectCollection extends Collection implements JsonSerializable
 {
 
     protected $index;
@@ -368,6 +369,50 @@ class ObjectCollection extends Collection
         }
 
         return $relatedObjects;
+    }
+
+    /**
+     * Eager load relations.
+     * @param string|array $relations Relation or array of relations to load. Can be nested. i.e. Book, Book.Author
+     * 
+     */
+    public function load(...$relations)
+    {
+        //  Ensure relations is an array.
+        if(!is_array($relations)) {
+            $relations = [$relations];
+        }
+        
+        $loadedRelations = [];  //  Cache the loaded relations.
+
+        foreach($relations as $relation) {
+
+            //  Set initial collection.
+            $collection = $this;
+
+            $relationsToLoad = explode(".", $relation);
+            foreach($relationsToLoad as $relationToLoad) {
+
+                //  Ensure we haven't already loaded the relation.
+                if(in_array($relationToLoad, $loadedRelations)) {
+                    continue;
+                }
+
+                //  Load relation and set collection for the next nested relation.
+                $collection = $collection->populateRelation($relationToLoad);
+
+                $loadedRelations[] = $relationToLoad; 
+            }
+        }
+    }
+
+    /**
+     * Implement JSON serialize.
+     * @return mixed
+     */
+    public function jsonSerialize()
+    {
+        return $this->getData();
     }
 
     /**
