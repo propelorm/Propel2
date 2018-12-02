@@ -1509,12 +1509,12 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Filter the query by a related $fkPhpName object
      * using the $crossTableName table as cross reference
      *
-     * @param $fkPhpName $objectName the related object to use as filter
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param $fkPhpName|ObjectCollection $objectName The related object(s) to use as filter
+     * @param string \$comparison Operator to use for the column comparison
      *
      * @return $queryClass The current query, for fluid interface
      */
-    public function filterBy{$relName}($objectName, \$comparison = Criteria::EQUAL)
+    public function filterBy{$relName}($objectName, \$comparison = null)
     {
         return \$this
             ->use{$relationName}Query()
