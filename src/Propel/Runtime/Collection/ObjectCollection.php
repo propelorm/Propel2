@@ -438,7 +438,7 @@ class ObjectCollection extends Collection implements JsonSerializable
      * @param string|array $relations Relation or array of relations to load. Can be nested. i.e. Book, Book.Author
      * 
      */
-    public function load(...$relations)
+    public function load($relations)
     {
         //  Ensure relations is an array.
         if(!is_array($relations)) {
