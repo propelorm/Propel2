@@ -423,7 +423,7 @@ class ObjectCollection extends Collection implements JsonSerializable
                 $mainObj = $object->$getMethod();  // instance pool is used here to avoid a query
                 $mainObj->$addMethod($object);
             }
-        } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType()) {
+        } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType() || RelationMap::ONE_TO_ONE === $relationMap->getType()) {
             // nothing to do; the instance pool will catch all calls to getRelatedObject()
             // and return the object in memory
         } else {
