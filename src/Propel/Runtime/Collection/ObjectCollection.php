@@ -424,8 +424,13 @@ class ObjectCollection extends Collection implements JsonSerializable
                 $mainObj->$addMethod($object);
             }
         } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType() || RelationMap::ONE_TO_ONE === $relationMap->getType()) {
-            // nothing to do; the instance pool will catch all calls to getRelatedObject()
-            // and return the object in memory
+            
+            //  Use instance pool to hydrate the related object on the main object.
+            $getMethod = 'get' . $relationMap->getName();
+            foreach($this as $mainObj) {
+                $mainObj->$getMethod();
+            }
+
         } else {
             throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
         }
