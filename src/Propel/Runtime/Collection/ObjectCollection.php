@@ -445,12 +445,11 @@ class ObjectCollection extends Collection implements JsonSerializable
      */
     public function load($relations)
     {
+        
         //  Ensure relations is an array.
         if(!is_array($relations)) {
             $relations = [$relations];
         }
-        
-        $loadedRelations = [];  //  Cache the loaded relations.
 
         foreach($relations as $relation) {
 
@@ -463,7 +462,10 @@ class ObjectCollection extends Collection implements JsonSerializable
                 //  Load relation and set collection for the next nested relation.
                 $collection = $collection->populateRelation($relationToLoad);
 
-                $loadedRelations[] = $relationToLoad; 
+                //  No need to go any further if the collection is empty.
+                if($collection->isEmpty()) {
+                    break;
+                }
             }
         }
     }
