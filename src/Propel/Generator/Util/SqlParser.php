@@ -185,6 +185,8 @@ class SqlParser
      */
     public function explodeIntoStatements()
     {
+        $this->delimiter = ';';
+        $this->delimiterLength = 1;
         $this->pos = 0;
         $sqlStatements = [];
         while ($sqlStatement = $this->getNextStatement()) {
@@ -194,82 +196,100 @@ class SqlParser
         return $sqlStatements;
     }
 
+    private static function parseDelimiter($s, $pos, $length) {
+        $end = $pos + $length;
+        if ($end <= $pos) {
+            return '';
+        }
+        $quote = $s[$pos];
+        if ($quote === "'" || $quote === '"') {
+            $pos++;
+        } else {
+            $quote = " \t\n\r\x0B";
+        }
+        $decoded = '';
+        while (true) {
+            $runLength = strcspn($s, '\\' . $quote, $pos, $end - $pos);
+            if (0 < $runLength) {
+                $decoded .= substr($s, $pos, $runLength);
+                $pos += $runLength;
+            }
+            if ($end <= $pos + 1 || $s[$pos] !== '\\') {
+                break;
+            }
+            $decoded .= $s[++$pos];
+        }
+        return $decoded;
+    }
+
     /**
      * Gets the next SQL statement in the inner SQL string,
      * and advances the cursor to the end of this statement.
      *
      * @return string A SQL statement
      */
-    public function getNextStatement()
-    {
-        $isAfterBackslash = false;
-        $isInString = false;
-        $stringQuotes = '';
-        $parsedString = '';
-        $lowercaseString = ''; // helper variable for performance sake
-        while ($this->pos <= $this->len) {
-            $char = isset($this->sql[$this->pos]) ? $this->sql[$this->pos] : '';
-            // check flags for strings or escaper
-            switch ($char) {
-                case "\\":
-                    $isAfterBackslash = true;
-                    break;
-                case "'":
-                case "\"":
-                    if ($isInString && $stringQuotes == $char) {
-                        if (!$isAfterBackslash) {
-                            $isInString = false;
+    public function getNextStatement() {
+        while (true) {
+            while ($this->pos < $this->len) {
+                $chord = $this->sql[$this->pos];
+                switch ($chord) { // 20 09 0a 0d 0b
+                    case " ":
+                    case "\t":
+                    case "\n":
+                    case "\r":
+                    case "\x0B":
+                        $this->pos++;
+                        break;
+                    default:
+                        break 2;
+                }
+            }
+            $i = $this->pos + 9;
+            if ($i < $this->len && substr_compare($this->sql, "delimiter", $this->pos, 9, true) === 0) {
+                $skip = strspn($this->sql, " \t\x0B", $i);
+                if (0 < $skip) {
+                    $i += $skip;
+                    $remainingLen = strcspn($this->sql, "\r\n", $i);
+                    $this->pos = $i + $remainingLen + 1;
+                    if ($remainingLen > 0) {
+                        list($delimiter,) = self::parseDelimiter($this->sql, $i, $remainingLen);
+                        if ($delimiter !== '' && false === strpos($delimiter, '\\')) {
+                            $this->delimiter = $delimiter;
+                            $this->delimiterLength = strlen($delimiter);
+                            continue;
                         }
-                    } elseif (!$isInString) {
-                        $stringQuotes = $char;
-                        $isInString = true;
                     }
+                }
+            }
+            break;
+        }
+        $parsedString = '';
+        $stringQuotes = '';
+        while ($this->pos < $this->len) {
+            $chord = $this->sql[$this->pos++];
+            if ($chord === '\\') {
+                $parsedString .= $chord;
+                if ($this->len <= $this->pos) {
                     break;
-            }
-            $this->pos++;
-            if ($char !== "\\") {
-                $isAfterBackslash = false;
-            }
-            if (!$isInString) {
-                if (false !== strpos($lowercaseString, 'delimiter ')) {
-                    // remove DELIMITER from string because it's a command-line keyword only
-                    $parsedString = trim(str_ireplace('delimiter ', '', $parsedString));
-                    // set new delimiter
-                    $this->delimiter = $char;
-                    // append other delimiter characters if any
-                    while (isset($this->sql[$this->pos]) && $this->sql[$this->pos] != "\n") {
-                        $this->delimiter .= $this->sql[$this->pos++]; // increase position
-                    }
-                    $this->delimiter = trim($this->delimiter);
-                    // store delimiter length for better performance
-                    $this->delimiterLength = strlen($this->delimiter);
-                    // delimiter has changed so return current sql if any
-                    if ($parsedString) {
-                        return $parsedString;
-                    } else {
-                        // reset helper variable
-                        $lowercaseString = '';
-                        continue;
-                    }
                 }
-                // get next characters if we have multiple characters in delimiter
-                $nextChars = '';
-                for ($i = 0; $i < $this->delimiterLength - 1; $i++) {
-                    if (!isset($this->sql[$this->pos + $i])) break;
-                    $nextChars .= $this->sql[$this->pos + $i];
-                }
-                // check for end of statement
-                if ($char.$nextChars == $this->delimiter) {
-                    $this->pos += $i; // increase position
-                    return trim($parsedString);
-                }
-                // avoid using strtolower on the whole parsed string every time new character is added
-                // there is also no point in adding characters which are in the string
-                $lowercaseString .= strtolower($char);
+                $parsedString .= $this->sql[$this->pos++];
+                continue;
             }
-            $parsedString .= $char;
+            if ($stringQuotes) {
+                if ($chord === $stringQuotes) {
+                    $stringQuotes = '';
+                }
+            } else {
+                if ($chord === $this->delimiter[0] && ($this->delimiterLength === 1 || substr_compare($this->sql, substr($this->delimiter, 1), $this->pos, $this->delimiterLength - 1) === 0)) {
+                    $this->pos += $this->delimiterLength - 1;
+                    break;
+                }
+                if ($chord === '"' || $chord === "'") {
+                    $stringQuotes = $chord;
+                }
+            }
+            $parsedString .= $chord;
         }
         return trim($parsedString);
     }
-
 }
