@@ -19,15 +19,9 @@ class BehaviorLocator
 
     const BEHAVIOR_PACKAGE_TYPE = 'propel-behavior';
 
-    private $behaviors = null;
+    private $behaviors;
 
-    private $composerDir = null;
-
-    /**
-     *
-     * @var GeneratorConfigInterface
-     */
-    private $generatorConfig = null;
+    private $composerDir;
 
     /**
      * Creates the composer finder
@@ -36,9 +30,8 @@ class BehaviorLocator
      */
     public function __construct(GeneratorConfigInterface $config = null)
     {
-        $this->generatorConfig = $config;
         if (null !== $config) {
-            $this->composerDir = $config->get()['paths']['composerDir'];
+            $this->composerDir = $config->getConfigProperty('paths.composerDir');
         }
     }
 
@@ -184,6 +177,7 @@ class BehaviorLocator
      * Finds all behaviors by parsing composer.lock file
      *
      * @param SplFileInfo $composerLock
+     * @return array
      */
     private function loadBehaviors($composerLock)
     {
@@ -217,22 +211,20 @@ class BehaviorLocator
      */
     private function loadBehavior($package)
     {
-        if (isset($package['type']) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
+        if (isset($package['type'], $package['extra']) && $package['type'] === self::BEHAVIOR_PACKAGE_TYPE) {
 
             // find propel behavior information
-            if (isset($package['extra'])) {
-                $extra = $package['extra'];
+            $extra = $package['extra'];
 
-                if (isset($extra['name']) && isset($extra['class'])) {
-                    return [
-                        'name' => $extra['name'],
-                        'class' => $extra['class'],
-                        'package' => $package['name']
-                    ];
-                } else {
-                    throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
-                }
+            if (isset($extra['name'], $extra['class'])) {
+                return [
+                    'name' => $extra['name'],
+                    'class' => $extra['class'],
+                    'package' => $package['name']
+                ];
             }
+
+            throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
         }
 
         return null;
