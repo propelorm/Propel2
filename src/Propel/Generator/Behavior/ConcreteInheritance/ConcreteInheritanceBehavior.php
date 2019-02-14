@@ -10,9 +10,13 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Behavior\Validate\ValidateBehavior;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
 
 /**
  * Makes a model inherit another one. The model with this behavior gets a copy
@@ -34,6 +38,8 @@ class ConcreteInheritanceBehavior extends Behavior
         'schema'              => '',
         'exclude_behaviors'   => '',
     ];
+    /** @var AbstractOMBuilder */
+    private $builder;
 
     public function modifyTable()
     {
@@ -55,7 +61,7 @@ class ConcreteInheritanceBehavior extends Behavior
 
         // Add the columns of the parent table
         foreach ($parentTable->getColumns() as $column) {
-            if ($column->getName() == $this->getParameter('descendant_column')) {
+            if ($column->getName() === $this->getParameter('descendant_column')) {
                 continue;
             }
             if ($table->hasColumn($column->getName())) {
@@ -69,7 +75,7 @@ class ConcreteInheritanceBehavior extends Behavior
             if ($column->isPrimaryKey() && $this->isCopyData()) {
                 $fk = new ForeignKey();
                 $fk->setForeignTableCommonName($column->getTable()->getCommonName());
-                if ($table->guessSchemaName() != $column->getTable()->guessSchemaName()) {
+                if ($table->guessSchemaName() !== $column->getTable()->guessSchemaName()) {
                     $fk->setForeignSchemaName($column->getTable()->guessSchemaName());
                 }
                 $fk->setOnDelete('CASCADE');
@@ -107,16 +113,19 @@ class ConcreteInheritanceBehavior extends Behavior
 
         // add the Behaviors of the parent table
         foreach ($parentTable->getBehaviors() as $behavior) {
-            if (isset($excludeBehaviors[$behavior->getName()])) {
+            $behaviorName = $behavior->getName();
+            if (isset($excludeBehaviors[$behaviorName])) {
                 continue;
             }
 
-            if ($behavior->getName() == 'concrete_inheritance_parent' || $behavior->getName() == 'concrete_inheritance') {
+            if ($behaviorName === 'concrete_inheritance_parent' || $behaviorName === 'concrete_inheritance') {
                 continue;
             }
             // validate behavior. If validate behavior already exists, clone only rules from parent
-            if ('validate' === $behavior->getName() && $table->hasBehavior('validate')) {
-                $table->getBehavior('validate')->mergeParameters($behavior->getParameters());
+            if ('validate' === $behaviorName && $table->hasBehavior('validate')) {
+                /** @var ValidateBehavior $validateBehavior */
+                $validateBehavior = $table->getBehavior('validate');
+                $validateBehavior->mergeParameters($behavior->getParameters());
 
                 continue;
             }
@@ -153,24 +162,25 @@ class ConcreteInheritanceBehavior extends Behavior
      */
     protected function getCopyToChild()
     {
-        if ('false' === strtolower($this->getParameter('copy_data_to_child'))) {
+        $copyDataToChild = $this->getParameter('copy_data_to_child');
+        if ('false' === strtolower($copyDataToChild)) {
             return false;
         }
 
-        if ('true' === strtolower($this->getParameter('copy_data_to_child'))) {
+        if ('true' === strtolower($copyDataToChild)) {
             return true;
         }
 
-        return explode(',', str_replace(' ', '', $this->getParameter('copy_data_to_child')));
+        return explode(',', str_replace(' ', '', $copyDataToChild));
     }
 
-    public function parentClass($builder)
+    public function parentClass(AbstractOMBuilder $builder)
     {
         $parentTable = $this->getParentTable();
         switch (get_class($builder)) {
-            case 'Propel\Generator\Builder\Om\ObjectBuilder':
+            case ObjectBuilder::class:
                 return $builder->declareClassFromBuilder($builder->getNewStubObjectBuilder($parentTable), true);
-            case 'Propel\Generator\Builder\Om\QueryBuilder':
+            case QueryBuilder::class:
                 return $builder->declareClassFromBuilder($builder->getNewStubQueryBuilder($parentTable), true);
         }
 
@@ -289,7 +299,7 @@ public function getParentOrCreate(\$con = null)
 
             return \$parent;
         } else {
-            \$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassname() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
+            \$parent = " . $this->builder->getNewStubQueryBuilder($parentTable)->getClassName() . "::create()->findPk(\$this->getPrimaryKey(), \$con);
             if (null === \$parent || null !== \$parent->getDescendantClass()) {
                 \$parent = new " . $parentClass . "();
                 \$parent->setPrimaryKey(\$this->getPrimaryKey());
@@ -321,7 +331,7 @@ public function getSyncParent(\$con = null)
 {
     \$parent = \$this->getParentOrCreate(\$con);";
         foreach ($parentTable->getColumns() as $column) {
-            if ($column->isPrimaryKey() || $column->getName() == $this->getParameter('descendant_column')) {
+            if ($column->isPrimaryKey() || $column->getName() === $this->getParameter('descendant_column')) {
                 continue;
             }
             $phpName = $column->getPhpName();
@@ -332,7 +342,7 @@ public function getSyncParent(\$con = null)
             if (isset($fk->isParentChild) && $fk->isParentChild) {
                 continue;
             }
-            $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
+            $refPhpName = $this->builder->getFKPhpNameAffix($fk);
             $script .= "
     if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
         \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());

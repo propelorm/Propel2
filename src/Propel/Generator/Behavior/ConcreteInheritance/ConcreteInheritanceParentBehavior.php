@@ -10,7 +10,9 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 
 /**
  * Symmetrical behavior of the concrete_inheritance. When model A extends model B,
@@ -25,6 +27,8 @@ class ConcreteInheritanceParentBehavior extends Behavior
     protected $parameters = [
         'descendant_column' => 'descendant_class'
     ];
+
+    private $builder;
 
     public function modifyTable()
     {
@@ -43,10 +47,10 @@ class ConcreteInheritanceParentBehavior extends Behavior
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
 
-    public function objectMethods($builder)
+    public function objectMethods(AbstractOMBuilder $builder)
     {
         $this->builder = $builder;
-        $this->builder->declareClasses('Propel\Runtime\ActiveQuery\PropelQuery');
+        $this->builder->declareClasses(PropelQuery::class);
         $script = '';
         $this->addHasChildObject($script);
         $this->addGetChildObject($script);
