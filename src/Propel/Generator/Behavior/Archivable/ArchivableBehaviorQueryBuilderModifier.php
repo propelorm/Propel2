@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Generator\Behavior\Archivable;
+use Propel\Generator\Builder\Om\QueryBuilder;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -20,7 +21,7 @@ class ArchivableBehaviorQueryBuilderModifier
     protected $behavior;
     protected $table;
 
-    public function __construct($behavior)
+    public function __construct(ArchivableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -31,7 +32,7 @@ class ArchivableBehaviorQueryBuilderModifier
         return $this->behavior->getParameter($key);
     }
 
-    public function queryAttributes($builder)
+    public function queryAttributes(QueryBuilder $builder)
     {
         $script = '';
         if ($this->behavior->isArchiveOnUpdate()) {
@@ -46,7 +47,7 @@ class ArchivableBehaviorQueryBuilderModifier
         return $script;
     }
 
-    public function preDeleteQuery($builder)
+    public function preDeleteQuery(QueryBuilder $builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return "
@@ -59,7 +60,7 @@ if (\$this->archiveOnDelete) {
         }
     }
 
-    public function postUpdateQuery($builder)
+    public function postUpdateQuery(QueryBuilder $builder)
     {
         if ($this->behavior->isArchiveOnUpdate()) {
             return "
@@ -73,9 +74,10 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param QueryBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function queryMethods($builder)
+    public function queryMethods(QueryBuilder $builder)
     {
         $script = '';
         $script .= $this->addArchive($builder);
@@ -92,9 +94,10 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param QueryBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    protected function addArchive($builder)
+    protected function addArchive(QueryBuilder $builder)
     {
         return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),

@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
@@ -23,21 +24,25 @@ use Propel\Generator\Model\Table;
  */
 class ArchivableBehavior extends Behavior
 {
-    // default parameters value
-    protected $parameters = [
-        'archive_table'       => '',
-        'archive_phpname'     => null,
-        'archive_class'       => '',
-        'log_archived_at'     => 'true',
-        'archived_at_column'  => 'archived_at',
-        'archive_on_insert'   => 'false',
-        'archive_on_update'   => 'false',
-        'archive_on_delete'   => 'true',
-    ];
-
     protected $archiveTable;
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
+
+    public function __construct()
+    {
+        parent::__construct();
+        // default parameters value
+        $this->parameters = [
+            'archive_table'       => '',
+            'archive_phpname'     => null,
+            'archive_class'       => '',
+            'log_archived_at'     => 'true',
+            'archived_at_column'  => 'archived_at',
+            'archive_on_insert'   => 'false',
+            'archive_on_update'   => 'false',
+            'archive_on_delete'   => 'true',
+        ];
+    }
 
     public function modifyDatabase()
     {
@@ -69,7 +74,7 @@ class ArchivableBehavior extends Behavior
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
-        $archiveTableName = $this->getParameter('archive_table') ? $this->getParameter('archive_table') : ($this->getTable()->getOriginCommonName() . '_archive');
+        $archiveTableName = $this->getParameter('archive_table') ?: ($this->getTable()->getOriginCommonName() . '_archive');
         if (!$database->hasTable($archiveTableName)) {
             // create the version table
             $archiveTable = $database->addTable([
@@ -87,13 +92,13 @@ class ArchivableBehavior extends Behavior
                 if ($columnInArchiveTable->hasReferrers()) {
                     $columnInArchiveTable->clearReferrers();
                 }
-                if ($columnInArchiveTable->isAutoincrement()) {
+                if ($columnInArchiveTable->isAutoIncrement()) {
                     $columnInArchiveTable->setAutoIncrement(false);
                 }
                 $archiveTable->addColumn($columnInArchiveTable);
             }
             // add archived_at column
-            if ($this->getParameter('log_archived_at') == 'true') {
+            if ($this->getParameter('log_archived_at') === 'true') {
                 $archiveTable->addColumn([
                     'name' => $this->getParameter('archived_at_column'),
                     'type' => 'TIMESTAMP'
@@ -137,7 +142,7 @@ class ArchivableBehavior extends Behavior
         return $this->archiveTable;
     }
 
-    public function getArchiveTablePhpName($builder)
+    public function getArchiveTablePhpName(AbstractOMBuilder $builder)
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class');
@@ -146,7 +151,7 @@ class ArchivableBehavior extends Behavior
         return $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getArchiveTable()));
     }
 
-    public function getArchiveTableQueryName($builder)
+    public function getArchiveTableQueryName(AbstractOMBuilder $builder)
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class') . 'Query';
@@ -157,17 +162,18 @@ class ArchivableBehavior extends Behavior
 
     public function hasArchiveClass()
     {
-        return $this->getParameter('archive_class') ? true : false;
+        return (bool)$this->getParameter('archive_class');
     }
 
     /**
-     * @return Column
+     * @return Column|null
      */
     public function getArchivedAtColumn()
     {
         if ($this->getArchiveTable() && 'true' === $this->getParameter('log_archived_at')) {
             return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
         }
+        return null;
     }
 
     public function isArchiveOnInsert()

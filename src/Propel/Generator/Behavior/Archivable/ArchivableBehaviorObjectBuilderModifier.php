@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Generator\Behavior\Archivable;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -19,9 +20,8 @@ class ArchivableBehaviorObjectBuilderModifier
 {
     protected $behavior;
     protected $table;
-    protected $builder;
 
-    public function __construct($behavior)
+    public function __construct(ArchivableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -33,9 +33,10 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function objectAttributes($builder)
+    public function objectAttributes(ObjectBuilder $builder)
     {
         $script = '';
         if ($this->behavior->isArchiveOnInsert()) {
@@ -89,24 +90,25 @@ class ArchivableBehaviorObjectBuilderModifier
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
      *
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function preDelete($builder)
+    public function preDelete(ObjectBuilder $builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return $this->behavior->renderTemplate('objectPreDelete', [
                 'queryClassName' => $builder->getQueryClassName(),
-                'isAddHooks'     => $builder->getGeneratorConfig()->get()['generator']['objectModel']['addHooks'],
+                'isAddHooks'     => $builder->getGeneratorConfig()->getConfigProperty('generator.objectModel.addHooks'),
             ]);
         }
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder)
     {
-        $this->builder = $builder;
         $script = '';
         $script .= $this->addGetArchive($builder);
         $script .= $this->addArchive($builder);
@@ -123,9 +125,10 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addGetArchive($builder)
+    public function addGetArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectGetArchive', [
             'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
@@ -134,9 +137,10 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addArchive($builder)
+    public function addArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectArchive', [
             'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
@@ -148,12 +152,13 @@ class ArchivableBehaviorObjectBuilderModifier
 
     /**
      *
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addRestoreFromArchive($builder)
+    public function addRestoreFromArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectRestoreFromArchive', [
-            'objectClassName' => $this->builder->getObjectClassName(),
+            'objectClassName' => $builder->getObjectClassName(),
         ]);
     }
 
@@ -162,37 +167,40 @@ class ArchivableBehaviorObjectBuilderModifier
      * This method is necessary because the archive's copyInto() may include the archived_at column
      * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
      *
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addPopulateFromArchive($builder)
+    public function addPopulateFromArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectPopulateFromArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'usesAutoIncrement'   => $this->table->hasAutoIncrementPrimaryKey(),
-            'objectClassName'     => $this->builder->getObjectClassName(),
+            'objectClassName'     => $builder->getObjectClassName(),
             'columns'             => $this->table->getColumns(),
         ]);
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addSaveWithoutArchive($builder)
+    public function addSaveWithoutArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectSaveWithoutArchive', [
-            'objectClassName'   => $this->builder->getObjectClassName(),
+            'objectClassName'   => $builder->getObjectClassName(),
             'isArchiveOnInsert' => $this->behavior->isArchiveOnInsert(),
             'isArchiveOnUpdate' => $this->behavior->isArchiveOnUpdate(),
         ]);
     }
 
     /**
+     * @param ObjectBuilder $builder
      * @return string the PHP code to be added to the builder
      */
-    public function addDeleteWithoutArchive($builder)
+    public function addDeleteWithoutArchive(ObjectBuilder $builder)
     {
         return $this->behavior->renderTemplate('objectDeleteWithoutArchive', [
-            'objectClassName' => $this->builder->getObjectClassName(),
+            'objectClassName' => $builder->getObjectClassName(),
         ]);
     }
 }
