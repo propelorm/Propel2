@@ -30,7 +30,7 @@ class ConfigurationManager
     /**
      * Array of configuration values
      *
-     * @var array
+     * @var array|array[]
      */
     private $config = [];
 
@@ -62,7 +62,7 @@ class ConfigurationManager
      * It ca be useful to get, in example, only 'generator' values.
      *
      * @param  string $section the section to be returned
-     * @return array
+     * @return array|null
      */
     public function getSection($section)
     {
@@ -139,7 +139,7 @@ class ConfigurationManager
     {
         $dirs = $this->getDirs($fileName);
 
-        if ((null === $fileName) || (is_dir($fileName))) {
+        if (null === $fileName || is_dir($fileName)) {
             $fileName = self::CONFIG_FILE_NAME;
         }
 
@@ -184,7 +184,7 @@ class ConfigurationManager
     protected function process($extraConf = null)
     {
         if (null === $extraConf && count($this->config) <= 0) {
-            return null;
+            return;
         }
 
         $processor = new Processor();
