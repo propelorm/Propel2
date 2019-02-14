@@ -347,15 +347,16 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected function needAliasForClassName($class, $namespace)
     {
-        if ($namespace === $this->getNamespace()) {
+        $thisNamespace = (string)$this->getNamespace();
+        if ($namespace === $thisNamespace) {
             return false;
         }
 
-        if (str_replace('\\Base', '', $namespace) === str_replace('\\Base', '', $this->getNamespace())) {
+        if (str_replace('\\Base', '', $namespace) === str_replace('\\Base', '', $thisNamespace)) {
             return true;
         }
 
-        if (empty($namespace) && 'Base' === $this->getNamespace()) {
+        if (empty($namespace) && 'Base' === $thisNamespace) {
             if (str_replace('Query', '', $class) === str_replace('Query', '', $this->getUnqualifiedClassName())) {
                 return true;
             }
@@ -370,7 +371,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
         }
 
-        if ('Base' === $namespace && '' === $this->getNamespace()) {
+        if ('Base' === $namespace && '' === $thisNamespace) {
             // force alias for model without namespace
             if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
