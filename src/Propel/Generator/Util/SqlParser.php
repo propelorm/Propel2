@@ -252,7 +252,7 @@ class SqlParser
                     $remainingLen = strcspn($this->sql, "\r\n", $i);
                     $this->pos = $i + $remainingLen + 1;
                     if ($remainingLen > 0) {
-                        list($delimiter,) = self::parseDelimiter($this->sql, $i, $remainingLen);
+                        $delimiter = self::parseDelimiter($this->sql, $i, $remainingLen);
                         if ($delimiter !== '' && false === strpos($delimiter, '\\')) {
                             $this->delimiter = $delimiter;
                             $this->delimiterLength = strlen($delimiter);
