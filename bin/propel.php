@@ -1,9 +1,9 @@
 <?php
 
-if (!class_exists('\Symfony\Component\Console\Application')) {
-    if (file_exists($file = __DIR__.'/../../../autoload.php') || file_exists($file = __DIR__.'/../autoload.php')) {
-        require_once $file;
-    } elseif (file_exists($file = __DIR__.'/../autoload.php.dist')) {
+if (!class_exists(\Symfony\Component\Console\Application::class)) {
+    if (file_exists($file = __DIR__ . '/../../../autoload.php') ||
+        file_exists($file = __DIR__ . '/../autoload.php') ||
+        file_exists($file = __DIR__ . '/../autoload.php.dist')) {
         require_once $file;
     }
 }
@@ -21,8 +21,8 @@ $app = new Application('Propel', Propel::VERSION);
 $ns = '\\Propel\\Generator\\Command\\';
 
 foreach ($finder as $file) {
-    $r  = new \ReflectionClass($ns.$file->getBasename('.php'));
-    if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
+    $r = new \ReflectionClass($ns . $file->getBasename('.php'));
+    if ($r->isSubclassOf(Symfony\Component\Console\Command\Command::class) && !$r->isAbstract()) {
         $app->add($r->newInstance());
     }
 }
