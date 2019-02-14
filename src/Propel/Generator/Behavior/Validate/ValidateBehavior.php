@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Behavior\Validate;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Exception\ConstraintNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
@@ -23,16 +24,17 @@ use Symfony\Component\Yaml\Parser;
 class ValidateBehavior extends Behavior
 {
     /**
-     * @param object $builder The current builder
+     * @var ObjectBuilder $builder The current builder
      */
     protected $builder;
 
     /**
      * Add behavior methods to model class
      *
+     * @param ObjectBuilder $builder
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder)
     {
         $array = $this->getParameters();
         if (empty($array)) {
@@ -42,30 +44,30 @@ class ValidateBehavior extends Behavior
 
         $this->builder = $builder;
         $this->builder->declareClasses(
-            'Symfony\\Component\\Validator\\Mapping\\ClassMetadata',
-            'Symfony\\Component\\Validator\\DefaultTranslator',
-            'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
-            'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
-            'Symfony\\Component\\Validator\\ConstraintViolationList'
+            \Symfony\Component\Validator\Mapping\ClassMetadata::class,
+            \Symfony\Component\Validator\DefaultTranslator::class,
+            \Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader::class,
+            \Symfony\Component\Validator\ConstraintValidatorFactory::class,
+            \Symfony\Component\Validator\ConstraintViolationList::class
         );
 
         //if SF >= 2.5 use new validator classes
-        if(class_exists('Symfony\\Component\\Validator\\Validator\\RecursiveValidator')) {
+        if(class_exists(\Symfony\Component\Validator\Validator\RecursiveValidator::class)) {
             $this->builder->declareClasses(
-                'Symfony\\Component\\Validator\\Validator\\RecursiveValidator',
-                'Symfony\\Component\\Validator\\Context\\ExecutionContextFactory',
-                'Symfony\\Component\\Validator\\Mapping\\Factory\LazyLoadingMetadataFactory',
-                'Symfony\\Component\\Validator\\Context\\ExecutionContextInterface',
-                'Symfony\\Component\\Validator\\Validator\\ValidatorInterface',
-                'Symfony\\Component\\Translation\\IdentityTranslator'
+                \Symfony\Component\Validator\Validator\RecursiveValidator::class,
+                \Symfony\Component\Validator\Context\ExecutionContextFactory::class,
+                \Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory::class,
+                \Symfony\Component\Validator\Context\ExecutionContextInterface::class,
+                \Symfony\Component\Validator\Validator\ValidatorInterface::class,
+                \Symfony\Component\Translation\IdentityTranslator::class
             );
         } else {
             $this->builder->declareClasses(
-                'Symfony\\Component\\Validator\\Validator',
-                'Symfony\\Component\\Validator\\Mapping\ClassMetadataFactory',
-                'Symfony\\Component\\Validator\\DefaultTranslator',
-                'Symfony\\Component\\Validator\\ExecutionContextInterface',
-                'Symfony\\Component\\Validator\\ValidatorInterface'
+                \Symfony\Component\Validator\Validator::class,
+                \Symfony\Component\Validator\Mapping\ClassMetadataFactory::class,
+                \Symfony\Component\Validator\DefaultTranslator::class,
+                \Symfony\Component\Validator\ExecutionContextInterface::class,
+                \Symfony\Component\Validator\ValidatorInterface::class
             );
         }
 
@@ -154,6 +156,7 @@ class ValidateBehavior extends Behavior
      * Merge $paramArray array into parameters array.
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
+     * @param array|null $params
      */
     public function mergeParameters(array $params = null)
     {
@@ -161,11 +164,11 @@ class ValidateBehavior extends Behavior
             $parameters = $this->getParameters();
             $out = [];
             $i = 1;
-            foreach ($parameters as $key => $parameter) {
+            foreach ($parameters as $parameter) {
                 $out["rule$i"] = $parameter;
                 $i++;
             }
-            foreach ($params as $key => $param) {
+            foreach ($params as $param) {
                 $out["rule$i"] = $param;
                 $i++;
             }
@@ -209,14 +212,9 @@ class ValidateBehavior extends Behavior
                 throw new InvalidArgumentException('Please, define the validator constraint.');
             }
 
-            if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
-                if (!class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
-                    throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
-                } else {
-                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
-                }
-            } else {
-                $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
+            if (!class_exists($classConstraint = "Symfony\\Component\\Validator\\Constraints\\" . $properties['validator']) &&
+                !class_exists($classConstraint = "Propel\\Runtime\\Validator\\Constraints\\" . $properties['validator'])) {
+                throw new ConstraintNotFoundException('The constraint class ' . $properties['validator'] . ' does not exist.');
             }
 
             if (isset($properties['options'])) {
@@ -225,8 +223,7 @@ class ValidateBehavior extends Behavior
                 }
 
                 $opt = var_export($properties['options'], true);
-                $opt = str_replace("\n", '', $opt);
-                $opt = str_replace('  ', '', $opt);
+                $opt = str_replace(["\n", '  '], '', $opt);
                 $properties['options'] = $opt;
             }
 
@@ -245,7 +242,7 @@ class ValidateBehavior extends Behavior
     {
         $table = $this->getTable();
         $foreignKeys = $table->getForeignKeys();
-        $hasForeignKeys = (count($foreignKeys) != 0);
+        $hasForeignKeys = !empty($foreignKeys);
         $aVarNames = [];
         $refFkVarNames = [];
         $collVarNames = [];
