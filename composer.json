@@ -29,7 +29,8 @@
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "ext-dom": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-xml": "*"
     },
     "require-dev": {
         "monolog/monolog": "~1.3",
