@@ -34,6 +34,9 @@ class SqlParser
      */
     public function setSQL($sql)
     {
+        if (strncmp($sql, "\xef\xbb\xbf", 3) === 0) {
+            $sql = substr($sql, 3);
+        }
         $this->sql = $sql;
         $this->pos = 0;
         $this->len = strlen($sql);
