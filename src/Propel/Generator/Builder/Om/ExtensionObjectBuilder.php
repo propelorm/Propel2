@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\Column;
+
 /**
  * Generates the empty PHP5 stub object class for user object model (OM).
  *

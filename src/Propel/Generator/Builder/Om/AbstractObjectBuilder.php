@@ -72,17 +72,6 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         }
     }
 
-    abstract protected function addTemporalAccessor(&$script, Column $col);
-    abstract protected function addObjectAccessor(&$script, Column $col);
-    abstract protected function addArrayAccessor(&$script, Column $col);
-    abstract protected function addHasArrayElement(&$script, Column $col);
-    abstract protected function addJsonAccessor(&$script, Column $col);
-    abstract protected function addEnumAccessor(&$script, Column $col);
-    abstract protected function addSetAccessor(&$script, Column $col);
-    abstract protected function addDefaultAccessor(&$script, Column $col);
-    abstract protected function addBooleanAccessor(&$script, Column $col);
-    abstract protected function addLazyLoader(&$script, Column $col);
-
     /**
      * Adds the mutator (setter) methods for setting column values.
      * This is here because it is probably generic enough to apply to templates being generated
@@ -128,17 +117,90 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         }
     }
 
-    abstract protected function addObjectMutator(&$script, Column $col);
-    abstract protected function addLobMutator(&$script, Column $col);
-    abstract protected function addTemporalMutator(&$script, Column $col);
-    abstract protected function addArrayMutator(&$script, Column $col);
-    abstract protected function addAddArrayElement(&$script, Column $col);
-    abstract protected function addRemoveArrayElement(&$script, Column $col);
-    abstract protected function addJsonMutator(&$script, Column $col);
-    abstract protected function addEnumMutator(&$script, Column $col);
-    abstract protected function addSetMutator(&$script, Column $col);
-    abstract protected function addBooleanMutator(&$script, Column $col);
-    abstract protected function addDefaultMutator(&$script, Column $col);
+
+    protected function addTemporalAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addObjectAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addArrayAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addHasArrayElement(&$script, Column $col)
+    {
+    }
+
+    protected function addJsonAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addEnumAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addSetAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addDefaultAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addBooleanAccessor(&$script, Column $col)
+    {
+    }
+
+    protected function addLazyLoader(&$script, Column $col)
+    {
+    }
+
+    protected function addObjectMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addLobMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addTemporalMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addArrayMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addAddArrayElement(&$script, Column $col)
+    {
+    }
+
+    protected function addRemoveArrayElement(&$script, Column $col)
+    {
+    }
+
+    protected function addJsonMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addEnumMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addSetMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addBooleanMutator(&$script, Column $col)
+    {
+    }
+
+    protected function addDefaultMutator(&$script, Column $col)
+    {
+    }
 
     /**
      * Gets the baseClass path if specified for table/db.
