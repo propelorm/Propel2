@@ -9,7 +9,6 @@ use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\DefaultPlatform;
 
 class TableDiffTest extends \PHPUnit_Framework_TestCase
@@ -281,7 +280,7 @@ class TableDiffTest extends \PHPUnit_Framework_TestCase
         $diff = $this->createTableDiff($tableA, $tableB);
         $reverseDiff = $diff->getReverseDiff();
 
-        $this->assertInstanceOf('Propel\Generator\Model\Diff\TableDiff', $reverseDiff);
+        $this->assertInstanceOf(TableDiff::class, $reverseDiff);
         $this->assertSame($tableA, $reverseDiff->getToTable());
         $this->assertSame($tableB, $reverseDiff->getFromTable());
     }
