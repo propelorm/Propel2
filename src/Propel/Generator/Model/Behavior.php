@@ -224,7 +224,7 @@ class Behavior extends MappingModel
      * Returns a single parameter by its name.
      *
      * @param  string $name
-     * @return array
+     * @return string
      */
     public function getParameter($name)
     {
@@ -328,22 +328,18 @@ class Behavior extends MappingModel
      * @param  string $templateDir
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
+    public function renderTemplate($filename, array $vars = [], $templateDir = '/templates/')
     {
         $filePath = $this->getDirname() . $templateDir . $filename;
-        if (!file_exists($filePath)) {
-            // try with '.php' at the end
-            $filePath = $filePath . '.php';
-            if (!file_exists($filePath)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
-                    $filename,
-                    $this->getDirname() . $templateDir
-                ));
-            }
+        if (!file_exists($filePath) && !file_exists($filePath .= '.php')) { // try with '.php' at the end
+            throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+                $filename,
+                $this->getDirname() . $templateDir
+            ));
         }
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, [ 'behavior' => $this ]);
+        $vars['behavior'] = $this;
 
         return $template->render($vars);
     }

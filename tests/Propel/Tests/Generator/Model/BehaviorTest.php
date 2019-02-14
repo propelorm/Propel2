@@ -1,4 +1,5 @@
 <?php
+/** @noinspection HtmlUnknownAttribute */
 
 /**
  * This file is part of the Propel package.
@@ -20,9 +21,6 @@ use Propel\Tests\TestCase;
  */
 class BehaviorTest extends TestCase
 {
-    private $schemaReader;
-    private $appData;
-
     public function testSetupObject()
     {
         $b = new Behavior();
@@ -114,7 +112,7 @@ EOF;
         $appData = $schemaReader->parseString($schema);
         $table = $appData->getDatabase('test1')->getTable('table1');
         $behaviors = $table->getBehaviors();
-        $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
+        $this->assertCount(1, $behaviors, 'SchemaReader ads as many behaviors as there are behaviors tags');
         $behavior = $table->getBehavior('timestampable');
         $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
         $this->assertEquals(

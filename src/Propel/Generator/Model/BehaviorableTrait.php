@@ -61,13 +61,13 @@ trait BehaviorableTrait
             $behavior = $bdata;
 
             // the new behavior is already registered
-            if ($this->hasBehavior($behavior->getId()) && $behavior->allowMultiple()) {
+            if ($behavior->allowMultiple() && $this->hasBehavior($behavior->getId())) {
                 // the user probably just forgot to specify the "id" attribute
                 if ($behavior->getId() === $behavior->getName()) {
                     throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.', $behavior->getName()));
-                } else { // or he copy-pasted it and forgot to update it.
-                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
                 }
+                // or he copy-pasted it and forgot to update it.
+                throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
             }
 
             $this->registerBehavior($behavior);
@@ -80,8 +80,8 @@ trait BehaviorableTrait
         $class = $locator->getBehavior($bdata['name']);
         $behavior = new $class();
         if (!($behavior instanceof Behavior)) {
-            throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
-                    $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
+            throw new BuildException(sprintf('Behavior [%s: %s] not instance of \\%s',
+                    $bdata['name'], $class, Behavior::class));
         }
         $behavior->loadMapping($bdata);
 
