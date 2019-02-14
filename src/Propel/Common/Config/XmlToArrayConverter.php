@@ -22,7 +22,7 @@ class XmlToArrayConverter
     /**
      * Create a PHP array from the XML file
      *
-     * @param String $xmlToParse The XML file or a string containing xml to parse
+     * @param string $xmlToParse The XML file or a string containing xml to parse
      *
      * @return array
      *
@@ -37,16 +37,16 @@ class XmlToArrayConverter
         $isFile = file_exists($xmlToParse);
 
         //Empty xml file returns empty array
-        if (
-            ($isFile && 0 === filesize($xmlToParse))
-            or (!$isFile && '' === $xmlToParse)
+        if ($isFile
+            ? (0 === filesize($xmlToParse))
+            : ('' === $xmlToParse)
         ) {
             return [];
         }
 
-        if (
-            ($isFile && file_get_contents($xmlToParse, false, null, 0, 1) !== '<')
-            or (!$isFile && $xmlToParse[0] !== '<')
+        if ($isFile
+            ? file_get_contents($xmlToParse, false, null, 0, 1) !== '<'
+            : $xmlToParse[0] !== '<'
         ) {
             throw new InvalidArgumentException('Invalid xml content');
         }
@@ -71,9 +71,7 @@ class XmlToArrayConverter
             throw new XmlParseException($errors);
         }
 
-        $conf = self::simpleXmlToArray($xml);
-
-        return $conf;
+        return self::simpleXmlToArray($xml);
     }
 
     /**
@@ -91,13 +89,13 @@ class XmlToArrayConverter
             $child = self::simpleXmlToArray($v);
 
             // if it's not an array, then it was empty, thus a value/string
-            if (count($child) == 0) {
+            if (count($child) === 0) {
                 $child = self::getConvertedXmlValue($v);
             }
 
             // add the children attributes as if they where children
             foreach ($v->attributes() as $ak => $av) {
-                if ($ak == 'id') {
+                if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
                     $k = self::getConvertedXmlValue($av);
@@ -112,7 +110,7 @@ class XmlToArrayConverter
 
             // if the $k is already in our children list, we need to transform
             // it into an array, else we add it as a value
-            if (!in_array($k, array_keys($ar))) {
+            if (!array_key_exists($k, $ar)) {
                 $ar[$k] = $child;
             } else {
                 // (This only applies to nested nodes that do not have an @id attribute)
@@ -134,29 +132,29 @@ class XmlToArrayConverter
 
     /**
      * Process XML value, handling boolean, if appropriate.
-     * @param  \SimpleXMLElement $value The simplexml value object.
+     * @param  \SimpleXMLElement $element The simplexml value object.
      * @return mixed             string or boolean value
      */
-    private static function getConvertedXmlValue($value)
+    private static function getConvertedXmlValue($element)
     {
-        $value = (string) $value; // convert from simplexml to string
+        $value = (string) $element; // convert from simplexml to string
 
         //handle numeric values
         if (is_numeric($value)) {
             if (ctype_digit($value)) {
-                $value = intval($value);
+                $value = (int)$value;
             } else {
-                $value = floatval($value);
+                $value = (float)$value;
             }
-        }
-
-        // handle booleans specially
-        $lwr = strtolower($value);
-        if ($lwr === "false") {
-            return false;
-        }
-        if ($lwr === "true") {
-            return true;
+        } elseif (strlen($value) <= 5) {
+            // handle booleans specially
+            $lwr = strtolower($value);
+            if ($lwr === "false") {
+                return false;
+            }
+            if ($lwr === "true") {
+                return true;
+            }
         }
 
         return $value;
