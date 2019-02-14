@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 
 /**
@@ -34,21 +35,22 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
+            $colType = $col->getType();
 
             // if they're not using the DateTime class than we will generate "compatibility" accessor method
-            if (PropelTypes::DATE === $col->getType()
-                || PropelTypes::TIME === $col->getType()
-                || PropelTypes::TIMESTAMP === $col->getType()
+            if (PropelTypes::DATE === $colType
+                || PropelTypes::TIME === $colType
+                || PropelTypes::TIMESTAMP === $colType
             ) {
                 $this->addTemporalAccessor($script, $col);
-            } elseif (PropelTypes::OBJECT === $col->getType()) {
+            } elseif (PropelTypes::OBJECT === $colType) {
                 $this->addObjectAccessor($script, $col);
-            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+            } elseif (PropelTypes::PHP_ARRAY === $colType) {
                 $this->addArrayAccessor($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
-            } elseif (PropelTypes::JSON === $col->getType()) {
+            } elseif (PropelTypes::JSON === $colType) {
                 $this->addJsonAccessor($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
@@ -70,6 +72,17 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         }
     }
 
+    abstract protected function addTemporalAccessor(&$script, Column $col);
+    abstract protected function addObjectAccessor(&$script, Column $col);
+    abstract protected function addArrayAccessor(&$script, Column $col);
+    abstract protected function addHasArrayElement(&$script, Column $col);
+    abstract protected function addJsonAccessor(&$script, Column $col);
+    abstract protected function addEnumAccessor(&$script, Column $col);
+    abstract protected function addSetAccessor(&$script, Column $col);
+    abstract protected function addDefaultAccessor(&$script, Column $col);
+    abstract protected function addBooleanAccessor(&$script, Column $col);
+    abstract protected function addLazyLoader(&$script, Column $col);
+
     /**
      * Adds the mutator (setter) methods for setting column values.
      * This is here because it is probably generic enough to apply to templates being generated
@@ -79,23 +92,25 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     protected function addColumnMutatorMethods(&$script)
     {
         foreach ($this->getTable()->getColumns() as $col) {
-            if (PropelTypes::OBJECT === $col->getType()) {
+            $colType = $col->getType();
+
+            if (PropelTypes::OBJECT === $colType) {
                 $this->addObjectMutator($script, $col);
             } elseif ($col->isLobType()) {
                 $this->addLobMutator($script, $col);
             } elseif (
-                PropelTypes::DATE === $col->getType()
-                || PropelTypes::TIME === $col->getType()
-                || PropelTypes::TIMESTAMP === $col->getType()
+                PropelTypes::DATE === $colType
+                || PropelTypes::TIME === $colType
+                || PropelTypes::TIMESTAMP === $colType
             ) {
                 $this->addTemporalMutator($script, $col);
-            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+            } elseif (PropelTypes::PHP_ARRAY === $colType) {
                 $this->addArrayMutator($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addAddArrayElement($script, $col);
                     $this->addRemoveArrayElement($script, $col);
                 }
-            } elseif (PropelTypes::JSON === $col->getType()) {
+            } elseif (PropelTypes::JSON === $colType) {
                 $this->addJsonMutator($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumMutator($script, $col);
@@ -113,6 +128,17 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         }
     }
 
+    abstract protected function addObjectMutator(&$script, Column $col);
+    abstract protected function addLobMutator(&$script, Column $col);
+    abstract protected function addTemporalMutator(&$script, Column $col);
+    abstract protected function addArrayMutator(&$script, Column $col);
+    abstract protected function addAddArrayElement(&$script, Column $col);
+    abstract protected function addRemoveArrayElement(&$script, Column $col);
+    abstract protected function addJsonMutator(&$script, Column $col);
+    abstract protected function addEnumMutator(&$script, Column $col);
+    abstract protected function addSetMutator(&$script, Column $col);
+    abstract protected function addBooleanMutator(&$script, Column $col);
+    abstract protected function addDefaultMutator(&$script, Column $col);
 
     /**
      * Gets the baseClass path if specified for table/db.
@@ -171,7 +197,8 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string|null $modifier
      * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = null)
@@ -193,6 +220,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return mixed
      */
     public function getBehaviorContent($contentName)
     {
