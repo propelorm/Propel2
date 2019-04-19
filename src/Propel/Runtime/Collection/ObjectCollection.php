@@ -338,6 +338,7 @@ class ObjectCollection extends Collection implements JsonSerializable
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
         $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
+        $query->setModelAlias("aliased_model", true);
         if (null !== $criteria) {
             $query->mergeWith($criteria);
         }
