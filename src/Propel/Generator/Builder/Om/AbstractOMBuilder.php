@@ -992,12 +992,17 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param  string $filename
      * @param  array  $vars
-     * @param  string $templateDir
+     * @param  string|null $templateDir
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
+    public function renderTemplate($filename, $vars = [], $templateDir = null)
     {
-        $filePath = __DIR__ . $templateDir . $filename;
+        if (!$templateDir) {
+            $filePath = __DIR__ . '/templates/' . $filename;
+        } else {
+            $filePath = $templateDir . $filename;
+        }
+        
         if (!file_exists($filePath)) {
             // try with '.php' at the end
             $filePath = $filePath . '.php';
