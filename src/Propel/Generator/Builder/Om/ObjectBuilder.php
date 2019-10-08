@@ -2645,7 +2645,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+    public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = array()" . ($hasFks ? ", bool \$includeForeignObjects = false" : '') . ") : array
     {
 
         if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
@@ -3008,7 +3008,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param      string \$keyType The type of keys the array uses.
      * @return void
      */
-    public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
+    public function fromArray(array \$arr, string \$keyType = TableMap::$defaultKeyType) : void
     {
         \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
 ";
