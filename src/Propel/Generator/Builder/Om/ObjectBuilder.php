@@ -1114,13 +1114,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $name = self::getBooleanAccessorName($column);
         $visibility = $column->getAccessorVisibility();
 
+        $type = 'bool';
+        if (!$column->isNotNull()) {
+            $type = '?' . $type;
+        }
+
         $script .= "
     ".$visibility." function $name(";
         if ($column->isLazyLoad()) {
             $script .= "ConnectionInterface \$con = null";
         }
 
-        $script .= ") : bool
+        $script .= ") : $type
     {";
     }
 
@@ -1376,6 +1381,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $type = $column->getPhpType() ?: 'mixed';
         }
 
+        $type = '?' . $type;
+
         $script .= "
     ".$visibility." function get$cfc(";
         if ($column->isLazyLoad()) {
@@ -1627,7 +1634,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $typeHint = $column->getPhpType() ?: 'mixed';
         if ($column->isBooleanType()) {
             if ($column->isBooleanType()) {
-                $typeHint = 'bool';
+                $typeHint = $column->isNotNull() ? 'bool' : '?bool';
             }
         } else {
             if ($column->getTypeHint()) {
@@ -1643,6 +1650,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 }
             }
         }
+
+        $typeHint = '?' . $typeHint;
 
         $script .= "
     ".$visibility." function set$cfc($typeHint\$v$null)
