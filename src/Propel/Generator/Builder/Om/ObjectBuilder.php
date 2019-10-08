@@ -1370,13 +1370,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
 
+        $type = $column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed');
+
         $script .= "
     ".$visibility." function get$cfc(";
         if ($column->isLazyLoad()) {
             $script .= "ConnectionInterface \$con = null";
         }
 
-        $script .= ")
+        $script .= ") : " . $type . "
     {";
     }
 
@@ -1617,9 +1619,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $this->getTable()->isReadOnly() ? 'protected' : $column->getMutatorVisibility();
 
-        $typeHint = '';
         $null = '';
-
+        $typeHint = $column->getPhpType() ?: 'mixed';
         if ($column->getTypeHint()) {
             $typeHint = $column->getTypeHint();
             if ('array' !== $typeHint) {
