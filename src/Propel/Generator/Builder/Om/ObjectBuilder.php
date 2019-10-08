@@ -1649,9 +1649,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     $null = ' = null';
                 }
             }
-        }
 
-        $typeHint = '?' . $typeHint;
+            $typeHint = '?' . $typeHint;
+        }
 
         $script .= "
     ".$visibility." function set$cfc($typeHint\$v$null)
