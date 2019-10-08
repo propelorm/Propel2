@@ -1373,7 +1373,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($column->isBooleanType()) {
             $type = 'bool';
         } else {
-            $type = $column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed');
+            $type = $column->getPhpType() ?: 'mixed';
         }
 
         $script .= "
