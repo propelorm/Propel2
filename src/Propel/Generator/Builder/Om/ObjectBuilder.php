@@ -1120,7 +1120,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "ConnectionInterface \$con = null";
         }
 
-        $script .= ")
+        $script .= ") : bool
     {";
     }
 
@@ -1370,7 +1370,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
 
-        $type = $column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed');
+        if ($column->isBooleanType()) {
+            $type = 'bool';
+        } else {
+            $type = $column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed');
+        }
 
         $script .= "
     ".$visibility." function get$cfc(";
@@ -1621,16 +1625,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $null = '';
         $typeHint = $column->getPhpType() ?: 'mixed';
-        if ($column->getTypeHint()) {
-            $typeHint = $column->getTypeHint();
-            if ('array' !== $typeHint) {
-                $typeHint = $this->declareClass($typeHint);
+        if ($column->isBooleanType()) {
+            if ($column->isBooleanType()) {
+                $typeHint = 'bool';
             }
+        } else {
+            if ($column->getTypeHint()) {
+                $typeHint = $column->getTypeHint();
+                if ('array' !== $typeHint) {
+                    $typeHint = $this->declareClass($typeHint);
+                }
 
-            $typeHint .= ' ';
+                $typeHint .= ' ';
 
-            if (!$column->isNotNull()) {
-                $null = ' = null';
+                if (!$column->isNotNull()) {
+                    $null = ' = null';
+                }
             }
         }
 
@@ -2134,14 +2144,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorOpenBody($script, $col);
 
         $script .= "
-        if (\$v !== null) {
-            if (is_string(\$v)) {
-                \$v = in_array(strtolower(\$v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                \$v = (boolean) \$v;
-            }
-        }
-
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
             \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
