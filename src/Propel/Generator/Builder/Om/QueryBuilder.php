@@ -185,8 +185,13 @@ class QueryBuilder extends AbstractOMBuilder
 
         // magic findBy() methods, for IDE completion
         foreach ($this->getTable()->getColumns() as $column) {
+            $type = $column->getPhpType();
+            if ($column->isBooleanType()) {
+                $type = 'bool';
+            }
+
             $script .= "
- * @method     $modelClass findOneBy" . $column->getPhpName() . "(" . $column->getPhpType() . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column";
+ * @method     $modelClass findOneBy" . $column->getPhpName() . "(" . $type . " \$" . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . " column";
         }
 
         $script .= " * \n";
