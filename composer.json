@@ -36,5 +36,13 @@
         "psr-0": {
             "Propel": "src/"
         }
+    },
+    "bin": [
+        "bin/propel"
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
     }
 }
