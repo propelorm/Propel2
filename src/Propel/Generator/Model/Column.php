@@ -1139,6 +1139,16 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns whether or not this column is date type.
+     *
+     * @return boolean
+     */
+    public function isDateType()
+    {
+        return PropelTypes::isDateType($this->getType());
+    }
+
+    /**
      * Returns whether or not this column is a temporal type.
      *
      * @return boolean

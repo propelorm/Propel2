@@ -1375,7 +1375,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
 
-        if ($column->isBooleanType()) {
+        if ($column->isDateType()) {
+            $type = '\DateTime';
+        } elseif ($column->isBooleanType()) {
             $type = 'bool';
         } else {
             $type = $column->getPhpType() ?: 'mixed';
@@ -1632,10 +1634,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $null = '';
         $typeHint = $column->getPhpType() ?: 'mixed';
-        if ($column->isBooleanType()) {
-            if ($column->isBooleanType()) {
-                $typeHint = $column->isNotNull() ? 'bool' : '?bool';
-            }
+
+        if ($column->isDateType()) {
+            $typeHint = '\DateTime';
+        } elseif ($column->isBooleanType()) {
+            $typeHint = $column->isNotNull() ? 'bool' : '?bool';
         } else {
             if ($column->getTypeHint()) {
                 $typeHint = $column->getTypeHint();

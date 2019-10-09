@@ -322,6 +322,17 @@ class PropelTypes
     }
 
     /**
+     * Return whether or not this column is a date type.
+     *
+     * @param $maapingType
+     * @return bool
+     */
+    public static function isDateType($maapingType)
+    {
+        return in_array($maapingType, [self::DATE, self::TIME, self::TIMESTAMP]);
+    }
+
+    /**
      * Returns whether or not this column is a boolean type.
      *
      * @param  string  $mappingType
