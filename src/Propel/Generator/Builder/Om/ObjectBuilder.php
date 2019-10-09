@@ -1636,7 +1636,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $typeHint = $column->getPhpType() ?: 'mixed';
 
         if ($column->isDateType()) {
-            $typeHint = '?mixed';
+            $typeHint = '';
         } elseif ($column->isBooleanType()) {
             $typeHint = $column->isNotNull() ? 'bool' : '?bool';
         } else {
