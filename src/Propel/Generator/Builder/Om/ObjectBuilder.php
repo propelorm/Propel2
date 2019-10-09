@@ -1654,7 +1654,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-    ".$visibility." function set$cfc($typeHint\$v$null) : self
+    ".$visibility." function set$cfc($typeHint\$v$null)
     {";
     }
 
