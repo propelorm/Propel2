@@ -16,6 +16,7 @@ Propel2 uses the following Symfony2 Components:
 * [Finder](https://github.com/symfony/Finder)
 * [Validator](https://github.com/symfony/Validator)
 * [Filesystem](https://github.com/symfony/Filesystem)
+* [Config](https://github.com/symfony/config)
 
 Propel2 also relies on [**Composer**](https://github.com/composer/composer) to manage dependencies but you
 also can use [ClassLoader](https://github.com/symfony/ClassLoader) (see the `autoload.php.dist` file for instance).
