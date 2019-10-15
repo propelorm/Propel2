@@ -158,7 +158,7 @@
      *
      * @return $this|<?php echo $className ?> The current object, for fluid interface
      */
-    public function setVirtualColumn(string $name, mixed $value): <?php echo $className ?>
+    public function setVirtualColumn(string $name, mixed $value)
     {
         $this->virtualColumns[$name] = $value;
 
