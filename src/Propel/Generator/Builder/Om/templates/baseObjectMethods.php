@@ -95,7 +95,7 @@
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
      */
-    public function equals(mixed $obj) : bool
+    public function equals($obj) : bool
     {
         if (!$obj instanceof static) {
             return false;
