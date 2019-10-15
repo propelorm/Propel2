@@ -141,7 +141,7 @@
      *
      * @throws PropelException
      */
-    public function getVirtualColumn(string $name) : mixed
+    public function getVirtualColumn(string $name)
     {
         if (!$this->hasVirtualColumn($name)) {
             throw new PropelException(sprintf('Cannot get value of inexistent virtual column %s.', $name));
@@ -158,7 +158,7 @@
      *
      * @return $this|<?php echo $className ?> The current object, for fluid interface
      */
-    public function setVirtualColumn(string $name, mixed $value)
+    public function setVirtualColumn(string $name, $value)
     {
         $this->virtualColumns[$name] = $value;
 
