@@ -225,7 +225,7 @@ public function enforceVersioning()
  * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  * @return  boolean
  */
-public function isVersioningNecessary(ConnectionInterface \$con = null)
+public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
 {
     if (\$this->alreadyInSave) {
         return false;
@@ -310,7 +310,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
  *
  * @return  {$versionARClassName} A version object
  */
-public function addVersion(ConnectionInterface \$con = null)
+public function addVersion(?ConnectionInterface \$con = null): {$versionARClassName}
 {
     \$this->enforceVersion = false;
 
