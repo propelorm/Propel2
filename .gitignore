@@ -5,6 +5,7 @@ autoload.php
 phpunit.xml
 pom.xml
 php-cs-fixer.phar
+.idea
 
 generated-classes/
 

@@ -14,8 +14,10 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\FileLocator;
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Abstract class used by all file-based loaders.
@@ -316,17 +318,23 @@ abstract class FileLoader extends BaseFileLoader
      */
     private function parseEnvironmentParams($value)
     {
-        // env.variable is an environment variable
-        $env = explode('.', $value);
-        if ('env' === $env[0]) {
-            $envParam = getenv($env[1]);
-            if (false === $envParam) {
-                throw new InvalidArgumentException("Environment variable '$env[1]' is not defined.");
-            }
+    	//Try loading environment variables from .env file, if exist
+		try {
+			$dotenv = new Dotenv();
+			$dotenv->load($this->getPath(".env"));
+		} catch (FileLocatorFileNotFoundException $e) {}
 
-            return $envParam;
-        }
+		// env.variable is an environment variable
+		$env = explode('.', $value);
+		if ('env' === $env[0]) {
+			$envParam = getenv($env[1]);
+			if (false === $envParam) {
+				throw new InvalidArgumentException("Environment variable '$env[1]' is not defined.");
+			}
 
-        return null;
+			return $envParam;
+		}
+
+		return null;
     }
 }
