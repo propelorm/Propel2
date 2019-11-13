@@ -13,6 +13,19 @@ namespace Propel\Runtime\Util;
 use \DateTimeZone;
 use Propel\Runtime\Exception\PropelException;
 
+class FakeDateTime {
+    private $time;
+
+    function __construct($time = "now", $tz = null)
+    {
+        $this->time = $time;
+    }
+
+    function format($format = "") {
+        return $this->time;
+    }
+}
+
 /**
  * DateTime subclass which supports serialization.
  *
@@ -123,6 +136,10 @@ class PropelDateTime extends \DateTime
                 // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
                 $dateTimeObject->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
             } else {
+                if (is_string($value) && (strpos($value, "%") !== false) || strpos($value, "_") !== false) {
+                    return new FakeDateTime($value, $timeZone);
+                }
+
                 if (null === $timeZone) {
                     // stupid DateTime constructor signature
                     $dateTimeObject = new $dateTimeClass($value);
