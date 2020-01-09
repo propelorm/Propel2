@@ -310,7 +310,7 @@ public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
  *
  * @return  {$versionARClassName} A version object
  */
-public function addVersion(?ConnectionInterface \$con = null): {$versionARClassName}
+public function addVersion(?ConnectionInterface \$con = null)
 {
     \$this->enforceVersion = false;
 
