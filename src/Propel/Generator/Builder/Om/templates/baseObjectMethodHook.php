@@ -5,7 +5,7 @@
      * @param  ConnectionInterface $con
      * @return boolean
      */
-    public function preSave(ConnectionInterface $con = null)
+    public function preSave(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::preSave')) {
 	        return parent::preSave($con);
@@ -19,7 +19,7 @@
      * Code to be run after persisting the object
      * @param ConnectionInterface $con
      */
-    public function postSave(ConnectionInterface $con = null)
+    public function postSave(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::postSave')) {
 	        parent::postSave($con);
@@ -33,7 +33,7 @@
      * @param  ConnectionInterface $con
      * @return boolean
      */
-    public function preInsert(ConnectionInterface $con = null)
+    public function preInsert(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::preInsert')) {
 	        return parent::preInsert($con);
@@ -47,7 +47,7 @@
      * Code to be run after inserting to database
      * @param ConnectionInterface $con
      */
-    public function postInsert(ConnectionInterface $con = null)
+    public function postInsert(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::postInsert')) {
 	        parent::postInsert($con);
@@ -61,7 +61,7 @@
      * @param  ConnectionInterface $con
      * @return boolean
      */
-    public function preUpdate(ConnectionInterface $con = null)
+    public function preUpdate(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::preUpdate')) {
 	        return parent::preUpdate($con);
@@ -75,7 +75,7 @@
      * Code to be run after updating the object in database
      * @param ConnectionInterface $con
      */
-    public function postUpdate(ConnectionInterface $con = null)
+    public function postUpdate(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::postUpdate')) {
 	        parent::postUpdate($con);
@@ -89,7 +89,7 @@
      * @param  ConnectionInterface $con
      * @return boolean
      */
-    public function preDelete(ConnectionInterface $con = null)
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::preDelete')) {
 	        return parent::preDelete($con);
@@ -103,7 +103,7 @@
      * Code to be run after deleting the object in database
      * @param ConnectionInterface $con
      */
-    public function postDelete(ConnectionInterface $con = null)
+    public function postDelete(?ConnectionInterface $con = null): bool
     {
         if (is_callable('parent::postDelete')) {
 	        parent::postDelete($con);
