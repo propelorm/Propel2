@@ -19,7 +19,7 @@
      * Code to be run after persisting the object
      * @param ConnectionInterface $con
      */
-    public function postSave(?ConnectionInterface $con = null): bool
+    public function postSave(?ConnectionInterface $con = null): void
     {
         if (is_callable('parent::postSave')) {
 	        parent::postSave($con);
@@ -47,7 +47,7 @@
      * Code to be run after inserting to database
      * @param ConnectionInterface $con
      */
-    public function postInsert(?ConnectionInterface $con = null): bool
+    public function postInsert(?ConnectionInterface $con = null): void
     {
         if (is_callable('parent::postInsert')) {
 	        parent::postInsert($con);
@@ -75,7 +75,7 @@
      * Code to be run after updating the object in database
      * @param ConnectionInterface $con
      */
-    public function postUpdate(?ConnectionInterface $con = null): bool
+    public function postUpdate(?ConnectionInterface $con = null): void
     {
         if (is_callable('parent::postUpdate')) {
 	        parent::postUpdate($con);
@@ -103,7 +103,7 @@
      * Code to be run after deleting the object in database
      * @param ConnectionInterface $con
      */
-    public function postDelete(?ConnectionInterface $con = null): bool
+    public function postDelete(?ConnectionInterface $con = null): void
     {
         if (is_callable('parent::postDelete')) {
 	        parent::postDelete($con);
