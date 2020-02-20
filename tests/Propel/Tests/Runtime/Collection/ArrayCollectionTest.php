@@ -10,18 +10,19 @@
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Country;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Collection\ArrayCollection;
-use Propel\Runtime\Exception\PropelException;
+
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\Collection\ArrayCollection;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Country;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for ObjectCollection.
