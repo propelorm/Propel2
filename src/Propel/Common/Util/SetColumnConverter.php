@@ -28,7 +28,7 @@ class SetColumnConverter
      *
      * @throws SetColumnConverterException
      */
-    public static function convertToInt($val, array $valueSet)
+    public static function convertToInt($val, array $valueSet) : void
     {
         if ($val === null) {
 
@@ -58,7 +58,7 @@ class SetColumnConverter
      *
      * @throws SetColumnConverterException
      */
-    public static function convertIntToArray($val, array $valueSet)
+    public static function convertIntToArray($val, array $valueSet) : string
     {
         if ($val === null) {
             
