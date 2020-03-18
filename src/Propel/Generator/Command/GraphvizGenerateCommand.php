@@ -62,5 +62,7 @@ class GraphvizGenerateCommand extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         $manager->build();
+
+        return 0;
     }
 }

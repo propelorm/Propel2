@@ -10,12 +10,13 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Runtime\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Exception;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -30,11 +31,18 @@ class MigrationUpCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
-            ->addOption('fake',             null, InputOption::VALUE_NONE,  'Does not touch the actual schema, but marks next migration as executed.')
-            ->addOption('force',            null, InputOption::VALUE_NONE,  'Continues with the migration even when errors occur.')
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
+            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
+            ->addOption('connection',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Connection to use',
+                [])
+            ->addOption('fake',
+                null,
+                InputOption::VALUE_NONE,
+                'Does not touch the actual schema, but marks next migration as executed.')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Continues with the migration even when errors occur.')
             ->setName('migration:up')
             ->setAliases(['up'])
             ->setDescription('Execute migrations up')
@@ -51,11 +59,11 @@ class MigrationUpCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-        
+
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -63,7 +71,7 @@ class MigrationUpCommand extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        $connections = [];
+        $connections       = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
@@ -109,6 +117,7 @@ class MigrationUpCommand extends AbstractCommand
                     $output->writeln('<error>preUp() returned false. Continue migration.</error>');
                 } else {
                     $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
+
                     return false;
                 }
             }
@@ -125,8 +134,8 @@ class MigrationUpCommand extends AbstractCommand
                 ));
             }
 
-            $conn = $manager->getAdapterConnection($datasource);
-            $res = 0;
+            $conn       = $manager->getAdapterConnection($datasource);
+            $res        = 0;
             $statements = SqlParser::parseString($sql);
 
             if (!$input->getOption('fake')) {
@@ -138,7 +147,7 @@ class MigrationUpCommand extends AbstractCommand
 
                         $conn->exec($statement);
                         $res++;
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         if ($input->getOption('force')) {
                             //continue, but print error message
                             $output->writeln(
@@ -190,5 +199,7 @@ class MigrationUpCommand extends AbstractCommand
         } else {
             $output->writeln('Migration complete. No further migration to execute.');
         }
+
+        return 0;
     }
 }

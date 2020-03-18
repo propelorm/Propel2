@@ -55,7 +55,7 @@ class MigrationMigrateCommand extends AbstractCommand
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -186,5 +186,7 @@ class MigrationMigrateCommand extends AbstractCommand
         }
 
         $output->writeln('Migration complete. No further migration to execute.');
+
+        return 0;
     }
 }

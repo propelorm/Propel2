@@ -7,9 +7,6 @@
      */
     public function preSave(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::preSave')) {
-	        return parent::preSave($con);
-        }
         return true;
     }
 
@@ -21,9 +18,6 @@
      */
     public function postSave(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::postSave')) {
-	        parent::postSave($con);
-        }
     }
 
 <?php endif?>
@@ -35,9 +29,6 @@
      */
     public function preInsert(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::preInsert')) {
-	        return parent::preInsert($con);
-        }
         return true;
     }
 
@@ -49,9 +40,6 @@
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::postInsert')) {
-	        parent::postInsert($con);
-        }
     }
 
 <?php endif?>
@@ -63,9 +51,6 @@
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::preUpdate')) {
-	        return parent::preUpdate($con);
-        }
         return true;
     }
 
@@ -77,9 +62,6 @@
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::postUpdate')) {
-	        parent::postUpdate($con);
-        }
     }
 
 <?php endif?>
@@ -91,9 +73,6 @@
      */
     public function preDelete(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::preDelete')) {
-	        return parent::preDelete($con);
-        }
         return true;
     }
 
@@ -105,9 +84,6 @@
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-        if (is_callable('parent::postDelete')) {
-	        parent::postDelete($con);
-        }
     }
 
 <?php endif?>

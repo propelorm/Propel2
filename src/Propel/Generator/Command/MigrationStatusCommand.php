@@ -10,10 +10,10 @@
 
 namespace Propel\Generator\Command;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Propel\Generator\Manager\MigrationManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -28,9 +28,13 @@ class MigrationStatusCommand extends AbstractCommand
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
+            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
+            ->addOption('connection',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Connection to use',
+                [])
             ->setName('migration:status')
             ->setAliases(['status'])
             ->setDescription('Get migration status')
@@ -47,11 +51,11 @@ class MigrationStatusCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-        
+
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -59,7 +63,7 @@ class MigrationStatusCommand extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        $connections = [];
+        $connections       = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
@@ -109,7 +113,7 @@ class MigrationStatusCommand extends AbstractCommand
         }
 
         $output->writeln('Listing Migration files...');
-        $dir = $generatorConfig->getSection('paths')['migrationDir'];
+        $dir                  = $generatorConfig->getSection('paths')['migrationDir'];
         $migrationTimestamps  = $manager->getMigrationTimestamps();
         $nbExistingMigrations = count($migrationTimestamps);
 
@@ -145,7 +149,7 @@ class MigrationStatusCommand extends AbstractCommand
             return false;
         }
 
-        $migrationTimestamps = $manager->getValidMigrationTimestamps();
+        $migrationTimestamps        = $manager->getValidMigrationTimestamps();
         $nbNotYetExecutedMigrations = count($migrationTimestamps);
 
         if (!$nbNotYetExecutedMigrations) {
@@ -158,5 +162,7 @@ class MigrationStatusCommand extends AbstractCommand
             'Call the "migrate" task to execute %s',
             $countValidTimestamps == 1 ? 'it' : 'them'
         ));
+
+        return 0;
     }
 }

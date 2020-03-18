@@ -55,7 +55,7 @@ class MigrationDownCommand extends AbstractCommand
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -181,5 +181,7 @@ class MigrationDownCommand extends AbstractCommand
         } else {
             $output->writeln('Reverse migration complete. No more migration available for reverse');
         }
+
+        return 0;
     }
 }

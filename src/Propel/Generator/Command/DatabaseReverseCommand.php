@@ -92,7 +92,7 @@ class DatabaseReverseCommand extends AbstractCommand
         $manager->setSchemaName($input->getOption('schema-name'));
 
         $namespace = $input->getOption('namespace');
-        
+
         if ($namespace) {
             $manager->setNamespace($namespace);
         }
@@ -100,5 +100,7 @@ class DatabaseReverseCommand extends AbstractCommand
         if (true === $manager->reverse()) {
             $output->writeln('<info>Schema reverse engineering finished.</info>');
         }
+
+        return 0;
     }
 }

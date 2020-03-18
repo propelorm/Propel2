@@ -131,5 +131,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['phpDir']);
 
         $manager->build();
+
+        return 0;
     }
 }

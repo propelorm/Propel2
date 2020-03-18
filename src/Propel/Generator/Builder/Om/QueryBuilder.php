@@ -533,10 +533,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             foreach ($pks as $col) {
                 $colNames[]= '$' . $col->getName();
             }
-            $pkType = 'array['. join($colNames, ', ') . ']';
+            $pkType = 'array['. join(', ', $colNames) . ']';
             $script .= "
      * <code>
-     * \$obj = \$c->findPk(array(" . join($examplePk, ', ') . "), \$con);";
+     * \$obj = \$c->findPk(array(" . join(', ', $examplePk) . "), \$con);";
         } else {
             $pkType = 'mixed';
             $script .= "
@@ -1092,7 +1092,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
                 \$this->add(\$key, \${$variableName}, Criteria::BINARY_NONE);
             }
             \$this->addOr(\$key, null, Criteria::ISNULL);
-            
+
             return \$this;
         }";
         } elseif ($col->getType() == PropelTypes::ENUM) {

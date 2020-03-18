@@ -2408,10 +2408,10 @@ class Criteria
                                 $rawcvt = '';
                                 // parse the $params['raw'] for ? chars
                                 for ($r = 0, $len = strlen($raw); $r < $len; $r++) {
-                                    if ($raw{$r} == '?') {
+                                    if (substr($raw, $r, 1) == '?') {
                                         $rawcvt .= ':p'.$p++;
                                     } else {
-                                        $rawcvt .= $raw{$r};
+                                        $rawcvt .= substr($raw, $r, 1);
                                     }
                                 }
                                 $sql .= $rawcvt . ', ';
