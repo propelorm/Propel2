@@ -212,7 +212,7 @@ class MigrationDiffCommand extends AbstractCommand
         if (!$migrationsUp) {
             $output->writeln('Same XML and database structures for all datasource - no diff to generate');
 
-            return;
+            return 0;
         }
 
         $timestamp = time();
