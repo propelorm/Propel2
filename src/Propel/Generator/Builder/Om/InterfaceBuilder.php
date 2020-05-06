@@ -59,7 +59,6 @@ class InterfaceBuilder extends AbstractObjectBuilder
  * You should add additional method declarations to this interface to meet the
  * application requirements.  This interface will only be generated as
  * long as it does not already exist in the output directory.
- *
  */
 interface ".$this->getUnqualifiedClassName()."
 {
