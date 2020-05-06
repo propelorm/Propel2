@@ -7,9 +7,11 @@
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::preSave')) {
 	        return parent::preSave($con);
         }
+        <?php endif?>
         return true;
     }
 
@@ -21,9 +23,11 @@
      */
     public function postSave(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::postSave')) {
 	        parent::postSave($con);
         }
+        <?php endif?>
     }
 
 <?php endif?>
@@ -35,9 +39,11 @@
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::preInsert')) {
 	        return parent::preInsert($con);
         }
+        <?php endif?>
         return true;
     }
 
@@ -49,9 +55,11 @@
      */
     public function postInsert(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::postInsert')) {
 	        parent::postInsert($con);
         }
+        <?php endif?>
     }
 
 <?php endif?>
@@ -63,9 +71,11 @@
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::preUpdate')) {
 	        return parent::preUpdate($con);
         }
+        <?php endif?>
         return true;
     }
 
@@ -77,9 +87,11 @@
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::postUpdate')) {
 	        parent::postUpdate($con);
         }
+        <?php endif?>
     }
 
 <?php endif?>
@@ -91,9 +103,11 @@
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::preDelete')) {
 	        return parent::preDelete($con);
         }
+        <?php endif?>
         return true;
     }
 
@@ -105,9 +119,11 @@
      */
     public function postDelete(ConnectionInterface $con = null)
     {
+        <?php if ($hasBaseClass): ?>
         if (is_callable('parent::postDelete')) {
 	        parent::postDelete($con);
         }
+        <?php endif?>
     }
 
 <?php endif?>
