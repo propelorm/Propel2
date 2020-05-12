@@ -14,7 +14,7 @@ use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Exception\BuildException;
 
 /**
- * Generates the empty PHP5 stub query class for use with single table inheritance.
+ * Generates the empty PHP7 stub query class for use with single table inheritance.
  *
  * This class produces the empty stub class that can be customized with
  * application business logic, custom behavior, etc.

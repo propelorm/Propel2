@@ -11,7 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP5 stub object class for user object model (OM).
+ * Generates the empty PHP7 stub object class for user object model (OM).
  *
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.

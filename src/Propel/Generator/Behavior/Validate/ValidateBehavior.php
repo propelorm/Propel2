@@ -209,15 +209,7 @@ class ValidateBehavior extends Behavior
                 throw new InvalidArgumentException('Please, define the validator constraint.');
             }
 
-            if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
-                if (!class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
-                    throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
-                } else {
-                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
-                }
-            } else {
-                $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
-            }
+            $classConstraint = $this->getClassConstraint($properties);
 
             if (isset($properties['options'])) {
                 if (!is_array($properties['options'])) {
@@ -235,6 +227,26 @@ class ValidateBehavior extends Behavior
         }
 
         return $this->renderTemplate('objectLoadValidatorMetadata', ['constraints' => $constraints]);
+    }
+
+    /**
+     * Propel constraints are preferred over Symfony ones.
+     *
+     * @param array $properties
+     *
+     * @return string
+     */
+    protected function getClassConstraint(array $properties)
+    {
+        if (class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
+            return "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
+        }
+
+        if (class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
+            return "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
+        }
+
+        throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
     }
 
     /**

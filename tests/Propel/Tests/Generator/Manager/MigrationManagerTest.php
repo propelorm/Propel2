@@ -5,6 +5,7 @@ namespace Propel\Tests\Generator\Manager;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Tests\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * @group database
@@ -20,7 +21,8 @@ class MigrationManagerTest extends TestCase
 
         $connections = $generatorConfig->getBuildConnections();
 
-        $migrationManager = $this->getMock('Propel\Generator\Manager\MigrationManager', ['getMigrationTimestamps']);
+        $migrationManagerMockBuilder = $this->getMockBuilder(MigrationManager::class);
+        $migrationManager = $migrationManagerMockBuilder->setMethods(['getMigrationTimestamps'])->getMock();
         $migrationManager->setGeneratorConfig($generatorConfig);
         $migrationManager->setConnections($connections);
         $migrationManager->setMigrationTable('migration');

@@ -122,11 +122,12 @@ class QuotingTest extends TestCaseFixturesDatabase
             ->having('g.Id > 0')
             ->find();
 
-        if ($this->runningOnPostgreSQL()) {
-            $expected = $this->getSql("SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id,g.name,g.type_id HAVING g.id > 0");
-        } else {
+        $expected = $this->getSql("SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id,g.name,g.type_id HAVING g.id > 0");
+
+        if ($this->runningOnSQLite()) {
             $expected = $this->getSql( "SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id HAVING g.id > 0");
         }
+
         $this->assertEquals($expected, $this->getLastQuery());
 
         \Propel\Tests\Quoting\GroupQuery::create('g')
@@ -151,14 +152,12 @@ class QuotingTest extends TestCaseFixturesDatabase
             ->having('group.As > 0')
             ->find();
 
-        if ($this->runningOnPostgreSQL()) {
-            $expected = $this->getSql("SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as`,`group`.`id`,`group`.`title`,`group`.`by`,`group`.`author_id` HAVING `group`.`as` > 0");
-        } else {
+        $expected = $this->getSql("SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as`,`group`.`id`,`group`.`title`,`group`.`by`,`group`.`author_id` HAVING `group`.`as` > 0");
+
+        if ($this->runningOnSQLite()) {
             $expected = $this->getSql("SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as` HAVING `group`.`as` > 0");
         }
+
         $this->assertEquals($expected, $this->getLastQuery());
-
     }
-
-
 }

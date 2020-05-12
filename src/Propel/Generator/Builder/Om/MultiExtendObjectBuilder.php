@@ -14,7 +14,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Inheritance;
 
 /**
- * Generates the empty PHP5 stub object class for use with inheritance in the
+ * Generates the empty PHP7 stub object class for use with inheritance in the
  * user object model (OM).
  *
  * This class produces the empty stub class that can be customized with
