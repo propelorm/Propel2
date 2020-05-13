@@ -9,6 +9,7 @@ jobs:
         version: 7.0
     steps:
       - checkout
+      - run: composer install -n --prefer-dist
       - run: if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
       - run: if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
       - run: ./tests/bin/circleci.sh
