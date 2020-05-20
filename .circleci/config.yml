@@ -1,12 +1,8 @@
 version: 2
 jobs:
   build:
-    machine:
-      environment:
-        DB_USER: ubuntu
-        DB_NAME: circle_test
-      php:
-        version: 7.0
+    docker:
+      - image: circleci/php:7.1-node-browsers
     steps:
       - checkout
       - run: sudo composer self-update
