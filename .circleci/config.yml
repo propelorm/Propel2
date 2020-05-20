@@ -6,16 +6,8 @@ jobs:
     steps:
       - checkout
       - run: sudo composer self-update
-      - restore_cache:
-          keys:
-            - composer-v1-{{ checksum "composer.lock" }}
-            # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
-            - composer-v1-
-      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
-          key: composer-v1-{{ checksum "composer.lock" }}
-          paths:
-            - vendor
       - run: composer install -n --prefer-dist
+      - run: echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
       - run: if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
       - run: if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
       - run: ./tests/bin/circleci.sh
