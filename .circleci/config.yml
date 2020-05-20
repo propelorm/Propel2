@@ -3,17 +3,19 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.1-node-browsers
-      - image: circleci/mysql:5.7-ram
-      - image: circleci/postgres:9.5-postgis-ram
+#      - image: circleci/mysql:5.7-ram
+#      - image: circleci/postgres:9.5-postgis-ram
+#          - environment:
+#            - POSTGRES_PASSWORD=password
     steps:
       - checkout
       - run: sudo composer self-update
       - run: composer install -n --prefer-dist
       - run: echo 'memory_limit = -1' | sudo tee -a /usr/local/etc/php/conf.d/docker-php-memlimit.ini
-      - run: if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
-      - run: if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
+#      - run: if [ "$CIRCLE_NODE_INDEX" = "1" ]; then ./tests/bin/setup.mysql.sh; fi
+#      - run: if [ "$CIRCLE_NODE_INDEX" = "2" ]; then ./tests/bin/setup.pgsql.sh; fi
       - run: ./tests/bin/circleci.sh
-    parallelism: 2
+#    parallelism: 2
 
 notify:
   webhooks:
