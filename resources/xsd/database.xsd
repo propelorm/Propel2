@@ -646,7 +646,7 @@
         <xs:attribute name="namespace" type="php_namespace" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The PHP 7.0 namespace to use for the generated model classes.
+                    The PHP namespace to use for the generated model classes.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -844,7 +844,7 @@
         <xs:attribute name="namespace" type="php_namespace" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The PHP 7.0 namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
+                    The PHP namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

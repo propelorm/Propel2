@@ -11,7 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP7 stub class for object query
+ * Generates the empty PHP stub class for object query
  *
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.

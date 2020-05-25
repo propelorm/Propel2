@@ -11,7 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP7 stub interface for user object model (OM).
+ * Generates the empty PHP stub interface for user object model (OM).
  *
  * This class produces the empty stub interface when the interface="" attribute is used
  * in the the schema xml.

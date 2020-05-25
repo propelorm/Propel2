@@ -26,7 +26,7 @@ use Propel\Generator\Platform\SqlsrvPlatform;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Generates a PHP7 base Object class for user object model (OM).
+ * Generates a PHP base Object class for user object model (OM).
  *
  * This class produces the base object class (e.g. BaseMyTable) which contains
  * all the custom-built accessor and setter methods.

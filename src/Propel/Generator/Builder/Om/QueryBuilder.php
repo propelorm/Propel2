@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 
 /**
- * Generates a PHP7 base Query class for user object model (OM).
+ * Generates a PHP base Query class for user object model (OM).
  *
  * This class produces the base query class (e.g. BaseBookQuery) which contains
  * all the custom-built query methods.
