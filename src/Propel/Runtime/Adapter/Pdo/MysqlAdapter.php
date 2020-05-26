@@ -147,11 +147,11 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $asSelects = $criteria->getAsColumns();
 
             foreach ($selected as $colName) {
-                if (!in_array($colName, $groupBy)) {
+                if (!in_array($colName, $groupBy, true)) {
 
                     // is a alias there that is grouped?
                     if ($alias = array_search($colName, $asSelects)) {
-                        if (in_array($alias, $groupBy)) {
+                        if (in_array($alias, $groupBy, true)) {
                             continue; //yes, alias is selected.
                         }
                     }

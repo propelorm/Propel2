@@ -5,7 +5,6 @@ namespace Propel\Tests\Generator\Manager;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Tests\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * @group database
