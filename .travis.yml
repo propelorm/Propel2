@@ -10,16 +10,6 @@ env:
   - DB=mysql
   - DB=sqlite
 
-install:
-  - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-  - composer install
-
-before_script:
-  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
-
-script:
-  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
-
 services:
   - mysql
 
@@ -28,6 +18,11 @@ matrix:
     - php: 7.2
       dist: trusty
       env: DB=mysql MARIADB=10.1
+      addons:
+        mariadb: "10.1"
+    - php: 7.2
+      dist: trusty
+      env: DB=mysql MARIADB=10.1 PREFER_LOWEST=1
       addons:
         mariadb: "10.1"
     - php: 7.3
@@ -87,6 +82,17 @@ matrix:
     - php: 7.4
 
   fast_finish: true
+
+install:
+  - phpenv config-rm xdebug.ini
+  - composer install
+  - if [[ $PREFER_LOWEST == 1 ]]; then composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction ; fi
+
+before_script:
+  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
+
+script:
+  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
 
 # cache vendors
 cache:
