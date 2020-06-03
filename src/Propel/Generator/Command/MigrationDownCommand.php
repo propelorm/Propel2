@@ -44,7 +44,7 @@ class MigrationDownCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -55,7 +55,7 @@ class MigrationDownCommand extends AbstractCommand
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -83,7 +83,7 @@ class MigrationDownCommand extends AbstractCommand
         if (!$nextMigrationTimestamp) {
             $output->writeln('No migration were ever executed on this database - nothing to reverse.');
 
-            return false;
+            return static::CODE_ERROR;
         }
 
         $output->writeln(sprintf(
@@ -108,7 +108,7 @@ class MigrationDownCommand extends AbstractCommand
                 } else {
                     $output->writeln('<error>preDown() returned false. Aborting migration.</error>');
 
-                    return false;
+                    return static::CODE_ERROR;
                 }
             }
         }
@@ -181,5 +181,7 @@ class MigrationDownCommand extends AbstractCommand
         } else {
             $output->writeln('Reverse migration complete. No more migration available for reverse');
         }
+
+        return static::CODE_SUCCESS;
     }
 }

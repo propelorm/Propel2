@@ -55,7 +55,7 @@ class MigrationDiffCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -169,7 +169,7 @@ class MigrationDiffCommand extends AbstractCommand
         $excludedTables = $input->getOption('skip-tables');
         $configManager = new ConfigurationManager($input->getOption('config-dir'));
         $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
-        
+
         foreach ($reversedSchema->getDatabases() as $database) {
             $name = $database->getName();
 
@@ -212,7 +212,7 @@ class MigrationDiffCommand extends AbstractCommand
         if (!$migrationsUp) {
             $output->writeln('Same XML and database structures for all datasource - no diff to generate');
 
-            return;
+            return static::CODE_SUCCESS;
         }
 
         $timestamp = time();
@@ -231,6 +231,7 @@ class MigrationDiffCommand extends AbstractCommand
             $output->writeln('Please review the generated SQL statements, and add data migration code if necessary.');
             $output->writeln('Once the migration class is valid, call the "migrate" task to execute it.');
         }
-    }
 
+        return static::CODE_SUCCESS;
+    }
 }

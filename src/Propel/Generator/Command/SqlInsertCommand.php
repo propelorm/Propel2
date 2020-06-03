@@ -26,7 +26,7 @@ class SqlInsertCommand extends AbstractCommand
     protected function configure()
     {
         parent::configure();
-        
+
         $this
             ->addOption('sql-dir', null, InputOption::VALUE_REQUIRED, 'The SQL files directory')
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)')
@@ -39,7 +39,7 @@ class SqlInsertCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $manager = new SqlManager();
 
@@ -70,5 +70,7 @@ class SqlInsertCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['sqlDir']);
 
         $manager->insertSql();
+
+        return static::CODE_SUCCESS;
     }
 }

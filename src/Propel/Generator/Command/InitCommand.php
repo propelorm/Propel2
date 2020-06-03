@@ -47,7 +47,10 @@ class InitCommand extends AbstractCommand
             ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritDoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $consoleHelper = $this->createConsoleHelper($input, $output);
         $options = [];
@@ -137,7 +140,8 @@ class InitCommand extends AbstractCommand
 
         if (!$correct) {
             $consoleHelper->writeln('<error>Process aborted.</error>');
-            return 1;
+
+            return static::CODE_ERROR;
         }
 
         $consoleHelper->writeln('');
@@ -145,7 +149,7 @@ class InitCommand extends AbstractCommand
         $this->generateProject($consoleHelper->getOutput(), $options);
         $consoleHelper->writeSection('Propel 2 is ready to be used!');
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 
     private function detectDefaultPhpDir()
@@ -295,11 +299,11 @@ class InitCommand extends AbstractCommand
             'connection' => $fullDsn,
             '--output-dir' => $outputDir
         ];
-        
+
         if (isset($options['namespace'])) {
             $arrInput['--namespace'] = $options['namespace'];
         }
-        
+
         $input = new ArrayInput($arrInput);
         $result = $this->getApplication()->run($input,$output);
 
