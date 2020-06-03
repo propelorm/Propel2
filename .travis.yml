@@ -80,6 +80,7 @@ matrix:
 
   allow_failures:
     - php: 7.4
+    - env: PREFER_LOWEST=1
 
   fast_finish: true
 
