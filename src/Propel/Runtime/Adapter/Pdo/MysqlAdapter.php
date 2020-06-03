@@ -141,30 +141,28 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $groupBy = $criteria->getGroupByColumns();
 
-        if ($groupBy) {
-            // check if all selected columns are groupBy'ed.
-            $selected = $this->getPlainSelectedColumns($criteria);
-            $asSelects = $criteria->getAsColumns();
-
-            foreach ($selected as $colName) {
-                if (!in_array($colName, $groupBy, true)) {
-
-                    // is a alias there that is grouped?
-                    if ($alias = array_search($colName, $asSelects)) {
-                        if (in_array($alias, $groupBy, true)) {
-                            continue; //yes, alias is selected.
-                        }
-                    }
-                    $groupBy[] = $colName;
-                }
-            }
-
-            if ($groupBy) {
-                return ' GROUP BY ' . implode(',', $groupBy);
-            }
+        if (!$groupBy) {
+            return '';
         }
 
-        return '';
+        // check if all selected columns are groupBy'ed.
+        $selected = $this->getPlainSelectedColumns($criteria);
+        $asSelects = $criteria->getAsColumns();
+
+        foreach ($selected as $colName) {
+            if (in_array($colName, $groupBy, true)) {
+                continue;
+            }
+
+            // is a alias there that is grouped?
+            if (in_array(array_search($colName, $asSelects), $groupBy, true)) {
+                continue; // yes, alias is selected.
+            }
+
+            $groupBy[] = $colName;
+        }
+
+        return ($groupBy) ? ' GROUP BY ' . implode(',', $groupBy) : '';
     }
 
     /**
