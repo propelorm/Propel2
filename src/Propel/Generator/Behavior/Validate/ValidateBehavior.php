@@ -238,12 +238,15 @@ class ValidateBehavior extends Behavior
      */
     protected function getClassConstraint(array $properties)
     {
-        if (class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
-            return "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
-        }
+        $constraintCandidates = [
+            sprintf('Propel\\Runtime\\Validator\\Constraints\\%s', $properties['validator']),
+            sprintf('Symfony\\Component\\Validator\\Constraints\\%s', $properties['validator']),
+        ];
 
-        if (class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
-            return "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
+        foreach ($constraintCandidates as $constraintCandidate) {
+            if (class_exists($constraintCandidate, true)) {
+                return $constraintCandidate;
+            }
         }
 
         throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
