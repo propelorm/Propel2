@@ -130,9 +130,9 @@ class CrossForeignKeys
      * @param  ForeignKey $fk
      * @return bool
      */
-    public function isAtLeastOneLocalPrimaryKeyNotCovered(ForeignKey $fk)
+    public function isAtLeastOneLocalColumnNotCovered(ForeignKey $fk)
     {
-        $primaryKeys = $fk->getLocalPrimaryKeys();
+        $primaryKeys = $fk->getLocalColumnObjects();
         foreach ($primaryKeys as $primaryKey) {
             $covered = false;
             foreach ($this->getCrossForeignKeys() as $crossFK) {
