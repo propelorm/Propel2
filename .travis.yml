@@ -80,7 +80,8 @@ matrix:
 
   allow_failures:
     - php: 7.4
-    - env: PREFER_LOWEST=1
+    - php: 7.2
+      env: DB=mysql MARIADB=10.1 PREFER_LOWEST=1
 
   fast_finish: true
 

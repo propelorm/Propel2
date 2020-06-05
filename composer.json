@@ -24,7 +24,9 @@
         "symfony/filesystem": "^3.4||^4.3||^5.0",
         "symfony/config": "^3.4||^4.3",
         "symfony/translation": "^3.4||^4.3",
-        "psr/log": "^1.0"
+        "psr/log": "^1.0",
+        "symfony/intl": "^5.1",
+        "egulias/email-validator": "^2.1"
     },
     "require-dev": {
         "monolog/monolog": "^1.3",
