@@ -11,6 +11,9 @@ env:
   - DB=agnostic #only database agnostic tests
   - DB=mysql
   - DB=sqlite
+  global:
+    - PGPORT=5432
+
 
 install:
   - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
