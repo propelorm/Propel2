@@ -41,3 +41,8 @@ CREATE SCHEMA contest;
 CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
 ';
+
+
+
+dsn="mysql:host=$DB_HOSTNAME;dbname=test";
+php $DIR/../../bin/propel test:prepare --vendor="mysql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
