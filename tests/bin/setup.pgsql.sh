@@ -33,6 +33,7 @@ CREATE SCHEMA migration;
 ' "$DB_NAME";
 
 
+DIR=`dirname $0`;
 dsn="pgsql:host=$DB_HOSTNAME;dbname=postgres";
 php $DIR/../../bin/propel test:prepare --vendor="pgsql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
 
