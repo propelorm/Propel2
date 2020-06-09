@@ -74,12 +74,6 @@ class TestCaseFixtures extends TestCase
                 //we need new test:prepare call with --exclude-schema disabled
                 $skip = false;
             }
-
-            if ($skip) {
-                $this->readAllRuntimeConfigs();
-                //skip, as we've already created all fixtures for current database connection.
-                return;
-            }
         }
 
         $finder = new Finder();
