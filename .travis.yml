@@ -23,6 +23,8 @@ before_script:
 script:
   - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
 
+services:
+  - mysql
 
 matrix:
   include:
