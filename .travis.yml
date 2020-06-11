@@ -28,6 +28,7 @@ services:
 install:
   - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
   - composer install
+  - composer show
 
 before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
