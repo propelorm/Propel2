@@ -431,7 +431,7 @@ EOF;
      */
     public function testRuntimeOrGeneratorConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->expectException(Propel\Common\Config\Exception\InvalidConfigurationException::class);
+        $this->expectException(\Propel\Common\Config\Exception\InvalidConfigurationException::class);
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         $manager = new ConfigurationManager();
@@ -442,7 +442,7 @@ EOF;
      */
     public function testRuntimeOrGeneratorDefaultConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->expectException(Propel\Common\Config\Exception\InvalidConfigurationException::class);
+        $this->expectException(\Propel\Common\Config\Exception\InvalidConfigurationException::class);
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         $manager = new ConfigurationManager();

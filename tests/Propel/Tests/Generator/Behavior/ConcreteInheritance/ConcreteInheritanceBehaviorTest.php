@@ -133,7 +133,7 @@ EOF;
 
     public function testModifyTableNoCopyDataKeepsAutoIncrement()
     {
-        $this->expectException(Propel\Runtime\Exception\PropelException::class);
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;

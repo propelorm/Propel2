@@ -239,7 +239,7 @@ class TableTest extends ModelTestCase
 
     public function testSetInvalidDefaultStringFormat()
     {
-        $this->expectException(Propel\Generator\Exception\InvalidArgumentException::class);
+        $this->expectException(\Propel\Generator\Exception\InvalidArgumentException::class);
 
         $table = new Table();
         $table->setDefaultStringFormat('FOO');
@@ -287,7 +287,7 @@ class TableTest extends ModelTestCase
         $table = new Table('books');
         $column = $this->getColumnMock('created_at', ['phpName' => 'CreatedAt']);
 
-        $this->expectException(Propel\Generator\Exception\EngineException::class);
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $table->addColumn($column);
         $table->addColumn($column);
@@ -392,7 +392,7 @@ class TableTest extends ModelTestCase
 
     public function testCantRemoveColumnWhichIsNotInTable()
     {
-        $this->expectException(Propel\Generator\Exception\EngineException::class);
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $column1 = $this->getColumnMock('title');
 
@@ -740,7 +740,7 @@ class TableTest extends ModelTestCase
         $table->addForeignKey($fk1);
         $table->addForeignKey($fk2);
 
-        $this->expectException(Propel\Generator\Exception\EngineException::class);
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
         $table->addForeignKey($fk3);
         $this->fail('Expected to throw an EngineException due to duplicate foreign key.');
     }

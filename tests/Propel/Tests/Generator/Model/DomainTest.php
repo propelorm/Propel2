@@ -165,7 +165,7 @@ class DomainTest extends ModelTestCase
         $domain = new Domain();
         $domain->setDefaultValue($value);
 
-        $this->expectException(Propel\Generator\Exception\EngineException::class);
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
         $domain->getPhpDefaultValue();
     }
 
