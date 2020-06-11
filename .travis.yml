@@ -113,25 +113,33 @@ jobs:
       addons:
         mariadb: 10.4
       before_script:
-        - sudo ./tests/bin/setup.$DB.sh
+        - mysql -e 'drop user if exists travis@localhost;'
+        - mysql -e 'create user travis@localhost;'
+        - ./tests/bin/setup.$DB.sh
     - php: 7.2
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
       before_script:
-        - sudo ./tests/bin/setup.$DB.sh
+        - mysql -e 'drop user if exists travis@localhost;'
+        - mysql -e 'create user travis@localhost;'
+        - ./tests/bin/setup.$DB.sh
     - php: 7.3
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
       before_script:
-        - sudo ./tests/bin/setup.$DB.sh
+        - mysql -e 'drop user if exists travis@localhost;'
+        - mysql -e 'create user travis@localhost;'
+        - ./tests/bin/setup.$DB.sh
     - php: 7.4
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
       before_script:
-        - sudo ./tests/bin/setup.$DB.sh
+        - mysql -e 'drop user if exists travis@localhost;'
+        - mysql -e 'create user travis@localhost;'
+        - ./tests/bin/setup.$DB.sh
 
     - php: 7.1
       env: DB=pgsql POSTGRES=9.4
