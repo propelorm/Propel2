@@ -807,7 +807,7 @@ class ColumnTest extends ModelTestCase
 
     public function testGetAutoIncrementStringThrowsEngineException()
     {
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(Propel\Generator\Exception\EngineException::class);
 
         $table = $this->getTableMock('books');
         $table
