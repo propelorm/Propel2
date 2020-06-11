@@ -31,7 +31,7 @@ install:
   - composer show
 
 before_script:
-  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
+  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then sudo ./tests/bin/setup.$DB.sh; fi
 
 script:
   - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
@@ -109,19 +109,19 @@ jobs:
         mariadb: 10.3
 
     - php: 7.1
-      env: DB=mysql 4ARIADB=10.4
+      env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
     - php: 7.2
-      env: DB=mysql 4ARIADB=10.4
+      env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
     - php: 7.3
-      env: DB=mysql 4ARIADB=10.4
+      env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
     - php: 7.4
-      env: DB=mysql 4ARIADB=10.4
+      env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
 
