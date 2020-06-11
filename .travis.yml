@@ -31,7 +31,7 @@ install:
   - composer show
 
 before_script:
-  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then sudo ./tests/bin/setup.$DB.sh; fi
+  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
   - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
@@ -112,18 +112,26 @@ jobs:
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
+      before_script:
+        - sudo ./tests/bin/setup.$DB.sh
     - php: 7.2
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
+      before_script:
+        - sudo ./tests/bin/setup.$DB.sh
     - php: 7.3
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
+      before_script:
+        - sudo ./tests/bin/setup.$DB.sh
     - php: 7.4
       env: DB=mysql MARIADB=10.4
       addons:
         mariadb: 10.4
+      before_script:
+        - sudo ./tests/bin/setup.$DB.sh
 
     - php: 7.1
       env: DB=pgsql POSTGRES=9.4
@@ -239,10 +247,6 @@ cache:
   directories:
     - vendor
     - $HOME/.composer/cache
-
-# This triggers builds to run on the new TravisCI infrastructure.
-# See: http://docs.travis-ci.com/user/workers/container-based-infrastructure/
-sudo: false
 
 notifications:
   webhooks:
