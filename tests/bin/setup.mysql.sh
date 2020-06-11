@@ -34,13 +34,14 @@ DROP SCHEMA IF EXISTS migration;
 SET FOREIGN_KEY_CHECKS = 1;
 '
 
-"$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e '
+"$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e "
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 CREATE DATABASE test;
 CREATE SCHEMA bookstore_schemas;
 CREATE SCHEMA contest;
 CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
-';
+";
 
 
 
