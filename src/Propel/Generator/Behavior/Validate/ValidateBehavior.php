@@ -57,7 +57,7 @@ class ValidateBehavior extends Behavior
                 'Symfony\\Component\\Validator\\Mapping\\Factory\LazyLoadingMetadataFactory',
                 'Symfony\\Component\\Validator\\Context\\ExecutionContextInterface',
                 'Symfony\\Component\\Validator\\Validator\\ValidatorInterface',
-                'Symfony\\Component\\Translation\\IdentityTranslator'
+                //'Symfony\\Component\\Translation\\IdentityTranslator'
             );
         } else {
             $this->builder->declareClasses(
