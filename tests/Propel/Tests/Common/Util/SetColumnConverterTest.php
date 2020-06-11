@@ -17,7 +17,7 @@ use Propel\Common\Util\SetColumnConverter;
  * 
  * @author Moritz Schroeder <moritz.schroeder@molabs.de> 
  */
-class SetColumnConverterTest extends \PHPUnit_Framework_TestCase
+class SetColumnConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array  $values

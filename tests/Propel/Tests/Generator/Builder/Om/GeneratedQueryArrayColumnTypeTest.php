@@ -20,7 +20,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Francois Zaninotto
  */
-class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedQueryArrayColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {

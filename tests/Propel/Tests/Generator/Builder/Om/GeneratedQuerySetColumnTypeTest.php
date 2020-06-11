@@ -18,7 +18,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Francois Zaninotto
  */
-class GeneratedQuerySetColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedQuerySetColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {
