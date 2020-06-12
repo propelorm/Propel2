@@ -131,17 +131,17 @@ class NameFactoryTest extends BaseTestCase
                 $algo = self::$ALGORITHMS[$algoIndex];
                 $algoInputs = self::$INPUTS[$algoIndex];
                 $nbAlgoInputs = count($algoInputs);
-                var_dump($algo);
-                var_dump($algoInputs);
-                var_dump($algoIndex);
-                var_dump($algosCount);
+                dump($algo);
+                dump($algoInputs);
+                dump($algoIndex);
+                dump($algosCount);
                 for ($i = 0; $i < $nbAlgoInputs; $i++) {
                     $inputs = $this->makeInputs($algo, $algoInputs[$i]);
-                    var_dump($inputs);
+                    dump($inputs);
                     $generated = NameFactory::generateName($algo, $inputs);
-                    var_dump($generated);
+                    dump($generated);
                     $expected = self::$OUTPUTS[$algoIndex][$i];
-                    var_dump($expected);
+                    dump($expected);
                     $this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
                 }
             }
