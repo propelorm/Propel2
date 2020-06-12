@@ -248,6 +248,24 @@ jobs:
 #     addons:
 #       postgresql: 12
 
+    - php: nightly
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer show
+    - php: nightly
+      env: DB=mysql
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer show
+    - php: nightly
+      env: DB=sqlite
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer show
 
   allow_failures:
     - php: nightly
