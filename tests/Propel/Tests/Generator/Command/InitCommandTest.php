@@ -106,7 +106,7 @@ class InitCommandTest extends TestCaseFixtures
 
         }, $dsnArray);
 
-        $inputs[] = array_shift($dsnArray);
+        $inputs[] = array_shift($dsnArray) ?? [];
         if ($this->getDriver() !== 'sqlite') {
             $inputs[] = array_shift($dsnArray);
             $inputs[] = null;

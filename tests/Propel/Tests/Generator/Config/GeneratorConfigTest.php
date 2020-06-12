@@ -180,7 +180,7 @@ class GeneratorConfigTest extends ConfigTestCase
 
     public function testGetConfiguredBuilder()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
@@ -191,7 +191,7 @@ class GeneratorConfigTest extends ConfigTestCase
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
     }
 

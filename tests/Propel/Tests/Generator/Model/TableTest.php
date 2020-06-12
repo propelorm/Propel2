@@ -303,8 +303,8 @@ class TableTest extends ModelTestCase
             ->will($this->returnValue(true))
         ;
 
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
+        $children[] = $this->getMockBuilder('Propel\Generator\Model\Inheritance')->getMock();
+        $children[] = $this->getMockBuilder('Propel\Generator\Model\Inheritance')->getMock();
 
         $column
             ->expects($this->any())
