@@ -16,7 +16,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * Generates the PHP5 table map class for user object model (OM).
+ * Generates the PHP table map class for user object model (OM).
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */

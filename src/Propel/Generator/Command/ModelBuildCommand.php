@@ -55,7 +55,7 @@ class ModelBuildCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
         $inputOptions = $input->getOptions();
@@ -131,5 +131,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['phpDir']);
 
         $manager->build();
+
+        return static::CODE_SUCCESS;
     }
 }

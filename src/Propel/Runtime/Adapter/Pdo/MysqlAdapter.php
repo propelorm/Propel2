@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\ColumnMap;
@@ -129,6 +130,39 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
         } elseif ($offset > 0) {
             $sql .= ' LIMIT ' . $offset . ', 18446744073709551615';
         }
+    }
+
+    /**
+     * @param Criteria $criteria
+     *
+     * @return string
+     */
+    public function getGroupBy(Criteria $criteria)
+    {
+        $groupBy = $criteria->getGroupByColumns();
+
+        if (!$groupBy) {
+            return '';
+        }
+
+        // check if all selected columns are groupBy'ed.
+        $selected = $this->getPlainSelectedColumns($criteria);
+        $asSelects = $criteria->getAsColumns();
+
+        foreach ($selected as $colName) {
+            if (in_array($colName, $groupBy, true)) {
+                continue;
+            }
+
+            // is a alias there that is grouped?
+            if (in_array(array_search($colName, $asSelects), $groupBy, true)) {
+                continue; // yes, alias is selected.
+            }
+
+            $groupBy[] = $colName;
+        }
+
+        return ($groupBy) ? ' GROUP BY ' . implode(',', $groupBy) : '';
     }
 
     /**

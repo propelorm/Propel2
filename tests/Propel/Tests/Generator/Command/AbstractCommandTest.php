@@ -84,10 +84,15 @@ class TestableAbstractCommand extends AbstractCommand
         return parent::parseConnection($connection);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritDoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->getSchemas($input->getOption('config-dir'), $input->getOption('recursive'));
 
         $output->write(count($result));
+
+        return static::CODE_SUCCESS;
     }
 }

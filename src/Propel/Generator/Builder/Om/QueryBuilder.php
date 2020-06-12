@@ -17,7 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 
 /**
- * Generates a PHP5 base Query class for user object model (OM).
+ * Generates a PHP base Query class for user object model (OM).
  *
  * This class produces the base query class (e.g. BaseBookQuery) which contains
  * all the custom-built query methods.
@@ -533,10 +533,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             foreach ($pks as $col) {
                 $colNames[]= '$' . $col->getName();
             }
-            $pkType = 'array['. join($colNames, ', ') . ']';
+            $pkType = 'array['. join(', ', $colNames) . ']';
             $script .= "
      * <code>
-     * \$obj = \$c->findPk(array(" . join($examplePk, ', ') . "), \$con);";
+     * \$obj = \$c->findPk(array(" . join(', ', $examplePk) . "), \$con);";
         } else {
             $pkType = 'mixed';
             $script .= "
