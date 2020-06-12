@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=7.1",
         "symfony/yaml": "~2.3||~3.0||~4.0",
         "symfony/console": "~2.3||~3.0||~4.0",
         "symfony/finder": "~2.3||~3.0||~4.0",
