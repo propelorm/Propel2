@@ -125,17 +125,29 @@ class NameFactoryTest extends BaseTestCase
      */
     public function testNames()
     {
-        $algosCount = count(self::$ALGORITHMS);
-        for ($algoIndex = 0; $algoIndex < $algosCount; $algoIndex++) {
-            $algo = self::$ALGORITHMS[$algoIndex];
-            $algoInputs = self::$INPUTS[$algoIndex];
-            $nbAlgoInputs = count($algoInputs);
-            for ($i = 0; $i < $nbAlgoInputs; $i++) {
-                $inputs = $this->makeInputs($algo, $algoInputs[$i]);
-                $generated = NameFactory::generateName($algo, $inputs);
-                $expected = self::$OUTPUTS[$algoIndex][$i];
-                $this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
+        try {
+
+            $algosCount = count(self::$ALGORITHMS);
+            for ($algoIndex = 0; $algoIndex < $algosCount; $algoIndex++) {
+                $algo = self::$ALGORITHMS[$algoIndex];
+                $algoInputs = self::$INPUTS[$algoIndex];
+                $nbAlgoInputs = count($algoInputs);
+                for ($i = 0; $i < $nbAlgoInputs; $i++) {
+                    $inputs = $this->makeInputs($algo, $algoInputs[$i]);
+                    $generated = NameFactory::generateName($algo, $inputs);
+                    $expected = self::$OUTPUTS[$algoIndex][$i];
+                    $this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
+                }
             }
+        } catch (\Throwable $exception) {
+            var_dump($exception->getTraceAsString());
+            var_dump($algo);
+            var_dump($algoInputs);
+            var_dump($algoIndex);
+            var_dump($algosCount);
+            var_dump($inputs);
+            var_dump($generated);
+            var_dump($expected);
         }
     }
 
