@@ -202,12 +202,12 @@ class SchemaReader
                     break;
 
                 case 'table':
-                    if (!isset($attributes['schema']) 
+                    if (!isset($attributes['schema'])
                         && $this->currDB->getSchema() && $this->currDB->getPlatform()->supportsSchemas()
                         && false === strpos($attributes['name'], $this->currDB->getPlatform()->getSchemaDelimiter())) {
                         $attributes['schema'] = $this->currDB->getSchema();
                     }
-                    
+
                     $this->currTable = $this->currDB->addTable($attributes);
                     if ($this->isExternalSchema()) {
                         $this->currTable->setForReferenceOnly($this->isForReferenceOnly);
