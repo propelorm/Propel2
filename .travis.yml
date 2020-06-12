@@ -12,7 +12,6 @@ php:
   - 7.2
   - 7.3
   - 7.4
-  - nightly
 
 env:
   global:
@@ -109,7 +108,7 @@ jobs:
         mariadb: 10.3
 
     - php: 7.1
-      env: DB=mysql MARIADB=10.4
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
         mariadb: 10.4
       before_script:
@@ -117,9 +116,9 @@ jobs:
         - sudo mysql -e 'create user travis@localhost;'
         - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
-        - DB_USER=travis ./tests/bin/setup.$DB.sh
+        - ./tests/bin/setup.$DB.sh
     - php: 7.2
-      env: DB=mysql MARIADB=10.4
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
         mariadb: 10.4
       before_script:
@@ -129,7 +128,7 @@ jobs:
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
         - DB_USER=travis ./tests/bin/setup.$DB.sh
     - php: 7.3
-      env: DB=mysql MARIADB=10.4
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
         mariadb: 10.4
       before_script:
@@ -139,7 +138,7 @@ jobs:
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
         - DB_USER=travis ./tests/bin/setup.$DB.sh
     - php: 7.4
-      env: DB=mysql MARIADB=10.4
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
         mariadb: 10.4
       before_script:
