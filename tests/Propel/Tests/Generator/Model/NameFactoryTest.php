@@ -68,29 +68,30 @@ class NameFactoryTest extends BaseTestCase
     public function __construct()
     {
         self::$INPUTS = [
-                [ [self::makeString(61), "I", 1],
-                        [self::makeString(61), "I", 2],
-                        [self::makeString(65), "I", 3],
-                        [self::makeString(4), "FK", 1],
-                        [self::makeString(5), "FK", 2]
-                    ],
-                [
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE],
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME],
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE]
-                    ]
-                ];
-
+            [
+                [self::makeString(61), "I", 1],
+                [self::makeString(61), "I", 2],
+                [self::makeString(65), "I", 3],
+                [self::makeString(4), "FK", 1],
+                [self::makeString(5), "FK", 2]
+            ],
+            [
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE],
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME],
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE]
+            ]
+        ];
 
         self::$OUTPUTS = [
-                        [
-                            self::makeString(60) . "_I_1",
-                            self::makeString(60) . "_I_2",
-                            self::makeString(60) . "_I_3",
-                            self::makeString(4) . "_FK_1",
-                            self::makeString(5) . "_FK_2"],
-                        ["MyUser", "MYUSER", "MY_USER"]
-                    ];
+            [
+                self::makeString(60) . "_I_1",
+                self::makeString(60) . "_I_2",
+                self::makeString(60) . "_I_3",
+                self::makeString(4) . "_FK_1",
+                self::makeString(5) . "_FK_2"
+            ],
+            ["MyUser", "MYUSER", "MY_USER"]
+        ];
 
     }
 
@@ -125,30 +126,25 @@ class NameFactoryTest extends BaseTestCase
      */
     public function testNames()
     {
-        try {
-
             $algosCount = count(self::$ALGORITHMS);
             for ($algoIndex = 0; $algoIndex < $algosCount; $algoIndex++) {
                 $algo = self::$ALGORITHMS[$algoIndex];
                 $algoInputs = self::$INPUTS[$algoIndex];
                 $nbAlgoInputs = count($algoInputs);
+                var_dump($algo);
+                var_dump($algoInputs);
+                var_dump($algoIndex);
+                var_dump($algosCount);
                 for ($i = 0; $i < $nbAlgoInputs; $i++) {
                     $inputs = $this->makeInputs($algo, $algoInputs[$i]);
+                    var_dump($inputs);
                     $generated = NameFactory::generateName($algo, $inputs);
+                    var_dump($generated);
                     $expected = self::$OUTPUTS[$algoIndex][$i];
+                    var_dump($expected);
                     $this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
                 }
             }
-        } catch (\Throwable $exception) {
-            var_dump($exception->getTraceAsString());
-            var_dump($algo);
-            var_dump($algoInputs);
-            var_dump($algoIndex);
-            var_dump($algosCount);
-            var_dump($inputs);
-            var_dump($generated);
-            var_dump($expected);
-        }
     }
 
     /**
