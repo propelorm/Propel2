@@ -18,7 +18,7 @@ env:
     - PGPORT=5432
   jobs:
     - DB=agnostic #only database agnostic tests
-    - DB=mysql
+    - DB=mysql # TODO we should cover multiple specific versions of mysql.
     - DB=sqlite
 
 services:
@@ -33,7 +33,7 @@ before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
-  - ./vendor/bin/phpunit --debug -v -c tests/$DB.phpunit.xml;
+  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
 
 jobs:
   include:
@@ -54,7 +54,7 @@ jobs:
 #     env: DB=mysql MARIADB=10.1
 #     addons:
 #       mariadb: 10.1
-#       TODO maria 5.5 is not EOL yet.
+#       TODO add maria 5.5, it is not EOL yet.
 
     - php: 7.1
       env: DB=mysql MARIADB=10.2
@@ -126,7 +126,7 @@ jobs:
         - sudo mysql -e 'create user travis@localhost;'
         - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
-        - DB_USER=travis ./tests/bin/setup.$DB.sh
+        - ./tests/bin/setup.$DB.sh
     - php: 7.3
       env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
@@ -136,7 +136,7 @@ jobs:
         - sudo mysql -e 'create user travis@localhost;'
         - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
-        - DB_USER=travis ./tests/bin/setup.$DB.sh
+        - ./tests/bin/setup.$DB.sh
     - php: 7.4
       env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
@@ -146,7 +146,7 @@ jobs:
         - sudo mysql -e 'create user travis@localhost;'
         - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
-        - DB_USER=travis ./tests/bin/setup.$DB.sh
+        - ./tests/bin/setup.$DB.sh
 
     - php: 7.1
       env: DB=pgsql POSTGRES=9.4
@@ -233,7 +233,7 @@ jobs:
       addons:
         postgresql: 11
 
-# Travis-ci doesn't know how to install postgres 12
+# Travis-ci fails to install postgres 12
 #   - php: 7.1
 #     env: DB=pgsql POSTGRES=12
 #     addons:
@@ -261,13 +261,13 @@ jobs:
       env: DB=mysql
       install:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer install --ignore-platform-reqs
         - composer show
     - php: nightly
       env: DB=sqlite
       install:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer install --ignore-platform-reqs
         - composer show
 
   allow_failures:
@@ -275,10 +275,8 @@ jobs:
 
   fast_finish: true
 
-# cache vendors
 cache:
   directories:
-    - vendor
     - $HOME/.composer/cache
 
 notifications:
