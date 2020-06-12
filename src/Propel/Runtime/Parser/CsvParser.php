@@ -59,7 +59,7 @@ class CsvParser extends AbstractParser
             $rows[] = implode($this->delimiter, $this->formatRow($array));
         }
 
-        return implode($rows, $this->lineTerminator) . $this->lineTerminator;
+        return implode($this->lineTerminator, $rows) . $this->lineTerminator;
     }
 
     public function listFromArray($array, $rootKey = null)
