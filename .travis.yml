@@ -115,7 +115,7 @@ jobs:
       before_script:
         - sudo mysql -e 'drop user if exists travis@localhost;'
         - sudo mysql -e 'create user travis@localhost;'
-        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost";
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - DB_USER=travis ./tests/bin/setup.$DB.sh
     - php: 7.2
       env: DB=mysql MARIADB=10.4
@@ -124,7 +124,7 @@ jobs:
       before_script:
         - sudo mysql -e 'drop user if exists travis@localhost;'
         - sudo mysql -e 'create user travis@localhost;'
-        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost";
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - DB_USER=travis ./tests/bin/setup.$DB.sh
     - php: 7.3
       env: DB=mysql MARIADB=10.4
@@ -133,7 +133,7 @@ jobs:
       before_script:
         - sudo mysql -e 'drop user if exists travis@localhost;'
         - sudo mysql -e 'create user travis@localhost;'
-        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost";
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - DB_USER=travis ./tests/bin/setup.$DB.sh
     - php: 7.4
       env: DB=mysql MARIADB=10.4
