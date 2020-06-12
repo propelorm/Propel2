@@ -187,7 +187,7 @@ class SchemaReader
                         $this->isForReferenceOnly = (null !== $isForRefOnly ? ('true' === strtolower($isForRefOnly)) : true); // defaults to TRUE
                     }
 
-                    if ('/' !== $xmlFile{0}) {
+                    if ('/' !== $xmlFile[0]) {
                         $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
                             throw new SchemaException(sprintf('Unknown include external "%s"', $xmlFile));
