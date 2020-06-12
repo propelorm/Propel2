@@ -34,7 +34,7 @@ before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
-  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
+  - ./vendor/bin/phpunit --debug -v -c tests/$DB.phpunit.xml;
 
 jobs:
   include:

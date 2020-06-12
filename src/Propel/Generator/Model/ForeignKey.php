@@ -575,6 +575,7 @@ class ForeignKey extends MappingModel
             $columns[] = $this->parentTable->getColumn($columnName);
         }
 
+        dump($columns, $this->localColumns);
         return $columns;
     }
 
