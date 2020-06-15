@@ -27,6 +27,7 @@
     },
     "require-dev": {
         "monolog/monolog": "^1.3",
+        "symfony/console": "~2.4||~3.0||^4.0",
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
