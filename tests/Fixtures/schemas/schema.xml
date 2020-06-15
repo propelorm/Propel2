@@ -95,8 +95,6 @@
     </table>
 
     <table name="fixture_for_testing_time_expressions" schema="contest" reloadOnInsert="true">
-        <column name="current_date" type="TIMESTAMP" defaultExpr="CURRENT_DATE" />
-        <column name="current_time" type="TIMESTAMP" defaultExpr="CURRENT_TIME" />
         <column name="current_timestamp" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
         <column name="localtime" type="TIMESTAMP" defaultExpr="LOCALTIME" />
         <column name="localtimestamp" type="TIMESTAMP" defaultExpr="LOCALTIMESTAMP" />
