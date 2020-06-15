@@ -309,16 +309,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             }
 
             if (null !== $default) {
-                $containsFunctionCall = "'" !== substr($default, 0, 1) && strpos($default, '(');
-                $isTimeExpression = in_array(
-                    strtoupper($default),
-                    [
-                        'LOCALTIMESTAMP',
-                        'CURRENT_TIMESTAMP'
-                    ],
-                    true
-                );
-                if ($containsFunctionCall || $isTimeExpression) {
+                if ($this->isColumnDefaultExpression($default)) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;
@@ -332,6 +323,34 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             $table->addColumn($column);
         }
+    }
+
+    /**
+     * @param string $default
+     *
+     * @return bool
+     */
+    protected function isColumnDefaultExpression($default)
+    {
+        $containsFunctionCall = "'" !== substr($default, 0, 1) && strpos($default, '(');
+
+        if ($containsFunctionCall) {
+            return true;
+        }
+
+        $defaultColumnValueExpressions = [
+            'CURRENT_DATE' => 'CURRENT_DATE',
+            'CURRENT_TIME' => 'CURRENT_TIME',
+            'CURRENT_TIMESTAMP' => 'CURRENT_TIMESTAMP',
+            'LOCALTIME' => 'LOCALTIME',
+            'LOCALTIMESTAMP' => 'LOCALTIMESTAMP'
+        ];
+
+        if (isset($defaultColumnValueExpressions[strtoupper($default)])) {
+            return true;
+        }
+
+        false;
     }
 
     /**
