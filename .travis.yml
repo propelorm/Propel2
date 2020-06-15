@@ -278,6 +278,7 @@ jobs:
         - composer require --dev dereuromark/composer-prefer-lowest
       script:
         - vendor/bin/validate-prefer-lowest
+        - composer show
         - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
     - name: Minimum versions on php7.3
@@ -288,6 +289,7 @@ jobs:
         - composer require --dev dereuromark/composer-prefer-lowest
       script:
         - vendor/bin/validate-prefer-lowest
+        - composer show
         - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
     - name: Minimum versions on php7.4
@@ -298,6 +300,7 @@ jobs:
         - composer require --dev dereuromark/composer-prefer-lowest
       script:
         - vendor/bin/validate-prefer-lowest
+        - composer show
         - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
   allow_failures:
