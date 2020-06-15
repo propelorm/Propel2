@@ -310,8 +310,15 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             if (null !== $default) {
                 $containsFunctionCall = "'" !== substr($default, 0, 1) && strpos($default, '(');
-                $isCurrentTimestamp = $default === 'CURRENT_TIMESTAMP';
-                if ($containsFunctionCall || $isCurrentTimestamp) {
+                $isTimeExpression = in_array(
+                    strtoupper($default),
+                    [
+                        'LOCALTIMESTAMP',
+                        'CURRENT_TIMESTAMP'
+                    ],
+                    true
+                );
+                if ($containsFunctionCall || $isTimeExpression) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;
