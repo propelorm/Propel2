@@ -144,7 +144,7 @@ jobs:
       before_script:
         - sudo mysql -e 'drop user if exists travis@localhost;'
         - sudo mysql -e 'create user travis@localhost;'
-        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost";
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
         - ./tests/bin/setup.$DB.sh
 
