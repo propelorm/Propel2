@@ -339,10 +339,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         }
 
         $defaultColumnValueExpressions = [
-            'CURRENT_DATE' => 'CURRENT_DATE',
-            'CURRENT_TIME' => 'CURRENT_TIME',
             'CURRENT_TIMESTAMP' => 'CURRENT_TIMESTAMP',
-            'LOCALTIME' => 'LOCALTIME',
             'LOCALTIMESTAMP' => 'LOCALTIMESTAMP'
         ];
 
