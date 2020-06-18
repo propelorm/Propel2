@@ -345,7 +345,7 @@ buildtime:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        new ConfigurationManager();
     }
 
     public function testNotDefineRuntimeAndGeneratorSectionUsesDefaultConnections()
@@ -392,7 +392,7 @@ propel:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        new ConfigurationManager();
     }
 
     /**
@@ -423,7 +423,7 @@ propel:
 EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        new ConfigurationManager();
     }
 
     /**
@@ -435,7 +435,7 @@ EOF;
             "`wrongsource` isn't a valid configured connection (Section: propel.$section.connections).");
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $manager = new ConfigurationManager();
+        new ConfigurationManager();
     }
 
     /**
@@ -447,7 +447,7 @@ EOF;
             "`wrongsource` isn't a valid configured connection (Section: propel.$section.defaultConnection).");
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $manager = new ConfigurationManager();
+        new ConfigurationManager();
     }
 
     public function testLoadValidConfigurationFile()
@@ -610,7 +610,7 @@ EOF;
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
 
         $manager = new ConfigurationManager();
-        $value = $manager->getConfigProperty(10);
+        $manager->getConfigProperty(10);
     }
 
     public function testGetConfigPropertyBadName()
