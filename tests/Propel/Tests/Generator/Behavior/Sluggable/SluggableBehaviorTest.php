@@ -288,7 +288,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $t->save();
         $this->assertEquals('hello-world', $t->getSlug());
 
-        $this->setExpectedException('Propel\Runtime\Exception\PropelException');
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
 
         $t = new TableWithScope();
         $t->setTitle('Hello, World');

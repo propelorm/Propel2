@@ -1,149 +1,187 @@
 language: php
 
+git:
+  strategy: clone
+  depth: 1
+  quiet: true
+
+dist: bionic
+
 php:
-  - 5.6
+  - 7.1
+  - 7.2
+  - 7.3
   - 7.4
 
-services:
-  - postgresql
-  - mysql
-
 env:
-  - DB=agnostic #only database agnostic tests
-  - DB=mysql
-  - DB=sqlite
+  global:
+    - PGPORT=5432
+  jobs:
+    - DB=agnostic #only database agnostic tests
+    - DB=mysql # TODO we should cover multiple specific versions of mysql.
+    - DB=sqlite
+
+services:
+  - mysql
 
 install:
   - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-  - composer install
+  - composer install -v
+  - composer show
 
 before_script:
-  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then tests/bin/setup.$DB.sh; fi
+  - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
-  - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml;
+  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
-matrix:
+jobs:
   include:
-    - php: 5.6
-      env: DB=mysql MARIADB=5.5
-      addons:
-        mariadb: 5.5
-    - php: 7.0
-      env: DB=mysql MARIADB=5.5
-      addons:
-        mariadb: 5.5
+# Travis-ci doesn't know how to install Maria 10.1
+#   - php: 7.1
+#     env: DB=mysql MARIADB=10.1
+#     addons:
+#       mariadb: 10.1
+#   - php: 7.2
+#     env: DB=mysql MARIADB=10.1
+#     addons:
+#       mariadb: 10.1
+#   - php: 7.3
+#     env: DB=mysql MARIADB=10.1
+#     addons:
+#       mariadb: 10.1
+#   - php: 7.4
+#     env: DB=mysql MARIADB=10.1
+#     addons:
+#       mariadb: 10.1
+#       TODO add maria 5.5, it is not EOL yet.
+
     - php: 7.1
-      env: DB=mysql MARIADB=5.5
+      env: DB=mysql MARIADB=10.2
       addons:
-        mariadb: 5.5
+        mariadb: 10.2
     - php: 7.2
-      env: DB=mysql MARIADB=5.5
+      env: DB=mysql MARIADB=10.2
       addons:
-        mariadb: 5.5
+        mariadb: 10.2
+    - php: 7.3
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
+    - php: 7.4
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
 
-    - php: 5.6
-      env: DB=mysql MARIADB=10.0
-      addons:
-        mariadb: 10.0
-    - php: 7.0
-      env: DB=mysql MARIADB=10.0
-      addons:
-        mariadb: 10.0
     - php: 7.1
-      env: DB=mysql MARIADB=10.0
+      env: DB=mysql MARIADB=10.2
       addons:
-        mariadb: 10.0
+        mariadb: 10.2
     - php: 7.2
-      env: DB=mysql MARIADB=10.0
+      env: DB=mysql MARIADB=10.2
       addons:
-        mariadb: 10.0
+        mariadb: 10.2
+    - php: 7.3
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
+    - php: 7.4
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
 
-#    - php: 5.6
-#      env: DB=mysql MARIADB=10.1
-#      addons:
-#        mariadb: 10.1
-#    - php: 7.0
-#      env: DB=mysql MARIADB=10.1
-#      addons:
-#        mariadb: 10.1
-
-    - php: 5.6
-      env: DB=pgsql POSTGRES=9.2
-      addons:
-        postgresql: 9.2
-    - php: 7.0
-      env: DB=pgsql POSTGRES=9.2
-      addons:
-        postgresql: 9.2
     - php: 7.1
-      env: DB=pgsql POSTGRES=9.2
+      env: DB=mysql MARIADB=10.3
       addons:
-        postgresql: 9.2
+        mariadb: 10.3
     - php: 7.2
-      env: DB=pgsql POSTGRES=9.2
+      env: DB=mysql MARIADB=10.3
       addons:
-        postgresql: 9.2
+        mariadb: 10.3
+    - php: 7.3
+      env: DB=mysql MARIADB=10.3
+      addons:
+        mariadb: 10.3
+    - php: 7.4
+      env: DB=mysql MARIADB=10.3
+      addons:
+        mariadb: 10.3
 
-    - php: 5.6
-      env: DB=pgsql POSTGRES=9.3
-      addons:
-        postgresql: 9.3
-    - php: 7.0
-      env: DB=pgsql POSTGRES=9.3
-      addons:
-        postgresql: 9.3
     - php: 7.1
-      env: DB=pgsql POSTGRES=9.3
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
-        postgresql: 9.3
+        mariadb: 10.4
+      before_script:
+        - sudo mysql -e 'drop user if exists travis@localhost;'
+        - sudo mysql -e 'create user travis@localhost;'
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
+        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
+        - ./tests/bin/setup.$DB.sh
     - php: 7.2
-      env: DB=pgsql POSTGRES=9.3
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
-        postgresql: 9.3
+        mariadb: 10.4
+      before_script:
+        - sudo mysql -e 'drop user if exists travis@localhost;'
+        - sudo mysql -e 'create user travis@localhost;'
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
+        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
+        - ./tests/bin/setup.$DB.sh
+    - php: 7.3
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
+      addons:
+        mariadb: 10.4
+      before_script:
+        - sudo mysql -e 'drop user if exists travis@localhost;'
+        - sudo mysql -e 'create user travis@localhost;'
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
+        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
+        - ./tests/bin/setup.$DB.sh
+    - php: 7.4
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
+      addons:
+        mariadb: 10.4
+      before_script:
+        - sudo mysql -e 'drop user if exists travis@localhost;'
+        - sudo mysql -e 'create user travis@localhost;'
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
+        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
+        - ./tests/bin/setup.$DB.sh
 
-    - php: 5.6
+    - php: 7.1
       env: DB=pgsql POSTGRES=9.4
       addons:
         postgresql: 9.4
-    - php: 7.0
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-        postgresql: 9.4
-    - php: 7.1
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-        postgresql: 9.4
     - php: 7.2
+      env: DB=pgsql POSTGRES=9.4
+      addons:
+        postgresql: 9.4
+    - php: 7.3
+      env: DB=pgsql POSTGRES=9.4
+      addons:
+        postgresql: 9.4
+    - php: 7.4
       env: DB=pgsql POSTGRES=9.4
       addons:
         postgresql: 9.4
 
-    - php: 5.6
-      env: DB=pgsql POSTGRES=9.5
-      addons:
-        postgresql: 9.5
-    - php: 7.0
-      env: DB=pgsql POSTGRES=9.5
-      addons:
-        postgresql: 9.5
     - php: 7.1
       env: DB=pgsql POSTGRES=9.5
       addons:
         postgresql: 9.5
     - php: 7.2
+      env: DB=pgsql POSTGRES=9.5
+      addons:
+        postgresql: 9.5
+    - php: 7.3
+      env: DB=pgsql POSTGRES=9.5
+      addons:
+        postgresql: 9.5
+    - php: 7.4
       env: DB=pgsql POSTGRES=9.5
       addons:
         postgresql: 9.5
 
-    - php: 5.6
-      env: DB=pgsql POSTGRES=9.6
-      addons:
-        postgresql: 9.6
-    - php: 7.0
-      env: DB=pgsql POSTGRES=9.6
-      addons:
-        postgresql: 9.6
     - php: 7.1
       env: DB=pgsql POSTGRES=9.6
       addons:
@@ -152,6 +190,124 @@ matrix:
       env: DB=pgsql POSTGRES=9.6
       addons:
         postgresql: 9.6
+    - php: 7.3
+      env: DB=pgsql POSTGRES=9.6
+      addons:
+        postgresql: 9.6
+    - php: 7.4
+      env: DB=pgsql POSTGRES=9.6
+      addons:
+        postgresql: 9.6
+
+    - php: 7.1
+      env: DB=pgsql POSTGRES=10
+      addons:
+        postgresql: 10
+    - php: 7.2
+      env: DB=pgsql POSTGRES=10
+      addons:
+        postgresql: 10
+    - php: 7.3
+      env: DB=pgsql POSTGRES=10
+      addons:
+        postgresql: 10
+    - php: 7.4
+      env: DB=pgsql POSTGRES=10
+      addons:
+        postgresql: 10
+
+    - php: 7.1
+      env: DB=pgsql POSTGRES=11
+      addons:
+        postgresql: 11
+    - php: 7.2
+      env: DB=pgsql POSTGRES=11
+      addons:
+        postgresql: 11
+    - php: 7.3
+      env: DB=pgsql POSTGRES=11
+      addons:
+        postgresql: 11
+    - php: 7.4
+      env: DB=pgsql POSTGRES=11
+      addons:
+        postgresql: 11
+
+# Travis-ci fails to install postgres 12
+#   - php: 7.1
+#     env: DB=pgsql POSTGRES=12
+#     addons:
+#       postgresql: 12
+#   - php: 7.3
+#     env: DB=pgsql POSTGRES=12
+#     addons:
+#       postgresql: 12
+#   - php: 7.4
+#     env: DB=pgsql POSTGRES=12
+#     addons:
+#       postgresql: 12
+#   - php: 7.2
+#     env: DB=pgsql POSTGRES=12
+#     addons:
+#       postgresql: 12
+
+    - php: nightly
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs # PHPUnit doesn't accept PHP8
+        - composer show
+    - php: nightly
+      env: DB=mysql
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs
+        - composer show
+    - php: nightly
+      env: DB=sqlite
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install --ignore-platform-reqs
+        - composer show
+
+    - name: Minimum versions on php7.2
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+        - composer require --dev dereuromark/composer-prefer-lowest
+      script:
+        - vendor/bin/validate-prefer-lowest
+        - composer show
+        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+
+    - name: Minimum versions on php7.3
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+        - composer require --dev dereuromark/composer-prefer-lowest
+      script:
+        - vendor/bin/validate-prefer-lowest
+        - composer show
+        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+
+    - name: Minimum versions on php7.4
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+        - composer require --dev dereuromark/composer-prefer-lowest
+      script:
+        - vendor/bin/validate-prefer-lowest
+        - composer show
+        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+
+  allow_failures:
+    - php: nightly
+    - name: Minimum versions on php7.2
+    - name: Minimum versions on php7.3
+    - name: Minimum versions on php7.4
 
   fast_finish: true
 

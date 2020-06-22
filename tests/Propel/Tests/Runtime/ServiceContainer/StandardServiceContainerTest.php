@@ -146,7 +146,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testCheckInvalidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
+        $logger = $this->getMockBuilder('Monolog\Logger')
+            ->setMethods(['warning'])
+            ->setConstructorArgs(['mylogger'])
+            ->getMock();
         $logger->expects($this->once())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);
@@ -155,7 +158,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testCheckValidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
+        $logger = $this->getMockBuilder('Monolog\Logger')
+            ->setMethods(['warning'])
+            ->setConstructorArgs(['mylogger'])
+            ->getMock();
         $logger->expects($this->never())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);

@@ -47,19 +47,19 @@ class CsvParser extends AbstractParser
         $rows = [];
         if ($isList) {
             if ($includeHeading) {
-                $rows[] = implode($this->formatRow(array_keys(reset($array))), $this->delimiter);
+                $rows[] = implode($this->delimiter, $this->formatRow(array_keys(reset($array))));
             }
             foreach ($array as $row) {
-                $rows[] = implode($this->formatRow($row), $this->delimiter);
+                $rows[] = implode($this->delimiter, $this->formatRow($row));
             }
         } else {
             if ($includeHeading) {
-                $rows[] = implode($this->formatRow(array_keys($array)), $this->delimiter);
+                $rows[] = implode($this->delimiter, $this->formatRow(array_keys($array)));
             }
-            $rows[] = implode($this->formatRow($array), $this->delimiter);
+            $rows[] = implode($this->delimiter, $this->formatRow($array));
         }
 
-        return implode($rows, $this->lineTerminator) . $this->lineTerminator;
+        return implode($this->lineTerminator, $rows) . $this->lineTerminator;
     }
 
     public function listFromArray($array, $rootKey = null)

@@ -431,8 +431,7 @@ EOF;
      */
     public function testRuntimeOrGeneratorConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
-            "`wrongsource` isn't a valid configured connection (Section: propel.$section.connections).");
+        $this->expectException(\Propel\Common\Config\Exception\InvalidConfigurationException::class);
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         new ConfigurationManager();
@@ -443,8 +442,7 @@ EOF;
      */
     public function testRuntimeOrGeneratorDefaultConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
-            "`wrongsource` isn't a valid configured connection (Section: propel.$section.defaultConnection).");
+        $this->expectException(\Propel\Common\Config\Exception\InvalidConfigurationException::class);
 
         $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
         new ConfigurationManager();

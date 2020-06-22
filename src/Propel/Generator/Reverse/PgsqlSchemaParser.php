@@ -309,7 +309,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             }
 
             if (null !== $default) {
-                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+                if ($this->isColumnDefaultExpression($default)) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;
@@ -323,6 +323,31 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             $table->addColumn($column);
         }
+    }
+
+    /**
+     * @param string $default
+     *
+     * @return bool
+     */
+    protected function isColumnDefaultExpression($default)
+    {
+        $containsFunctionCall = "'" !== substr($default, 0, 1) && strpos($default, '(');
+
+        if ($containsFunctionCall) {
+            return true;
+        }
+
+        $defaultColumnValueExpressions = [
+            'CURRENT_TIMESTAMP' => 'CURRENT_TIMESTAMP',
+            'LOCALTIMESTAMP' => 'LOCALTIMESTAMP'
+        ];
+
+        if (isset($defaultColumnValueExpressions[strtoupper($default)])) {
+            return true;
+        }
+
+        false;
     }
 
     /**

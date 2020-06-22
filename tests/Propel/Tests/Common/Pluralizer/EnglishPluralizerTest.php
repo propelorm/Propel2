@@ -17,7 +17,7 @@ use Propel\Common\Pluralizer\StandardEnglishPluralizer;
  * Tests for the StandardEnglishPluralizer class
  *
  */
-class EnglishPluralizerTest extends \PHPUnit_Framework_TestCase
+class EnglishPluralizerTest extends \PHPUnit\Framework\TestCase
 {
     public function getPluralFormDataProvider()
     {

@@ -303,8 +303,8 @@ class ColumnTest extends ModelTestCase
     public function testClearForeignKeys()
     {
         $fks = [
-            $this->getMock('Propel\Generator\Model\ForeignKey'),
-            $this->getMock('Propel\Generator\Model\ForeignKey'),
+            $this->getMockBuilder('Propel\Generator\Model\ForeignKey')->getMock(),
+            $this->getMockBuilder('Propel\Generator\Model\ForeignKey')->getMock(),
         ];
 
         $table = $this->getTableMock('books');
@@ -807,7 +807,7 @@ class ColumnTest extends ModelTestCase
 
     public function testGetAutoIncrementStringThrowsEngineException()
     {
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $table = $this->getTableMock('books');
         $table

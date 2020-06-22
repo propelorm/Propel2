@@ -62,7 +62,7 @@ class SchemaTest extends ModelTestCase
         $schema = new Schema($this->getPlatformMock());
         $schema->addDatabase($database2);
 
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $schema->joinSchemas([$subSchema1]);
     }

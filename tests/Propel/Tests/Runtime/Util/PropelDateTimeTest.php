@@ -21,7 +21,7 @@ use \DateTimeZone;
  * @author Alan Pinstein
  * @author Soenke Ruempler
  */
-class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
+class PropelDateTimeTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
