@@ -25,6 +25,7 @@ use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -815,7 +816,10 @@ ALTER TABLE %s RENAME TO %s;
         if ($columnChanges) {
             //merge column changes into one command. This is more compatible especially with PK constraints.
 
-            $changes = explode(';', $columnChanges);
+            $sqlParser = new SqlParser();
+            $sqlParser->setSQL($columnChanges);
+            $changes = $sqlParser->explodeIntoStatements();
+
             $columnChanges = [];
 
             foreach ($changes as $change) {
