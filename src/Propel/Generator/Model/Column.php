@@ -219,7 +219,7 @@ class Column extends MappingModel
             $this->isNestedSetRightKey = $this->booleanValue($this->getAttribute('nestedSetRightKey'));
             $this->isTreeScopeKey = $this->booleanValue($this->getAttribute('treeScopeKey'));
 
-            $this->isNotNull = ($this->booleanValue($this->getAttribute('required'), false) || $this->isPrimaryKey); // primary keys are required
+            $this->isNotNull = ($this->booleanValue($this->getAttribute('required')) || $this->isPrimaryKey); // primary keys are required
 
             // AutoIncrement/Sequences
             $this->isAutoIncrement = $this->booleanValue($this->getAttribute('autoIncrement'));
@@ -434,8 +434,8 @@ class Column extends MappingModel
     }
 
     /**
-     * Returns the singular form of the name to use in PHP sources. 
-     * It will set & return a self-generated phpName from its name 
+     * Returns the singular form of the name to use in PHP sources.
+     * It will set & return a self-generated phpName from its name
      * if its not already set.
      *
      * @return string
@@ -467,7 +467,7 @@ class Column extends MappingModel
     }
 
     /**
-     * Sets the singular forn of the name to use in PHP 
+     * Sets the singular forn of the name to use in PHP
      * sources.
      *
      * It will generate a phpName from its name if no

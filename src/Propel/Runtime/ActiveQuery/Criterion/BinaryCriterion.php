@@ -28,7 +28,7 @@ class BinaryCriterion extends AbstractCriterion
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::BINARY_ALL)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        parent::__construct($outer, $column, $value, $comparison);
     }
 
     /**
@@ -43,7 +43,7 @@ class BinaryCriterion extends AbstractCriterion
             $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];
             $bindParam = ':p' . count($params);
             $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
-            
+
             if ($this->comparison === Criteria::BINARY_ALL) {
                 $sb .= $field . ' & ' . $bindParam . ' = ' . $bindParam;
             } else {

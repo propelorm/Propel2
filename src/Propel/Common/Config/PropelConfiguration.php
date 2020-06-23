@@ -29,7 +29,7 @@ class PropelConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder(); //FIXME! invoked with 0 parameters, 1-3 required
         $rootNode = $treeBuilder->root('propel');
 
         $this->addGeneralSection($rootNode);

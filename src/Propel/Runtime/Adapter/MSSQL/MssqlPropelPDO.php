@@ -35,7 +35,7 @@ class MssqlPropelPDO extends PropelPDO
         if ($opcount === 0) {
             $return = self::exec('BEGIN TRANSACTION');
             if ($this->useDebug) {
-                $this->log('Begin transaction', null, __METHOD__);
+                $this->log('Begin transaction');
             }
             $this->isUncommitable = false;
         }
@@ -63,7 +63,7 @@ class MssqlPropelPDO extends PropelPDO
                 } else {
                     $return = self::exec('COMMIT TRANSACTION');
                     if ($this->useDebug) {
-                        $this->log('Commit transaction', null, __METHOD__);
+                        $this->log('Commit transaction');
                     }
 
                 }
@@ -90,7 +90,7 @@ class MssqlPropelPDO extends PropelPDO
             if ($opcount === 1) {
                 $return = self::exec('ROLLBACK TRANSACTION');
                 if ($this->useDebug) {
-                    $this->log('Rollback transaction', null, __METHOD__);
+                    $this->log('Rollback transaction');
                 }
             } else {
                 $this->isUncommitable = true;
@@ -124,7 +124,7 @@ class MssqlPropelPDO extends PropelPDO
             $this->nestedTransactionCount = 0;
 
             if ($this->useDebug) {
-                $this->log('Rollback transaction', null, __METHOD__);
+                $this->log('Rollback transaction');
             }
         }
 

@@ -1,0 +1,5 @@
+parameters:
+    excludes_analyse:
+            - '%rootDir%/../../../src/Propel/Generator/Command/templates/*'
+    ignoreErrors:
+        - '#Access to undefined constant PDO::.+#'
