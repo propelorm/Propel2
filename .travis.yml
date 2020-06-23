@@ -242,23 +242,58 @@ jobs:
       addons:
         postgresql: 11
 
-# Travis-ci fails to install postgres 12
-#   - php: 7.1
-#     env: DB=pgsql POSTGRES=12
-#     addons:
-#       postgresql: 12
-#   - php: 7.3
-#     env: DB=pgsql POSTGRES=12
-#     addons:
-#       postgresql: 12
-#   - php: 7.4
-#     env: DB=pgsql POSTGRES=12
-#     addons:
-#       postgresql: 12
-#   - php: 7.2
-#     env: DB=pgsql POSTGRES=12
-#     addons:
-#       postgresql: 12
+    - php: 7.1
+      env: DB=pgsql POSTGRES=12
+      addons:
+        postgresql: 12
+        apt:
+          packages:
+            - postgresql-12
+            - postgresql-client-12
+            - postgresql-server-dev-12
+      install:
+        - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+    - php: 7.2
+      env: DB=pgsql POSTGRES=12
+      addons:
+        postgresql: 12
+        apt:
+          packages:
+            - postgresql-12
+            - postgresql-client-12
+            - postgresql-server-dev-12
+      install:
+        - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+    - php: 7.3
+      env: DB=pgsql POSTGRES=12
+      addons:
+        postgresql: 12
+        apt:
+          packages:
+            - postgresql-12
+            - postgresql-client-12
+            - postgresql-server-dev-12
+      install:
+        - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+    - php: 7.4
+      env: DB=pgsql POSTGRES=12
+      addons:
+        postgresql: 12
+        apt:
+          packages:
+            - postgresql-12
+            - postgresql-client-12
+            - postgresql-server-dev-12
+      install:
+        - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
+        - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
 
     - php: nightly
       env: DB=agnostic
