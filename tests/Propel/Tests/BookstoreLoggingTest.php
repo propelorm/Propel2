@@ -40,7 +40,7 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         AuthorQuery::create()->deleteAll();
     }
 
-    public function testSetterAndGetter()
+    public function testSetterAndGetter() : void
     {
         $book = new Book();
         $book->setTitle('Book 1');
@@ -69,7 +69,7 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $log->save();
     }
 
-    public function testQueryFilter()
+    public function testQueryFilter() : void
     {
         $book = new Book();
         $book->setTitle('Book 1');
@@ -136,7 +136,7 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
      * @group mysql
      * @group pgsql
      */
-    public function testQueryJoins()
+    public function testQueryJoins() : void
     {
         if ($this->runningOnSQLite()) {
             $this->markTestSkipped('SQLite does not support right joins');
