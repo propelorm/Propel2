@@ -250,7 +250,6 @@ jobs:
           packages:
             - postgresql-12
             - postgresql-client-12
-            - postgresql-server-dev-12
       install:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
@@ -266,7 +265,6 @@ jobs:
           packages:
             - postgresql-12
             - postgresql-client-12
-            - postgresql-server-dev-12
       install:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
@@ -282,7 +280,6 @@ jobs:
           packages:
             - postgresql-12
             - postgresql-client-12
-            - postgresql-server-dev-12
       install:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
@@ -298,7 +295,6 @@ jobs:
           packages:
             - postgresql-12
             - postgresql-client-12
-            - postgresql-server-dev-12
       install:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
