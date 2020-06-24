@@ -255,6 +255,9 @@ jobs:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install -v
+        - composer show
     - php: 7.2
       env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
@@ -268,6 +271,9 @@ jobs:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install -v
+        - composer show
     - php: 7.3
       env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
@@ -281,6 +287,9 @@ jobs:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install -v
+        - composer show
     - php: 7.4
       env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
@@ -294,6 +303,9 @@ jobs:
         - sudo sed -i 's/md5/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - composer install -v
+        - composer show
 
     - php: nightly
       env: DB=agnostic
