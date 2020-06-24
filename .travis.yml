@@ -331,7 +331,7 @@ jobs:
       script:
         - vendor/bin/validate-prefer-lowest
         - composer show
-        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml --debug
 
     - name: Minimum versions on php7.3
       php: 7.3
