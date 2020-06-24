@@ -243,7 +243,7 @@ jobs:
         postgresql: 11
 
     - php: 7.1
-      env: DB=pgsql POSTGRES=12
+      env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
         postgresql: 12
         apt:
@@ -256,7 +256,7 @@ jobs:
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
     - php: 7.2
-      env: DB=pgsql POSTGRES=12
+      env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
         postgresql: 12
         apt:
@@ -269,7 +269,7 @@ jobs:
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
     - php: 7.3
-      env: DB=pgsql POSTGRES=12
+      env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
         postgresql: 12
         apt:
@@ -282,7 +282,7 @@ jobs:
         - sudo sed -i 's/peer/trust/g' /etc/postgresql/12/main/pg_hba.conf
         - sudo pg_ctlcluster --skip-systemctl-redirect 12 main restart
     - php: 7.4
-      env: DB=pgsql POSTGRES=12
+      env: DB=pgsql POSTGRES=12 PGPORT=5433
       addons:
         postgresql: 12
         apt:
