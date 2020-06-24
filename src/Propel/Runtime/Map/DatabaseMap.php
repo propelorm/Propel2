@@ -93,7 +93,7 @@ class DatabaseMap
         $table->setDatabaseMap($this);
         $this->tables[$table->getName()] = $table;
         $phpName = $table->getClassName();
-        if ('\\' !== $phpName[0]) {
+        if ($phpName && '\\' !== $phpName[0]) {
             $phpName = '\\' . $phpName;
         }
         $this->tablesByPhpName[$phpName] = $table;
