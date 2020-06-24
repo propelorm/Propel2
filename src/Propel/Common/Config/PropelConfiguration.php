@@ -32,7 +32,7 @@ class PropelConfiguration implements ConfigurationInterface
         // Create TreeBuilder with default param, before version 4.4 is not required
         $treeBuilder = new TreeBuilder('propel');
         // Check if exists root method for versions before 4.4
-        if(method_exists($treeBuilder, 'root')) {
+        if (method_exists($treeBuilder, 'root')) {
             $rootNode = $treeBuilder->root('propel');
         } else { // Versions greater than 4.4 and 5.x
             $rootNode = $treeBuilder->getRootNode();
