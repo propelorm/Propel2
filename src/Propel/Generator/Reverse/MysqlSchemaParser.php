@@ -446,7 +446,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
-            $row = ['Engine' => $row['Engine']];
+            $row = ['Engine' => $row ? $row['Engine'] : null];
         }
         $vi = $this->getNewVendorInfoObject($row);
         $table->addVendorInfo($vi);
