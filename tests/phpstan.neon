@@ -9,5 +9,8 @@ parameters:
         - '%rootDir%/../../../src/Propel/Generator/Builder/Om/templates/*'
         - '%rootDir%/../../../src/Propel/Generator/Behavior/Validate/templates/*'
         - '%rootDir%/../../../src/Propel/Generator/Behavior/Archivable/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Delegate/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Sortable/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/NestedSet/templates/*'
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'

@@ -26,6 +26,7 @@ use Propel\Generator\Model\Unique;
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {
+    protected $addVendorInfo;
 
     /**
      * Map Sqlite native types to Propel types.

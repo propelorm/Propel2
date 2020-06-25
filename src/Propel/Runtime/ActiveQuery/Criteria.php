@@ -320,8 +320,6 @@ class Criteria
         $this->limit = -1;
         $this->aliases = [];
         $this->useTransaction = false;
-        $this->ifLvlCount = false;
-        $this->wasTrue = false;
     }
 
     /**

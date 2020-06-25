@@ -36,6 +36,11 @@ class DelegateBehavior extends Behavior
     protected $delegates = [];
 
     /**
+     * @var array|null
+     */
+    protected $double_defined;
+
+    /**
      * Lists the delegates and checks that the behavior can use them,
      * And adds a fk from the delegate to the main table if not already set
      */
@@ -187,7 +192,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
         $table = $this->getTable();
         $fks = [];
 
-        if (!isset($this->double_defined)) {
+        if ($this->double_defined === null) {
             $this->double_defined = [];
 
             foreach ($this->delegates+[$table->getName() => 1] as $key => $value) {

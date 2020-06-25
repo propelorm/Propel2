@@ -1030,12 +1030,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         // line feed
         $content = str_replace("\r\n", "\n", $content);
-     
+
         // trailing whitespaces
         $content = preg_replace('/[ \t]*$/m', '', $content);
 
         // indentation
-        $content = preg_replace_callback('/^([ \t]+)/m', function ($matches) use ($content) {
+        $content = preg_replace_callback('/^([ \t]+)/m', function ($matches) {
             return str_replace("\t", '    ', $matches[0]);
         }, $content);
 
