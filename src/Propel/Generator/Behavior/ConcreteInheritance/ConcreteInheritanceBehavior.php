@@ -25,6 +25,8 @@ use Propel\Generator\Model\ForeignKey;
  */
 class ConcreteInheritanceBehavior extends Behavior
 {
+    protected $builder;
+
     // default parameters value
     protected $parameters = [
         'extends'             => '',

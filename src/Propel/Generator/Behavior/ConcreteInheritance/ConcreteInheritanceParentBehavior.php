@@ -21,6 +21,8 @@ use Propel\Generator\Model\Behavior;
  */
 class ConcreteInheritanceParentBehavior extends Behavior
 {
+    protected $builder;
+
     // default parameters value
     protected $parameters = [
         'descendant_column' => 'descendant_class'
