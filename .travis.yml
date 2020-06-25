@@ -9,8 +9,6 @@ dist: bionic
 
 php:
   - 7.1
-  - 7.2
-  - 7.3
   - 7.4
 
 env:
@@ -36,7 +34,7 @@ before_script:
   - if [[ $DB != 'agnostic' && $DB != 'sqlite' ]]; then ./tests/bin/setup.$DB.sh; fi
 
 script:
-  - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+  - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
 jobs:
   include:
@@ -335,7 +333,7 @@ jobs:
       script:
         - vendor/bin/validate-prefer-lowest
         - composer show
-        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
     - name: Minimum versions on php7.3
       php: 7.3
@@ -346,7 +344,7 @@ jobs:
       script:
         - vendor/bin/validate-prefer-lowest
         - composer show
-        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
     - name: Minimum versions on php7.4
       php: 7.4
@@ -357,13 +355,10 @@ jobs:
       script:
         - vendor/bin/validate-prefer-lowest
         - composer show
-        - ./vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
+        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
 
   allow_failures:
     - php: nightly
-    - name: Minimum versions on php7.2
-    - name: Minimum versions on php7.3
-    - name: Minimum versions on php7.4
 
   fast_finish: true
 
