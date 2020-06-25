@@ -27,7 +27,8 @@
     },
     "require-dev": {
         "monolog/monolog": "^1.3",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0",
+        "phpstan/phpstan": "^0.12.4"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
@@ -40,6 +41,11 @@
     "bin": [
         "bin/propel"
     ],
+    "scripts": {
+        "stan": [
+            "vendor/bin/phpstan analyze -l 1 -c tests/phpstan.neon src/"
+        ]
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"

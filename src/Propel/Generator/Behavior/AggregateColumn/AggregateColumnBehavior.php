@@ -79,7 +79,7 @@ class AggregateColumnBehavior extends Behavior
         }
         $script = '';
         $script .= $this->addObjectCompute($builder);
-        $script .= $this->addObjectUpdate($builder);
+        $script .= $this->addObjectUpdate();
 
         return $script;
     }

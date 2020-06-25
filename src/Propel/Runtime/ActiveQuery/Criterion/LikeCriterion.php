@@ -32,7 +32,7 @@ class LikeCriterion extends AbstractCriterion
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::LIKE)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        parent::__construct($outer, $column, $value, $comparison);
     }
 
     /**

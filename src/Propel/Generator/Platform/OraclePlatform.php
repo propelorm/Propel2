@@ -172,7 +172,7 @@ CREATE SEQUENCE %s
     public function getDropTableDDL(Table $table)
     {
         $ret = "
-DROP TABLE " . $this->quoteIdentifier($table->getName(), $table) . " CASCADE CONSTRAINTS;
+DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS;
 ";
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $ret .= "

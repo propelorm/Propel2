@@ -29,7 +29,7 @@ class XmlParser extends AbstractParser
     public function fromArray($array, $rootKey = 'data', $charset = null)
     {
         $rootNode = $this->getRootNode($rootKey);
-        $this->arrayToDOM($array, $rootNode, $charset, false);
+        $this->arrayToDOM($array, $rootNode, $charset);
 
         return $rootNode->ownerDocument->saveXML();
     }
@@ -37,7 +37,7 @@ class XmlParser extends AbstractParser
     public function listFromArray($array, $rootKey = 'data', $charset = null)
     {
         $rootNode = $this->getRootNode($rootKey);
-        $this->arrayToDOM($array, $rootNode, $charset, true);
+        $this->arrayToDOM($array, $rootNode, $charset);
 
         return $rootNode->ownerDocument->saveXML();
     }

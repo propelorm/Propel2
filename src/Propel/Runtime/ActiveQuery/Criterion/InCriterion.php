@@ -28,7 +28,7 @@ class InCriterion extends AbstractCriterion
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::IN)
     {
-        return parent::__construct($outer, $column, $value, $comparison);
+        parent::__construct($outer, $column, $value, $comparison);
     }
 
     /**

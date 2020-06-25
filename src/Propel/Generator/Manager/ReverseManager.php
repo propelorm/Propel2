@@ -39,25 +39,16 @@ class ReverseManager extends AbstractManager
     protected $xml;
 
     /**
-     * The document root element.
-     *
-     * @var \DOMElement
-     */
-    protected $databaseNode;
-
-    /**
-     * Hashtable of columns that have primary keys.
-     *
-     * @var array
-     */
-    protected $primaryKeys;
-
-    /**
      * Whether to use same name for phpName or not.
      *
      * @var boolean
      */
     protected $samePhpName;
+
+    /**
+     * @var string
+     */
+    protected $databaseName;
 
     /**
      * Whether to add vendor info or not.

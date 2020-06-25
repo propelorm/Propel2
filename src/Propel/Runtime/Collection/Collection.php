@@ -310,7 +310,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Alias for ArrayObject::offsetUnset()
      *
      * @param  mixed $key
-     * @return mixed The removed element
+     * @return void
      */
     public function remove($key)
     {
@@ -318,17 +318,17 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
             throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
         }
 
-        return $this->offsetUnset($key);
+        $this->offsetUnset($key);
     }
 
     /**
      * Clears the collection
      *
-     * @return array The previous collection
+     * @return void
      */
     public function clear()
     {
-        return $this->exchangeArray([]);
+        $this->exchangeArray([]);
     }
 
     /**
