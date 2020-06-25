@@ -40,24 +40,22 @@ script:
 
 jobs:
   include:
-# Travis-ci doesn't know how to install Maria 10.1
-#   - php: 7.1
-#     env: DB=mysql MARIADB=10.1
-#     addons:
-#       mariadb: 10.1
-#   - php: 7.2
-#     env: DB=mysql MARIADB=10.1
-#     addons:
-#       mariadb: 10.1
-#   - php: 7.3
-#     env: DB=mysql MARIADB=10.1
-#     addons:
-#       mariadb: 10.1
-#   - php: 7.4
-#     env: DB=mysql MARIADB=10.1
-#     addons:
-#       mariadb: 10.1
-#       TODO add maria 5.5, it is not EOL yet.
+    - php: 7.1
+      env: DB=mysql MARIADB=10.1
+      addons:
+        mariadb: 10.1
+    - php: 7.2
+      env: DB=mysql MARIADB=10.1
+      addons:
+        mariadb: 10.1
+    - php: 7.3
+      env: DB=mysql MARIADB=10.1
+      addons:
+        mariadb: 10.1
+    - php: 7.4
+      env: DB=mysql MARIADB=10.1
+      addons:
+        mariadb: 10.1
 
     - php: 7.1
       env: DB=mysql MARIADB=10.2
