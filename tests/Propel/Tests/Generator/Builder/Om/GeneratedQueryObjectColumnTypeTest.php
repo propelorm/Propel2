@@ -76,10 +76,12 @@ EOF;
      */
     public function testWhereLike()
     {
+        $this->markTestSkipped('There are inconsistencies regarding the handling of this statement on different platforms.');
+
         $nb = \ComplexColumnTypeEntity10Query::create()
             ->where('ComplexColumnTypeEntity10.Bar LIKE ?', '%1234%')
             ->count();
-//        $this->assertEquals(1, $nb, 'object columns are searchable by serialized object using where()');
+        $this->assertEquals(1, $nb, 'object columns are searchable by serialized object using where()');
     }
 
     public function testFilterByColumn()
