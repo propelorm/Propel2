@@ -41,19 +41,27 @@ script:
 jobs:
   include:
     - php: 7.1
+      dist: trusty
       env: DB=mysql MARIADB=10.1
+      services:
       addons:
         mariadb: 10.1
     - php: 7.2
+      dist: trusty
       env: DB=mysql MARIADB=10.1
+      services:
       addons:
         mariadb: 10.1
     - php: 7.3
+      dist: trusty
       env: DB=mysql MARIADB=10.1
+      services:
       addons:
         mariadb: 10.1
     - php: 7.4
+      dist: trusty
       env: DB=mysql MARIADB=10.1
+      services:
       addons:
         mariadb: 10.1
 
