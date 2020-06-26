@@ -1,8 +1,7 @@
 <?php
 
 
-namespace Propel\Generator\Model;
-
+namespace Propel\Generator\Model\Stringifier;
 
 class TablesStringifier
 {
@@ -13,11 +12,10 @@ class TablesStringifier
 
     /**
      * Constructs a stringifier to represent multiple tables
-     *
      */
     public function __construct()
     {
-       $this->tableStringifier = new TableStringifier();
+        $this->tableStringifier = new TableStringifier();
     }
 
     /**
@@ -27,10 +25,11 @@ class TablesStringifier
      *
      * @return string
      */
-    public function stringify(array $tables):string {
+    public function stringify(array $tables): string
+    {
         $stringTables = [];
         foreach ($tables as $table) {
-            $stringTables[] = $this->tableStringifier-$this->stringify($table);
+            $stringTables[] = $this->tableStringifier->stringify($table);
         }
 
         return implode("\n", $stringTables);

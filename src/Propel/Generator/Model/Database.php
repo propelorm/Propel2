@@ -13,6 +13,7 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Model\Stringifier\TablesStringifier;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -78,7 +79,9 @@ class Database extends ScopedMappingModel
      */
     private $identifierQuoting;
 
-    /** @var Schema */
+    /**
+     * @var Schema
+     */
     private $parentSchema;
 
     /**
@@ -127,20 +130,20 @@ class Database extends ScopedMappingModel
             $this->setPlatform($platform);
         }
 
-        $this->heavyIndexing             = false;
-        $this->identifierQuoting         = false;
-        $this->defaultPhpNamingMethod    = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
-        $this->defaultIdMethod           = IdMethod::NATIVE;
-        $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
+        $this->heavyIndexing = false;
+        $this->identifierQuoting = false;
+        $this->defaultPhpNamingMethod = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
+        $this->defaultIdMethod = IdMethod::NATIVE;
+        $this->defaultStringFormat = static::DEFAULT_STRING_FORMAT;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
-        $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
-        $this->behaviors                 = [];
-        $this->domainMap                 = [];
-        $this->tables                    = [];
-        $this->tablesByName              = [];
-        $this->tablesByPhpName           = [];
-        $this->tablesByLowercaseName     = [];
-        $this->tablesStringifier         = new TablesStringifier();
+        $this->defaultMutatorVisibility = static::VISIBILITY_PUBLIC;
+        $this->behaviors = [];
+        $this->domainMap = [];
+        $this->tables = [];
+        $this->tablesByName = [];
+        $this->tablesByPhpName = [];
+        $this->tablesByLowercaseName = [];
+        $this->tablesStringifier = new TablesStringifier();
     }
 
     protected function setupObject()
@@ -312,7 +315,7 @@ class Database extends ScopedMappingModel
      *
      * Any of 'XML', 'YAML', 'JSON', or 'CSV'.
      *
-     * @param  string                   $format
+     * @param  string $format
      * @throws InvalidArgumentException
      */
     public function setDefaultStringFormat($format)
@@ -444,7 +447,8 @@ class Database extends ScopedMappingModel
     public function getTable($name, $caseInsensitive = false)
     {
         if ($this->getSchema() && $this->getPlatform()->supportsSchemas()
-            && false === strpos($name, $this->getPlatform()->getSchemaDelimiter())) {
+            && false === strpos($name, $this->getPlatform()->getSchemaDelimiter())
+        ) {
             $name = $this->getSchema() . $this->getPlatform()->getSchemaDelimiter() . $name;
         }
 
@@ -463,7 +467,7 @@ class Database extends ScopedMappingModel
      * Returns whether or not the database has a table identified by its
      * PHP name.
      *
-     * @param  string  $phpName
+     * @param  string $phpName
      * @return boolean
      */
     public function hasTableByPhpName($phpName)
@@ -544,7 +548,7 @@ class Database extends ScopedMappingModel
     public function removeTable(Table $table)
     {
         if ($this->hasTable($table->getName(), true)) {
-            foreach($this->tables as $id => $tableExam) {
+            foreach ($this->tables as $id => $tableExam) {
                 if ($table->getName() === $tableExam->getName()) {
                     unset($this->tables[$id]);
                 }
@@ -637,7 +641,8 @@ class Database extends ScopedMappingModel
         parent::setSchema($schema);
     }
 
-    private function fixHash(&$array, $schema, $oldSchema, $schemaDelimiter) {
+    private function fixHash(&$array, $schema, $oldSchema, $schemaDelimiter)
+    {
         $platformSupportsSchemas = $this->getPlatform()->supportsSchemas();
 
         foreach ($array as $k => $v) {
@@ -659,7 +664,7 @@ class Database extends ScopedMappingModel
      * Computes the table namespace based on the current relative or
      * absolute table namespace and the database namespace.
      *
-     * @param  Table  $table
+     * @param  Table $table
      * @return string
      */
     private function computeTableNamespace(Table $table)
@@ -816,7 +821,6 @@ class Database extends ScopedMappingModel
 
     /**
      * Finalizes the setup process.
-     *
      */
     public function doFinalInitialization()
     {
@@ -837,7 +841,9 @@ class Database extends ScopedMappingModel
         // do naming and heavy indexing
         foreach ($this->tables as $table) {
             $table->doFinalInitialization();
-            // setup referrers again, since final initialization may have added columns
+
+            // setup referrers again, since final initialization may
+            // have added columns
             $table->setupReferrers(true);
         }
     }
@@ -849,7 +855,6 @@ class Database extends ScopedMappingModel
 
     /**
      * Setups all table referrers.
-     *
      */
     protected function setupTableReferrers()
     {
@@ -862,7 +867,8 @@ class Database extends ScopedMappingModel
     {
         $stringifiedTables = $this->tablesStringifier->stringify($this->getTables());
 
-        return sprintf("%s:\n%s",
+        return sprintf(
+            "%s:\n%s",
             $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
             $stringifiedTables
         );

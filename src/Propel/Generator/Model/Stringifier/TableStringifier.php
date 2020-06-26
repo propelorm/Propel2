@@ -3,32 +3,23 @@
 
 namespace Propel\Generator\Model\Stringifier;
 
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
 
 class TableStringifier
 {
-
-    /**
-     * Constructs a stringifier to represent multiple tables
-     *
-     */
-    public function __construct()
-    {
-        $this->tableStringifier = new TableStringifier()
-    }
-
     /**
      * Returns an SQL string representation of the tables
      *
      * @param Table $table
      *
-     * @return void
+     * @return string
      */
-    public function stringify(Table $table) {
+    public function stringify(Table $table): string
+    {
         $columns = $this->getColumns($table->getColumns());
 
-        $tableDef = sprintf("  %s (%s):\n%s",
+        $tableDef = sprintf(
+            "  %s (%s):\n%s",
             $table->getName(),
             $table->getCommonName(),
             implode("\n", $columns)
@@ -52,10 +43,12 @@ class TableStringifier
         return $tableDef;
     }
 
-    protected function getColumns(array $columns): array {
+    protected function getColumns(array $columns): array
+    {
         $stringColumns = [];
         foreach ($columns as $column) {
-            $stringColumns[] = sprintf("      %s %s %s %s %s %s %s",
+            $stringColumns[] = sprintf(
+                "      %s %s %s %s %s %s %s",
                 $column->getName(),
                 $column->getType(),
                 $column->getSize() ? '(' . $column->getSize() . ')' : '',
@@ -69,10 +62,12 @@ class TableStringifier
         return $columns;
     }
 
-    protected function getForeignKeys(array $foreignKeys): array {
+    protected function getForeignKeys(array $foreignKeys): array
+    {
         $stringForeignKeys = [];
         foreach ($foreignKeys as $fk) {
-            $stringForeignKeys[] = sprintf("      %s to %s.%s (%s => %s)",
+            $stringForeignKeys[] = sprintf(
+                "      %s to %s.%s (%s => %s)",
                 $fk->getName(),
                 $fk->getForeignSchemaName(),
                 $fk->getForeignTableCommonName(),
@@ -84,14 +79,20 @@ class TableStringifier
         return $stringForeignKeys;
     }
 
-    protected function getIndices(array $indices): array {
+    protected function getIndices(array $indices): array
+    {
         $stringIndices = [];
         foreach ($indices as $index) {
             $indexColumns = [];
             foreach ($index->getColumns() as $indexColumnName) {
-                $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
+                $indexColumns[] = sprintf(
+                    '%s (%s)',
+                    $indexColumnName,
+                    $index->getColumnSize($indexColumnName)
+                );
             }
-            $stringIndices[] = sprintf("      %s (%s)",
+            $stringIndices[] = sprintf(
+                "      %s (%s)",
                 $index->getName(),
                 join(', ', $indexColumns)
             );
@@ -100,10 +101,12 @@ class TableStringifier
         return $stringIndices;
     }
 
-    protected function getUnices(array $unices): array {
+    protected function getUnices(array $unices): array
+    {
         $stringUnices = [];
         foreach ($unices as $index) {
-            $unices[] = sprintf("      %s (%s)",
+            $unices[] = sprintf(
+                "      %s (%s)",
                 $index->getName(),
                 join(', ', $index->getColumns())
             );
