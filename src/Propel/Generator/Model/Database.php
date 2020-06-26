@@ -623,29 +623,36 @@ class Database extends ScopedMappingModel
      */
     public function setSchema($schema)
     {
-        $oldSchema = $this->schema;
-        if ($this->schema !== $schema && $this->getPlatform()) {
-            $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
-            $fixHash = function (&$array) use ($schema, $oldSchema, $schemaDelimiter) {
-                foreach ($array as $k => $v) {
-                    if ($schema && $this->getPlatform()->supportsSchemas()) {
-                        if (false === strpos($k, $schemaDelimiter)) {
-                            $array[$schema . $schemaDelimiter . $k] = $v;
-                            unset($array[$k]);
-                        }
-                    } elseif ($oldSchema) {
-                        if (false !== strpos($k, $schemaDelimiter)) {
-                            $array[explode($schemaDelimiter, $k)[1]] = $v;
-                            unset($array[$k]);
-                        }
-                    }
-                }
-            };
+        if (!($this->schema !== $schema && $this->getPlatform())) {
+            parent::setSchema($schema);
 
-            $fixHash($this->tablesByName);
-            $fixHash($this->tablesByLowercaseName);
+            return;
         }
+
+        $oldSchema = $this->schema;
+        $schemaDelimiter = $this->getPlatform()->getSchemaDelimiter();
+
+        $this->fixHash($this->tablesByName, $schema, $oldSchema, $schemaDelimiter);
+        $this->fixHash($this->tablesByLowercaseName, $schema, $oldSchema, $schemaDelimiter);
         parent::setSchema($schema);
+    }
+
+    private function fixHash(&$array, $schema, $oldSchema, $schemaDelimiter) {
+        $platformSupportsSchemas = $this->getPlatform()->supportsSchemas();
+
+        foreach ($array as $k => $v) {
+            if ($schema && $platformSupportsSchemas) {
+                if (false === strpos($k, $schemaDelimiter)) {
+                    $array[$schema . $schemaDelimiter . $k] = $v;
+                    unset($array[$k]);
+                }
+            } elseif ($oldSchema) {
+                if (false !== strpos($k, $schemaDelimiter)) {
+                    $array[explode($schemaDelimiter, $k)[1]] = $v;
+                    unset($array[$k]);
+                }
+            }
+        }
     }
 
     /**
