@@ -34,8 +34,8 @@
         "monolog/monolog": "The recommended logging library to use with Propel."
     },
     "autoload": {
-        "psr-0": {
-            "Propel": "src/"
+        "psr-4": {
+            "Propel\\": "src/Propel/"
         }
     },
     "bin": [
