@@ -105,6 +105,11 @@ class Database extends ScopedMappingModel
     protected $tablePrefix;
 
     /**
+     * @var TablesStringifier
+     */
+    protected $tablesStringifier;
+
+    /**
      * Constructs a new Database object.
      *
      * @param string            $name     The database's name
@@ -135,6 +140,7 @@ class Database extends ScopedMappingModel
         $this->tablesByName              = [];
         $this->tablesByPhpName           = [];
         $this->tablesByLowercaseName     = [];
+        $this->tablesStringifier         = new TablesStringifier();
     }
 
     protected function setupObject()
@@ -528,6 +534,12 @@ class Database extends ScopedMappingModel
         }
     }
 
+    /**
+     * Removes table from this database.
+     *
+     * @param  Table|array $table
+     * @return void
+     */
     public function removeTable(Table $table)
     {
         if ($this->hasTable($table->getName(), true)) {
@@ -737,7 +749,7 @@ class Database extends ScopedMappingModel
      * @see \Propel\Common\Config\ConfigurationManager::getConfigProperty() method
      *
      * @param  string $name
-     * @return string
+     * @return string|void
      */
     public function getBuildProperty($name)
     {
@@ -838,76 +850,11 @@ class Database extends ScopedMappingModel
 
     public function __toString()
     {
-        $tables = [];
-        foreach ($this->getTables() as $table) {
-            $columns = [];
-            foreach ($table->getColumns() as $column) {
-                $columns[] = sprintf("      %s %s %s %s %s %s %s",
-                    $column->getName(),
-                    $column->getType(),
-                    $column->getSize() ? '(' . $column->getSize() . ')' : '',
-                    $column->isPrimaryKey() ? 'PK' : '',
-                    $column->isNotNull() ? 'NOT NULL' : '',
-                    $column->getDefaultValueString() ? "'".$column->getDefaultValueString()."'" : '',
-                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '' 
-                );
-            }
-
-            $fks = [];
-            foreach ($table->getForeignKeys() as $fk) {
-                $fks[] = sprintf("      %s to %s.%s (%s => %s)",
-                    $fk->getName(),
-                    $fk->getForeignSchemaName(),
-                    $fk->getForeignTableCommonName(),
-                    join(', ', $fk->getLocalColumns()),
-                    join(', ', $fk->getForeignColumns())
-                );
-            }
-
-            $indices = [];
-            foreach ($table->getIndices() as $index) {
-                $indexColumns = [];
-                foreach ($index->getColumns() as $indexColumnName) {
-                    $indexColumns[] = sprintf('%s (%s)', $indexColumnName, $index->getColumnSize($indexColumnName));
-                }
-                $indices[] = sprintf("      %s (%s)",
-                    $index->getName(),
-                    join(', ', $indexColumns)
-                );
-            }
-
-            $unices = [];
-            foreach ($table->getUnices() as $index) {
-                $unices[] = sprintf("      %s (%s)",
-                    $index->getName(),
-                    join(', ', $index->getColumns())
-                );
-            }
-
-            $tableDef = sprintf("  %s (%s):\n%s",
-                $table->getName(),
-                $table->getCommonName(),
-                implode("\n", $columns)
-            );
-
-            if ($fks) {
-                $tableDef .= "\n    FKs:\n" . implode("\n", $fks);
-            }
-
-            if ($indices) {
-                $tableDef .= "\n    indices:\n" . implode("\n", $indices);
-            }
-
-            if ($unices) {
-                $tableDef .= "\n    unices:\n". implode("\n", $unices);
-            }
-
-            $tables[] = $tableDef;
-        }
+        $stringifiedTables = $this->tablesStringifier->stringify($this->getTables());
 
         return sprintf("%s:\n%s",
             $this->getName() . ($this->getSchema() ? '.'. $this->getSchema() : ''),
-            implode("\n", $tables)
+            $stringifiedTables
         );
     }
 
