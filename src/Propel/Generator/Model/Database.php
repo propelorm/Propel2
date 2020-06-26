@@ -503,14 +503,15 @@ class Database extends ScopedMappingModel
         }
 
         $table->setDatabase($this);
+        $tableName = $table->getName();
 
-        if (isset($this->tablesByName[$table->getName()])) {
+        if (isset($this->tablesByName[$tableName])) {
             throw new EngineException(sprintf('Table "%s" declared twice', $table->getName()));
         }
 
         $this->tables[] = $table;
-        $this->tablesByName[$table->getName()] = $table;
-        $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
+        $this->tablesByName[$tableName] = $table;
+        $this->tablesByLowercaseName[strtolower($tableName)] = $table;
         $this->tablesByPhpName[$table->getPhpName()] = $table;
 
         $this->computeTableNamespace($table);
@@ -584,10 +585,12 @@ class Database extends ScopedMappingModel
      */
     public function removeSequence($sequence)
     {
-        if ($this->sequences) {
-            if (false !== ($idx = array_search($sequence, $this->sequences))) {
-                unset($this->sequence[$idx]);
-            }
+        if (!$this->sequences) {
+
+            return;
+        }
+        if (false !== ($idx = array_search($sequence, $this->sequences))) {
+            unset($this->sequence[$idx]);
         }
     }
 
@@ -724,11 +727,11 @@ class Database extends ScopedMappingModel
      */
     public function getDomain($name)
     {
-        if (isset($this->domainMap[$name])) {
-            return $this->domainMap[$name];
+        if (!isset($this->domainMap[$name])) {
+            return null;
         }
 
-        return null;
+        return $this->domainMap[$name];
     }
 
     /**
@@ -903,9 +906,10 @@ class Database extends ScopedMappingModel
         $tables = [];
         foreach ($this->tables as $oldTable) {
             $table = clone $oldTable;
+            $tableName = $table->getName();
             $tables[] = $table;
-            $this->tablesByName[$table->getName()] = $table;
-            $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
+            $this->tablesByName[$tableName] = $table;
+            $this->tablesByLowercaseName[strtolower($tableName)] = $table;
             $this->tablesByPhpName[$table->getPhpName()] = $table;
         }
         $this->tables = $tables;
