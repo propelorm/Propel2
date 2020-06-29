@@ -29,7 +29,7 @@
     "require-dev": {
         "monolog/monolog": "^1.3",
         "phpstan/phpstan": "^0.12.4",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.5.15"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
