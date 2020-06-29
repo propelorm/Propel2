@@ -326,17 +326,6 @@ jobs:
         - composer install --ignore-platform-reqs
         - composer show
 
-    - name: Minimum versions using prefer-lowest
-      php: 7.2
-      env: DB=agnostic
-      install:
-        - composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
-        - composer require --dev dereuromark/composer-prefer-lowest
-      script:
-        - vendor/bin/validate-prefer-lowest
-        - composer show
-        - vendor/bin/phpunit -v -c tests/$DB.phpunit.xml
-
   allow_failures:
     - php: nightly
 
