@@ -449,6 +449,320 @@ jobs:
         - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
         - composer show
 
+          ############################
+    - name: "sf ~2.7"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "sf ^2.7"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "sf ~3"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "sf ^3"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "sf ~4"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "sf ^4"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+    - name: "sf ~5"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
+        - composer show
+    - name: "sf ^5"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
+        - composer show
+
+    - name: "mysql sf ~2.7"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "mysql sf ^2.7"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "mysql sf ~3"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "mysql sf ^3"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "mysql sf ~4"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "mysql sf ^4"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+    - name: "mysql sf ~5"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
+        - composer show
+    - name: "mysql sf ^5"
+      php: 7.3
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
+        - composer show
+          ############################
+    - name: "sf ~2.7"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "sf ^2.7"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "sf ~3"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "sf ^3"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "sf ~4"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "sf ^4"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+    - name: "sf ~5"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
+        - composer show
+    - name: "sf ^5"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
+        - composer show
+
+    - name: "mysql sf ~2.7"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "mysql sf ^2.7"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "mysql sf ~3"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "mysql sf ^3"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "mysql sf ~4"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "mysql sf ^4"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+    - name: "mysql sf ~5"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
+        - composer show
+    - name: "mysql sf ^5"
+      php: 7.2
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
+        - composer show
+          ############################
+    - name: "sf ~2.7"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "sf ^2.7"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "sf ~3"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "sf ^3"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "sf ~4"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "sf ^4"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+
+    - name: "mysql sf ~2.7"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "mysql sf ^2.7"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "mysql sf ~3"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "mysql sf ^3"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "mysql sf ~4"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "mysql sf ^4"
+      php: 7.1
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
 
 
   allow_failures:
