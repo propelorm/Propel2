@@ -391,6 +391,66 @@ jobs:
         - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
         - composer show
 
+
+    - name: "mysql sf ~2.7"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-min.json composer install
+        - composer show
+    - name: "mysql sf ^2.7"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony27-max.json composer install
+        - composer show
+    - name: "mysql sf ~3"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
+        - composer show
+    - name: "mysql sf ^3"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
+        - composer show
+    - name: "mysql sf ~4"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
+        - composer show
+    - name: "mysql sf ^4"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
+        - composer show
+    - name: "mysql sf ~5"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
+        - composer show
+    - name: "mysql sf ^5"
+      php: 7.4
+      env: DB=agnostic
+      install:
+        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
+        - composer show
+
+
+
   allow_failures:
     - php: nightly
     - name: "sf ~2.7"
@@ -401,6 +461,14 @@ jobs:
     - name: "sf ^4"
     - name: "sf ~5"
     - name: "sf ^5"
+    - name: "mysql sf ~2.7"
+    - name: "mysql sf ^2.7"
+    - name: "mysql sf ~3"
+    - name: "mysql sf ^3"
+    - name: "mysql sf ~4"
+    - name: "mysql sf ^4"
+    - name: "mysql sf ~5"
+    - name: "mysql sf ^5"
 
   fast_finish: true
 
