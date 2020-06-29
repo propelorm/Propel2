@@ -82,7 +82,7 @@ class TestPrepareCommand extends AbstractCommand
                 new InputOption('vendor',       null, InputOption::VALUE_REQUIRED, 'The database vendor', self::DEFAULT_VENDOR),
                 new InputOption('dsn',          null, InputOption::VALUE_REQUIRED, 'The data source name', self::DEFAULT_DSN),
                 new InputOption('user',          'u', InputOption::VALUE_REQUIRED, 'The database user', self::DEFAULT_DB_USER),
-                new InputOption('password',      'p', InputOption::VALUE_REQUIRED, 'The database password', self::DEFAULT_DB_PASSWD),
+                new InputOption('password',      'p', InputOption::VALUE_OPTIONAL, 'The database password', self::DEFAULT_DB_PASSWD),
                 new InputOption('exclude-database',  null, InputOption::VALUE_NONE, 'Whether this should not touch database\'s schema'),
             ])
             ->setName('test:prepare')
