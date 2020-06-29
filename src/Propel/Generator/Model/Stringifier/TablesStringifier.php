@@ -1,8 +1,18 @@
 <?php
 
+/**
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Generator\Model\Stringifier;
 
+/**
+ * A class for representing a collection of Tables as a String
+ */
 class TablesStringifier
 {
     /**
