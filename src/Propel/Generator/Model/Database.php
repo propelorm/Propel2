@@ -542,7 +542,7 @@ class Database extends ScopedMappingModel
     /**
      * Removes table from this database.
      *
-     * @param  Table|array $table
+     * @param  Table $table
      * @return void
      */
     public function removeTable(Table $table)
