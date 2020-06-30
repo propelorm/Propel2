@@ -359,7 +359,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
-        if ($column->getPDOType() == PropelTypes::CLOB_EMU) {
+        if ($column->getType() == PropelTypes::CLOB_EMU) {
             return sprintf(
                 "%s\$stmt->bindParam(%s, %s, %s, strlen(%s));
 ",
