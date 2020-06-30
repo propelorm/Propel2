@@ -48,6 +48,10 @@ class InitCommandTest extends TestCaseFixtures
 
     public function testExecute()
     {
+        if (!method_exists(CommandTester::class, 'setInputs')) {
+            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symphony/console');
+        }
+
         $app = new Application('Propel', Propel::VERSION);
         $app->addCommands([
             new InitCommand(),
@@ -59,11 +63,8 @@ class InitCommandTest extends TestCaseFixtures
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
 
-        $setInputs = $this->getInputsArray();
-        var_dump($setInputs);
-        $command = ['command' => $command->getName()];
-        $commandTester->setInputs($setInputs);
-        $commandTester->execute($command);
+        $commandTester->setInputs($this->getInputsArray());
+        $commandTester->execute(['command' => $command->getName()]);
 
         $this->assertContains('Propel 2 is ready to be used!', $commandTester->getDisplay());
         $this->assertTrue(file_exists($this->dir . '/schema.xml'), 'Example schema file created.');
@@ -78,6 +79,10 @@ class InitCommandTest extends TestCaseFixtures
 
     public function testExecuteAborted()
     {
+        if (!method_exists(CommandTester::class, 'setInputs')) {
+            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symphony/console');
+        }
+
         $app = new Application('Propel', Propel::VERSION);
         $app->addCommands([
             new InitCommand(),
