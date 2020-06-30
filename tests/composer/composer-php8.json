@@ -2,6 +2,8 @@
     "name": "propel/propel",
     "type": "library",
     "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "keywords": [
         "ORM",
         "persistence",
