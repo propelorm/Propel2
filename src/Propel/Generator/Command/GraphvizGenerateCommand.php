@@ -41,7 +41,7 @@ class GraphvizGenerateCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
         if ($this->hasInputOption('schema-dir', $input)){
@@ -62,5 +62,7 @@ class GraphvizGenerateCommand extends AbstractCommand
         $manager->setWorkingDirectory($input->getOption('output-dir'));
 
         $manager->build();
+
+        return 0;
     }
 }

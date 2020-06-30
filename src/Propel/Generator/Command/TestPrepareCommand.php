@@ -93,11 +93,13 @@ class TestPrepareCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         foreach ($this->fixtures as $fixturesDir => $connections) {
             $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
         }
+
+        return 0;
     }
 
     /**

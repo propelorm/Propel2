@@ -47,7 +47,7 @@ class SqlBuildCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -110,5 +110,7 @@ class SqlBuildCommand extends AbstractCommand
         }
 
         $manager->buildSql();
+
+        return 0;
     }
 }

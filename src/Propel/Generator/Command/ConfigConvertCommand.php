@@ -39,7 +39,7 @@ class ConfigConvertCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configManager = new ConfigurationManager($input->getOption('config-dir'));
 
@@ -77,5 +77,7 @@ class ConfigConvertCommand extends AbstractCommand
             file_put_contents($outputFilePath, $phpConf);
             $output->writeln(sprintf('Successfully wrote PHP configuration in file <info>"%s"</info>.', $outputFilePath));
         }
+
+        return 0;
     }
 }
