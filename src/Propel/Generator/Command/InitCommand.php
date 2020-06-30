@@ -18,7 +18,6 @@ use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\Exception\ConnectionException;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
@@ -44,127 +43,11 @@ class InitCommand extends AbstractCommand
 
         $this
             ->setName('init')
-            ->setDescription('Initializes a new project. Interactive when no input is provided.')
-            ->addArgument(
-                'adapter',
-                InputArgument::OPTIONAL,
-                'DB Adapter to use. One of: mysql, sqlite, pgsql, oracle, sqlsrv, mssql'
-            )
-            ->addArgument(
-                'connection',
-                InputArgument::OPTIONAL,
-                'The Pdo connection string to use. eg: mysql:host=127.0.0.1;port=;dbname=test'
-            )
-            ->addArgument(
-                'user',
-                InputArgument::OPTIONAL,
-                'The database user. eg: root'
-
-            )
-            ->addArgument(
-                'password',
-                InputArgument::OPTIONAL,
-                'The database password. Passwords command arguments in production are insecure and discouraged'
-            )
-            ->addArgument(
-                'charset',
-                InputArgument::OPTIONAL,
-                'The connection charset to use. eg: "utf8"'
-            )
-            ->addArgument(
-                'preexistingDB',
-                InputArgument::OPTIONAL,
-                'If the database in the connection string already exists, Propel will reverse engineer the schema setup. answers: "yes", "no"'
-            )
-            ->addArgument(
-                'schemaPath',
-                InputArgument::OPTIONAL,
-                'Path for the schema files'
-            )
-            ->addArgument(
-                'phpModelPath',
-                InputArgument::OPTIONAL,
-                'Path to store generated PHP models'
-            )
-            ->addArgument(
-                'namespace',
-                InputArgument::OPTIONAL,
-                'Namespace for generated PHP models'
-            )
-            ->addArgument(
-                'configFormat',
-                InputArgument::OPTIONAL,
-                'Format of generated configuration files. One of: yml, xml, json, ini, php'
-            );
+            ->setDescription('Initializes a new project')
+            ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $args = $input->getArguments();
-        $allArgumentsAreProvided = (count(array_filter($args)) === 10);
-
-        if ($allArgumentsAreProvided) {
-            return $this->argumentBasedSetup($input, $output);
-        }
-
-        return $this->interactiveSetup($input, $output);
-    }
-
-    private function argumentBasedSetup(InputInterface $input, OutputInterface $output): int
-    {
-        $consoleHelper = $this->createConsoleHelper($input, $output);
-
-        $args = $input->getArguments();
-        $options = [
-            'format' => $args['configFormat'],
-            'namespace' => $args['namespace'],
-            'phpDir' => $args['phpModelPath'],
-            'schemaDir' => $args['schemaPath'],
-            'charset' => $args['charset'],
-            'password' => $args['password'],
-            'user' => $args['user'],
-            'dsn' => $args['connection'],
-            'rdbms' => $args['adapter']
-        ];
-
-        $isReverseEngineerRequested = $args['preexistingDB'];
-
-        if ($this->testConnection($consoleHelper, $options)) {
-            $consoleHelper->writeSection('Unable to connect to database');
-
-            return 1;
-        }
-
-        if ($isReverseEngineerRequested) {
-            $options['schema'] = $this->reverseEngineerSchema($consoleHelper->getOutput(), $options);
-        }
-
-        $consoleHelper->writeBlock('Propel 2 Initializer - Summary');
-        $consoleHelper->writeSection('The Propel 2 Initializer will set up your project with the following settings:');
-
-        $consoleHelper->writeSummary([
-            'Path to schema.xml' => $options['schemaDir'] . '/schema.xml',
-            'Path to config file' => sprintf('%s/propel.%s', getcwd(), $options['format']),
-            'Path to generated php models' => $options['phpDir'],
-            'Namespace of generated php models' => $options['namespace'],
-        ]);
-
-        $consoleHelper->writeSummary([
-            'Database management system' => $options['rdbms'],
-            'Charset' => $options['charset'],
-            'User' => $options['user'],
-        ]);
-
-        $consoleHelper->writeln('');
-
-        $this->generateProject($consoleHelper->getOutput(), $options);
-
-        $consoleHelper->writeSection('Propel 2 is ready to be used!');
-
-        return 0;
-    }
-
-    private function interactiveSetup(InputInterface $input, OutputInterface $output): int
     {
         $consoleHelper = $this->createConsoleHelper($input, $output);
         $options = [];
@@ -191,11 +74,11 @@ class InitCommand extends AbstractCommand
         $connectionAttemptCount = 0;
         do {
             if ($connectionAttemptCount >= $connectionAttemptLimit) {
-                $consoleHelper->writeln('');
-                $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
-                $consoleHelper->writeln('');
+              $consoleHelper->writeln('');
+              $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
+              $consoleHelper->writeln('');
 
-                return 1;
+              return 1;
             }
             $connectionAttemptCount += 1;
             switch ($options['rdbms']) {
@@ -271,6 +154,8 @@ class InitCommand extends AbstractCommand
 
         $this->generateProject($consoleHelper->getOutput(), $options);
         $consoleHelper->writeSection('Propel 2 is ready to be used!');
+
+        return 0;
     }
 
     private function detectDefaultPhpDir()
