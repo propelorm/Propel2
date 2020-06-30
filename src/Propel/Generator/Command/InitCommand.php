@@ -70,7 +70,17 @@ class InitCommand extends AbstractCommand
 
         $consoleHelper->writeln('');
 
+        $connectionAttemptLimit = 10;
+        $connectionAttemptCount = 0;
         do {
+            if ($connectionAttemptCount >= $connectionAttemptLimit) {
+              $consoleHelper->writeln('');
+              $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
+              $consoleHelper->writeln('');
+
+              return 1;
+            }
+            $connectionAttemptCount += 1;
             switch ($options['rdbms']) {
                 case 'mysql':
                     $options['dsn'] = $this->initMysql($consoleHelper);
