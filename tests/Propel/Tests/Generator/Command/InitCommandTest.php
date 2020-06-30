@@ -59,11 +59,8 @@ class InitCommandTest extends TestCaseFixtures
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
 
-        $setInputs = $this->getInputsArray();
-        var_dump($setInputs);
-        $command = ['command' => $command->getName()];
-        $commandTester->setInputs($setInputs);
-        $commandTester->execute($command);
+        $input = ['command' => $command->getName()] + $this->getInputArguments();
+        $commandTester->execute($input);
 
         $this->assertContains('Propel 2 is ready to be used!', $commandTester->getDisplay());
         $this->assertTrue(file_exists($this->dir . '/schema.xml'), 'Example schema file created.');
@@ -88,50 +85,26 @@ class InitCommandTest extends TestCaseFixtures
 
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
-        $commandTester->setInputs($this->getInputsArray('no'));
-        $commandTester->execute(['command'  => $command->getName()]);
+        $input = ['command'  => $command->getName()] + $this->getInputArguments('no');
+        $commandTester->execute($input);
 
         $this->assertContains('Process aborted', $commandTester->getDisplay());
     }
 
-    private function getInputsArray($lastAnswer = 'yes')
+    private function getInputArguments($lastAnswer = 'yes')
     {
-        $dsn = $this->getConnectionDsn('bookstore', true);
-
-        $dsn = str_replace(':', ';', $dsn);
-        $dsnArray = explode(';', $dsn);
-        $dsnArray = array_map(function ($element) {
-            $pos = strpos($element, '=');
-            if (false !== $pos) {
-                $element = substr($element, $pos + 1);
-            }
-
-            return $element;
-
-        }, $dsnArray);
-
-        $inputs = [];
-        $firstDsnElement = array_shift($dsnArray);
-        if ($firstDsnElement) {
-          $inputs[] = $firstDsnElement;
-        }
-
-        if ($this->getDriver() !== 'sqlite') {
-            $inputs[] = array_shift($dsnArray);
-            $inputs[] = null;
-        }
-        $inputs = array_merge($inputs, [
-            $dsnArray[0],
-            isset($dsnArray[1]) ? $dsnArray[1] : null,
-            isset($dsnArray[2]) ? $dsnArray[2] : null,
-            'utf8',
-            'no',
-            $this->dir,
-            $this->dir . '/Model/',
-            'Init\\Command\\Namespace',
-            'yml',
-            $lastAnswer
-        ]);
+        $inputs = [
+            'connection' => $this->getConnectionDsn('bookstore', true),
+            'namespace' => 'Init\\Command\\Namespace',
+            'phpModelPath' => $this->dir . '/Model/',
+            'schemaPath' => $this->dir,
+            'charset' => 'utf8',
+            'preexistingDB' => 'no',
+            'password' => '',
+            'user' => 'root',
+            'adapter' => $this->getDriver(),
+            'configFormat' => 'yml',
+        ];
 
         return $inputs;
     }
