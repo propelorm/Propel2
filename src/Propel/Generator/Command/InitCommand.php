@@ -129,6 +129,7 @@ class InitCommand extends AbstractCommand
 
         $isReverseEngineerRequested = $args['preexistingDB'];
 
+        var_dump($options);
         if ($this->testConnection($consoleHelper, $options)) {
             $consoleHelper->writeSection('Unable to connect to database');
 
