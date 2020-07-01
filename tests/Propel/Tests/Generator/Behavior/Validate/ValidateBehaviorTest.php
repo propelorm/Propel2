@@ -317,9 +317,6 @@ EOF;
         $failures = $book->getValidationFailures();
 
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-        if (1 !== count($failures)) {
-          var_dump((string)$failures);
-        }
         $this->assertEquals(1, count($failures), 'Only one constraint violation object');
 
         $failure = $failures[0];

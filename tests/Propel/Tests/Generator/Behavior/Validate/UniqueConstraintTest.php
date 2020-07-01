@@ -29,9 +29,6 @@ class UniqueConstraintTest extends BookstoreTestBase
         $publisher->setName('Happy Reading');
         $publisher->setWebsite('http://www.happyreading.com');
         $isValid = $publisher->validate();
-        if (!$isValid) {
-          var_dump((string)$publisher->getValidationFailures());
-        }
         $this->assertTrue($isValid);
     }
 
