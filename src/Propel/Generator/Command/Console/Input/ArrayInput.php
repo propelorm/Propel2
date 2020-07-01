@@ -13,6 +13,7 @@ namespace Propel\Generator\Command\Console\Input;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
+use Symfony\Component\Console\Input\Input;
 
 /**
  * ArrayInput represents an input provided as an array.
