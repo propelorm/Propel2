@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Command\Console\Input\ArrayInput;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Generator\Command\Helper\ConsoleHelper3;
@@ -17,7 +18,6 @@ use Propel\Generator\Command\Helper\ConsoleHelperInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\Exception\ConnectionException;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
