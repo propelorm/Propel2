@@ -205,7 +205,11 @@ class ValidateBehavior extends Behavior
                     $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
                 }
             } else {
-                $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
+                if ($properties['validator'] === 'Unique') {
+                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
+                } else {
+                    $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
+                }
             }
 
             if (isset($properties['options'])) {
