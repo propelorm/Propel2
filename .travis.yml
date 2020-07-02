@@ -739,6 +739,19 @@ jobs:
 
   allow_failures:
     - php: nightly
+    - name: "PHP 7.4, Agnostic, Symfony ~5"
+    - name: "PHP 7.4, Agnostic, Symfony ^5"
+    - name: "PHP 7.4, MySql, Symfony ~5"
+    - name: "PHP 7.4, MySql, Symfony ^5"
+    - name: "PHP 7.3, Agnostic, Symfony ~5"
+    - name: "PHP 7.3, Agnostic, Symfony ^5"
+    - name: "PHP 7.3, MySql, Symfony ~5"
+    - name: "PHP 7.3, MySql, Symfony ^5"
+    - name: "PHP 7.2, Agnostic, Symfony ~5"
+    - name: "PHP 7.2, Agnostic, Symfony ^5"
+    - name: "PHP 7.2, MySql, Symfony ~5"
+    - name: "PHP 7.2, MySql, Symfony ^5"
+
 
   fast_finish: true
 
