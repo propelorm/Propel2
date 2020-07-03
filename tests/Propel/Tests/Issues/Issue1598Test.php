@@ -2,7 +2,6 @@
 
 namespace Propel\Tests\Issues;
 
-use Domain\Module\Metadata\Form\Form;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
