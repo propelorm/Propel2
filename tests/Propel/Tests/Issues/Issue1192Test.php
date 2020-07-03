@@ -48,15 +48,13 @@ END;
         $params = [];
         $actualSql = $query->createSelectSql($params);
 
-        $this->assertEquals("SELECT  FROM issue_1192_item WHERE issue_1192_item.target & :p1 = :p2",
+        $this->assertSame("SELECT  FROM issue_1192_item WHERE issue_1192_item.target & :p1 = :p2",
             $actualSql,
             'Generated SQL does not match expected SQL'
         );
 
-        $this->assertEquals(2, count($params), 'Incorrect number of params');
+        $this->assertSame(2, count($params), 'Incorrect number of params');
 
-        $this->assertEquals($params[0], $params[1], 'Params are not identical');
+        $this->assertSame($params[0], $params[1], 'Params are not identical');
     }
-
-
 }
