@@ -224,7 +224,7 @@ class Behavior extends MappingModel
      * Returns a single parameter by its name.
      *
      * @param  string $name
-     * @return array
+     * @return mixed
      */
     public function getParameter($name)
     {
