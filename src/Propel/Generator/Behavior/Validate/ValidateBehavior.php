@@ -198,19 +198,7 @@ class ValidateBehavior extends Behavior
                 throw new InvalidArgumentException('Please, define the validator constraint.');
             }
 
-            if (!class_exists("Symfony\\Component\\Validator\\Constraints\\".$properties['validator'], true)) {
-                if (!class_exists("Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'], true)) {
-                    throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
-                } else {
-                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
-                }
-            } else {
-                if ($properties['validator'] === 'Unique') {
-                    $classConstraint = "Propel\\Runtime\\Validator\\Constraints\\".$properties['validator'];
-                } else {
-                    $classConstraint = "Symfony\\Component\\Validator\\Constraints\\".$properties['validator'];
-                }
-            }
+            $classConstraint = $this->getClassConstraint($properties);
 
             if (isset($properties['options'])) {
                 if (!is_array($properties['options'])) {
@@ -228,6 +216,29 @@ class ValidateBehavior extends Behavior
         }
 
         return $this->renderTemplate('objectLoadValidatorMetadata', ['constraints' => $constraints]);
+    }
+
+    /**
+     * Propel constraints are preferred over Symfony ones.
+     *
+     * @param array $properties
+     *
+     * @return string
+     */
+    protected function getClassConstraint(array $properties)
+    {
+        $constraintCandidates = [
+            sprintf('Propel\\Runtime\\Validator\\Constraints\\%s', $properties['validator']),
+            sprintf('Symfony\\Component\\Validator\\Constraints\\%s', $properties['validator']),
+        ];
+
+        foreach ($constraintCandidates as $constraintCandidate) {
+            if (class_exists($constraintCandidate, true)) {
+                return $constraintCandidate;
+            }
+        }
+
+        throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
     }
 
     /**
