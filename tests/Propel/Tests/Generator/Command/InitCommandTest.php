@@ -49,7 +49,7 @@ class InitCommandTest extends TestCaseFixtures
     public function testExecute()
     {
         if (!method_exists(CommandTester::class, 'setInputs')) {
-            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symphony/console');
+            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symfony/console');
         }
 
         $app = new Application('Propel', Propel::VERSION);
