@@ -78,6 +78,6 @@ class ConfigConvertCommand extends AbstractCommand
             $output->writeln(sprintf('Successfully wrote PHP configuration in file <info>"%s"</info>.', $outputFilePath));
         }
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }

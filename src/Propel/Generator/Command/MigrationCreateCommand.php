@@ -97,7 +97,7 @@ class MigrationCreateCommand extends AbstractCommand
             $output->writeln('Once the migration class is valid, call the "migrate" task to execute it.');
         }
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 
 }

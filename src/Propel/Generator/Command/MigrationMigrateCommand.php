@@ -55,7 +55,7 @@ class MigrationMigrateCommand extends AbstractCommand
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -81,7 +81,7 @@ class MigrationMigrateCommand extends AbstractCommand
         if (!$manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
-            return 1;
+            return static::CODE_ERROR;
         }
 
         $timestamps = $manager->getValidMigrationTimestamps();
@@ -113,7 +113,7 @@ class MigrationMigrateCommand extends AbstractCommand
                     } else {
                         $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
 
-                        return 1;
+                        return static::CODE_ERROR;
                     }
                 }
 
@@ -187,6 +187,6 @@ class MigrationMigrateCommand extends AbstractCommand
 
         $output->writeln('Migration complete. No further migration to execute.');
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }
