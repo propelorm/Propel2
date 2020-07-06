@@ -69,16 +69,18 @@ class ModelCriteria extends BaseModelCriteria
     protected $isWithOneToMany = false;
 
     // this is introduced to prevent useQuery->join from going wrong
-    protected $previousJoin = null;
+    protected $previousJoin;
 
     // whether to clone the current object before termination methods
     protected $isKeepQuery = true;
 
     // this is for the select method
-    protected $select = null;
+    protected $select;
 
     // temporary property used in replaceNames
     protected $currentAlias;
+
+    protected $foundMatch;
 
     /**
      * Used to memorize whether we added self-select columns before.

@@ -41,7 +41,5 @@ class InModelCriterion extends AbstractModelCriterion
         } else {
             $sb .= (stripos($this->clause, ' NOT IN ') === false) ? "1<>1" : "1=1";
         }
-        unset($value, $valuesLength);
     }
-
 }

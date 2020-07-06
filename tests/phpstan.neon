@@ -1,5 +1,16 @@
 parameters:
+    level: 1
+    paths:
+        - '%rootDir%/../../../src/'
     excludes_analyse:
-            - '%rootDir%/../../../src/Propel/Generator/Command/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Command/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/AggregateColumn/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/I18n/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Builder/Om/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Validate/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Archivable/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Delegate/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/Sortable/templates/*'
+        - '%rootDir%/../../../src/Propel/Generator/Behavior/NestedSet/templates/*'
     ignoreErrors:
-        - '#Access to undefined constant PDO::.+#'
+        - '#Call to an undefined method .+Collection::.+Array\(\)#'

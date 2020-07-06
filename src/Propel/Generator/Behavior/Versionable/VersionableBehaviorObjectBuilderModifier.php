@@ -23,6 +23,7 @@ class VersionableBehaviorObjectBuilderModifier
     protected $table;
     protected $builder;
     protected $objectClassName;
+    protected $queryClassName;
 
     public function __construct($behavior)
     {

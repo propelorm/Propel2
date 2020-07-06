@@ -737,8 +737,17 @@ jobs:
         - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
         - composer show
 
+    - name: Checks
+      php: 7.4
+      env: DB=agnostic CHECKS=1
+      install:
+        - composer install --prefer-dist --no-interaction
+      script:
+        - composer stan
+
   allow_failures:
     - php: nightly
+    - name: "Checks"
     - name: "PHP 7.4, Agnostic, Symfony ~5"
     - name: "PHP 7.4, Agnostic, Symfony ^5"
     - name: "PHP 7.4, MySql, Symfony ~5"
@@ -751,7 +760,6 @@ jobs:
     - name: "PHP 7.2, Agnostic, Symfony ^5"
     - name: "PHP 7.2, MySql, Symfony ~5"
     - name: "PHP 7.2, MySql, Symfony ^5"
-
 
   fast_finish: true
 

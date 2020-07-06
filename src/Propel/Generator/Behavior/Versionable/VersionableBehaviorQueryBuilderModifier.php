@@ -25,6 +25,8 @@ class VersionableBehaviorQueryBuilderModifier
 
     protected $objectClassName;
 
+    protected $queryClassName;
+
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
