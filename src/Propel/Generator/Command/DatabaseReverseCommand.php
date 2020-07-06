@@ -53,7 +53,7 @@ class DatabaseReverseCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -100,5 +100,7 @@ class DatabaseReverseCommand extends AbstractCommand
         if (true === $manager->reverse()) {
             $output->writeln('<info>Schema reverse engineering finished.</info>');
         }
+
+        return 0;
     }
 }

@@ -40,7 +40,7 @@ class MigrationStatusCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -142,7 +142,7 @@ class MigrationStatusCommand extends AbstractCommand
         } else {
             $output->writeln(sprintf('No migration file found in "%s".', $dir));
 
-            return false;
+            return 1;
         }
 
         $migrationTimestamps = $manager->getValidMigrationTimestamps();
@@ -151,12 +151,14 @@ class MigrationStatusCommand extends AbstractCommand
         if (!$nbNotYetExecutedMigrations) {
             $output->writeln('All migration files were already executed - Nothing to migrate.');
 
-            return false;
+            return 1;
         }
 
         $output->writeln(sprintf(
             'Call the "migrate" task to execute %s',
             $countValidTimestamps == 1 ? 'it' : 'them'
         ));
+
+        return 0;
     }
 }

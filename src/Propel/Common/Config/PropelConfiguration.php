@@ -29,8 +29,15 @@ class PropelConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('propel');
+        $isBeforeSymfony5 = method_exists(TreeBuilder::class, 'root');
+
+        if ($isBeforeSymfony5) {
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('propel');
+        } else {
+            $treeBuilder = new TreeBuilder('propel');
+            $rootNode = $treeBuilder->getRootNode();
+        }
 
         $this->addGeneralSection($rootNode);
         $this->addExcludeTablesSection($rootNode);
