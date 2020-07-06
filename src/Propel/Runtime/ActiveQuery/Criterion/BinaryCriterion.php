@@ -45,7 +45,11 @@ class BinaryCriterion extends AbstractCriterion
             $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
 
             if ($this->comparison === Criteria::BINARY_ALL) {
-                $sb .= $field . ' & ' . $bindParam . ' = ' . $bindParam;
+                // With ATTR_EMULATE_PREPARES => false, we can't have two identical params, so let's add another param
+                // https://github.com/propelorm/Propel2/issues/1192
+                $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];
+                $bindParam2 = ':p' . count($params);
+                $sb .= $field . ' & ' . $bindParam . ' = ' . $bindParam2;
             } else {
                 $sb .= $field . ' & ' . $bindParam . ' = 0';
             }
