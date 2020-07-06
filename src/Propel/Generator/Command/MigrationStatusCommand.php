@@ -47,11 +47,11 @@ class MigrationStatusCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-        
+
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -142,7 +142,7 @@ class MigrationStatusCommand extends AbstractCommand
         } else {
             $output->writeln(sprintf('No migration file found in "%s".', $dir));
 
-            return 1;
+            return static::CODE_ERROR;
         }
 
         $migrationTimestamps = $manager->getValidMigrationTimestamps();
@@ -151,7 +151,7 @@ class MigrationStatusCommand extends AbstractCommand
         if (!$nbNotYetExecutedMigrations) {
             $output->writeln('All migration files were already executed - Nothing to migrate.');
 
-            return 1;
+            return static::CODE_ERROR;
         }
 
         $output->writeln(sprintf(
@@ -159,6 +159,6 @@ class MigrationStatusCommand extends AbstractCommand
             $countValidTimestamps == 1 ? 'it' : 'them'
         ));
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }

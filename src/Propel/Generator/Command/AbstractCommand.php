@@ -23,7 +23,10 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 abstract class AbstractCommand extends Command
 {
-    const DEFAULT_CONFIG_DIRECTORY   = '.';
+    public const DEFAULT_CONFIG_DIRECTORY   = '.';
+
+    public const CODE_SUCCESS = 0;
+    public const CODE_ERROR = 1;
 
     protected $filesystem;
 
@@ -142,7 +145,7 @@ abstract class AbstractCommand extends Command
 
     /**
      * Parse a connection string and return an array of properties to pass to GeneratorConfig constructor.
-     * The connection must be in the following format: 
+     * The connection must be in the following format:
      * `bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar`
      * where "bookstore" is your propel database name (used in your schema.xml).
      *
@@ -152,18 +155,18 @@ abstract class AbstractCommand extends Command
      * @return array
      */
     protected function connectionToProperties($connection, $section = null)
-    {        
+    {
         list($name, $dsn, $infos) = $this->parseConnection($connection);
         $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
         $config['propel']['database']['connections'][$name]['adapter'] = strtolower($infos['adapter']);
         $config['propel']['database']['connections'][$name]['dsn'] = $dsn;
         $config['propel']['database']['connections'][$name]['user'] = isset($infos['user']) && $infos['user'] ? $infos['user'] : null;
         $config['propel']['database']['connections'][$name]['password'] = isset($infos['password']) ? $infos['password'] : null;
-        
+
         if (null === $section) {
             $section = 'generator';
         }
-        
+
         if ('reverse' === $section) {
             $config['propel']['reverse']['connection'] = $name;
         } else {
@@ -185,7 +188,7 @@ abstract class AbstractCommand extends Command
     {
         return $input->hasOption($option) && null !== $input->getOption($option);
     }
-    
+
     /**
      * Check if a given input argument exists and it isn't null.
      *

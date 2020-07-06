@@ -132,6 +132,6 @@ class ModelBuildCommand extends AbstractCommand
 
         $manager->build();
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }

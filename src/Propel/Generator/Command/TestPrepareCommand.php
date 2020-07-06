@@ -95,11 +95,15 @@ class TestPrepareCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $result = static::CODE_SUCCESS;
         foreach ($this->fixtures as $fixturesDir => $connections) {
-            $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
+            $run = $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
+            if ($run !== static::CODE_SUCCESS) {
+                $result = $run;
+            }
         }
 
-        return 0;
+        return $result;
     }
 
     /**
@@ -107,13 +111,14 @@ class TestPrepareCommand extends AbstractCommand
      * @param $connections
      * @param InputInterface  $input
      * @param OutputInterface $output
+     * @return int Exit code
      */
-    protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output)
+    protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output): int
     {
         if (!file_exists($this->root . '/' . $fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
 
-            return 1;
+            return static::CODE_ERROR;
         }
 
         $output->writeln(sprintf('Building fixtures in <info>%-40s</info> ' . ($input->getOption('exclude-database') ? '(exclude-database)' : ''), $fixturesDir));
@@ -158,7 +163,7 @@ class TestPrepareCommand extends AbstractCommand
         }
 
         if ($input->getOption('exclude-database')) {
-            return 0;
+            return static::CODE_SUCCESS;
         }
 
         if (0 < count($this->getSchemas('.'))) {
@@ -201,5 +206,7 @@ class TestPrepareCommand extends AbstractCommand
         }
 
         chdir($this->root);
+
+        return static::CODE_SUCCESS;
     }
 }

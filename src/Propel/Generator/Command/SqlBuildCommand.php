@@ -111,6 +111,6 @@ class SqlBuildCommand extends AbstractCommand
 
         $manager->buildSql();
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }

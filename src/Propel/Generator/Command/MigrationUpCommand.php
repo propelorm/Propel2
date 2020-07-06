@@ -51,11 +51,11 @@ class MigrationUpCommand extends AbstractCommand
         if ($this->hasInputOption('output-dir', $input)) {
             $configOptions['propel']['paths']['migrationDir'] = $input->getOption('output-dir');
         }
-        
+
         if ($this->hasInputOption('migration-table', $input)) {
             $configOptions['propel']['migrations']['tableName'] = $input->getOption('migration-table');
         }
-        
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
         $this->createDirectory($generatorConfig->getSection('paths')['migrationDir']);
@@ -82,7 +82,7 @@ class MigrationUpCommand extends AbstractCommand
         if (!$nextMigrationTimestamp) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
-            return 1;
+            return static::CODE_ERROR;
         }
 
         if ($input->getOption('fake')) {
@@ -109,7 +109,7 @@ class MigrationUpCommand extends AbstractCommand
                     $output->writeln('<error>preUp() returned false. Continue migration.</error>');
                 } else {
                     $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
-                    return 1;
+                    return static::CODE_ERROR;
                 }
             }
         }
@@ -191,6 +191,6 @@ class MigrationUpCommand extends AbstractCommand
             $output->writeln('Migration complete. No further migration to execute.');
         }
 
-        return 0;
+        return static::CODE_SUCCESS;
     }
 }
