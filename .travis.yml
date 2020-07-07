@@ -747,7 +747,6 @@ jobs:
 
   allow_failures:
     - php: nightly
-    - name: "Checks"
 
   fast_finish: true
 
