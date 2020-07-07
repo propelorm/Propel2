@@ -12,6 +12,9 @@ namespace Propel\Generator\Builder\Util;
 
 use Propel\Generator\Model\Table;
 
+/**
+ * @deprecated Not in use
+ */
 class DataRow
 {
     private $table;
@@ -30,7 +33,7 @@ class DataRow
     }
 
     /**
-     * @return ColumnValue[]
+     * @return \Propel\Generator\Model\ColumnDefaultValue[]
      */
     public function getColumnValues()
     {

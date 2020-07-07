@@ -47,7 +47,7 @@ abstract class AbstractCommand extends Command
      * the configuration properties in the `config-dir` folder.
      *
      * @param array $properties Properties to add to the configuration. They usually come from command line.
-     * @param       $input
+     * @param InputInterface|null $input
      *
      * @return GeneratorConfig
      */
@@ -70,7 +70,7 @@ abstract class AbstractCommand extends Command
     /**
      * Find every schema files.
      *
-     * @param string|array $directory Path to the input directory
+     * @param string|string[] $directory Path to the input directory
      * @param bool         $recursive Search for file inside the input directory and all subdirectories
      *
      * @return array List of schema files

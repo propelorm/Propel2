@@ -649,7 +649,7 @@ class Join
      * // 'LEFT JOIN author ON (book.AUTHOR_ID=author.ID)'
      * </code>
      *
-     * @param array &$params
+     * @param array $params
      *
      * @return string SQL join clause with join condition
      */

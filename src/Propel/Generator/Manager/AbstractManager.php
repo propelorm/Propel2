@@ -58,13 +58,19 @@ abstract class AbstractManager
 
     /**
      * The XSD schema file to use for validation.
-     * @var string
+     *
+     * @deprecated Not in use and not working due to missing class.
+     *
+     * @var mixed
      */
     protected $xsd;
 
     /**
      * XSL file to use to normalize (or otherwise transform) schema before validation.
-     * @var string
+     *
+     * @deprecated Not in use and not working due to missing class.
+     *
+     * @var mixed
      */
     protected $xsl;
 
@@ -81,9 +87,9 @@ abstract class AbstractManager
     protected $workingDirectory;
 
     /**
-     * @var \Closure
+     * @var \Closure|null
      */
-    private $loggerClosure = null;
+    private $loggerClosure;
 
     /**
      * Have datamodels been initialized?
@@ -111,7 +117,7 @@ abstract class AbstractManager
     /**
      * Sets the schemas list.
      *
-     * @param array
+     * @param array $schemas
      */
     public function setSchemas($schemas)
     {
@@ -231,7 +237,7 @@ abstract class AbstractManager
      * Sets the normalization XSLT to use to transform datamodel schema.xml
      * file(s) before validation and parsing.
      *
-     * @param string $xsl
+     * @param mixed $xsl
      */
     public function setXsl($xsl)
     {

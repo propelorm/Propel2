@@ -33,7 +33,7 @@ class SqlitePlatform extends DefaultPlatform
      * If we should generate FOREIGN KEY statements.
      * This is since SQLite version 3.6.19 possible.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $foreignKeySupport = null;
 

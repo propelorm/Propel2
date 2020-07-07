@@ -363,7 +363,7 @@ class RelationMap
     /**
      * Gets the symmetrical relation
      *
-     * @return \Propel\Runtime\Map\RelationMap
+     * @return \Propel\Runtime\Map\RelationMap|null
      */
     public function getSymmetricalRelation()
     {
@@ -373,5 +373,7 @@ class RelationMap
                 return $relation;
             }
         }
+
+        return null;
     }
 }

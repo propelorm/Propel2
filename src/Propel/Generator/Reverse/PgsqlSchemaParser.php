@@ -150,6 +150,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $params[] = $filterTable->getCommonName();
 
         } else if (!$database->getSchema()) {
+            /** @var \PDOStatement $stmt */
             $stmt = $this->dbh->query('SELECT schema_name FROM information_schema.schemata');
             $searchPath = [];
 
@@ -173,6 +174,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $sql .= "
           ORDER BY relname";
+
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->prepare($sql);
 
         $stmt->execute($params);
@@ -347,7 +350,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             return true;
         }
 
-        false;
+        return false;
     }
 
     /**

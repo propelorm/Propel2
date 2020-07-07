@@ -42,6 +42,8 @@ class AggregateColumnBehavior extends Behavior
 
     /**
      * Add the aggregate key to the current table
+     *
+     * @return void
      */
     public function modifyTable()
     {
@@ -72,6 +74,13 @@ class AggregateColumnBehavior extends Behavior
         }
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
     public function objectMethods(ObjectBuilder $builder)
     {
         if (!$this->getParameter('foreign_table')) {
@@ -103,7 +112,7 @@ class AggregateColumnBehavior extends Behavior
         }
 
         foreach ($this->getForeignKey()->getMapping() as $index => $mapping) {
-            list($localColumn, $foreignColumn) = $mapping;
+            [$localColumn, $foreignColumn] = $mapping;
             $conditions[] = $localColumn->getFullyQualifiedName() . ' = :p' . ($index + 1);
             $bindings[$index + 1]   = $foreignColumn->getPhpName();
         }

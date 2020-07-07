@@ -331,6 +331,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
+     * @return bool
      */
     public function setAttribute($attribute, $value)
     {
@@ -357,6 +358,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             default:
                 $this->connection->setAttribute($attribute, $value);
         }
+
+        return true;
     }
 
     /**
@@ -538,7 +541,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * Returns the original number of queries (ie the value of $this->queryCount before calling this method).
      *
-     * @return integer
+     * @return void
      */
     public function incrementQueryCount()
     {

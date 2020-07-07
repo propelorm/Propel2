@@ -300,8 +300,9 @@ abstract class PdoAdapter
      */
     public function formatTemporalValue($value, ColumnMap $cMap)
     {
-        /** @var $dt PropelDateTime */
-        if ($dt = PropelDateTime::newInstance($value)) {
+        /** @var PropelDateTime $dt */
+        $dt = PropelDateTime::newInstance($value);
+        if ($dt) {
             switch ($cMap->getType()) {
                 case PropelTypes::TIMESTAMP:
                 case PropelTypes::BU_TIMESTAMP:
@@ -341,6 +342,8 @@ abstract class PdoAdapter
         if ($groupBy) {
             return ' GROUP BY ' . implode(',', $groupBy);
         }
+
+        return '';
     }
 
     /**

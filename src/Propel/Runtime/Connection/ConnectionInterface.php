@@ -88,7 +88,7 @@ interface ConnectionInterface
      * @param string $attribute
      * @param mixed  $value
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value);
 
@@ -112,14 +112,14 @@ interface ConnectionInterface
     public function lastInsertId($name = null);
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function getSingleDataFetcher($data);
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */

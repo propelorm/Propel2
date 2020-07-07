@@ -124,7 +124,7 @@ class Propel
     /**
      * Set the service container instance.
      *
-     * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface
+     * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface $serviceContainer
      */
     public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
     {
@@ -267,7 +267,7 @@ class Propel
      * @param string $message The message that will be logged.
      * @param int    $level   The logging level.
      *
-     * @return boolean True if the message was logged successfully or no logger was used.
+     * @return void
      */
     public static function log($message, $level = self::LOG_DEBUG)
     {
@@ -275,21 +275,28 @@ class Propel
 
         switch ($level) {
             case self::LOG_EMERG:
-                return $logger->emergency($message);
+                $logger->emergency($message);
+                break;
             case self::LOG_ALERT:
-                return $logger->alert($message);
+                $logger->alert($message);
+                break;
             case self::LOG_CRIT:
-                return $logger->critical($message);
+                $logger->critical($message);
+                break;
             case self::LOG_ERR:
-                return $logger->error($message);
+                $logger->error($message);
+                break;
             case self::LOG_WARNING:
-                return $logger->warning($message);
+                $logger->warning($message);
+                break;
             case self::LOG_NOTICE:
-                return $logger->notice($message);
+                $logger->notice($message);
+                break;
             case self::LOG_INFO:
-                return $logger->info($message);
+                $logger->info($message);
+                break;
             default:
-                return $logger->debug($message);
+                $logger->debug($message);
         }
     }
 

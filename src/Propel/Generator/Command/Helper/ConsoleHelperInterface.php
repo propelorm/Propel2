@@ -27,7 +27,7 @@ interface ConsoleHelperInterface
     public function askHiddenResponse($question, $fallback = true);
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return mixed
      */

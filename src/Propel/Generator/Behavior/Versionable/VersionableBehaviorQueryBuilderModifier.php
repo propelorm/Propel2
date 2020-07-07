@@ -63,7 +63,7 @@ static \$isVersioningEnabled = true;
     /**
      * @param string $key
      *
-     * @return array
+     * @return mixed
      */
     protected function getParameter($key)
     {

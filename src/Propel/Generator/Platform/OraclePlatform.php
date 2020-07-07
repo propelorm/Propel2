@@ -30,7 +30,6 @@ use Propel\Generator\Model\Unique;
  */
 class OraclePlatform extends DefaultPlatform
 {
-
     /**
      * Initializes db specific domain mapping.
      */
@@ -192,6 +191,11 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return $tableName . '_pk';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string|null
+     */
     public function getPrimaryKeyDDL(Table $table)
     {
         if ($table->hasPrimaryKey()) {
@@ -213,11 +217,17 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string|null
+     */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
+
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s) REFERENCES %s (%s)";
         $script = sprintf($pattern,

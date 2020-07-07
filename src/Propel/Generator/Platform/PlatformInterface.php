@@ -158,7 +158,7 @@ interface PlatformInterface
      * Quotes a identifier.
      *
      * @param string $text
-     * @return mixed
+     * @return string
      */
     public function doQuoting($text);
 
@@ -208,7 +208,7 @@ interface PlatformInterface
      * SQL.
      *
      * @param  mixed $tf A boolean or string representation of boolean ('y', 'true').
-     * @return mixed
+     * @return string
      */
     public function getBooleanString($tf);
 

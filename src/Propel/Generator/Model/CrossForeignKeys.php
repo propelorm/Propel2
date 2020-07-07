@@ -215,7 +215,7 @@ class CrossForeignKeys
     }
 
     /**
-     * @param Table $foreignTable
+     * @param \Propel\Generator\Model\Table $foreignTable
      */
     public function setMiddleTable(Table $foreignTable)
     {
@@ -233,7 +233,7 @@ class CrossForeignKeys
     }
 
     /**
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      */
     public function setTable(Table $table)
     {

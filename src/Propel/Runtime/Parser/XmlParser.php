@@ -170,6 +170,7 @@ class XmlParser extends AbstractParser
     {
         $array = [];
         $elementNames = [];
+        /** @var \DOMElement $element */
         foreach ($data->childNodes as $element) {
             if ($element->nodeType == XML_TEXT_NODE) {
                 continue;

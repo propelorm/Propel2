@@ -206,7 +206,7 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassOpen(&$script)
     {
@@ -259,7 +259,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Specifies the methods that are added as part of the basic OM class.
      * This can be overridden by subclasses that wish to add more methods.
      *
-     * @param string &$script
+     * @param string $script
      * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
@@ -372,7 +372,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassClose(&$script)
     {
@@ -385,7 +385,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds any constants to the class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstants(&$script)
     {
@@ -400,7 +400,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds class attributes.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addAttributes(&$script)
     {
@@ -437,7 +437,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds variables that store column values.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addColumnAttributes(&$script)
     {
@@ -464,7 +464,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds comment about the attribute (variable) that stores column values.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeComment(&$script, Column $column)
@@ -497,7 +497,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the declaration of a column value storage attribute.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeDeclaration(&$script, Column $column)
@@ -512,7 +512,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the comment about the attribute keeping track if an attribute value
      * has been loaded.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeLoaderComment(&$script, Column $column)
@@ -530,7 +530,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the declaration of the attribute keeping track of an attribute
      * loaded state.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeLoaderDeclaration(&$script, Column $column)
@@ -544,7 +544,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment about the serialized attribute.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeUnserializedComment(&$script, Column $column)
@@ -561,7 +561,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the declaration of the serialized attribute.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeUnserializedDeclaration(&$script, Column $column)
@@ -573,7 +573,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addColumnAttributeConvertedDeclaration(&$script, Column $column)
@@ -587,7 +587,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the constructor for this object.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstructor(&$script)
     {
@@ -602,7 +602,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the constructor
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstructorComment(&$script)
     {
@@ -620,7 +620,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the constructor.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstructorOpen(&$script)
     {
@@ -632,7 +632,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for the constructor.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstructorBody(&$script)
     {
@@ -643,7 +643,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the constructor.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addConstructorClose(&$script)
     {
@@ -655,7 +655,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the base object functions.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addBaseObjectMethods(&$script)
     {
@@ -665,7 +665,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the base object hook functions.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addHookMethods(&$script)
     {
@@ -689,7 +689,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the applyDefaults() method, which is called from the constructor.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addApplyDefaultValues(&$script)
     {
@@ -702,7 +702,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addApplyDefaultValuesComment(&$script)
     {
@@ -718,7 +718,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addApplyDefaultValuesOpen(&$script)
     {
@@ -730,7 +730,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body of the applyDefault method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addApplyDefaultValuesBody(&$script)
     {
@@ -764,7 +764,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addApplyDefaultValuesClose(&$script)
     {
@@ -776,7 +776,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a date/time/timestamp getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addTemporalAccessor(&$script, Column $column)
@@ -790,7 +790,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a temporal accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addTemporalAccessorComment(&$script, Column $column)
@@ -828,7 +828,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a temporal accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addTemporalAccessorOpen(&$script, Column $column)
@@ -889,7 +889,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the temporal accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addTemporalAccessorBody(&$script, Column $column)
@@ -929,7 +929,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the temporal accessor.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addTemporalAccessorClose(&$script)
     {
@@ -941,7 +941,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds an object getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addObjectAccessor(&$script, Column $column)
@@ -955,7 +955,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an object accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addObjectAccessorBody(&$script, Column $column)
@@ -987,7 +987,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a json accessor method (a getter).
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addJsonAccessorComment(&$script, Column $column)
@@ -1012,7 +1012,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a JSON accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addJsonAccessorOpen(&$script, Column $column)
@@ -1040,7 +1040,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds an array getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addArrayAccessor(&$script, Column $column)
@@ -1054,7 +1054,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an array accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addArrayAccessorBody(&$script, Column $column)
@@ -1080,7 +1080,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a boolean isser method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addBooleanAccessor(&$script, Column $column)
@@ -1114,7 +1114,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a boolean accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
@@ -1135,7 +1135,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a boolean accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addBooleanAccessorBody(&$script, Column $column)
@@ -1155,7 +1155,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds an enum getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addEnumAccessor(&$script, Column $column)
@@ -1169,7 +1169,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for an enum accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addEnumAccessorComment(&$script, Column $column)
@@ -1193,7 +1193,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an enum accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addEnumAccessorBody(&$script, Column $column)
@@ -1218,7 +1218,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a SET column getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addSetAccessor(&$script, Column $column)
@@ -1232,7 +1232,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a SET column accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addSetAccessorComment(&$script, Column $column)
@@ -1256,7 +1256,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a SET column accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addSetAccessorBody(&$script, Column $column)
@@ -1283,7 +1283,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
             }
         }
-        
+
         return \$this->$cloConverted;";
     }
 
@@ -1291,7 +1291,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a tester method for an array column.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addHasArrayElement(&$script, Column $column)
@@ -1333,7 +1333,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a normal (non-temporal) getter method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addDefaultAccessor(&$script, Column $column)
@@ -1347,7 +1347,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a default accessor method (a getter).
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addDefaultAccessorComment(&$script, Column $column)
@@ -1370,7 +1370,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a default accessor.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addDefaultAccessorOpen(&$script, Column $column)
@@ -1391,7 +1391,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a default accessor method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addDefaultAccessorBody(&$script, Column $column)
@@ -1408,7 +1408,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for a default accessor method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addDefaultAccessorClose(&$script)
     {
@@ -1420,7 +1420,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the lazy loader method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addLazyLoader(&$script, Column $column)
@@ -1434,7 +1434,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the lazy loader method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addLazyLoaderComment(&$script, Column $column)
@@ -1458,7 +1458,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the lazy loader method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addLazyLoaderOpen(&$script, Column $column)
@@ -1472,7 +1472,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for the lazy loader method.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addLazyLoaderBody(&$script, Column $column)
@@ -1544,7 +1544,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the lazy loader.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addLazyLoaderClose(&$script)
     {
@@ -1555,7 +1555,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the open of the mutator (setter) method for a column.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addMutatorOpen(&$script, Column $column)
@@ -1568,7 +1568,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the open of the mutator (setter) method for a JSON column.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addJsonMutatorOpen(&$script, Column $column)
@@ -1581,7 +1581,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a mutator.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addJsonMutatorComment(&$script, Column $column)
@@ -1599,7 +1599,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a mutator.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addMutatorComment(&$script, Column $column)
@@ -1617,7 +1617,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the mutator function declaration.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addMutatorOpenOpen(&$script, Column $column)
@@ -1649,7 +1649,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the mutator open body part.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addMutatorOpenBody(&$script, Column $column)
@@ -1670,7 +1670,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the close of the mutator (setter) method for a column.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addMutatorClose(&$script, Column $column)
@@ -1682,7 +1682,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the close part of a mutator.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     protected function addMutatorCloseBody(&$script, Column $column)
@@ -1748,7 +1748,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the close for the mutator close
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see addMutatorClose()
      **/
@@ -1763,7 +1763,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for BLOB columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -1789,7 +1789,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter method for date/time/timestamp columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -1857,7 +1857,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Object columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -1881,7 +1881,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Json columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -1907,7 +1907,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Array columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -1929,7 +1929,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a push method for an array column.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      */
     protected function addAddArrayElement(&$script, Column $col)
@@ -1974,7 +1974,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a remove method for an array column.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      */
     protected function addRemoveArrayElement(&$script, Column $col)
@@ -2022,7 +2022,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Enum columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -2053,7 +2053,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for an enum mutator.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addEnumMutatorComment(&$script, Column $column)
@@ -2072,7 +2072,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a setter for SET column mutator.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -2110,7 +2110,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a SET column mutator.
      *
-     * @param string &$script
+     * @param string $script
      * @param Column $column
      */
     public function addSetMutatorComment(&$script, Column $column)
@@ -2128,7 +2128,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds setter method for boolean columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -2176,7 +2176,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds setter method for "normal" columns.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param Column $col     The current column.
      * @see parent::addColumnMutators()
      */
@@ -2207,7 +2207,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hasOnlyDefaultValues() method.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addHasOnlyDefaultValues(&$script)
     {
@@ -2219,7 +2219,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesComment(&$script)
@@ -2237,7 +2237,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesOpen(&$script)
@@ -2249,7 +2249,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesBody(&$script)
@@ -2281,7 +2281,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHasOnlyDefaultValues
      **/
     protected function addHasOnlyDefaultValuesClose(&$script)
@@ -2296,7 +2296,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addHydrate(&$script)
     {
@@ -2308,7 +2308,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateComment(&$script)
@@ -2336,7 +2336,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateOpen(&$script)
@@ -2348,7 +2348,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateBody(&$script)
@@ -2456,7 +2456,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addHydrate()
      */
     protected function addHydrateClose(&$script)
@@ -2468,7 +2468,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      **/
     protected function addBuildPkeyCriteria(&$script)
     {
@@ -2482,7 +2482,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaComment(&$script)
@@ -2502,7 +2502,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaOpen(&$script)
@@ -2514,7 +2514,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaBody(&$script)
@@ -2537,7 +2537,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildPkeyCriteria()
      **/
     protected function addBuildPkeyCriteriaClose(&$script)
@@ -2551,7 +2551,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      **/
     protected function addBuildCriteria(&$script)
     {
@@ -2563,7 +2563,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaComment(&$script)
@@ -2578,7 +2578,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaOpen(&$script)
@@ -2590,7 +2590,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaBody(&$script)
@@ -2609,7 +2609,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addBuildCriteria()
      **/
     protected function addBuildCriteriaClose(&$script)
@@ -2623,7 +2623,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the toArray method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      **/
     protected function addToArray(&$script)
     {
@@ -2759,7 +2759,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByName method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      **/
     protected function addGetByName(&$script)
     {
@@ -2771,7 +2771,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the getByName method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameComment(&$script)
@@ -2792,7 +2792,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the getByName method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameOpen(&$script)
@@ -2805,7 +2805,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the getByName method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameBody(&$script)
@@ -2817,7 +2817,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the getByName method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByName
      **/
     protected function addGetByNameClose(&$script)
@@ -2831,7 +2831,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      **/
     protected function addGetByPosition(&$script)
     {
@@ -2843,7 +2843,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionComment(&$script)
@@ -2860,7 +2860,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionOpen(&$script)
@@ -2872,7 +2872,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionBody(&$script)
@@ -2898,7 +2898,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addGetByPosition
      **/
     protected function addGetByPositionClose(&$script)
@@ -3070,7 +3070,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a delete() method to remove the object form the datastore.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addDelete(&$script)
     {
@@ -3082,7 +3082,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the delete function
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteComment(&$script)
@@ -3102,7 +3102,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the delete function
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteOpen(&$script)
@@ -3114,7 +3114,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the delete function
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteBody(&$script)
@@ -3162,7 +3162,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the delete function
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addDelete()
      **/
     protected function addDeleteClose(&$script)
@@ -3174,7 +3174,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a reload() method to re-fetch the data for this object from the database.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addReload(&$script)
     {
@@ -3263,7 +3263,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods related to refreshing, saving and deleting the object.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addManipulationMethods(&$script)
     {
@@ -3297,7 +3297,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= ";\n";
 
-        /** @var $primaryKeyFKs ForeignKey[] */
+        /** @var ForeignKey[] $primaryKeyFKs */
         $primaryKeyFKs = [];
         $foreignKeyPKCount = 0;
         foreach ($this->getTable()->getForeignKeys() as $foreignKey) {
@@ -3340,7 +3340,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct getPrimaryKey() method for this object.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addGetPrimaryKey(&$script)
     {
@@ -3357,7 +3357,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addGetPrimaryKey_SinglePK(&$script)
     {
@@ -3379,7 +3379,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addGetPrimaryKey_MultiPK(&$script)
     {
@@ -3411,7 +3411,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * This "feature" is deprecated, since the getPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @deprecated
      */
     protected function addGetPrimaryKey_NoPK(&$script)
@@ -3431,7 +3431,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct setPrimaryKey() method for this object.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addSetPrimaryKey(&$script)
     {
@@ -3448,7 +3448,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a single-column primary key.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addSetPrimaryKey_SinglePK(&$script)
     {
@@ -3474,7 +3474,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addSetPrimaryKey_MultiPK(&$script)
     {
@@ -3504,7 +3504,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * This "feature" is deprecated, since the setPrimaryKey() method is not required
      * by the Persistent interface (or used by the templates).  Hence, this method is also
      * deprecated.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @deprecated
      */
     protected function addSetPrimaryKey_NoPK(&$script)
@@ -3528,7 +3528,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the isPrimaryKeyNull() method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addIsPrimaryKeyNull(&$script)
     {
@@ -3591,7 +3591,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods that get & set objects related by foreign key to the current object.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addFKMethods(&$script)
     {
@@ -3605,7 +3605,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the class attributes that are needed to store fkey related objects.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
@@ -3623,7 +3623,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the mutator (setter) method for setting an fkey related object.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKMutator(&$script, ForeignKey $fk)
@@ -3708,7 +3708,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the accessor (getter) method for getting an fkey related object.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
      */
     protected function addFKAccessor(&$script, ForeignKey $fk)
@@ -3813,7 +3813,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
@@ -3883,7 +3883,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the attributes used to store objects that have referrer fkey relationships to this object.
      * <code>protected collVarName;</code>
      * <code>private lastVarNameCriteria = null;</code>
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
@@ -3910,7 +3910,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods for retrieving, initializing, adding objects that are related to this one by foreign keys.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addRefFKMethods(&$script)
     {
@@ -3940,7 +3940,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string       &$script
+     * @param string $script
      * @param ForeignKey[] $referrers
      */
     protected function addInitRelations(&$script, $referrers)
@@ -3975,7 +3975,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKClear(&$script, ForeignKey $refFK)
@@ -4002,7 +4002,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKInit(&$script, ForeignKey $refFK)
@@ -4039,7 +4039,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKAdd(&$script, ForeignKey $refFK)
@@ -4086,7 +4086,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the size of the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
@@ -4137,7 +4137,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
@@ -4272,7 +4272,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKDoAdd(&$script, ForeignKey $refFK)
@@ -4302,7 +4302,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKRemove(&$script, ForeignKey $refFK)
@@ -4359,7 +4359,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that gets a one-to-one related referrer fkey.
      * This is for one-to-one relationship special case.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
@@ -4394,7 +4394,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that sets a one-to-one related referrer fkey.
      * This is for one-to-one relationships special case.
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK   The referencing foreign key.
      */
     protected function addPKRefFKSet(&$script, ForeignKey $refFK)
@@ -4527,7 +4527,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param $script
+     * @param string $script
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFkScheduledForDeletion(&$script, CrossForeignKeys $crossFKs)
@@ -4740,7 +4740,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKClear(&$script, CrossForeignKeys $crossFKs)
@@ -4768,7 +4768,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that clears the referrer fkey collection.
      *
-     * @param string     &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param ForeignKey $refFK
      */
     protected function addRefFKPartial(&$script, ForeignKey $refFK)
@@ -4789,7 +4789,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKInit(&$script, CrossForeignKeys $crossFKs)
@@ -4869,7 +4869,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that check if the referrer fkey collection is initialized.
-     * @param string           &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKIsLoaded(&$script, CrossForeignKeys $crossFKs)
@@ -5264,7 +5264,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * @param string           $script
-     * @param CrossForeignKeys $crossFks
+     * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKCount(&$script, CrossForeignKeys $crossFKs)
     {
@@ -5365,7 +5365,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKAdd(&$script, CrossForeignKeys $crossFKs)
@@ -5435,7 +5435,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string           &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param CrossForeignKeys $crossFKs
      */
     protected function addCrossFKDoAdd(&$script, CrossForeignKeys $crossFKs)
@@ -5648,7 +5648,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the workhourse doSave() method.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addDoSave(&$script)
     {
@@ -6063,7 +6063,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addAlreadyInSaveAttribute(&$script)
     {
@@ -6080,7 +6080,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the save() method.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addSave(&$script)
     {
@@ -6092,7 +6092,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the save method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveComment(&$script)
@@ -6139,7 +6139,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the save method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveOpen(&$script)
@@ -6154,7 +6154,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the save method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveBody(&$script)
@@ -6171,7 +6171,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->alreadyInSave) {
             return 0;
         }
- 
+
         if (\$con === null) {
             \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
@@ -6262,7 +6262,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the save method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @see addSave()
      **/
     protected function addSaveClose(&$script)
@@ -6274,7 +6274,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the ensureConsistency() method to ensure that internal state is correct.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addEnsureConsistency(&$script)
     {
@@ -6327,7 +6327,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addCopy(&$script)
     {
@@ -6361,7 +6361,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the copyInto() method, which takes an object and sets contents to match current object.
      * In complex OM this method includes the $deepCopy param for making copies of related objects.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addCopyInto(&$script)
     {
@@ -6459,7 +6459,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds clear method
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addClear(&$script)
     {
@@ -6526,7 +6526,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds clearAllReferences() method which resets all the collections of referencing
      * fk objects.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addClearAllReferences(&$script)
     {
@@ -6600,7 +6600,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a magic __toString() method if a string column was defined as primary string
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addPrimaryString(&$script)
     {
@@ -6638,7 +6638,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a magic __call() method.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addMagicCall(&$script)
     {

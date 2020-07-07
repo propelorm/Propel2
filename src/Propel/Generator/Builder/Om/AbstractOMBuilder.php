@@ -457,7 +457,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * return the string for the class namespace
      *
-     * @return string
+     * @return string|null
      */
     public function getNamespaceStatement()
     {
@@ -467,6 +467,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
 ", $namespace);
         }
+
+        return null;
     }
 
     /**
@@ -943,7 +945,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $modifier The name of the modifier object providing the method in the behavior
-     * @param string &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      */
     public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = "        ")
     {
@@ -1023,8 +1025,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Most of the code comes from the PHP-CS-Fixer project
      *
-     * @param $content
-     * @return mixed
+     * @param string $content
+     * @return string
      */
     private function clean($content)
     {
@@ -1066,7 +1068,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Opens class.
      *
-     * @param string &$script
+     * @param string $script
      */
     abstract protected function addClassOpen(&$script);
 
@@ -1078,14 +1080,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Hint: Override this method in your subclass if you want to reorganize or
      * drastically change the contents of the generated object class.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     abstract protected function addClassBody(&$script);
 
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script
      */
     abstract protected function addClassClose(&$script);
 }

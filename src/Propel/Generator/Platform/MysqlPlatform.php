@@ -118,7 +118,7 @@ class MysqlPlatform extends DefaultPlatform
 
     public function supportsNativeDeleteTrigger()
     {
-        return strtolower($this->getDefaultTableEngine()) == 'innodb';
+        return strtolower($this->getDefaultTableEngine()) === 'innodb';
     }
 
     public function supportsIndexSize()
@@ -137,7 +137,7 @@ class MysqlPlatform extends DefaultPlatform
             $mysqlTableType = $this->getDefaultTableEngine();
         }
 
-        return strtolower($mysqlTableType) == 'innodb';
+        return strtolower($mysqlTableType) === 'innodb';
     }
 
     public function getAddTablesDDL(Database $database)
@@ -177,7 +177,7 @@ SET FOREIGN_KEY_CHECKS = 1;
      *
      * @param Table $table
      *
-     * @return string
+     * @return string|null
      */
     public function getPrimaryKeyDDL(Table $table)
     {

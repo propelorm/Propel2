@@ -358,14 +358,16 @@ class Criteria
     /**
      * Returns the column name associated with an alias (AS-column).
      *
-     * @param  string $alias
-     * @return string $string
+     * @param  string $as Alias
+     * @return string|null $string
      */
     public function getColumnForAs($as)
     {
         if (isset($this->asColumns[$as])) {
             return $this->asColumns[$as];
         }
+
+        return null;
     }
 
     /**
@@ -412,13 +414,15 @@ class Criteria
      * Returns the table name associated with an alias.
      *
      * @param  string $alias
-     * @return string $string
+     * @return string|null $string
      */
     public function getTableForAlias($alias)
     {
         if (isset($this->aliases[$alias])) {
             return $this->aliases[$alias];
         }
+
+        return null;
     }
 
     /**
@@ -687,7 +691,7 @@ class Criteria
      * any SELECT columns or WHERE columns.  This must be explicitly
      * set, of course, in order to be useful.
      *
-     * @param string $v
+     * @param string $tableName
      */
     public function setPrimaryTableName($tableName)
     {
@@ -1837,7 +1841,7 @@ class Criteria
      * to be set before the statement is executed.  The reason we do it this way
      * is to let the PDO layer handle all escaping & value formatting.
      *
-     * @param  array  &$params Parameters that are to be replaced in prepared statement.
+     * @param  array $params Parameters that are to be replaced in prepared statement.
      * @return string
      *
      * @throws \Propel\Runtime\Exception\PropelException Trouble creating the query string.
@@ -2444,7 +2448,7 @@ class Criteria
                 $stmt = $con->prepare($sql);
 
                 // Replace ':p?' with the actual values
-                $db->bindValues($stmt, $params, $dbMap, $db);
+                $db->bindValues($stmt, $params, $dbMap);
 
                 $stmt->execute();
 

@@ -77,8 +77,8 @@ class MssqlPlatform extends DefaultPlatform
 
     /**
      * Returns the DDL SQL to add the tables of a database
-     * together with index and foreign keys. 
-     * Since MSSQL always checks it the tables in foreign key definitions exist, 
+     * together with index and foreign keys.
+     * Since MSSQL always checks it the tables in foreign key definitions exist,
      * the foreign key DDLs are moved after all tables are created
      *
      * @return string
@@ -145,6 +145,11 @@ END
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string|null
+     */
     public function getPrimaryKeyDDL(Table $table)
     {
         if ($table->hasPrimaryKey()) {
@@ -157,11 +162,17 @@ END
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string|null
+     */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
+
         $pattern = "
 BEGIN
 ALTER TABLE %s ADD %s
@@ -190,11 +201,17 @@ END
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string|null
+     */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
+
         $pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';
         $script = sprintf($pattern,
             $this->quoteIdentifier($fk->getName()),
@@ -220,9 +237,15 @@ END
         return true;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
+
         return !(in_array($sqlType, $nosize));
     }
 

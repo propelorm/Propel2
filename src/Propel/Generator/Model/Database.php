@@ -165,7 +165,7 @@ class Database extends ScopedMappingModel
     /**
      * Sets the PlatformInterface implementation for this database.
      *
-     * @param PlatformInterface $platform A Platform implementation
+     * @param PlatformInterface|null $platform A Platform implementation
      */
     public function setPlatform(PlatformInterface $platform = null)
     {
@@ -293,7 +293,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the list of supported string formats
      *
-     * @return array
+     * @return string[]
      */
     public static function getSupportedStringFormats()
     {
@@ -722,7 +722,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the GeneratorConfigInterface object.
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {

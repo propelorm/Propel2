@@ -31,9 +31,9 @@ class ObjectCombinationCollection extends ObjectCollection
     {
         $ret = [];
 
-        /** @var $obj ActiveRecordInterface */
         foreach ($this as $combination) {
             $pkCombo = [];
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
             foreach ($combination as $key => $obj) {
                 $pkCombo[$key] = $obj->getPrimaryKey();
             }

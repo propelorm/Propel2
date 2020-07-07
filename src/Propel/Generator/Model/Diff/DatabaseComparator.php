@@ -49,7 +49,7 @@ class DatabaseComparator
     protected $removeTable = true;
 
     /**
-     * @var array list of excluded tables
+     * @var string[] list of excluded tables
      */
     protected $excludedTables = [];
 
@@ -124,7 +124,7 @@ class DatabaseComparator
     /**
      * Set the list of tables excluded from the comparison
      *
-     * @param array $excludedTables set the list of table name
+     * @param string[] $excludedTables set the list of table name
      */
     public function setExcludedTables(array $excludedTables)
     {
@@ -134,7 +134,7 @@ class DatabaseComparator
     /**
      * Returns the list of tables excluded from the comparison
      *
-     * @return array
+     * @return string[]
      */
     public function getExcludedTables()
     {
@@ -268,7 +268,7 @@ class DatabaseComparator
     }
 
     /**
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      * @return bool
      */
     protected function isTableExcluded(Table $table)

@@ -146,7 +146,7 @@ class Index extends MappingModel
     /**
      * Sets the index parent Table.
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      */
     public function setTable(Table $table)
     {

@@ -32,7 +32,6 @@ use Propel\Generator\Model\Diff\ColumnDiff;
  */
 class PgsqlPlatform extends DefaultPlatform
 {
-
     /**
      * @var string
      */
@@ -91,6 +90,11 @@ class PgsqlPlatform extends DefaultPlatform
         return 63;
     }
 
+    /**
+     * @param mixed $b
+     *
+     * @return string
+     */
     public function getBooleanString($b)
     {
         // parent method does the checking for allows string
@@ -263,7 +267,7 @@ SET search_path TO public;
 BEGIN;
 ";
     }
-    
+
     /**
      * @return string
      */

@@ -40,21 +40,21 @@ class TableDiff
     /**
      * The list of added columns.
      *
-     * @var array
+     * @var Column[]
      */
     protected $addedColumns;
 
     /**
      * The list of removed columns.
      *
-     * @var array
+     * @var Column[]
      */
     protected $removedColumns;
 
     /**
      * The list of modified columns.
      *
-     * @var array
+     * @var ColumnDiff[]
      */
     protected $modifiedColumns;
 
@@ -68,14 +68,14 @@ class TableDiff
     /**
      * The list of added primary key columns.
      *
-     * @var array
+     * @var Column[]
      */
     protected $addedPkColumns;
 
     /**
      * The list of removed primary key columns.
      *
-     * @var array
+     * @var Column[]
      */
     protected $removedPkColumns;
 
@@ -117,7 +117,7 @@ class TableDiff
     /**
      * The list of removed foreign keys.
      *
-     * @var array
+     * @var ForeignKey[]
      */
     protected $removedFks;
 
@@ -131,8 +131,8 @@ class TableDiff
     /**
      * Constructor.
      *
-     * @param Table $fromTable The first table
-     * @param Table $toTable   The second table
+     * @param \Propel\Generator\Model\Table $fromTable The first table
+     * @param \Propel\Generator\Model\Table $toTable   The second table
      */
     public function __construct(Table $fromTable = null, Table $toTable = null)
     {
@@ -162,7 +162,7 @@ class TableDiff
     /**
      * Sets the fromTable property.
      *
-     * @param Table $fromTable
+     * @param \Propel\Generator\Model\Table $fromTable
      */
     public function setFromTable(Table $fromTable)
     {
@@ -182,7 +182,7 @@ class TableDiff
     /**
      * Sets the toTable property.
      *
-     * @param Table $toTable
+     * @param \Propel\Generator\Model\Table $toTable
      */
     public function setToTable(Table $toTable)
     {
@@ -256,6 +256,8 @@ class TableDiff
         if (isset($this->addedColumns[$columnName])) {
             return $this->addedColumns[$columnName];
         }
+
+        return null;
     }
 
     /**
@@ -307,13 +309,15 @@ class TableDiff
      *
      * @param string $columnName
      *
-     * @param Column
+     * @return Column|null
      */
     public function getRemovedColumn($columnName)
     {
         if (isset($this->removedColumns[$columnName])) {
             return $this->removedColumns[$columnName];
         }
+
+        return null;
     }
 
     /**
@@ -452,7 +456,7 @@ class TableDiff
      * Add a removed Pk column
      *
      * @param string $columnName
-     * @param Column $removedColumn
+     * @param Column $removedPkColumn
      */
     public function addRemovedPkColumn($columnName, Column $removedPkColumn)
     {
@@ -695,7 +699,7 @@ class TableDiff
      * Adds a removed foreign key column.
      *
      * @param string     $fkName
-     * @param ForeignKey $removedColumn
+     * @param ForeignKey $removedFk
      */
     public function addRemovedFk($fkName, ForeignKey $removedFk)
     {

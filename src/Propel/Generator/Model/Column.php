@@ -92,14 +92,17 @@ class Column extends MappingModel
     // maybe this can be retrieved from vendor specific information
     private $needsTransactionInPostgres;
 
+    /**
+     * @var string[]
+     */
     protected $valueSet;
 
     /**
      * Creates a new column and set the name.
      *
-     * @param string $name The column's name
-     * @param string $type The column's type
-     * @param string $size The column's size
+     * @param string|null $name The column's name
+     * @param string|null $type The column's type
+     * @param string|null $size The column's size
      */
     public function __construct($name = null, $type = null, $size = null)
     {
@@ -637,7 +640,7 @@ class Column extends MappingModel
     /**
      * Sets the parent table.
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      */
     public function setTable(Table $table)
     {
@@ -1191,7 +1194,7 @@ class Column extends MappingModel
     /**
      * Sets the list of possible values for an ENUM or SET column.
      *
-     * @param array|string
+     * @param string|string[] $valueSet
      */
     public function setValueSet($valueSet)
     {
@@ -1206,7 +1209,7 @@ class Column extends MappingModel
     /**
      * Returns the list of possible values for an ENUM or SET column.
      *
-     * @return array
+     * @return string[]
      */
     public function getValueSet()
     {
@@ -1306,8 +1309,8 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param  ColumnDefaultValue|mixed $defaultValue The column's default value
-     * @return Column
+     * @param ColumnDefaultValue|string $defaultValue The column's default value
+     * @return void
      */
     public function setDefaultValue($defaultValue)
     {

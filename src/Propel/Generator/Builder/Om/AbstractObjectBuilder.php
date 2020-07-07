@@ -27,7 +27,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * Adds the getter methods for the column values.
      * This is here because it is probably generic enough to apply to templates being generated
      * in different languages (e.g. PHP4 and PHP5).
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addColumnAccessorMethods(&$script)
     {
@@ -74,7 +74,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * Adds the mutator (setter) methods for setting column values.
      * This is here because it is probably generic enough to apply to templates being generated
      * in different languages (e.g. PHP4 and PHP5).
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      */
     protected function addColumnMutatorMethods(&$script)
     {
@@ -182,7 +182,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string &$script  The script will be modified in this method.
+     * @param string $script  The script will be modified in this method.
      * @param string $tab
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
