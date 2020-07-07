@@ -44,7 +44,7 @@
     ],
     "scripts": {
         "stan": [
-            "vendor/bin/phpstan analyze -c tests/phpstan.neon"
+            "vendor/bin/phpstan analyze"
         ]
     },
     "extra": {

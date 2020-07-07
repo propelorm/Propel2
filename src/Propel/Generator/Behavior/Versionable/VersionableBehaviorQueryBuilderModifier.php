@@ -17,22 +17,39 @@ namespace Propel\Generator\Behavior\Versionable;
  */
 class VersionableBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Model\Behavior
+     */
     protected $behavior;
-
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
-
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
-
+    /**
+     * @var string
+     */
     protected $objectClassName;
-
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table    = $behavior->getTable();
     }
 
+    /**
+     * @return string
+     */
     public function queryAttributes()
     {
         return "
@@ -43,26 +60,49 @@ static \$isVersioningEnabled = true;
 ";
     }
 
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name = 'version_column')
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnPhpName($name = 'version_column')
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    /**
+     * @return string
+     */
     protected function getVersionQueryClassName()
     {
         return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
@@ -90,6 +130,11 @@ static \$isVersioningEnabled = true;
         return 'set' . $this->getColumnPhpName($name);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
         $this->setBuilder($builder);
@@ -106,6 +151,11 @@ static \$isVersioningEnabled = true;
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFilterByVersion(&$script)
     {
         $script .= "
@@ -123,6 +173,11 @@ public function filterByVersion(\$version = null, \$comparison = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addOrderByVersion(&$script)
     {
         $script .= "
@@ -139,6 +194,9 @@ public function orderByVersion(\$order = Criteria::ASC)
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addIsVersioningEnabled()
     {
         return "
@@ -154,6 +212,9 @@ static public function isVersioningEnabled()
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addEnableVersioning()
     {
         return "
@@ -167,6 +228,9 @@ static public function enableVersioning()
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addDisableVersioning()
     {
         return "

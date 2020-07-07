@@ -1,0 +1,222 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Variable \\$paramsDoc might not be defined\\.$#"
+			count: 4
+			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
+
+		-
+			message: "#^Variable \\$methodSignature might not be defined\\.$#"
+			count: 10
+			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
+
+		-
+			message: "#^Variable \\$buildScope might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
+
+		-
+			message: "#^Variable \\$col might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addHasArrayElement\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultAccessor\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addLazyLoader\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addLobMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addAddArrayElement\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addRemoveArrayElement\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Variable \\$mysqlInvalidDateString might not be defined\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
+			message: "#^Variable \\$crossFK might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
+			message: "#^Parameter \\$definition of method Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\ArrayInput\\:\\:__construct\\(\\) has invalid typehint type Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\InputDefinition\\.$#"
+			count: 1
+			path: src/Propel/Generator/Command/Console/Input/ArrayInput.php
+
+		-
+			message: "#^Variable \\$migration might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Command/MigrationMigrateCommand.php
+
+		-
+			message: "#^Variable \\$countValidTimestamps might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Command/MigrationStatusCommand.php
+
+		-
+			message: "#^Variable \\$defaultDatasource might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Config/ArrayToPhpConverter.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Manager\\\\AbstractManager\\:\\:getLocation\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/AbstractManager.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\ForeignKey\\:\\:getLocalForeignMapping\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/ForeignKey.php
+
+		-
+			message: "#^Variable \\$strDefault might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Reverse/PgsqlSchemaParser.php
+
+		-
+			message: "#^Variable \\$fk might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
+
+		-
+			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:\\$useAliasInSQL\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:getShortName\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:find\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
+
+		-
+			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$currentAlias\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$foundMatch\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Variable \\$sql might not be defined\\.$#"
+			count: 3
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Variable \\$sql might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Variable \\$dbMap might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
+
+		-
+			message: "#^Variable \\$params might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
+
