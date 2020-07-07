@@ -12,6 +12,10 @@ namespace Propel\Runtime\Validator\Constraints;
 use Symfony\Component\Validator\Constraints\DateValidator as SymfonyDateValidator;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Validates Dates
+ * Supports \DateTimeInterface values which were removed from the DateValidator in Symfony 5.
+ */
 class DateValidator extends SymfonyDateValidator
 {
     /**
