@@ -20,3 +20,4 @@ parameters:
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'
         - '#Class .+TreeBuilder constructor invoked with 0 parameters, 1-3 required#'
+        - '#PHPDoc tag @throws with type .+FileLoaderLoadException|.+LoaderLoadException is not subtype of Throwable#'
