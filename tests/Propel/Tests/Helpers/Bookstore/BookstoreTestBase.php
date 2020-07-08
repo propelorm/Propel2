@@ -64,7 +64,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Propel::getServiceContainer()->closeConnections();
     }
