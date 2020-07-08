@@ -234,7 +234,7 @@ class ConfigurationManager
      * @param string $fileName The configuration file
      *
      * @return array|mixed
-     * @throws \Symfony\Component\Config\Exception\LoaderLoadException
+     * @throws \Symfony\Component\Config\Exception\LoaderLoadException|\Symfony\Component\Config\Exception\FileLoaderLoadException
      */
     private function loadFile($fileName)
     {
