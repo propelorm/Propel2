@@ -20,7 +20,7 @@ use Propel\Tests\TestCase;
  */
 class TableBehaviorTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }

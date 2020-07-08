@@ -46,7 +46,7 @@ class CriteriaTest extends BookstoreTestBase
 //     */
 //    private $savedAdapter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->c = new ModelCriteria();

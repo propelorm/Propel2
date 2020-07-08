@@ -28,7 +28,7 @@ class ObjectBuilderTest extends TestCase
 {
     protected $builder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $builder = new TestableObjectBuilder(new Table('Foo'));
         $builder->setPlatform(new MysqlPlatform());

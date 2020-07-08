@@ -18,7 +18,7 @@ class JsonFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new JsonFileLoader(new FileLocator(sys_get_temp_dir()));
     }

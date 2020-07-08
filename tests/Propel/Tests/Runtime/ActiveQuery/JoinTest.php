@@ -32,7 +32,7 @@ class JoinTest extends BaseTestCase
      */
     private $savedAdapter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
@@ -41,7 +41,7 @@ class JoinTest extends BaseTestCase
         Propel::getServiceContainer()->setAdapter(null, new SqliteAdapter());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Propel::getServiceContainer()->setAdapter(null, $this->savedAdapter);
         parent::tearDown();

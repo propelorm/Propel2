@@ -30,7 +30,7 @@ use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
 class PropelQueryTest extends BookstoreTestBase
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         include_once(__DIR__.'/PropelQueryTestClasses.php');

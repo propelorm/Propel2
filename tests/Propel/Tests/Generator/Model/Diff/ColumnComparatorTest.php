@@ -21,7 +21,7 @@ use \Propel\Tests\TestCase;
  */
 class ColumnComparatorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }

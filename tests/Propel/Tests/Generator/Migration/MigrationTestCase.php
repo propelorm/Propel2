@@ -34,7 +34,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      */
     protected $platform;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!$this->con) {

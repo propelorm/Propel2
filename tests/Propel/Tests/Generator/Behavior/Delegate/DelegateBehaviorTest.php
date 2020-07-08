@@ -24,7 +24,7 @@ use Propel\Tests\TestCase;
 class DelegateBehaviorTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('DelegateDelegate')) {
             $schema = <<<EOF

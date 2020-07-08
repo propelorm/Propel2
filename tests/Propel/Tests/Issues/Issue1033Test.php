@@ -13,7 +13,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class Issue1033Test extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('\Base\Issue1033Book')) {
             $schema = <<<EOF
@@ -40,7 +40,7 @@ EOF;
             $noExceptionThrown = false;
 	}
 
-        $this->assertTrue($noExceptionThrown);        
+        $this->assertTrue($noExceptionThrown);
     }
 
 }

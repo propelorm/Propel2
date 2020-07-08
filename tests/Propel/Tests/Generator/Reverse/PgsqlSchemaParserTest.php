@@ -27,7 +27,7 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         Propel::init(__DIR__ . '/../../../../Fixtures/reverse/pgsql/build/conf/reverse-bookstore-conf.php');
@@ -40,7 +40,7 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->con) {
             $this->con->rollback();

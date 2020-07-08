@@ -31,7 +31,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
     /**
      * This is run before each unit test; it populates the database.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
 	    parent::setUp();
         if (true !== self::$isInitialized) {
@@ -49,7 +49,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
     /**
      * This is run after each unit test. It empties the database.
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // Only commit if the transaction hasn't failed.
         // This is because tearDown() is also executed on a failed tests,

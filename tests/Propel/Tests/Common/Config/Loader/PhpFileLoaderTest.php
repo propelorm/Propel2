@@ -18,7 +18,7 @@ class PhpFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loader = new PhpFileLoader(new FileLocator(sys_get_temp_dir()));
     }

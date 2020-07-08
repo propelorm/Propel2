@@ -40,7 +40,7 @@ class MssqlAdapterTest extends TestCase
      */
     private $savedAdapter;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Propel::init(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
         parent::setUp();
@@ -58,7 +58,7 @@ class MssqlAdapterTest extends TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Propel::getServiceContainer()->setAdapter(
             Propel::getServiceContainer()->getDefaultDatasource(),

@@ -20,7 +20,7 @@ use Propel\Tests\TestCase;
  */
 class ActiveRecordTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         include_once(__DIR__.'/ActiveRecordTestClasses.php');

@@ -130,12 +130,12 @@ EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reader = new SchemaReader();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->reader = null;
     }

@@ -17,7 +17,7 @@ class QuickGeneratorConfigTest extends TestCase
 {
     protected $generatorConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->generatorConfig = new QuickGeneratorConfig();
     }

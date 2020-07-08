@@ -32,7 +32,7 @@ use Propel\Runtime\Map\TableMap;
  */
 class ArrayCollectionTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);
