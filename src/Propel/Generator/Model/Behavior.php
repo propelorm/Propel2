@@ -290,7 +290,7 @@ class Behavior extends MappingModel
 
     /**
      * This method is automatically called on table behaviors when the database
-     * model is finished. It also override it to add columns to the current
+     * model is finished. Override this method to add columns to the current
      * table.
      *
      * @return void
