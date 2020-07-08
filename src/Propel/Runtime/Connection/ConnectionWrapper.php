@@ -53,7 +53,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * The wrapped connection class
-     * @var ConnectionInterface
+     * @var ConnectionInterface|null
      */
     protected $connection;
 
@@ -500,10 +500,10 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * object, depending on the underlying driver. For example, PDO_PGSQL()
      * requires you to specify the name of a sequence object for the name parameter.
      *
-     * @param string $name Name of the sequence object from which the ID should be
+     * @param string|null $name Name of the sequence object from which the ID should be
      *                     returned.
      *
-     * @return string If a sequence name was not specified for the name parameter,
+     * @return string|int If a sequence name was not specified for the name parameter,
      *                returns a string representing the row ID of the last row that was
      *                inserted into the database.
      *                If a sequence name was specified for the name parameter, returns

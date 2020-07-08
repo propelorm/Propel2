@@ -66,7 +66,11 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function rewind()
     {
-        return null === $this->dataObject ? null : reset($this->dataObject);
+        if ($this->dataObject === null) {
+            return;
+        }
+
+        reset($this->dataObject);
     }
 
     /**

@@ -242,6 +242,11 @@ SET search_path TO public;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string
+     */
     public function getForeignKeyDDL(ForeignKey $fk) {
         $script = parent::getForeignKeyDDL($fk);
 

@@ -57,6 +57,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $connectionManagers = [];
 
     /**
+     * @phpstan-var class-string<\Propel\Runtime\Util\Profiler>
+     *
      * @var string
      */
     protected $profilerClass = ServiceContainerInterface::DEFAULT_PROFILER_CLASS;
@@ -67,7 +69,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profilerConfiguration = [];
 
     /**
-     * @var \Propel\Runtime\Util\Profiler
+     * @var \Propel\Runtime\Util\Profiler|null
      */
     protected $profiler;
 
@@ -432,6 +434,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     {
         if (null === $this->profiler) {
             $class = $this->profilerClass;
+            /** @var \Propel\Runtime\Util\Profiler $profiler */
             $profiler = new $class();
             if (!empty($this->profilerConfiguration)) {
                 $profiler->setConfiguration($this->profilerConfiguration);

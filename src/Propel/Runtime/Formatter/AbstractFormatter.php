@@ -200,6 +200,9 @@ abstract class AbstractFormatter
 
     abstract public function formatOne(DataFetcherInterface $dataFetcher = null);
 
+    /**
+     * @return bool
+     */
     abstract public function isObjectFormatter();
 
     public function checkInit()

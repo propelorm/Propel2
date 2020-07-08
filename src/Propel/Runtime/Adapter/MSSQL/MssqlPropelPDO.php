@@ -26,14 +26,14 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return integer
+     * @return bool
      */
     public function beginTransaction()
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
         if ($opcount === 0) {
-            $return = self::exec('BEGIN TRANSACTION');
+            $return = (bool)$this->exec('BEGIN TRANSACTION');
             if ($this->useDebug) {
                 $this->log('Begin transaction: ' . __METHOD__);
             }
@@ -50,7 +50,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return integer
+     * @return bool
      */
     public function commit()
     {
@@ -60,12 +60,11 @@ class MssqlPropelPDO extends PropelPDO
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new PropelException('Cannot commit because a nested transaction was rolled back');
-                } else {
-                    $return = self::exec('COMMIT TRANSACTION');
-                    if ($this->useDebug) {
-                        $this->log('Commit transaction: ' . __METHOD__);
-                    }
+                }
 
+                $return = (bool)$this->exec('COMMIT TRANSACTION');
+                if ($this->useDebug) {
+                    $this->log('Commit transaction: ' . __METHOD__);
                 }
             }
             $this->nestedTransactionCount--;
@@ -80,7 +79,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return integer
+     * @return bool
      */
     public function rollBack()
     {
@@ -88,7 +87,7 @@ class MssqlPropelPDO extends PropelPDO
         $opcount = $this->getNestedTransactionCount();
         if ($opcount > 0) {
             if ($opcount === 1) {
-                $return = self::exec('ROLLBACK TRANSACTION');
+                $return = (bool)$this->exec('ROLLBACK TRANSACTION');
                 if ($this->useDebug) {
                     $this->log('Rollback transaction: ' . __METHOD__);
                 }
@@ -108,7 +107,7 @@ class MssqlPropelPDO extends PropelPDO
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
      *
-     * @return integer
+     * @return bool
      */
     public function forceRollBack()
     {
@@ -117,7 +116,7 @@ class MssqlPropelPDO extends PropelPDO
         if ($opcount > 0) {
             // If we're in a transaction, always roll it back
             // regardless of nesting level.
-            $return = self::exec('ROLLBACK TRANSACTION');
+            $return = (bool)$this->exec('ROLLBACK TRANSACTION');
 
             // reset nested transaction count to 0 so that we don't
             // try to commit (or rollback) the transaction outside this scope.
@@ -132,12 +131,12 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param  string  $seqname
+     * @param  string|null  $seqname
      * @return integer
      */
     public function lastInsertId($seqname = null)
     {
-        $result = self::query('SELECT SCOPE_IDENTITY()');
+        $result = $this->query('SELECT SCOPE_IDENTITY()');
 
         return (int) $result->fetchColumn();
     }

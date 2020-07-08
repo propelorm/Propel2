@@ -42,7 +42,7 @@ class Index extends MappingModel
     protected $columnObjects = [];
 
     /**
-     * @var string[]
+     * @var int[]
      */
     protected $columnsSize;
 
@@ -237,7 +237,7 @@ class Index extends MappingModel
      *
      * @param  string  $name
      * @param  boolean $caseInsensitive
-     * @return integer
+     * @return int|null
      */
     public function getColumnSize($name, $caseInsensitive = false)
     {
@@ -249,6 +249,7 @@ class Index extends MappingModel
             }
             return null;
         }
+
         return isset($this->columnsSize[$name]) ? $this->columnsSize[$name] : null;
     }
 

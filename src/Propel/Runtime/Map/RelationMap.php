@@ -66,7 +66,7 @@ class RelationMap
     protected $localValues = [];
 
     /**
-     * @var ColumnMap[]
+     * @var (\Propel\Runtime\Map\ColumnMap|null)[]
      */
     protected $foreignColumns = [];
 

@@ -82,7 +82,7 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param ActiveRecordInterface|null $record the object to format
      *
      * @return array The original record turned into an array
      */
@@ -91,11 +91,19 @@ class SimpleArrayFormatter extends AbstractFormatter
         return $record ? $record->toArray() : [];
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;
     }
 
+    /**
+     * @param array $row
+     *
+     * @return array
+     */
     public function getStructuredArrayFromRow($row)
     {
         $columnNames = array_keys($this->getAsColumns());

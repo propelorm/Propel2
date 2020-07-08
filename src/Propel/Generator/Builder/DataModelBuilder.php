@@ -59,43 +59,43 @@ abstract class DataModelBuilder
 
     /**
      * Object builder class for current table.
-     * @var DataModelBuilder
+     * @var ObjectBuilder
      */
     private $objectBuilder;
 
     /**
      * Stub Object builder class for current table.
-     * @var DataModelBuilder
+     * @var ObjectBuilder
      */
     private $stubObjectBuilder;
 
     /**
      * Query builder class for current table.
-     * @var DataModelBuilder
+     * @var ObjectBuilder
      */
     private $queryBuilder;
 
     /**
      * Stub Query builder class for current table.
-     * @var DataModelBuilder
+     * @var ObjectBuilder
      */
     private $stubQueryBuilder;
 
     /**
      * TableMap builder class for current table.
-     * @var DataModelBuilder
+     * @var TableMapBuilder
      */
     protected $tablemapBuilder;
 
     /**
      * Stub Interface builder class for current table.
-     * @var DataModelBuilder
+     * @var ObjectBuilder
      */
     private $interfaceBuilder;
 
     /**
      * Stub child object for current table.
-     * @var DataModelBuilder
+     * @var MultiExtendObjectBuilder
      */
     private $multiExtendObjectBuilder;
 
@@ -140,7 +140,9 @@ abstract class DataModelBuilder
     public function getObjectBuilder()
     {
         if (!isset($this->objectBuilder)) {
-            $this->objectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
+            /** @var ObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
+            $this->objectBuilder = $builder;
         }
 
         return $this->objectBuilder;
@@ -153,7 +155,9 @@ abstract class DataModelBuilder
     public function getStubObjectBuilder()
     {
         if (!isset($this->stubObjectBuilder)) {
-            $this->stubObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
+            /** @var ObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
+            $this->stubObjectBuilder = $builder;
         }
 
         return $this->stubObjectBuilder;
@@ -166,7 +170,9 @@ abstract class DataModelBuilder
     public function getQueryBuilder()
     {
         if (!isset($this->queryBuilder)) {
-            $this->queryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
+            /** @var ObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
+            $this->queryBuilder = $builder;
         }
 
         return $this->queryBuilder;
@@ -179,7 +185,9 @@ abstract class DataModelBuilder
     public function getStubQueryBuilder()
     {
         if (!isset($this->stubQueryBuilder)) {
-            $this->stubQueryBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
+            /** @var ObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
+            $this->stubQueryBuilder = $builder;
         }
 
         return $this->stubQueryBuilder;
@@ -192,7 +200,9 @@ abstract class DataModelBuilder
     public function getTableMapBuilder()
     {
         if (!isset($this->tablemapBuilder)) {
-            $this->tablemapBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
+            /** @var TableMapBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
+            $this->tablemapBuilder = $builder;
         }
 
         return $this->tablemapBuilder;
@@ -205,7 +215,9 @@ abstract class DataModelBuilder
     public function getInterfaceBuilder()
     {
         if (!isset($this->interfaceBuilder)) {
-            $this->interfaceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
+            /** @var ObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
+            $this->interfaceBuilder = $builder;
         }
 
         return $this->interfaceBuilder;
@@ -218,7 +230,9 @@ abstract class DataModelBuilder
     public function getMultiExtendObjectBuilder()
     {
         if (!isset($this->multiExtendObjectBuilder)) {
-            $this->multiExtendObjectBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
+            /** @var MultiExtendObjectBuilder $builder */
+            $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
+            $this->multiExtendObjectBuilder= $builder;
         }
 
         return $this->multiExtendObjectBuilder;
@@ -251,7 +265,10 @@ abstract class DataModelBuilder
      */
     public function getNewObjectBuilder(Table $table)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
+        /** @var ObjectBuilder $builder */
+        $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
+
+        return $builder;
     }
 
     /**
@@ -265,7 +282,10 @@ abstract class DataModelBuilder
      */
     public function getNewStubObjectBuilder(Table $table)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
+        /** @var ObjectBuilder $builder */
+        $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
+
+        return $builder;
     }
 
     /**
@@ -279,7 +299,10 @@ abstract class DataModelBuilder
      */
     public function getNewQueryBuilder(Table $table)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
+        /** @var QueryBuilder $builder */
+        $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
+
+        return $builder;
     }
 
     /**
@@ -293,14 +316,17 @@ abstract class DataModelBuilder
      */
     public function getNewStubQueryBuilder(Table $table)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
+        /** @var QueryBuilder $builder */
+        $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
+
+        return $builder;
     }
 
     /**
      * Returns new Query Inheritance builder class for this table.
      *
      * @param  Inheritance   $child
-     * @return ObjectBuilder
+     * @return QueryInheritanceBuilder
      */
     public function getNewQueryInheritanceBuilder(Inheritance $child)
     {
@@ -315,7 +341,7 @@ abstract class DataModelBuilder
      * Returns new stub Query Inheritance builder class for this table.
      *
      * @param  Inheritance   $child
-     * @return ObjectBuilder
+     * @return QueryInheritanceBuilder
      */
     public function getNewStubQueryInheritanceBuilder(Inheritance $child)
     {
@@ -328,11 +354,17 @@ abstract class DataModelBuilder
 
     /**
      * Returns new stub Query Inheritance builder class for this table.
-     * @return TableMapBuilder
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return \Propel\Generator\Builder\Om\TableMapBuilder
      */
     public function getNewTableMapBuilder(Table $table)
     {
-        return $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
+        /** @var \Propel\Generator\Builder\Om\TableMapBuilder $builder */
+        $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
+
+        return $builder;
     }
 
     /**
@@ -355,7 +387,7 @@ abstract class DataModelBuilder
      * <code>'database.adapter.mysql.tableType</code>
      *
      * @param  string $name
-     * @return string
+     * @return string|null
      */
     public function getBuildProperty($name)
     {
@@ -363,7 +395,7 @@ abstract class DataModelBuilder
             return $this->getGeneratorConfig()->getConfigProperty($name);
         }
 
-        return null; // just to be explicit
+        return null;
     }
 
     /**

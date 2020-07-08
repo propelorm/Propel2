@@ -39,7 +39,7 @@ abstract class AbstractCriterion
 
     /**
      * Table name
-     * @var string
+     * @var string|null
      */
     protected $table;
 
@@ -213,7 +213,7 @@ abstract class AbstractCriterion
      * Get the list of clauses in this Criterion.
      * @return self[]
      */
-    private function getClauses()
+    public function getClauses()
     {
         return $this->clauses;
     }
@@ -268,8 +268,10 @@ abstract class AbstractCriterion
     public function appendPsTo(&$sb, array &$params)
     {
         if (!$this->clauses) {
-            return $this->appendPsForUniqueClauseTo($sb, $params);
+            $this->appendPsForUniqueClauseTo($sb, $params);
+            return;
         }
+
         // if there are sub criterions, they must be combined to this criterion
         $sb .= str_repeat('(', count($this->clauses));
         $this->appendPsForUniqueClauseTo($sb, $params);
@@ -280,6 +282,9 @@ abstract class AbstractCriterion
         }
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $sb = '';
@@ -337,7 +342,7 @@ abstract class AbstractCriterion
             $isEquiv &= $this->value === $crit->getValue();
         }
 
-        return $isEquiv;
+        return (bool)$isEquiv;
     }
 
     /**

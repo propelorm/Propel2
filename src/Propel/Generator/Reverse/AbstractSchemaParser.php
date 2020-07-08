@@ -173,7 +173,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Gets a mapped Propel type for specified native type.
      *
      * @param  string $nativeType
-     * @return string The mapped Propel type.
+     * @return string|null The mapped Propel type.
      */
     protected function getMappedPropelType($nativeType)
     {

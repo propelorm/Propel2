@@ -43,7 +43,7 @@ interface GeneratorConfigInterface
      *
      * @param  ConnectionInterface $con
      * @param  string              $database
-     * @return PlatformInterface
+     * @return PlatformInterface|null
      *
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the platform class doesn't exists
      * @throws \Propel\Generator\Exception\BuildException         if the class isn't an implementation of PlatformInterface
@@ -56,7 +56,7 @@ interface GeneratorConfigInterface
      * @param  ConnectionInterface $con
      * @param  string              $database
      *
-     * @return SchemaParserInterface
+     * @return SchemaParserInterface|null
      *
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the class doesn't exist
      * @throws \Propel\Generator\Exception\BuildException         if the class isn't an implementation of SchemaParserInterface

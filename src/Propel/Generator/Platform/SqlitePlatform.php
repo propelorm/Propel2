@@ -214,7 +214,7 @@ DROP TABLE %s;
         }
 
         foreach ($tableDiff->getRenamedColumns() as $col) {
-            list ($from, $to) = $col;
+            [$from, $to] = $col;
             $fieldMap[$from->getName()] = $to->getName();
         }
 
@@ -285,6 +285,7 @@ PRAGMA foreign_keys = ON;
      * those UNIQUE is otherwise automatically created by the sqlite engine.
      *
      * @param Table $table
+     * @return void
      */
     public function normalizeTable(Table $table)
     {
@@ -496,10 +497,15 @@ PRAGMA foreign_keys = ON;
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string
+     */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || !$this->foreignKeySupport || $fk->isPolymorphic()) {
-            return;
+            return '';
         }
 
         $pattern = "FOREIGN KEY (%s) REFERENCES %s (%s)";

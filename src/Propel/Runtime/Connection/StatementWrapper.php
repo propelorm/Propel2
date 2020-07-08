@@ -82,7 +82,9 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
      */
     public function query()
     {
-        $this->statement = $this->connection->getWrappedConnection()->query($this->sql);
+        /** @var \PDOStatement $statement */
+        $statement = $this->connection->getWrappedConnection()->query($this->sql);
+        $this->statement = $statement;
 
         return $this->connection->getWrappedConnection()->getDataFetcher($this);
     }

@@ -24,7 +24,7 @@ class RawModelCriterion extends AbstractModelCriterion
 {
     /**
      * Binding type to be used for Criteria::RAW comparison
-     * @var string any of the PDO::PARAM_ constant values
+     * @var int Any of the PDO::PARAM_ constant values
      */
     protected $type;
 

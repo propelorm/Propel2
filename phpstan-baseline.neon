@@ -466,11 +466,6 @@ parameters:
 			path: src/Propel/Generator/Manager/SqlManager.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\ForeignKey\\:\\:getLocalForeignMapping\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/ForeignKey.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isEarly\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Table.php
@@ -649,11 +644,6 @@ parameters:
 			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 3
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to private method getClauses\\(\\) of class Propel\\\\Runtime\\\\ActiveQuery\\\\Criterion\\\\AbstractCriterion\\.$#"
-			count: 2
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"

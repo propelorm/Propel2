@@ -88,6 +88,6 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
             $isEquiv &= $this->value === $crit->getValue();
         }
 
-        return $isEquiv;
+        return (bool)$isEquiv;
     }
 }

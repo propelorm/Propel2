@@ -279,7 +279,7 @@ class TableMap
         if (class_exists($collectionClass)) {
             return $collectionClass;
         }
-        
+
         return '\Propel\Runtime\Collection\ObjectCollection';
     }
 
@@ -752,7 +752,7 @@ class TableMap
     /**
      * Gets the ColumnMap for the primary string column.
      *
-     * @return \Propel\Runtime\Map\ColumnMap
+     * @return \Propel\Runtime\Map\ColumnMap|null
      */
     public function getPrimaryStringColumn()
     {

@@ -1714,7 +1714,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @return boolean
      */
-    public function hasBehaviorModifier($hookName, $modifier = null)
+    public function hasBehaviorModifier($hookName, $modifier = '')
     {
         return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }

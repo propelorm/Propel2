@@ -683,7 +683,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the subclasses that can be created from this table.
      *
-     * @return array
+     * @return array|null
      */
     public function getChildrenNames()
     {
@@ -1665,12 +1665,12 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param  string  $name            The name of the column (e.g. 'my_column')
      * @param  boolean $caseInsensitive Whether the check is case insensitive.
-     * @return Column
+     * @return Column|null
      */
     public function getColumn($name, $caseInsensitive = false)
     {
         if (!$this->hasColumn($name, $caseInsensitive)) {
-            return null; // just to be explicit
+            return null;
         }
 
         if ($caseInsensitive) {
@@ -1684,7 +1684,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns a specified column by its php name.
      *
      * @param  string $phpName
-     * @return Column
+     * @return Column|null
      */
     public function getColumnByPhpName($phpName)
     {

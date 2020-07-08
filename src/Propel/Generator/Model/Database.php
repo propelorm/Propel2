@@ -433,7 +433,7 @@ class Database extends ScopedMappingModel
      *
      * @param  string  $name
      * @param  boolean $caseInsensitive
-     * @return Table
+     * @return Table|null
      */
     public function getTable($name, $caseInsensitive = false)
     {
@@ -469,7 +469,7 @@ class Database extends ScopedMappingModel
      * Returns the table object with the specified PHP name.
      *
      * @param  string $phpName
-     * @return Table
+     * @return Table|null
      */
     public function getTableByPhpName($phpName)
     {
@@ -477,7 +477,7 @@ class Database extends ScopedMappingModel
             return $this->tablesByPhpName[$phpName];
         }
 
-        return null; // just to be explicit
+        return null;
     }
 
     /**
@@ -708,7 +708,7 @@ class Database extends ScopedMappingModel
      * Returns the already configured domain object by its name.
      *
      * @param  string $name
-     * @return Domain
+     * @return Domain|null
      */
     public function getDomain($name)
     {
