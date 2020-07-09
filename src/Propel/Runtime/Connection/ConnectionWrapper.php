@@ -332,7 +332,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute(int $attribute, $value)
     {
         if (is_string($attribute)) {
             if (false === strpos($attribute, '::')) {
@@ -372,7 +372,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return \PDOStatement
      */
-    public function prepare($statement, array $driver_options = [])
+    public function prepare(string $statement, array $driver_options = [])
     {
         $statementWrapper = null;
 

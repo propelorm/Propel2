@@ -118,37 +118,4 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
         return $this->getDataFetcher($stmt);
     }
-
-    /**
-     * Overwrite. Fixes HHVM strict issue.
-     *
-     * @return bool|void
-     */
-    public function inTransaction()
-    {
-        return parent::inTransaction();
-    }
-
-    /**
-     * Overwrite. Fixes HHVM strict issue.
-     *
-     * @param  null        $name
-     * @return string|void
-     */
-    public function lastInsertId($name = null)
-    {
-        return parent::lastInsertId($name);
-    }
-
-    /**
-     * Overwrite. Fixes HHVM strict issue.
-     *
-     * @param  string $string
-     * @param  int    $parameter_type
-     * @return string
-     */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR)
-    {
-        return parent::quote($string, $parameter_type);
-    }
 }

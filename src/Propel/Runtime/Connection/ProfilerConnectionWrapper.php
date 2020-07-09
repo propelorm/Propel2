@@ -78,7 +78,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * {@inheritDoc}
      */
-    public function prepare($statement, array $driver_options = [])
+    public function prepare(string $statement, array $driver_options = [])
     {
         $this->getProfiler()->start();
 

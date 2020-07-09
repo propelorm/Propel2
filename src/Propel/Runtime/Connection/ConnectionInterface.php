@@ -170,7 +170,7 @@ interface ConnectionInterface
 
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
-    public function prepare($statement, array $driver_options = []);
+    public function prepare(string $statement, array $driver_options = []);
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
