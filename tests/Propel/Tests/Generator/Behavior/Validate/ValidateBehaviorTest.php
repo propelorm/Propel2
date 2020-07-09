@@ -33,7 +33,7 @@ class ValidateBehaviorTest extends BookstoreTestBase
      */
     private $classes;
 
-    public function assertPreConditions()
+    public function assertPreConditions(): void
     {
         if (!class_exists('Propel\Tests\Bookstore\Behavior\ValidateAuthor')) {
             throw new \Exception('Please, run \'bin/propel test:prepare\' command before starting to test this behavior');
