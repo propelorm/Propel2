@@ -72,7 +72,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute(int $attribute, $value)
     {
         if (is_string($attribute) && false === strpos($attribute, '::')) {
             $attribute = '\PDO::' . $attribute;
@@ -138,18 +138,6 @@ class PdoConnection extends \PDO implements ConnectionInterface
     public function lastInsertId($name = null)
     {
         return parent::lastInsertId($name);
-    }
-
-    /**
-     * Overwrite. Fixes HHVM strict issue.
-     *
-     * @param  string                                     $statement
-     * @param  array                                      $driver_options
-     * @return bool|\PDOStatement|void
-     */
-    public function prepare($statement, $driver_options = null)
-    {
-        return parent::prepare($statement, $driver_options ?: []);
     }
 
     /**

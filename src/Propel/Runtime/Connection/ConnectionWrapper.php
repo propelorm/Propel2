@@ -309,13 +309,13 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string $attribute The name of the attribute to retrieve,
+     * @param int $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute)
+    public function getAttribute(int $attribute)
     {
         switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
@@ -372,7 +372,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return \PDOStatement
      */
-    public function prepare($statement, $driver_options = null)
+    public function prepare($statement, array $driver_options = [])
     {
         $statementWrapper = null;
 
