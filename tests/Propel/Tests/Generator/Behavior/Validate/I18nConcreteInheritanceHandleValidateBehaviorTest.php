@@ -25,7 +25,7 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 {
     protected $metadataFactory;
 
-    public function assertPreConditions()
+    public function assertPreConditions(): void
     {
         $this->metadataFactory = new \Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory(new StaticMethodLoader());
     }

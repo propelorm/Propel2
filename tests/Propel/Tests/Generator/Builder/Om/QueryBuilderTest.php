@@ -52,7 +52,7 @@ use \ReflectionMethod;
 class QueryBuilderTest extends BookstoreTestBase
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         include_once(__DIR__.'/QueryBuilderTestClasses.php');

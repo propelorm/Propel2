@@ -20,8 +20,7 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class VersionableBehaviorObjectBuilderModifierTest extends TestCase
 {
-
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_1">

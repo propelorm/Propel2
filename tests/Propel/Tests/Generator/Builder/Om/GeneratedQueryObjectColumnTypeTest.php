@@ -24,7 +24,7 @@ class GeneratedQueryObjectColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
     protected $c1, $c2;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->c1 = new FooColumnValue2();
         $this->c1->bar = 1234;

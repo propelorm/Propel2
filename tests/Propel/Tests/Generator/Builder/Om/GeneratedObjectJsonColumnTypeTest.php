@@ -22,7 +22,7 @@ use Propel\Tests\TestCase;
  */
 class GeneratedObjectJsonColumnTypeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeJsonEntity')) {
             $schema = <<<EOF
@@ -68,7 +68,7 @@ EOF;
         $e->setBar(null);
         $this->assertNull($e->getBar());
     }
-    
+
     public function testIsModified()
     {
       $this->assertTrue(method_exists('ComplexColumnTypeJsonEntity', 'setBar'));
@@ -77,24 +77,24 @@ EOF;
           'key' => 'value'
       ));
       $this->assertTrue($e->isModified());
-      
+
       $e = new \PublicComplexColumnTypeJsonEntity();
       $e->setBar(array(
           'defaultKey' => 'defaultValue'
       ));
       $this->assertFalse($e->isModified());
-      
+
       $e->setBar('{"defaultKey":"defaultValue"}');
       $this->assertFalse($e->isModified());
-      
+
       $e->setBar('{"defaultKey"  :  "defaultValue"}');
       $this->assertFalse($e->isModified());
-      
+
       $e->setBar((object)array(
           'defaultKey' => 'defaultValue'
       ));
       $this->assertFalse($e->isModified());
-      
+
       $e->setBar((object)array(
           'key' => 'value'
       ));

@@ -33,7 +33,7 @@ use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;

@@ -27,7 +27,7 @@ class TableMapTest extends TestCase
 {
     protected $databaseMap;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = new DatabaseMap('foodb');
@@ -35,7 +35,7 @@ class TableMapTest extends TestCase
         $this->tmap = new TableMap($this->tableName, $this->databaseMap);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // nothing to do for now
         parent::tearDown();

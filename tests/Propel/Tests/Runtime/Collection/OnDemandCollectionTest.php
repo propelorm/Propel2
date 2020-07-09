@@ -28,7 +28,7 @@ use Propel\Runtime\ActiveQuery\PropelQuery;
  */
 class OnDemandCollectionTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);
@@ -36,7 +36,7 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
         $this->books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)->find();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->books = null;
         parent::tearDown();

@@ -18,7 +18,7 @@ use Propel\Tests\TestCase;
  */
 class GeneratedPKLessQueryBuilderTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (class_exists('Stuff')) {
             return;

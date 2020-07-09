@@ -23,7 +23,7 @@ use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
  */
 class SortableBehaviorObjectBuilderModifierTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

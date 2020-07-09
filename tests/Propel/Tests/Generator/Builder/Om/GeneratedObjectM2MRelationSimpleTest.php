@@ -16,7 +16,7 @@ class GeneratedObjectM2MRelationSimpleTest extends PlatformDatabaseBuildTimeBase
     protected $databaseName = 'migration';
     protected $connected = false;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

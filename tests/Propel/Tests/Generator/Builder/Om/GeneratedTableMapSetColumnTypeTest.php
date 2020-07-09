@@ -21,7 +21,7 @@ use Propel\Tests\TestCase;
  */
 class GeneratedTableMapSetColumnTypeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity103')) {
             $schema = <<<EOF
