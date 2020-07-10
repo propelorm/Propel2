@@ -208,9 +208,9 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
-    public function asort()
+    public function asort($sort_flags = SORT_REGULAR)
     {
-        parent::asort();
+        parent::asort($sort_flags);
         $this->refreshPositions();
     }
 
