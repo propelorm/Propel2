@@ -15,8 +15,6 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
- * Test class for PHP5TableMapBuilder with schemas.
- *
  * @author Ulf Hermann
  *
  * @group database

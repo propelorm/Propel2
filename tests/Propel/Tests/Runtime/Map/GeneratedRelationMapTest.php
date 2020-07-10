@@ -15,8 +15,6 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
- * Test class for PHP5TableMapBuilder.
- *
  * @author François Zaninotto
  */
 class GeneratedRelationMapTest extends TestCaseFixtures

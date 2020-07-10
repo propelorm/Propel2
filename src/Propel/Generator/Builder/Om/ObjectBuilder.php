@@ -26,7 +26,7 @@ use Propel\Generator\Platform\SqlsrvPlatform;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Generates a PHP5 base Object class for user object model (OM).
+ * Generates a base Object class for user object model (OM).
  *
  * This class produces the base object class (e.g. BaseMyTable) which contains
  * all the custom-built accessor and setter methods.
@@ -1283,7 +1283,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
             }
         }
-        
+
         return \$this->$cloConverted;";
     }
 
@@ -6171,7 +6171,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->alreadyInSave) {
             return 0;
         }
- 
+
         if (\$con === null) {
             \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
         }
