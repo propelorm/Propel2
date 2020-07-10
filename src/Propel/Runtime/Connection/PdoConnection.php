@@ -31,6 +31,14 @@ class PdoConnection implements ConnectionInterface
     protected $pdo;
 
     /**
+     * Forward any call to a method not found to the proxied connection.
+     */
+    public function __call($method, $args)
+    {
+        return call_user_func_array([$this->pdo, $method], $args);
+    }
+
+    /**
      * @param string $name The datasource name associated to this connection
      */
     public function setName($name)

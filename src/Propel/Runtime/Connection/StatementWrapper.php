@@ -287,7 +287,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator()
+    public function getIterator(): \Iterator
     {
         return $this->statement;
     }

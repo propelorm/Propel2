@@ -303,7 +303,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function inTransaction()
     {
-        return $this->connection->inTransaction();
+        return (bool)$this->connection->inTransaction();
     }
 
     /**
