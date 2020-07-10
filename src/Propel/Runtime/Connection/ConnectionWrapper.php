@@ -320,7 +320,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
                 return $this->isCachePreparedStatements;
-                break;
             default:
                 return $this->connection->getAttribute($attribute);
         }
@@ -329,10 +328,10 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
      */
-    public function setAttribute(int $attribute, $value)
+    public function setAttribute($attribute, $value)
     {
         if (is_string($attribute)) {
             if (false === strpos($attribute, '::')) {

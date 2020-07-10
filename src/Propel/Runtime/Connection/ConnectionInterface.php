@@ -85,12 +85,12 @@ interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param int $attribute
+     * @param int|string $attribute
      * @param mixed  $value
      *
      * @return boolean TRUE on success or FALSE on failure.
      */
-    public function setAttribute(int $attribute, $value);
+    public function setAttribute($attribute, $value);
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -109,7 +109,7 @@ interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null);
+    public function lastInsertId(?string $name = null);
 
     /**
      * @param $data

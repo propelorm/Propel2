@@ -16,7 +16,7 @@ use Propel\Runtime\DataFetcher\PDODataFetcher;
 /**
  * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
  */
-class PdoConnection extends \PDO implements ConnectionInterface
+class PdoConnection implements ConnectionInterface
 {
     use TransactionTrait;
 
@@ -24,6 +24,11 @@ class PdoConnection extends \PDO implements ConnectionInterface
      * @var string The datasource name associated to this connection
      */
     protected $name;
+
+    /**
+     * @var \PDO
+     */
+    protected $pdo;
 
     /**
      * @param string $name The datasource name associated to this connection
@@ -43,10 +48,14 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * Creates a PDO instance representing a connection to a database.
+     *
+     * @param string $dsn
+     * @param string|null $user
+     * @param string|null $password
+     * @param array|null $options
      */
-    public function __construct($dsn, $user = null, $password = null, array $options = null)
+    public function __construct(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null)
     {
-
         // Convert option keys from a string to a \PDO:: constant
         $pdoOptions = [];
         if (is_array($options)) {
@@ -56,9 +65,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
             }
         }
 
-        parent::__construct($dsn, $user, $password, $pdoOptions);
-
-        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new \PDO($dsn, $user, $password, $pdoOptions);
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -66,13 +74,13 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * This is overridden here to allow names corresponding to PDO constant names.
      *
-     * @param integer $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
+     * @param int|string $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
      * @param mixed   $value     The attribute value.
      *
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function setAttribute(int $attribute, $value)
+    public function setAttribute($attribute, $value)
     {
         if (is_string($attribute) && false === strpos($attribute, '::')) {
             $attribute = '\PDO::' . $attribute;
@@ -82,7 +90,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
             $attribute = constant($attribute);
         }
 
-        return parent::setAttribute($attribute, $value);
+        $this->pdo->setAttribute($attribute, $value);
     }
 
     /**
@@ -106,7 +114,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      */
     public function query($statement)
     {
-        return parent::query($statement);
+        $this->pdo->query($statement);
     }
 
     /**
@@ -114,8 +122,54 @@ class PdoConnection extends \PDO implements ConnectionInterface
      */
     public function exec($statement)
     {
-        $stmt = parent::exec($statement);
+        $stmt = $this->pdo->exec($statement);
 
         return $this->getDataFetcher($stmt);
+    }
+
+    public function inTransaction()
+    {
+        // TODO: Implement inTransaction() method.
+    }
+
+    public function getAttribute(int $attribute)
+    {
+        return $this->pdo->getAttribute($attribute);
+    }
+
+    public function lastInsertId(?string $name = null)
+    {
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * @param string $statement
+     * @param array $driver_options
+     *
+     * @return bool|\PDOStatement
+     */
+    public function prepare(string $statement, array $driver_options = [])
+    {
+        return $this->pdo->prepare($statement, $driver_options);
+    }
+
+    public function quote($string, $parameter_type = \PDO::PARAM_STR)
+    {
+        return $this->pdo->quote($string, $parameter_type);
+    }
+
+    public function beginTransaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->pdo->commit();
+    }
+
+    public function rollBack()
+    {
+        return $this->pdo->rollBack();
     }
 }
