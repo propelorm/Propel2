@@ -99,7 +99,7 @@ interface ConnectionInterface
      * object, depending on the underlying driver. For example, PDO_PGSQL()
      * requires you to specify the name of a sequence object for the name parameter.
      *
-     * @param string $name Name of the sequence object from which the ID should be
+     * @param string|null $name Name of the sequence object from which the ID should be
      *                     returned.
      *
      * @return string If a sequence name was not specified for the name parameter,
@@ -109,7 +109,7 @@ interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId(?string $name = null);
+    public function lastInsertId($name = null);
 
     /**
      * @param $data
