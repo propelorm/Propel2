@@ -214,9 +214,9 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
-    public function ksort()
+    public function ksort($sort_flags = SORT_REGULAR)
     {
-        parent::ksort();
+        parent::ksort($sort_flags);
         $this->refreshPositions();
     }
 
