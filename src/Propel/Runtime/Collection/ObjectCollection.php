@@ -144,6 +144,7 @@ class ObjectCollection extends Collection
      *                                        TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
+     * @param boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to TRUE.
      *
      * <code>
      * $bookCollection->toArray();
@@ -165,7 +166,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = [])
+    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = [], $includeForeignObjects = true)
     {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
@@ -174,7 +175,7 @@ class ObjectCollection extends Collection
         foreach ($this->data as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
+            $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, $includeForeignObjects);
         }
 
         return $ret;
