@@ -28,6 +28,8 @@ class ArchivableBehavior extends Behavior
         'archive_table'       => '',
         'archive_phpname'     => null,
         'archive_class'       => '',
+        'archive_foreign_keys' => 'false',
+        'archive_foreign_keys_skip_sql' => 'true',
         'log_archived_at'     => 'true',
         'archived_at_column'  => 'archived_at',
         'archive_on_insert'   => 'false',
@@ -99,7 +101,15 @@ class ArchivableBehavior extends Behavior
                     'type' => 'TIMESTAMP'
                 ]);
             }
-            // do not copy foreign keys
+            // copy foreign keys if enabled in parameters
+            if ($this->getParameter('archive_foreign_keys') == 'true') {
+                foreach ($table->getForeignKeys() as $foreignKey) {
+                    $copiedForeignKey = clone $foreignKey;
+                    // database foreing keys are not required
+                    $copiedForeignKey->setSkipSql($this->getParameter('archive_foreign_keys_skip_sql') == 'true');
+                    $archiveTable->addForeignKey($copiedForeignKey);
+                }
+            }
             // copy the indices
             foreach ($table->getIndices() as $index) {
                 $copiedIndex = clone $index;
