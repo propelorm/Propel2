@@ -6339,7 +6339,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @return ".$this->getObjectClassName(true)." Clone of current object.
      * @throws PropelException
      */
-    public function copy(\$deepCopy = false, \$makeNew = true)
+    public function copy(\$deepCopy = false, \$makeNew = false)
     {
         // we use get_class(), because this might be a subclass
         \$clazz = get_class(\$this);
