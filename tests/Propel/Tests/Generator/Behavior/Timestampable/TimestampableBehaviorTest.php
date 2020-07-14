@@ -30,7 +30,7 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::$isInitialized = false;
         parent::setUpBeforeClass();

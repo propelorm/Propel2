@@ -21,7 +21,7 @@ use Propel\Tests\Bookstore\Behavior\SortableTable14Query;
  */
 class SortableBehaviorWithSetScopeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

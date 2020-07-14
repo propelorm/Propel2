@@ -24,7 +24,7 @@ class ActiveRecordConvertTest extends TestCaseFixtures
 {
     private $book;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $publisher = new Publisher();

@@ -294,19 +294,7 @@ jobs:
       env: DB=agnostic
       install:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-php8.json composer install
-        - composer show
-    - php: nightly
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-php8.json composer install
-        - composer show
-    - php: nightly
-      env: DB=sqlite
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-php8.json composer install
+        - COMPOSER=./tests/composer/composer-php8.json composer install --ignore-platform-reqs
         - composer show
 
     - name: "PHP 7.4, Agnostic, Symfony ~2.7"

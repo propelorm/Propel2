@@ -32,7 +32,7 @@ class DefaultPlatformTest extends TestCase
         return $this->platform;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->platform = null;
     }

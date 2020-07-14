@@ -13,7 +13,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class Issue915Test extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('\Base\Issue915Book')) {
             $schema = <<<EOF

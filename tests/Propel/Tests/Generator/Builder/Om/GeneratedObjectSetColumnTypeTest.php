@@ -25,7 +25,7 @@ use Propel\Tests\TestCase;
  */
 class GeneratedObjectSetColumnTypeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('MyNameSpace\\ComplexColumnTypeEntitySet')) {
             $schema = <<<EOF
@@ -36,7 +36,7 @@ class GeneratedObjectSetColumnTypeTest extends TestCase
         <column name="bar" type="SET" valueSet="foo, bar" />
         <column name="defaults" type="SET" valueSet="foo, bar, foo baz" defaultValue="bar" />
         <column name="bears" type="SET" valueSet="foo, bar, baz, kevin" defaultValue="bar, baz" />
-        
+
     </table>
 </database>
 EOF;
@@ -149,7 +149,7 @@ EOF;
         $value = ['foo', '1'];
         $e->setTags($value);
         $this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
-        
+
         $this->assertEquals(9, $e->tags);
     }
 

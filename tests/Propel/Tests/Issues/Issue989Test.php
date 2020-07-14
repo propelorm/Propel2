@@ -7,12 +7,12 @@ use Propel\Generator\Util\QuickBuilder;
 
 /**
  * This test proves the bug described in https://github.com/propelorm/Propel2/issues/989.
- * 
+ *
  * @group database
  */
 class Issue989Test extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!class_exists('\Nature')) {
@@ -41,7 +41,7 @@ class Issue989Test extends TestCase
             QuickBuilder::buildSchema($schema);
         }
     }
-    
+
     public function testIssue989()
     {
         $nature = new \Nature();
@@ -59,13 +59,13 @@ class Issue989Test extends TestCase
         // Recherche
         $recherche = new \Recherche();
         $recherche->setRechercheNatures($collection);
-        
-        $countBeforeSave = $recherche->countRechercheNatures(); 
+
+        $countBeforeSave = $recherche->countRechercheNatures();
 
         $recherche->save();
 
         $countAfterSave = $recherche->countRechercheNatures();
-        
+
         $this->assertEquals($countBeforeSave, $countAfterSave);
     }
 }

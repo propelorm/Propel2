@@ -35,12 +35,12 @@ use \Exception;
  */
 class PropelPDOTest extends BookstoreTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
     }
 

@@ -23,7 +23,7 @@ class GeneratedRelationMapTest extends TestCaseFixtures
 {
     protected $databaseMap;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');

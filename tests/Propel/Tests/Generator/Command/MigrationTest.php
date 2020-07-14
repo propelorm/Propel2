@@ -23,7 +23,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     protected $schemaDir;
     protected $outputDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connectionOption =  ['migration_command=' . $this->getConnectionDsn('bookstore', true)];

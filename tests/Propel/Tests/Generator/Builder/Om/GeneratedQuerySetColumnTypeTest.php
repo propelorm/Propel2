@@ -20,7 +20,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 class GeneratedQuerySetColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('\ComplexColumnTypeEntitySet2')) {
             $schema = <<<EOF
@@ -95,7 +95,7 @@ EOF;
             ->find();
         $this->assertEquals(0, $e->count(), 'set columns are searchable by multiple values using where()');
     }
-    
+
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
      */

@@ -31,7 +31,7 @@ class InitCommandTest extends TestCaseFixtures
     /** @var string */
     private $currentDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

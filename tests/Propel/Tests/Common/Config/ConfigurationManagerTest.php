@@ -26,7 +26,7 @@ class ConfigurationManagerTest extends ConfigTestCase
      */
     private $fixturesDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->currentDir = getcwd();
         $this->fixturesDir = realpath( __DIR__ . '/../../../../Fixtures') . '/Configuration';
@@ -35,7 +35,7 @@ class ConfigurationManagerTest extends ConfigTestCase
         chdir($this->fixturesDir);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         chdir($this->currentDir);
         $this->getFileSystem()->remove($this->fixturesDir);

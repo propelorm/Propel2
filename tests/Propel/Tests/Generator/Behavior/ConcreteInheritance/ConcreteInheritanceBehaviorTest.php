@@ -40,7 +40,7 @@ use Propel\Generator\Util\QuickBuilder;
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

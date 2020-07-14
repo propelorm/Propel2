@@ -25,7 +25,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class ModelCriteriaHooksTest extends BookstoreTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::depopulate();

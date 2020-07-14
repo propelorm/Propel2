@@ -31,7 +31,7 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
  */
 class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);

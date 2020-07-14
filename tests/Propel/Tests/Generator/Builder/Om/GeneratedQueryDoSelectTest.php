@@ -60,7 +60,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  */
 class GeneratedQueryDoSelectTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->markTestSkipped('not used anymore look if all tests are present in Query');
         parent::setUp();

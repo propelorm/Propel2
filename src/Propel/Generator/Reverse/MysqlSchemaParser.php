@@ -434,7 +434,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 continue;
             }
             $name = $row['Column_name'];
-            $table->getColumn($name)->setPrimaryKey(true);
+            $column = $table->getColumn($name);
+            if ($column) {
+                $column->setPrimaryKey(true);
+            }
         }
     }
 
