@@ -14,7 +14,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Inheritance;
 
 /**
- * Generates the empty PHP5 stub query class for use with single table
+ * Generates the empty stub query class for use with single table
  * inheritance.
  *
  * This class produces the empty stub class that can be customized with
@@ -84,7 +84,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
         }
 
         return $this->child;
