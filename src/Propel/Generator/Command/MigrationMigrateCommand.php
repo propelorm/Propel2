@@ -81,7 +81,7 @@ class MigrationMigrateCommand extends AbstractCommand
         if (!$manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
-            return static::CODE_ERROR;
+            return static::CODE_SUCCESS;
         }
 
         $timestamps = $manager->getValidMigrationTimestamps();
