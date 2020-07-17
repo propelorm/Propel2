@@ -71,10 +71,6 @@ jobs:
       addons:
         mariadb: 10.2
 
-    - php: 7.1
-      env: DB=mysql MARIADB=10.3
-      addons:
-        mariadb: 10.3
     - php: 7.2
       env: DB=mysql MARIADB=10.3
       addons:
@@ -120,19 +116,6 @@ jobs:
         - ./tests/bin/setup.$DB.sh
 
     - php: 7.2
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-        postgresql: 9.4
-    - php: 7.3
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-        postgresql: 9.4
-    - php: 7.4
-      env: DB=pgsql POSTGRES=9.4
-      addons:
-        postgresql: 9.4
-
-    - php: 7.2
       env: DB=pgsql POSTGRES=9.5
       addons:
         postgresql: 9.5
@@ -158,10 +141,6 @@ jobs:
       addons:
         postgresql: 9.6
 
-    - php: 7.1
-      env: DB=pgsql POSTGRES=10
-      addons:
-        postgresql: 10
     - php: 7.2
       env: DB=pgsql POSTGRES=10
       addons:
