@@ -38,7 +38,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Mapping from Propel types to Domain objects.
      *
-     * @var array
+     * @var Domain[]
      */
     protected $schemaDomainMap;
 
@@ -200,7 +200,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the database specific domain for a mapping type.
      *
-     * @param string
+     * @param string $mappingType
      * @return Domain
      */
     public function getDomainForType($mappingType)
@@ -293,7 +293,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the beginning of a DDL file
      *
-     * @return string
+     * @return string|null
      */
     public function getBeginDDL()
     {
@@ -302,7 +302,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the end of a DDL file
      *
-     * @return string
+     * @return string|null
      */
     public function getEndDDL()
     {
@@ -437,8 +437,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param array Column[] or string[]
-     * @param string $delim The delimiter to use in separating the column names.
+     * @param Column[] $columns
+     * @param string $delimiter The delimiter to use in separating the column names.
      *
      * @return string
      */
@@ -468,7 +468,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Returns the SQL for the primary key of a Table object.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrimaryKeyDDL(Table $table)
     {
@@ -1236,8 +1236,8 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param  mixed $tf A Boolean or string representation of Boolean ('y', 'true').
-     * @return mixed
+     * @param  mixed $b A Boolean or string representation of Boolean ('y', 'true').
+     * @return string
      */
     public function getBooleanString($b)
     {

@@ -58,6 +58,8 @@ abstract class MappingModel implements MappingModelInterface
      * This method must be implemented by children classes to hydrate and
      * configure the current object with the loaded mapping definition stored in
      * the protected $attributes array.
+     *
+     * @return void
      */
     abstract protected function setupObject();
 
@@ -136,10 +138,10 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
-     * Converts the default string for set columns to an array. 
-     * 
+     * Converts the default string for set columns to an array.
+     *
      * @param string $stringValue
-     * 
+     *
      * @return array|null
      */
     protected function getDefaultValueForSet($stringValue)

@@ -19,6 +19,8 @@ class SqlsrvPlatform extends MssqlPlatform
 {
     /**
      * @see Platform#getMaxColumnNameLength()
+     *
+     * @return int
      */
     public function getMaxColumnNameLength()
     {

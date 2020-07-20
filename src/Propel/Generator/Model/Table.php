@@ -43,7 +43,15 @@ class Table extends ScopedMappingModel implements IdMethod
      * @var ForeignKey[]
      */
     private $foreignKeys;
+
+    /**
+     * @var ForeignKey[]
+     */
     private $foreignKeysByName;
+
+    /**
+     * @var string[]
+     */
     private $foreignTableNames;
 
     /**
@@ -442,7 +450,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns a delimiter-delimited string list of column names.
      *
      * @see Platform::getColumnList() if quoting is required
-     * @param array
+     * @param array $columns
      * @param  string $delimiter
      * @return string
      */
@@ -856,8 +864,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets whether or not this table contains a foreign primary key.
      *
-     * @param $containsForeignPK
-     * @return boolean
+     * @param bool $containsForeignPK
+     * @return void
      */
     public function setContainsForeignPK($containsForeignPK)
     {
@@ -1010,7 +1018,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Retrieves the configuration object.
      *
-     * @return GeneratorConfig
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {
@@ -1035,7 +1043,8 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * Get the early table behaviors
-     * @return Array of Behavior objects
+     *
+     * @return \Propel\Generator\Model\Behavior[] Array of Behavior objects
      */
     public function getEarlyBehaviors()
     {
@@ -1691,7 +1700,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * in argument.
      *
      * @param  string $tableName
-     * @return array
+     * @return \Propel\Generator\Model\ForeignKey[]
      */
     public function getForeignKeysReferencingTable($tableName)
     {
@@ -1713,7 +1722,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * is either a, b or c.
      *
      * @param  string $column Name of the column
-     * @return array
+     * @return \Propel\Generator\Model\ForeignKey[]
      */
     public function getColumnForeignKeys($column)
     {

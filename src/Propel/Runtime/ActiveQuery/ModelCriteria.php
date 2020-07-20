@@ -2115,13 +2115,13 @@ class ModelCriteria extends BaseModelCriteria
      * @see Criteria::add()
      * @param string $column   The colName of column to run the condition on (e.g. BookTableMap::ID)
      * @param mixed  $value
-     * @param string $operator A String, like Criteria::EQUAL.
+     * @param string|null $operator A String, like Criteria::EQUAL.
      *
      * @return $this|ModelCriteria A modified Criteria object.
      */
-    public function addUsingAlias($p1, $value = null, $operator = null)
+    public function addUsingAlias($column, $value = null, $operator = null)
     {
-        return $this->addUsingOperator($this->getAliasedColName($p1), $value, $operator);
+        return $this->addUsingOperator($this->getAliasedColName($column), $value, $operator);
     }
 
     /**

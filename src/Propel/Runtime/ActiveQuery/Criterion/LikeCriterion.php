@@ -61,7 +61,7 @@ class LikeCriterion extends AbstractCriterion
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *
-     * @param string &$sb    The string that will receive the Prepared Statement
+     * @param string $sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)

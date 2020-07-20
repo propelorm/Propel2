@@ -101,7 +101,7 @@ class ColumnMap
      * Constructor.
      *
      * @param string $name The name of the column.
-     * @param      \Propel\Runtime\Map\TableMap containingTable TableMap of the table this column is in.
+     * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
      */
     public function __construct($name, TableMap $containingTable)
     {
@@ -251,7 +251,7 @@ class ColumnMap
 
     /**
      * Whether this column is of type set.
-     * 
+     *
      * @return bool
      */
     public function isSetType()

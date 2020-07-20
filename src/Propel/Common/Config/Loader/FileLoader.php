@@ -104,8 +104,8 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Check if a resource has a given extension
      *
-     * @param $ext mixed  An extension or an arrayof extensions
-     * @param $resource  string A resource
+     * @param string|string[] $ext An extension or an array of extensions
+     * @param string|false $resource A resource
      */
     protected function checkSupports($ext, $resource)
     {
@@ -284,7 +284,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @return mixed The value or null if not found
      */
-    private function getValue($property_key, $config = null, &$found)
+    private function getValue($property_key, $config, &$found)
     {
         if (null === $config) {
             $config = $this->config;

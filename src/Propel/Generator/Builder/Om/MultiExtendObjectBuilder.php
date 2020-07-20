@@ -103,7 +103,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassOpen(&$script)
     {
@@ -155,7 +155,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
      * By default there are no methods for the empty stub classes; override this
      * method if you want to change that behavior.
      *
-     * @param string &$script
+     * @param string $script
      * @see ObjectBuilder::addClassBody()
      */
     protected function addClassBody(&$script)
@@ -182,7 +182,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassClose(&$script)
     {

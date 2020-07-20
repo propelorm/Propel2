@@ -17,22 +17,43 @@ namespace Propel\Generator\Behavior\Archivable;
  */
 class ArchivableBehaviorObjectBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Model\Behavior
+     */
     protected $behavior;
+
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
+
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
 
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function objectAttributes($builder)
@@ -55,7 +76,9 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function postInsert($builder)
     {
@@ -69,7 +92,9 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function postUpdate($builder)
     {
@@ -89,7 +114,9 @@ class ArchivableBehaviorObjectBuilderModifier
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
      *
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function preDelete($builder)
     {
@@ -102,6 +129,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function objectMethods($builder)
@@ -123,6 +152,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addGetArchive($builder)
@@ -134,6 +165,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addArchive($builder)
@@ -147,6 +180,7 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string the PHP code to be added to the builder
      */
@@ -162,6 +196,8 @@ class ArchivableBehaviorObjectBuilderModifier
      * This method is necessary because the archive's copyInto() may include the archived_at column
      * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
      *
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addPopulateFromArchive($builder)
@@ -175,6 +211,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSaveWithoutArchive($builder)
@@ -187,6 +225,8 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)

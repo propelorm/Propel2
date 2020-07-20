@@ -57,7 +57,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * Sets the array of ModelWith specifying which objects must be hydrated
      * together with the main object.
      *
-     * @param    array
+     * @param array $with
      *
      * @return $this|ModelCriteria The current object, for fluid interface
      */

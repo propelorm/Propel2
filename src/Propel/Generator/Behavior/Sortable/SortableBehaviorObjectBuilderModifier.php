@@ -23,17 +23,17 @@ use Propel\Generator\Model\Table;
 class SortableBehaviorObjectBuilderModifier
 {
     /**
-     * @var SortableBehavior
+     * @var \Propel\Generator\Model\Behavior
      */
     protected $behavior;
 
     /**
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $table;
 
     /**
-     * @var AbstractOMBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     protected $builder;
 
@@ -250,7 +250,7 @@ protected \$oldScope;
     /**
      * Get the wraps for getter/setter, if the rank column has not the default name
      *
-     * @return string
+     * @return void
      */
     protected function addRankAccessors(&$script)
     {
@@ -281,7 +281,7 @@ public function setRank(\$v)
     /**
      * Get the wraps for getter/setter, if the scope column has not the default name
      *
-     * @return string
+     * @return void
      */
     protected function addScopeAccessors(&$script)
     {
@@ -368,6 +368,11 @@ public function setScopeValue(\$v)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsFirst(&$script)
     {
         $script .= "
@@ -383,6 +388,11 @@ public function isFirst()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsLast(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -401,12 +411,17 @@ public function isLast(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetNext(&$script)
     {
         $useScope = $this->behavior->useScope();
         // The generateScopePhp() method below contains the following list of variables:
         // list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars)
-        list($methodSignature, , , $buildScopeVars) = $this->behavior->generateScopePhp();
+        [$methodSignature, , , $buildScopeVars] = $this->behavior->generateScopePhp();
 
         $script .= "
 /**
@@ -445,13 +460,18 @@ public function getNext(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetPrevious(&$script)
     {
         $useScope = $this->behavior->useScope();
 
         // The generateScopePhp() method below contains the following list of variables:
         // list($methodSignature, $paramsDoc, $buildScope, $buildScopeVars)
-        list($methodSignature, , , $buildScopeVars) = $this->behavior->generateScopePhp();
+        [$methodSignature, , , $buildScopeVars] = $this->behavior->generateScopePhp();
 
         $script .= "
 /**
@@ -490,6 +510,11 @@ public function getPrevious(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAtRank(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -528,6 +553,11 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAtBottom(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -552,6 +582,11 @@ public function insertAtBottom(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAtTop(&$script)
     {
         $script .= "
@@ -615,6 +650,11 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSwapWith(&$script)
     {
         $script .= "
@@ -660,6 +700,11 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveUp(&$script)
     {
         $script .= "
@@ -688,6 +733,11 @@ public function moveUp(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveDown(&$script)
     {
         $script .= "
@@ -716,6 +766,11 @@ public function moveDown(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToTop(&$script)
     {
         $script .= "
@@ -737,6 +792,11 @@ public function moveToTop(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToBottom(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -766,6 +826,11 @@ public function moveToBottom(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addRemoveFromList(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -806,6 +871,11 @@ public function removeFromList()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addProcessSortableQueries(&$script)
     {
         $script .= "

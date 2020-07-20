@@ -176,7 +176,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     {
         $tableName = $table->getName();
 
-//        var_dump("PRAGMA table_info('$tableName') //");
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("PRAGMA table_info('$tableName')");
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -235,6 +235,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if ($column->isPrimaryKey()) {
                 // check if autoIncrement
+                /** @var \PDOStatement $autoIncrementStmt */
                 $autoIncrementStmt = $this->dbh->prepare('
                 SELECT tbl_name
                 FROM sqlite_master
@@ -258,6 +259,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query('PRAGMA foreign_key_list("' . $table->getName() . '")');
 
         $lastId = null;
@@ -302,6 +304,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query('PRAGMA index_list("' . $table->getName() . '")');
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -314,6 +317,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             $index = $row['unique'] ? new Unique($internalName) : new Index($internalName);
 
+            /** @var \PDOStatement $stmt2 */
             $stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
             while ($row2 = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
                 $colname = $row2['name'];

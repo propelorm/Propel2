@@ -23,7 +23,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 class ArrayCollection extends Collection
 {
     /**
-     * @var
+     * @var object
      */
     protected $workerObject;
 

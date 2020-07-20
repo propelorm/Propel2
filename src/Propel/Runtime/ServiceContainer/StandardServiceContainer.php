@@ -376,7 +376,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Shortcut to define a single connection for a datasource.
      *
      * @param string $name The datasource name
-     * @param \Propel\Runtime\Connection\ConnectionInterface A database connection
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection A database connection
      */
     public function setConnection($name, ConnectionInterface $connection)
     {

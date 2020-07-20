@@ -66,7 +66,7 @@ class ObjectCollection extends Collection
             $con = $this->getWriteConnection();
         }
         $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $element */
             foreach ($this as $element) {
                 $element->save($con);
             }
@@ -87,7 +87,7 @@ class ObjectCollection extends Collection
             $con = $this->getWriteConnection();
         }
         $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $element */
             foreach ($this as $element) {
                 $element->delete($con);
             }
@@ -104,10 +104,10 @@ class ObjectCollection extends Collection
     {
         $ret = [];
 
-        /** @var $obj ActiveRecordInterface */
+        /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
         foreach ($this as $key => $obj) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key]= $obj->getPrimaryKey();
+            $ret[$key] = $obj->getPrimaryKey();
         }
 
         return $ret;
@@ -124,7 +124,7 @@ class ObjectCollection extends Collection
     {
         $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
-            /** @var $obj ActiveRecordInterface */
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
             $obj = new $class();
             $obj->fromArray($element);
             $this->append($obj);
@@ -170,7 +170,7 @@ class ObjectCollection extends Collection
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
-        /** @var $obj ActiveRecordInterface */
+        /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
         foreach ($this->data as $key => $obj) {
             $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -413,7 +413,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * @param $element
+     * @param mixed $element
      */
     public function removeObject($element)
     {

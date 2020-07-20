@@ -72,7 +72,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @param $datasource
+     * @param string $datasource
      * @return ConnectionInterface
      */
     public function getAdapterConnection($datasource)
@@ -87,7 +87,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @param  string            $datasource
+     * @param  string $datasource
      * @return PlatformInterface
      */
     public function getPlatform($datasource)

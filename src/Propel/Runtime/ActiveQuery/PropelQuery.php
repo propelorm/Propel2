@@ -20,7 +20,7 @@ use Propel\Runtime\Exception\ClassNotFoundException;
 class PropelQuery
 {
     /**
-     * @param $queryClassAndAlias
+     * @param string $queryClassAndAlias
      * @return ModelCriteria
      * @throws \Propel\Runtime\Exception\ClassNotFoundException
      */

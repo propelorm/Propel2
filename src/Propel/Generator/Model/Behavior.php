@@ -146,7 +146,7 @@ class Behavior extends MappingModel
     /**
      * Sets the table this behavior is applied to
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      */
     public function setTable(Table $table)
     {
@@ -224,7 +224,7 @@ class Behavior extends MappingModel
      * Returns a single parameter by its name.
      *
      * @param  string $name
-     * @return array
+     * @return mixed
      */
     public function getParameter($name)
     {
@@ -290,12 +290,13 @@ class Behavior extends MappingModel
 
     /**
      * This method is automatically called on table behaviors when the database
-     * model is finished. It also override it to add columns to the current
+     * model is finished. Override this method to add columns to the current
      * table.
+     *
+     * @return void
      */
     public function modifyTable()
     {
-
     }
 
     /**

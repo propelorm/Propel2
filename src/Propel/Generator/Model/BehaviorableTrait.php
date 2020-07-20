@@ -22,7 +22,7 @@ trait BehaviorableTrait
     private $behaviorLocator;
 
     /**
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     abstract protected function getGeneratorConfig();
 
@@ -51,7 +51,7 @@ trait BehaviorableTrait
     /**
      * Adds a new Behavior
      *
-     * @param $bdata
+     * @param array|\Propel\Generator\Model\Behavior $bdata
      * @throws BuildException when the added behavior is not an instance of \Propel\Generator\Model\Behavior
      * @return Behavior       $bdata
      */

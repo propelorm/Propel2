@@ -378,6 +378,7 @@ class Domain extends MappingModel
     {
         $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
 
+        /** @var \DOMElement $domainNode */
         $domainNode = $node->appendChild($doc->createElement('domain'));
         $domainNode->setAttribute('type', $this->getType());
         $domainNode->setAttribute('name', $this->getName());

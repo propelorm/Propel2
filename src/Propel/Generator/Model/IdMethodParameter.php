@@ -20,12 +20,24 @@ namespace Propel\Generator\Model;
  */
 class IdMethodParameter extends MappingModel
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var mixed
+     */
     private $value;
 
-    /** @var Table */
+    /**
+     * @var Table
+     */
     private $parentTable;
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->name = $this->getAttribute('name');
@@ -35,7 +47,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parameter name.
      *
-     * @param string
+     * @return string
      */
     public function getName()
     {
@@ -55,7 +67,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parameter value.
      *
-     * @param mixed
+     * @return mixed
      */
     public function getValue()
     {
@@ -75,7 +87,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Sets the parent table.
      *
-     * @param Table $parent
+     * @param \Propel\Generator\Model\Table $parent
      */
     public function setTable(Table $parent)
     {

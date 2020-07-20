@@ -181,7 +181,7 @@ abstract class AbstractFormatter
      */
     public function getCollectionClassName()
     {
-
+        return null;
     }
 
     /**

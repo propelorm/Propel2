@@ -145,6 +145,8 @@ class CsvParser extends AbstractParser
                 return true;
             }
         }
+
+        return false;
     }
 
     /**

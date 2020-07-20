@@ -161,6 +161,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -371,12 +372,13 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
 
-        /** @var $indexes Index[] */
+        /** @var Index[] $indexes */
         $indexes = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $colName = $row['Column_name'];
@@ -421,6 +423,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
 
         // Loop through the returned results, grouping the same key_name together
@@ -445,6 +448,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addTableVendorInfo(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {

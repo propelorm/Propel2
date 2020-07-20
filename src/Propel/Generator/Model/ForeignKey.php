@@ -462,7 +462,7 @@ class ForeignKey extends MappingModel
     /**
      * Sets the parent Table of the foreign key.
      *
-     * @param Table $parent
+     * @param \Propel\Generator\Model\Table $parent
      */
     public function setTable(Table $parent)
     {

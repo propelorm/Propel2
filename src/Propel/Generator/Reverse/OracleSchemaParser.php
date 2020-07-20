@@ -80,6 +80,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     public function parse(Database $database, array $additionalTables = [])
     {
         $tables = [];
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT OBJECT_NAME FROM USER_OBJECTS WHERE OBJECT_TYPE = 'TABLE'");
 
         $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracle']['autoincrementSequencePattern'];
@@ -106,6 +107,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 $seqName = str_replace('${table}', $table->getName(), $seqPattern);
                 $seqName = strtoupper($seqName);
 
+                /** @var \PDOStatement $stmt2 */
                 $stmt2 = $this->dbh->query("SELECT * FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '" . $seqName . "'");
                 $hasSeq = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
@@ -134,6 +136,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (false !== strpos($row['COLUMN_NAME'], '$')) {
@@ -195,6 +198,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 
         $indices = [];
@@ -237,8 +241,9 @@ class OracleSchemaParser extends AbstractSchemaParser
             $localReferenceInfo = $stmt2->fetch(\PDO::FETCH_ASSOC);
 
             // Foreign reference
-            $stmt2 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
-            $foreignReferenceInfo = $stmt2->fetch(\PDO::FETCH_ASSOC);
+            /** @var \PDOStatement $stmt3 */
+            $stmt3 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '".$row['R_CONSTRAINT_NAME']."'");
+            $foreignReferenceInfo = $stmt3->fetch(\PDO::FETCH_ASSOC);
 
             if (!isset($foreignKeys[$row['CONSTRAINT_NAME']])) {
                 $fk = new ForeignKey($row['CONSTRAINT_NAME']);
@@ -260,6 +265,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addPrimaryKey(Table $table)
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '".$table->getName()."' AND CONS.CONSTRAINT_TYPE = 'P'");
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             // This fixes a strange behavior by PDO. Sometimes the

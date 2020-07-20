@@ -93,7 +93,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Returns classpath to parent class.
      *
-     * @return string
+     * @return string|null
      */
     protected function getParentClassName()
     {
@@ -112,12 +112,14 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
                 return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
             }
         }
+
+        return null;
     }
 
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassOpen(&$script)
     {
@@ -179,7 +181,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Adds the factory for this object.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addFactory(&$script)
     {
@@ -291,7 +293,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script
      */
     protected function addClassClose(&$script)
     {

@@ -49,7 +49,7 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * @param string $key
      *
-     * @return array
+     * @return mixed
      */
     protected function getParameter($key)
     {
@@ -162,7 +162,7 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
-     * @return string
+     * @return string|null
      */
     public function postDelete($builder)
     {
