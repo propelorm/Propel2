@@ -74,7 +74,7 @@ interface ConnectionInterface
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string $attribute The name of the attribute to retrieve,
+     * @param string|int $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
@@ -85,7 +85,7 @@ interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute
+     * @param string|int $attribute
      * @param mixed  $value
      *
      * @return bool TRUE on success or FALSE on failure.

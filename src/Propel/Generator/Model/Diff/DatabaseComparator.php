@@ -53,6 +53,9 @@ class DatabaseComparator
      */
     protected $excludedTables = [];
 
+    /**
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff|null $databaseDiff
+     */
     public function __construct($databaseDiff = null)
     {
         $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;

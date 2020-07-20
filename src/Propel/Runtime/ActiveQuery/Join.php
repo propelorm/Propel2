@@ -77,11 +77,11 @@ class Join
      * Use it preferably with no arguments, and then use addCondition() and setJoinType()
      * Syntax with arguments used mainly for backwards compatibility
      *
-     * @param string $leftColumn  The left column of the join condition
+     * @param string|array|null $leftColumn  The left column of the join condition
      *                            (may contain an alias name)
-     * @param string $rightColumn The right column of the join condition
+     * @param string|array|null $rightColumn The right column of the join condition
      *                            (may contain an alias name)
-     * @param string $joinType    The type of the join. Valid join types are null (implicit join),
+     * @param string|null $joinType    The type of the join. Valid join types are null (implicit join),
      *                            Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
      */
     public function __construct($leftColumn = null, $rightColumn = null, $joinType = null)
@@ -605,7 +605,7 @@ class Join
      */
     public function buildJoinCondition(Criteria $c)
     {
-        /** @var AbstractCriterion $joinCondition */
+        /** @var AbstractCriterion|null $joinCondition */
         $joinCondition = null;
         for ($i = 0; $i < $this->count; $i++) {
             if ($this->leftValues[$i]) {

@@ -57,7 +57,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Executes a prepared statement.  Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  string  $parameters
+     * @param  array|null  $parameters
      * @return boolean
      */
     public function execute($parameters = null)

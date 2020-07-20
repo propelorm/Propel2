@@ -320,7 +320,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
                 return $this->isCachePreparedStatements;
-                break;
             default:
                 return $this->connection->getAttribute($attribute);
         }

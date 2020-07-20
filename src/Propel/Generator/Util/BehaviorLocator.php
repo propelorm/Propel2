@@ -45,6 +45,7 @@ class BehaviorLocator
     /**
      * Searches a composer file
      *
+     * @param string $fileName
      * @return SplFileInfo|null The found composer file or null if composer file isn't found
      */
     private function findComposerFile($fileName)
@@ -72,7 +73,7 @@ class BehaviorLocator
     /**
      * Searches the composer.lock file
      *
-     * @return SplFileInfo the found composer.lock or null if composer.lock isn't found
+     * @return SplFileInfo|null The found composer.lock or null if composer.lock isn't found
      */
     private function findComposerLock()
     {
@@ -82,7 +83,7 @@ class BehaviorLocator
     /**
      * Searches the composer.json file
      *
-     * @return SplFileInfo the found composer.json or null if composer.json isn't found
+     * @return SplFileInfo|null the found composer.json or null if composer.json isn't found
      */
     private function findComposerJson()
     {
@@ -188,10 +189,6 @@ class BehaviorLocator
     private function loadBehaviors($composerLock)
     {
         $behaviors = [];
-
-        if (null === $composerLock) {
-            return $behaviors;
-        }
 
         $json = json_decode($composerLock->getContents(), true);
 

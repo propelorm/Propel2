@@ -377,7 +377,7 @@ class SchemaReader
             $this->currTable->addUnique($this->currUnique);
         }
 
-        if (self::DEBUG) {
+        if (static::DEBUG) {
             print('endElement(' . $name . ") called\n");
         }
 

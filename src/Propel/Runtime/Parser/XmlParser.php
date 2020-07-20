@@ -103,7 +103,7 @@ class XmlParser extends AbstractParser
 
                 // Books => Book
                 if (substr($key, -1, 1) === 's') {
-                    $key = substr($key, 0, strlen($key) - 1);
+                    $key = substr($key, 0, -1);
                 }
             }
 
@@ -125,7 +125,7 @@ class XmlParser extends AbstractParser
                 $child = $element->ownerDocument->createTextNode($value->format(\DateTime::ISO8601));
                 $element->appendChild($child);
             } else {
-                $child = $element->ownerDocument->createTextNode($value);
+                $child = $element->ownerDocument->createTextNode((string)$value);
                 $element->appendChild($child);
             }
             $rootElement->appendChild($element);

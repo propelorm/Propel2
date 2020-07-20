@@ -222,10 +222,8 @@ class Profiler
                     break;
                 default:
                     throw new InvalidConfigurationException("`$detailName` isn't a valid profiler key (Section: propel.runtime.profiler).");
-                    break;
             }
             $profile .= $config['name'] . $this->innerGlue . str_pad($value, $config['pad'], ' ', STR_PAD_LEFT) . $this->outerGlue;
-
         }
 
         return $profile;
@@ -290,14 +288,14 @@ class Profiler
     /**
      * Rounding to significant digits (sort of like JavaScript's toPrecision()).
      *
-     * @param float   $number             Value to round
+     * @param float|int   $number             Value to round
      * @param integer $significantFigures Number of significant figures
      *
      * @return string
      */
     public static function toPrecision($number, $significantFigures = 3)
     {
-        if (0 === $number) {
+        if ((float)$number === 0.0) {
             return '0';
         }
 

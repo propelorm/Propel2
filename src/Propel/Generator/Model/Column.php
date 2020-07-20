@@ -58,7 +58,7 @@ class Column extends MappingModel
     private $phpType;
 
     /**
-     * @var Domain
+     * @var Domain|null
      */
     private $domain;
     /**
@@ -66,6 +66,9 @@ class Column extends MappingModel
      */
     private $parentTable;
 
+    /**
+     * @var int|null
+     */
     private $position;
     private $isPrimaryKey;
     private $isNodeKey;
@@ -76,7 +79,7 @@ class Column extends MappingModel
     private $isUnique;
     private $isAutoIncrement;
     private $isLazyLoad;
-    private $referrers;
+    private $referrers = [];
     private $isPrimaryString;
 
     // only one type is supported currently, which assumes the
@@ -102,7 +105,7 @@ class Column extends MappingModel
      *
      * @param string|null $name The column's name
      * @param string|null $type The column's type
-     * @param string|null $size The column's size
+     * @param string|int|null $size The column's size
      */
     public function __construct($name = null, $type = null, $size = null)
     {
@@ -117,7 +120,7 @@ class Column extends MappingModel
         }
 
         if (null !== $size) {
-            $this->setSize($size);
+            $this->setSize((int)$size);
         }
 
         $this->isAutoIncrement            = false;
@@ -313,11 +316,13 @@ class Column extends MappingModel
      */
     public function getDomain()
     {
-        if (null === $this->domain) {
-            $this->domain = new Domain();
+        $domain = $this->domain;
+        if ($domain === null) {
+            $domain = new Domain();
+            $this->domain = $domain;
         }
 
-        return $this->domain;
+        return $domain;
     }
 
     /**
@@ -620,7 +625,7 @@ class Column extends MappingModel
     /**
      * Returns the location of this column within the table (one-based).
      *
-     * @return integer
+     * @return integer|null
      */
     public function getPosition()
     {
@@ -978,10 +983,6 @@ class Column extends MappingModel
      */
     public function addReferrer(ForeignKey $fk)
     {
-        if (null === $this->referrers) {
-            $this->referrers = [];
-        }
-
         $this->referrers[] = $fk;
     }
 
@@ -992,10 +993,6 @@ class Column extends MappingModel
      */
     public function getReferrers()
     {
-        if (null === $this->referrers) {
-            $this->referrers = [];
-        }
-
         return $this->referrers;
     }
 
@@ -1006,7 +1003,7 @@ class Column extends MappingModel
      */
     public function hasReferrers()
     {
-        return is_array($this->referrers) && count($this->referrers) > 0;
+        return count($this->referrers) > 0;
     }
 
     /**
@@ -1018,7 +1015,7 @@ class Column extends MappingModel
      */
     public function hasReferrer(ForeignKey $fk)
     {
-        return $this->hasReferrers() && in_array($fk, $this->referrers, true);
+        return $this->referrers && in_array($fk, $this->referrers, true);
     }
 
     /**
@@ -1027,7 +1024,7 @@ class Column extends MappingModel
      */
     public function clearReferrers()
     {
-        $this->referrers = null;
+        $this->referrers = [];
     }
 
     /**
@@ -1309,7 +1306,7 @@ class Column extends MappingModel
     /**
      * Sets a string that will give this column a default value.
      *
-     * @param ColumnDefaultValue|string $defaultValue The column's default value
+     * @param ColumnDefaultValue|string|null $defaultValue The column's default value
      * @return void
      */
     public function setDefaultValue($defaultValue)
@@ -1324,7 +1321,7 @@ class Column extends MappingModel
     /**
      * Returns the default value object for this column.
      *
-     * @return ColumnDefaultValue
+     * @return ColumnDefaultValue|null
      * @see Domain::getDefaultValue()
      */
     public function getDefaultValue()
@@ -1335,7 +1332,7 @@ class Column extends MappingModel
     /**
      * Returns the default value suitable for use in PHP.
      *
-     * @return mixed
+     * @return mixed|null
      * @see Domain::getPhpDefaultValue()
      */
     public function getPhpDefaultValue()
@@ -1452,7 +1449,7 @@ class Column extends MappingModel
     /**
      * Returns an instance of PlatformInterface interface.
      *
-     * @return PlatformInterface
+     * @return PlatformInterface|null
      */
     public function getPlatform()
     {
@@ -1479,7 +1476,7 @@ class Column extends MappingModel
      */
     public function __clone()
     {
-        $this->referrers = null;
+        $this->referrers = [];
         if ($this->domain) {
             $this->domain = clone $this->domain;
         }

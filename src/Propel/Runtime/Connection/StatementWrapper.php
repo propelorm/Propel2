@@ -188,7 +188,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
      * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  array   $input_parameters
+     * @param  array|null   $input_parameters
      * @return boolean
      */
     public function execute($input_parameters = null)
@@ -205,6 +205,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
     }
 
     /**
+     * @param array|null $input_parameters
      * @return string
      */
     public function getExecutedQueryString($input_parameters = null)
@@ -217,7 +218,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
                 $pos = $matches[1][$i];
                 if (isset($this->boundValues[$pos]))
                     $sql = str_replace($pos, $this->boundValues[$pos], $sql);
-                if (isset($input_parameters[$pos]))
+                if ($input_parameters && isset($input_parameters[$pos]))
                     $sql = str_replace($pos, $input_parameters[$pos], $sql);
             }
         }

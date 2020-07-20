@@ -275,13 +275,13 @@ class FileLoaderTest extends TestCase
     public function testResourceNameIsNotStringReturnsFalse()
     {
         $this->assertFalse($this->loader->checkSupports('ini', null));
-        $this->assertFalse($this->loader->checkSupports('yaml', ['foo',  'bar']));
+        $this->assertFalse($this->loader->checkSupports('yaml', false));
     }
 
     public function testExtensionIsNotStringOrArrayReturnsFalse()
     {
-        $this->assertFalse($this->loader->checkSupports(null, '/tmp/propel.yaml'));
-        $this->assertFalse($this->loader->checkSupports(12, '/tmp/propel.yaml'));
+        $this->assertFalse($this->loader->checkSupports('', '/tmp/propel.yaml'));
+        $this->assertFalse($this->loader->checkSupports('12', '/tmp/propel.yaml'));
     }
 
     /**

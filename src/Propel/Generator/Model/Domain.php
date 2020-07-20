@@ -27,6 +27,9 @@ class Domain extends MappingModel
     private $scale;
     private $mappingType;
     private $sqlType;
+    /**
+     * @var ColumnDefaultValue|null
+     */
     private $defaultValue;
     private $database;
 
@@ -35,10 +38,10 @@ class Domain extends MappingModel
      *
      * If this domain needs a name, it must be specified manually.
      *
-     * @param string  $type    Propel type.
-     * @param string  $sqlType SQL type.
-     * @param integer $size
-     * @param integer $scale
+     * @param string|null  $type    Propel type.
+     * @param string|null  $sqlType SQL type.
+     * @param integer|null $size
+     * @param integer|null $scale
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
@@ -255,7 +258,7 @@ class Domain extends MappingModel
     /**
      * Returns the default value object.
      *
-     * @return ColumnDefaultValue
+     * @return ColumnDefaultValue|null
      */
     public function getDefaultValue()
     {
@@ -265,7 +268,7 @@ class Domain extends MappingModel
     /**
      * Returns the default value, type-casted for use in PHP OM.
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function getPhpDefaultValue()
     {

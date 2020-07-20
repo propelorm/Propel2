@@ -19,10 +19,25 @@ namespace Propel\Generator\Model;
  */
 class Inheritance extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     private $key;
+    /**
+     * @var string|null
+     */
     private $className;
+    /**
+     * @var string|null
+     */
     private $package;
+    /**
+     * @var string|null
+     */
     private $ancestor;
+    /**
+     * @var Column|null
+     */
     private $column;
 
     /**
@@ -57,16 +72,6 @@ class Inheritance extends MappingModel
     }
 
     /**
-     * Returns the parent column.
-     *
-     * @return Column
-     */
-    public function getColumn()
-    {
-        return $this->column;
-    }
-
-    /**
      * Sets the parent column
      *
      * @param Column $column
@@ -74,6 +79,16 @@ class Inheritance extends MappingModel
     public function setColumn(Column $column)
     {
         $this->column = $column;
+    }
+
+    /**
+     * Returns the parent column.
+     *
+     * @return Column
+     */
+    public function getColumn()
+    {
+        return $this->column;
     }
 
     /**
@@ -119,7 +134,7 @@ class Inheritance extends MappingModel
     /**
      * Returns the ancestor value.
      *
-     * @return string
+     * @return string|null
      */
     public function getAncestor()
     {

@@ -66,9 +66,11 @@ Abstract class AbstractModelCriterion extends AbstractCriterion
         /** @var AbstractModelCriterion $crit */
         $crit = $obj;
 
-        $isEquiv = (((null === $this->table && null === $crit->getTable())
-            || (null !== $this->table && $crit->getTable() === $this->table)
-                          )
+        $isEquiv = (
+            (
+                (null === $this->table && null === $crit->getTable())
+                || (null !== $this->table && $crit->getTable() === $this->table)
+            )
             && $this->clause === $crit->getClause()
             && $this->column === $crit->getColumn()
             && $this->comparison === $crit->getComparison());

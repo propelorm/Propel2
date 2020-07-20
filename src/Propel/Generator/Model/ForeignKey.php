@@ -83,22 +83,22 @@ class ForeignKey extends MappingModel
     /**
      * @var string[]
      */
-    private $localColumns;
+    private $localColumns = [];
 
     /**
      * @var (string|null)[]
      */
-    private $foreignColumns;
+    private $foreignColumns = [];
 
     /**
      * @var (string|null)[]
      */
-    private $localValues;
+    private $localValues = [];
 
     /**
      * @var bool
      */
-    private $skipSql;
+    private $skipSql = false;
 
     /**
      * @var string
@@ -113,7 +113,7 @@ class ForeignKey extends MappingModel
     /**
      * Constructs a new ForeignKey object.
      *
-     * @param string $name
+     * @param string|null $name
      */
     public function __construct($name = null)
     {
@@ -125,9 +125,6 @@ class ForeignKey extends MappingModel
 
         $this->onUpdate       = self::NONE;
         $this->onDelete       = self::NONE;
-        $this->localColumns   = [];
-        $this->foreignColumns = [];
-        $this->skipSql        = false;
     }
 
     protected function setupObject()
@@ -152,8 +149,8 @@ class ForeignKey extends MappingModel
 
             $hash = [];
             $hash[] = $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
-            $hash[] = implode(',', (array)$this->localColumns);
-            $hash[] = implode(',', (array)$this->foreignColumns);
+            $hash[] = implode(',', $this->localColumns);
+            $hash[] = implode(',', $this->foreignColumns);
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
 
@@ -169,7 +166,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the normalized input of onDelete and onUpdate behaviors.
      *
-     * @param  string $behavior
+     * @param  string|null $behavior
      * @return string
      */
     public function normalizeFKey($behavior)
@@ -255,7 +252,7 @@ class ForeignKey extends MappingModel
     /**
      * Sets the onUpdate behavior.
      *
-     * @param string $behavior
+     * @param string|null $behavior
      */
     public function setOnUpdate($behavior)
     {
@@ -364,7 +361,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the PlatformInterface instance.
      *
-     * @return PlatformInterface
+     * @return PlatformInterface|null
      */
     private function getPlatform()
     {
@@ -374,7 +371,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the Database object of this Column.
      *
-     * @return Database
+     * @return Database|null
      */
     public function getDatabase()
     {
@@ -430,13 +427,16 @@ class ForeignKey extends MappingModel
     /**
      * Returns the resolved foreign Table model object.
      *
-     * @return Table
+     * @return Table|null
      */
     public function getForeignTable()
     {
-        if ($database = $this->parentTable->getDatabase()) {
+        $database = $this->parentTable->getDatabase();
+        if ($database) {
             return $database->getTable($this->getForeignTableName());
         }
+
+        return null;
     }
 
     /**

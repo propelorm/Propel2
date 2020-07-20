@@ -27,7 +27,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * The current child "object" we are operating on.
      *
-     * @var Inheritance $child
+     * @var Inheritance|null $child
      */
     private $child;
 
@@ -48,7 +48,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      */
     public function getPackage()
     {
-        return ($this->child->getPackage() ? $this->child->getPackage() : parent::getPackage());
+        return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
 
     /**

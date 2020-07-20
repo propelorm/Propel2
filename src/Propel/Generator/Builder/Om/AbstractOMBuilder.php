@@ -283,7 +283,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param  string         $class     the class name
      * @param  string         $namespace the namespace
-     * @param  string|boolean $alias     the alias wanted, if set to True, it automatically adds an alias when needed
+     * @param  string|bool|null $alias     the alias wanted, if set to True, it automatically adds an alias when needed
      * @return string         the class name or it's alias
      */
     public function declareClassNamespace($class, $namespace = '', $alias = false)
@@ -553,8 +553,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Get the column constant name (e.g. TableMapName::COLUMN_NAME).
      *
-     * @param Column $col       The column we need a name for.
-     * @param string $classname The TableMap classname to use.
+     * @param Column|null $col       The column we need a name for.
+     * @param string|null $classname The TableMap classname to use.
      *
      * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the TableMapName is looked up for current table to yield $currTableTableMap::COLUMN_NAME.
      */

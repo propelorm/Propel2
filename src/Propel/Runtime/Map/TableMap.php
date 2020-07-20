@@ -167,6 +167,9 @@ class TableMap
 
     /**
      * Construct a new TableMap.
+     *
+     * @param string|null $name
+     * @param \Propel\Runtime\Map\DatabaseMap|null $dbMap
      */
     public function __construct($name = null, $dbMap = null)
     {
@@ -657,7 +660,7 @@ class TableMap
         }
         // set columns
         foreach ($joinConditionMapping as $map) {
-            list($local, $foreign) = $map;
+            [$local, $foreign] = $map;
             $relation->addColumnMapping(
                 $this->getColumnOrValue($local, $relation->getLocalTable()),
                 $this->getColumnOrValue($foreign, $relation->getForeignTable())

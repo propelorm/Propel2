@@ -124,20 +124,20 @@ abstract class FileLoader extends BaseFileLoader
             return ($ext === $extension);
         }
 
-        if (is_array($ext)) {
-            $supported = false;
-
-            foreach ($ext as $value) {
-                if ($value === $extension) {
-                    $supported = true;
-                    break;
-                }
-            }
-
-            return $supported;
+        if (!is_array($ext)) {
+            throw new \InvalidArgumentException('$ext must string or string[]');
         }
 
-        return false;
+        $supported = false;
+
+        foreach ($ext as $value) {
+            if ($value === $extension) {
+                $supported = true;
+                break;
+            }
+        }
+
+        return $supported;
     }
 
     private function isResolved()
@@ -279,7 +279,7 @@ abstract class FileLoader extends BaseFileLoader
      * Scan recursively an array to find a value of a given key.
      *
      * @param string  $property_key The array key
-     * @param array   $config       The array to scan
+     * @param array|null   $config       The array to scan
      * @param boolean $found        if the key was found
      *
      * @return mixed The value or null if not found

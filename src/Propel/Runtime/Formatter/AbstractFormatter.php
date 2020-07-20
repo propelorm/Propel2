@@ -87,7 +87,7 @@ abstract class AbstractFormatter
      * @param BaseModelCriteria    $criteria
      * @param DataFetcherInterface $dataFetcher
      *
-     * @return $this|AbstractFormatter The current formatter object
+     * @return $this The current formatter object
      */
     public function init(BaseModelCriteria $criteria, DataFetcherInterface $dataFetcher = null)
     {

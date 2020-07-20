@@ -181,7 +181,7 @@ class MigrationManager extends AbstractManager
 
         $column = new Column('version');
         $column->getDomain()->copy($platform->getDomainForType('INTEGER'));
-        $column->setDefaultValue(0);
+        $column->setDefaultValue('0');
 
         $table->addColumn($column);
         // insert the table into the database

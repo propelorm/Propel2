@@ -32,6 +32,9 @@ class ObjectCollection extends Collection
     protected $index;
     protected $indexSplHash;
 
+    /**
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         parent::__construct($data);

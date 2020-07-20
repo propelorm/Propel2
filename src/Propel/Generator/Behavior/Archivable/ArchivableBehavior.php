@@ -35,6 +35,9 @@ class ArchivableBehavior extends Behavior
         'archive_on_delete'   => 'true',
     ];
 
+    /**
+     * @var Table|null
+     */
     protected $archiveTable;
     protected $objectBuilderModifier;
     protected $queryBuilderModifier;
@@ -130,7 +133,7 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @return Table
+     * @return Table|null
      */
     public function getArchiveTable()
     {

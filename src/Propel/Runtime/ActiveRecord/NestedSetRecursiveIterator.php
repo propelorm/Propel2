@@ -17,10 +17,19 @@ namespace Propel\Runtime\ActiveRecord;
  */
 class NestedSetRecursiveIterator implements \RecursiveIterator
 {
-    protected $topNode = null;
+    /**
+     * @var object
+     */
+    protected $topNode;
 
-    protected $curNode = null;
+    /**
+     * @var object
+     */
+    protected $curNode;
 
+    /**
+     * @param object $node
+     */
     public function __construct($node)
     {
         $this->topNode = $node;

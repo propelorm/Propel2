@@ -37,7 +37,7 @@ class ConfigurationManager
     /**
      * Load and validate configuration values from a file.
      *
-     * @param string $filename  Configuration file name or directory in which resides the configuration file.
+     * @param string|null $filename  Configuration file name or directory in which resides the configuration file.
      * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
      *                          It's useful when passing configuration parameters from command line.
      */
@@ -133,13 +133,13 @@ class ConfigurationManager
      * This method also looks for a '.dist' configuration file and loads it.
      *
      * @param string $fileName  Configuration file name or directory in which resides the configuration file.
-     * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
+     * @param array|null $extraConf Array of configuration properties, to be merged with those loaded from file.
      */
     protected function load($fileName, $extraConf)
     {
         $dirs = $this->getDirs($fileName);
 
-        if ((null === $fileName) || (is_dir($fileName))) {
+        if (!$fileName || is_dir($fileName)) {
             $fileName = self::CONFIG_FILE_NAME;
         }
 
@@ -147,7 +147,7 @@ class ConfigurationManager
             $extraConf = [];
         }
 
-        if (self::CONFIG_FILE_NAME === $fileName) {
+        if (static::CONFIG_FILE_NAME === $fileName) {
             $files = $this->getFiles($dirs, $fileName);
             $distFiles = $this->getFiles($dirs, $fileName, true);
 

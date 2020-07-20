@@ -22,7 +22,7 @@ class ColumnDefaultValue
     const TYPE_EXPR  = 'expr';
 
     /**
-     * @var string The default value, as specified in the schema.
+     * @var string|null The default value, as specified in the schema.
      */
     private $value;
 
@@ -34,8 +34,8 @@ class ColumnDefaultValue
     /**
      * Creates a new DefaultValue object.
      *
-     * @param string $value The default value, as specified in the schema.
-     * @param string $type  The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     * @param string|null $value The default value, as specified in the schema.
+     * @param string|null $type  The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
     public function __construct($value, $type = null)
     {
@@ -73,7 +73,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @return string The value, as specified in the schema.
+     * @return string|null The value, as specified in the schema.
      */
     public function getValue()
     {
@@ -81,7 +81,7 @@ class ColumnDefaultValue
     }
 
     /**
-     * @param string $value The value, as specified in the schema.
+     * @param string|null $value The value, as specified in the schema.
      */
     public function setValue($value)
     {
