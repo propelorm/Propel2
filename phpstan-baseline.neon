@@ -656,6 +656,11 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criterion/LikeCriterion.php
 
 		-
+			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:filterBy\\(\\) should return Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria but returns Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getTableMap\\(\\)\\.$#"
 			count: 7
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -701,7 +706,17 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Parameter \\#1 \\$values \\(array\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:doUpdate\\(\\) should be compatible with parameter \\$updateValues \\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:doUpdate\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:getTableMap\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:addUsingAlias\\(\\) should return Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria but returns Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
@@ -806,9 +821,24 @@ parameters:
 			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
 		-
+			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/OnDemandCollection.php
+
+		-
+			message: "#^Method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should return Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator but returns Iterator\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/OnDemandCollection.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:getProfiler\\(\\)\\.$#"
 			count: 3
 			path: src/Propel/Runtime/Connection/ProfilerStatementWrapper.php
+
+		-
+			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\ArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
@@ -834,6 +864,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setVirtualColumn\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
+
+		-
+			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\SimpleArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
