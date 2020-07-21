@@ -132,7 +132,7 @@ class ConfigurationManager
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     * @param string $fileName  Configuration file name or directory in which resides the configuration file.
+     * @param string|null $fileName  Configuration file name or directory in which resides the configuration file.
      * @param array|null $extraConf Array of configuration properties, to be merged with those loaded from file.
      */
     protected function load($fileName, $extraConf)
@@ -250,18 +250,18 @@ class ConfigurationManager
     /**
      * Return the directories where to find the configuration file.
      *
-     * @param  string $fileName
+     * @param  string|null $fileName
      * @return array
      */
     private function getDirs($fileName)
     {
-        if (is_file($fileName)) {
+        if ($fileName && is_file($fileName)) {
             return [];
         }
 
         $currentDir = getcwd();
 
-        if (is_dir($fileName)) {
+        if ($fileName && is_dir($fileName)) {
             $currentDir = $fileName;
         }
 

@@ -71,7 +71,7 @@ class SluggableBehavior extends Behavior
      */
     protected function addUniqueConstraint(Table $table)
     {
-        $unique = new Unique(); //$this->getColumnForParameter('slug_column')
+        $unique = new Unique();
         $unique->setName($table->getCommonName() . '_slug');
         $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
         if ($this->getParameter('scope_column')) {
