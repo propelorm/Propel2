@@ -110,13 +110,13 @@ class SchemaReader
      * populated Schema structure.
      *
      * @param  string $xmlFile The input file to parse.
-     * @return Schema populated by <code>xmlFile</code>.
+     * @return Schema|null populated by <code>xmlFile</code>.
      */
     public function parseFile($xmlFile)
     {
         // we don't want infinite recursion
         if ($this->isAlreadyParsed($xmlFile)) {
-            return;
+            return null;
         }
 
         return $this->parseString(file_get_contents($xmlFile), $xmlFile);
@@ -128,14 +128,15 @@ class SchemaReader
      *
      * @param  string $xmlString The input string to parse.
      * @param  string $xmlFile   The input file name.
-     * @return Schema
+     * @return Schema|null
      */
     public function parseString($xmlString, $xmlFile = null)
     {
         // we don't want infinite recursion
         if ($this->isAlreadyParsed($xmlFile)) {
-            return;
+            return null;
         }
+
         // store current schema file path
         $this->schemasTagsStack[$xmlFile] = [];
         $this->currentXmlFile = $xmlFile;

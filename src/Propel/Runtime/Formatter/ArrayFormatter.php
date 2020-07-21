@@ -97,7 +97,7 @@ class ArrayFormatter extends AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param ActiveRecordInterface|null $record the object to format
      *
      * @return array The original record turned into an array
      */
@@ -106,6 +106,9 @@ class ArrayFormatter extends AbstractFormatter
         return $record ? $record->toArray() : [];
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;

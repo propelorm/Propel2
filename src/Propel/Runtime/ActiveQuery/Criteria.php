@@ -196,9 +196,9 @@ class Criteria
 
     /**
      * Storage of having data.
-     * @var AbstractCriterion
+     * @var AbstractCriterion|null
      */
-    protected $having = null;
+    protected $having;
 
     /**
      * Storage of join data. collection of Join objects.
@@ -535,7 +535,7 @@ class Criteria
     /**
      * Method to return the latest Criterion in a table.
      *
-     * @return AbstractCriterion A Criterion or null no Criterion is added.
+     * @return AbstractCriterion|null A Criterion or null no Criterion is added.
      */
     public function getLastCriterion()
     {
@@ -599,7 +599,7 @@ class Criteria
      * Method to return a String table name.
      *
      * @param  string $name Name of the key.
-     * @return string The value of the object at key.
+     * @return string|null The value of the object at key.
      */
     public function getColumnName($name)
     {
@@ -637,7 +637,7 @@ class Criteria
      * Method to return a comparison String.
      *
      * @param  string $key String name of the key.
-     * @return string A String with the value of the object at key.
+     * @return string|null A String with the value of the object at key.
      */
     public function getComparison($key)
     {
@@ -702,7 +702,7 @@ class Criteria
      * Method to return a String table name.
      *
      * @param  string $name The name of the key.
-     * @return string The value of table for criterion at key.
+     * @return string|null The value of table for criterion at key.
      */
     public function getTableName($name)
     {
@@ -1055,7 +1055,7 @@ class Criteria
     /**
      * @param string $name The name of the join clause
      *
-     * @return Join A join object
+     * @return bool
      */
     public function hasJoin($name)
     {

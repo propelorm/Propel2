@@ -165,12 +165,12 @@ END
     /**
      * @param \Propel\Generator\Model\ForeignKey $fk
      *
-     * @return string|null
+     * @return string
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return null;
+            return '';
         }
 
         $pattern = "
@@ -204,12 +204,12 @@ END
     /**
      * @param \Propel\Generator\Model\ForeignKey $fk
      *
-     * @return string|null
+     * @return string
      */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return null;
+            return '';
         }
 
         $pattern = 'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)';

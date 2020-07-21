@@ -220,12 +220,12 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * @param \Propel\Generator\Model\ForeignKey $fk
      *
-     * @return string|null
+     * @return string
      */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return null;
+            return '';
         }
 
         $pattern = "CONSTRAINT %s

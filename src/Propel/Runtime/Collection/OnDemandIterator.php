@@ -43,7 +43,7 @@ class OnDemandIterator implements \Iterator
     protected $enableInstancePoolingOnFinish;
 
     /**
-     * @param AbstractFormatter    $formatter
+     * @param ObjectFormatter    $formatter
      * @param DataFetcherInterface $dataFetcher
      */
     public function __construct(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)

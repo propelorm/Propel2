@@ -45,7 +45,7 @@ class BehaviorLocator
     /**
      * Searches a composer file
      *
-     * @return SplFileInfo the found composer file or null if composer file isn't found
+     * @return SplFileInfo|null The found composer file or null if composer file isn't found
      */
     private function findComposerFile($fileName)
     {
@@ -213,7 +213,7 @@ class BehaviorLocator
      *
      * @param  array          $package
      * @throws BuildException
-     * @return array          behavior data
+     * @return array|null Behavior data
      */
     private function loadBehavior($package)
     {
@@ -229,9 +229,9 @@ class BehaviorLocator
                         'class' => $extra['class'],
                         'package' => $package['name']
                     ];
-                } else {
-                    throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
                 }
+
+                throw new BuildException(sprintf('Cannot read behavior name and class from package %s', $package['name']));
             }
         }
 

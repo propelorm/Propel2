@@ -551,11 +551,16 @@ DROP INDEX %s ON %s;
         return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string|null
+     */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
         if (!$this->supportsForeignKeys($fk->getTable())) return '';
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
         $pattern = "
 ALTER TABLE %s DROP FOREIGN KEY %s;
@@ -567,6 +572,11 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
         );
     }
 
+    /**
+     * @param string $comment
+     *
+     * @return string
+     */
     public function getCommentBlockDDL($comment)
     {
         $pattern = "

@@ -256,6 +256,13 @@ interface PlatformInterface
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     * @param string $identifier
+     * @param string $columnValueAccessor
+     * @param string $tab
+     *
+     * @return string
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ");
 

@@ -62,7 +62,7 @@ class ConfigurationManager
      * It ca be useful to get, in example, only 'generator' values.
      *
      * @param  string $section the section to be returned
-     * @return array
+     * @return array|null
      */
     public function getSection($section)
     {

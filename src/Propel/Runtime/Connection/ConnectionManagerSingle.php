@@ -28,7 +28,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     protected $configuration = [];
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $connection;
 

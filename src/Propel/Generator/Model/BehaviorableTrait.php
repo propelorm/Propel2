@@ -115,7 +115,7 @@ trait BehaviorableTrait
      * Get behavior by id
      *
      * @param  string   $id the behavior id
-     * @return Behavior a behavior object or null if the behavior doesn't exist
+     * @return Behavior|null A behavior object or null if the behavior doesn't exist
      */
     public function getBehavior($id)
     {

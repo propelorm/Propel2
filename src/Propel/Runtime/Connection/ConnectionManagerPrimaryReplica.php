@@ -28,7 +28,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     protected $writeConfiguration = [];
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $writeConnection;
 
@@ -38,7 +38,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     protected $readConfiguration;
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $readConnection;
 

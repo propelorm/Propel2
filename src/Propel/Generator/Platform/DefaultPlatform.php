@@ -625,7 +625,7 @@ DROP INDEX %s;
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return '';
         }
         $pattern = "
 ALTER TABLE %s ADD %s;
@@ -641,12 +641,12 @@ ALTER TABLE %s ADD %s;
      * Builds the DDL SQL to drop a foreign key.
      *
      * @param  ForeignKey $fk
-     * @return string
+     * @return string|null
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
         $pattern = "
 ALTER TABLE %s DROP CONSTRAINT %s;
@@ -660,13 +660,17 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL for a ForeignKey object.
+     *
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @return string
      */
     public function getForeignKeyDDL(ForeignKey $fk)
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return '';
         }
+
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s)
     REFERENCES %s (%s)";
@@ -688,6 +692,11 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         return $script;
     }
 
+    /**
+     * @param string $comment
+     *
+     * @return string
+     */
     public function getCommentLineDDL($comment)
     {
         $pattern = "-- %s
@@ -696,6 +705,11 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         return sprintf($pattern, $comment);
     }
 
+    /**
+     * @param string $comment
+     *
+     * @return string
+     */
     public function getCommentBlockDDL($comment)
     {
         $pattern = "
@@ -710,6 +724,8 @@ ALTER TABLE %s DROP CONSTRAINT %s;
     /**
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
+     *
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff $databaseDiff
      *
      * @return string
      */
@@ -746,6 +762,10 @@ ALTER TABLE %s DROP CONSTRAINT %s;
 
     /**
      * Builds the DDL SQL to rename a table
+     *
+     * @param string $fromTableName
+     * @param string $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
@@ -764,6 +784,8 @@ ALTER TABLE %s RENAME TO %s;
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
@@ -777,45 +799,45 @@ ALTER TABLE %s RENAME TO %s;
             $ret .= $this->getDropForeignKeyDDL($fk);
         }
         foreach ($tableDiff->getModifiedFks() as $fkModification) {
-            list($fromFk) = $fkModification;
+            [$fromFk] = $fkModification;
             $ret .= $this->getDropForeignKeyDDL($fromFk);
         }
         foreach ($tableDiff->getRemovedIndices() as $index) {
             $ret .= $this->getDropIndexDDL($index);
         }
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list($fromIndex) = $indexModification;
+            [$fromIndex] = $indexModification;
             $ret .= $this->getDropIndexDDL($fromIndex);
         }
 
-        $columnChanges = '';
+        $columnChangeString = '';
 
         // alter table structure
         if ($tableDiff->hasModifiedPk()) {
-            $columnChanges .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
+            $columnChangeString .= $this->getDropPrimaryKeyDDL($tableDiff->getFromTable());
         }
         foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
-            $columnChanges .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
+            $columnChangeString .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
         if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
-            $columnChanges .= $this->getModifyColumnsDDL($modifiedColumns);
+            $columnChangeString .= $this->getModifyColumnsDDL($modifiedColumns);
         }
         if ($addedColumns = $tableDiff->getAddedColumns()) {
-            $columnChanges .= $this->getAddColumnsDDL($addedColumns);
+            $columnChangeString .= $this->getAddColumnsDDL($addedColumns);
         }
         foreach ($tableDiff->getRemovedColumns() as $column) {
-            $columnChanges .= $this->getRemoveColumnDDL($column);
+            $columnChangeString .= $this->getRemoveColumnDDL($column);
         }
 
         // add new indices and foreign keys
         if ($tableDiff->hasModifiedPk()) {
-            $columnChanges .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
+            $columnChangeString .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
         }
 
-        if ($columnChanges) {
+        if ($columnChangeString) {
             //merge column changes into one command. This is more compatible especially with PK constraints.
 
-            $changes = explode(';', $columnChanges);
+            $changes = explode(';', $columnChangeString);
             $columnChanges = [];
 
             foreach ($changes as $change) {
@@ -845,14 +867,14 @@ ALTER TABLE %s%s;
 
         // create indices, foreign keys
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list($oldIndex, $toIndex) = $indexModification;
+            [$oldIndex, $toIndex] = $indexModification;
             $ret .= $this->getAddIndexDDL($toIndex);
         }
         foreach ($tableDiff->getAddedIndices() as $index) {
             $ret .= $this->getAddIndexDDL($index);
         }
         foreach ($tableDiff->getModifiedFks() as $fkModification) {
-            list(, $toFk) = $fkModification;
+            [, $toFk] = $fkModification;
             $ret .= $this->getAddForeignKeyDDL($toFk);
         }
         foreach ($tableDiff->getAddedFks() as $fk) {
@@ -928,7 +950,7 @@ ALTER TABLE %s%s;
         }
 
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
-            list($fromIndex, $toIndex) = $indexModification;
+            [$fromIndex, $toIndex] = $indexModification;
             $ret .= $this->getDropIndexDDL($fromIndex);
             $ret .= $this->getAddIndexDDL($toIndex);
         }
@@ -955,7 +977,7 @@ ALTER TABLE %s%s;
         }
 
         foreach ($tableDiff->getModifiedFks() as $fkModification) {
-            list($fromFk, $toFk) = $fkModification;
+            [$fromFk, $toFk] = $fkModification;
             $ret .= $this->getDropForeignKeyDDL($fromFk);
             $ret .= $this->getAddForeignKeyDDL($toFk);
         }
@@ -965,6 +987,8 @@ ALTER TABLE %s%s;
 
     /**
      * Builds the DDL SQL to remove a column
+     *
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return string
      */
@@ -983,6 +1007,9 @@ ALTER TABLE %s DROP COLUMN %s;
     /**
      * Builds the DDL SQL to rename a column
      *
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
      * @return string
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
@@ -1000,6 +1027,8 @@ ALTER TABLE %s RENAME COLUMN %s TO %s;
 
     /**
      * Builds the DDL SQL to modify a column
+     *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff $columnDiff
      *
      * @return string
      */
@@ -1052,6 +1081,8 @@ ALTER TABLE %s MODIFY
 
     /**
      * Builds the DDL SQL to remove a column
+     *
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return string
      */
@@ -1308,6 +1339,13 @@ ALTER TABLE %s ADD
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     * @param string $identifier
+     * @param string $columnValueAccessor
+     * @param string $tab
+     *
+     * @return string
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
@@ -1387,6 +1425,7 @@ if (is_resource($columnValueAccessor)) {
      * which the most Platforms requires but which is not always explicitly defined in the table model.
      *
      * @param Table $table The table object which gets modified.
+     * @return void
      */
     public function normalizeTable(Table $table)
     {

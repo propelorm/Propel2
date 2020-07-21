@@ -246,7 +246,7 @@ class ColumnTest extends ModelTestCase
     public function provideDefaultValues()
     {
         return [
-            ['DOUBLE', 3.14, 3.14],
+            ['DOUBLE', 3.14, '3.14'],
             ['VARCHAR', 'hello', "'hello'"],
             ['VARCHAR', "john's bike", "'john\\'s bike'"],
             ['BOOLEAN', 1, 'true'],

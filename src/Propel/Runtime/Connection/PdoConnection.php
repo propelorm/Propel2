@@ -132,8 +132,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  null        $name
-     * @return string|void
+     * @param  string|null        $name
+     * @return string|int
      */
     public function lastInsertId($name = null)
     {

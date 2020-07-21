@@ -1292,7 +1292,7 @@ class Column extends MappingModel
         }
 
         if ($this->isNumericType()) {
-            return (float) $defaultValue->getValue();
+            return (string)$defaultValue->getValue();
         }
 
         if ($this->isTextType() || $this->getDefaultValue()->isExpression()) {

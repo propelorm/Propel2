@@ -290,16 +290,15 @@ class Profiler
     /**
      * Rounding to significant digits (sort of like JavaScript's toPrecision()).
      *
-     *
      * @param float   $number             Value to round
      * @param integer $significantFigures Number of significant figures
      *
-     * @return float
+     * @return string
      */
     public static function toPrecision($number, $significantFigures = 3)
     {
         if (0 === $number) {
-            return 0;
+            return '0';
         }
 
         $significantDecimals = (int) floor($significantFigures - log10(abs($number)));
