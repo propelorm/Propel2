@@ -266,6 +266,26 @@ parameters:
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorQueryBuilderModifier.php
 
 		-
+			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalAccessor\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
@@ -371,6 +391,11 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
 			message: "#^Variable \\$mysqlInvalidDateString might not be defined\\.$#"
 			count: 2
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
@@ -391,9 +416,24 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getIdentifierPhp\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/TableMapBuilder.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getSequenceName\\(\\)\\.$#"
@@ -401,9 +441,29 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/TableMapBuilder.php
 
 		-
+			message: "#^Parameter \\#2 \\$shdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'startElement' given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Util/SchemaReader.php
+
+		-
+			message: "#^Parameter \\#3 \\$ehdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'endElement' given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Util/SchemaReader.php
+
+		-
 			message: "#^Parameter \\$definition of method Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\ArrayInput\\:\\:__construct\\(\\) has invalid typehint type Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\InputDefinition\\.$#"
 			count: 1
 			path: src/Propel/Generator/Command/Console/Input/ArrayInput.php
+
+		-
+			message: "#^Parameter \\#1 \\$definition of method Symfony\\\\Component\\\\Console\\\\Input\\\\Input\\:\\:__construct\\(\\) expects Symfony\\\\Component\\\\Console\\\\Input\\\\InputDefinition\\|null, Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\InputDefinition\\|null given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Command/Console/Input/ArrayInput.php
+
+		-
+			message: "#^Parameter \\#1 \\$attempts of method Symfony\\\\Component\\\\Console\\\\Question\\\\Question\\:\\:setMaxAttempts\\(\\) expects int\\|null, true given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Command/Helper/ConsoleHelper3.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getModifyDatabaseDDL\\(\\)\\.$#"
@@ -431,6 +491,11 @@ parameters:
 			path: src/Propel/Generator/Config/GeneratorConfig.php
 
 		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Config/GeneratorConfig.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Generator/Manager/AbstractManager.php
@@ -444,6 +509,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getAddTableDDL\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Manager/MigrationManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$builder of method Propel\\\\Generator\\\\Manager\\\\ModelManager\\:\\:doBuild\\(\\) expects Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractOMBuilder, Propel\\\\Generator\\\\Builder\\\\DataModelBuilder given\\.$#"
+			count: 5
+			path: src/Propel/Generator/Manager/ModelManager.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setChild\\(\\)\\.$#"
@@ -464,6 +534,51 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getAddTablesDDL\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Manager/SqlManager.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Column.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Database.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Database.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: src/Propel/Generator/Model/Database.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and int will always evaluate to false\\.$#"
+			count: 2
+			path: src/Propel/Generator/Model/Domain.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/ForeignKey.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Schema.php
+
+		-
+			message: "#^Parameter \\#1 \\$namespace of method Propel\\\\Generator\\\\Model\\\\ScopedMappingModel\\:\\:setNamespace\\(\\) expects string, null given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Schema.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Table.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isEarly\\(\\)\\.$#"
@@ -496,6 +611,26 @@ parameters:
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
 		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/DefaultPlatform.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/DefaultPlatform.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and int will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/DefaultPlatform.php
+
+		-
+			message: "#^Parameter \\#1 \\$size of method Propel\\\\Generator\\\\Model\\\\Column\\:\\:setSize\\(\\) expects int, null given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/DefaultPlatform.php
+
+		-
 			message: "#^Method Propel\\\\Generator\\\\Platform\\\\MssqlPlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/MssqlPlatform.php
@@ -511,6 +646,11 @@ parameters:
 			path: src/Propel/Generator/Platform/MysqlPlatform.php
 
 		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 2
+			path: src/Propel/Generator/Platform/MysqlPlatform.php
+
+		-
 			message: "#^Method Propel\\\\Generator\\\\Platform\\\\OraclePlatform\\:\\:getAddPrimaryKeyDDL\\(\\) should return string but return statement is missing\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/OraclePlatform.php
@@ -519,6 +659,26 @@ parameters:
 			message: "#^Method Propel\\\\Generator\\\\Platform\\\\OraclePlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/OraclePlatform.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/PgsqlPlatform.php
+
+		-
+			message: "#^Right side of && is always true\\.$#"
+			count: 2
+			path: src/Propel/Generator/Platform/PgsqlPlatform.php
+
+		-
+			message: "#^Left side of \\|\\| is always false\\.$#"
+			count: 2
+			path: src/Propel/Generator/Platform/SqlitePlatform.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of function trim expects string, Propel\\\\Generator\\\\Model\\\\ColumnDefaultValue\\|null given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Platform/SqlitePlatform.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\DataFetcher\\\\DataFetcherInterface\\:\\:setStyle\\(\\)\\.$#"
@@ -546,6 +706,11 @@ parameters:
 			path: src/Propel/Generator/Reverse/PgsqlSchemaParser.php
 
 		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
@@ -561,9 +726,24 @@ parameters:
 			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
 
 		-
+			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int\\<1, max\\>\\|int\\<min, \\-1\\> given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/BehaviorLocator.php
+
+		-
+			message: "#^Parameter \\#1 \\$attribute of method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
@@ -577,6 +757,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getModifyDatabaseDDL\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Util/QuickBuilder.php
+
+		-
+			message: "#^Parameter \\#2 \\$code of class Propel\\\\Generator\\\\Exception\\\\BuildException constructor expects int, null given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
@@ -646,6 +831,36 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
+			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Parameter \\#2 \\$code of class Propel\\\\Runtime\\\\Exception\\\\PropelException constructor expects int, null given\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Runtime/ActiveQuery/Criterion/BasicCriterion.php
@@ -661,8 +876,23 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Parameter \\#1 \\$join of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\:\\:setPreviousJoin\\(\\) expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getRelationMap\\(\\)\\.$#"
 			count: 3
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Parameter \\#1 \\$join of class Propel\\\\Runtime\\\\ActiveQuery\\\\ModelWith constructor expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\|null, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria will always evaluate to false\\.$#"
+			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
@@ -706,6 +936,21 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with object will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:getTableMap\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -714,6 +959,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criterion\\\\AbstractCriterion\\:\\:setIgnoreCase\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Result of \\|\\| is always false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php
 
 		-
 			message: "#^Variable \\$dbMap might not be defined\\.$#"
