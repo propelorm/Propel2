@@ -164,7 +164,11 @@ ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (id,bar);
         $expected = "
 DROP INDEX bar_fk;
 
+DROP INDEX bax_unique;
+
 CREATE INDEX baz_fk ON foo (baz);
+
+CREATE UNIQUE INDEX bax_bay_unique ON foo (bax,bay);
 
 DROP INDEX bar_baz_fk;
 

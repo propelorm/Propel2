@@ -688,8 +688,8 @@ DROP SEQUENCE %s CASCADE;
     {
         if ($index instanceof Unique) {
             $pattern = "
-    ALTER TABLE %s DROP CONSTRAINT %s;
-    ";
+ALTER TABLE %s DROP CONSTRAINT %s;
+";
 
             return sprintf($pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
@@ -723,4 +723,26 @@ DROP SEQUENCE %s CASCADE;
         return preg_replace('/^/m', $tab, $script);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Index $index
+     *
+     * @return string
+     */
+    public function getAddIndexDDL(Index $index)
+    {
+        if (!$index->isUnique()) {
+            return parent::getAddIndexDDL($index);
+        }
+
+        $pattern = "
+ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s);
+";
+
+        return sprintf(
+            $pattern,
+            $this->quoteIdentifier($index->getTable()->getName()),
+            $this->quoteIdentifier($index->getName()),
+            $this->getColumnListDDL($index->getColumnObjects())
+        );
+    }
 }

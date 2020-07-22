@@ -17,6 +17,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\PgsqlPlatform;
 
 /**
@@ -596,6 +597,21 @@ ALTER TABLE "foo" ADD PRIMARY KEY ("bar");
     {
         $expected = '
 CREATE INDEX "babar" ON "foo" ("bar1","bar2");
+';
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
+    }
+
+    /**
+     * @dataProvider providerForTestGetUniqueIndexDDL
+     *
+     * @param \Propel\Generator\Model\Unique $index
+     *
+     * @return void
+     */
+    public function testAddUniqueIndexDDL(Unique $index): void
+    {
+        $expected = '
+ALTER TABLE "foo" ADD CONSTRAINT "babar" UNIQUE ("bar1");
 ';
         $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
     }
