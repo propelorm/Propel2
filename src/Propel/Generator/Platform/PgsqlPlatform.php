@@ -683,8 +683,8 @@ DROP SEQUENCE %s CASCADE;
     {
         if ($index instanceof Unique) {
             $pattern = "
-    ALTER TABLE %s DROP CONSTRAINT %s;
-    ";
+ALTER TABLE %s DROP CONSTRAINT %s;
+";
 
             return sprintf($pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
