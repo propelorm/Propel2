@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Common\Util\CartesianProduct;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
@@ -827,15 +828,39 @@ class Table extends ScopedMappingModel implements IdMethod
         $crossFks = [];
         foreach ($this->referrers as $refFK) {
             if ($refFK->getTable()->isCrossRef()) {
-                $crossFK = new CrossForeignKeys($refFK, $this);
-                foreach ($refFK->getOtherFks() as $fk) {
-                    if ($fk->isAtLeastOneLocalPrimaryKeyIsRequired() &&
-                        $crossFK->isAtLeastOneLocalPrimaryKeyNotCovered($fk)) {
-                        $crossFK->addCrossForeignKey($fk);
+                // group all polymorphic fks
+                $refFKOtherFKs = $refFK->getOtherFks();
+                $havePMFKs = false;
+                foreach ($refFKOtherFKs as $k => $refFKOtherFk) {
+                    if ($refFKOtherFk->isPolymorphic()) {
+                        $havePMFKs = true;
+                        $refFKOtherFKs[$refFKOtherFk->getPolymorphicSignature()][] = $refFKOtherFk;
+                        unset($refFKOtherFKs[$k]);
                     }
                 }
-                if ($crossFK->hasCrossForeignKeys()) {
-                    $crossFks[] = $crossFK;
+
+                if (!$havePMFKs) {
+                    $combinations = [$refFKOtherFKs];
+                } else {
+                    // Calculate cartesian product
+                    $combinations = CartesianProduct::get(array_values($refFKOtherFKs));
+                }
+
+                foreach ($combinations as $combination) {
+                    $crossFK = new CrossForeignKeys($refFK, $this);
+                    foreach ($combination as $fk) {
+                        /** @var ForeignKey $fk */
+                        if ($fk->isAtLeastOneLocalPrimaryKeyIsRequired() &&
+                            $crossFK->isAtLeastOneLocalPrimaryKeyNotCovered($fk) &&
+                            !$crossFK->getIncomingForeignKey()->isAPolymorphicSiblingRelationship($fk)
+                        ) {
+                            $crossFK->addCrossForeignKey($fk);
+                        }
+                    }
+
+                    if ($crossFK->hasCrossForeignKeys()) {
+                        $crossFks[] = $crossFK;
+                    }
                 }
             }
         }

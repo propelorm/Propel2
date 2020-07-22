@@ -982,4 +982,30 @@ class ForeignKey extends MappingModel
 
         return 0 !== count($cols);
     }
+
+    public function isTheSamePolymorphicSignature(ForeignKey $fk)
+    {
+        return $this->getPolymorphicSignature() == $fk->getPolymorphicSignature();
+    }
+
+    public function isAPolymorphicSiblingRelationship(ForeignKey $fk)
+    {
+        if (!($this->isPolymorphic() && $fk->isPolymorphic())) {
+            return false;
+        }
+
+        return $this->isTheSamePolymorphicSignature($fk);
+    }
+
+    public function getPolymorphicSignature()
+    {
+        if (!$this->isPolymorphic()) {
+            return false;
+        }
+
+        $sortedCols = $this->getLocalColumns();
+        sort($sortedCols);
+
+        return sha1(implode('|||', $sortedCols));
+    }
 }

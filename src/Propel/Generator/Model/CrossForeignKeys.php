@@ -136,7 +136,7 @@ class CrossForeignKeys
         foreach ($primaryKeys as $primaryKey) {
             $covered = false;
             foreach ($this->getCrossForeignKeys() as $crossFK) {
-                if ($crossFK->hasLocalColumn($primaryKey)) {
+                if ($crossFK->hasLocalColumn($primaryKey) && $crossFK->getLocalValues() == $fk->getLocalValues()) {
                     $covered = true;
                     break;
                 }
@@ -148,6 +148,17 @@ class CrossForeignKeys
         }
 
         return false;
+    }
+
+    public function isNotContainingColumnSignature(ForeignKey $fk)
+    {
+        foreach ($this->getCrossForeignKeys() as $crossFK) {
+            if ($crossFK->isTheSameColumnSignature($fk)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
