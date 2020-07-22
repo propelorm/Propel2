@@ -247,7 +247,10 @@ EOF;
         ];
     }
 
-    public function providerForTestGetUniqueIndexDDL()
+    /**
+     * @return array
+     */
+    public function providerForTestGetUniqueIndexDDL(): array
     {
         $table = new Table('foo');
         $table->setIdentifierQuoting(true);
