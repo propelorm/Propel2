@@ -232,7 +232,7 @@ class ReverseManager extends AbstractManager
                 }
             }
 
-            if ($skip) {
+            if (!$skip) {
                 continue;
             }
 
