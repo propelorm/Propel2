@@ -197,20 +197,19 @@ class StandardServiceContainer implements ServiceContainerInterface
      * the propel runtime.
      *
      * @param string $generatorVersion
+     * @return void
      */
     public function checkVersion($generatorVersion)
     {
-        if ($generatorVersion != Propel::VERSION) {
-            $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
-            $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
-
-            $logger = $this->getLogger();
-            if ($logger) {
-                $logger->warning($warning);
-            } else {
-                trigger_error($warning, E_USER_WARNING);
-            }
+        if ($generatorVersion === Propel::VERSION) {
+            return;
         }
+
+        $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
+        $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
+
+        $logger = $this->getLogger();
+        $logger->warning($warning);
     }
 
     /**
@@ -505,7 +504,6 @@ class StandardServiceContainer implements ServiceContainerInterface
                     'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
                     $configuration['type']
                 ));
-                break;
         }
         $logger->pushHandler($handler);
 

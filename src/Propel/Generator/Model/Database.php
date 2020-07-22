@@ -34,7 +34,7 @@ class Database extends ScopedMappingModel
     /**
      * The database's platform.
      *
-     * @var PlatformInterface
+     * @var PlatformInterface|null
      */
     private $platform;
 
@@ -44,7 +44,7 @@ class Database extends ScopedMappingModel
     private $tables;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -107,8 +107,8 @@ class Database extends ScopedMappingModel
     /**
      * Constructs a new Database object.
      *
-     * @param string            $name     The database's name
-     * @param PlatformInterface $platform The database's platform
+     * @param string|null            $name     The database's name
+     * @param PlatformInterface|null $platform The database's platform
      */
     public function __construct($name = null, PlatformInterface $platform = null)
     {
@@ -155,7 +155,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the PlatformInterface implementation for this database.
      *
-     * @return PlatformInterface
+     * @return PlatformInterface|null
      */
     public function getPlatform()
     {
@@ -185,7 +185,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the database name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -481,6 +481,38 @@ class Database extends ScopedMappingModel
     }
 
     /**
+     * Adds several tables at once.
+     *
+     * @param Table[] $tables An array of Table instances
+     */
+    public function addTables(array $tables)
+    {
+        foreach ($tables as $table) {
+            $this->addTable($table);
+        }
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
+    public function removeTable(Table $table)
+    {
+        if ($this->hasTable($table->getName(), true)) {
+            foreach($this->tables as $id => $tableExam) {
+                if ($table->getName() === $tableExam->getName()) {
+                    unset($this->tables[$id]);
+                }
+            }
+
+            unset($this->tablesByName[$table->getName()]);
+            unset($this->tablesByLowercaseName[strtolower($table->getName())]);
+            unset($this->tablesByPhpName[$table->getPhpName()]);
+        }
+    }
+
+    /**
      * Adds a new table to this database.
      *
      * @param  Table|array $table
@@ -514,33 +546,6 @@ class Database extends ScopedMappingModel
         }
 
         return $table;
-    }
-
-    /**
-     * Adds several tables at once.
-     *
-     * @param Table[] $tables An array of Table instances
-     */
-    public function addTables(array $tables)
-    {
-        foreach ($tables as $table) {
-            $this->addTable($table);
-        }
-    }
-
-    public function removeTable(Table $table)
-    {
-        if ($this->hasTable($table->getName(), true)) {
-            foreach($this->tables as $id => $tableExam) {
-                if ($table->getName() === $tableExam->getName()) {
-                    unset($this->tables[$id]);
-                }
-            }
-
-            unset($this->tablesByName[$table->getName()]);
-            unset($this->tablesByLowercaseName[strtolower($table->getName())]);
-            unset($this->tablesByPhpName[$table->getPhpName()]);
-        }
     }
 
     /**
@@ -722,13 +727,15 @@ class Database extends ScopedMappingModel
     /**
      * Returns the GeneratorConfigInterface object.
      *
-     * @return \Propel\Generator\Config\GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
     public function getGeneratorConfig()
     {
         if ($this->parentSchema) {
             return $this->parentSchema->getGeneratorConfig();
         }
+
+        return null;
     }
 
     /**
@@ -741,9 +748,12 @@ class Database extends ScopedMappingModel
      */
     public function getBuildProperty($name)
     {
-        if ($config = $this->getGeneratorConfig()) {
+        $config = $this->getGeneratorConfig();
+        if ($config) {
             return $config->getConfigProperty($name);
         }
+
+        return '';
     }
 
     /**

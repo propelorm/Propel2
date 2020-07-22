@@ -163,10 +163,10 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
                     $groupBy[] = $colName;
                 }
             }
+        }
 
-            if ($groupBy) {
-                return ' GROUP BY ' . implode(',', $groupBy);
-            }
+        if ($groupBy) {
+            return ' GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';

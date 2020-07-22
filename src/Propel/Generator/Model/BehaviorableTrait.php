@@ -22,7 +22,7 @@ trait BehaviorableTrait
     private $behaviorLocator;
 
     /**
-     * @return \Propel\Generator\Config\GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
     abstract protected function getGeneratorConfig();
 

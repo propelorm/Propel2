@@ -5,7 +5,7 @@
  * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
  * @param     ConnectionInterface $con an optional connection object
  *
- * @return    $this|<?php echo $objectClassName ?> The current object (for fluent API support)
+ * @return    $this The current object (for fluent API support)
  */
 public function removeTranslation($locale = '<?php echo $defaultLocale ?>', ConnectionInterface $con = null)
 {

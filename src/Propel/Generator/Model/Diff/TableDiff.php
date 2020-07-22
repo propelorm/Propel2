@@ -26,14 +26,14 @@ class TableDiff
     /**
      * The first Table object.
      *
-     * @var Table
+     * @var Table|null
      */
     protected $fromTable;
 
     /**
      * The second Table object.
      *
-     * @var Table
+     * @var Table|null
      */
     protected $toTable;
 
@@ -172,7 +172,7 @@ class TableDiff
     /**
      * Returns the fromTable property.
      *
-     * @return Table
+     * @return Table|null
      */
     public function getFromTable()
     {
@@ -488,7 +488,7 @@ class TableDiff
     /**
      * Sets the list of all renamed primary key columns.
      *
-     * @param Column[] $renamedPkColumns
+     * @param Column[][] $renamedPkColumns
      */
     public function setRenamedPkColumns(array $renamedPkColumns)
     {
@@ -603,7 +603,7 @@ class TableDiff
      *
      * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
      *
-     * @param Index[] $modifiedIndices An aray of modified indices
+     * @param Index[][] $modifiedIndices An aray of modified indices
      */
     public function setModifiedIndices(array $modifiedIndices)
     {
@@ -731,7 +731,7 @@ class TableDiff
      *
      * Array must be [ [ ForeignKey $fromFk, ForeignKey $toFk ], [ ... ] ]
      *
-     * @param ForeignKey[] $modifiedFks
+     * @param ForeignKey[][] $modifiedFks
      */
     public function setModifiedFks(array $modifiedFks)
     {

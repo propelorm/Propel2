@@ -30,7 +30,7 @@ class OnDemandCollection extends Collection
     private $lastIterator;
 
     /**
-     * @param AbstractFormatter    $formatter
+     * @param \Propel\Runtime\Formatter\ObjectFormatter    $formatter
      * @param DataFetcherInterface $dataFetcher
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)

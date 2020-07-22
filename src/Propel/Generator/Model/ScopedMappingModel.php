@@ -19,9 +19,21 @@ namespace Propel\Generator\Model;
  */
 abstract class ScopedMappingModel extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     protected $package;
+    /**
+     * @var bool
+     */
     protected $packageOverridden;
+    /**
+     * @var string|null
+     */
     protected $namespace;
+    /**
+     * @var string|null
+     */
     protected $schema;
 
     /**

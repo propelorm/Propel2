@@ -27,7 +27,7 @@ class Index extends MappingModel
     /**
      * The Table instance.
      *
-     * @var Table
+     * @var Table|null
      */
     protected $table;
 
@@ -54,7 +54,7 @@ class Index extends MappingModel
     /**
      * Creates a new Index instance.
      *
-     * @param string $name Name of the index
+     * @param string|null $name Name of the index
      */
     public function __construct($name = null)
     {
@@ -98,7 +98,7 @@ class Index extends MappingModel
     {
         $this->doNaming();
 
-        if ($this->table && $database = $this->table->getDatabase()) {
+        if ($this->table && ($database = $this->table->getDatabase())) {
             return substr($this->name, 0, $database->getMaxColumnNameLength());
         }
 
@@ -132,7 +132,8 @@ class Index extends MappingModel
     public function getFQName()
     {
         $table = $this->getTable();
-        if ($table->getDatabase()
+        if ($table
+            && $table->getDatabase()
             && ($table->getSchema() || $table->getDatabase()->getSchema())
             && $table->getDatabase()->getPlatform()
             && $table->getDatabase()->getPlatform()->supportsSchemas()
@@ -156,7 +157,7 @@ class Index extends MappingModel
     /**
      * Returns the index parent table.
      *
-     * @return Table
+     * @return Table|null
      */
     public function getTable()
     {

@@ -30,6 +30,9 @@ class InitCommand extends AbstractCommand
     private $defaultSchemaDir;
     private $defaultPhpDir;
 
+    /**
+     * @param string|null $name
+     */
     public function __construct($name = null)
     {
         parent::__construct($name);

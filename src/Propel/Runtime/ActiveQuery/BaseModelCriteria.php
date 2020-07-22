@@ -29,9 +29,9 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @param string $dbName     The dabase name
-     * @param string $modelName  The phpName of a model, e.g. 'Book'
-     * @param string $modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string|null $dbName     The dabase name
+     * @param string|null $modelName  The phpName of a model, e.g. 'Book'
+     * @param string|null $modelAlias The alias for the model in this query, e.g. 'b'
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
@@ -59,7 +59,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @param array $with
      *
-     * @return $this|ModelCriteria The current object, for fluid interface
+     * @return $this The current object, for fluid interface
      */
     public function setWith($with)
     {
@@ -77,7 +77,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * </code>
      *
      * @param  string|AbstractFormatter $formatter a formatter class name, or a formatter instance
-     * @return $this|ModelCriteria      The current object, for fluid interface
+     * @return $this      The current object, for fluid interface
      *
      * @throws InvalidArgumentException
      */
@@ -128,7 +128,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      *
      * @param string $modelName
      *
-     * @return $this|ModelCriteria The current object, for fluid interface
+     * @return $this The current object, for fluid interface
      */
     public function setModelName($modelName)
     {
@@ -140,7 +140,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
         if ($this->modelName && !$this->modelTableMapName) {
             $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
         }
-        if (!$this->tableMap && $this->modelName) {
+        if ($this->modelName) {
             $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
         }
 
@@ -158,7 +158,7 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
      * @param string  $modelAlias    The model alias
      * @param boolean $useAliasInSQL Whether to use the alias in the SQL code (false by default)
      *
-     * @return $this|ModelCriteria The current object, for fluid interface
+     * @return $this The current object, for fluid interface
      */
     public function setModelAlias($modelAlias, $useAliasInSQL = false)
     {

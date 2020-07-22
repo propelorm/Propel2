@@ -113,7 +113,7 @@ class OnDemandFormatter extends ObjectFormatter
             }
             // as we may be in a left join, the endObject may be empty
             // in which case it should not be related to the previous object
-            if (null === $endObject || $endObject->isPrimaryKeyNull()) {
+            if ($endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
                     call_user_func([$startObject, $modelWith->getInitMethod()], false);
                 }

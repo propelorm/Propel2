@@ -24,7 +24,7 @@ class VendorInfo extends MappingModel
     /**
      * Creates a new VendorInfo instance.
      *
-     * @param string $type       RDBMS type (optional)
+     * @param string|null $type       RDBMS type (optional)
      * @param array  $parameters An associative array of vendor's parameters (optional)
      */
     public function __construct($type = null, array $parameters = [])

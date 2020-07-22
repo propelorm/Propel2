@@ -231,7 +231,7 @@ abstract class AbstractCriterion
      * Append an AND Criterion onto this Criterion's list.
      *
      * @param  AbstractCriterion       $criterion
-     * @return $this|AbstractCriterion
+     * @return $this
      */
     public function addAnd(AbstractCriterion $criterion)
     {
@@ -245,7 +245,7 @@ abstract class AbstractCriterion
      * Append an OR Criterion onto this Criterion's list.
      *
      * @param  AbstractCriterion       $criterion
-     * @return $this|AbstractCriterion
+     * @return $this
      */
     public function addOr(AbstractCriterion $criterion)
     {
@@ -321,11 +321,12 @@ abstract class AbstractCriterion
         /** @var AbstractCriterion $crit */
         $crit = $obj;
 
-        $isEquiv = (((null === $this->table && null === $crit->getTable())
+        $isEquiv = (
+            ((null === $this->table && null === $crit->getTable())
             || (null !== $this->table && $this->table === $crit->getTable()))
             && $this->column === $crit->getColumn()
-            && $this->comparison === $crit->getComparison())
-        ;
+            && $this->comparison === $crit->getComparison()
+        );
 
         // check chained criterion
 

@@ -22,10 +22,13 @@ use Propel\Generator\Util\BehaviorLocator;
 class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
     /**
-     * @var BehaviorLocator
+     * @var BehaviorLocator|null
      */
     protected $behaviorLocator = null;
 
+    /**
+     * @param array|null $extraConf
+     */
     public function __construct($extraConf = [])
     {
         if (null === $extraConf) {
@@ -109,6 +112,9 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
         return null;
     }
 
+    /**
+     * @return \Propel\Generator\Util\BehaviorLocator
+     */
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {

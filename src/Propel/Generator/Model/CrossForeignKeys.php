@@ -68,7 +68,7 @@ class CrossForeignKeys
     /**
      * The incoming foreign key from the middle-table to this table.
      *
-     * @var ForeignKey
+     * @var ForeignKey|null
      */
     protected $incomingForeignKey;
 
@@ -83,7 +83,7 @@ class CrossForeignKeys
     }
 
     /**
-     * @param ForeignKey $foreignKey
+     * @param ForeignKey|null $foreignKey
      */
     public function setIncomingForeignKey($foreignKey)
     {
@@ -94,7 +94,7 @@ class CrossForeignKeys
     /**
      * The foreign key from the middle-table to the target table.
      *
-     * @return ForeignKey
+     * @return ForeignKey|null
      */
     public function getIncomingForeignKey()
     {

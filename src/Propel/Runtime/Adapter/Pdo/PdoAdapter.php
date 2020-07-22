@@ -300,7 +300,7 @@ abstract class PdoAdapter
      */
     public function formatTemporalValue($value, ColumnMap $cMap)
     {
-        /** @var PropelDateTime $dt */
+        /** @var PropelDateTime|null $dt */
         $dt = PropelDateTime::newInstance($value);
         if ($dt) {
             switch ($cMap->getType()) {
