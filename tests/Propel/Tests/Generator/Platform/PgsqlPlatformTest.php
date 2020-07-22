@@ -601,6 +601,17 @@ CREATE INDEX "babar" ON "foo" ("bar1","bar2");
     }
 
     /**
+     * @dataProvider providerForTestGetUniqueIndexDDL
+     */
+    public function testAddUniqueIndexDDL($index)
+    {
+        $expected = '
+ALTER TABLE "foo" ADD CONSTRAINT "babar" UNIQUE ("bar1");
+';
+        $this->assertEquals($expected, $this->getPlatform()->getAddIndexDDL($index));
+    }
+
+    /**
      * @dataProvider providerForTestGetIndicesDDL
      */
     public function testAddIndicesDDL($table)

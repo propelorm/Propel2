@@ -198,6 +198,7 @@ EOF;
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
+        <column name="bax" type="VARCHAR" size="12" required="true" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
         <index name="bar_fk">
             <index-column name="bar"/>
@@ -206,6 +207,9 @@ EOF;
             <index-column name="bar"/>
             <index-column name="baz"/>
         </index>
+        <unique name="bax_unique">
+            <unique-column name="bax"/>
+        </unique>
     </table>
 </database>
 EOF;
@@ -214,6 +218,8 @@ EOF;
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
+        <column name="bax" type="VARCHAR" size="12" required="true" />
+        <column name="bay" type="VARCHAR" size="12" required="true" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
         <index name="bar_baz_fk">
             <index-column name="id"/>
@@ -223,6 +229,10 @@ EOF;
         <index name="baz_fk">
             <index-column name="baz"/>
         </index>
+        <unique name="bax_bay_unique">
+            <unique-column name="bax"/>
+            <unique-column name="bay"/>
+        </unique>
     </table>
 </database>
 EOF;
