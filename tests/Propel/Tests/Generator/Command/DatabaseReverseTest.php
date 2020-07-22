@@ -2,6 +2,7 @@
 
 namespace Propel\Tests\Generator\Command;
 
+use Propel\Generator\Command\AbstractCommand;
 use Propel\Generator\Command\DatabaseReverseCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
@@ -38,11 +39,11 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
 
         chdir($currentDir);
 
-        if (0 !== $result) {
+        if (AbstractCommand::CODE_SUCCESS !== $result) {
             rewind($output->getStream());
             echo stream_get_contents($output->getStream());
         }
-        $this->assertEquals(0, $result, 'database:reverse tests exited successfully');
+        $this->assertSame(AbstractCommand::CODE_SUCCESS, $result, 'database:reverse tests exited successfully');
 
         $databaseXml = simplexml_load_file($outputDir . '/schema.xml');
         $this->assertEquals('reverse-test', $databaseXml['name']);
