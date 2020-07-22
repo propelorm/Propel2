@@ -4172,10 +4172,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria  || \$partial) {
-            if (\$this->isNew() && null === \$this->$collName) {
+        if (null === \$this->$collName || null !== \$criteria || \$partial) {
+            if (\$this->isNew()) {
                 // return empty collection
-                \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                if (null === \$this->$collName) {
+                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                } else {
+                    \$collectionClassName = ".$this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable()))."::getTableMap()->getCollectionClassName();
+
+                    \$$collName = new \$collectionClassName;
+                    \${$collName}->setModel('" . $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), true) . "');
+
+                    return \$$collName;
+                }
             } else {
                 \$$collName = $fkQueryClassName::create(null, \$criteria)
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
