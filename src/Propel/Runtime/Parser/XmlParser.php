@@ -34,12 +34,19 @@ class XmlParser extends AbstractParser
         return $rootNode->ownerDocument->saveXML();
     }
 
+    /**
+     * @param array $array
+     * @param string|null $rootKey
+     * @param string|null $charset
+     *
+     * @return string
+     */
     public function listFromArray($array, $rootKey = 'data', $charset = null)
     {
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
 
-        return $rootNode->ownerDocument->saveXML();
+        return (string)$rootNode->ownerDocument->saveXML();
     }
 
     /**

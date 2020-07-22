@@ -492,6 +492,11 @@ class Database extends ScopedMappingModel
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
     public function removeTable(Table $table)
     {
         if ($this->hasTable($table->getName(), true)) {

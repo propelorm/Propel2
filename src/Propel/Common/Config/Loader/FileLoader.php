@@ -125,7 +125,7 @@ abstract class FileLoader extends BaseFileLoader
         }
 
         if (!is_array($ext)) {
-            throw new \InvalidArgumentException('$ext must string or string[]');
+            throw new \InvalidArgumentException('$ext must be string or string[]');
         }
 
         $supported = false;

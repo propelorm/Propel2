@@ -36,7 +36,7 @@ class CsvParser extends AbstractParser
      * Converts data from an associative array to CSV.
      *
      * @param array $array Source data to convert
-     * @param string $rootKey Will not be used for converting because csv is flat
+     * @param string|null $rootKey Will not be used for converting because csv is flat
      * @param boolean $isList Whether the input data contains more than one row
      * @param boolean $includeHeading Whether the output should contain a heading line
      *
@@ -62,6 +62,12 @@ class CsvParser extends AbstractParser
         return implode($this->lineTerminator, $rows) . $this->lineTerminator;
     }
 
+    /**
+     * @param array $array
+     * @param string|null $rootKey
+     *
+     * @return string
+     */
     public function listFromArray($array, $rootKey = null)
     {
         return $this->fromArray($array, $rootKey, true);
