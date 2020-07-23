@@ -72,6 +72,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'timestamp without time zone' => PropelTypes::TIMESTAMP,
         'timestamp with time zone' => PropelTypes::TIMESTAMP,
         'double precision' => PropelTypes::DOUBLE,
+        'json' => PropelTypes::JSON,
     ];
 
     protected static $defaultTypeSizes = [
