@@ -1791,6 +1791,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {

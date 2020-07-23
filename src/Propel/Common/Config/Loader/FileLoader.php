@@ -66,7 +66,7 @@ abstract class FileLoader extends BaseFileLoader
     public function resolveParams(array $configuration)
     {
         if ($this->resolved) {
-            return $configuration;
+            return [];
         }
 
         $this->config = $configuration;

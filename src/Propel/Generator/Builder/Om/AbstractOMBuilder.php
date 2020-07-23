@@ -982,7 +982,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      * @param string $modifier    The name of the modifier object providing the method in the behavior
-     * @return mixed
+     * @return string|null
      */
     public function getBehaviorContentBase($contentName, $modifier)
     {
@@ -993,6 +993,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return $modifier->$contentName($this);
             }
         }
+
+        return null;
     }
 
     /**

@@ -202,7 +202,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
-     * @return mixed
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {
