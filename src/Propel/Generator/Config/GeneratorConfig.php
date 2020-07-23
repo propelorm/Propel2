@@ -18,8 +18,6 @@ use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Platform\PlatformInterface;
-use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -37,14 +35,14 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * @var BehaviorLocator
      */
-    protected $behaviorLocator = null;
+    protected $behaviorLocator;
 
     /**
      * Connections configured in the `generator` section of the configuration file
      *
      * @var array
      */
-    protected $buildConnections = [];
+    protected $buildConnections;
 
     /**
      * @inheritdoc
