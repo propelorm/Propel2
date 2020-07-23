@@ -49,11 +49,20 @@ class SimpleArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|null
+     */
     public function formatOne(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();

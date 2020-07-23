@@ -158,6 +158,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         return (!$table->isAlias() && $this->getBuildProperty('generator.objectModel.addGenericAccessors'));
     }
 
+    /**
+     * @return bool
+     */
     protected function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {
@@ -171,7 +174,10 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     *
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
+     *
      * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = '')
@@ -184,6 +190,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $script  The script will be modified in this method.
      * @param string $tab
+     * @return void
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
@@ -193,6 +200,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return mixed
      */
     public function getBehaviorContent($contentName)
     {

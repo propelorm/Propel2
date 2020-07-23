@@ -19,10 +19,11 @@ use Propel\Generator\Model\Column;
  */
 class GraphvizManager extends AbstractManager
 {
+    /**
+     * @return void
+     */
     public function build()
     {
-        $count = 0;
-
         foreach ($this->getDatabases() as $database) {
             $dotSyntax = "digraph G {\n";
 
@@ -44,12 +45,9 @@ class GraphvizManager extends AbstractManager
                 }
                 $dotSyntax .= '}", shape=record];';
                 $dotSyntax .= "\n";
-
-                $count++;
             }
 
             // print the relations
-            $count = 0;
             $dotSyntax .= "\n";
             foreach ($database->getTables() as $tbl) {
                 foreach ($tbl->getForeignKeys() as $fk) {
@@ -57,7 +55,7 @@ class GraphvizManager extends AbstractManager
                     $dotSyntax .= ':cols -> node'.$fk->getForeignTableName();
                     $label = [];
                     foreach ($fk->getMapping() as $map) {
-                        list ($localColumn, $foreignValueOrColumn) = $map;
+                        [$localColumn, $foreignValueOrColumn] = $map;
                         $labelString = $localColumn->getName().'=';
                         if ($foreignValueOrColumn instanceof Column) {
                             $labelString .= $foreignValueOrColumn->getName();
@@ -70,8 +68,6 @@ class GraphvizManager extends AbstractManager
                     $dotSyntax .= ':table [label="' . implode('\l', $label) . ' ", color=gray];';
                     $dotSyntax .= "\n";
                 }
-
-                $count++;
             }
 
             $dotSyntax .= "}\n";
@@ -80,6 +76,12 @@ class GraphvizManager extends AbstractManager
         }
     }
 
+    /**
+     * @param string $dotSyntax
+     * @param string $baseFilename
+     *
+     * @return void
+     */
     protected function writeDot($dotSyntax, $baseFilename)
     {
         $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $baseFilename . '.schema.dot';

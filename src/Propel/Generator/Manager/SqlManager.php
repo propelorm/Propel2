@@ -29,10 +29,8 @@ class SqlManager extends AbstractManager
     protected $connections;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $databases = null;
-
     protected $overwriteSqlMap = false;
 
     /**
@@ -55,6 +53,11 @@ class SqlManager extends AbstractManager
         return $this->connections;
     }
 
+    /**
+     * @param string $connection
+     *
+     * @return bool
+     */
     public function hasConnection($connection)
     {
         return isset($this->connections[$connection]);
@@ -76,6 +79,13 @@ class SqlManager extends AbstractManager
         $this->overwriteSqlMap = (boolean) $overwriteSqlMap;
     }
 
+    /**
+     * @param string $datasource
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return array
+     */
     public function getConnection($datasource)
     {
         if (!$this->hasConnection($datasource)) {

@@ -21,6 +21,9 @@ use Propel\Generator\Model\Behavior;
  */
 class ConcreteInheritanceParentBehavior extends Behavior
 {
+    /**
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     */
     protected $builder;
 
     // default parameters value
@@ -40,11 +43,19 @@ class ConcreteInheritanceParentBehavior extends Behavior
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getColumnGetter()
     {
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         $this->builder = $builder;
@@ -56,6 +67,11 @@ class ConcreteInheritanceParentBehavior extends Behavior
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasChildObject(&$script)
     {
         $script .= "
@@ -71,6 +87,11 @@ public function hasChildObject()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetChildObject(&$script)
     {
         $script .= "

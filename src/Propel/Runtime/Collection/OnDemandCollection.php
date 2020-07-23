@@ -186,21 +186,43 @@ class OnDemandCollection extends Collection
 
     // ArrayObject methods
 
+    /**
+     * @param mixed $value
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return void
+     */
     public function append($value)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return int
+     */
     public function prepend($value)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @param array $input
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return void
+     */
     public function exchangeArray($input)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return array
+     */
     public function getArrayCopy()
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');

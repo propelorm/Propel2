@@ -601,16 +601,6 @@ parameters:
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
 		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\DefaultPlatform\\:\\:getEndDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\DefaultPlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/DefaultPlatform.php

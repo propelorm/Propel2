@@ -906,7 +906,7 @@ class Criteria
      *
      * @param string|array $left     A String with the left side of the join.
      * @param string|array $right    A String with the right side of the join.
-     * @param mixed $joinType A String with the join operator
+     * @param string|null $joinType A String with the join operator
      *                        among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
      *                        and Criteria::RIGHT_JOIN
      *
@@ -966,7 +966,7 @@ class Criteria
      *
      * @see addJoin()
      * @param array  $conditions An array of conditions, each condition being an array (left, right, operator)
-     * @param string $joinType   A String with the join operator. Defaults to an implicit join.
+     * @param string|null $joinType   A String with the join operator. Defaults to an implicit join.
      *
      * @return $this A modified Criteria object.
      */
@@ -1076,7 +1076,7 @@ class Criteria
      * Adds a Criteria as subQuery in the From Clause.
      *
      * @param Criteria $subQueryCriteria Criteria to build the subquery from
-     * @param string   $alias            alias for the subQuery
+     * @param string|null   $alias            alias for the subQuery
      *
      * @return $this this modified Criteria object (Fluid API)
      */
@@ -1132,6 +1132,9 @@ class Criteria
         return isset($this->selectQueries[$alias]);
     }
 
+    /**
+     * @return int
+     */
     public function forgeSelectQueryAlias()
     {
         $aliasNumber = 0;
@@ -2105,6 +2108,11 @@ class Criteria
         return $string;
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     public function quoteIdentifierTable($string)
     {
         $realTableName = $string;
@@ -2313,6 +2321,11 @@ class Criteria
         return $id;
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
+     *
+     * @return \Propel\Runtime\Map\ColumnMap|null
+     */
     public function getPrimaryKey(Criteria $criteria = null)
     {
         if (!$criteria) {
@@ -2480,6 +2493,12 @@ class Criteria
         return $affectedRows;
     }
 
+    /**
+     * @param string[] $columns
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $values
+     *
+     * @return array
+     */
     public function buildParams($columns, Criteria $values = null)
     {
         if (!$values) {
@@ -2500,6 +2519,13 @@ class Criteria
         return $params;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
@@ -2667,6 +2693,9 @@ class Criteria
 
     // Fluid operators
 
+    /**
+     * @return $this
+     */
     public function _or()
     {
         $this->defaultCombineOperator = Criteria::LOGICAL_OR;
@@ -2674,6 +2703,9 @@ class Criteria
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function _and()
     {
         $this->defaultCombineOperator = Criteria::LOGICAL_AND;

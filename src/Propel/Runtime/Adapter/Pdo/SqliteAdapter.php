@@ -34,6 +34,12 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     {
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array $settings
+     *
+     * @return void
+     */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
         $con->query('PRAGMA foreign_keys = ON');

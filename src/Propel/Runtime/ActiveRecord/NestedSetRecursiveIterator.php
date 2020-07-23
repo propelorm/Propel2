@@ -36,21 +36,33 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
         $this->curNode = $node;
     }
 
+    /**
+     * @return void
+     */
     public function rewind()
     {
         $this->curNode = $this->topNode;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return null !== $this->curNode;
     }
 
+    /**
+     * @return mixed
+     */
     public function current()
     {
         return $this->curNode;
     }
 
+    /**
+     * @return string
+     */
     public function key()
     {
         $method = method_exists($this->curNode, 'getPath') ? 'getPath' : 'getAncestors';
@@ -62,6 +74,9 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
         return implode('.', $key);
     }
 
+    /**
+     * @return void
+     */
     public function next()
     {
         $nextNode = null;
@@ -80,15 +95,19 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
             }
             $this->curNode = $nextNode;
         }
-
-        return $this->curNode;
     }
 
+    /**
+     * @return bool
+     */
     public function hasChildren()
     {
         return $this->curNode->hasChildren();
     }
 
+    /**
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator
+     */
     public function getChildren()
     {
         $method = method_exists($this->curNode, 'retrieveFirstChild') ? 'retrieveFirstChild' : 'getFirstChild';

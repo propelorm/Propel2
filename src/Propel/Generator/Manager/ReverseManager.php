@@ -167,6 +167,10 @@ class ReverseManager extends AbstractManager
         return $this->samePhpName;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     * @return bool
+     */
     public function reverse()
     {
         if (!$this->getDatabaseName()) {

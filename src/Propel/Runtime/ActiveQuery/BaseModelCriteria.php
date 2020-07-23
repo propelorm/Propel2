@@ -147,6 +147,9 @@ class BaseModelCriteria extends Criteria implements \IteratorAggregate
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getFullyQualifiedModelName()
     {
         return '\\' . $this->getModelName();

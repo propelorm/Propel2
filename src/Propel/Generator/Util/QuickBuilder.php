@@ -180,6 +180,15 @@ class QuickBuilder
         return $builder->build($dsn, $user, $pass, $adapter);
     }
 
+    /**
+     * @param string|null $dsn
+     * @param string|null $user
+     * @param string|null $pass
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     * @param array|null $classTargets
+     *
+     * @return \Propel\Runtime\Connection\ConnectionWrapper
+     */
     public function build($dsn = null, $user = null, $pass = null, $adapter = null, array $classTargets = null)
     {
         if (null === $dsn) {
@@ -194,6 +203,7 @@ class QuickBuilder
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        /** @var SqliteAdapter $adapter */
         $adapter->initConnection($con, []);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
@@ -204,6 +214,9 @@ class QuickBuilder
         return $con;
     }
 
+    /**
+     * @return \Propel\Generator\Model\Database|null
+     */
     public function getDatabase()
     {
         if (null === $this->database) {
@@ -216,6 +229,12 @@ class QuickBuilder
         return $this->database;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @throws \Exception
+     * @return int
+     */
     public function buildSQL(ConnectionInterface $con)
     {
         $sql = $this->getSQL();
@@ -239,6 +258,12 @@ class QuickBuilder
         return count($statements);
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     * @return \Propel\Generator\Model\Database|null
+     */
     public function updateDB(ConnectionInterface $con)
     {
         $database = $this->readConnectedDatabase();
@@ -283,11 +308,19 @@ class QuickBuilder
         return $database;
     }
 
+    /**
+     * @return string
+     */
     public function getSQL()
     {
         return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
     }
 
+    /**
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
     public function getBuildName($classTargets = null)
     {
         $tables = [];
@@ -306,7 +339,7 @@ class QuickBuilder
     }
 
     /**
-     * @param array $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
+     * @param string[]|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
      * @param bool  $separate     pass true to get for each class a own file. better for debugging.
      */
     public function buildClasses(array $classTargets = null, $separate = false)
@@ -354,6 +387,11 @@ class QuickBuilder
         }
     }
 
+    /**
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
     public function getClasses(array $classTargets = null)
     {
         $script = '';
@@ -364,6 +402,12 @@ class QuickBuilder
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
     public function getClassesForTable(Table $table, array $classTargets = null)
     {
         if (null === $classTargets) {
@@ -415,6 +459,12 @@ class QuickBuilder
         return $script;
     }
 
+    /**
+     * @param string $schema
+     * @param string $tableName
+     *
+     * @return void
+     */
     public static function debugClassesForTable($schema, $tableName)
     {
         $builder = new self;

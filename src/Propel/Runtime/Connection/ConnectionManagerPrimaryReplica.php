@@ -153,7 +153,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      * If no replica connection exist yet, choose one configuration randomly in the
      * read configuration to open it.
      *
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
@@ -181,6 +181,9 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
         return $this->readConnection;
     }
 
+    /**
+     * @return void
+     */
     public function closeConnections()
     {
         $this->writeConnection = null;

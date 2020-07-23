@@ -599,6 +599,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         return $this->logMethods;
     }
 
+    /**
+     * @param string $methodName
+     *
+     * @return bool
+     */
     protected function isLogEnabledForMethod($methodName)
     {
         return in_array($methodName, $this->getLogMethods());

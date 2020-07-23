@@ -215,6 +215,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreSelect(&$script)
     {
         $child = $this->getChild();
@@ -230,6 +235,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreUpdate(&$script)
     {
         $child = $this->getChild();
@@ -245,6 +255,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreDelete(&$script)
     {
         $child = $this->getChild();
@@ -260,6 +275,9 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function getClassKeyCondition()
     {
         $child = $this->getChild();
@@ -268,6 +286,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
         return "\$this->addUsingAlias(" . $col->getFQConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDoDeleteAll(&$script)
     {
         $child = $this->getChild();
@@ -294,6 +317,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * Closes class.
      *
      * @param string $script
+     * @return void
      */
     protected function addClassClose(&$script)
     {

@@ -119,6 +119,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
         return count($database->getTables());
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
     protected function parseTables(Database $database, $filterTable = null)
     {
         $sql = 'SHOW FULL TABLES';
@@ -135,7 +141,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
-        $tables = [];
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -150,7 +155,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $table->setSchema($filterTable->getSchema());
             }
             $database->addTable($table);
-            $tables[] = $table;
         }
     }
 

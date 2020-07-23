@@ -63,7 +63,7 @@ class TestPrepareCommand extends AbstractCommand
     /**
      * @var string
      */
-    protected $root = null;
+    protected $root;
 
     public function __construct()
     {

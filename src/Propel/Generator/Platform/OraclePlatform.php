@@ -61,26 +61,41 @@ class OraclePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'NUMBER'));
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 30;
     }
 
+    /**
+     * @return string
+     */
     public function getNativeIdMethod()
     {
         return PlatformInterface::SEQUENCE;
     }
 
+    /**
+     * @return string
+     */
     public function getAutoIncrement()
     {
         return '';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return true;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBeginDDL()
     {
         return "
@@ -89,6 +104,11 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
+     */
     public function getAddTablesDDL(Database $database)
     {
         $ret = $this->getBeginDDL();
@@ -110,6 +130,11 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
@@ -146,6 +171,11 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddPrimaryKeyDDL(Table $table)
     {
         if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
@@ -153,6 +183,11 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddSequencesDDL(Table $table)
     {
         if ('native' === $table->getIdMethod()) {
@@ -165,8 +200,15 @@ CREATE SEQUENCE %s
                 $this->quoteIdentifier($this->getSequenceName($table))
             );
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getDropTableDDL(Table $table)
     {
         $ret = "
@@ -181,6 +223,11 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getPrimaryKeyName(Table $table)
     {
         $tableName = $table->getName();
@@ -193,7 +240,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string|null
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
@@ -206,8 +253,15 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
                 $this->generateBlockStorage($table, true)
             );
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Unique $unique
+     *
+     * @return string
+     */
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
@@ -260,6 +314,9 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return $text;
     }
 
+    /**
+     * @return string
+     */
     public function getTimestampFormatter()
     {
         return 'Y-m-d H:i:s';
@@ -387,6 +444,15 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Get the PHP snippet for getting a Pk from the database.
      * Warning: duplicates logic from OracleAdapter::getId().
      * Any code modification here must be ported there.
+     *
+     * @param string $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param string|null $phpType
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     * @return string|string[]|null
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
     {

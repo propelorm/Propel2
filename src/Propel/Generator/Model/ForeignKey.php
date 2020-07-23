@@ -117,8 +117,6 @@ class ForeignKey extends MappingModel
      */
     public function __construct($name = null)
     {
-        parent::__construct();
-
         if (null !== $name) {
             $this->setName($name);
         }
@@ -127,6 +125,9 @@ class ForeignKey extends MappingModel
         $this->onDelete       = self::NONE;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
@@ -142,6 +143,9 @@ class ForeignKey extends MappingModel
         $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
+    /**
+     * @return void
+     */
     protected function doNaming()
     {
         if (!$this->name || $this->autoNaming) {
@@ -823,7 +827,7 @@ class ForeignKey extends MappingModel
         $result = [];
 
         foreach ($mapping as $map) {
-            list ($left, $right) = $map;
+            [$left, $right] = $map;
             $item = [];
             $item[0] = $left instanceof Column ? ':' . $left->getName() : $left;
             $item[1] = $right instanceof Column ? ':' . $right->getName() : $right;
@@ -920,9 +924,16 @@ class ForeignKey extends MappingModel
         return (boolean) $this->getInverseFK();
     }
 
+    /**
+     * @return \Propel\Generator\Model\ForeignKey|null
+     */
     public function getInverseFK()
     {
         $foreignTable = $this->getForeignTable();
+        if (!$foreignTable) {
+            throw new \RuntimeException('No foreign table given');
+        }
+
         $map = $this->getInverseMapping();
 
         foreach ($foreignTable->getForeignKeys() as $refFK) {
@@ -932,6 +943,8 @@ class ForeignKey extends MappingModel
                 return $refFK;
             }
         }
+
+        return null;
     }
 
     /**

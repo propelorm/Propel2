@@ -27,12 +27,12 @@ class BehaviorLocator
      *
      * @var GeneratorConfigInterface
      */
-    private $generatorConfig = null;
+    private $generatorConfig;
 
     /**
      * Creates the composer finder
      *
-     * @param GeneratorConfigInterface $config build config
+     * @param GeneratorConfigInterface|null $config build config
      */
     public function __construct(GeneratorConfigInterface $config = null)
     {
@@ -93,9 +93,9 @@ class BehaviorLocator
     /**
      * Returns the directories to search the composer lock file in
      *
-     * @return array[string]
+     * @return string[]
      */
-    private function getSearchDirs()
+    private function getSearchDirs(): array
     {
         return [
             getcwd(),

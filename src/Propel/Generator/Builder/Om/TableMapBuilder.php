@@ -31,6 +31,9 @@ class TableMapBuilder extends AbstractOMBuilder
         return parent::getPackage() . '.Map';
     }
 
+    /**
+     * @return string
+     */
     public function getNamespace()
     {
         if (!$namespace = parent::getNamespace()) {
@@ -45,6 +48,9 @@ class TableMapBuilder extends AbstractOMBuilder
         return $namespace .'Map';
     }
 
+    /**
+     * @return string
+     */
     public function getBaseTableMapClassName()
     {
         return "TableMap";
@@ -52,6 +58,7 @@ class TableMapBuilder extends AbstractOMBuilder
 
     /**
      * Returns the name of the current class being built.
+     *
      * @return string
      */
     public function getUnprefixedClassName()
@@ -61,7 +68,10 @@ class TableMapBuilder extends AbstractOMBuilder
 
     /**
      * Adds class phpdoc comment and opening of class.
+     *
      * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -99,6 +109,8 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Specifies the methods that are added as part of the map builder class.
      * This can be overridden by subclasses that wish to add more methods.
      * @see ObjectBuilder::addClassBody()
+     * @param string $script
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -168,6 +180,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the addSelectColumns(), doCount(), etc. methods.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addSelectMethods(&$script)
     {
@@ -351,6 +364,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
     }
 
+    /**
+     * @return string
+     */
     protected function addFieldsAttributes()
     {
         $tableColumns = $this->getTable()->getColumns();
@@ -658,6 +674,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         return $script;
     }
 
+    /**
+     * @return string
+     */
     public function addInstancePool()
     {
         // No need to override instancePool if the PK is not composite
@@ -668,7 +687,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $pks = $this->getTable()->getPrimaryKey();
 
         if (!count($pks)) {
-            return;
+            return '';
         }
 
         $add = [];
@@ -696,6 +715,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function addClearRelatedInstancePool()
     {
         $table = $this->getTable();

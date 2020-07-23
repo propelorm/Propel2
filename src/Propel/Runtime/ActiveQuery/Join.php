@@ -45,7 +45,11 @@ class Join
     // the right parts of the join condition
     protected $right = [];
 
-    // the comparison operators for each pair of columns in the join condition
+    /**
+     * The comparison operators for each pair of columns in the join condition
+     *
+     * @var string[]
+     */
     protected $operators = [];
 
     // the type of the join (LEFT JOIN, ...)
@@ -136,7 +140,7 @@ class Join
      *
      * @param array $lefts     The left columns of the join condition
      * @param array $rights    The right columns of the join condition
-     * @param array $operators The comparison operators of the join condition, default Join::EQUAL
+     * @param string[] $operators The comparison operators of the join condition, default Join::EQUAL
      * @throws \Propel\Runtime\Exception\LogicException
      */
     public function addConditions($lefts, $rights, $operators = [])
@@ -193,11 +197,11 @@ class Join
     /**
      * @param string $leftTableName
      * @param string $leftColumnName
-     * @param mixed  $leftTableAlias
+     * @param string|null  $leftTableAlias
      * @param mixed  $leftColumnValue
      * @param string $operator
      */
-    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $leftColumnValue, $operator = self::EQUAL)
+    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias, $leftColumnValue, $operator = self::EQUAL)
     {
         $this->leftTableName = $leftTableName;
         $this->leftTableAlias  = $leftTableAlias;
@@ -209,7 +213,16 @@ class Join
         $this->count++;
     }
 
-    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias = null, $rightColumnValue, $operator = self::EQUAL)
+    /**
+     * @param string $rightTableName
+     * @param string $rightColumnName
+     * @param string|null $rightTableAlias
+     * @param mixed $rightColumnValue
+     * @param string $operator
+     *
+     * @return void
+     */
+    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias, $rightColumnValue, $operator = self::EQUAL)
     {
         $this->rightTableName = $rightTableName;
         $this->rightTableAlias = $rightTableAlias;
@@ -253,7 +266,7 @@ class Join
     /**
      * @param string $operator the comparison operator for the join condition
      */
-    public function addOperator($operator = null)
+    public function addOperator($operator)
     {
         $this->operators[] = $operator;
     }
@@ -267,6 +280,9 @@ class Join
         return $this->operators[$index];
     }
 
+    /**
+     * @return string[]
+     */
     public function getOperators()
     {
         return $this->operators;

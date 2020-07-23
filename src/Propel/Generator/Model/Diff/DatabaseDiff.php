@@ -328,6 +328,9 @@ class DatabaseDiff
         return implode(', ', $changes);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $ret = '';

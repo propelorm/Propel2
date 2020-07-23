@@ -44,7 +44,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      *
      * @var array
      */
-    protected $buildConnections = null;
+    protected $buildConnections = [];
 
     /**
      * {@inheritdoc}
@@ -175,7 +175,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     }
 
     /**
-     * Return an array of all configured connection properties, from `generator` and `reverse` 
+     * Return an array of all configured connection properties, from `generator` and `reverse`
      * sections of the configuration.
      *
      * @return array
@@ -225,7 +225,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * Return a connection object of a given database name
      *
-     * @param  string              $database
+     * @param  string|null              $database
      * @return ConnectionInterface
      */
     public function getConnection($database = null)
@@ -248,6 +248,9 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
         return $con;
     }
 
+    /**
+     * @return \Propel\Generator\Util\BehaviorLocator
+     */
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {

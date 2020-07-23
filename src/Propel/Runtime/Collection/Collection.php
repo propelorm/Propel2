@@ -438,6 +438,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         return $this->fullyQualifiedModel;
     }
 
+    /**
+     * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
+     * @return string
+     */
     public function getTableMapClass()
     {
         $model = $this->getModel();
@@ -582,6 +586,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         }
     }
 
+    /**
+     * @return \Propel\Common\Pluralizer\PluralizerInterface|null
+     */
     protected function getPluralizer()
     {
         if ($this->pluralizer === null) {
@@ -593,17 +600,25 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * Overwrite this method if you want to use a custom pluralizer
+     *
+     * @return PluralizerInterface
      */
     protected function createPluralizer()
     {
         return new StandardEnglishPluralizer();
     }
 
+    /**
+     * @return string
+     */
     protected function getPluralModelName()
     {
         return $this->getPluralizer()->getPluralForm($this->getModel());
     }
 
+    /**
+     * @return string
+     */
     public function hashCode()
     {
         return spl_object_hash($this);

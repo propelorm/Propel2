@@ -54,6 +54,9 @@ class OnDemandIterator implements \Iterator
         $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
     }
 
+    /**
+     * @return void
+     */
     public function closeCursor()
     {
         $this->dataFetcher->close();

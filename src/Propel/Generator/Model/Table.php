@@ -186,6 +186,9 @@ class Table extends ScopedMappingModel implements IdMethod
         return $this->getCommonName();
     }
 
+    /**
+     * @return void
+     */
     public function setupObject()
     {
         parent::setupObject();
@@ -260,6 +263,11 @@ class Table extends ScopedMappingModel implements IdMethod
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     *
+     * @return void
+     */
     protected function registerBehavior(Behavior $behavior)
     {
         $behavior->setTable($this);
@@ -272,6 +280,8 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * <p>Performs heavy indexing and naming of elements which weren't
      * provided with a name.</p>
+     *
+     * @return void
      */
     public function doFinalInitialization()
     {
@@ -310,6 +320,8 @@ class Table extends ScopedMappingModel implements IdMethod
      * See the mysql manual http://www.mysql.com/doc/E/X/EXPLAIN.html
      * for a better description of why heavy indexing is useful for
      * quickly searchable database tables.
+     *
+     * @return void
      */
     private function doHeavyIndexing()
     {
@@ -330,6 +342,8 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds extra indices for reverse foreign keys
      * This is required for MySQL databases,
      * and is called from Database::doFinalInitialization()
+     *
+     * @return void
      */
     public function addExtraIndices()
     {
@@ -601,6 +615,11 @@ class Table extends ScopedMappingModel implements IdMethod
         // @FIXME: also remove indexes and validators on this column?
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return int|false
+     */
     private function getColumnPosition(Column $column)
     {
         $position  = false;
@@ -614,6 +633,9 @@ class Table extends ScopedMappingModel implements IdMethod
         return $position;
     }
 
+    /**
+     * @return void
+     */
     public function adjustColumnPositions()
     {
         $this->columns = array_values($this->columns);
@@ -1864,6 +1886,9 @@ class Table extends ScopedMappingModel implements IdMethod
         }
     }
 
+    /**
+     * @return void
+     */
     public function __clone()
     {
         $columns = [];

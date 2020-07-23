@@ -71,11 +71,17 @@ class SqlitePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
     }
 
+    /**
+     * @return string
+     */
     public function getSchemaDelimiter()
     {
         return '§';
     }
 
+    /**
+     * @return int[]
+     */
     public function getDefaultTypeSizes()
     {
         return [
@@ -246,6 +252,9 @@ DROP TABLE %s;
         return $sql;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBeginDDL()
     {
         return '
@@ -253,6 +262,9 @@ PRAGMA foreign_keys = OFF;
 ';
     }
 
+    /**
+     * @return string
+     */
     public function getEndDDL()
     {
         return '
@@ -261,7 +273,9 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
      */
     public function getAddTablesDDL(Database $database)
     {
@@ -419,17 +433,26 @@ PRAGMA foreign_keys = ON;
 
     /**
      * @link       http://www.sqlite.org/autoinc.html
+     * @return string
      */
     public function getAutoIncrement()
     {
         return 'PRIMARY KEY AUTOINCREMENT';
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 1024;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return string
+     */
     public function getColumnDDL(Column $col)
     {
         if ($col->isAutoIncrement()) {
@@ -450,6 +473,11 @@ PRAGMA foreign_keys = ON;
         return parent::getColumnDDL($col);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $table = clone $table;
@@ -528,6 +556,11 @@ PRAGMA foreign_keys = ON;
         return $script;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         return !in_array($sqlType, [
@@ -547,14 +580,19 @@ PRAGMA foreign_keys = ON;
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsSchemas()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return true;
     }
-
 }

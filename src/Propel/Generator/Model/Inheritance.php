@@ -151,6 +151,9 @@ class Inheritance extends MappingModel
         $this->ancestor = $ancestor;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->key       = $this->getAttribute('key');

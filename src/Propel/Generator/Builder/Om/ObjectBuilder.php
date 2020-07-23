@@ -621,6 +621,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the function declaration for the constructor.
      *
      * @param string $script
+     * @return void
      */
     protected function addConstructorOpen(&$script)
     {
@@ -633,6 +634,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the function body for the constructor.
      *
      * @param string $script
+     * @return void
      */
     protected function addConstructorBody(&$script)
     {
@@ -644,6 +646,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the function close for the constructor.
      *
      * @param string $script
+     * @return void
      */
     protected function addConstructorClose(&$script)
     {
@@ -656,6 +659,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the base object functions.
      *
      * @param string $script
+     * @return void
      */
     protected function addBaseObjectMethods(&$script)
     {
@@ -666,6 +670,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the base object hook functions.
      *
      * @param string $script
+     * @return void
      */
     protected function addHookMethods(&$script)
     {
@@ -976,6 +981,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->$cloUnserialized;";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
+     */
     protected function addJsonAccessor(&$script, Column $column)
     {
         $this->addJsonAccessorComment($script, $column);
@@ -1030,6 +1041,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
+     */
     protected function addJsonAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
@@ -1847,6 +1864,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorClose($script, $col);
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return void
+     */
     public function addTemporalMutatorComment(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
@@ -2163,6 +2186,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addMutatorClose($script, $col);
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return void
+     */
     public function addBooleanMutatorComment(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
@@ -2914,6 +2943,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetByName(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -2938,6 +2972,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetByPosition(&$script)
     {
         $table = $this->getTable();
@@ -3000,6 +3039,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFromArray(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -3038,6 +3082,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addImportFrom(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -3281,6 +3330,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $this->addDoUpdate();
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHashCode(&$script)
     {
         $script .= "
@@ -3657,7 +3711,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {";
 
         foreach ($fk->getMapping() as $map) {
-            list($column, $rightValueOrColumn) = $map;
+            [$column, $rightValueOrColumn] = $map;
 
             if ($rightValueOrColumn instanceof Column) {
                 $script .= "
@@ -3743,7 +3797,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $findPk = $fk->isForeignPrimaryKey();
 
         foreach ($fk->getMapping() as $mapping) {
-            list($column, $rightValueOrColumn) = $mapping;
+            [$column, $rightValueOrColumn] = $mapping;
 
             $cptype = $column->getPhpType();
             $clo = $column->getLowercasedName();
@@ -4440,10 +4494,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossFKAttributes(&$script, CrossForeignKeys $crossFKs)
     {
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
-            list($names) = $this->getCrossFKInformation($crossFKs);
+            [$names] = $this->getCrossFKInformation($crossFKs);
             $script .= "
     /**
      * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of $names combinations.
@@ -4475,11 +4535,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossScheduledForDeletionAttribute(&$script, CrossForeignKeys $crossFKs)
     {
         $name = $this->getCrossScheduledForDeletionVarName($crossFKs);
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
-            list($names) = $this->getCrossFKInformation($crossFKs);
+            [$names] = $this->getCrossFKInformation($crossFKs);
             $script .= "
     /**
      * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of $names combinations.
@@ -4502,6 +4568,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return string
+     */
     protected function getCrossScheduledForDeletionVarName(CrossForeignKeys $crossFKs)
     {
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
@@ -4513,6 +4584,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $crossFK
+     *
+     * @return void
+     */
     protected function addCrossFkScheduledForDeletionAttribute(&$script, ForeignKey $crossFK)
     {
         $className = $this->getClassNameFromTable($crossFK->getForeignTable());
@@ -4527,6 +4604,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
+     */
     protected function addRefFkScheduledForDeletionAttribute(&$script, ForeignKey $refFK)
     {
         $className = $this->getClassNameFromTable($refFK->getTable());
@@ -4700,6 +4783,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
+     */
     protected function addRefFkScheduledForDeletion(&$script, ForeignKey $refFK)
     {
         $relatedName            = $this->getRefFKPhpNameAffix($refFK, $plural = true);
@@ -4731,6 +4820,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCrossFKMethods(&$script)
     {
         foreach ($this->getTable()->getCrossFks() as $crossFKs) {
@@ -4927,6 +5021,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossFKCreateQuery(&$script, CrossForeignKeys $crossFKs)
     {
         if (1 <= count($crossFKs->getCrossForeignKeys()) && !$crossFKs->getUnclassifiedPrimaryKeys()) {
@@ -5217,7 +5317,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();
 
         if ($multi) {
-            list($relatedObjectClassName) = $this->getCrossFKInformation($crossFKs);
+            [$relatedObjectClassName] = $this->getCrossFKInformation($crossFKs);
             $collName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
         } else {
             $crossFK = $crossFKs->getCrossForeignKeys()[0];
@@ -5292,7 +5392,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();
 
         if ($multi) {
-            list($relatedObjectClassName) = $this->getCrossFKInformation($crossFKs);
+            [$relatedObjectClassName] = $this->getCrossFKInformation($crossFKs);
             $collName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
             $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($crossFKs->getMiddleTable()));
         } else {
@@ -5403,7 +5503,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $tblFK = $refFK->getTable();
             $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
-            list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs, $crossFK);
+            [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs, $crossFK);
 
             $script .= "
     /**
@@ -5439,7 +5539,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected function getCrossFKGetterSignature(CrossForeignKeys $crossFKs, $excludeSignatureItem)
     {
-        list (, $getSignature) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [, $getSignature] = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
         if (false !== ($pos = array_search($excludeSignatureItem, $getSignature))) {
@@ -5464,7 +5564,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $tblFK                       = $crossFKs->getIncomingForeignKey()->getTable();
         $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
 
-        list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs);
 
         $script .= "
     /**
@@ -5591,7 +5691,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $M2MScheduledForDeletion  = $this->getCrossScheduledForDeletionVarName($crossFKs);
         $relatedObjectClassName   = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
 
-        list($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs);
         $names = str_replace('$', '', $normalizedShortSignature);
 
         $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
@@ -5858,12 +5958,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return $script;
     }
 
+    /**
+     * @return string
+     */
     protected function addDoInsertBodyStandard()
     {
         return "
         \$pk = \$criteria->doInsert(\$con);";
     }
 
+    /**
+     * @return string
+     */
     protected function addDoInsertBodyWithIdMethod()
     {
         $table = $this->getTable();
@@ -6665,6 +6771,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         ]);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
     protected function getDateTimeClass(Column $column)
     {
         if (PropelTypes::isPhpObjectType($column->getPhpType())) {

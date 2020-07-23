@@ -37,6 +37,9 @@ class ModelManager extends AbstractManager
         $this->filesystem = $filesystem;
     }
 
+    /**
+     * @return void
+     */
     public function build()
     {
         $this->validate();

@@ -33,6 +33,11 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher;
     }
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|null
+     */
     public function formatOne(DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {
@@ -44,11 +49,20 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|void|null
+     */
     public function formatRecord(ActiveRecordInterface $record = null)
     {
         throw new PropelException('The Statement formatter cannot transform a record into a statement');
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;

@@ -33,15 +33,54 @@ class Column extends MappingModel
 
     public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
+    /**
+     * @var string|null
+     */
     private $name;
+
+    /**
+     * @var string|null
+     */
     private $description;
+
+    /**
+     * @var string|null
+     */
     private $phpName;
+
+    /**
+     * @var string|null
+     */
     private $phpSingularName;
+
+    /**
+     * @var string|null
+     */
     private $phpNamingMethod;
-    private $isNotNull;
+
+    /**
+     * @var bool
+     */
+    private $isNotNull = false;
+
+    /**
+     * @var string|null
+     */
     private $namePrefix;
+
+    /**
+     * @var string|null
+     */
     private $accessorVisibility;
+
+    /**
+     * @var string|null
+     */
     private $mutatorVisibility;
+
+    /**
+     * @var string|null
+     */
     private $typeHint;
 
     /**
@@ -70,16 +109,60 @@ class Column extends MappingModel
      * @var int|null
      */
     private $position;
+
+    /**
+     * @var bool
+     */
     private $isPrimaryKey;
+
+    /**
+     * @var bool
+     */
     private $isNodeKey;
+
+    /**
+     * @var string
+     */
     private $nodeKeySep;
+
+    /**
+     * @var bool
+     */
     private $isNestedSetLeftKey;
+
+    /**
+     * @var bool
+     */
     private $isNestedSetRightKey;
+
+    /**
+     * @var bool
+     */
     private $isTreeScopeKey;
+
+    /**
+     * @var bool
+     */
     private $isUnique;
+
+    /**
+     * @var bool
+     */
     private $isAutoIncrement;
+
+    /**
+     * @var bool
+     */
     private $isLazyLoad;
+
+    /**
+     * @var array
+     */
     private $referrers = [];
+
+    /**
+     * @var bool
+     */
     private $isPrimaryString;
 
     // only one type is supported currently, which assumes the
@@ -87,18 +170,37 @@ class Column extends MappingModel
     // classnames specified in the schema.    Others may be
     // supported later.
 
+    /**
+     * @var string|null
+     */
     private $inheritanceType;
+
+    /**
+     * @var bool
+     */
     private $isInheritance;
+
+    /**
+     * @var bool
+     */
     private $isEnumeratedClasses;
+
+    /**
+     * @var array|null
+     */
     private $inheritanceList;
 
-    // maybe this can be retrieved from vendor specific information
+    /**
+     * maybe this can be retrieved from vendor specific information
+     *
+     * @var bool
+     */
     private $needsTransactionInPostgres;
 
     /**
      * @var string[]
      */
-    protected $valueSet;
+    protected $valueSet = [];
 
     /**
      * Creates a new column and set the name.
@@ -109,8 +211,6 @@ class Column extends MappingModel
      */
     public function __construct($name = null, $type = null, $size = null)
     {
-        parent::__construct();
-
         if (null !== $name) {
             $this->setName($name);
         }
@@ -122,24 +222,10 @@ class Column extends MappingModel
         if (null !== $size) {
             $this->setSize((int)$size);
         }
-
-        $this->isAutoIncrement            = false;
-        $this->isEnumeratedClasses        = false;
-        $this->isLazyLoad                 = false;
-        $this->isNestedSetLeftKey         = false;
-        $this->isNestedSetRightKey        = false;
-        $this->isNodeKey                  = false;
-        $this->isNotNull                  = false;
-        $this->isPrimaryKey               = false;
-        $this->isPrimaryString            = false;
-        $this->isTreeScopeKey             = false;
-        $this->isUnique                   = false;
-        $this->needsTransactionInPostgres = false;
-        $this->valueSet = [];
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getTypeHint()
     {
@@ -147,13 +233,17 @@ class Column extends MappingModel
     }
 
     /**
-     * @param mixed $typeHint
+     * @param string|null $typeHint
      */
     public function setTypeHint($typeHint)
     {
         $this->typeHint = $typeHint;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\EngineException
+     * @return void
+     */
     protected function setupObject()
     {
         try {
@@ -701,7 +791,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance type.
      *
-     * @return string
+     * @return string|null
      */
     public function getInheritanceType()
     {
@@ -1085,6 +1175,11 @@ class Column extends MappingModel
         return PropelTypes::getPDOType($this->getType());
     }
 
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
+     *
+     * @return bool
+     */
     public function isDefaultSqlType(PlatformInterface $platform = null)
     {
         if (null === $this->domain

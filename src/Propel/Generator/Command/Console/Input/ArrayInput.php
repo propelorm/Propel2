@@ -14,6 +14,7 @@ namespace Propel\Generator\Command\Console\Input;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Input\InputDefinition;
 
 /**
  * ArrayInput represents an input provided as an array.
@@ -26,8 +27,15 @@ use Symfony\Component\Console\Input\Input;
  */
 class ArrayInput extends Input
 {
+    /**
+     * @var array
+     */
     private $parameters;
 
+    /**
+     * @param array $parameters
+     * @param \Symfony\Component\Console\Input\InputDefinition|null $definition
+     */
     public function __construct(array $parameters, InputDefinition $definition = null)
     {
         $this->parameters = $parameters;

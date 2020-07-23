@@ -377,6 +377,10 @@ class Behavior extends MappingModel
         return $this->table->getColumn($this->getParameter($name));
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\LogicException
+     * @return void
+     */
     protected function setupObject()
     {
         $this->setName($this->getAttribute('name'));

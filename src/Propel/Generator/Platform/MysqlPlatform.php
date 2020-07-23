@@ -55,6 +55,11 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
 
+    /**
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
+     * @return void
+     */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         parent::setGeneratorConfig($generatorConfig);
@@ -106,26 +111,43 @@ class MysqlPlatform extends DefaultPlatform
         return $this->defaultTableEngine;
     }
 
+    /**
+     * @return string
+     */
     public function getAutoIncrement()
     {
         return 'AUTO_INCREMENT';
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 64;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return strtolower($this->getDefaultTableEngine()) === 'innodb';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsIndexSize()
     {
         return true;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return bool
+     */
     public function supportsForeignKeys(Table $table)
     {
         $vendorSpecific = $table->getVendorInfoForType('mysql');
@@ -140,6 +162,11 @@ class MysqlPlatform extends DefaultPlatform
         return strtolower($mysqlTableType) === 'innodb';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
+     */
     public function getAddTablesDDL(Database $database)
     {
         $ret = '';
@@ -155,6 +182,9 @@ class MysqlPlatform extends DefaultPlatform
         return $ret;
     }
 
+    /**
+     * @return string|null
+     */
     public function getBeginDDL()
     {
         return "
@@ -164,6 +194,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 ";
     }
 
+    /**
+     * @return string
+     */
     public function getEndDDL()
     {
         return "
@@ -177,12 +210,11 @@ SET FOREIGN_KEY_CHECKS = 1;
      *
      * @param Table $table
      *
-     * @return string|null
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
         if ($table->hasPrimaryKey()) {
-
             $keys = $table->getPrimaryKey();
 
             //MySQL throws an 'Incorrect table definition; there can be only one auto column and it must be defined as a key'
@@ -199,8 +231,15 @@ SET FOREIGN_KEY_CHECKS = 1;
 
             return 'PRIMARY KEY (' . $this->getColumnListDDL($keys) . ')';
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $lines = [];
@@ -267,6 +306,11 @@ CREATE TABLE %s
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string[]
+     */
     protected function getTableOptions(Table $table)
     {
         $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
@@ -326,6 +370,11 @@ CREATE TABLE %s
         return $tableOptions;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getDropTableDDL(Table $table)
     {
         return "
@@ -333,6 +382,12 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     * @return string
+     */
     public function getColumnDDL(Column $col)
     {
         $domain = $col->getDomain();
@@ -342,18 +397,18 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
         // Special handling of TIMESTAMP/DATETIME types ...
         // See: http://propel.phpdb.org/trac/ticket/538
-        if ($sqlType == 'DATETIME') {
+        if ($sqlType === 'DATETIME') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 // DATETIME values can only have constant expressions
                 $sqlType = 'TIMESTAMP';
             }
-        } elseif ($sqlType == 'DATE') {
+        } elseif ($sqlType === 'DATE') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 throw new EngineException('DATE columns cannot have default *expressions* in MySQL.');
             }
-        } elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
+        } elseif ($sqlType === 'TEXT' || $sqlType === 'BLOB') {
             if ($domain->getDefaultValue()) {
                 throw new EngineException('BLOB and TEXT columns cannot have DEFAULT values. in MySQL.');
             }
@@ -385,11 +440,11 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($colinfo->hasParameter('Collate')) {
             $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
         }
-        if ($sqlType == 'TIMESTAMP') {
+        if ($sqlType === 'TIMESTAMP') {
             if ($notNullString == '') {
                 $notNullString = 'NULL';
             }
-            if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
+            if ($defaultSetting == '' && $notNullString === 'NOT NULL') {
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
             if ($notNullString) {
@@ -505,6 +560,11 @@ DROP INDEX %s ON %s;
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\Index $index
+     *
+     * @return string
+     */
     protected function getIndexType(Index $index)
     {
         $type = '';
@@ -518,6 +578,11 @@ DROP INDEX %s ON %s;
         return $type;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Unique $unique
+     *
+     * @return string
+     */
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('UNIQUE INDEX %s (%s)',
@@ -526,6 +591,11 @@ DROP INDEX %s ON %s;
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string
+     */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
         if ($this->supportsForeignKeys($fk->getTable())) {
@@ -764,6 +834,11 @@ ALTER TABLE %s ADD %s %s;
         return true;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         return !in_array($sqlType, [
@@ -775,6 +850,9 @@ ALTER TABLE %s ADD %s %s;
         ]);
     }
 
+    /**
+     * @return int[]
+     */
     public function getDefaultTypeSizes()
     {
         return [
@@ -812,6 +890,14 @@ ALTER TABLE %s ADD %s %s;
         return '`' . strtr($text, ['.' => '`.`']) . '`';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     * @param string $identifier
+     * @param string $columnValueAccessor
+     * @param string $tab
+     *
+     * @return string
+     */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL

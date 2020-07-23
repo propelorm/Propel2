@@ -80,7 +80,7 @@ abstract class AbstractCriterion
      * @param Criteria $outer      The outer class (this is an "inner" class).
      * @param string   $column     TABLE.COLUMN format.
      * @param mixed    $value
-     * @param string   $comparison
+     * @param string|null   $comparison
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = null)
     {

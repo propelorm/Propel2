@@ -218,6 +218,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
         return $vi;
     }
 
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
+     */
     public function setPlatform($platform)
     {
         $this->platform = $platform;

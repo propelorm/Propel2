@@ -429,6 +429,10 @@ abstract class AbstractManager
         $this->generatorConfig = $generatorConfig;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     * @return void
+     */
     protected function validate()
     {
         if ($this->validate) {
@@ -438,6 +442,11 @@ abstract class AbstractManager
         }
     }
 
+    /**
+     * @param string $message
+     *
+     * @return void
+     */
     protected function log($message)
     {
         if (null !== $this->loggerClosure) {
@@ -450,7 +459,7 @@ abstract class AbstractManager
      * Returns an array of properties as key/value pairs from an input file.
      *
      * @param  string $file
-     * @return array
+     * @return string[]
      */
     protected function getProperties($file)
     {

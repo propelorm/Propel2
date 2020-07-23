@@ -98,8 +98,6 @@ class ColumnMap
     protected $isPkString = false;
 
     /**
-     * Constructor.
-     *
      * @param string $name The name of the column.
      * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
      */
@@ -475,11 +473,21 @@ class ColumnMap
         return $this->valueSet;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     public function isInValueSet($value)
     {
         return in_array($value, $this->valueSet);
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return false|int|string
+     */
     public function getValueSetKey($value)
     {
         return array_search($value, $this->valueSet);

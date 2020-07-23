@@ -14,8 +14,17 @@ use Propel\Runtime\Propel;
 
 trait InstancePoolTrait
 {
+    /**
+     * @var object[]
+     */
     public static $instances = [];
 
+    /**
+     * @param object $object
+     * @param string|null $key
+     *
+     * @return void
+     */
     public static function addInstanceToPool($object, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
@@ -27,6 +36,11 @@ trait InstancePoolTrait
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return string
+     */
     public static function getInstanceKey($value)
     {
         if (!($value instanceof Criteria) && is_object($value)) {
@@ -45,6 +59,11 @@ trait InstancePoolTrait
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
     public static function removeInstanceFromPool($value)
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
@@ -57,6 +76,11 @@ trait InstancePoolTrait
         }
     }
 
+    /**
+     * @param string $key
+     *
+     * @return object|null
+     */
     public static function getInstanceFromPool($key)
     {
         if (Propel::isInstancePoolingEnabled()) {
@@ -68,11 +92,17 @@ trait InstancePoolTrait
         return null;
     }
 
+    /**
+     * @return void
+     */
     public static function clearInstancePool()
     {
         self::$instances = [];
     }
 
+    /**
+     * @return void
+     */
     public static function clearRelatedInstancePool()
     {
     }

@@ -1002,6 +1002,7 @@ class TableDiff
     /**
      * Clones the current diff object.
      *
+     * @return void
      */
     public function __clone()
     {

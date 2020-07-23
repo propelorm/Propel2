@@ -46,6 +46,11 @@ class PropelConditionalProxy
 
     protected $parentState;
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param mixed $cond
+     * @param \Propel\Runtime\Util\PropelConditionalProxy|null $proxy
+     */
     public function __construct(Criteria $criteria, $cond, self $proxy = null)
     {
         $this->criteria = $criteria;
@@ -116,6 +121,11 @@ class PropelConditionalProxy
         return $this->state && $this->parentState;
     }
 
+    /**
+     * @param mixed $cond
+     *
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     */
     protected function setConditionalState($cond)
     {
         $this->state = (Boolean) $cond;
@@ -124,11 +134,17 @@ class PropelConditionalProxy
         return $this->getCriteriaOrProxy();
     }
 
+    /**
+     * @return \Propel\Runtime\Util\PropelConditionalProxy|null
+     */
     public function getParentProxy()
     {
         return $this->parent;
     }
 
+    /**
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     */
     public function getCriteriaOrProxy()
     {
         if ($this->state && $this->parentState) {
@@ -138,6 +154,12 @@ class PropelConditionalProxy
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function __call($name, $arguments)
     {
         return $this;

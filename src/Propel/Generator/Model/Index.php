@@ -34,7 +34,7 @@ class Index extends MappingModel
     /**
      * @var string[]
      */
-    protected $columns;
+    protected $columns = [];
 
     /**
      * @var Column[]
@@ -44,7 +44,7 @@ class Index extends MappingModel
     /**
      * @var int[]
      */
-    protected $columnsSize;
+    protected $columnsSize = [];
 
     /**
      * @var bool
@@ -58,11 +58,6 @@ class Index extends MappingModel
      */
     public function __construct($name = null)
     {
-        parent::__construct();
-
-        $this->columns     = [];
-        $this->columnsSize = [];
-
         if (null !== $name) {
             $this->setName($name);
         }
@@ -105,6 +100,9 @@ class Index extends MappingModel
         return $this->name;
     }
 
+    /**
+     * @return void
+     */
     protected function doNaming()
     {
         if (!$this->name || $this->autoNaming) {
@@ -129,6 +127,9 @@ class Index extends MappingModel
         }
     }
 
+    /**
+     * @return string
+     */
     public function getFQName()
     {
         $table = $this->getTable();
@@ -269,7 +270,7 @@ class Index extends MappingModel
      *
      * @param  integer $pos             Position in the column list
      * @param  string  $name            Column name
-     * @param  integer $size            Optional size check
+     * @param  integer|null $size            Optional size check
      * @param  boolean $caseInsensitive Whether or not the comparison is case insensitive (false by default)
      * @return boolean
      */
@@ -311,13 +312,16 @@ class Index extends MappingModel
      *
      * You should not edit this list.
      *
-     * @return array
+     * @return string[]
      */
     public function getColumns()
     {
         return $this->columns;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->setName($this->getAttribute('name'));

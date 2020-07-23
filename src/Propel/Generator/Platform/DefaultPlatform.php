@@ -192,6 +192,9 @@ class DefaultPlatform implements PlatformInterface
         return PlatformInterface::IDENTITY;
     }
 
+    /**
+     * @return bool
+     */
     public function isNativeIdMethodAutoIncrement()
     {
         return PlatformInterface::IDENTITY === $this->getNativeIdMethod();
@@ -270,6 +273,8 @@ class DefaultPlatform implements PlatformInterface
      * Returns the DDL SQL to add the tables of a database
      * together with index and foreign keys
      *
+     * @param \Propel\Generator\Model\Database $database
+     *
      * @return string
      */
     public function getAddTablesDDL(Database $database)
@@ -302,10 +307,11 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the end of a DDL file
      *
-     * @return string|null
+     * @return string
      */
     public function getEndDDL()
     {
+        return '';
     }
 
     /**
@@ -468,13 +474,15 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Returns the SQL for the primary key of a Table object.
      *
-     * @return string|null
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
         if ($table->hasPrimaryKey()) {
             return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
         }
+
+        return '';
     }
 
     /**
@@ -1247,13 +1255,16 @@ ALTER TABLE %s ADD
 
     /**
      * @see Platform::supportsMigrations()
+     * @return bool
      */
     public function supportsMigrations()
     {
         return true;
     }
 
-
+    /**
+     * @return bool
+     */
     public function supportsVarcharWithoutSize()
     {
         return false;
@@ -1267,7 +1278,7 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param  mixed $b A Boolean or string representation of Boolean ('y', 'true').
+     * @param bool|int|string $b A Boolean or string representation of Boolean ('y', 'true').
      * @return string
      */
     public function getBooleanString($b)
@@ -1288,6 +1299,11 @@ ALTER TABLE %s ADD
         return '0';
     }
 
+    /**
+     * @param string $stringValue
+     *
+     * @return string|null
+     */
     public function getPhpArrayString($stringValue)
     {
         $stringValue = trim($stringValue);
@@ -1381,6 +1397,14 @@ if (is_resource($columnValueAccessor)) {
      * <code>
      * $this->id = $con->lastInsertId();
      * </code>
+     *
+     * @param string $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param string|null $phpType
+     *
+     * @return string|string[]|null
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
     {
@@ -1398,7 +1422,7 @@ if (is_resource($columnValueAccessor)) {
     /**
      * Returns a integer indexed array of default type sizes.
      *
-     * @return integer[] type indexed array of integers
+     * @return int[] type indexed array of integers
      */
     public function getDefaultTypeSizes()
     {

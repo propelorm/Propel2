@@ -51,6 +51,11 @@ class PropelConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addGeneralSection(ArrayNodeDefinition $node)
     {
         $node
@@ -66,6 +71,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addPathsSection(ArrayNodeDefinition $node)
     {
         $node
@@ -87,6 +97,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addDatabaseSection(ArrayNodeDefinition $node)
     {
         $node
@@ -196,6 +211,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addMigrationsSection(ArrayNodeDefinition $node)
     {
         $node
@@ -213,6 +233,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addReverseSection(ArrayNodeDefinition $node)
     {
         $node
@@ -227,6 +252,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addExcludeTablesSection(ArrayNodeDefinition $node)
     {
         $node
@@ -238,6 +268,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addRuntimeSection(ArrayNodeDefinition $node)
     {
         $node
@@ -312,6 +347,11 @@ class PropelConfiguration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
     protected function addGeneratorSection(ArrayNodeDefinition $node)
     {
         $node

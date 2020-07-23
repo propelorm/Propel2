@@ -327,6 +327,12 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
         return $this->boundValues;
     }
 
+    /**
+     * @param string $method
+     * @param array $args
+     *
+     * @return mixed
+     */
     public function __call($method, $args)
     {
         return call_user_func_array([$this->statement, $method], $args);

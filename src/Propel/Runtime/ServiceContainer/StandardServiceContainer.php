@@ -27,12 +27,12 @@ use Psr\Log\NullLogger;
 class StandardServiceContainer implements ServiceContainerInterface
 {
     /**
-     * @var array[\Propel\Runtime\Adapter\AdapterInterface] List of database adapter instances
+     * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
      */
     protected $adapters = [];
 
     /**
-     * @var array[string] List of database adapter classes
+     * @var string[] List of database adapter classes
      */
     protected $adapterClasses = [];
 
@@ -47,12 +47,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
-     * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
+     * @var \Propel\Runtime\Map\DatabaseMap[] List of database map instances
      */
     protected $databaseMaps = [];
 
     /**
-     * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
+     * @var \Propel\Runtime\Connection\ConnectionManagerInterface[] List of connection managers
      */
     protected $connectionManagers = [];
 
@@ -74,7 +74,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var array[LoggerInterface] list of loggers
+     * @var LoggerInterface[] List of loggers
      */
     protected $loggers = [];
 
@@ -102,7 +102,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get the adapter class for a given datasource.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
      * @return string
      */
@@ -132,7 +132,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array $adapterClasses A list of adapters
+     * @param string[] $adapterClasses A list of adapters
      */
     public function setAdapterClasses($adapterClasses)
     {
@@ -294,7 +294,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return array[\Propel\Runtime\Connection\ConnectionManagerInterface]
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface[]
      */
     public function getConnectionManagers()
     {
@@ -467,6 +467,12 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->loggers[$name] = $logger;
     }
 
+    /**
+     * @param string $name
+     *
+     * @throws \Propel\Runtime\Exception\UnexpectedValueException
+     * @return \Psr\Log\LoggerInterface
+     */
     protected function buildLogger($name = 'defaultLogger')
     {
         if (!isset($this->loggerConfigurations[$name])) {
@@ -533,6 +539,9 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->loggerConfigurations[$name] = $loggerConfiguration;
     }
 
+    /**
+     * @return void
+     */
     private function __clone()
     {
     }

@@ -75,8 +75,6 @@ class RelationMap
     protected $onDelete;
 
     /**
-     * Constructor.
-     *
      * @param string $name Name of the relation.
      */
     public function __construct($name)
@@ -110,6 +108,11 @@ class RelationMap
         return $this->name;
     }
 
+    /**
+     * @param string $pluralName
+     *
+     * @return void
+     */
     public function setPluralName($pluralName)
     {
         $this->pluralName = $pluralName;

@@ -18,18 +18,35 @@ namespace Propel\Generator\Behavior\I18n;
  */
 class I18nBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\I18n\I18nBehavior
+     */
     protected $behavior;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @var \Propel\Generator\Builder\Om\QueryBuilder
+     */
     protected $builder;
 
+    /**
+     * @param \Propel\Generator\Behavior\I18n\I18nBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table    = $behavior->getTable();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\QueryBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
         $this->builder = $builder;
@@ -41,6 +58,9 @@ class I18nBehaviorQueryBuilderModifier
         return $script;
     }
 
+    /**
+     * @return string
+     */
     protected function addJoinI18n()
     {
         $fk = $this->behavior->getI18nForeignKey();
@@ -53,6 +73,9 @@ class I18nBehaviorQueryBuilderModifier
         ]);
     }
 
+    /**
+     * @return string
+     */
     protected function addJoinWithI18n()
     {
         $fk = $this->behavior->getI18nForeignKey();
@@ -64,6 +87,9 @@ class I18nBehaviorQueryBuilderModifier
         ]);
     }
 
+    /**
+     * @return string
+     */
     protected function addUseI18nQuery()
     {
         $i18nTable = $this->behavior->getI18nTable();

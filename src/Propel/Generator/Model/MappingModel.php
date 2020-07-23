@@ -24,24 +24,14 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @var array
      */
-    protected $attributes;
+    protected $attributes = [];
 
     /**
      * The list of vendor's information.
      *
-     * @var array
+     * @var VendorInfo[]
      */
-    protected $vendorInfos;
-
-    /**
-     * Constructor.
-     *
-     */
-    public function __construct()
-    {
-        $this->attributes  = [];
-        $this->vendorInfos = [];
-    }
+    protected $vendorInfos = [];
 
     /**
      * Loads a mapping definition from an array.
@@ -82,7 +72,7 @@ abstract class MappingModel implements MappingModelInterface
      * returned instead.
      *
      * @param  string $name
-     * @param  mixed  $default
+     * @param  mixed|null  $default
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -116,6 +106,11 @@ abstract class MappingModel implements MappingModelInterface
         return in_array(strtolower($value),  [ 'true', 't', 'y', 'yes' ], true);
     }
 
+    /**
+     * @param string $stringValue
+     *
+     * @return string|null
+     */
     protected function getDefaultValueForArray($stringValue)
     {
         $stringValue = trim($stringValue);

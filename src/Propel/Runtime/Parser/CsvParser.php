@@ -223,11 +223,22 @@ class CsvParser extends AbstractParser
         return $array;
     }
 
-    public function listToArray($array, $rootKey = null)
+    /**
+     * @param string $data
+     * @param string|null $rootKey
+     *
+     * @return array
+     */
+    public function listToArray($data, $rootKey = null)
     {
-        return $this->toArray($array, $rootKey, true);
+        return $this->toArray($data, $rootKey, true);
     }
 
+    /**
+     * @param string $row
+     *
+     * @return array
+     */
     protected function getColumns($row)
     {
         $delim = preg_quote($this->delimiter, '/');
@@ -260,6 +271,11 @@ class CsvParser extends AbstractParser
         return $row;
     }
 
+    /**
+     * @param string $input
+     *
+     * @return false|int
+     */
     protected function isQuoted($input)
     {
         $quote = preg_quote($this->quotechar, '/');
@@ -267,6 +283,11 @@ class CsvParser extends AbstractParser
         return preg_match('/^' . $quote . '.*' . $quote . '$/', $input);
     }
 
+    /**
+     * @param string $input
+     *
+     * @return string
+     */
     protected function unescape($input)
     {
         return str_replace(
@@ -276,6 +297,11 @@ class CsvParser extends AbstractParser
         );
     }
 
+    /**
+     * @param string $input
+     *
+     * @return string
+     */
     protected function unquote($input)
     {
         return trim($input, $this->quotechar);
@@ -283,6 +309,10 @@ class CsvParser extends AbstractParser
 
     /**
      * Checks whether a value from CSV output is serialized
+     *
+     * @param string $input
+     *
+     * @return false|int
      */
     protected function isSerialized($input)
     {

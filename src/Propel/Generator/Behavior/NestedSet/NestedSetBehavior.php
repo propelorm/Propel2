@@ -69,6 +69,9 @@ class NestedSetBehavior extends Behavior
         }
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\NestedSet\NestedSetBehavior|\Propel\Generator\Behavior\NestedSet\NestedSetBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
         if (null === $this->objectBuilderModifier) {
@@ -78,6 +81,9 @@ class NestedSetBehavior extends Behavior
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\NestedSet\NestedSetBehavior|\Propel\Generator\Behavior\NestedSet\NestedSetBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {
@@ -87,16 +93,29 @@ class NestedSetBehavior extends Behavior
         return $this->queryBuilderModifier;
     }
 
+    /**
+     * @return bool
+     */
     public function useScope()
     {
         return 'true' === $this->getParameter('use_scope');
     }
 
+    /**
+     * @param string $columnName
+     *
+     * @return string
+     */
     public function getColumnConstant($columnName)
     {
         return $this->getColumn($columnName)->getName();
     }
 
+    /**
+     * @param string $columnName
+     *
+     * @return \Propel\Generator\Model\Column
+     */
     public function getColumn($columnName)
     {
         return $this->getColumnForParameter($columnName);

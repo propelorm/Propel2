@@ -47,6 +47,11 @@ class Profiler
         ],
     ];
 
+    /**
+     * @param float $slowTreshold
+     * @param string $innerGlue
+     * @param string $outerGlue
+     */
     public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
     {
         $this->slowTreshold = $slowTreshold;
@@ -163,16 +168,25 @@ class Profiler
         ];
     }
 
+    /**
+     * @return void
+     */
     public function start()
     {
         $this->snapshot = self::getSnapshot();
     }
 
+    /**
+     * @return bool
+     */
     public function isSlow()
     {
         return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
     }
 
+    /**
+     * @return string
+     */
     public function getProfile()
     {
         return $this->getProfileBetween($this->snapshot, self::getSnapshot());

@@ -45,8 +45,6 @@ class Domain extends MappingModel
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
-        parent::__construct();
-
         if (null !== $type) {
             $this->setType($type);
         }
@@ -78,6 +76,9 @@ class Domain extends MappingModel
         $this->mappingType = $domain->getType();
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $schemaType = strtoupper($this->getAttribute('type'));
@@ -339,7 +340,7 @@ class Domain extends MappingModel
     /**
      * Replaces the SQL type if the new value is not null.
      *
-     * @param string $sqlType
+     * @param string|null $sqlType
      */
     public function replaceSqlType($sqlType)
     {
@@ -366,6 +367,9 @@ class Domain extends MappingModel
         return sprintf('(%u)', $this->size);
     }
 
+    /**
+     * @return void
+     */
     public function __clone()
     {
         if ($this->defaultValue) {

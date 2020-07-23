@@ -61,6 +61,9 @@ class DatabaseComparator
         $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;
     }
 
+    /**
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff
+     */
     public function getDatabaseDiff()
     {
         return $this->databaseDiff;

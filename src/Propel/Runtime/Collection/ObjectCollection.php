@@ -50,6 +50,11 @@ class ObjectCollection extends Collection
         $this->rebuildIndex();
     }
 
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
     public function setData($data)
     {
         parent::setData($data);
@@ -390,6 +395,9 @@ class ObjectCollection extends Collection
         return false;
     }
 
+    /**
+     * @return void
+     */
     protected function rebuildIndex()
     {
         $this->index = [];

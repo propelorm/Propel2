@@ -21,43 +21,75 @@ use Propel\Generator\Model\Table;
  */
 class NestedSetBehaviorObjectBuilderModifier
 {
-    /** @var NestedSetBehavior */
+    /**
+     * @var NestedSetBehavior
+     */
     protected $behavior;
 
-    /** @var Table */
+    /**
+     * @var Table
+     */
     protected $table;
 
-    /** @var ObjectBuilder */
+    /**
+     * @var ObjectBuilder
+     */
     protected $builder;
 
-    protected $objectClassName;
-
+    /**
+     * @param \Propel\Generator\Behavior\NestedSet\NestedSetBehavior $behavior
+     */
     public function __construct(NestedSetBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table    = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name)
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnPhpName($name)
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder(ObjectBuilder $builder)
     {
         $this->builder = $builder;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function preSave(ObjectBuilder $builder)
     {
         $queryClassName  = $builder->getQueryClassName();
@@ -92,6 +124,11 @@ class NestedSetBehaviorObjectBuilderModifier
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function preDelete(ObjectBuilder $builder)
     {
         $queryClassName = $builder->getQueryClassName();
@@ -106,6 +143,11 @@ if (\$this->isInTree()) {
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function postDelete(ObjectBuilder $builder)
     {
         $queryClassName = $builder->getQueryClassName();
@@ -117,12 +159,22 @@ if (\$this->isInTree()) {
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectClearReferences(ObjectBuilder $builder)
     {
         return "\$this->collNestedSetChildren = null;
 \$this->aNestedSetParent = null;";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods(ObjectBuilder $builder)
     {
         $this->setBuilder($builder);
@@ -217,6 +269,11 @@ if (\$this->isInTree()) {
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addProcessNestedSetQueries(&$script)
     {
         $script .= "
@@ -235,6 +292,12 @@ protected function processNestedSetQueries(ConnectionInterface \$con)
 }
 ";
     }
+
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetLeft(&$script)
     {
         $script .= "
@@ -251,6 +314,11 @@ public function getLeftValue()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetRight(&$script)
     {
         $script .= "
@@ -267,6 +335,11 @@ public function getRightValue()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetLevel(&$script)
     {
         $script .= "
@@ -283,6 +356,11 @@ public function getLevel()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetScope(&$script)
     {
         $script .= "
@@ -299,6 +377,9 @@ public function getScopeValue()
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addSetLeft()
     {
         return $this->behavior->renderTemplate('objectSetLeft', [
@@ -307,6 +388,11 @@ public function getScopeValue()
         ]);
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetRight(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -326,6 +412,11 @@ public function setRightValue(\$v)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetLevel(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -345,6 +436,11 @@ public function setLevel(\$v)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetScope(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -364,6 +460,11 @@ public function setScopeValue(\$v)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMakeRoot(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -390,6 +491,11 @@ public function makeRoot()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsInTree(&$script)
     {
         $script .= "
@@ -405,6 +511,11 @@ public function isInTree()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsRoot(&$script)
     {
         $script .= "
@@ -420,6 +531,11 @@ public function isRoot()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsLeaf(&$script)
     {
         $script .= "
@@ -435,6 +551,11 @@ public function isLeaf()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsDescendantOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -461,6 +582,11 @@ public function isDescendantOf($objectClassName \$parent)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsAncestorOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -479,6 +605,11 @@ public function isAncestorOf($objectClassName \$child)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasParent(&$script)
     {
         $script .= "
@@ -494,6 +625,11 @@ public function hasParent()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetParent(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -516,6 +652,11 @@ public function setParent($objectClassName \$parent = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetParent(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -543,6 +684,11 @@ public function getParent(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasPrevSibling(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -572,6 +718,11 @@ public function hasPrevSibling(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetPrevSibling(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -598,6 +749,11 @@ public function getPrevSibling(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasNextSibling(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -627,6 +783,11 @@ public function hasNextSibling(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetNextSibling(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -653,6 +814,11 @@ public function getNextSibling(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addNestedSetChildrenClear(&$script)
     {
         $script .= "
@@ -671,6 +837,11 @@ public function clearNestedSetChildren()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addNestedSetChildrenInit(&$script)
     {
         $script .= "
@@ -689,6 +860,11 @@ public function initNestedSetChildren()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addNestedSetChildAdd(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -717,6 +893,11 @@ public function addNestedSetChild($objectClassName $objectName)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasChildren(&$script)
     {
         $script .= "
@@ -732,6 +913,11 @@ public function hasChildren()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetChildren(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -768,6 +954,11 @@ public function getChildren(Criteria \$criteria = null, ConnectionInterface \$co
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCountChildren(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -797,6 +988,11 @@ public function countChildren(Criteria \$criteria = null, ConnectionInterface \$
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetFirstChild(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -823,6 +1019,11 @@ public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetLastChild(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -850,6 +1051,11 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetSiblings(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -883,6 +1089,11 @@ public function getSiblings(\$includeNode = false, Criteria \$criteria = null, C
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetDescendants(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -910,6 +1121,11 @@ public function getDescendants(Criteria \$criteria = null, ConnectionInterface \
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCountDescendants(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -936,6 +1152,11 @@ public function countDescendants(Criteria \$criteria = null, ConnectionInterface
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetBranch(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -959,6 +1180,11 @@ public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con 
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetAncestors(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -988,6 +1214,11 @@ public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$c
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addAddChild(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1014,6 +1245,11 @@ public function addChild($objectClassName \$child)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAsFirstChildOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1062,6 +1298,9 @@ public function insertAsFirstChildOf($objectClassName \$parent)
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addInsertAsLastChildOf()
     {
         return $this->behavior->renderTemplate('objectInsertAsLastChildOf', [
@@ -1071,6 +1310,11 @@ public function insertAsFirstChildOf($objectClassName \$parent)
         ]);
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAsPrevSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1114,6 +1358,11 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInsertAsNextSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1157,6 +1406,11 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToFirstChildOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1188,6 +1442,11 @@ public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterfac
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToLastChildOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1220,6 +1479,11 @@ public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToPrevSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1255,6 +1519,11 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterf
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToNextSiblingOf(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1290,6 +1559,11 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveSubtreeTo(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -1338,17 +1612,16 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
         if (\$targetScope != \$scope) {
 
             //move subtree to < 0, so the items are out of scope.
-            $queryClassName::shiftRLValues(-\$right, \$left, \$right" . ($useScope ? ", \$scope" : "") . ", \$con);
+            $queryClassName::shiftRLValues(-\$right, \$left, \$right, \$scope, \$con);
 
             //update scopes
             $queryClassName::setNegativeScope(\$targetScope, \$con);
 
             //update levels
-            $queryClassName::shiftLevel(\$levelDelta, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
+            $queryClassName::shiftLevel(\$levelDelta, \$left - \$right, 0, \$targetScope, \$con);
 
             //move the subtree to the target
-            $queryClassName::shiftRLValues((\$right - \$left) + \$destLeft, \$left - \$right, 0" . ($useScope ? ", \$targetScope" : "") . ", \$con);
-
+            $queryClassName::shiftRLValues((\$right - \$left) + \$destLeft, \$left - \$right, 0, \$targetScope, \$con);
 
             \$preventDefault = true;
         }
@@ -1384,6 +1657,11 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDeleteDescendants(&$script)
     {
         $objectClassName = $this->builder->getObjectClassName();
@@ -1436,6 +1714,11 @@ public function deleteDescendants(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectAttributes(ObjectBuilder $builder)
     {
         $tableName = $this->table->getName();
@@ -1488,6 +1771,9 @@ const SCOPE_COL = '" . $tableName . '.' . $this->behavior->getColumnConstant('sc
         return $script;
     }
 
+    /**
+     * @return string
+     */
     protected function addGetIterator()
     {
         return $this->behavior->renderTemplate('objectGetIterator');

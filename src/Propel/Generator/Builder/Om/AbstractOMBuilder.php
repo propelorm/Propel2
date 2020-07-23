@@ -431,6 +431,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }
 
+    /**
+     * @return void
+     */
     public function declareClasses()
     {
         $args = func_get_args();
@@ -844,7 +847,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $relCol = '';
 
         foreach ($fk->getMapping() as $mapping) {
-            list($localColumn, $foreignValueOrColumn) = $mapping;
+            [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable  = $fk->getTable();
             if (!$localColumn) {
@@ -895,7 +898,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         $relCol = '';
         foreach ($fk->getMapping() as $mapping) {
-            list($localColumn, $foreignValueOrColumn) = $mapping;
+            [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
             if (!$localColumn) {
@@ -975,6 +978,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      * @param string $modifier    The name of the modifier object providing the method in the behavior
+     * @return mixed
      */
     public function getBehaviorContentBase($contentName, $modifier)
     {

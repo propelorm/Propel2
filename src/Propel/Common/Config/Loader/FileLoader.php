@@ -140,9 +140,12 @@ abstract class FileLoader extends BaseFileLoader
         return $supported;
     }
 
+    /**
+     * @return bool
+     */
     private function isResolved()
     {
-        return ($this->resolved);
+        return $this->resolved;
     }
 
     /**

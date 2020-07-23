@@ -157,6 +157,7 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
      *
      * @param string $script
      * @see ObjectBuilder::addClassBody()
+     * @return void
      */
     protected function addClassBody(&$script)
     {

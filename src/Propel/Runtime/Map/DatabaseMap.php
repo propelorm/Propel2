@@ -51,8 +51,6 @@ class DatabaseMap
     protected $tablesByPhpName = [];
 
     /**
-     * Constructor.
-     *
      * @param string $name Name of the database.
      */
     public function __construct($name)
