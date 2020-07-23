@@ -16,20 +16,19 @@ use Propel\Runtime\Map\ColumnMap;
 
 /**
  * Interface for adapters.
- *
  */
 interface AdapterInterface
 {
-    const ID_METHOD_NONE = 0;
-    const ID_METHOD_AUTOINCREMENT = 1;
-    const ID_METHOD_SEQUENCE = 2;
+    public const ID_METHOD_NONE = 0;
+    public const ID_METHOD_AUTOINCREMENT = 1;
+    public const ID_METHOD_SEQUENCE = 2;
 
     /**
      * Build database connection
      *
      * @param array $conparams connection parameters
      *
-     * @return ConnectionInterface
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     public function getConnection($conparams);
 
@@ -41,8 +40,9 @@ interface AdapterInterface
      *
      * @see initConnection()
      *
-     * @param ConnectionInterface $con
-     * @param string              $charset The $string charset encoding.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string $charset The $string charset encoding.
+     *
      * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset);
@@ -53,7 +53,8 @@ interface AdapterInterface
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param  string $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
+     *
      * @return string The string in a case that can be ignored.
      */
     public function ignoreCaseInOrderBy($in);
@@ -80,9 +81,9 @@ interface AdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
@@ -91,14 +92,17 @@ interface AdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s);
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
-     * @param  string $text The identifier to quote.
+     *
+     * @param string $text The identifier to quote.
+     *
      * @return string The quoted identifier.
      */
     public function quoteIdentifier($text);
@@ -109,7 +113,8 @@ interface AdapterInterface
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $table The table name to quo
+     * @param string $table The table name to quo
+     *
      * @return string The quoted table name
      */
     public function quoteIdentifierTable($table);
@@ -121,6 +126,7 @@ interface AdapterInterface
      * author_id => `author_id`
      *
      * @param string $text
+     *
      * @return string
      */
     public function quote($text);
@@ -128,22 +134,22 @@ interface AdapterInterface
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
     public function isGetIdBeforeInsert();
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
     public function isGetIdAfterInsert();
 
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param Criteria $criteria
-     * @param string   $tableName
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param string $tableName
      *
      * @return string
      */
@@ -152,8 +158,8 @@ interface AdapterInterface
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
      * @return mixed
      */
@@ -162,8 +168,8 @@ interface AdapterInterface
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed     $value The temporal value
-     * @param ColumnMap $cMap
+     * @param mixed $value The temporal value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */
@@ -191,10 +197,9 @@ interface AdapterInterface
     public function getTimeFormatter();
 
     /**
-     * @param Criteria $criteria
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
     public function getGroupBy(Criteria $criteria);
-
 }

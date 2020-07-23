@@ -261,12 +261,12 @@ parameters:
 			path: src/Propel/Generator/Manager/ReverseManager.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Column.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Database.php
 
@@ -281,7 +281,12 @@ parameters:
 			path: src/Propel/Generator/Model/Database.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and int will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Domain.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int\\<1, max\\>\\|int\\<min, \\-1\\> given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Domain.php
 
@@ -296,7 +301,7 @@ parameters:
 			path: src/Propel/Generator/Model/Schema.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Table.php
 
@@ -316,7 +321,7 @@ parameters:
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and int will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
@@ -358,11 +363,6 @@ parameters:
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
-			path: src/Propel/Generator/Reverse/OracleSchemaParser.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\DataFetcher\\\\DataFetcherInterface\\:\\:fetch\\(\\) invoked with 1 parameter, 0 required\\.$#"
-			count: 2
 			path: src/Propel/Generator/Reverse/OracleSchemaParser.php
 
 		-
@@ -486,7 +486,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
 
@@ -496,7 +496,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
 
@@ -531,7 +531,12 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria will always evaluate to false\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:getPrimaryCriteria\\(\\) should return \\$this\\(Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\)\\|null but returns Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\|null\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 

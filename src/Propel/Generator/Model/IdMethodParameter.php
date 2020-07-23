@@ -31,7 +31,7 @@ class IdMethodParameter extends MappingModel
     private $value;
 
     /**
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     private $parentTable;
 
@@ -58,6 +58,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter name.
      *
      * @param string $name
+     *
      * @return void
      */
     public function setName($name)
@@ -79,6 +80,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter value.
      *
      * @param mixed $value
+     *
      * @return void
      */
     public function setValue($value)
@@ -90,6 +92,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parent table.
      *
      * @param \Propel\Generator\Model\Table $parent
+     *
      * @return void
      */
     public function setTable(Table $parent)
@@ -100,7 +103,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parent table.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getTable()
     {

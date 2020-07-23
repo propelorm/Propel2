@@ -23,20 +23,24 @@ class Inheritance extends MappingModel
      * @var string|null
      */
     private $key;
+
     /**
      * @var string|null
      */
     private $className;
+
     /**
      * @var string|null
      */
     private $package;
+
     /**
      * @var string|null
      */
     private $ancestor;
+
     /**
-     * @var Column|null
+     * @var \Propel\Generator\Model\Column|null
      */
     private $column;
 
@@ -58,6 +62,7 @@ class Inheritance extends MappingModel
     public function getConstantSuffix()
     {
         $separator = PhpNameGenerator::STD_SEPARATOR_CHAR;
+
         return strtoupper(rtrim(preg_replace('/(\W|_)+/', $separator, $this->key), $separator));
     }
 
@@ -65,6 +70,7 @@ class Inheritance extends MappingModel
      * Sets a key name.
      *
      * @param string $key
+     *
      * @return void
      */
     public function setKey($key)
@@ -75,7 +81,8 @@ class Inheritance extends MappingModel
     /**
      * Sets the parent column
      *
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
      * @return void
      */
     public function setColumn(Column $column)
@@ -86,7 +93,7 @@ class Inheritance extends MappingModel
     /**
      * Returns the parent column.
      *
-     * @return Column
+     * @return \Propel\Generator\Model\Column
      */
     public function getColumn()
     {
@@ -107,6 +114,7 @@ class Inheritance extends MappingModel
      * Sets the class name.
      *
      * @param string $name
+     *
      * @return void
      */
     public function setClassName($name)
@@ -128,6 +136,7 @@ class Inheritance extends MappingModel
      * Sets the package.
      *
      * @param string $package
+     *
      * @return void
      */
     public function setPackage($package)
@@ -149,6 +158,7 @@ class Inheritance extends MappingModel
      * Sets the ancestor.
      *
      * @param string $ancestor
+     *
      * @return void
      */
     public function setAncestor($ancestor)
@@ -161,9 +171,9 @@ class Inheritance extends MappingModel
      */
     protected function setupObject()
     {
-        $this->key       = $this->getAttribute('key');
+        $this->key = $this->getAttribute('key');
         $this->className = $this->getAttribute('class');
-        $this->package   = $this->getAttribute('package');
-        $this->ancestor  = $this->getAttribute('extends');
+        $this->package = $this->getAttribute('package');
+        $this->ancestor = $this->getAttribute('extends');
     }
 }

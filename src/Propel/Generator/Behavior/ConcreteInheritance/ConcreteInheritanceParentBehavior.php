@@ -28,9 +28,12 @@ class ConcreteInheritanceParentBehavior extends Behavior
 
     // default parameters value
     protected $parameters = [
-        'descendant_column' => 'descendant_class'
+        'descendant_column' => 'descendant_class',
     ];
 
+    /**
+     * @return void
+     */
     public function modifyTable()
     {
         $table = $this->getTable();
@@ -38,7 +41,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
             $table->addColumn([
                 'name' => $this->getParameter('descendant_column'),
                 'type' => 'VARCHAR',
-                'size' => 100
+                'size' => 100,
             ]);
         }
     }

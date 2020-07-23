@@ -10,17 +10,17 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Psr\Log\LoggerInterface;
+use Propel\Runtime\Propel;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Wraps a Connection class, providing nested transactions, statement cache, and logging.
  *
  * This class was designed to work around the limitation in PDO where attempting to begin
- * a transaction when one has already been begun will trigger a PDOException.  Propel
+ * a transaction when one has already been begun will trigger a PDOException. Propel
  * relies on the ability to create nested transactions, even if the underlying layer
  * simply ignores these (because it doesn't support nested transactions).
  *
@@ -28,7 +28,6 @@ use Psr\Log\LoggerAwareInterface;
  * getNestedTransactionDepth() and isInTransaction() and the fact that beginTransaction()
  * will no longer throw a PDOException (or trigger an error) if a transaction is already
  * in-progress.
- *
  */
 class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 {
@@ -37,7 +36,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Attribute to use to set whether to cache prepared statements.
      */
-    const PROPEL_ATTR_CACHE_PREPARES    = -1;
+    public const PROPEL_ATTR_CACHE_PREPARES = -1;
 
     /**
      * @var string The datasource name associated to this connection
@@ -47,23 +46,26 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Whether or not the debug is enabled
      *
-     * @var boolean
+     * @var bool
      */
     public $useDebug = false;
 
     /**
      * The wrapped connection class
-     * @var ConnectionInterface|null
+     *
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $connection;
 
     /**
      * The current transaction depth.
-     * @var integer
+     *
+     * @var int
      */
     protected $nestedTransactionCount = 0;
 
     /**
+     * @var bool
      * Whether the final commit is possible
      * Is false if a nested transaction is rolled back
      */
@@ -72,7 +74,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Count of queries performed.
      *
-     * @var integer
+     * @var int
      */
     protected $queryCount = 0;
 
@@ -86,14 +88,14 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Cache of prepared statements (StatementWrapper) keyed by SQL.
      *
-     * @var array  [sql => StatementWrapper]
+     * @var array [sql => StatementWrapper]
      */
     protected $cachedPreparedStatements = [];
 
     /**
      * Whether to cache prepared statements.
      *
-     * @var boolean
+     * @var bool
      */
     protected $isCachePreparedStatements = false;
 
@@ -111,7 +113,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Configured logger.
      *
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
 
@@ -130,6 +132,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     *
      * @return void
      */
     public function setName($name)
@@ -156,7 +159,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Gets the current transaction depth.
      *
-     * @return integer
+     * @return int
      */
     public function getNestedTransactionCount()
     {
@@ -165,7 +168,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Set the current transaction depth.
+     *
      * @param int $v The new depth.
+     *
      * @return void
      */
     protected function setNestedTransactionCount($v)
@@ -177,7 +182,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Is this PDO connection currently in-transaction?
      * This is equivalent to asking whether the current nested transaction count is greater than 0.
      *
-     * @return boolean
+     * @return bool
      */
     public function isInTransaction()
     {
@@ -188,7 +193,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Check whether the connection contains a transaction that can be committed.
      * To be used in an environment where Propelexceptions are caught.
      *
-     * @return boolean True if the connection is in a committable transaction
+     * @return bool True if the connection is in a committable transaction
      */
     public function isCommitable()
     {
@@ -198,7 +203,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Overrides PDO::beginTransaction() to prevent errors due to already-in-progress transaction.
      *
-     * @return boolean
+     * @return bool
      */
     public function beginTransaction()
     {
@@ -219,7 +224,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Overrides PDO::commit() to only commit the transaction if we are in the outermost
      * transaction nesting level.
      *
-     * @return boolean
+     * @throws \Propel\Runtime\Connection\Exception\RollbackException
+     *
+     * @return bool
      */
     public function commit()
     {
@@ -227,7 +234,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $opcount = $this->nestedTransactionCount;
 
         if ($opcount > 0) {
-            if (1 === $opcount) {
+            if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new RollbackException('Cannot commit because a nested transaction was rolled back');
                 }
@@ -248,7 +255,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Overrides PDO::rollBack() to only rollback the transaction if we are in the outermost
      * transaction nesting level
      *
-     * @return boolean Whether operation was successful.
+     * @return bool Whether operation was successful.
      */
     public function rollBack()
     {
@@ -256,7 +263,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $opcount = $this->nestedTransactionCount;
 
         if ($opcount > 0) {
-            if (1 === $opcount) {
+            if ($opcount === 1) {
                 $return = $this->connection->rollBack();
                 if ($this->useDebug) {
                     $this->log('Rollback transaction');
@@ -275,7 +282,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Rollback the whole transaction, even if this is a nested rollback
      * and reset the nested transaction count to 0.
      *
-     * @return boolean Whether operation was successful.
+     * @return bool Whether operation was successful.
      */
     public function forceRollBack()
     {
@@ -301,7 +308,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Checks if inside a transaction.
      *
-     * @return boolean TRUE if a transaction is currently active, and FALSE if not.
+     * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
     public function inTransaction()
     {
@@ -331,17 +338,20 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Set an attribute.
      *
      * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
-     * @param mixed  $value
+     * @param mixed $value
+     *
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     *
      * @return bool
      */
     public function setAttribute($attribute, $value)
     {
         if (is_string($attribute)) {
-            if (false === strpos($attribute, '::')) {
+            if (strpos($attribute, '::') === false) {
                 if (defined('\PDO::' . $attribute)) {
                     $attribute = '\PDO::' . $attribute;
                 } else {
-                    $attribute = __CLASS__ . '::' . $attribute;
+                    $attribute = self::class . '::' . $attribute;
                 }
             }
             if (!defined($attribute)) {
@@ -355,6 +365,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
                 $this->isCachePreparedStatements = $value;
+
                 break;
             default:
                 $this->connection->setAttribute($attribute, $value);
@@ -370,8 +381,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *  - Add logging and query counting if logging is true.
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
-     * @param string $statement      This must be a valid SQL statement for the target database server.
-     * @param array  $driver_options One $array or more key => value pairs to set attribute values
+     * @param string $statement This must be a valid SQL statement for the target database server.
+     * @param array|null $driver_options One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
      * @return \PDOStatement
@@ -401,8 +412,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Execute an SQL statement and return the number of affected rows.
      * Overrides PDO::exec() to log queries when required
      *
-     * @param  string  $sql
-     * @return integer
+     * @param string $sql
+     *
+     * @return int
      */
     public function exec($sql)
     {
@@ -453,8 +465,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
      *
-     * @param string $string         The string to be quoted.
-     * @param int    $parameter_type Provides a data type hint for drivers that
+     * @param string $string The string to be quoted.
+     * @param int $parameter_type Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
      * @return string A quoted string that is theoretically safe to pass into an
@@ -487,7 +499,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $sql A valid SQL statement
      *
-     * @return StatementWrapper
+     * @return \Propel\Runtime\Connection\StatementWrapper
      */
     protected function createStatementWrapper($sql)
     {
@@ -518,6 +530,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Clears any stored prepared statements for this connection.
+     *
      * @return void
      */
     public function clearStatementCache()
@@ -531,7 +544,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * When using DebugPDOStatement as the statement class, any queries by DebugPDOStatement instances
      * are counted as well.
      *
-     * @return integer
+     * @return int
      */
     public function getQueryCount()
     {
@@ -564,6 +577,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Set the SQL code for the latest query executed by Propel
      *
      * @param string $query Executable SQL code
+     *
      * @return void
      */
     public function setLastExecutedQuery($query)
@@ -574,7 +588,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Enable or disable the query debug features
      *
-     * @param boolean $value True to enable debug (default), false to disable it
+     * @param bool $value True to enable debug (default), false to disable it
+     *
      * @return void
      */
     public function useDebug($value = true)
@@ -590,6 +605,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * @param array $logMethods
+     *
      * @return void
      */
     public function setLogMethods($logMethods)
@@ -617,6 +633,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * {@inheritDoc}
+     *
      * @return void
      */
     public function setLogger(LoggerInterface $logger)
@@ -628,11 +645,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Gets the logger to use for this connection.
      * If no logger was set, returns the default logger from the Service Container.
      *
-     * @return LoggerInterface A logger.
+     * @return \Psr\Log\LoggerInterface A logger.
      */
     public function getLogger()
     {
-        if (null === $this->logger) {
+        if ($this->logger === null) {
             return Propel::getServiceContainer()->getLogger($this->getName());
         }
 
@@ -643,6 +660,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Logs the method call or the executed SQL statement.
      *
      * @param string $msg Message to log.
+     *
      * @return void
      */
     public function log($msg)
@@ -657,7 +675,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         do {
             $callingMethod = $backtrace[$i]['function'];
             $i++;
-        } while ($callingMethod == "log" && $i < $stackSize);
+        } while ($callingMethod == 'log' && $i < $stackSize);
 
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;

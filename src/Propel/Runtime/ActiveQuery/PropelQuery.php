@@ -21,19 +21,21 @@ class PropelQuery
 {
     /**
      * @param string $queryClassAndAlias
-     * @return ModelCriteria
+     *
      * @throws \Propel\Runtime\Exception\ClassNotFoundException
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
     public static function from($queryClassAndAlias)
     {
-        list($class, $alias) = ModelCriteria::getClassAndAlias($queryClassAndAlias);
+        [$class, $alias] = ModelCriteria::getClassAndAlias($queryClassAndAlias);
         $queryClass = $class . 'Query';
         if (!class_exists($queryClass)) {
             throw new ClassNotFoundException('Cannot find a query class for ' . $class);
         }
-        /** @var ModelCriteria $query */
+        /** @var \Propel\Runtime\ActiveQuery\ModelCriteria $query */
         $query = new $queryClass();
-        if (null !== $alias) {
+        if ($alias !== null) {
             $query->setModelAlias($alias);
         }
 

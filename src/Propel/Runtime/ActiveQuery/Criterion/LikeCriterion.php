@@ -15,20 +15,19 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 
 /**
  * Specialized Criterion used for LIKE expressions
- * e.g. table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
+ * e.g. table.column LIKE ? or table.column NOT LIKE ? (or ILIKE for Postgres)
  */
 class LikeCriterion extends AbstractCriterion
 {
-    /** flag to ignore case in comparison */
     protected $ignoreStringCase = false;
 
     /**
      * Create a new instance.
      *
-     * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     ignored
-     * @param string   $value      The condition to be added to the query string
-     * @param string   $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
+     * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
+     * @param string $column ignored
+     * @param string $value The condition to be added to the query string
+     * @param string $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::LIKE)
     {
@@ -38,12 +37,13 @@ class LikeCriterion extends AbstractCriterion
     /**
      * Sets ignore case.
      *
-     * @param  boolean             $b True if case should be ignored.
+     * @param bool $b True if case should be ignored.
+     *
      * @return $this A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreStringCase = (bool) $b;
+        $this->ignoreStringCase = (bool)$b;
 
         return $this;
     }
@@ -51,7 +51,7 @@ class LikeCriterion extends AbstractCriterion
     /**
      * Is ignore case on or off?
      *
-     * @return boolean True if case is ignored.
+     * @return bool True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -61,21 +61,22 @@ class LikeCriterion extends AbstractCriterion
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *
-     * @param string $sb    The string that will receive the Prepared Statement
-     * @param array  $params A list to which Prepared Statement parameters will be appended
+     * @param string $sb The string that will receive the Prepared Statement
+     * @param array $params A list to which Prepared Statement parameters will be appended
+     *
      * @return void
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
-        $field = (null === $this->table) ? $this->column : $this->table . '.' . $this->column;
+        $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
         $db = $this->getAdapter();
         // If selection is case insensitive use ILIKE for PostgreSQL or SQL
         // UPPER() function on column name for other databases.
         if ($this->ignoreStringCase) {
             if ($db instanceof PgsqlAdapter) {
-                if (Criteria::LIKE === $this->comparison) {
+                if ($this->comparison === Criteria::LIKE) {
                     $this->comparison = Criteria::ILIKE;
-                } elseif (Criteria::NOT_LIKE === $this->comparison) {
+                } elseif ($this->comparison === Criteria::NOT_LIKE) {
                     $this->comparison = Criteria::NOT_ILIKE;
                 }
             } else {
@@ -90,10 +91,9 @@ class LikeCriterion extends AbstractCriterion
         // If selection is case insensitive use SQL UPPER() function
         // on criteria or, if Postgres we are using ILIKE, so not necessary.
         if ($this->ignoreStringCase && !($db instanceof PgsqlAdapter)) {
-            $sb .= $db->ignoreCase(':p'.count($params));
+            $sb .= $db->ignoreCase(':p' . count($params));
         } else {
-            $sb .= ':p'.count($params);
+            $sb .= ':p' . count($params);
         }
     }
-
 }

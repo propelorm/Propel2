@@ -10,34 +10,34 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Manager\ReverseManager;
 use Propel\Generator\Schema\Dumper\XmlDumper;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Propel\Generator\Manager\ReverseManager;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
 class DatabaseReverseCommand extends AbstractCommand
 {
-    const DEFAULT_OUTPUT_DIRECTORY  = 'generated-reversed-database';
-    const DEFAULT_DATABASE_NAME     = 'default';
-    const DEFAULT_SCHEMA_NAME       = 'schema';
+    public const DEFAULT_OUTPUT_DIRECTORY = 'generated-reversed-database';
+    public const DEFAULT_DATABASE_NAME = 'default';
+    public const DEFAULT_SCHEMA_NAME = 'schema';
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->addOption('output-dir',    null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory', self::DEFAULT_OUTPUT_DIRECTORY)
             ->addOption('database-name', null, InputOption::VALUE_REQUIRED, 'The database name used in the created schema.xml. If not defined we use `connection`.')
-            ->addOption('schema-name',   null, InputOption::VALUE_REQUIRED, 'The schema name to generate', self::DEFAULT_SCHEMA_NAME)
-            ->addOption('namespace',     null, InputOption::VALUE_OPTIONAL, 'The PHP namespace to use for generated models')
+            ->addOption('schema-name', null, InputOption::VALUE_REQUIRED, 'The schema name to generate', self::DEFAULT_SCHEMA_NAME)
+            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'The PHP namespace to use for generated models')
             ->addArgument(
                 'connection',
                 InputArgument::OPTIONAL,
@@ -46,19 +46,18 @@ class DatabaseReverseCommand extends AbstractCommand
             )
             ->setName('database:reverse')
             ->setAliases(['reverse'])
-            ->setDescription('Reverse-engineer a XML schema file based on given database. Uses given `connection` as name, as dsn or your `reverse.connection` configuration in propel config as connection.')
-        ;
+            ->setDescription('Reverse-engineer a XML schema file based on given database. Uses given `connection` as name, as dsn or your `reverse.connection` configuration in propel config as connection.');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
         $connection = $input->getArgument('connection');
-        if (false === strpos($connection, ':')) {
+        if (strpos($connection, ':') === false) {
             //treat it as connection name
             $configOptions['propel']['reverse']['connection'] = $connection;
             if (!$input->getOption('database-name')) {
@@ -97,7 +96,7 @@ class DatabaseReverseCommand extends AbstractCommand
             $manager->setNamespace($namespace);
         }
 
-        if (true === $manager->reverse()) {
+        if ($manager->reverse() === true) {
             $output->writeln('<info>Schema reverse engineering finished.</info>');
         }
 

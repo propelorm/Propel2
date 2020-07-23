@@ -10,8 +10,9 @@
 
 namespace Propel\Generator\Manager;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use SplFileInfo;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * This manager creates the Object Model classes based on the XML schema file.
@@ -23,14 +24,15 @@ class ModelManager extends AbstractManager
     /**
      * A Filesystem object.
      *
-     * @var Filesystem
+     * @var \Symfony\Component\Filesystem\Filesystem
      */
     private $filesystem;
 
     /**
      * Sets the filesystem object.
      *
-     * @param Filesystem $filesystem
+     * @param \Symfony\Component\Filesystem\Filesystem $filesystem
+     *
      * @return void
      */
     public function setFilesystem(Filesystem $filesystem)
@@ -45,8 +47,8 @@ class ModelManager extends AbstractManager
     {
         $this->validate();
 
-        $totalNbFiles    = 0;
-        $dataModels      = $this->getDataModels();
+        $totalNbFiles = 0;
+        $dataModels = $this->getDataModels();
         $generatorConfig = $this->getGeneratorConfig();
 
         $this->log('Generating PHP files...');
@@ -136,7 +138,7 @@ class ModelManager extends AbstractManager
                         }
 
                         $totalNbFiles += $nbWrittenFiles;
-                        if (0 === $nbWrittenFiles) {
+                        if ($nbWrittenFiles === 0) {
                             $this->log("\t\t(no change)");
                         }
                     }
@@ -156,14 +158,15 @@ class ModelManager extends AbstractManager
      * This method assumes that the DataModelBuilder class has been initialized
      * with the build properties.
      *
-     * @param  AbstractOMBuilder $builder
-     * @param  boolean           $overwrite
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     * @param bool $overwrite
+     *
      * @return int
      */
     protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
     {
         $path = $builder->getClassFilePath();
-        $file = new \SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
+        $file = new SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
 
         $this->filesystem->mkdir($file->getPath());
 

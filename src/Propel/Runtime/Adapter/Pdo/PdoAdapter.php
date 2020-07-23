@@ -10,6 +10,11 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDO;
+use PDOException;
+use PDOStatement;
+use Propel\Generator\Model\PropelTypes;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -17,25 +22,22 @@ use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Util\PropelDateTime;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Base for PDO database adapters.
  */
 abstract class PdoAdapter
 {
-
     /**
      * Build database connection
      *
      * @param array $conparams connection parameters
      *
-     * @return PdoConnection
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws \Propel\Runtime\Adapter\Exception\AdapterException
      *
-     * @throws InvalidArgumentException
-     * @throws AdapterException
+     * @return \Propel\Runtime\Connection\PdoConnection
      */
     public function getConnection($conparams)
     {
@@ -45,8 +47,8 @@ abstract class PdoAdapter
             throw new InvalidArgumentException('No dsn specified in your connection parameters');
         }
 
-        $dsn      = $conparams['dsn'];
-        $user     = isset($conparams['user']) ? $conparams['user'] : null;
+        $dsn = $conparams['dsn'];
+        $user = isset($conparams['user']) ? $conparams['user'] : null;
         $password = isset($conparams['password']) ? $conparams['password'] : null;
 
         // load any driver options from the config file
@@ -55,7 +57,7 @@ abstract class PdoAdapter
         if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
                 $value = $optiondata;
-                if (is_string($value) && false !== strpos($value, '::')) {
+                if (is_string($value) && strpos($value, '::') !== false) {
                     if (!defined($value)) {
                         throw new InvalidArgumentException(sprintf('Error processing driver options for dsn "%s"', $dsn));
                     }
@@ -68,8 +70,8 @@ abstract class PdoAdapter
         try {
             $con = new PdoConnection($dsn, $user, $password, $driver_options);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : []);
-        } catch (\PDOException $e) {
-            throw new AdapterException("Unable to open PDO connection", 0, $e);
+        } catch (PDOException $e) {
+            throw new AdapterException('Unable to open PDO connection', 0, $e);
         }
 
         return $con;
@@ -80,7 +82,7 @@ abstract class PdoAdapter
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("%s REGEXP %s", $left, $right);
+        return sprintf('%s REGEXP %s', $left, $right);
     }
 
     /**
@@ -88,7 +90,7 @@ abstract class PdoAdapter
      */
     public function getAdapterId()
     {
-        $class = str_replace('Adapter', '', get_called_class());
+        $class = str_replace('Adapter', '', static::class);
         $lastSlash = strrpos($class, '\\');
 
         return strtolower(substr($class, $lastSlash + 1));
@@ -117,8 +119,9 @@ abstract class PdoAdapter
      *
      * @see setCharset()
      *
-     * @param ConnectionInterface $con
-     * @param array               $settings An array of settings.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array $settings An array of settings.
+     *
      * @return void
      */
     public function initConnection(ConnectionInterface $con, array $settings)
@@ -142,8 +145,9 @@ abstract class PdoAdapter
      *
      * @see initConnection()
      *
-     * @param ConnectionInterface $con
-     * @param string              $charset The $string charset encoding.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string $charset The $string charset encoding.
+     *
      * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
@@ -154,7 +158,8 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param  string $in The string to transform to upper case.
+     * @param string $in The string to transform to upper case.
+     *
      * @return string The upper case string.
      */
     public function toUpperCase($in)
@@ -165,7 +170,8 @@ abstract class PdoAdapter
     /**
      * This method is used to ignore case.
      *
-     * @param  string $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
+     *
      * @return string The string in a case that can be ignored.
      */
     public function ignoreCase($in)
@@ -179,7 +185,8 @@ abstract class PdoAdapter
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param  string $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
+     *
      * @return string The string in a case that can be ignored.
      */
     public function ignoreCaseInOrderBy($in)
@@ -201,7 +208,9 @@ abstract class PdoAdapter
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
-     * @param  string $text The identifier to quote.
+     *
+     * @param string $text The identifier to quote.
+     *
      * @return string The quoted identifier.
      */
     public function quoteIdentifier($text)
@@ -216,11 +225,12 @@ abstract class PdoAdapter
      * author_id => `author_id`
      *
      * @param string $text
+     *
      * @return string
      */
     public function quote($text)
     {
-        if (false !== ($pos = strrpos($text, '.'))) {
+        if (($pos = strrpos($text, '.')) !== false) {
             $table = substr($text, 0, $pos);
             $column = substr($text, $pos + 1);
         } else {
@@ -241,7 +251,8 @@ abstract class PdoAdapter
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $table The table name to quo
+     * @param string $table The table name to quo
+     *
      * @return string The quoted table name
      */
     public function quoteIdentifierTable($table)
@@ -252,7 +263,7 @@ abstract class PdoAdapter
     /**
      * Returns the native ID method for this RDBMS.
      *
-     * @return integer One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
+     * @return int One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
      */
     protected function getIdMethod()
     {
@@ -262,28 +273,28 @@ abstract class PdoAdapter
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
     public function isGetIdBeforeInsert()
     {
-        return AdapterInterface::ID_METHOD_SEQUENCE === $this->getIdMethod();
+        return $this->getIdMethod() === AdapterInterface::ID_METHOD_SEQUENCE;
     }
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
     public function isGetIdAfterInsert()
     {
-        return AdapterInterface::ID_METHOD_AUTOINCREMENT === $this->getIdMethod();
+        return $this->getIdMethod() === AdapterInterface::ID_METHOD_AUTOINCREMENT;
     }
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
      * @return mixed
      */
@@ -295,27 +306,30 @@ abstract class PdoAdapter
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed     $value The temporal value
-     * @param ColumnMap $cMap
+     * @param mixed $value The temporal value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */
     public function formatTemporalValue($value, ColumnMap $cMap)
     {
-        /** @var PropelDateTime|null $dt */
+        /** @var \Propel\Runtime\Util\PropelDateTime|null $dt */
         $dt = PropelDateTime::newInstance($value);
         if ($dt) {
             switch ($cMap->getType()) {
                 case PropelTypes::TIMESTAMP:
                 case PropelTypes::BU_TIMESTAMP:
                     $value = $dt->format($this->getTimestampFormatter());
+
                     break;
                 case PropelTypes::DATE:
                 case PropelTypes::BU_DATE:
                     $value = $dt->format($this->getDateFormatter());
+
                     break;
                 case PropelTypes::TIME:
                     $value = $dt->format($this->getTimeFormatter());
+
                     break;
             }
         }
@@ -334,7 +348,7 @@ abstract class PdoAdapter
     }
 
     /**
-     * @param Criteria $criteria
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
@@ -371,10 +385,11 @@ abstract class PdoAdapter
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param string      $sql    The sql statement
-     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Criteria    $values
-     * @param DatabaseMap $dbMap
+     * @param string $sql The sql statement
+     * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param \Propel\Runtime\ActiveQuery\Criteria $values
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
      * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
@@ -384,8 +399,8 @@ abstract class PdoAdapter
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param Criteria $criteria
-     * @param string   $tableName
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param string $tableName
      *
      * @return string
      */
@@ -411,9 +426,9 @@ abstract class PdoAdapter
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      *
-     * @param Criteria $criteria
-     * @param array    $fromClause
-     * @param boolean  $aliasAll
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param array $fromClause
+     * @param bool $aliasAll
      *
      * @return string
      */
@@ -426,7 +441,6 @@ abstract class PdoAdapter
             // no select columns after that, they are all aliases
         } else {
             foreach ($criteria->getSelectColumns() as $columnName) {
-
                 // expect every column to be of "table.column" formation
                 // it could be a function:  e.g. MAX(books.price)
                 $tableName = null;
@@ -436,8 +450,8 @@ abstract class PdoAdapter
                 $parenPos = strrpos($columnName, '(');
                 $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
 
-                if (false !== $dotPos) {
-                    if (false === $parenPos) { // table.column
+                if ($dotPos !== false) {
+                    if ($parenPos === false) { // table.column
                         $tableName = substr($columnName, 0, $dotPos);
                     } else { // FUNC(table.column)
                         // functions may contain qualifiers so only take the last
@@ -445,7 +459,7 @@ abstract class PdoAdapter
                         // COUNT(DISTINCT books.price)
                         $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
                         $lastSpace = strrpos($tableName, ' ');
-                        if (false !== $lastSpace) { // COUNT(DISTINCT books.price)
+                        if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
                             $tableName = substr($tableName, $lastSpace + 1);
                         }
                     }
@@ -469,11 +483,10 @@ abstract class PdoAdapter
         $queryComment = $criteria->getComment();
 
         // Build the SQL from the arrays we compiled
-        $sql =  'SELECT '
+        $sql = 'SELECT '
             . ($queryComment ? '/* ' . $queryComment . ' */ ' : '')
             . ($selectModifiers ? (implode(' ', $selectModifiers) . ' ') : '')
-            . implode(', ', $selectClause)
-        ;
+            . implode(', ', $selectClause);
 
         return $sql;
     }
@@ -481,20 +494,21 @@ abstract class PdoAdapter
     /**
      * Returns all selected columns that are selected without a aggregate function.
      *
-     * @param  Criteria $criteria
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
      * @return string[]
      */
     public function getPlainSelectedColumns(Criteria $criteria)
     {
         $selected = [];
         foreach ($criteria->getSelectColumns() as $columnName) {
-            if (false === strpos($columnName, '(')) {
+            if (strpos($columnName, '(') === false) {
                 $selected[] = $columnName;
             }
         }
 
         foreach ($criteria->getAsColumns() as $alias => $col) {
-            if (false === strpos($col, '(') && !in_array($col, $selected)) {
+            if (strpos($col, '(') === false && !in_array($col, $selected)) {
                 $selected[] = $col;
             }
         }
@@ -508,8 +522,9 @@ abstract class PdoAdapter
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {
@@ -558,25 +573,28 @@ abstract class PdoAdapter
      * </code>
      *
      * @param \PDOStatement $stmt
-     * @param array         $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param DatabaseMap   $dbMap
+     * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
      * @return void
      */
-    public function bindValues(\PDOStatement $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap)
     {
         $position = 0;
         foreach ($params as $param) {
             $position++;
             $parameter = ':p' . $position;
             $value = $param['value'];
-            if (null === $value) {
-                $stmt->bindValue($parameter, null, \PDO::PARAM_NULL);
+            if ($value === null) {
+                $stmt->bindValue($parameter, null, PDO::PARAM_NULL);
+
                 continue;
             }
             $tableName = $param['table'];
-            if (null === $tableName) {
-                $type = isset($param['type']) ? $param['type'] : \PDO::PARAM_STR;
+            if ($tableName === null) {
+                $type = isset($param['type']) ? $param['type'] : PDO::PARAM_STR;
                 $stmt->bindValue($parameter, $value, $type);
+
                 continue;
             }
             $cMap = $dbMap->getTable($tableName)->getColumn($param['column']);
@@ -588,15 +606,15 @@ abstract class PdoAdapter
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt      The statement to bind
-     * @param string        $parameter Parameter identifier
-     * @param mixed         $value     The value to bind
-     * @param ColumnMap     $cMap      The ColumnMap of the column to bind
-     * @param null|integer  $position  The position of the parameter to bind
+     * @param \PDOStatement $stmt The statement to bind
+     * @param string $parameter Parameter identifier
+     * @param mixed $value The value to bind
+     * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
+     * @param int|null $position The position of the parameter to bind
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
@@ -608,5 +626,4 @@ abstract class PdoAdapter
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
     }
-
 }

@@ -43,12 +43,13 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     protected $readConnection;
 
     /**
-     * @var boolean Whether a call to getReadConnection() always returns a write connection.
+     * @var bool Whether a call to getReadConnection() always returns a write connection.
      */
     protected $isForcePrimaryConnection = false;
 
     /**
      * @param string $name The datasource name associated to this connection
+     *
      * @return void
      */
     public function setName($name)
@@ -67,7 +68,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     /**
      * For replication, whether to always force the use of a primary connection.
      *
-     * @return boolean
+     * @return bool
      */
     public function isForcePrimaryConnection()
     {
@@ -77,12 +78,13 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     /**
      * For replication, set whether to always force the use of a primary connection.
      *
-     * @param boolean $isForceMasterConnection
+     * @param bool $isForceMasterConnection
+     *
      * @return void
      */
     public function setForcePrimaryConnection($isForceMasterConnection)
     {
-        $this->isForcePrimaryConnection = (bool) $isForceMasterConnection;
+        $this->isForcePrimaryConnection = (bool)$isForceMasterConnection;
     }
 
     /**
@@ -90,13 +92,14 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * <code>
      * $manager->setWriteConfiguration(array(
-     *   'dsn'      => 'mysql:dbname=test_master',
-     *   'user'     => 'mywriteuser',
+     *   'dsn' => 'mysql:dbname=test_master',
+     *   'user' => 'mywriteuser',
      *   'password' => 'S3cr3t'
      * ));
      * </code>
      *
      * @param array $configuration
+     *
      * @return void
      */
     public function setWriteConfiguration($configuration)
@@ -111,19 +114,20 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      * <code>
      * $manager->setReadConfiguration(array(
      *   array(
-     *     'dsn'      => 'mysql:dbname=test_replica1',
-     *     'user'     => 'myreaduser',
+     *     'dsn' => 'mysql:dbname=test_replica1',
+     *     'user' => 'myreaduser',
      *     'password' => 'F00baR'
      *   ),
      *   array(
-     *     'dsn'      => 'mysql:dbname=test_replica2',
-     *     'user'     => 'myreaduser',
+     *     'dsn' => 'mysql:dbname=test_replica2',
+     *     'user' => 'myreaduser',
      *     'password' => 'F00baR'
      *   )
      * ));
      * </code>
      *
      * @param array $configuration
+     *
      * @return void
      */
     public function setReadConfiguration($configuration)
@@ -137,13 +141,13 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * If no master connection exist yet, open it using the write configuration.
      *
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null)
     {
-        if (null === $this->writeConnection) {
+        if ($this->writeConnection === null) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
             $this->writeConnection->setName($this->getName());
         }
@@ -161,7 +165,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null)
     {
         if ($this->writeConnection && $this->writeConnection->inTransaction()) {
             return $this->writeConnection;
@@ -170,8 +174,8 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
         if ($this->isForcePrimaryConnection()) {
             return $this->getWriteConnection($adapter);
         }
-        if (null === $this->readConnection) {
-            if (null === $this->readConfiguration) {
+        if ($this->readConnection === null) {
+            if ($this->readConfiguration === null) {
                 $this->readConnection = $this->getWriteConnection($adapter);
             } else {
                 $keys = array_keys($this->readConfiguration);

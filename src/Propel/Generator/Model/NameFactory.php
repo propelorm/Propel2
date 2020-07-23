@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\EngineException;
-
 /**
  * A name generation factory.
  *
@@ -24,14 +22,15 @@ class NameFactory
     /**
      * The class name of the PHP name generator.
      */
-    const PHP_GENERATOR = '\Propel\Generator\Model\PhpNameGenerator';
+    public const PHP_GENERATOR = '\Propel\Generator\Model\PhpNameGenerator';
 
     /**
      * The fully qualified class name of the constraint name generator.
      */
-    const CONSTRAINT_GENERATOR = '\Propel\Generator\Model\ConstraintNameGenerator';
+    public const CONSTRAINT_GENERATOR = '\Propel\Generator\Model\ConstraintNameGenerator';
 
     /**
+     * @var array
      * The cache of <code>NameGeneratorInterface</code> algorithms in use for
      * name generation, keyed by fully qualified class name.
      */
@@ -56,11 +55,11 @@ class NameFactory
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param  string          $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
+     * @param string $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
      *                                        implementation to use to generate names.
-     * @param  array           $inputs        Inputs used to generate a name.
-     * @return string          The generated name.
-     * @throws EngineException
+     * @param array $inputs Inputs used to generate a name.
+     *
+     * @return string The generated name.
      */
     public static function generateName($algorithmName, $inputs)
     {

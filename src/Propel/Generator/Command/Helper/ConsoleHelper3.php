@@ -2,7 +2,6 @@
 
 namespace Propel\Generator\Command\Helper;
 
-use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,10 +11,14 @@ use Symfony\Component\Console\Question\Question;
 
 class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
 {
-    /** @var InputInterface $input */
+    /**
+     * @var \Symfony\Component\Console\Input\InputInterface $input
+     */
     protected $input;
 
-    /** @var OutputInterface $output */
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface $output
+     */
     protected $output;
 
     /**
@@ -29,9 +32,9 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function askQuestion($question, $default = null, array $autocomplete = null)
+    public function askQuestion($question, $default = null, ?array $autocomplete = null)
     {
         $question = new Question($this->formatQuestion($question, $default), $default);
         $question->setAutocompleterValues($autocomplete);
@@ -40,7 +43,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function askHiddenResponse($question, $fallback = true)
     {
@@ -52,7 +55,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeSection($text)
     {
@@ -63,11 +66,11 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeBlock($text, $style = 'bg=blue;fg=white')
     {
-        /** @var FormatterHelper $formatter */
+        /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
         $formatter = $this->getHelperSet()->get('formatter');
         $block = $formatter->formatBlock($text, $style, true);
 
@@ -75,7 +78,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeSummary($items)
     {
@@ -86,7 +89,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
@@ -103,7 +106,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function askConfirmation($question, $default = true)
     {
@@ -113,7 +116,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getInput()
     {
@@ -121,7 +124,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setInput(InputInterface $input)
     {
@@ -129,7 +132,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOutput()
     {
@@ -137,7 +140,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setOutput(OutputInterface $output)
     {
@@ -145,7 +148,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeln($messages, $options = 0)
     {
@@ -153,8 +156,8 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     }
 
     /**
-     * @param string        $question
-     * @param string|null   $default
+     * @param string $question
+     * @param string|null $default
      *
      * @return string
      */

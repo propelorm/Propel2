@@ -10,11 +10,11 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Propel;
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\ColumnMap;
+use Propel\Runtime\Propel;
 
 /**
  * This is an "inner" class that describes an object in the criteria.
@@ -25,32 +25,36 @@ use Propel\Runtime\Map\ColumnMap;
  */
 abstract class AbstractCriterion
 {
-    const UND = " AND ";
-    const ODER = " OR ";
+    public const UND = ' AND ';
+    public const ODER = ' OR ';
 
-    /** Value of the criterion */
+
     protected $value;
 
     /**
      * Comparison value.
+     *
      * @var string
      */
     protected $comparison;
 
     /**
      * Table name
+     *
      * @var string|null
      */
     protected $table;
 
     /**
      * Real table name
+     *
      * @var string
      */
     protected $realtable;
 
     /**
      * Column name
+     *
      * @var string
      */
     protected $column;
@@ -58,18 +62,22 @@ abstract class AbstractCriterion
     /**
      * The DBAdapter which might be used to get db specific
      * variations of sql.
+     *
+     * @var \Propel\Runtime\Adapter\AdapterInterface
      */
     protected $db;
 
     /**
      * Other connected criterions
-     * @var AbstractCriterion[]
+     *
+     * @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion[]
      */
     protected $clauses = [];
 
     /**
      * Operators for connected criterions
      * Only self::UND and self::ODER are accepted
+     *
      * @var string[]
      */
     protected $conjunctions = [];
@@ -77,22 +85,24 @@ abstract class AbstractCriterion
     /**
      * Create a new instance.
      *
-     * @param Criteria $outer      The outer class (this is an "inner" class).
-     * @param string   $column     TABLE.COLUMN format.
-     * @param mixed    $value
-     * @param string|null   $comparison
+     * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
+     * @param string $column TABLE.COLUMN format.
+     * @param mixed $value
+     * @param string|null $comparison
      */
     public function __construct(Criteria $outer, $column, $value, $comparison = null)
     {
         $this->value = $value;
         $this->setColumn($column);
-        $this->comparison = (null === $comparison) ? Criteria::EQUAL : $comparison;
+        $this->comparison = ($comparison === null) ? Criteria::EQUAL : $comparison;
         $this->init($outer);
     }
 
     /**
      * Init some properties with the help of outer class
-     * @param      Criteria $criteria The outer class
+     *
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria The outer class
+     *
      * @return void
      */
     public function init(Criteria $criteria)
@@ -100,10 +110,10 @@ abstract class AbstractCriterion
         try {
             $db = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
             $this->setAdapter($db);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // we are only doing this to allow easier debugging, so
             // no need to throw up the exception, just make note of it.
-            Propel::log("Could not get a AdapterInterface, sql may be wrong", Propel::LOG_ERR);
+            Propel::log('Could not get a AdapterInterface, sql may be wrong', Propel::LOG_ERR);
         }
 
         // init $this->realtable
@@ -113,6 +123,7 @@ abstract class AbstractCriterion
 
     /**
      * Set the $column and $table properties based on a column name or object
+     *
      * @return void
      */
     protected function setColumn($column)
@@ -146,7 +157,8 @@ abstract class AbstractCriterion
     /**
      * Set the table name.
      *
-     * @param  string $name A String with the table name.
+     * @param string $name A String with the table name.
+     *
      * @return void
      */
     public function setTable($name)
@@ -189,7 +201,8 @@ abstract class AbstractCriterion
      *
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
-     * @return AdapterInterface value of db.
+     *
+     * @return \Propel\Runtime\Adapter\AdapterInterface value of db.
      */
     public function getAdapter()
     {
@@ -200,7 +213,9 @@ abstract class AbstractCriterion
      * Set the adapter.
      *
      * The AdapterInterface might be used to get db specific variations of sql.
-     * @param  AdapterInterface $v Value to assign to db.
+     *
+     * @param \Propel\Runtime\Adapter\AdapterInterface $v Value to assign to db.
+     *
      * @return void
      */
     public function setAdapter(AdapterInterface $v)
@@ -213,6 +228,7 @@ abstract class AbstractCriterion
 
     /**
      * Get the list of clauses in this Criterion.
+     *
      * @return self[]
      */
     public function getClauses()
@@ -222,6 +238,7 @@ abstract class AbstractCriterion
 
     /**
      * Get the list of conjunctions in this Criterion
+     *
      * @return array
      */
     public function getConjunctions()
@@ -232,7 +249,8 @@ abstract class AbstractCriterion
     /**
      * Append an AND Criterion onto this Criterion's list.
      *
-     * @param  AbstractCriterion       $criterion
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $criterion
+     *
      * @return $this
      */
     public function addAnd(AbstractCriterion $criterion)
@@ -246,7 +264,8 @@ abstract class AbstractCriterion
     /**
      * Append an OR Criterion onto this Criterion's list.
      *
-     * @param  AbstractCriterion       $criterion
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $criterion
+     *
      * @return $this
      */
     public function addOr(AbstractCriterion $criterion)
@@ -261,16 +280,18 @@ abstract class AbstractCriterion
      * Appends a Prepared Statement representation of the Criterion
      * onto the buffer.
      *
-     * @param  string          $sb    The string that will receive the Prepared Statement
-     * @param  array           $params A list to which Prepared Statement parameters will be appended
+     * @param string $sb The string that will receive the Prepared Statement
+     * @param array $params A list to which Prepared Statement parameters will be appended
+     *
      * @return void
-     * @throws PropelException - if the expression builder cannot figure out how to turn a specified
+     *
      *                                expression into proper SQL.
      */
     public function appendPsTo(&$sb, array &$params)
     {
         if (!$this->clauses) {
             $this->appendPsForUniqueClauseTo($sb, $params);
+
             return;
         }
 
@@ -293,14 +314,15 @@ abstract class AbstractCriterion
         $params = [];
         $this->appendPsTo($sb, $params);
 
-        return "" . $sb;
+        return '' . $sb;
     }
 
     /**
      * Appends a Prepared Statement representation of the Criterion onto the buffer
      *
-     * @param string $sb    The string that will receive the Prepared Statement
-     * @param array  $params A list to which Prepared Statement parameters will be appended
+     * @param string $sb The string that will receive the Prepared Statement
+     * @param array $params A list to which Prepared Statement parameters will be appended
+     *
      * @return void
      */
     abstract protected function appendPsForUniqueClauseTo(&$sb, array &$params);
@@ -308,7 +330,8 @@ abstract class AbstractCriterion
     /**
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
-     * @return boolean
+     *
+     * @return bool
      */
     public function equals($obj)
     {
@@ -317,16 +340,16 @@ abstract class AbstractCriterion
             return true;
         }
 
-        if ((null === $obj) || !($obj instanceof AbstractCriterion)) {
+        if (($obj === null) || !($obj instanceof AbstractCriterion)) {
             return false;
         }
 
-        /** @var AbstractCriterion $crit */
+        /** @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $crit */
         $crit = $obj;
 
         $isEquiv = (
-            ((null === $this->table && null === $crit->getTable())
-            || (null !== $this->table && $this->table === $crit->getTable()))
+            (($this->table === null && $crit->getTable() === null)
+            || ($this->table !== null && $this->table === $crit->getTable()))
             && $this->column === $crit->getColumn()
             && $this->comparison === $crit->getComparison()
         );
@@ -351,6 +374,7 @@ abstract class AbstractCriterion
 
     /**
      * Get all tables from nested criterion objects
+     *
      * @return array
      */
     public function getAllTables()
@@ -364,6 +388,7 @@ abstract class AbstractCriterion
     /**
      * method supporting recursion through all criterions to give
      * us a string array of tables from each criterion
+     *
      * @return void
      */
     private function addCriterionTable(AbstractCriterion $c, array &$s)
@@ -377,7 +402,8 @@ abstract class AbstractCriterion
     /**
      * get an array of all criterion attached to this
      * recursing through all sub criterion
-     * @return AbstractCriterion[]
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion[]
      */
     public function getAttachedCriterion()
     {
@@ -391,6 +417,7 @@ abstract class AbstractCriterion
 
     /**
      * Ensures deep cloning of attached objects
+     *
      * @return void
      */
     public function __clone()

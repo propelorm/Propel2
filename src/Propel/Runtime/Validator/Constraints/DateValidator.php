@@ -9,8 +9,9 @@
 
 namespace Propel\Runtime\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraints\DateValidator as SymfonyDateValidator;
+use DateTimeInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\DateValidator as SymfonyDateValidator;
 
 /**
  * Validates Dates
@@ -22,11 +23,12 @@ class DateValidator extends SymfonyDateValidator
     /**
      * @param mixed $value The value that should be validated
      * @param \Symfony\Component\Validator\Constraint $constraint
+     *
      * @return void
      */
     public function validate($value, Constraint $constraint)
     {
-        if ($value instanceof \DateTimeInterface) {
+        if ($value instanceof DateTimeInterface) {
             return;
         }
 

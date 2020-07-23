@@ -10,12 +10,13 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Runtime\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Exception;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Util\SqlParser;
+use Propel\Runtime\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -23,26 +24,27 @@ use Propel\Generator\Util\SqlParser;
 class MigrationUpCommand extends AbstractCommand
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
-            ->addOption('fake',             null, InputOption::VALUE_NONE,  'Does not touch the actual schema, but marks next migration as executed.')
-            ->addOption('force',            null, InputOption::VALUE_NONE,  'Continues with the migration even when errors occur.')
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
+            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption('fake', null, InputOption::VALUE_NONE, 'Does not touch the actual schema, but marks next migration as executed.')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Continues with the migration even when errors occur.')
             ->setName('migration:up')
             ->setAliases(['up'])
-            ->setDescription('Execute migrations up')
-        ;
+            ->setDescription('Execute migrations up');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws \Propel\Runtime\Exception\RuntimeException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -69,7 +71,7 @@ class MigrationUpCommand extends AbstractCommand
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
-                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                [$name, $dsn, $infos] = $this->parseConnection($connection);
                 $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
@@ -104,11 +106,12 @@ class MigrationUpCommand extends AbstractCommand
         $migration = $manager->getMigrationObject($nextMigrationTimestamp);
 
         if (!$input->getOption('fake')) {
-            if (false === $migration->preUp($manager)) {
+            if ($migration->preUp($manager) === false) {
                 if ($input->getOption('force')) {
                     $output->writeln('<error>preUp() returned false. Continue migration.</error>');
                 } else {
                     $output->writeln('<error>preUp() returned false. Aborting migration.</error>');
+
                     return static::CODE_ERROR;
                 }
             }
@@ -138,7 +141,7 @@ class MigrationUpCommand extends AbstractCommand
 
                         $conn->exec($statement);
                         $res++;
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         if ($input->getOption('force')) {
                             //continue, but print error message
                             $output->writeln(

@@ -32,14 +32,17 @@ class ConcreteInheritanceBehavior extends Behavior
 
     // default parameters value
     protected $parameters = [
-        'extends'             => '',
-        'descendant_column'   => 'descendant_class',
+        'extends' => '',
+        'descendant_column' => 'descendant_class',
         'copy_data_to_parent' => 'true',
-        'copy_data_to_child'  => 'false',
-        'schema'              => '',
-        'exclude_behaviors'   => '',
+        'copy_data_to_child' => 'false',
+        'schema' => '',
+        'exclude_behaviors' => '',
     ];
 
+    /**
+     * @return void
+     */
     public function modifyTable()
     {
         $table = $this->getTable();
@@ -120,7 +123,7 @@ class ConcreteInheritanceBehavior extends Behavior
                 continue;
             }
             // validate behavior. If validate behavior already exists, clone only rules from parent
-            if ('validate' === $behavior->getName() && $table->hasBehavior('validate')) {
+            if ($behavior->getName() === 'validate' && $table->hasBehavior('validate')) {
                 /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validateBehavior */
                 $validateBehavior = $table->getBehavior('validate');
                 $validateBehavior->mergeParameters($behavior->getParameters());
@@ -131,11 +134,11 @@ class ConcreteInheritanceBehavior extends Behavior
             $copiedBehavior->setTableModified(false);
             $this->getTable()->addBehavior($copiedBehavior);
         }
-
     }
 
     /**
      * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
      * @return \Propel\Generator\Model\Table
      */
     protected function getParentTable()
@@ -143,7 +146,7 @@ class ConcreteInheritanceBehavior extends Behavior
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('extends');
         if ($database->getPlatform()->supportsSchemas() && $this->getParameter('schema')) {
-            $tableName = $this->getParameter('schema').$database->getPlatform()->getSchemaDelimiter().$tableName;
+            $tableName = $this->getParameter('schema') . $database->getPlatform()->getSchemaDelimiter() . $tableName;
         }
 
         $table = $database->getTable($tableName);
@@ -159,7 +162,7 @@ class ConcreteInheritanceBehavior extends Behavior
      */
     protected function isCopyData()
     {
-        return 'true' === $this->getParameter('copy_data_to_parent');
+        return $this->getParameter('copy_data_to_parent') === 'true';
     }
 
     /**
@@ -167,11 +170,11 @@ class ConcreteInheritanceBehavior extends Behavior
      */
     protected function getCopyToChild()
     {
-        if ('false' === strtolower($this->getParameter('copy_data_to_child'))) {
+        if (strtolower($this->getParameter('copy_data_to_child')) === 'false') {
             return false;
         }
 
-        if ('true' === strtolower($this->getParameter('copy_data_to_child'))) {
+        if (strtolower($this->getParameter('copy_data_to_child')) === 'true') {
             return true;
         }
 
@@ -280,7 +283,7 @@ public function syncParentToChild($parentClass \$parent)
     ";
 
         $columns = $this->getCopyToChild();
-        if (true === $columns) {
+        if ($columns === true) {
             $columns = $parentTable->getColumns();
         } else {
             $columnNames = $columns;
@@ -299,7 +302,6 @@ public function syncParentToChild($parentClass \$parent)
 
             $getter = 'get' . ucfirst($column->getPhpName());
             $setter = 'set' . ucfirst($column->getPhpName());
-
 
             $script .= "
     \$this->{$setter}(\$parent->{$getter}());
@@ -385,8 +387,8 @@ public function getSyncParent(\$con = null)
             }
             $refPhpName = $this->builder->getFKPhpNameAffix($fk, false);
             $script .= "
-    if (\$this->get" . $refPhpName . "() && \$this->get" . $refPhpName . "()->isNew()) {
-        \$parent->set" . $refPhpName . "(\$this->get" . $refPhpName . "());
+    if (\$this->get" . $refPhpName . '() && $this->get' . $refPhpName . "()->isNew()) {
+        \$parent->set" . $refPhpName . '($this->get' . $refPhpName . "());
     }";
         }
         $script .= "

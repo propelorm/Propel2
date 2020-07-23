@@ -29,7 +29,7 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * The list of vendor's information.
      *
-     * @var VendorInfo[]
+     * @var \Propel\Generator\Model\VendorInfo[]
      */
     protected $vendorInfos = [];
 
@@ -37,6 +37,7 @@ abstract class MappingModel implements MappingModelInterface
      * Loads a mapping definition from an array.
      *
      * @param array $attributes
+     *
      * @return void
      */
     public function loadMapping(array $attributes)
@@ -72,8 +73,9 @@ abstract class MappingModel implements MappingModelInterface
      * If the attribute is not set, then the second default value is
      * returned instead.
      *
-     * @param  string $name
-     * @param  mixed|null  $default
+     * @param string $name
+     * @param mixed|null $default
+     *
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -91,8 +93,9 @@ abstract class MappingModel implements MappingModelInterface
      *
      * This is to support the default value when used with a boolean column.
      *
-     * @param  mixed   $value
-     * @return boolean
+     * @param mixed $value
+     *
+     * @return bool
      */
     protected function booleanValue($value)
     {
@@ -101,10 +104,10 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         if (is_numeric($value)) {
-            return (bool) $value;
+            return (bool)$value;
         }
 
-        return in_array(strtolower($value),  [ 'true', 't', 'y', 'yes' ], true);
+        return in_array(strtolower($value), [ 'true', 't', 'y', 'yes' ], true);
     }
 
     /**
@@ -126,7 +129,7 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         $value = implode(' | ', $values);
-        if (empty($value) || ' | ' === $value) {
+        if (empty($value) || $value === ' | ') {
             return null;
         }
 
@@ -155,14 +158,16 @@ abstract class MappingModel implements MappingModelInterface
         if (count($values) === 0) {
             return null;
         }
+
         return $values;
     }
 
     /**
      * Adds a new VendorInfo instance to this current model object.
      *
-     * @param  VendorInfo|array $vendor
-     * @return VendorInfo
+     * @param \Propel\Generator\Model\VendorInfo|array $vendor
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     public function addVendorInfo($vendor)
     {
@@ -181,8 +186,9 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Returns a VendorInfo object by its type.
      *
-     * @param  string     $type
-     * @return VendorInfo
+     * @param string $type
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     public function getVendorInfoForType($type)
     {
@@ -196,11 +202,10 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Returns the list of all vendor information.
      *
-     * @return VendorInfo[]
+     * @return \Propel\Generator\Model\VendorInfo[]
      */
     public function getVendorInformation()
     {
         return $this->vendorInfos;
     }
-
 }

@@ -10,13 +10,14 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDOStatement;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * Oracle adapter.
@@ -37,8 +38,9 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see parent::initConnection()
      *
-     * @param ConnectionInterface $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param array $settings
+     *
      * @return void
      */
     public function initConnection(ConnectionInterface $con, array $settings)
@@ -47,7 +49,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         $con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
         if (isset($settings['queries']) && is_array($settings['queries'])) {
             foreach ($settings['queries'] as $queries) {
-                foreach ((array) $queries as $query) {
+                foreach ((array)$queries as $query) {
                     $con->exec($query);
                 }
             }
@@ -72,15 +74,15 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("REGEXP_LIKE(%s, %s)", $left, $right);
+        return sprintf('REGEXP_LIKE(%s, %s)', $left, $right);
     }
 
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
@@ -92,7 +94,8 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s)
@@ -103,10 +106,11 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::applyLimit()
      *
-     * @param string        $sql
-     * @param integer       $offset
-     * @param integer       $limit
-     * @param null|Criteria $criteria
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
+     *
      * @return void
      */
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
@@ -140,15 +144,16 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
-     * @return integer
+     *
+     * @return int
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
-        if (null === $name) {
+        if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
 
@@ -158,7 +163,8 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
     public function random($seed = null)
@@ -172,8 +178,9 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria)
     {
@@ -185,7 +192,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         // add the select columns back
         foreach ($selectColumns as $id => $clause) {
             // Generate a unique alias
-            $baseAlias = "ORA_COL_ALIAS_".$id;
+            $baseAlias = 'ORA_COL_ALIAS_' . $id;
             $alias = $baseAlias;
             // If it already exists, add a unique suffix
             $i = 0;
@@ -209,17 +216,17 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * @see AdapterInterface::bindValue()
      *
      * @param \PDOStatement $stmt
-     * @param string        $parameter
-     * @param mixed         $value
-     * @param ColumnMap     $cMap
-     * @param null|integer  $position
+     * @param string $parameter
+     * @param mixed $value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
+     * @param int|null $position
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
-        if (PropelTypes::CLOB_EMU === $cMap->getType()) {
-            return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
+        if ($cMap->getType() === PropelTypes::CLOB_EMU) {
+            return $stmt->bindParam(':p' . $position, $value, $cMap->getPdoType(), strlen($value));
         }
 
         if ($cMap->isTemporal()) {
@@ -237,6 +244,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * We need to replace oracle: to oci: in connection's dsn.
      *
      * @param array $params
+     *
      * @return array
      */
     protected function prepareParams($params)

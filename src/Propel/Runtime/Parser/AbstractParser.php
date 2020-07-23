@@ -10,8 +10,6 @@
 
 namespace Propel\Runtime\Parser;
 
-use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Exception\FileNotFoundException;
 
 /**
@@ -27,8 +25,9 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param  array $array Source data to convert
+     * @param array $array Source data to convert
      * @param string $rootKey The parser might use this for naming the root key of the parser format
+     *
      * @return mixed Converted data, depending on the parser format
      */
     abstract public function fromArray($array, $rootKey = 'data');
@@ -38,8 +37,9 @@ abstract class AbstractParser
      *
      * Override in the parser driver.
      *
-     * @param  mixed $data Source data to convert, depending on the parser format
+     * @param mixed $data Source data to convert, depending on the parser format
      * @param string $rootKey The parser might use this name for converting from parser format
+     *
      * @return array Converted data
      */
     abstract public function toArray($data, $rootKey = 'data');
@@ -71,6 +71,8 @@ abstract class AbstractParser
      *
      * @param string $path Path to the file to load
      *
+     * @throws \Propel\Runtime\Exception\FileNotFoundException
+     *
      * @return string The file content processed by PHP
      */
     public function load($path)
@@ -90,12 +92,13 @@ abstract class AbstractParser
      * Dumps data to a file, or to STDOUT if no filename is given
      *
      * @param string $data The file content
-     * @param string $path Path of the file to create
+     * @param string|null $path Path of the file to create
+     *
      * @return mixed|null|void
      */
     public function dump($data, $path = null)
     {
-        if (null !== $path) {
+        if ($path !== null) {
             return file_put_contents($path, $data);
         }
 
@@ -107,7 +110,9 @@ abstract class AbstractParser
      *
      * @param string $type Parser type, amon 'XML', 'YAML', 'JSON', and 'CSV'
      *
-     * @return AbstractParser A PropelParser subclass instance
+     * @throws \Propel\Runtime\Exception\FileNotFoundException
+     *
+     * @return \Propel\Runtime\Parser\AbstractParser A PropelParser subclass instance
      */
     public static function getParser($type = 'XML')
     {
@@ -117,6 +122,6 @@ abstract class AbstractParser
             throw new FileNotFoundException(sprintf('Unknown parser class "%s"', $class));
         }
 
-        return new $class;
+        return new $class();
     }
 }

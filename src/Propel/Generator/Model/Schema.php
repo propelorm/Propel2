@@ -27,37 +27,42 @@ use Propel\Generator\Schema\Dumper\XmlDumper;
 class Schema
 {
     /**
-     * @var Database[]
+     * @var \Propel\Generator\Model\Database[]
      */
     private $databases;
+
     /**
-     * @var PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface
      */
     private $platform;
+
     private $name;
+
     private $isInitialized;
+
     protected $generatorConfig;
 
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param PlatformInterface $platform
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
      */
-    public function __construct(PlatformInterface $platform = null)
+    public function __construct(?PlatformInterface $platform = null)
     {
-        if (null !== $platform) {
+        if ($platform !== null) {
             $this->setPlatform($platform);
         }
 
         $this->isInitialized = false;
-        $this->databases     = [];
+        $this->databases = [];
     }
 
     /**
      * Sets the platform object to use for any databases added to this
      * application schema.
      *
-     * @param PlatformInterface $platform
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
      * @return void
      */
     public function setPlatform(PlatformInterface $platform)
@@ -69,7 +74,7 @@ class Schema
      * Returns the platform object to use for any databases added to this
      * application schema.
      *
-     * @return PlatformInterface
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     public function getPlatform()
     {
@@ -79,7 +84,8 @@ class Schema
     /**
      * Sets the generator configuration
      *
-     * @param GeneratorConfigInterface $generatorConfig
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
      * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
@@ -90,7 +96,7 @@ class Schema
     /**
      * Returns the generator configuration
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {
@@ -101,6 +107,7 @@ class Schema
      * Sets the schema name.
      *
      * @param string $name
+     *
      * @return void
      */
     public function setName($name)
@@ -134,8 +141,9 @@ class Schema
      * The first boolean parameter tells whether or not to run the
      * final initialization process.
      *
-     * @param  boolean    $doFinalInitialization
-     * @return Database[]
+     * @param bool $doFinalInitialization
+     *
+     * @return \Propel\Generator\Model\Database[]
      */
     public function getDatabases($doFinalInitialization = true)
     {
@@ -151,7 +159,7 @@ class Schema
     /**
      * Returns whether or not this schema has multiple databases.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasMultipleDatabases()
     {
@@ -161,9 +169,10 @@ class Schema
     /**
      * Returns the database according to the specified name.
      *
-     * @param  string   $name
-     * @param  boolean  $doFinalInitialization
-     * @return Database
+     * @param string|null $name
+     * @param bool $doFinalInitialization
+     *
+     * @return \Propel\Generator\Model\Database
      */
     public function getDatabase($name = null, $doFinalInitialization = true)
     {
@@ -173,7 +182,7 @@ class Schema
             $this->doFinalInitialization();
         }
 
-        if (null === $name) {
+        if ($name === null) {
             return $this->databases[0];
         }
 
@@ -181,6 +190,7 @@ class Schema
         foreach ($this->databases as $database) {
             if ($database->getName() === $name) {
                 $db = $database;
+
                 break;
             }
         }
@@ -192,8 +202,9 @@ class Schema
      * Returns whether or not a database with the specified name exists in this
      * schema.
      *
-     * @param  string  $name
-     * @return boolean
+     * @param string $name
+     *
+     * @return bool
      */
     public function hasDatabase($name)
     {
@@ -211,15 +222,16 @@ class Schema
      * Schema. The database can be specified as a Database object or a
      * DOMNode object.
      *
-     * @param  Database|array $database
-     * @return Database
+     * @param \Propel\Generator\Model\Database|array $database
+     *
+     * @return \Propel\Generator\Model\Database
      */
     public function addDatabase($database)
     {
         if ($database instanceof Database) {
             $platform = null;
             $database->setParentSchema($this);
-            if (null === $database->getPlatform()) {
+            if ($database->getPlatform() === null) {
                 if ($config = $this->getGeneratorConfig()) {
                     $platform = $config->getConfiguredPlatform(null, $database->getName());
                 }
@@ -257,7 +269,10 @@ class Schema
     /**
      * Merge other Schema objects together into this Schema object.
      *
-     * @param Schema[] $schemas
+     * @param \Propel\Generator\Model\Schema[] $schemas
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
      * @return void
      */
     public function joinSchemas(array $schemas)
@@ -295,7 +310,7 @@ class Schema
     /**
      * Returns the number of tables in all the databases of this Schema object.
      *
-     * @return integer
+     * @return int
      */
     public function countTables()
     {

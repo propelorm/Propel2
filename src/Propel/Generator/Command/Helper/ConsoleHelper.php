@@ -2,13 +2,14 @@
 
 namespace Propel\Generator\Command\Helper;
 
+use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
 
 class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterface
 {
     protected $input;
+
     protected $output;
 
     /**
@@ -22,15 +23,15 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function askQuestion($question, $default = null, array $autocomplete = null)
+    public function askQuestion($question, $default = null, ?array $autocomplete = null)
     {
         return parent::ask($this->output, $this->formatQuestion($question, $default), $default, $autocomplete);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function askHiddenResponse($question, $fallback = true)
     {
@@ -38,7 +39,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeSection($text)
     {
@@ -49,7 +50,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeBlock($text, $style = 'bg=blue;fg=white')
     {
@@ -60,7 +61,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeSummary($items)
     {
@@ -71,7 +72,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     private function formatQuestion($question, $default = null)
     {
@@ -83,23 +84,23 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
         return parent::select(
-                                $this->output,
-                                $this->formatQuestion($question, $default),
-                                $choices,
-                                $default,
-                                $attempts,
-                                $errorMessage,
-                                $multiselect
-                             );
+            $this->output,
+            $this->formatQuestion($question, $default),
+            $choices,
+            $default,
+            $attempts,
+            $errorMessage,
+            $multiselect
+        );
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function askConfirmation($question, $default = true)
     {
@@ -107,7 +108,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getInput()
     {
@@ -115,7 +116,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setInput(InputInterface $input)
     {
@@ -123,7 +124,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOutput()
     {
@@ -131,7 +132,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setOutput(OutputInterface $output)
     {
@@ -139,7 +140,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function writeln($messages, $options = 0)
     {

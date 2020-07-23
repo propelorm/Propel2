@@ -12,7 +12,6 @@ namespace Propel\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\Table;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -24,44 +23,46 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 interface PlatformInterface
 {
-
     /**
      * Constant for auto-increment id method.
      */
-    const IDENTITY = "identity";
+    public const IDENTITY = 'identity';
 
     /**
      * Constant for sequence id method.
      */
-    const SEQUENCE = "sequence";
+    public const SEQUENCE = 'sequence';
 
     /**
      * Constant for serial id method (postgresql).
      */
-    const SERIAL = "serial";
+    public const SERIAL = 'serial';
 
     /**
      * Sets a database connection to use (for quoting, etc.).
-     * @param ConnectionInterface $con The database connection to use in this Platform class.
+     *
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con The database connection to use in this Platform class.
      */
-    public function setConnection(ConnectionInterface $con = null);
+    public function setConnection(?ConnectionInterface $con = null);
 
     /**
      * Returns the database connection to use for this Platform class.
-     * @return ConnectionInterface The database connection or NULL if none has been set.
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface The database connection or NULL if none has been set.
      */
     public function getConnection();
 
     /**
      * Sets the GeneratorConfigInterface which contains any generator build properties.
      *
-     * @param GeneratorConfigInterface $generatorConfig
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig);
 
     /**
      * Returns the short name of the database type that this platform represents.
      * For example MysqlPlatform->getDatabaseType() returns 'mysql'.
+     *
      * @return string
      */
     public function getDatabaseType();
@@ -83,43 +84,52 @@ interface PlatformInterface
     /**
      * Returns the db specific domain for a propelType.
      *
-     * @param  string $propelType the Propel type name.
-     * @return Domain The db specific domain.
+     * @param string $propelType the Propel type name.
+     *
+     * @return \Propel\Generator\Model\Domain The db specific domain.
      */
     public function getDomainForType($propelType);
 
     /**
-     * @return string The RDBMS-specific SQL fragment for <code>NULL</code>
-     *                or <code>NOT NULL</code>.
+     * Returns the RDBMS-specific SQL fragment for <code>NULL</code>
+     *   or <code>NOT NULL</code>.
+     *
+     * @return string
      */
     public function getNullString($notNull);
 
     /**
-     * @return string The RDBMS-specific SQL fragment for autoincrement.
+     * Returns the RDBMS-specific SQL fragment for autoincrement.
+     *
+     * @return string
      */
     public function getAutoIncrement();
 
     /**
      * Returns the DDL SQL for a Column object.
+     *
      * @return string
      */
     public function getColumnDDL(Column $col);
 
     /**
      * Returns the SQL for the default value of a Column object.
+     *
      * @return string
      */
     public function getColumnDefaultValueDDL(Column $col);
 
     /**
      * Creates a delimiter-delimited string list of column names, quoted using quoteIdentifier().
+     *
      * @example
      * <code>
      * echo $platform->getColumnListDDL(array('foo', 'bar');
      * // '"foo","bar"'
      * </code>
-     * @param Column[]|string[] $columns
-     * @param string            $delimiter The delimiter to use in separating the column names.
+     *
+     * @param \Propel\Generator\Model\Column[]|string[] $columns
+     * @param string $delimiter The delimiter to use in separating the column names.
      *
      * @return string
      */
@@ -127,6 +137,7 @@ interface PlatformInterface
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table);
@@ -134,22 +145,26 @@ interface PlatformInterface
     /**
      * Returns if the RDBMS-specific SQL type has a size attribute.
      *
-     * @param  string  $sqlType the SQL type
-     * @return boolean True if the type has a size attribute
+     * @param string $sqlType the SQL type
+     *
+     * @return bool True if the type has a size attribute
      */
     public function hasSize($sqlType);
 
     /**
      * Returns if the RDBMS-specific SQL type has a scale attribute.
      *
-     * @param  string  $sqlType the SQL type
-     * @return boolean True if the type has a scale attribute
+     * @param string $sqlType the SQL type
+     *
+     * @return bool True if the type has a scale attribute
      */
     public function hasScale($sqlType);
 
     /**
      * Quote and escape needed characters in the string for underlying RDBMS.
-     * @param  string $text
+     *
+     * @param string $text
+     *
      * @return string
      */
     public function quote($text);
@@ -158,43 +173,50 @@ interface PlatformInterface
      * Quotes a identifier.
      *
      * @param string $text
+     *
      * @return string
      */
     public function doQuoting($text);
 
     /**
      * Whether RDBMS supports native index sizes.
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsIndexSize();
 
     /**
      * Whether RDBMS supports native ON DELETE triggers (e.g. ON DELETE CASCADE).
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsNativeDeleteTrigger();
 
     /**
      * Whether RDBMS supports INSERT null values in autoincremented primary keys
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsInsertNullPk();
 
     /**
      * Whether RDBMS supports native schemas for table layout.
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsSchemas();
 
     /**
      * Whether RDBMS supports migrations.
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsMigrations();
 
     /**
      * Whether RDBMS supports VARCHAR without explicit size
-     * @return boolean
+     *
+     * @return bool
      */
     public function supportsVarcharWithoutSize();
 
@@ -207,31 +229,36 @@ interface PlatformInterface
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param  mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
+     *
      * @return string
      */
     public function getBooleanString($tf);
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return boolean
+     *
+     * @return bool
      */
     public function hasStreamBlobImpl();
 
     /**
      * Gets the preferred timestamp formatter for setting date/time values.
+     *
      * @return string
      */
     public function getTimestampFormatter();
 
     /**
      * Gets the preferred date formatter for setting time values.
+     *
      * @return string
      */
     public function getDateFormatter();
 
     /**
      * Gets the preferred time formatter for setting time values.
+     *
      * @return string
      */
     public function getTimeFormatter();
@@ -247,10 +274,9 @@ interface PlatformInterface
      * Useful for checking needed definitions/structures. E.g. Unique Indexes for ForeignKey columns,
      * which the most Platforms requires but which is not always explicitly defined in the table model.
      *
-     * @param Table $table The table object which gets modified.
+     * @param \Propel\Generator\Model\Table $table The table object which gets modified.
      */
     public function normalizeTable(Table $table);
-
 
     /**
      * Get the PHP snippet for binding a value to a column.
@@ -264,15 +290,15 @@ interface PlatformInterface
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ");
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ');
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isIdentifierQuotingEnabled();
 
     /**
-     * @param boolean $enabled
+     * @param bool $enabled
      */
     public function setIdentifierQuoting($enabled);
 }

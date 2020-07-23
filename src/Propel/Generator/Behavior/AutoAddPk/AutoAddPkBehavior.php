@@ -21,14 +21,15 @@ class AutoAddPkBehavior extends Behavior
 {
     // default parameters value
     protected $parameters = [
-        'name'          => 'id',
+        'name' => 'id',
         'autoIncrement' => 'true',
-        'type'          => 'INTEGER'
+        'type' => 'INTEGER',
     ];
 
     /**
      * Copy the behavior to the database tables
      * Only for tables that have no Pk
+     *
      * @return void
      */
     public function modifyDatabase()
@@ -43,6 +44,7 @@ class AutoAddPkBehavior extends Behavior
 
     /**
      * Add the primary key to the current table
+     *
      * @return void
      */
     public function modifyTable()

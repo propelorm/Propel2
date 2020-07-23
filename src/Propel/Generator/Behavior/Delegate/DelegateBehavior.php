@@ -10,13 +10,13 @@
 
 namespace Propel\Generator\Behavior\Delegate;
 
+use InvalidArgumentException;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\NameGeneratorInterface;
 use Propel\Generator\Util\PhpParser;
-use Propel\Runtime\Exception\PropelException;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -25,12 +25,12 @@ use Propel\Runtime\Exception\PropelException;
  */
 class DelegateBehavior extends Behavior
 {
-    const ONE_TO_ONE = 1;
-    const MANY_TO_ONE = 2;
+    public const ONE_TO_ONE = 1;
+    public const MANY_TO_ONE = 2;
 
     // default parameters value
     protected $parameters = [
-        'to' => ''
+        'to' => '',
     ];
 
     protected $delegates = [];
@@ -43,6 +43,9 @@ class DelegateBehavior extends Behavior
     /**
      * Lists the delegates and checks that the behavior can use them,
      * And adds a fk from the delegate to the main table if not already set
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return void
      */
     public function modifyTable()
@@ -53,7 +56,7 @@ class DelegateBehavior extends Behavior
         foreach ($delegates as $delegate) {
             $delegate = $database->getTablePrefix() . trim($delegate);
             if (!$database->hasTable($delegate)) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'No delegate table "%s" found for table "%s"',
                     $delegate,
                     $table->getName()
@@ -70,7 +73,7 @@ class DelegateBehavior extends Behavior
                     $fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
                     $fk = $fks[0];
                     if (!$fk->isLocalPrimaryKey()) {
-                        throw new \InvalidArgumentException(sprintf(
+                        throw new InvalidArgumentException(sprintf(
                             'Delegate table "%s" has a relationship with table "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
                             $delegate,
                             $table->getName()
@@ -184,7 +187,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
             $delegateTable = $this->getDelegateTable($key);
 
             $tn = ($delegateTable->getSchema() ? $delegateTable->getSchema() . NameGeneratorInterface::STD_SEPARATOR_CHAR : '') . $delegateTable->getCommonName();
-            $ns = $delegateTable->getNamespace() ? '\\'.$delegateTable->getNamespace() : '';
+            $ns = $delegateTable->getNamespace() ? '\\' . $delegateTable->getNamespace() : '';
             $new_result .= "{$indent}\$keys_{$tn} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
             $i = 0;
             foreach ($delegateTable->getColumns() as $column) {
@@ -202,11 +205,9 @@ if (is_callable(array('$ARFQCN', \$name))) {
     }
 
     /**
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return bool
-     *
-     * @throws PropelException
      */
     protected function isColumnForeignKeyOrDuplicated(Column $column)
     {
@@ -217,7 +218,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
         if ($this->double_defined === null) {
             $this->double_defined = [];
 
-            foreach ($this->delegates+[$table->getName() => 1] as $key => $value) {
+            foreach ($this->delegates + [$table->getName() => 1] as $key => $value) {
                 $delegateTable = $this->getDelegateTable($key);
                 foreach ($delegateTable->getColumns() as $columnDelegated) {
                     if (isset($this->double_defined[$columnDelegated->getName()])) {
@@ -229,7 +230,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
             }
         }
 
-        if (1<$this->double_defined[$column->getName()]) {
+        if (1 < $this->double_defined[$column->getName()]) {
             return true;
         }
 
@@ -301,7 +302,6 @@ protected \$delegatedFields = [
 
                     $script .= $this->renderTemplate('queryMethodsTemplate', compact('tablePhpName', 'phpName', 'childClassName', 'fieldName'));
                 }
-
             }
         }
 
@@ -336,6 +336,6 @@ public function filterBy(\$column, \$value, \$comparison = Criteria::EQUAL)
 ";
         }
 
-       return $script;
+        return $script;
     }
 }

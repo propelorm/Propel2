@@ -13,8 +13,8 @@ namespace Propel\Common\Config;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 use Propel\Common\Config\Loader\DelegatingLoader;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class ConfigurationManager
@@ -25,7 +25,7 @@ use Symfony\Component\Config\Definition\Processor;
  */
 class ConfigurationManager
 {
-    const CONFIG_FILE_NAME = 'propel';
+    public const CONFIG_FILE_NAME = 'propel';
 
     /**
      * Array of configuration values
@@ -37,8 +37,8 @@ class ConfigurationManager
     /**
      * Load and validate configuration values from a file.
      *
-     * @param string|null $filename  Configuration file name or directory in which resides the configuration file.
-     * @param array  $extraConf Array of configuration properties, to be merged with those loaded from file.
+     * @param string|null $filename Configuration file name or directory in which resides the configuration file.
+     * @param array $extraConf Array of configuration properties, to be merged with those loaded from file.
      *                          It's useful when passing configuration parameters from command line.
      */
     public function __construct($filename = null, $extraConf = [])
@@ -61,7 +61,8 @@ class ConfigurationManager
      * Return a specific section of the configuration array.
      * It ca be useful to get, in example, only 'generator' values.
      *
-     * @param  string $section the section to be returned
+     * @param string $section the section to be returned
+     *
      * @return array|null
      */
     public function getSection($section)
@@ -81,9 +82,11 @@ class ConfigurationManager
      * is expressed by:
      * <code>'database.adapter.mysql.tableType</code>
      *
-     * @param  string                                                   $name The name of property, expressed as a dot separated level hierarchy
+     * @param string $name The name of property, expressed as a dot separated level hierarchy
+     *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
-     * @return mixed                                                    The configuration property
+     *
+     * @return mixed The configuration property
      */
     public function getConfigProperty($name)
     {
@@ -107,7 +110,8 @@ class ConfigurationManager
      * Return an array of parameters relative to configured connections, for `runtime` or `generator` section.
      * It's useful for \Propel\Generator\Command\ConfigConvertCommand class
      *
-     * @param  string     $section `runtime` or `generator` section
+     * @param string $section `runtime` or `generator` section
+     *
      * @return array|null
      */
     public function getConnectionParametersArray($section = 'runtime')
@@ -132,8 +136,9 @@ class ConfigurationManager
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     * @param string|null $fileName  Configuration file name or directory in which resides the configuration file.
+     * @param string|null $fileName Configuration file name or directory in which resides the configuration file.
      * @param array|null $extraConf Array of configuration properties, to be merged with those loaded from file.
+     *
      * @return void
      */
     protected function load($fileName, $extraConf)
@@ -144,11 +149,11 @@ class ConfigurationManager
             $fileName = self::CONFIG_FILE_NAME;
         }
 
-        if (null === $extraConf) {
+        if ($extraConf === null) {
             $extraConf = [];
         }
 
-        if (static::CONFIG_FILE_NAME === $fileName) {
+        if ($fileName === static::CONFIG_FILE_NAME) {
             $files = $this->getFiles($dirs, $fileName);
             $distFiles = $this->getFiles($dirs, $fileName, true);
 
@@ -156,7 +161,7 @@ class ConfigurationManager
             $numDistFiles = count($distFiles);
 
             //allow to load only .dist file
-            if (0 === $numFiles && 1 === $numDistFiles) {
+            if ($numFiles === 0 && $numDistFiles === 1) {
                 $files = $distFiles;
                 $numFiles = 1;
             }
@@ -171,21 +176,22 @@ class ConfigurationManager
             $fileName = $file->getPathName();
         }
 
-        $this->config = array_replace_recursive($this->loadFile($fileName.'.dist'), $this->loadFile($fileName), $extraConf);
+        $this->config = array_replace_recursive($this->loadFile($fileName . '.dist'), $this->loadFile($fileName), $extraConf);
     }
 
     /**
      * Validate the configuration array via Propel\Common\Config\PropelConfiguration class
      * and add default values.
      *
-     * @param array $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
+     * @param array|null $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
      *                         the constructor to pass a built-in array of configuration, without load it from file. I.e.
      *                         Propel\Generator\Config\QuickGeneratorConfig class.
+     *
      * @return void
      */
     protected function process($extraConf = null)
     {
-        if (null === $extraConf && count($this->config) <= 0) {
+        if ($extraConf === null && count($this->config) <= 0) {
             return;
         }
 
@@ -205,9 +211,11 @@ class ConfigurationManager
     /**
      * Return an array of configuration files in the $dirs directories
      *
-     * @param array  $dirs     The directories where to find the configuration files
+     * @param array $dirs The directories where to find the configuration files
      * @param string $fileName The name of the file
-     * @param bool   $dist     If search .dist files
+     * @param bool $dist If search .dist files
+     *
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      *
      * @return array
      */
@@ -216,7 +224,7 @@ class ConfigurationManager
         $finder = new Finder();
         $fileName .= '.{php,inc,ini,properties,yaml,yml,xml,json}';
 
-        if (true === $dist) {
+        if ($dist === true) {
             $fileName .= '.dist';
         }
 
@@ -236,7 +244,6 @@ class ConfigurationManager
      * @param string $fileName The configuration file
      *
      * @return array|mixed
-     * @throws \Symfony\Component\Config\Exception\LoaderLoadException|\Symfony\Component\Config\Exception\FileLoaderLoadException
      */
     private function loadFile($fileName)
     {
@@ -252,7 +259,8 @@ class ConfigurationManager
     /**
      * Return the directories where to find the configuration file.
      *
-     * @param  string|null $fileName
+     * @param string|null $fileName
+     *
      * @return array
      */
     private function getDirs($fileName)
@@ -268,11 +276,11 @@ class ConfigurationManager
         }
 
         $dirs[] = $currentDir;
-        if (is_dir($currentDir.'/conf')) {
-            $dirs[] = $currentDir.'/conf';
+        if (is_dir($currentDir . '/conf')) {
+            $dirs[] = $currentDir . '/conf';
         }
-        if (is_dir($currentDir.'/config')) {
-            $dirs[] = $currentDir.'/config';
+        if (is_dir($currentDir . '/config')) {
+            $dirs[] = $currentDir . '/config';
         }
 
         return $dirs;
@@ -296,6 +304,8 @@ class ConfigurationManager
      * If not defined, set `runtime` and `generator` connections, based on `database.connections` property.
      * Check if runtime and generator connections are correctly defined.
      *
+     * @throws \Propel\Common\Config\Exception\InvalidConfigurationException
+     *
      * @return void
      */
     private function cleanupConnections()
@@ -314,14 +324,14 @@ class ConfigurationManager
 
             foreach ($this->config[$section]['connections'] as $connection) {
                 if (!array_key_exists($connection, $this->config['database']['connections'])) {
-                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). ".
-                        "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.connections). " .
+                        'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
                 }
             }
 
             if (!array_key_exists($defaultConnection = $this->config[$section]['defaultConnection'], $this->config['database']['connections'])) {
-                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). ".
-                    "Please, check your configured connections in `propel.database.connections` section of your configuration file.");
+                throw new InvalidConfigurationException("`$defaultConnection` isn't a valid configured connection (Section: propel.$section.defaultConnection). " .
+                    'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
             }
         }
     }

@@ -10,17 +10,20 @@
 
 namespace Propel\Runtime\ServiceContainer;
 
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
+use Monolog\Logger;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
-use Propel\Runtime\Exception\UnexpectedValueException;
-use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Propel;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -74,7 +77,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var LoggerInterface[] List of loggers
+     * @var \Psr\Log\LoggerInterface[] List of loggers
      */
     protected $loggers = [];
 
@@ -93,6 +96,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $defaultDatasource
+     *
      * @return void
      */
     public function setDefaultDatasource($defaultDatasource)
@@ -109,7 +113,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getAdapterClass($name = null)
     {
-        if (null === $name) {
+        if ($name === null) {
             $name = $this->getDefaultDatasource();
         }
 
@@ -121,8 +125,9 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * This allows for lazy-loading adapter objects in getAdapter().
      *
-     * @param string $name         The datasource name
+     * @param string $name The datasource name
      * @param string $adapterClass
+     *
      * @return void
      */
     public function setAdapterClass($name, $adapterClass)
@@ -135,6 +140,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Reset existing adapters classes and set new classes for all datasources.
      *
      * @param string[] $adapterClasses A list of adapters
+     *
      * @return void
      */
     public function setAdapterClasses($adapterClasses)
@@ -148,15 +154,15 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * If the adapter does not yet exist, build it using the related adapterClass.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
-     * @return AdapterInterface
+     * @throws \Propel\Runtime\Adapter\Exception\AdapterException
      *
-     * @throws AdapterException
+     * @return \Propel\Runtime\Adapter\AdapterInterface
      */
     public function getAdapter($name = null)
     {
-        if (null === $name) {
+        if ($name === null) {
             $name = $this->getDefaultDatasource();
         }
         if (!isset($this->adapters[$name])) {
@@ -172,8 +178,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Set the adapter for a given datasource.
      *
-     * @param string                                   $name    The datasource name
+     * @param string $name The datasource name
      * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     *
      * @return void
      */
     public function setAdapter($name, AdapterInterface $adapter)
@@ -186,6 +193,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Reset existing adapters and set new adapters for all datasources.
      *
      * @param array $adapters A list of adapters
+     *
      * @return void
      */
     public function setAdapters($adapters)
@@ -202,6 +210,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * the propel runtime.
      *
      * @param string $generatorVersion
+     *
      * @return void
      */
     public function checkVersion($generatorVersion)
@@ -210,7 +219,7 @@ class StandardServiceContainer implements ServiceContainerInterface
             return;
         }
 
-        $warning  = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
+        $warning = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
         $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
 
         $logger = $this->getLogger();
@@ -219,6 +228,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $databaseMapClass
+     *
      * @return void
      */
     public function setDatabaseMapClass($databaseMapClass)
@@ -231,13 +241,13 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * The database maps are "registered" by the generated map builder classes.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
     public function getDatabaseMap($name = null)
     {
-        if (null === $name) {
+        if ($name === null) {
             $name = $this->getDefaultDatasource();
         }
         if (!isset($this->databaseMaps[$name])) {
@@ -251,8 +261,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Set the database map object to use for a given datasource.
      *
-     * @param string                          $name        The datasource name
+     * @param string $name The datasource name
      * @param \Propel\Runtime\Map\DatabaseMap $databaseMap
+     *
      * @return void
      */
     public function setDatabaseMap($name, DatabaseMap $databaseMap)
@@ -261,8 +272,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param string                                                $name    The datasource name
+     * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
+     *
      * @return void
      */
     public function setConnectionManager($name, ConnectionManagerInterface $manager)
@@ -279,8 +291,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string $name The datasource name
      *
-     * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      * @throws \Propel\Runtime\Exception\RuntimeException - if the datasource doesn't exist
+     *
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
     public function getConnectionManager($name)
     {
@@ -294,7 +307,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string $name
      *
-     * @return boolean true if a connectionManager with $name has been registered
+     * @return bool true if a connectionManager with $name has been registered
      */
     public function hasConnectionManager($name)
     {
@@ -330,18 +343,18 @@ class StandardServiceContainer implements ServiceContainerInterface
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      * @param string $mode The connection mode (this applies to replication systems).
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
     {
-        if (null === $name) {
+        if ($name === null) {
             $name = $this->getDefaultDatasource();
         }
 
-        if (ServiceContainerInterface::CONNECTION_READ === $mode) {
+        if ($mode === ServiceContainerInterface::CONNECTION_READ) {
             return $this->getReadConnection($name);
         }
 
@@ -357,9 +370,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                     from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
-     *
-     * @throws \Propel\Runtime\Adapter\Exception\AdapterException - if connection is not properly configured
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function getWriteConnection($name)
     {
@@ -376,7 +387,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name The datasource name that is used to look up the DSN
      *                     from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public function getReadConnection($name)
     {
@@ -388,6 +399,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection A database connection
+     *
      * @return void
      */
     public function setConnection($name, ConnectionInterface $connection)
@@ -404,6 +416,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * getProfiler() is called.
      *
      * @param string $profilerClass
+     *
      * @return void
      */
     public function setProfilerClass($profilerClass)
@@ -414,9 +427,11 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * Set the profiler configuration.
+     *
      * @see \Propel\Runtime\Util\Profiler::setConfiguration()
      *
      * @param array $profilerConfiguration
+     *
      * @return void
      */
     public function setProfilerConfiguration($profilerConfiguration)
@@ -429,6 +444,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Set the profiler instance.
      *
      * @param \Propel\Runtime\Util\Profiler $profiler
+     *
      * @return void
      */
     public function setProfiler($profiler)
@@ -445,7 +461,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getProfiler()
     {
-        if (null === $this->profiler) {
+        if ($this->profiler === null) {
             $class = $this->profilerClass;
             /** @var \Propel\Runtime\Util\Profiler $profiler */
             $profiler = new $class();
@@ -461,7 +477,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get a logger instance
      *
-     * @return LoggerInterface
+     * @param string $name
+     *
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger($name = 'defaultLogger')
     {
@@ -473,8 +491,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param string          $name   the name of the logger to be set
-     * @param LoggerInterface $logger A logger instance
+     * @param string $name the name of the logger to be set
+     * @param \Psr\Log\LoggerInterface $logger A logger instance
+     *
      * @return void
      */
     public function setLogger($name, LoggerInterface $logger)
@@ -486,39 +505,43 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @param string $name
      *
      * @throws \Propel\Runtime\Exception\UnexpectedValueException
+     *
      * @return \Psr\Log\LoggerInterface
      */
     protected function buildLogger($name = 'defaultLogger')
     {
         if (!isset($this->loggerConfigurations[$name])) {
-            return 'defaultLogger' !== $name ? $this->getLogger() : new NullLogger();
+            return $name !== 'defaultLogger' ? $this->getLogger() : new NullLogger();
         }
 
-        $logger        = new Logger($name);
+        $logger = new Logger($name);
         $configuration = $this->loggerConfigurations[$name];
         switch ($configuration['type']) {
             case 'stream':
-                $handler = new \Monolog\Handler\StreamHandler(
+                $handler = new StreamHandler(
                     $configuration['path'],
                     isset($configuration['level']) ? $configuration['level'] : null,
                     isset($configuration['bubble']) ? $configuration['bubble'] : null
                 );
+
                 break;
             case 'rotating_file':
-                $handler = new \Monolog\Handler\RotatingFileHandler(
+                $handler = new RotatingFileHandler(
                     $configuration['path'],
                     isset($configuration['max_files']) ? $configuration['max_files'] : null,
                     isset($configuration['level']) ? $configuration['level'] : null,
                     isset($configuration['bubble']) ? $configuration['bubble'] : null
                 );
+
                 break;
             case 'syslog':
-                $handler = new \Monolog\Handler\SyslogHandler(
+                $handler = new SyslogHandler(
                     $configuration['ident'],
                     isset($configuration['facility']) ? $configuration['facility'] : null,
                     isset($configuration['level']) ? $configuration['level'] : null,
                     isset($configuration['bubble']) ? $configuration['bubble'] : null
                 );
+
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
@@ -547,7 +570,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      * </code>
      *
      * @param string $name
-     * @param array  $loggerConfiguration
+     * @param array $loggerConfiguration
+     *
      * @return void
      */
     public function setLoggerConfiguration($name, $loggerConfiguration)

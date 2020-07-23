@@ -14,5 +14,6 @@ use Symfony\Component\Validator\Constraints\Date as SymfonyDateConstraint;
 class Date extends SymfonyDateConstraint
 {
     public $message = 'This value is not a valid date.';
+
     public $column = '';
 }

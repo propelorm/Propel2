@@ -20,8 +20,9 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
     /**
      * For replication, whether to always force the use of a master connection.
      *
-     * @return boolean
      * @deprecated Use isForcePrimaryConnection() instead.
+     *
+     * @return bool
      */
     public function isForceMasterConnection()
     {
@@ -31,8 +32,10 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
     /**
      * For replication, set whether to always force the use of a master connection.
      *
-     * @param boolean $isForceMasterConnection
      * @deprecated Use setForcePrimaryConnection() instead.
+     *
+     * @param bool $isForceMasterConnection
+     *
      * @return void
      */
     public function setForceMasterConnection($isForceMasterConnection)

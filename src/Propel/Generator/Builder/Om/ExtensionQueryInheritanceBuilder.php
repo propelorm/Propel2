@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Builder\Om;
 
-use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Model\Inheritance;
 
 /**
  * Generates the empty stub query class for use with single table inheritance.
@@ -25,7 +25,6 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
 {
     /**
      * The current child "object" we are operating on.
-     *
      */
     protected $child;
 
@@ -52,7 +51,8 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Set the child object that we're operating on currently.
      *
-     * @param Inheritance $child Inheritance
+     * @param \Propel\Generator\Model\Inheritance $child Inheritance
+     *
      * @return void
      */
     public function setChild(Inheritance $child)
@@ -63,13 +63,14 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Returns the child object we're operating on currently.
      *
-     * @return Inheritance
-     * @throws BuildException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Inheritance
      */
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
         }
 
         return $this->child;
@@ -79,6 +80,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      * Adds class phpdoc comment and opening of class.
      *
      * @param string $script The script will be modified in this method.
+     *
      * @return void
      */
     protected function addClassOpen(&$script)
@@ -113,7 +115,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
  */";
         }
         $script .= "
-class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
+class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
 {
 ";
     }
@@ -124,19 +126,21 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * By default there are no methods for the empty stub classes; override this method
      * if you want to change that behavior.
      *
-     * @param string $script
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)
     {
-
     }
 
     /**
      * Closes class.
      *
      * @param string $script
+     *
      * @return void
      */
     protected function addClassClose(&$script)

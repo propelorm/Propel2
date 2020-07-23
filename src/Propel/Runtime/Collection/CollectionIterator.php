@@ -10,21 +10,27 @@
 
 namespace Propel\Runtime\Collection;
 
+use ArrayIterator;
+
 /**
  * Iterator class for iterating over Collection data
  */
-class CollectionIterator extends \ArrayIterator
+class CollectionIterator extends ArrayIterator
 {
-    /** @var Collection */
+    /**
+     * @var \Propel\Runtime\Collection\Collection
+     */
     protected $collection;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $positions = [];
 
     /**
      * Constructor
      *
-     * @param Collection $collection
+     * @param \Propel\Runtime\Collection\Collection $collection
      */
     public function __construct(Collection $collection)
     {
@@ -37,7 +43,7 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Returns the collection instance
      *
-     * @return Collection
+     * @return \Propel\Runtime\Collection\Collection
      */
     public function getCollection()
     {
@@ -47,22 +53,22 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check if the collection is empty
      *
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
-        return 0 === $this->count();
+        return $this->count() === 0;
     }
 
     /**
      * Gets the position of the internal pointer
      * This position can be later used in seek()
      *
-     * @return integer
+     * @return int
      */
     public function getPosition()
     {
-        if (null === $this->key()) {
+        if ($this->key() === null) {
             return 0;
         }
 
@@ -88,11 +94,11 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check whether the internal pointer is at the beginning of the list
      *
-     * @return boolean
+     * @return bool
      */
     public function isFirst()
     {
-        return 0 === $this->getPosition();
+        return $this->getPosition() === 0;
     }
 
     /**
@@ -155,7 +161,7 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check whether the internal pointer is at the end of the list
      *
-     * @return boolean
+     * @return bool
      */
     public function isLast()
     {
@@ -170,17 +176,17 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check if the current index is an odd integer
      *
-     * @return boolean
+     * @return bool
      */
     public function isOdd()
     {
-        return (boolean) ($this->getPosition() % 2);
+        return (bool)($this->getPosition() % 2);
     }
 
     /**
      * Check if the current index is an even integer
      *
-     * @return boolean
+     * @return bool
      */
     public function isEven()
     {

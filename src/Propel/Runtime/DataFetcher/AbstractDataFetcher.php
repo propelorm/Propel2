@@ -22,6 +22,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
 
     /**
      * {@inheritDoc}
+     *
      * @return void
      */
     public function setDataObject($dataObject)
@@ -45,7 +46,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
         $next = $this->fetch();
 
         if ($next) {
-            return null === $index ? current($next) : (isset($next[$index]) ? $next[$index] : null);
+            return $index === null ? current($next) : (isset($next[$index]) ? $next[$index] : null);
         }
     }
 }

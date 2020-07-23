@@ -8,31 +8,29 @@
  */
 
 namespace Propel\Common\Exception;
-use Exception;
 
+use Exception;
+use InvalidArgumentException;
 
 /**
  * Exception for Propel\Common\Util\SetColumnConverter class.
- * 
+ *
  * @author Moritz Schroeder <moritz.schroeder@molabs.de>
  */
-class SetColumnConverterException extends \InvalidArgumentException
+class SetColumnConverterException extends InvalidArgumentException
 {
-    
     /**
      * @var mixed
      */
     protected $value;
 
     /**
-     * SetColumnConverterException constructor.
-     * 
-     * @param string         $message
-     * @param mixed          $value
-     * @param int            $code
-     * @param Exception|null $previous
+     * @param string $message
+     * @param mixed $value
+     * @param int $code
+     * @param \Exception|null $previous
      */
-    public function __construct($message, $value, $code = 0, Exception $previous = null)
+    public function __construct($message, $value, $code = 0, ?Exception $previous = null)
     {
         $this->value = $value;
         parent::__construct($message, $code, $previous);

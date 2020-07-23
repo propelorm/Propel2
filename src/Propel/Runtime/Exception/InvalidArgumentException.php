@@ -10,9 +10,11 @@
 
 namespace Propel\Runtime\Exception;
 
+use InvalidArgumentException as CoreInvalidArgumentException;
+
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+class InvalidArgumentException extends CoreInvalidArgumentException implements ExceptionInterface
 {
 }

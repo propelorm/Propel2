@@ -11,7 +11,6 @@
 namespace Propel\Generator\Behavior\NestedSet;
 
 use Propel\Generator\Builder\Om\QueryBuilder;
-use Propel\Generator\Model\Table;
 
 /**
  * Behavior to adds nested set tree structure columns and abilities
@@ -21,17 +20,17 @@ use Propel\Generator\Model\Table;
 class NestedSetBehaviorQueryBuilderModifier
 {
     /**
-     * @var NestedSetBehavior
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehavior
      */
     protected $behavior;
 
     /**
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $table;
 
     /**
-     * @var QueryBuilder
+     * @var \Propel\Generator\Builder\Om\QueryBuilder
      */
     protected $builder;
 
@@ -86,9 +85,9 @@ class NestedSetBehaviorQueryBuilderModifier
      */
     protected function setBuilder(QueryBuilder $builder)
     {
-        $this->builder           = $builder;
-        $this->objectClassName   = $builder->getObjectClassName();
-        $this->queryClassName    = $builder->getQueryClassName();
+        $this->builder = $builder;
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
@@ -434,7 +433,7 @@ public function orderByLevel(\$reverse = false)
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
- * Returns " . ($useScope ? 'a' : 'the') ." root node for the tree
+ * Returns " . ($useScope ? 'a' : 'the') . " root node for the tree
  *";
         if ($useScope) {
             $script .= "
@@ -446,7 +445,7 @@ public function orderByLevel(\$reverse = false)
  *
  * @return     {$this->objectClassName} The tree root object
  */
-public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+public function findRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     return \$this
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
@@ -494,7 +493,7 @@ public function findRoots(ConnectionInterface \$con = null)
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
- * Returns " . ($useScope ? 'a' : 'the') ." tree of objects
+ * Returns " . ($useScope ? 'a' : 'the') . " tree of objects
  *";
         if ($useScope) {
             $script .= "
@@ -506,7 +505,7 @@ public function findRoots(ConnectionInterface \$con = null)
  *
  * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+public function findTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     return \$this";
         if ($useScope) {
@@ -527,8 +526,8 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "Connection
      */
     protected function addRetrieveRoots(&$script)
     {
-        $queryClassName     = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -558,9 +557,9 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
      */
     protected function addRetrieveRoot(&$script)
     {
-        $queryClassName    = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -575,7 +574,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassName}            Propel object for root node
  */
-static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     \$c = new Criteria($tableMapClassName::DATABASE_NAME);
     \$c->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);";
@@ -597,9 +596,9 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
      */
     protected function addRetrieveTree(&$script)
     {
-        $queryClassName     = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -615,7 +614,7 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
  * @param      ConnectionInterface \$con    Connection to use.
  * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
+static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "Criteria \$criteria = null, ConnectionInterface \$con = null)
 {
     if (null === \$criteria) {
         \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -666,8 +665,8 @@ static public function isValid($objectClassName \$node = null)
      */
     protected function addDeleteTree(&$script)
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -683,7 +682,7 @@ static public function isValid($objectClassName \$node = null)
  *
  * @return     int  The number of deleted nodes
  */
-static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $script .= "
@@ -708,8 +707,8 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
      */
     protected function addShiftRLValues(&$script)
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
@@ -729,7 +728,7 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
         $script .= "
  * @param ConnectionInterface \$con Connection to use.
  */
-static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ', $scope = null' : '') . ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
@@ -781,8 +780,8 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
      */
     protected function addShiftLevel(&$script)
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
@@ -802,7 +801,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
         $script .= "
  * @param      ConnectionInterface \$con        Connection to use.
  */
-static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ', $scope = null' : '') . ", ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
@@ -832,7 +831,7 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
      */
     protected function addUpdateLoadedNodes(&$script)
     {
-        $queryClassName  = $this->queryClassName;
+        $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->tableMapClassName;
 
@@ -858,22 +857,22 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             // We don't need to alter the object instance pool; we're just modifying these ones
             // already in the pool.
             \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);";
-        if (1 === count($this->table->getPrimaryKey())) {
+        if (count($this->table->getPrimaryKey()) === 1) {
             $pkey = $this->table->getPrimaryKey();
             $col = array_shift($pkey);
             $script .= "
-            \$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);";
+            \$criteria->add(" . $this->builder->getColumnConstant($col) . ', $keys, Criteria::IN);';
         } else {
             $fields = [];
             foreach ($this->table->getPrimaryKey() as $k => $col) {
                 $fields[] = $this->builder->getColumnConstant($col);
-            };
+            }
             $script .= "
 
             // Loop on each instances in pool
             foreach (\$keys as \$values) {
               // Create initial Criterion
-                \$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
+                \$cton = \$criteria->getNewCriterion(" . $fields[0] . ', $values[0]);';
             unset($fields[0]);
             foreach ($fields as $k => $col) {
                 $script .= "
@@ -935,7 +934,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
     protected function addMakeRoomForLeaf(&$script)
     {
         $queryClassName = $this->queryClassName;
-        $useScope       = $this->behavior->useScope();
+        $useScope = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -950,10 +949,10 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
  * @param      mixed \$prune    Object to prune from the shift
  * @param      ConnectionInterface \$con    Connection to use.
  */
-static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, ConnectionInterface \$con = null)
+static public function makeRoomForLeaf(\$left" . ($useScope ? ', $scope' : '') . ", \$prune = null, ConnectionInterface \$con = null)
 {
     // Update database nodes
-    $queryClassName::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+    $queryClassName::shiftRLValues(2, \$left, null" . ($useScope ? ', $scope' : '') . ", \$con);
 
     // Update all loaded nodes
     $queryClassName::updateLoadedNodes(\$prune, \$con);
@@ -968,10 +967,10 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
      */
     protected function addFixLevels(&$script)
     {
-        $objectClassName   = $this->objectClassName;
-        $queryClassName    = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $queryClassName = $this->queryClassName;
         $tableMapClassName = $this->tableMapClassName;
-        $useScope          = $this->behavior->useScope();
+        $useScope = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -984,7 +983,7 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
         $script .= "
  * @param      ConnectionInterface \$con    Connection to use.
  */
-static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
+static public function fixLevels(" . ($useScope ? '$scope, ' : '') . "ConnectionInterface \$con = null)
 {
     \$c = new Criteria();";
         if ($useScope) {
@@ -1060,7 +1059,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
      */
     protected function addSetNegativeScope(&$script)
     {
-        $objectClassName   = $this->objectClassName;
+        $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->tableMapClassName;
         $script .= "
 /**

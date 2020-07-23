@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
 
@@ -22,13 +21,18 @@ use Propel\Runtime\Exception\LogicException;
  */
 class ObjectFormatter extends AbstractFormatter
 {
-
     /**
      * @var array
      */
     protected $objects = [];
 
-    public function format(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|\Propel\Runtime\Collection\Collection
+     */
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         if ($dataFetcher) {
@@ -45,7 +49,7 @@ class ObjectFormatter extends AbstractFormatter
             }
             foreach ($dataFetcher as $row) {
                 $object = $this->getAllObjectsFromRow($row);
-                $pk     = $object->getPrimaryKey();
+                $pk = $object->getPrimaryKey();
                 $serializedPk = serialize($pk);
 
                 if (!isset($this->objects[$serializedPk])) {
@@ -76,9 +80,10 @@ class ObjectFormatter extends AbstractFormatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
+     *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null
      */
-    public function formatOne(DataFetcherInterface $dataFetcher = null)
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
@@ -116,7 +121,7 @@ class ObjectFormatter extends AbstractFormatter
      * @param array $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()
      *
-     * @return ActiveRecordInterface
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     public function getAllObjectsFromRow($row)
     {
@@ -136,7 +141,7 @@ class ObjectFormatter extends AbstractFormatter
         foreach ($this->getWith() as $modelWith) {
             [$endObject, $col] = $modelWith->getTableMap()->populateObject($row, $col, $this->getDataFetcher()->getIndexType());
 
-            if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
+            if ($modelWith->getLeftPhpName() !== null && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 continue;
             }
 
@@ -150,10 +155,11 @@ class ObjectFormatter extends AbstractFormatter
 
             // as we may be in a left join, the endObject may be empty
             // in which case it should not be related to the previous object
-            if (null === $endObject || $endObject->isPrimaryKeyNull()) {
+            if ($endObject === null || $endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
                     call_user_func([$startObject, $modelWith->getInitMethod()], false);
                 }
+
                 continue;
             }
             if (isset($hydrationChain)) {

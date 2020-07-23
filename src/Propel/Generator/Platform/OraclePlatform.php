@@ -32,6 +32,7 @@ class OraclePlatform extends DefaultPlatform
 {
     /**
      * Initializes db specific domain mapping.
+     *
      * @return void
      */
     protected function initialize()
@@ -159,7 +160,8 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
     %s
 )%s;
 ";
-        $ret = sprintf($pattern,
+        $ret = sprintf(
+            $pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines),
@@ -193,13 +195,14 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
      */
     public function getAddSequencesDDL(Table $table)
     {
-        if ('native' === $table->getIdMethod()) {
+        if ($table->getIdMethod() === 'native') {
             $pattern = "
 CREATE SEQUENCE %s
     INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE NOCACHE ORDER;
 ";
 
-            return sprintf($pattern,
+            return sprintf(
+                $pattern,
                 $this->quoteIdentifier($this->getSequenceName($table))
             );
         }
@@ -250,7 +253,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)%s';
 
-            return sprintf($pattern,
+            return sprintf(
+                $pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
                 $this->getColumnListDDL($table->getPrimaryKey()),
                 $this->generateBlockStorage($table, true)
@@ -267,7 +271,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      */
     public function getUniqueDDL(Unique $unique)
     {
-        return sprintf('CONSTRAINT %s UNIQUE (%s)',
+        return sprintf(
+            'CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
             $this->getColumnListDDL($unique->getColumnObjects())
         );
@@ -286,7 +291,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
         $pattern = "CONSTRAINT %s
     FOREIGN KEY (%s) REFERENCES %s (%s)";
-        $script = sprintf($pattern,
+        $script = sprintf(
+            $pattern,
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
@@ -302,7 +308,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
-     * @return boolean
+     *
+     * @return bool
      */
     public function hasStreamBlobImpl()
     {
@@ -310,7 +317,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function doQuoting($text)
     {
@@ -326,9 +333,10 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     }
 
     /**
-     * @note       While Oracle supports schemas, they're user-based and
+     * @note While Oracle supports schemas, they're user-based and
      *             are really only good for creating a database layout in
      *             one fell swoop.
+     *
      * @see Platform::supportsSchemas()
      */
     public function supportsSchemas()
@@ -339,8 +347,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * Generate oracle block storage
      *
-     * @param Table|Index $object       object with vendor parameters
-     * @param boolean     $isPrimaryKey is a primary key vendor part
+     * @param \Propel\Generator\Model\Table|\Propel\Generator\Model\Index $object object with vendor parameters
+     * @param bool $isPrimaryKey is a primary key vendor part
      *
      * @return string oracle vendor sql part
      */
@@ -355,41 +363,41 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
             $physicalParameters = "
 USING INDEX
 ";
-            $prefix = "PK";
+            $prefix = 'PK';
         } else {
             $physicalParameters = "\n";
-            $prefix = "";
+            $prefix = '';
         }
 
-        if ($vendorSpecific->hasParameter($prefix.'PCTFree')) {
-            $physicalParameters .= "PCTFREE " . $vendorSpecific->getParameter($prefix.'PCTFree') . "
+        if ($vendorSpecific->hasParameter($prefix . 'PCTFree')) {
+            $physicalParameters .= 'PCTFREE ' . $vendorSpecific->getParameter($prefix . 'PCTFree') . "
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'InitTrans')) {
-            $physicalParameters .= "INITRANS " . $vendorSpecific->getParameter($prefix.'InitTrans') . "
+        if ($vendorSpecific->hasParameter($prefix . 'InitTrans')) {
+            $physicalParameters .= 'INITRANS ' . $vendorSpecific->getParameter($prefix . 'InitTrans') . "
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'MinExtents') || $vendorSpecific->hasParameter($prefix.'MaxExtents') || $vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
+        if ($vendorSpecific->hasParameter($prefix . 'MinExtents') || $vendorSpecific->hasParameter($prefix . 'MaxExtents') || $vendorSpecific->hasParameter($prefix . 'PCTIncrease')) {
             $physicalParameters .= "STORAGE
 (
 ";
-            if ($vendorSpecific->hasParameter($prefix.'MinExtents')) {
-                $physicalParameters .= "    MINEXTENTS " . $vendorSpecific->getParameter($prefix.'MinExtents') . "
+            if ($vendorSpecific->hasParameter($prefix . 'MinExtents')) {
+                $physicalParameters .= '    MINEXTENTS ' . $vendorSpecific->getParameter($prefix . 'MinExtents') . "
 ";
             }
-            if ($vendorSpecific->hasParameter($prefix.'MaxExtents')) {
-                $physicalParameters .= "    MAXEXTENTS " . $vendorSpecific->getParameter($prefix.'MaxExtents') . "
+            if ($vendorSpecific->hasParameter($prefix . 'MaxExtents')) {
+                $physicalParameters .= '    MAXEXTENTS ' . $vendorSpecific->getParameter($prefix . 'MaxExtents') . "
 ";
             }
-            if ($vendorSpecific->hasParameter($prefix.'PCTIncrease')) {
-                $physicalParameters .= "    PCTINCREASE " . $vendorSpecific->getParameter($prefix.'PCTIncrease') . "
+            if ($vendorSpecific->hasParameter($prefix . 'PCTIncrease')) {
+                $physicalParameters .= '    PCTINCREASE ' . $vendorSpecific->getParameter($prefix . 'PCTIncrease') . "
 ";
             }
             $physicalParameters .= ")
 ";
         }
-        if ($vendorSpecific->hasParameter($prefix.'Tablespace')) {
-            $physicalParameters .= "TABLESPACE " . $vendorSpecific->getParameter($prefix.'Tablespace');
+        if ($vendorSpecific->hasParameter($prefix . 'Tablespace')) {
+            $physicalParameters .= 'TABLESPACE ' . $vendorSpecific->getParameter($prefix . 'Tablespace');
         }
 
         return $physicalParameters;
@@ -398,7 +406,8 @@ USING INDEX
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param  Index  $index
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getAddIndexDDL(Index $index)
@@ -412,7 +421,8 @@ USING INDEX
 CREATE %sINDEX %s ON %s (%s)%s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $index->isUnique() ? 'UNIQUE ' : '',
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
@@ -426,7 +436,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         if ($column->getType() == PropelTypes::CLOB_EMU) {
             return sprintf(
@@ -455,9 +465,10 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * @param string|null $phpType
      *
      * @throws \Propel\Generator\Exception\EngineException
+     *
      * @return string|string[]|null
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
+    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
@@ -465,11 +476,12 @@ CREATE %sINDEX %s ON %s (%s)%s;
         $snippet = "
 \$dataFetcher = %s->query('SELECT %s.nextval FROM dual');
 %s = %s\$dataFetcher->fetchColumn();";
-        $script = sprintf($snippet,
+        $script = sprintf(
+            $snippet,
             $connectionVariableName,
             $sequenceName,
             $columnValueMutator,
-            $phpType ? '('.$phpType.') ' : ''
+            $phpType ? '(' . $phpType . ') ' : ''
         );
 
         return preg_replace('/^/m', $tab, $script);

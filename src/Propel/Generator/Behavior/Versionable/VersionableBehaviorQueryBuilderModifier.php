@@ -21,18 +21,22 @@ class VersionableBehaviorQueryBuilderModifier
      * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
      */
     protected $behavior;
+
     /**
      * @var \Propel\Generator\Model\Table
      */
     protected $table;
+
     /**
      * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     protected $builder;
+
     /**
      * @var string
      */
     protected $objectClassName;
+
     /**
      * @var string
      */
@@ -44,7 +48,7 @@ class VersionableBehaviorQueryBuilderModifier
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table = $behavior->getTable();
     }
 
     /**
@@ -139,7 +143,7 @@ static \$isVersioningEnabled = true;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }

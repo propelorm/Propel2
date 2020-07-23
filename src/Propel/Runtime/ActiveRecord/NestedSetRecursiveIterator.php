@@ -10,12 +10,14 @@
 
 namespace Propel\Runtime\ActiveRecord;
 
+use RecursiveIterator;
+
 /**
  * Pre-order node iterator for Node objects.
  *
  * @author Heltem <heltem@o2php.com>
  */
-class NestedSetRecursiveIterator implements \RecursiveIterator
+class NestedSetRecursiveIterator implements RecursiveIterator
 {
     /**
      * @var object
@@ -49,7 +51,7 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
      */
     public function valid()
     {
-        return null !== $this->curNode;
+        return $this->curNode !== null;
     }
 
     /**
@@ -82,8 +84,8 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
         $nextNode = null;
         $method = method_exists($this->curNode, 'retrieveNextSibling') ? 'retrieveNextSibling' : 'getNextSibling';
         if ($this->valid()) {
-            while (null === $nextNode) {
-                if (null === $this->curNode) {
+            while ($nextNode === null) {
+                if ($this->curNode === null) {
                     break;
                 }
 

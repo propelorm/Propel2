@@ -11,9 +11,9 @@
 namespace Propel\Generator\Model;
 
 /**
- * Information about unique columns of a table.  This class assumes
+ * Information about unique columns of a table. This class assumes
  * that in the underlying RDBMS, unique constraints and unique indices
- * are roughly equivalent.  For example, adding a unique constraint to
+ * are roughly equivalent. For example, adding a unique constraint to
  * a column also creates an index on that column (this is known to be
  * true for MySQL and Oracle).
  *
@@ -33,5 +33,4 @@ class Unique extends Index
     {
         return true;
     }
-
 }

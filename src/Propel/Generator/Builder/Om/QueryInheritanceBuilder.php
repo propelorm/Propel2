@@ -20,12 +20,10 @@ use Propel\Generator\Model\Inheritance;
  * This class produces the empty stub class that can be customized with
  * application business logic, custom behavior, etc.
  *
- *
  * @author François Zaninotto
  */
 class QueryInheritanceBuilder extends AbstractOMBuilder
 {
-
     /**
      * The current child "object" we are operating on.
      */
@@ -68,7 +66,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Sets the child object that we're operating on currently.
      *
-     * @param Inheritance $child
+     * @param \Propel\Generator\Model\Inheritance $child
+     *
      * @return void
      */
     public function setChild(Inheritance $child)
@@ -79,13 +78,14 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Returns the child object we're operating on currently.
      *
-     * @return Inheritance
-     * @throws BuildException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Inheritance
      */
     public function getChild()
     {
         if (!$this->child) {
-            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
         }
 
         return $this->child;
@@ -98,7 +98,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     protected function getParentClassName()
     {
-        if (is_null($this->getChild()->getAncestor())) {
+        if ($this->getChild()->getAncestor() === null) {
             return $this->getNewStubQueryBuilder($this->getTable())->getUnqualifiedClassName();
         }
 
@@ -121,6 +121,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      * Adds class phpdoc comment and opening of class.
      *
      * @param string $script The script will be modified in this method.
+     *
      * @return void
      */
     protected function addClassOpen(&$script)
@@ -152,7 +153,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  */
-class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
+class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
 {
 ";
     }
@@ -163,8 +164,10 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * By default there are no methods for the empty stub classes; override this
      * method if you want to change that behavior.
      *
-     * @param string $script
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)
@@ -185,6 +188,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * Adds the factory for this object.
      *
      * @param string $script The script will be modified in this method.
+     *
      * @return void
      */
     protected function addFactory(&$script)
@@ -287,7 +291,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getFQConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");";
+        return '$this->addUsingAlias(' . $col->getFQConstantName() . ', ' . $this->getTableMapClassName() . '::CLASSKEY_' . $child->getConstantSuffix() . ');';
     }
 
     /**
@@ -321,6 +325,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * Closes class.
      *
      * @param string $script
+     *
      * @return void
      */
     protected function addClassClose(&$script)

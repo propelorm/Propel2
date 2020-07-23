@@ -49,7 +49,7 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns whether or not the package has been overriden.
      *
-     * @return boolean
+     * @return bool
      */
     public function isPackageOverriden()
     {
@@ -63,6 +63,9 @@ abstract class ScopedMappingModel extends MappingModel
      */
     abstract protected function getBuildProperty($name);
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->setPackage($this->getAttribute('package', $this->package));
@@ -107,12 +110,13 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * A namespace is absolute if it starts with a "\".
      *
-     * @param  string  $namespace
-     * @return boolean
+     * @param string $namespace
+     *
+     * @return bool
      */
     public function isAbsoluteNamespace($namespace)
     {
-        return 0 === strpos($namespace, '\\');
+        return strpos($namespace, '\\') === 0;
     }
 
     /**
@@ -129,6 +133,7 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the package name.
      *
      * @param string $package
+     *
      * @return void
      */
     public function setPackage($package)
@@ -155,6 +160,7 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the schema name.
      *
      * @param string $schema
+     *
      * @return void
      */
     public function setSchema($schema)

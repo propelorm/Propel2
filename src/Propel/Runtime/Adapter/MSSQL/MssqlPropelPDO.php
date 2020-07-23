@@ -16,7 +16,6 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * dblib doesn't support transactions so we need to add a workaround for
  * transactions, last insert ID, and quoting
- *
  */
 class MssqlPropelPDO extends PropelPDO
 {
@@ -49,6 +48,8 @@ class MssqlPropelPDO extends PropelPDO
      *
      * It is necessary to override the abstract PDO transaction functions here, as
      * the PDO driver for MSSQL does not support transactions.
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return bool
      */
@@ -131,23 +132,24 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param  string|null  $seqname
-     * @return integer
+     * @param string|null $seqname
+     *
+     * @return int
      */
     public function lastInsertId($seqname = null)
     {
         $result = $this->query('SELECT SCOPE_IDENTITY()');
 
-        return (int) $result->fetchColumn();
+        return (int)$result->fetchColumn();
     }
 
     /**
-     * @param  string $text
+     * @param string $text
+     *
      * @return string
      */
     public function quoteIdentifier($text)
     {
         return '[' . $text . ']';
     }
-
 }

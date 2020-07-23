@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Connection;
 
+use InvalidArgumentException;
 use Propel\Runtime\Adapter\AdapterInterface;
 
 /**
@@ -34,6 +35,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     *
      * @return void
      */
     public function setName($name)
@@ -82,13 +84,15 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     /**
      * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
+     * @throws \InvalidArgumentException
+     *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null)
     {
-        if (null === $this->connection) {
+        if ($this->connection === null) {
             if ($adapter === null) {
-                throw new \InvalidArgumentException('$adapter not given');
+                throw new InvalidArgumentException('$adapter not given');
             }
 
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
@@ -103,7 +107,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null)
     {
         return $this->getWriteConnection($adapter);
     }

@@ -18,11 +18,12 @@ class ArrayDataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     *
      * @return void
      */
     public function next()
     {
-        if (null !== $this->dataObject) {
+        if ($this->dataObject !== null) {
             next($this->dataObject);
         }
     }
@@ -32,7 +33,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function current()
     {
-        return null === $this->dataObject ? null : current($this->dataObject);
+        return $this->dataObject === null ? null : current($this->dataObject);
     }
 
     /**
@@ -51,7 +52,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function key()
     {
-        return null === $this->dataObject ? null : key($this->dataObject);
+        return $this->dataObject === null ? null : key($this->dataObject);
     }
 
     /**
@@ -59,11 +60,12 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function valid()
     {
-        return (null !== $this->dataObject && null !== key($this->dataObject));
+        return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
 
     /**
      * {@inheritDoc}
+     *
      * @return void
      */
     public function rewind()
@@ -88,13 +90,14 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function count()
     {
-        return null === $this->dataObject ? null : count($this->dataObject);
+        return $this->dataObject === null ? null : count($this->dataObject);
     }
 
     /**
      * Sets the current index type.
      *
      * @param string $indexType one of TableMap::TYPE_*
+     *
      * @return void
      */
     public function setIndexType($indexType)
@@ -104,6 +107,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     *
      * @return void
      */
     public function close()

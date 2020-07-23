@@ -20,11 +20,11 @@ use Symfony\Component\Config\Loader\LoaderResolver as BaseLoaderResolver;
 class LoaderResolver extends BaseLoaderResolver
 {
     /**
-     * @param array $loaders
+     * @param array|null $loaders
      */
-    public function __construct(array $loaders = null)
+    public function __construct(?array $loaders = null)
     {
-        if (null === $loaders) {
+        if ($loaders === null) {
             $loaders = [
                 new IniFileLoader(),
                 new PhpFileLoader(),

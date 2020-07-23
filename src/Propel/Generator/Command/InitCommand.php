@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Command;
 
-use Propel\Generator\Command\Console\Input\ArrayInput;
 use Propel\Generator\Builder\Util\PropelTemplate;
+use Propel\Generator\Command\Console\Input\ArrayInput;
 use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Generator\Command\Helper\ConsoleHelper3;
 use Propel\Generator\Command\Helper\ConsoleHelperInterface;
@@ -28,6 +28,7 @@ use Symfony\Component\Finder\Finder;
 class InitCommand extends AbstractCommand
 {
     private $defaultSchemaDir;
+
     private $defaultPhpDir;
 
     /**
@@ -49,8 +50,7 @@ class InitCommand extends AbstractCommand
 
         $this
             ->setName('init')
-            ->setDescription('Initializes a new project')
-            ;
+            ->setDescription('Initializes a new project');
     }
 
     /**
@@ -75,7 +75,7 @@ class InitCommand extends AbstractCommand
             'pgsql' => 'PostgreSQL',
             'oracle' => 'Oracle',
             'sqlsrv' => 'MSSQL (via pdo-sqlsrv)',
-            'mssql' => 'MSSQL (via pdo-mssql)'
+            'mssql' => 'MSSQL (via pdo-mssql)',
         ];
 
         $options['rdbms'] = $consoleHelper->select('Please pick your favorite database management system', $supportedRdbms);
@@ -86,28 +86,31 @@ class InitCommand extends AbstractCommand
         $connectionAttemptCount = 0;
         do {
             if ($connectionAttemptCount >= $connectionAttemptLimit) {
-              $consoleHelper->writeln('');
-              $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
-              $consoleHelper->writeln('');
+                $consoleHelper->writeln('');
+                $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
+                $consoleHelper->writeln('');
 
-              return 1;
+                return 1;
             }
             $connectionAttemptCount += 1;
             switch ($options['rdbms']) {
                 case 'mysql':
                     $options['dsn'] = $this->initMysql($consoleHelper);
+
                     break;
                 case 'sqlite':
                     $options['dsn'] = $this->initSqlite($consoleHelper);
+
                     break;
                 case 'pgsql':
                     $options['dsn'] = $this->initPgsql($consoleHelper);
+
                     break;
                 default:
                     $options['dsn'] = $this->initDsn($consoleHelper, $options['rdbms']);
+
                     break;
             }
-
 
             $options['user'] = $consoleHelper->askQuestion('Please enter your database user', 'root');
             $options['password'] = $consoleHelper->askHiddenResponse('Please enter your database password');
@@ -159,6 +162,7 @@ class InitCommand extends AbstractCommand
 
         if (!$correct) {
             $consoleHelper->writeln('<error>Process aborted.</error>');
+
             return static::CODE_ERROR;
         }
 
@@ -240,12 +244,15 @@ class InitCommand extends AbstractCommand
         switch ($rdbms) {
             case 'oracle':
                 $help = 'https://php.net/manual/en/ref.pdo-oci.connection.php#refsect1-ref.pdo-oci.connection-description';
+
                 break;
             case 'sqlsrv':
                 $help = 'https://php.net/manual/en/ref.pdo-sqlsrv.connection.php#refsect1-ref.pdo-sqlsrv.connection-description';
+
                 break;
             case 'mssql':
                 $help = 'https://php.net/manual/en/ref.pdo-dblib.connection.php#refsect1-ref.pdo-dblib.connection-description';
+
                 break;
             default:
                 $help = 'https://php.net/manual/en/pdo.drivers.php';
@@ -295,8 +302,8 @@ class InitCommand extends AbstractCommand
             'config:convert',
         ];
 
-        foreach($followupCommands as $command) {
-            if (0 !== $this->getApplication()->run(new ArrayInput([$command]))) {
+        foreach ($followupCommands as $command) {
+            if ($this->getApplication()->run(new ArrayInput([$command])) !== 0) {
                 exit(1);
             }
         }
@@ -332,18 +339,19 @@ class InitCommand extends AbstractCommand
             ConnectionFactory::create($options, $adapter);
 
             $consoleHelper->writeBlock('Connected to sql server successful!');
+
             return true;
         } catch (ConnectionException $e) {
             // get the "real" wrapped exception message
             do {
                 $message = $e->getMessage();
-            } while (null !== ($e = $e->getPrevious()));
+            } while (($e = $e->getPrevious()) !== null);
 
             $consoleHelper->writeBlock('Unable to connect to the specific sql server: ' . $message, 'error');
             $consoleHelper->writeSection('Make sure the specified credentials are correct and try it again.');
             $consoleHelper->writeln('');
 
-            if (OutputInterface::VERBOSITY_DEBUG === $consoleHelper->getOutput()->getVerbosity()) {
+            if ($consoleHelper->getOutput()->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $consoleHelper->writeln($e);
             }
 
@@ -367,7 +375,7 @@ class InitCommand extends AbstractCommand
         $arrInput = [
             'reverse',
             'connection' => $fullDsn,
-            '--output-dir' => $outputDir
+            '--output-dir' => $outputDir,
         ];
 
         if (isset($options['namespace'])) {
@@ -375,9 +383,9 @@ class InitCommand extends AbstractCommand
         }
 
         $input = new ArrayInput($arrInput);
-        $result = $this->getApplication()->run($input,$output);
+        $result = $this->getApplication()->run($input, $output);
 
-        if (0 === $result) {
+        if ($result === 0) {
             $schema = file_get_contents($outputDir . '/schema.xml');
         } else {
             exit(1);
@@ -389,10 +397,10 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return ConsoleHelperInterface
+     * @return \Propel\Generator\Command\Helper\ConsoleHelperInterface
      */
     protected function createConsoleHelper(InputInterface $input, OutputInterface $output)
     {
