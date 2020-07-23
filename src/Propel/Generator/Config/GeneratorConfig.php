@@ -18,8 +18,6 @@ use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Generator\Platform\PlatformInterface;
-use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -37,17 +35,17 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * @var BehaviorLocator
      */
-    protected $behaviorLocator = null;
+    protected $behaviorLocator;
 
     /**
      * Connections configured in the `generator` section of the configuration file
      *
      * @var array
      */
-    protected $buildConnections = null;
+    protected $buildConnections;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
@@ -92,7 +90,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
     {
@@ -133,7 +131,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             throw new ClassNotFoundException(sprintf('Reverse SchemaParser class for `%s` not found.', $reverse));
         }
 
-        /** @var SchemaParserInterface $parser */
+        /** @var \Propel\Generator\Reverse\AbstractSchemaParser $parser */
         $parser = $this->getInstance($reverseClass, null, '\\Propel\\Generator\\Reverse\\SchemaParserInterface');
         $parser->setConnection($con);
         $parser->setMigrationTable($this->get()['migrations']['tableName']);
@@ -175,7 +173,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     }
 
     /**
-     * Return an array of all configured connection properties, from `generator` and `reverse` 
+     * Return an array of all configured connection properties, from `generator` and `reverse`
      * sections of the configuration.
      *
      * @return array
@@ -225,7 +223,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * Return a connection object of a given database name
      *
-     * @param  string              $database
+     * @param  string|null              $database
      * @return ConnectionInterface
      */
     public function getConnection($database = null)
@@ -248,6 +246,9 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
         return $con;
     }
 
+    /**
+     * @return \Propel\Generator\Util\BehaviorLocator
+     */
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {

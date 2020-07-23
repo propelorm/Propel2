@@ -12,8 +12,8 @@ namespace Propel\Runtime\Util;
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 
 /**
-* Profiler for Propel
-*/
+ * Profiler for Propel
+ */
 class Profiler
 {
     protected $slowTreshold;
@@ -47,6 +47,11 @@ class Profiler
         ],
     ];
 
+    /**
+     * @param float $slowTreshold
+     * @param string $innerGlue
+     * @param string $outerGlue
+     */
     public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
     {
         $this->slowTreshold = $slowTreshold;
@@ -58,6 +63,7 @@ class Profiler
      * Set the duration which triggers the 'slow' label on details.
      *
      * @param integer $slowTreshold duration in seconds
+     * @return void
      */
     public function setSlowTreshold($slowTreshold)
     {
@@ -68,6 +74,7 @@ class Profiler
      * Set the list of details to be included in a profile.
      *
      * @param array $details
+     * @return void
      */
     public function setDetails($details)
     {
@@ -78,6 +85,7 @@ class Profiler
      * Set the inner glue for the details.
      *
      * @param string $innerGlue
+     * @return void
      */
     public function setInnerGlue($innerGlue)
     {
@@ -88,6 +96,7 @@ class Profiler
      * Set the outer glue for the details.
      *
      * @param string $outerGlue
+     * @return void
      */
     public function setOuterGlue($outerGlue)
     {
@@ -129,6 +138,7 @@ class Profiler
      * </code>
      *
      * @param array $profilerConfiguration
+     * @return void
      */
     public function setConfiguration($profilerConfiguration)
     {
@@ -163,16 +173,25 @@ class Profiler
         ];
     }
 
+    /**
+     * @return void
+     */
     public function start()
     {
         $this->snapshot = self::getSnapshot();
     }
 
+    /**
+     * @return bool
+     */
     public function isSlow()
     {
         return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
     }
 
+    /**
+     * @return string
+     */
     public function getProfile()
     {
         return $this->getProfileBetween($this->snapshot, self::getSnapshot());

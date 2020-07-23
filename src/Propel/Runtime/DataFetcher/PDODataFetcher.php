@@ -54,7 +54,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetch($style = null)
     {
@@ -66,6 +66,7 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     * @return void
      */
     public function next()
     {
@@ -78,7 +79,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function current()
     {
@@ -86,7 +87,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function key()
     {
@@ -94,7 +95,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function valid()
     {
@@ -105,6 +106,7 @@ class PDODataFetcher extends AbstractDataFetcher
      * Not supported in PDODataFetcher.
      * It actually fetches the first row, since a foreach in php triggers that
      * function as init.
+     * @return void
      */
     public function rewind()
     {
@@ -114,6 +116,7 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     * @return void
      */
     public function close()
     {
@@ -124,7 +127,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function count()
     {
@@ -149,7 +152,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getIndexType()
     {
@@ -166,6 +169,7 @@ class PDODataFetcher extends AbstractDataFetcher
      * @param int   $type
      * @param int   $maxlen
      * @param mixed $driverdata
+     * @return void
      */
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {

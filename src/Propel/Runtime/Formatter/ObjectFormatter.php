@@ -64,11 +64,20 @@ class ObjectFormatter extends AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return $this->getTableMap()->getCollectionClassName();
     }
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null
+     */
     public function formatOne(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
@@ -91,6 +100,9 @@ class ObjectFormatter extends AbstractFormatter
         return $result;
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return true;
@@ -109,7 +121,7 @@ class ObjectFormatter extends AbstractFormatter
     public function getAllObjectsFromRow($row)
     {
         // main object
-        list($obj, $col) = $this->getTableMap()->populateobject($row, 0, $this->getDataFetcher()->getIndexType());
+        [$obj, $col] = $this->getTableMap()->populateObject($row, 0, $this->getDataFetcher()->getIndexType());
 
         $pk = $obj->getPrimaryKey();
         $serializedPk = serialize($pk);
@@ -122,7 +134,7 @@ class ObjectFormatter extends AbstractFormatter
 
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
-            list($endObject, $col) = $modelWith->getTableMap()->populateobject($row, $col, $this->getDataFetcher()->getIndexType());
+            [$endObject, $col] = $modelWith->getTableMap()->populateObject($row, $col, $this->getDataFetcher()->getIndexType());
 
             if (null !== $modelWith->getLeftPhpName() && !isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 continue;

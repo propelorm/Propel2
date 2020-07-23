@@ -119,6 +119,12 @@ class MysqlSchemaParser extends AbstractSchemaParser
         return count($database->getTables());
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
     protected function parseTables(Database $database, $filterTable = null)
     {
         $sql = 'SHOW FULL TABLES';
@@ -135,7 +141,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happen before filling out details of tables)
-        $tables = [];
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -150,7 +155,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 $table->setSchema($filterTable->getSchema());
             }
             $database->addTable($table);
-            $tables[] = $table;
         }
     }
 
@@ -158,6 +162,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Adds Columns to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+     * @return void
      */
     protected function addColumns(Table $table)
     {
@@ -273,6 +278,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     * @return void
      */
     protected function addForeignKeys(Table $table)
     {
@@ -369,6 +375,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     * @return void
      */
     protected function addIndexes(Table $table)
     {
@@ -420,6 +427,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     * @return void
      */
     protected function addPrimaryKey(Table $table)
     {
@@ -445,6 +453,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Adds vendor-specific info for table.
      *
      * @param Table $table
+     * @return void
      */
     protected function addTableVendorInfo(Table $table)
     {

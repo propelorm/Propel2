@@ -98,8 +98,6 @@ class ColumnMap
     protected $isPkString = false;
 
     /**
-     * Constructor.
-     *
      * @param string $name The name of the column.
      * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
      */
@@ -153,6 +151,7 @@ class ColumnMap
      * Set the php name of this column.
      *
      * @param string $phpName A string representing the PHP name.
+     * @return void
      */
     public function setPhpName($phpName)
     {
@@ -173,6 +172,7 @@ class ColumnMap
      * Set the Propel type of this column.
      *
      * @param string $type A string representing the Propel type (e.g. PropelTypes::DATE).
+     * @return void
      */
     public function setType($type)
     {
@@ -277,6 +277,7 @@ class ColumnMap
      * Set the size of this column.
      *
      * @param int $size An int specifying the size.
+     * @return void
      */
     public function setSize($size)
     {
@@ -297,10 +298,11 @@ class ColumnMap
      * Set if this column is a primary key or not.
      *
      * @param boolean $pk True if column is a primary key.
+     * @return void
      */
     public function setPrimaryKey($pk)
     {
-        $this->pk = (Boolean) $pk;
+        $this->pk = (bool) $pk;
     }
 
     /**
@@ -317,10 +319,11 @@ class ColumnMap
      * Set if this column may be null.
      *
      * @param boolean $nn True if column may be null.
+     * @return void
      */
     public function setNotNull($nn)
     {
-        $this->notNull = (Boolean) $nn;
+        $this->notNull = (bool) $nn;
     }
 
     /**
@@ -337,6 +340,7 @@ class ColumnMap
      * Sets the default value for this column.
      *
      * @param mixed $defaultValue the default value for the column
+     * @return void
      */
     public function setDefaultValue($defaultValue)
     {
@@ -357,6 +361,7 @@ class ColumnMap
      *
      * @param string $tableName  The name of the table that is foreign.
      * @param string $columnName The name of the column that is foreign.
+     * @return void
      */
     public function setForeignKey($tableName, $columnName)
     {
@@ -382,6 +387,8 @@ class ColumnMap
 
     /**
      * Get the RelationMap object for this foreign key
+     *
+     * @return \Propel\Runtime\Map\RelationMap|null
      */
     public function getRelation()
     {
@@ -397,6 +404,8 @@ class ColumnMap
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -459,6 +468,7 @@ class ColumnMap
      * Set the valueSet of this column (only valid for ENUM and SET columns).
      *
      * @param array $values A list of allowed values
+     * @return void
      */
     public function setValueSet($values)
     {
@@ -475,11 +485,21 @@ class ColumnMap
         return $this->valueSet;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     public function isInValueSet($value)
     {
         return in_array($value, $this->valueSet);
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return false|int|string
+     */
     public function getValueSetKey($value)
     {
         return array_search($value, $this->valueSet);
@@ -490,6 +510,7 @@ class ColumnMap
      *
      * @param string                                   $str The expression we want to apply the ignore case formatting to (e.g. the column name).
      * @param \Propel\Runtime\Adapter\AdapterInterface $db
+     * @return string
      */
     public function ignoreCase($str, AdapterInterface $db)
     {
@@ -522,10 +543,11 @@ class ColumnMap
      * Set this column to be a primaryString column.
      *
      * @param boolean $pkString
+     * @return void
      */
     public function setPrimaryString($pkString)
     {
-        $this->isPkString = (Boolean) $pkString;
+        $this->isPkString = (bool) $pkString;
     }
 
     /**

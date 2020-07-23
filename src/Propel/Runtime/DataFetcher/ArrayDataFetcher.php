@@ -18,6 +18,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     * @return void
      */
     public function next()
     {
@@ -27,7 +28,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function current()
     {
@@ -35,7 +36,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetch()
     {
@@ -46,7 +47,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function key()
     {
@@ -54,7 +55,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function valid()
     {
@@ -63,6 +64,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     * @return void
      */
     public function rewind()
     {
@@ -74,7 +76,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getIndexType()
     {
@@ -82,7 +84,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function count()
     {
@@ -93,6 +95,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      * Sets the current index type.
      *
      * @param string $indexType one of TableMap::TYPE_*
+     * @return void
      */
     public function setIndexType($indexType)
     {
@@ -101,6 +104,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
+     * @return void
      */
     public function close()
     {

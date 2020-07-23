@@ -28,7 +28,7 @@ use Propel\Generator\Model\Schema;
 class MigrationDiffCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -53,7 +53,7 @@ class MigrationDiffCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -201,6 +201,7 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             $conn     = $manager->getAdapterConnection($name);
+            /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
             if ($input->getOption('disable-identifier-quoting')) {
                 $platform->setIdentifierQuoting(false);

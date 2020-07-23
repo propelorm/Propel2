@@ -20,25 +20,32 @@ use Propel\Generator\Model\Column;
 class VersionableBehaviorObjectBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
      */
     protected $behavior;
+
     /**
      * @var \Propel\Generator\Model\Table
      */
     protected $table;
+
     /**
      * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     protected $builder;
+
     /**
      * @var string
      */
     protected $objectClassName;
+
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
      */
     public function __construct($behavior)
     {
@@ -175,6 +182,8 @@ class VersionableBehaviorObjectBuilderModifier
 
             return $script;
         }
+
+        return null;
     }
 
     /**
@@ -528,7 +537,10 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getId())->getVersionTable();
+
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior */
+            $behavior = $fk->getForeignTable()->getBehavior($this->behavior->getId());
+            $foreignVersionTable = $behavior->getVersionTable();
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
             $fkColumnName = $fk->getLocalColumnName();
@@ -558,6 +570,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $plural = false;
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural);
             $foreignTable = $fk->getTable();
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $foreignBehavior */
             $foreignBehavior = $foreignTable->getBehavior($this->behavior->getId());
             $foreignVersionTable = $foreignBehavior->getVersionTable();
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);

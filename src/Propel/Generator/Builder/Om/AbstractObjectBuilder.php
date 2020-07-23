@@ -28,27 +28,28 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This is here because it is probably generic enough to apply to templates being generated
      * in different PHP versions.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addColumnAccessorMethods(&$script)
     {
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
-
+            $type = $col->getType();
             // if they're not using the DateTime class than we will generate "compatibility" accessor method
-            if (PropelTypes::DATE === $col->getType()
-                || PropelTypes::TIME === $col->getType()
-                || PropelTypes::TIMESTAMP === $col->getType()
+            if (PropelTypes::DATE === $type
+                || PropelTypes::TIME === $type
+                || PropelTypes::TIMESTAMP === $type
             ) {
                 $this->addTemporalAccessor($script, $col);
-            } elseif (PropelTypes::OBJECT === $col->getType()) {
+            } elseif (PropelTypes::OBJECT === $type) {
                 $this->addObjectAccessor($script, $col);
-            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+            } elseif (PropelTypes::PHP_ARRAY === $type) {
                 $this->addArrayAccessor($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
-            } elseif (PropelTypes::JSON === $col->getType()) {
+            } elseif (PropelTypes::JSON === $type) {
                 $this->addJsonAccessor($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);
@@ -75,6 +76,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This is here because it is probably generic enough to apply to templates being generated
      * in different PHP versions.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addColumnMutatorMethods(&$script)
     {
@@ -158,6 +160,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         return (!$table->isAlias() && $this->getBuildProperty('generator.objectModel.addGenericAccessors'));
     }
 
+    /**
+     * @return bool
+     */
     protected function hasDefaultValues()
     {
         foreach ($this->getTable()->getColumns() as $col) {
@@ -171,7 +176,10 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     *
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
+     *
      * @return boolean
      */
     public function hasBehaviorModifier($hookName, $modifier = '')
@@ -184,6 +192,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $script  The script will be modified in this method.
      * @param string $tab
+     * @return void
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
@@ -193,6 +202,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {

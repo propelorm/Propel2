@@ -21,7 +21,7 @@ use Propel\Generator\Manager\SqlManager;
 class SqlInsertCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -37,7 +37,7 @@ class SqlInsertCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

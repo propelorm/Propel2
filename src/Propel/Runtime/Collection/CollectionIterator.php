@@ -187,6 +187,12 @@ class CollectionIterator extends \ArrayIterator
         return !$this->isOdd();
     }
 
+    /**
+     * @param string $index
+     * @param string $newval
+     *
+     * @return void
+     */
     public function offsetSet($index, $newval)
     {
         $this->collection->offsetSet($index, $newval);
@@ -194,6 +200,11 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $index
+     *
+     * @return void
+     */
     public function offsetUnset($index)
     {
         $this->collection->offsetUnset($index);
@@ -201,6 +212,11 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
     public function append($value)
     {
         $this->collection->append($value);
@@ -208,42 +224,67 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function asort()
     {
         parent::asort();
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function ksort()
     {
         parent::ksort();
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $cmp_function
+     *
+     * @return void
+     */
     public function uasort($cmp_function)
     {
         parent::uasort($cmp_function);
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $cmp_function
+     *
+     * @return void
+     */
     public function uksort($cmp_function)
     {
         parent::uksort($cmp_function);
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function natsort()
     {
         parent::natsort();
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function natcasesort()
     {
         parent::natcasesort();
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     private function refreshPositions()
     {
         $this->positions = array_flip(array_keys($this->getArrayCopy()));

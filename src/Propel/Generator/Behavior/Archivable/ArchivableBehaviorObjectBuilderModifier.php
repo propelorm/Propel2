@@ -18,7 +18,7 @@ namespace Propel\Generator\Behavior\Archivable;
 class ArchivableBehaviorObjectBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehavior
      */
     protected $behavior;
 
@@ -33,7 +33,7 @@ class ArchivableBehaviorObjectBuilderModifier
     protected $builder;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Archivable\ArchivableBehavior $behavior
      */
     public function __construct($behavior)
     {
@@ -89,6 +89,8 @@ class ArchivableBehaviorObjectBuilderModifier
     \$this->archiveOnInsert = true;
 }";
         }
+
+        return null;
     }
 
     /**
@@ -105,6 +107,8 @@ class ArchivableBehaviorObjectBuilderModifier
     \$this->archiveOnUpdate = true;
 }";
         }
+
+        return null;
     }
 
     /**
@@ -126,6 +130,8 @@ class ArchivableBehaviorObjectBuilderModifier
                 'isAddHooks'     => $builder->getGeneratorConfig()->get()['generator']['objectModel']['addHooks'],
             ]);
         }
+
+        return null;
     }
 
     /**

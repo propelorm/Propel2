@@ -34,6 +34,7 @@ class SortableBehavior extends Behavior
 
     /**
      * Add the rank_column to the current table
+     * @return void
      */
     public function modifyTable()
     {
@@ -64,6 +65,9 @@ class SortableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Sortable\SortableBehavior|\Propel\Generator\Behavior\Sortable\SortableBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
         if (null === $this->objectBuilderModifier) {
@@ -73,6 +77,9 @@ class SortableBehavior extends Behavior
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Sortable\SortableBehavior|\Propel\Generator\Behavior\Sortable\SortableBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {
@@ -82,6 +89,9 @@ class SortableBehavior extends Behavior
         return $this->queryBuilderModifier;
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Sortable\SortableBehavior|\Propel\Generator\Behavior\Sortable\SortableBehaviorTableMapBuilderModifier
+     */
     public function getTableMapBuilderModifier()
     {
         if (null === $this->tableMapBuilderModifier) {
@@ -91,6 +101,9 @@ class SortableBehavior extends Behavior
         return $this->tableMapBuilderModifier;
     }
 
+    /**
+     * @return bool
+     */
     public function useScope()
     {
         return 'true' === $this->getParameter('use_scope');
@@ -104,7 +117,6 @@ class SortableBehavior extends Behavior
      */
     public function generateScopePhp()
     {
-
         $methodSignature = '';
         $paramsDoc       = '';
         $buildScope      = '';
@@ -174,7 +186,7 @@ class SortableBehavior extends Behavior
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addParameter(array $parameter)
     {

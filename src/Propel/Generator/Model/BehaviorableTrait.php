@@ -14,7 +14,7 @@ trait BehaviorableTrait
     /**
      * @var Behavior[]
      */
-    protected $behaviors;
+    protected $behaviors = [];
 
     /**
      * @var BehaviorLocator
@@ -88,6 +88,11 @@ trait BehaviorableTrait
         return $this->addBehavior($behavior);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     *
+     * @return void
+     */
     abstract protected function registerBehavior(Behavior $behavior);
 
     /**

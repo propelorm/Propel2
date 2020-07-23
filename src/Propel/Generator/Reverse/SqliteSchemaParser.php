@@ -34,7 +34,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      * There really aren't any SQLite native types, so we're just
      * using the MySQL ones here.
      *
-     * @var array
+     * @var string[]
      */
     private static $sqliteTypeMap = [
         'tinyint'    => PropelTypes::TINYINT,
@@ -71,13 +71,19 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return string[]
      */
     protected function getTypeMapping()
     {
         return self::$sqliteTypeMap;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param Table[] $additionalTables
+     *
+     * @return int
+     */
     public function parse(Database $database, array $additionalTables = [])
     {
         if ($this->getGeneratorConfig()) {
@@ -104,6 +110,12 @@ class SqliteSchemaParser extends AbstractSchemaParser
         return count($database->getTables());
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
     protected function parseTables(Database $database, Table $filterTable = null)
     {
         $sql = "
@@ -138,7 +150,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $tableName = $row[0];
             $tableSchema = '';
 
-            if ('sqlite_' == substr($tableName, 0, 7)) {
+            if ('sqlite_' === substr($tableName, 0, 7)) {
                 continue;
             }
 
@@ -171,6 +183,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      * Adds Columns to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+     * @return void
      */
     protected function addColumns(Table $table)
     {
@@ -255,6 +268,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();
@@ -301,6 +319,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     * @return void
      */
     protected function addIndexes(Table $table)
     {

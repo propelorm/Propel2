@@ -66,7 +66,14 @@ class SchemaReader
     /** @var VendorInfo */
     private $currVendorObject;
 
-    private $isForReferenceOnly;
+    /**
+     * @var bool
+     */
+    private $isForReferenceOnly = false;
+
+    /**
+     * @var string|null
+     */
     private $currentPackage;
     private $currentXmlFile;
     private $defaultPackage;
@@ -83,8 +90,8 @@ class SchemaReader
     /**
      * Creates a new instance for the specified database type.
      *
-     * @param PlatformInterface $defaultPlatform The default database platform for the application.
-     * @param string            $defaultPackage  the default PHP package used for the om
+     * @param PlatformInterface|null $defaultPlatform The default database platform for the application.
+     * @param string|null            $defaultPackage  the default PHP package used for the om
      * @param string            $encoding        The database encoding.
      */
     public function __construct(PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
@@ -99,6 +106,7 @@ class SchemaReader
      * Set the Schema generator configuration
      *
      * @param GeneratorConfigInterface $generatorConfig
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
@@ -158,6 +166,14 @@ class SchemaReader
         return $this->schema;
     }
 
+    /**
+     * @param resource $parser
+     * @param string $name
+     * @param array $attributes
+     *
+     * @throws \Propel\Generator\Exception\SchemaException
+     * @return void
+     */
     public function startElement($parser, $name, $attributes)
     {
         $parentTag = $this->peekCurrentSchemaTag();
@@ -326,7 +342,7 @@ class SchemaReader
                 default:
                     $this->_throwInvalidTagException($parser, $name);
             }
-        } elseif ($parentTag == 'behavior') {
+        } elseif ($parentTag === 'behavior') {
 
             switch ($name) {
                 case 'parameter':
@@ -354,6 +370,13 @@ class SchemaReader
         $this->pushCurrentSchemaTag($name);
     }
 
+    /**
+     * @param resource $parser
+     * @param string $tag_name
+     *
+     * @throws \Propel\Generator\Exception\SchemaException
+     * @return void
+     */
     protected function _throwInvalidTagException($parser, $tag_name)
     {
         $location = '';
@@ -369,6 +392,12 @@ class SchemaReader
         throw new SchemaException(sprintf('Unexpected tag <%s> in %s', $tag_name, $location));
     }
 
+    /**
+     * @param resource $parser
+     * @param string $name
+     *
+     * @return void
+     */
     public function endElement($parser, $name)
     {
         if ('index' === $name) {
@@ -384,6 +413,9 @@ class SchemaReader
         $this->popCurrentSchemaTag();
     }
 
+    /**
+     * @return string|false
+     */
     protected function peekCurrentSchemaTag()
     {
         $keys = array_keys($this->schemasTagsStack);
@@ -391,23 +423,40 @@ class SchemaReader
         return end($this->schemasTagsStack[end($keys)]);
     }
 
+    /**
+     * @return string|false
+     */
     protected function popCurrentSchemaTag()
     {
         $keys = array_keys($this->schemasTagsStack);
-        array_pop($this->schemasTagsStack[end($keys)]);
+
+        return array_pop($this->schemasTagsStack[end($keys)]);
     }
 
+    /**
+     * @param string $tag
+     *
+     * @return void
+     */
     protected function pushCurrentSchemaTag($tag)
     {
         $keys = array_keys($this->schemasTagsStack);
         $this->schemasTagsStack[end($keys)][] = $tag;
     }
 
+    /**
+     * @return bool
+     */
     protected function isExternalSchema()
     {
         return count($this->schemasTagsStack) > 1;
     }
 
+    /**
+     * @param string $filePath
+     *
+     * @return bool
+     */
     protected function isAlreadyParsed($filePath)
     {
         return isset($this->schemasTagsStack[$filePath]);

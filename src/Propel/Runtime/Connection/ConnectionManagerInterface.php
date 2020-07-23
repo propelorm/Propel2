@@ -16,6 +16,7 @@ interface ConnectionManagerInterface
 {
     /**
      * @param string $name The datasource name associated to this connection
+     * @return void
      */
     public function setName($name);
 
@@ -25,14 +26,14 @@ interface ConnectionManagerInterface
     public function getName();
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     public function getWriteConnection(AdapterInterface $adapter = null);
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

@@ -453,6 +453,7 @@ class ModelCriteria extends BaseModelCriteria
      * by default this is null, but after useQuery this is set the to the join of that use
      *
      * @param Join $previousJoin The previousJoin for this ModelCriteria
+     * @return void
      */
     public function setPreviousJoin(Join $previousJoin)
     {
@@ -688,6 +689,9 @@ class ModelCriteria extends BaseModelCriteria
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isWithOneToMany()
     {
         return $this->isWithOneToMany;
@@ -818,6 +822,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param ModelCriteria $criteria     The primary criteria
      * @param Join          $previousJoin The previousJoin for this ModelCriteria
+     * @return void
      */
     public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
     {
@@ -959,7 +964,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function keepQuery($isKeepQuery = true)
     {
-        $this->isKeepQuery = (Boolean) $isKeepQuery;
+        $this->isKeepQuery = (bool) $isKeepQuery;
 
         return $this;
     }
@@ -978,12 +983,18 @@ class ModelCriteria extends BaseModelCriteria
      * Code to execute before every SELECT statement
      *
      * @param ConnectionInterface $con The connection object used by the query
+     * @return void
      */
     protected function basePreSelect(ConnectionInterface $con)
     {
-        return $this->preSelect($con);
+        $this->preSelect($con);
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @return void
+     */
     protected function preSelect(ConnectionInterface $con)
     {
     }
@@ -993,7 +1004,7 @@ class ModelCriteria extends BaseModelCriteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return ObjectCollection|ActiveRecordInterface[]|array|mixed the list of results, formatted by the current formatter
      */
@@ -1019,7 +1030,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * Does not work with ->with()s containing one-to-many relations.
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      */
@@ -1053,7 +1064,7 @@ class ModelCriteria extends BaseModelCriteria
      * Throws an exception when nothing was found.
      *
      * @param mixed               $key Primary key to use for the query
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      * @throws EntityNotFoundException|\Exception When nothing is found
@@ -1078,7 +1089,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * Does not work with ->with()s containing one-to-many relations.
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      * @throws EntityNotFoundException|\Exception When nothing is found
@@ -1104,7 +1115,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param mixed               $column A string representing the column phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
-     * @param ConnectionInterface $con    an optional connection object
+     * @param ConnectionInterface|null $con    an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      * @throws EntityNotFoundException|\Exception When nothing is found
@@ -1132,7 +1143,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see requireOne()
      *
      * @param mixed               $conditions An array of conditions, using column phpNames as key
-     * @param ConnectionInterface $con        an optional connection object
+     * @param ConnectionInterface|null $con        an optional connection object
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1147,6 +1158,10 @@ class ModelCriteria extends BaseModelCriteria
         return $result;
     }
 
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return \Exception
+     */
     private function createEntityNotFoundException()
     {
         if (!isset($this->entityNotFoundExceptionClass)) {
@@ -1161,7 +1176,7 @@ class ModelCriteria extends BaseModelCriteria
      * and format the result with the current formatter
      * By default, returns a model object
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      *
@@ -1196,7 +1211,7 @@ class ModelCriteria extends BaseModelCriteria
      * $bookOpinion = $c->findPk(array(34, 634), $con);
      * </code>
      * @param mixed               $key Primary key to use for the query
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      */
@@ -1236,7 +1251,7 @@ class ModelCriteria extends BaseModelCriteria
      * $bookOpinion = $c->findPks(array(array(34, 634), array(45, 518), array(34, 765)), $con);
      * </code>
      * @param array               $keys Primary keys to use for the query
-     * @param ConnectionInterface $con  an optional connection object
+     * @param ConnectionInterface|null $con  an optional connection object
      *
      * @return mixed the list of results, formatted by the current formatter
      *
@@ -1272,7 +1287,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string              $column A string representing the column phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
-     * @param ConnectionInterface $con    An optional connection object
+     * @param ConnectionInterface|null $con    An optional connection object
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1297,7 +1312,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see find()
      *
      * @param mixed               $conditions An array of conditions, using column phpNames as key
-     * @param ConnectionInterface $con        an optional connection object
+     * @param ConnectionInterface|null $con        an optional connection object
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1316,7 +1331,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param mixed               $column A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param mixed               $value  A value for the condition
-     * @param ConnectionInterface $con    an optional connection object
+     * @param ConnectionInterface|null $con    an optional connection object
      *
      * @return mixed the result, formatted by the current formatter
      */
@@ -1341,7 +1356,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see findOne()
      *
      * @param mixed               $conditions An array of conditions, using column phpNames as key
-     * @param ConnectionInterface $con        an optional connection object
+     * @param ConnectionInterface|null $con        an optional connection object
      *
      * @return mixed the list of results, formatted by the current formatter
      */
@@ -1355,7 +1370,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Issue a SELECT COUNT(*) query based on the current ModelCriteria
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return integer the number of results
      */
@@ -1387,6 +1402,11 @@ class ModelCriteria extends BaseModelCriteria
         return $count;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
     public function doCount(ConnectionInterface $con = null)
     {
         $this->configureSelectColumns();
@@ -1402,7 +1422,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Issue an existence check on the current ModelCriteria
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return bool column existence
      */
@@ -1439,7 +1459,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param int                 $page       number of the page to start the pager on. Page 1 means no offset
      * @param int                 $maxPerPage maximum number of results per page. Determines the limit
-     * @param ConnectionInterface $con        an optional connection object
+     * @param ConnectionInterface|null $con        an optional connection object
      *
      * @return PropelModelPager a pager object, supporting iteration
      */
@@ -1466,10 +1486,11 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function preDelete(ConnectionInterface $con)
     {
+        return null;
     }
 
     /**
@@ -1487,17 +1508,18 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * @param int $affectedRows
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function postDelete($affectedRows, ConnectionInterface $con)
     {
+        return null;
     }
 
     /**
      * Issue a DELETE query based on the current ModelCriteria
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return integer the number of deleted rows
      *
@@ -1535,7 +1557,7 @@ class ModelCriteria extends BaseModelCriteria
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
      * An optional hook on basePreDelete() can prevent the actual deletion
      *
-     * @param ConnectionInterface $con an optional connection object
+     * @param ConnectionInterface|null $con an optional connection object
      *
      * @return integer the number of deleted rows
      *
@@ -1564,7 +1586,7 @@ class ModelCriteria extends BaseModelCriteria
      * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
      * This method is called by ModelCriteria::deleteAll() inside a transaction
      *
-     * @param ConnectionInterface $con a connection object
+     * @param ConnectionInterface|null $con a connection object
      *
      * @return integer the number of deleted rows
      *
@@ -1610,7 +1632,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param array               $values               The associative array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
      * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
-     * @return int
+     * @return int|null
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1621,10 +1643,11 @@ class ModelCriteria extends BaseModelCriteria
      * @param array $values
      * @param ConnectionInterface $con
      * @param bool $forceIndividualSaves
-     * @return int
+     * @return int|null
      */
     protected function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
+        return null;
     }
 
     /**
@@ -1632,7 +1655,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param int                 $affectedRows the number of updated rows
      * @param ConnectionInterface $con          The connection object used by the query
-     * @return int
+     * @return int|null
      */
     protected function basePostUpdate($affectedRows, ConnectionInterface $con)
     {
@@ -1642,10 +1665,11 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * @param int $affectedRows
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function postUpdate($affectedRows, ConnectionInterface $con)
     {
+        return null;
     }
 
     /**
@@ -1655,7 +1679,7 @@ class ModelCriteria extends BaseModelCriteria
      * will only be triggered if you force individual saves, i.e. if you pass true as second argument.
      *
      * @param mixed               $values               Associative array of keys and values to replace
-     * @param ConnectionInterface $con                  an optional connection object
+     * @param ConnectionInterface|null $con                  an optional connection object
      * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return integer Number of updated rows
@@ -1747,7 +1771,7 @@ class ModelCriteria extends BaseModelCriteria
      * Creates a Criterion object based on a list of existing condition names and a comparator
      *
      * @param array  $conditions The list of condition names, e.g. array('cond1', 'cond2')
-     * @param string $operator   An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
+     * @param string|null $operator   An operator, Criteria::LOGICAL_AND (default) or Criteria::LOGICAL_OR
      *
      * @return AbstractCriterion A Criterion or ModelCriterion object
      */
@@ -1766,7 +1790,10 @@ class ModelCriteria extends BaseModelCriteria
      * Uses introspection to translate the column phpName into a fully qualified name
      *
      * @param string $clause The pseudo SQL clause, e.g. 'AuthorId = ?'
-     * @param mixed  $value  A value for the condition
+     * @param mixed $value A value for the condition
+     * @param int|null $bindingType
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return AbstractCriterion a Criterion object
      */
@@ -1827,7 +1854,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected function convertValueForColumn($value, ColumnMap $colMap)
     {
-        if ($colMap->getType() == 'OBJECT' && is_object($value)) {
+        if ($colMap->getType() === 'OBJECT' && is_object($value)) {
             if (is_array($value)) {
                 $value = array_map('serialize', $value);
             } else {
@@ -1999,6 +2026,9 @@ class ModelCriteria extends BaseModelCriteria
         return parent::doSelect($con);
     }
 
+    /**
+     * @return void
+     */
     public function configureSelectColumns()
     {
         if (is_null($this->select)) {
@@ -2034,10 +2064,14 @@ class ModelCriteria extends BaseModelCriteria
     }
 
 
-
     /**
      * Special case for subquery columns
      *
+     * @param string $class
+     * @param string $phpName
+     * @param bool $failSilently
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
      * @return array List($columnMap, $realColumnName)
      */
     protected function getColumnFromSubQuery($class, $phpName, $failSilently = true)
@@ -2049,14 +2083,16 @@ class ModelCriteria extends BaseModelCriteria
             $realColumnName = $class.'.'.$column->getName();
 
             return [$column, $realColumnName];
-        } elseif (isset($subQueryCriteria->asColumns[$phpName])) {
+        }
+        if (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column
             return [null, $class.'.'.$phpName];
-        } elseif ($failSilently) {
-            return [null, null];
-        } else {
-            throw new PropelException(sprintf('Unknown column "%s" in the subQuery with alias "%s".', $phpName, $class));
         }
+        if ($failSilently) {
+            return [null, null];
+        }
+
+        throw new PropelException(sprintf('Unknown column "%s" in the subQuery with alias "%s".', $phpName, $class));
     }
 
     /**
@@ -2247,6 +2283,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Ensures deep cloning of attached objects
+     * @return void
      */
     public function __clone()
     {

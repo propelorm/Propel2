@@ -28,6 +28,12 @@ class OnDemandFormatter extends ObjectFormatter
 {
     protected $isSingleTableInheritance = false;
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return $this
+     */
     public function init(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
@@ -37,6 +43,12 @@ class OnDemandFormatter extends ObjectFormatter
         return $this;
     }
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
+     */
     public function format(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
@@ -56,6 +68,9 @@ class OnDemandFormatter extends ObjectFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\OnDemandCollection';
@@ -80,7 +95,7 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array with data
+     * @param    array  $row associative array with data
      *
      * @return ActiveRecordInterface
      */

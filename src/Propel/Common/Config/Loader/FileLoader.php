@@ -46,7 +46,7 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Constructor.
      *
-     * @param FileLocatorInterface $locator A FileLocator instance
+     * @param FileLocatorInterface|null $locator A FileLocator instance
      */
     public function __construct(FileLocatorInterface $locator = null)
     {
@@ -61,11 +61,12 @@ abstract class FileLoader extends BaseFileLoader
      * Replaces parameter placeholders (%name%) by their values for all parameters.
      *
      * @param array $configuration The configuration array to resolve
+     * @return array
      */
     public function resolveParams(array $configuration)
     {
         if ($this->resolved) {
-            return;
+            return [];
         }
 
         $this->config = $configuration;
@@ -84,7 +85,7 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Get the pathof a given resource
      *
-     * @param mixed $file The resource
+     * @param string $file The resource
      *
      * @return array|string
      * @throws \InvalidArgumentException                            If the file is not found
@@ -106,6 +107,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string|string[] $ext An extension or an array of extensions
      * @param string|false $resource A resource
+     * @return bool
      */
     protected function checkSupports($ext, $resource)
     {
@@ -140,9 +142,12 @@ abstract class FileLoader extends BaseFileLoader
         return $supported;
     }
 
+    /**
+     * @return bool
+     */
     private function isResolved()
     {
-        return ($this->resolved);
+        return $this->resolved;
     }
 
     /**

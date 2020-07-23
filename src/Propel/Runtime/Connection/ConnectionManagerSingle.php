@@ -34,6 +34,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     * @return void
      */
     public function setName($name)
     {
@@ -48,31 +49,48 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
         return $this->name;
     }
 
+    /**
+     * @return array
+     */
     public function getConfiguration()
     {
         return $this->configuration;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     *
+     * @return void
+     */
     public function setConnection(ConnectionInterface $connection)
     {
         $this->setConfiguration(null);
         $this->connection = $connection;
     }
 
+    /**
+     * @param array|null $configuration
+     *
+     * @return void
+     */
     public function setConfiguration($configuration)
     {
-        $this->configuration = $configuration;
+        $this->configuration = (array)$configuration;
         $this->closeConnections();
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     public function getWriteConnection(AdapterInterface $adapter = null)
     {
         if (null === $this->connection) {
+            if ($adapter === null) {
+                throw new \InvalidArgumentException('$adapter not given');
+            }
+
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
             $this->connection->setName($this->getName());
         }
@@ -81,7 +99,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
@@ -90,6 +108,9 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
         return $this->getWriteConnection($adapter);
     }
 
+    /**
+     * @return void
+     */
     public function closeConnections()
     {
         $this->connection = null;

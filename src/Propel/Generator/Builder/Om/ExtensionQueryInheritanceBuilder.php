@@ -53,6 +53,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      * Set the child object that we're operating on currently.
      *
      * @param Inheritance $child Inheritance
+     * @return void
      */
     public function setChild(Inheritance $child)
     {
@@ -77,7 +78,8 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -124,6 +126,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      *
      * @param string $script
      * @see ObjectBuilder::addClassBody()
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -134,6 +137,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * Closes class.
      *
      * @param string $script
+     * @return void
      */
     protected function addClassClose(&$script)
     {

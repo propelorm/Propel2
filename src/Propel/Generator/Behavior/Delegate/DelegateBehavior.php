@@ -43,6 +43,7 @@ class DelegateBehavior extends Behavior
     /**
      * Lists the delegates and checks that the behavior can use them,
      * And adds a fk from the delegate to the main table if not already set
+     * @return void
      */
     public function modifyTable()
     {
@@ -85,6 +86,12 @@ class DelegateBehavior extends Behavior
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $delegateTable
+     * @param \Propel\Generator\Model\Table $mainTable
+     *
+     * @return void
+     */
     protected function relateDelegateToMainTable($delegateTable, $mainTable)
     {
         $pks = $mainTable->getPrimaryKey();
@@ -109,11 +116,21 @@ class DelegateBehavior extends Behavior
         $delegateTable->addForeignKey($fk);
     }
 
+    /**
+     * @param string $delegateTableName
+     *
+     * @return \Propel\Generator\Model\Table|null
+     */
     protected function getDelegateTable($delegateTableName)
     {
         return $this->getTable()->getDatabase()->getTable($delegateTableName);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectCall($builder)
     {
         $plural = false;
@@ -148,6 +165,11 @@ if (is_callable(array('$ARFQCN', \$name))) {
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     public function objectFilter(&$script)
     {
         $p = new PhpParser($script, true);
@@ -227,6 +249,9 @@ if (is_callable(array('$ARFQCN', \$name))) {
         return false;
     }
 
+    /**
+     * @return string
+     */
     public function queryAttributes()
     {
         $script = '';
@@ -255,6 +280,11 @@ protected \$delegatedFields = [
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\QueryBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods(QueryBuilder $builder)
     {
         $script = '';

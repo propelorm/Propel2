@@ -14,6 +14,7 @@ namespace Propel\Generator\Command\Console\Input;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Input\InputDefinition;
 
 /**
  * ArrayInput represents an input provided as an array.
@@ -26,8 +27,15 @@ use Symfony\Component\Console\Input\Input;
  */
 class ArrayInput extends Input
 {
+    /**
+     * @var array
+     */
     private $parameters;
 
+    /**
+     * @param array $parameters
+     * @param \Symfony\Component\Console\Input\InputDefinition|null $definition
+     */
     public function __construct(array $parameters, InputDefinition $definition = null)
     {
         $this->parameters = $parameters;
@@ -36,7 +44,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstArgument()
     {
@@ -52,7 +60,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasParameterOption($values, $onlyParams = false)
     {
@@ -76,7 +84,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParameterOption($values, $default = false, $onlyParams = false)
     {
@@ -125,7 +133,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function parse()
     {
@@ -147,6 +155,7 @@ class ArrayInput extends Input
      * Adds a short option value.
      *
      * @throws InvalidOptionException When option given doesn't exist
+     * @return void
      */
     private function addShortOption(string $shortcut, $value)
     {
@@ -162,6 +171,7 @@ class ArrayInput extends Input
      *
      * @throws InvalidOptionException When option given doesn't exist
      * @throws InvalidOptionException When a required value is missing
+     * @return void
      */
     private function addLongOption(string $name, $value)
     {
@@ -191,6 +201,7 @@ class ArrayInput extends Input
      * @param mixed      $value The value for the argument
      *
      * @throws InvalidArgumentException When argument given doesn't exist
+     * @return void
      */
     private function addArgument($name, $value)
     {

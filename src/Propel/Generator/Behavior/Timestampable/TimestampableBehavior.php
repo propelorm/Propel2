@@ -27,12 +27,17 @@ class TimestampableBehavior extends Behavior
         'disable_updated_at' => 'false',
     ];
 
-
+    /**
+     * @return bool
+     */
     protected function withUpdatedAt()
     {
         return !$this->booleanValue($this->getParameter('disable_updated_at'));
     }
 
+    /**
+     * @return bool
+     */
     protected function withCreatedAt()
     {
         return !$this->booleanValue($this->getParameter('disable_created_at'));
@@ -40,6 +45,7 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add the create_column and update_columns to the current table
+     * @return void
      */
     public function modifyTable()
     {
@@ -70,6 +76,12 @@ class TimestampableBehavior extends Behavior
         return 'set' . $this->getColumnForParameter($column)->getPhpName();
     }
 
+    /**
+     * @param string $columnName
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     protected function getColumnConstant($columnName, $builder)
     {
         return $builder->getColumnConstant($this->getColumnForParameter($columnName));
@@ -77,6 +89,8 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add code in ObjectBuilder::preUpdate
+     *
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string The code to put at the hook
      */
@@ -97,6 +111,8 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add code in ObjectBuilder::preInsert
+     *
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string The code to put at the hook
      */
@@ -130,6 +146,11 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         if (!$this->withUpdatedAt()) {
@@ -151,6 +172,11 @@ public function keepUpdateDateUnchanged()
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
         $queryClassName = $builder->getQueryClassName();

@@ -27,12 +27,12 @@ use Psr\Log\NullLogger;
 class StandardServiceContainer implements ServiceContainerInterface
 {
     /**
-     * @var array[\Propel\Runtime\Adapter\AdapterInterface] List of database adapter instances
+     * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
      */
     protected $adapters = [];
 
     /**
-     * @var array[string] List of database adapter classes
+     * @var string[] List of database adapter classes
      */
     protected $adapterClasses = [];
 
@@ -47,12 +47,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
-     * @var array[\Propel\Runtime\Map\DatabaseMap] List of database map instances
+     * @var \Propel\Runtime\Map\DatabaseMap[] List of database map instances
      */
     protected $databaseMaps = [];
 
     /**
-     * @var array[\Propel\Runtime\Connection\ConnectionManagerInterface] List of connection managers
+     * @var \Propel\Runtime\Connection\ConnectionManagerInterface[] List of connection managers
      */
     protected $connectionManagers = [];
 
@@ -74,7 +74,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var array[LoggerInterface] list of loggers
+     * @var LoggerInterface[] List of loggers
      */
     protected $loggers = [];
 
@@ -93,6 +93,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $defaultDatasource
+     * @return void
      */
     public function setDefaultDatasource($defaultDatasource)
     {
@@ -102,7 +103,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get the adapter class for a given datasource.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
      * @return string
      */
@@ -122,6 +123,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name         The datasource name
      * @param string $adapterClass
+     * @return void
      */
     public function setAdapterClass($name, $adapterClass)
     {
@@ -132,7 +134,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array $adapterClasses A list of adapters
+     * @param string[] $adapterClasses A list of adapters
+     * @return void
      */
     public function setAdapterClasses($adapterClasses)
     {
@@ -171,6 +174,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string                                   $name    The datasource name
      * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @return void
      */
     public function setAdapter($name, AdapterInterface $adapter)
     {
@@ -182,6 +186,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Reset existing adapters and set new adapters for all datasources.
      *
      * @param array $adapters A list of adapters
+     * @return void
      */
     public function setAdapters($adapters)
     {
@@ -214,6 +219,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $databaseMapClass
+     * @return void
      */
     public function setDatabaseMapClass($databaseMapClass)
     {
@@ -247,6 +253,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string                          $name        The datasource name
      * @param \Propel\Runtime\Map\DatabaseMap $databaseMap
+     * @return void
      */
     public function setDatabaseMap($name, DatabaseMap $databaseMap)
     {
@@ -256,6 +263,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string                                                $name    The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
+     * @return void
      */
     public function setConnectionManager($name, ConnectionManagerInterface $manager)
     {
@@ -294,7 +302,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return array[\Propel\Runtime\Connection\ConnectionManagerInterface]
+     * @return \Propel\Runtime\Connection\ConnectionManagerInterface[]
      */
     public function getConnectionManagers()
     {
@@ -306,6 +314,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * This method frees any database connection handles that have been
      * opened by the getConnection() method.
+     *
+     * @return void
      */
     public function closeConnections()
     {
@@ -378,6 +388,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection A database connection
+     * @return void
      */
     public function setConnection($name, ConnectionInterface $connection)
     {
@@ -393,6 +404,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * getProfiler() is called.
      *
      * @param string $profilerClass
+     * @return void
      */
     public function setProfilerClass($profilerClass)
     {
@@ -405,6 +417,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @see \Propel\Runtime\Util\Profiler::setConfiguration()
      *
      * @param array $profilerConfiguration
+     * @return void
      */
     public function setProfilerConfiguration($profilerConfiguration)
     {
@@ -416,6 +429,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Set the profiler instance.
      *
      * @param \Propel\Runtime\Util\Profiler $profiler
+     * @return void
      */
     public function setProfiler($profiler)
     {
@@ -461,12 +475,19 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string          $name   the name of the logger to be set
      * @param LoggerInterface $logger A logger instance
+     * @return void
      */
     public function setLogger($name, LoggerInterface $logger)
     {
         $this->loggers[$name] = $logger;
     }
 
+    /**
+     * @param string $name
+     *
+     * @throws \Propel\Runtime\Exception\UnexpectedValueException
+     * @return \Psr\Log\LoggerInterface
+     */
     protected function buildLogger($name = 'defaultLogger')
     {
         if (!isset($this->loggerConfigurations[$name])) {
@@ -527,12 +548,16 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name
      * @param array  $loggerConfiguration
+     * @return void
      */
     public function setLoggerConfiguration($name, $loggerConfiguration)
     {
         $this->loggerConfigurations[$name] = $loggerConfiguration;
     }
 
+    /**
+     * @return void
+     */
     private function __clone()
     {
     }

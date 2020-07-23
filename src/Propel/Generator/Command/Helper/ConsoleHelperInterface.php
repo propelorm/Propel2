@@ -7,6 +7,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface ConsoleHelperInterface
 {
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
     public function __construct(InputInterface $input, OutputInterface $output);
 
     /**
@@ -47,13 +51,13 @@ interface ConsoleHelperInterface
      * @param string $question
      * @param array  $choices
      * @param string $default
-     * @param bool   $attempts
+     * @param int|null   $attempts
      * @param string $errorMessage
      * @param bool   $multiselect
      *
      * @return mixed
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false);
+    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false);
 
     /**
      * @param string    $question
@@ -75,11 +79,13 @@ interface ConsoleHelperInterface
 
     /**
      * @param OutputInterface $output
+     * @return void
      */
     public function setOutput(OutputInterface $output);
 
     /**
      * @param InputInterface $input
+     * @return void
      */
     public function setInput(InputInterface $input);
 
@@ -88,6 +94,7 @@ interface ConsoleHelperInterface
      *
      * @param string|array $messages The message as an array of lines of a single string
      * @param int          $options  A bitmask of options (one of the OUTPUT or VERBOSITY constants), 0 is considered the same as self::OUTPUT_NORMAL | self::VERBOSITY_NORMAL
+     * @return void
      */
     public function writeln($messages, $options = 0);
 }

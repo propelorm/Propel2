@@ -34,6 +34,11 @@ class PropelDateTime extends \DateTime
      */
     private $tzString;
 
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     protected static function isTimestamp($value)
     {
         if (!is_numeric($value)) {
@@ -156,6 +161,7 @@ class PropelDateTime extends \DateTime
     /**
      * PHP "magic" function called when object is restored from serialized state.
      * Calls DateTime constructor with previously stored string value of date.
+     * @return void
      */
     public function __wakeup()
     {

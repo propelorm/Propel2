@@ -23,7 +23,7 @@ class GraphvizGenerateCommand extends AbstractCommand
     const DEFAULT_OUTPUT_DIRECTORY  = 'generated-graphviz';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -39,7 +39,7 @@ class GraphvizGenerateCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

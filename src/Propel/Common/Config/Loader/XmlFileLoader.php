@@ -22,8 +22,8 @@ class XmlFileLoader extends FileLoader
     /**
      * Loads an Xml file.
      *
-     * @param mixed  $file The resource
-     * @param string $type The resource type
+     * @param string  $file The resource
+     * @param string|null $type The resource type
      *
      * @return array
      *

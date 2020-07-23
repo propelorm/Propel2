@@ -33,6 +33,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -75,6 +76,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * if you want to change that behavior.
      *
      * @see QueryBuilder::addClassBody()
+     * @return void
      */
 
     protected function addClassBody(&$script)
@@ -84,6 +86,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {
@@ -108,6 +111,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $script  The script will be modified in this method.
      * @param string $tab
+     * @return void
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
@@ -117,6 +121,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {

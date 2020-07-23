@@ -69,6 +69,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      * Sets the child object that we're operating on currently.
      *
      * @param Inheritance $child
+     * @return void
      */
     public function setChild(Inheritance $child)
     {
@@ -119,7 +120,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -163,6 +165,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      *
      * @param string $script
      * @see ObjectBuilder::addClassBody()
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -181,7 +184,8 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Adds the factory for this object.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactory(&$script)
     {
@@ -215,6 +219,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreSelect(&$script)
     {
         $child = $this->getChild();
@@ -230,6 +239,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreUpdate(&$script)
     {
         $child = $this->getChild();
@@ -245,6 +259,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPreDelete(&$script)
     {
         $child = $this->getChild();
@@ -260,6 +279,9 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function getClassKeyCondition()
     {
         $child = $this->getChild();
@@ -268,6 +290,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
         return "\$this->addUsingAlias(" . $col->getFQConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDoDeleteAll(&$script)
     {
         $child = $this->getChild();
@@ -294,6 +321,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * Closes class.
      *
      * @param string $script
+     * @return void
      */
     protected function addClassClose(&$script)
     {

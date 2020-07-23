@@ -32,6 +32,7 @@ class OnDemandCollection extends Collection
     /**
      * @param \Propel\Runtime\Formatter\ObjectFormatter    $formatter
      * @param DataFetcherInterface $dataFetcher
+     * @return void
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
     {
@@ -93,6 +94,7 @@ class OnDemandCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+     * @return void
      */
     public function fromArray($arr)
     {
@@ -138,6 +140,7 @@ class OnDemandCollection extends Collection
      *
      * @param integer $offset
      * @param mixed   $value
+     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -147,6 +150,7 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      * @param  integer                                                     $offset
+     * @return void
      */
     public function offsetUnset($offset)
     {
@@ -157,6 +161,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws \Propel\Runtime\Exception\PropelException
+     * @return string
      */
     public function serialize()
     {
@@ -166,6 +171,7 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      * @param  string                                    $data
+     * @return void
      */
     public function unserialize($data)
     {
@@ -186,28 +192,50 @@ class OnDemandCollection extends Collection
 
     // ArrayObject methods
 
+    /**
+     * @param mixed $value
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return void
+     */
     public function append($value)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return int
+     */
     public function prepend($value)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @param array $input
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     * @return void
+     */
     public function exchangeArray($input)
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return array
+     */
     public function getArrayCopy()
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {

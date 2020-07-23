@@ -44,7 +44,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function push($value)
     {
@@ -67,7 +67,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function search($element)
     {
@@ -104,7 +104,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function removeObject($element)
     {
@@ -114,7 +114,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function contains($element)
     {

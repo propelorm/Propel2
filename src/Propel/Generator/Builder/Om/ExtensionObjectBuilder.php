@@ -33,6 +33,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -74,6 +75,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -82,6 +84,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {

@@ -61,11 +61,20 @@ class ArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|null
+     */
     public function formatOne(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
@@ -119,10 +128,10 @@ class ArrayFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array indexed by column number,
+     * @param    array  $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()
      *
-     * @return Array
+     * @return array
      */
     public function &getStructuredArrayFromRow($row)
     {

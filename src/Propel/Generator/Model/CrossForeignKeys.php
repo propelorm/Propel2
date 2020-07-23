@@ -84,6 +84,7 @@ class CrossForeignKeys
 
     /**
      * @param ForeignKey|null $foreignKey
+     * @return void
      */
     public function setIncomingForeignKey($foreignKey)
     {
@@ -182,6 +183,7 @@ class CrossForeignKeys
 
     /**
      * @param ForeignKey $foreignKey
+     * @return void
      */
     public function addCrossForeignKey(ForeignKey $foreignKey)
     {
@@ -198,6 +200,7 @@ class CrossForeignKeys
 
     /**
      * @param ForeignKey[] $foreignKeys
+     * @return void
      */
     public function setCrossForeignKeys(array $foreignKeys)
     {
@@ -216,6 +219,7 @@ class CrossForeignKeys
 
     /**
      * @param \Propel\Generator\Model\Table $foreignTable
+     * @return void
      */
     public function setMiddleTable(Table $foreignTable)
     {
@@ -234,6 +238,7 @@ class CrossForeignKeys
 
     /**
      * @param \Propel\Generator\Model\Table $table
+     * @return void
      */
     public function setTable(Table $table)
     {

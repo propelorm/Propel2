@@ -58,6 +58,10 @@ class ArchivableBehavior extends Behavior
         }
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     * @return void
+     */
     public function modifyTable()
     {
         if ($this->getParameter('archive_class') && $this->getParameter('archive_table')) {
@@ -68,6 +72,9 @@ class ArchivableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return void
+     */
     protected function addArchiveTable()
     {
         $table = $this->getTable();
@@ -140,6 +147,11 @@ class ArchivableBehavior extends Behavior
         return $this->archiveTable;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function getArchiveTablePhpName($builder)
     {
         if ($this->hasArchiveClass()) {
@@ -149,6 +161,11 @@ class ArchivableBehavior extends Behavior
         return $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getArchiveTable()));
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function getArchiveTableQueryName($builder)
     {
         if ($this->hasArchiveClass()) {
@@ -158,6 +175,9 @@ class ArchivableBehavior extends Behavior
         return $builder->getClassNameFromBuilder($builder->getNewStubQueryBuilder($this->getArchiveTable()));
     }
 
+    /**
+     * @return bool
+     */
     public function hasArchiveClass()
     {
         return $this->getParameter('archive_class') ? true : false;
@@ -175,21 +195,33 @@ class ArchivableBehavior extends Behavior
         return null;
     }
 
+    /**
+     * @return bool
+     */
     public function isArchiveOnInsert()
     {
         return 'true' === $this->getParameter('archive_on_insert');
     }
 
+    /**
+     * @return bool
+     */
     public function isArchiveOnUpdate()
     {
         return 'true' === $this->getParameter('archive_on_update');
     }
 
+    /**
+     * @return bool
+     */
     public function isArchiveOnDelete()
     {
         return 'true' === $this->getParameter('archive_on_delete');
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Archivable\ArchivableBehavior|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
         if (null === $this->objectBuilderModifier) {
@@ -199,6 +231,9 @@ class ArchivableBehavior extends Behavior
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Archivable\ArchivableBehavior|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {

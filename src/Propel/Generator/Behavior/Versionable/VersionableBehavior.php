@@ -33,6 +33,9 @@ class VersionableBehavior extends Behavior
         'indices'                   => 'false'
     ];
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $versionTable;
 
     protected $objectBuilderModifier;
@@ -57,6 +60,9 @@ class VersionableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return void
+     */
     public function modifyTable()
     {
         $this->addVersionColumn();
@@ -65,6 +71,9 @@ class VersionableBehavior extends Behavior
         $this->addForeignKeyVersionColumns();
     }
 
+    /**
+     * @return void
+     */
     protected function addVersionColumn()
     {
         $table = $this->getTable();
@@ -78,6 +87,9 @@ class VersionableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return void
+     */
     protected function addLogColumns()
     {
         $table = $this->getTable();
@@ -103,6 +115,9 @@ class VersionableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return void
+     */
     protected function addVersionTable()
     {
         $table = $this->getTable();
@@ -164,6 +179,9 @@ class VersionableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return void
+     */
     public function addForeignKeyVersionColumns()
     {
         $versionTable = $this->versionTable;
@@ -198,16 +216,25 @@ class VersionableBehavior extends Behavior
         }
     }
 
+    /**
+     * @return \Propel\Generator\Model\Table
+     */
     public function getVersionTable()
     {
         return $this->versionTable;
     }
 
+    /**
+     * @return string
+     */
     public function getVersionTablePhpName()
     {
         return $this->getTable()->getPhpName() . 'Version';
     }
 
+    /**
+     * @return ForeignKey[]
+     */
     public function getVersionableFks()
     {
         $versionableFKs = [];
@@ -222,6 +249,9 @@ class VersionableBehavior extends Behavior
         return $versionableFKs;
     }
 
+    /**
+     * @return ForeignKey[]
+     */
     public function getVersionableReferrers()
     {
         $versionableReferrers = [];
@@ -236,6 +266,11 @@ class VersionableBehavior extends Behavior
         return $versionableReferrers;
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return \Propel\Generator\Model\Column|null
+     */
     public function getReferrerIdsColumn(ForeignKey $fk)
     {
         $fkTableName = $fk->getTable()->getName();
@@ -244,6 +279,11 @@ class VersionableBehavior extends Behavior
         return $this->versionTable->getColumn($fkIdsColumnName);
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return \Propel\Generator\Model\Column|null
+     */
     public function getReferrerVersionsColumn(ForeignKey $fk)
     {
         $fkTableName = $fk->getTable()->getName();
@@ -252,6 +292,9 @@ class VersionableBehavior extends Behavior
         return $this->versionTable->getColumn($fkIdsColumnName);
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Versionable\VersionableBehavior|\Propel\Generator\Behavior\Versionable\VersionableBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
         if (null === $this->objectBuilderModifier) {
@@ -261,6 +304,9 @@ class VersionableBehavior extends Behavior
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return \Propel\Generator\Behavior\Versionable\VersionableBehavior|\Propel\Generator\Behavior\Versionable\VersionableBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
         if (null === $this->queryBuilderModifier) {

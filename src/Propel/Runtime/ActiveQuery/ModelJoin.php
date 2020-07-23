@@ -108,6 +108,11 @@ class ModelJoin extends Join
         return $this->tableMap;
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelJoin $join
+     *
+     * @return $this
+     */
     public function setPreviousJoin(ModelJoin $join)
     {
         $this->previousJoin = $join;
@@ -123,26 +128,43 @@ class ModelJoin extends Join
         return $this->previousJoin;
     }
 
+    /**
+     * @return bool
+     */
     public function isPrimary()
     {
         return null === $this->previousJoin;
     }
 
+    /**
+     * @param string $relationAlias
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelJoin
+     */
     public function setRelationAlias($relationAlias)
     {
         return $this->setRightTableAlias($relationAlias);
     }
 
+    /**
+     * @return string|null
+     */
     public function getRelationAlias()
     {
         return $this->getRightTableAlias();
     }
 
+    /**
+     * @return bool
+     */
     public function hasRelationAlias()
     {
         return $this->hasRightTableAlias();
     }
 
+    /**
+     * @return bool
+     */
     public function isIdentifierQuotingEnabled()
     {
         return $this->getTableMap()->isIdentifierQuotingEnabled();
@@ -172,6 +194,11 @@ class ModelJoin extends Join
         return $previousObject->$method();
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\Join|null $join
+     *
+     * @return bool
+     */
     public function equals($join)
     {
         /** @var ModelJoin $join */
@@ -183,6 +210,9 @@ class ModelJoin extends Join
         ;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return parent::toString()

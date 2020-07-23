@@ -30,6 +30,7 @@ class MssqlPlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+     * @return void
      */
     protected function initialize()
     {
@@ -55,21 +56,35 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, "INT"));
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 128;
     }
 
+    /**
+     * @param bool $notNull
+     *
+     * @return string
+     */
     public function getNullString($notNull)
     {
         return $notNull ? 'NOT NULL' : 'NULL';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsInsertNullPk()
     {
         return false;
@@ -103,6 +118,11 @@ class MssqlPlatform extends DefaultPlatform
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getDropTableDDL(Table $table)
     {
         $ret = '';
@@ -148,7 +168,7 @@ END
     /**
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string|null
+     * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
@@ -160,6 +180,8 @@ END
                 $this->getColumnListDDL($table->getPrimaryKey())
             );
         }
+
+        return '';
     }
 
     /**
@@ -250,13 +272,16 @@ END
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
 
+    /**
+     * @return string
+     */
     public function getTimestampFormatter()
     {
         return 'Y-m-d H:i:s';

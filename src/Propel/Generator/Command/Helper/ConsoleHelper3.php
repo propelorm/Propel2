@@ -18,6 +18,10 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     /** @var OutputInterface $output */
     protected $output;
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -84,18 +88,18 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
     /**
      * @inheritdoc
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
+    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
-        $question = new ChoiceQuestion($this->formatQuestion($question, $default), $choices, $default);
+        $choiceQuestion = new ChoiceQuestion($this->formatQuestion($question, $default), $choices, $default);
 
         if ($attempts) {
-            $question->setMaxAttempts($attempts);
+            $choiceQuestion->setMaxAttempts($attempts);
         }
 
-        $question->setErrorMessage($errorMessage);
-        $question->setMultiselect($multiselect);
+        $choiceQuestion->setErrorMessage($errorMessage);
+        $choiceQuestion->setMultiselect($multiselect);
 
-        return parent::ask($this->input, $this->output, $question);
+        return parent::ask($this->input, $this->output, $choiceQuestion);
     }
 
     /**
@@ -145,7 +149,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
      */
     public function writeln($messages, $options = 0)
     {
-        return $this->output->writeln($messages, $options);
+        $this->output->writeln($messages, $options);
     }
 
     /**

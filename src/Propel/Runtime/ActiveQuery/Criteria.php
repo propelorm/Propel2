@@ -514,7 +514,7 @@ class Criteria
      */
     public function setUseTransaction($v)
     {
-        $this->useTransaction = (Boolean) $v;
+        $this->useTransaction = (bool) $v;
     }
 
     /**
@@ -702,6 +702,7 @@ class Criteria
      * set, of course, in order to be useful.
      *
      * @param string $tableName
+     * @return void
      */
     public function setPrimaryTableName($tableName)
     {
@@ -777,6 +778,7 @@ class Criteria
      * Criteria, overwriting previous settings.
      *
      * @param mixed $t Mappings to be stored in this map.
+     * @return void
      */
     public function putAll($t)
     {
@@ -906,7 +908,7 @@ class Criteria
      *
      * @param string|array $left     A String with the left side of the join.
      * @param string|array $right    A String with the right side of the join.
-     * @param mixed $joinType A String with the join operator
+     * @param string|null $joinType A String with the join operator
      *                        among Criteria::INNER_JOIN, Criteria::LEFT_JOIN,
      *                        and Criteria::RIGHT_JOIN
      *
@@ -962,11 +964,11 @@ class Criteria
      *     array(FoldersTableMap::alias( 'fo', FoldersTableMap::LFT ), FoldersTableMap::alias( 'parent', FoldersTableMap::RGT ), Criteria::LESS_EQUAL )
      *   ),
      *   Criteria::LEFT_JOIN
-      * );
+     * );
      *
      * @see addJoin()
      * @param array  $conditions An array of conditions, each condition being an array (left, right, operator)
-     * @param string $joinType   A String with the join operator. Defaults to an implicit join.
+     * @param string|null $joinType   A String with the join operator. Defaults to an implicit join.
      *
      * @return $this A modified Criteria object.
      */
@@ -1076,7 +1078,7 @@ class Criteria
      * Adds a Criteria as subQuery in the From Clause.
      *
      * @param Criteria $subQueryCriteria Criteria to build the subquery from
-     * @param string   $alias            alias for the subQuery
+     * @param string|null   $alias            alias for the subQuery
      *
      * @return $this this modified Criteria object (Fluid API)
      */
@@ -1097,7 +1099,7 @@ class Criteria
      */
     public function hasSelectQueries()
     {
-        return (Boolean) $this->selectQueries;
+        return (bool) $this->selectQueries;
     }
 
     /**
@@ -1132,6 +1134,9 @@ class Criteria
         return isset($this->selectQueries[$alias]);
     }
 
+    /**
+     * @return int
+     */
     public function forgeSelectQueryAlias()
     {
         $aliasNumber = 0;
@@ -1219,7 +1224,7 @@ class Criteria
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreCase = (Boolean) $b;
+        $this->ignoreCase = (bool) $b;
 
         return $this;
     }
@@ -1248,7 +1253,7 @@ class Criteria
      */
     public function setSingleRecord($b)
     {
-        $this->singleRecord = (Boolean) $b;
+        $this->singleRecord = (bool) $b;
 
         return $this;
     }
@@ -1828,7 +1833,7 @@ class Criteria
      * @param mixed                    $value
      * @param string                   $operator              A String, like Criteria::EQUAL.
      * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
-    *                      (necessary for Propel 1.4 compatibility).
+     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
      * @return $this A modified Criteria object.
@@ -2105,6 +2110,11 @@ class Criteria
         return $string;
     }
 
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
     public function quoteIdentifierTable($string)
     {
         $realTableName = $string;
@@ -2313,6 +2323,11 @@ class Criteria
         return $id;
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
+     *
+     * @return \Propel\Runtime\Map\ColumnMap|null
+     */
     public function getPrimaryKey(Criteria $criteria = null)
     {
         if (!$criteria) {
@@ -2421,7 +2436,7 @@ class Criteria
                                 $rawcvt = '';
                                 // parse the $params['raw'] for ? chars
                                 for ($r = 0, $len = strlen($raw); $r < $len; $r++) {
-                                    if ($raw[$r] == '?') {
+                                    if ($raw[$r] === '?') {
                                         $rawcvt .= ':p'.$p++;
                                     } else {
                                         $rawcvt .= $raw[$r];
@@ -2480,6 +2495,12 @@ class Criteria
         return $affectedRows;
     }
 
+    /**
+     * @param string[] $columns
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $values
+     *
+     * @return array
+     */
     public function buildParams($columns, Criteria $values = null)
     {
         if (!$values) {
@@ -2500,6 +2521,13 @@ class Criteria
         return $params;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
@@ -2549,6 +2577,8 @@ class Criteria
      * Checks whether the Criteria needs to use column aliasing
      * This is implemented in a service class rather than in Criteria itself
      * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
+     *
+     * @return bool
      */
     public function needsSelectAliases()
     {
@@ -2667,6 +2697,9 @@ class Criteria
 
     // Fluid operators
 
+    /**
+     * @return $this
+     */
     public function _or()
     {
         $this->defaultCombineOperator = Criteria::LOGICAL_OR;
@@ -2674,6 +2707,9 @@ class Criteria
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function _and()
     {
         $this->defaultCombineOperator = Criteria::LOGICAL_AND;
@@ -2755,6 +2791,7 @@ class Criteria
 
     /**
      * Ensures deep cloning of attached objects
+     * @return void
      */
     public function __clone()
     {
@@ -2781,6 +2818,7 @@ class Criteria
 
     /**
      * @param boolean $identifierQuoting
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

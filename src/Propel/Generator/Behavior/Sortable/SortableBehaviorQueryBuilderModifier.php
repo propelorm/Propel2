@@ -20,7 +20,7 @@ use Propel\Generator\Model\Column;
 class SortableBehaviorQueryBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
      */
     protected $behavior;
 
@@ -39,12 +39,18 @@ class SortableBehaviorQueryBuilderModifier
      */
     protected $objectClassName;
 
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
+    /**
+     * @var string
+     */
     protected $tableMapClassName;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
     public function __construct($behavior)
     {

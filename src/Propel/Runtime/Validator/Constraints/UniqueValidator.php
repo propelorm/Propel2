@@ -16,6 +16,12 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class UniqueValidator extends ConstraintValidator
 {
+    /**
+     * @param mixed $value
+     * @param \Symfony\Component\Validator\Constraint $constraint
+     *
+     * @return void
+     */
     public function validate($value, Constraint $constraint)
     {
         if (null === $value) {

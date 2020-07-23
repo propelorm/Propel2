@@ -40,6 +40,9 @@ class InitCommand extends AbstractCommand
         $this->defaultPhpDir = $this->detectDefaultPhpDir();
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
@@ -50,6 +53,12 @@ class InitCommand extends AbstractCommand
             ;
     }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $consoleHelper = $this->createConsoleHelper($input, $output);
@@ -161,6 +170,9 @@ class InitCommand extends AbstractCommand
         return static::CODE_SUCCESS;
     }
 
+    /**
+     * @return string
+     */
     private function detectDefaultPhpDir()
     {
         if (file_exists(getcwd() . '/src/')) {
@@ -177,6 +189,11 @@ class InitCommand extends AbstractCommand
         return getcwd();
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initMysql(ConsoleHelperInterface $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host', 'localhost');
@@ -186,6 +203,11 @@ class InitCommand extends AbstractCommand
         return sprintf('mysql:host=%s;port=%s;dbname=%s', $host, $port, $database);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initSqlite(ConsoleHelperInterface $consoleHelper)
     {
         $path = $consoleHelper->askQuestion('Where should the sqlite database be stored?', getcwd() . '/my.app.sq3');
@@ -193,6 +215,11 @@ class InitCommand extends AbstractCommand
         return sprintf('sqlite:%s', $path);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initPgsql(ConsoleHelperInterface $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host (without port)', 'localhost');
@@ -202,6 +229,12 @@ class InitCommand extends AbstractCommand
         return sprintf('pgsql:host=%s;port=%s;dbname=%s', $host, $port, $database);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param string $rdbms
+     *
+     * @return mixed
+     */
     private function initDsn(ConsoleHelperInterface $consoleHelper, $rdbms)
     {
         switch ($rdbms) {
@@ -221,6 +254,12 @@ class InitCommand extends AbstractCommand
         return $consoleHelper->askQuestion(sprintf('Please enter the dsn (see <comment>%s</comment>) for your database connection', $help));
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param array $options
+     *
+     * @return void
+     */
     private function generateProject(OutputInterface $output, array $options)
     {
         $schema = new PropelTemplate();
@@ -243,6 +282,9 @@ class InitCommand extends AbstractCommand
         $this->buildSqlAndModelsAndConvertConfig();
     }
 
+    /**
+     * @return void
+     */
     private function buildSqlAndModelsAndConvertConfig()
     {
         $this->getApplication()->setAutoExit(false);
@@ -262,6 +304,13 @@ class InitCommand extends AbstractCommand
         $this->getApplication()->setAutoExit(true);
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string $filename
+     * @param string $content
+     *
+     * @return void
+     */
     private function writeFile(OutputInterface $output, $filename, $content)
     {
         $this->getFilesystem()->dumpFile($filename, $content);
@@ -269,6 +318,12 @@ class InitCommand extends AbstractCommand
         $output->writeln(sprintf('<info> + %s</info>', $filename));
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param array $options
+     *
+     * @return bool
+     */
     private function testConnection(ConsoleHelperInterface $consoleHelper, array $options)
     {
         $adapter = AdapterFactory::create($options['rdbms']);
@@ -296,6 +351,12 @@ class InitCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param array $options
+     *
+     * @return string
+     */
     private function reverseEngineerSchema(OutputInterface $output, array $options)
     {
         $outputDir = sys_get_temp_dir();

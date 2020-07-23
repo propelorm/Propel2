@@ -69,34 +69,51 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      */
     protected $con;
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $query
+     * @param int $maxPerPage
+     */
     public function __construct(ModelCriteria $query, $maxPerPage = 10)
     {
         $this->setQuery($query);
         $this->setMaxPerPage($maxPerPage);
         $this->setPage(1);
         $this->setLastPage(1);
-        $this->setMaxRecordLimit(false);
+        $this->setMaxRecordLimit(0);
         $this->setNbResults(0);
 
         $this->currentMaxLink = 1;
     }
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $query
+     *
+     * @return void
+     */
     public function setQuery(ModelCriteria $query)
     {
         $this->query = $query;
     }
 
+    /**
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return void
+     */
     public function init(ConnectionInterface $con = null)
     {
         $this->con = $con;
-        $hasMaxRecordLimit = false !== $this->getMaxRecordLimit();
         $maxRecordLimit = $this->getMaxRecordLimit();
-        
+        $hasMaxRecordLimit = (bool)$maxRecordLimit;
+
         $qForCount = clone $this->getQuery();
         $count = $qForCount
             ->offset(0)
@@ -145,7 +162,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
                 $newQueryKey = sprintf('%s offset %s limit %s', $queryKey, $this->getQuery()->getOffset(), $this->getQuery()->getLimit());
                 $this->getQuery()->setQueryKey($newQueryKey);
             }
-            
+
             $this->results = $this->getQuery()
                 ->find($this->con)
             ;
@@ -154,21 +171,37 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         return $this->results;
     }
 
+    /**
+     * @return int
+     */
     public function getCurrentMaxLink()
     {
         return $this->currentMaxLink;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxRecordLimit()
     {
         return $this->maxRecordLimit;
     }
 
+    /**
+     * @param int $limit
+     *
+     * @return void
+     */
     public function setMaxRecordLimit($limit)
     {
         $this->maxRecordLimit = $limit;
     }
 
+    /**
+     * @param int $nbLinks
+     *
+     * @return int[]
+     */
     public function getLinks($nbLinks = 5)
     {
         $links = [];
@@ -246,6 +279,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the total number of results of the query
      *
      * @param int $nb
+     * @return void
      */
     protected function setNbResults($nb)
     {
@@ -296,6 +330,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the first page
      *
      * @param int $page
+     * @return void
      */
     protected function setLastPage($page)
     {
@@ -319,6 +354,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the current page
      *
      * @param int $page
+     * @return void
      */
     public function setPage($page)
     {
@@ -363,6 +399,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the maximum number results per page
      *
      * @param int $max
+     * @return void
      */
     public function setMaxPerPage($max)
     {
@@ -393,6 +430,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         return $this->getResults()->isEmpty();
     }
 
+    /**
+     * @return \Propel\Runtime\Collection\CollectionIterator|\Traversable
+     */
     public function getIterator()
     {
         return $this->getResults()->getIterator();
@@ -409,6 +449,13 @@ class PropelModelPager implements \IteratorAggregate, \Countable
         return count($this->getResults());
     }
 
+    /**
+     * @param string $name
+     * @param array $params
+     *
+     * @throws \Propel\Runtime\Exception\BadMethodCallException
+     * @return mixed
+     */
     public function __call($name, $params)
     {
         try {

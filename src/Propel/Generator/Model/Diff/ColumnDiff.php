@@ -24,27 +24,27 @@ class ColumnDiff
      *
      * @var array
      */
-    protected $changedProperties;
+    protected $changedProperties = [];
 
     /**
      * The original column definition.
      *
-     * @var Column
+     * @var Column|null
      */
     protected $fromColumn;
 
     /**
      * The modified column definition.
      *
-     * @var Column
+     * @var Column|null
      */
     protected $toColumn;
 
     /**
      * Constructor.
      *
-     * @param Column $fromColumn The original column
-     * @param Column $toColumn   The modified column
+     * @param Column|null $fromColumn The original column
+     * @param Column|null $toColumn   The modified column
      */
     public function __construct(Column $fromColumn = null, Column $toColumn = null)
     {
@@ -55,14 +55,13 @@ class ColumnDiff
         if (null !== $toColumn) {
             $this->setToColumn($toColumn);
         }
-
-        $this->changedProperties = [];
     }
 
     /**
      * Sets for the changed properties.
      *
      * @param array $properties
+     * @return void
      */
     public function setChangedProperties($properties)
     {
@@ -83,6 +82,7 @@ class ColumnDiff
      * Sets the fromColumn property.
      *
      * @param Column $fromColumn
+     * @return void
      */
     public function setFromColumn(Column $fromColumn)
     {
@@ -92,7 +92,7 @@ class ColumnDiff
     /**
      * Returns the fromColumn property.
      *
-     * @return Column
+     * @return Column|null
      */
     public function getFromColumn()
     {
@@ -103,6 +103,7 @@ class ColumnDiff
      * Sets the toColumn property.
      *
      * @param Column $toColumn
+     * @return void
      */
     public function setToColumn(Column $toColumn)
     {
@@ -112,7 +113,7 @@ class ColumnDiff
     /**
      * Returns the toColumn property.
      *
-     * @return Column
+     * @return Column|null
      */
     public function getToColumn()
     {

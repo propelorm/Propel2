@@ -28,7 +28,6 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Database extends ScopedMappingModel
 {
-
     use BehaviorableTrait;
 
     /**
@@ -41,16 +40,31 @@ class Database extends ScopedMappingModel
     /**
      * @var Table[]
      */
-    private $tables;
+    private $tables = [];
 
     /**
      * @var string|null
      */
     private $name;
 
+    /**
+     * @var string|null
+     */
     private $baseClass;
+
+    /**
+     * @var string|null
+     */
     private $baseQueryClass;
+
+    /**
+     * @var string
+     */
     private $defaultIdMethod;
+
+    /**
+     * @var string
+     */
     private $defaultPhpNamingMethod;
 
     /**
@@ -70,38 +84,55 @@ class Database extends ScopedMappingModel
      * @var string
      */
     private $defaultMutatorVisibility;
-    private $domainMap;
-    private $heavyIndexing;
+
+    /**
+     * @var array
+     */
+    private $domainMap = [];
+
+    /**
+     * @var bool
+     */
+    private $heavyIndexing = false;
 
     /**
      * @var boolean
      */
-    private $identifierQuoting;
+    private $identifierQuoting = false;
 
-    /** @var Schema */
+    /**
+     * @var Schema
+     */
     private $parentSchema;
 
     /**
      * @var Table[]
      */
-    private $tablesByName;
+    private $tablesByName = [];
 
     /**
      * @var Table[]
      */
-    private $tablesByLowercaseName;
+    private $tablesByLowercaseName = [];
 
     /**
      * @var Table[]
      */
-    private $tablesByPhpName;
+    private $tablesByPhpName = [];
 
     /**
      * @var string[]
      */
-    private $sequences;
+    private $sequences = [];
 
+    /**
+     * @var string
+     */
     protected $defaultStringFormat;
+
+    /**
+     * @var string|null
+     */
     protected $tablePrefix;
 
     /**
@@ -122,21 +153,16 @@ class Database extends ScopedMappingModel
             $this->setPlatform($platform);
         }
 
-        $this->heavyIndexing             = false;
-        $this->identifierQuoting         = false;
         $this->defaultPhpNamingMethod    = NameGeneratorInterface::CONV_METHOD_UNDERSCORE;
         $this->defaultIdMethod           = IdMethod::NATIVE;
         $this->defaultStringFormat       = static::DEFAULT_STRING_FORMAT;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
         $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
-        $this->behaviors                 = [];
-        $this->domainMap                 = [];
-        $this->tables                    = [];
-        $this->tablesByName              = [];
-        $this->tablesByPhpName           = [];
-        $this->tablesByLowercaseName     = [];
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         parent::setupObject();
@@ -166,6 +192,7 @@ class Database extends ScopedMappingModel
      * Sets the PlatformInterface implementation for this database.
      *
      * @param PlatformInterface|null $platform A Platform implementation
+     * @return void
      */
     public function setPlatform(PlatformInterface $platform = null)
     {
@@ -196,6 +223,7 @@ class Database extends ScopedMappingModel
      * Sets the database name.
      *
      * @param string $name
+     * @return void
      */
     public function setName($name)
     {
@@ -229,6 +257,7 @@ class Database extends ScopedMappingModel
      * This parameter is overridden at the table level.
      *
      * @param string $class.
+     * @return void
      */
     public function setBaseClass($class)
     {
@@ -240,6 +269,7 @@ class Database extends ScopedMappingModel
      * This parameter is overridden at the table level.
      *
      * @param string $class.
+     * @return void
      */
     public function setBaseQueryClass($class)
     {
@@ -262,6 +292,7 @@ class Database extends ScopedMappingModel
      * This parameter can be overridden at the table level.
      *
      * @param string $strategy
+     * @return void
      */
     public function setDefaultIdMethod($strategy)
     {
@@ -284,6 +315,7 @@ class Database extends ScopedMappingModel
      * Sets name of the default PHP naming method strategy.
      *
      * @param string $strategy
+     * @return void
      */
     public function setDefaultPhpNamingMethod($strategy)
     {
@@ -308,6 +340,7 @@ class Database extends ScopedMappingModel
      *
      * @param  string                   $format
      * @throws InvalidArgumentException
+     * @return void
      */
     public function setDefaultStringFormat($format)
     {
@@ -360,10 +393,11 @@ class Database extends ScopedMappingModel
      * Sets whether or not heavy indexing is enabled.
      *
      * @param boolean $flag
+     * @return void
      */
     public function setHeavyIndexing($flag = true)
     {
-        $this->heavyIndexing = (Boolean) $flag;
+        $this->heavyIndexing = (bool) $flag;
     }
 
     /**
@@ -484,6 +518,7 @@ class Database extends ScopedMappingModel
      * Adds several tables at once.
      *
      * @param Table[] $tables An array of Table instances
+     * @return void
      */
     public function addTables(array $tables)
     {
@@ -550,6 +585,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string[] $sequences
+     * @return void
      */
     public function setSequences($sequences)
     {
@@ -566,6 +602,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string $sequence
+     * @return void
      */
     public function addSequence($sequence)
     {
@@ -574,6 +611,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string $sequence
+     * @return void
      */
     public function removeSequence($sequence)
     {
@@ -610,6 +648,7 @@ class Database extends ScopedMappingModel
      * Sets the database's schema.
      *
      * @param string $schema
+     * @return void
      */
     public function setSchema($schema)
     {
@@ -670,6 +709,7 @@ class Database extends ScopedMappingModel
      * Sets the parent schema
      *
      * @param Schema $parent The parent schema
+     * @return void
      */
     public function setParentSchema(Schema $parent)
     {
@@ -770,6 +810,7 @@ class Database extends ScopedMappingModel
      * Sets the tables' prefix.
      *
      * @param string $tablePrefix
+     * @return void
      */
     public function setTablePrefix($tablePrefix)
     {
@@ -805,6 +846,7 @@ class Database extends ScopedMappingModel
     /**
      * Finalizes the setup process.
      *
+     * @return void
      */
     public function doFinalInitialization()
     {
@@ -830,6 +872,11 @@ class Database extends ScopedMappingModel
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     *
+     * @return void
+     */
     protected function registerBehavior(Behavior $behavior)
     {
         $behavior->setDatabase($this);
@@ -838,14 +885,18 @@ class Database extends ScopedMappingModel
     /**
      * Setups all table referrers.
      *
+     * @return void
      */
-    protected function setupTableReferrers()
+    protected function setupTableReferrers(): void
     {
         foreach ($this->tables as $table) {
             $table->setupReferrers();
         }
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $tables = [];
@@ -925,6 +976,7 @@ class Database extends ScopedMappingModel
      * Sets the default accessor visibility.
      *
      * @param string $defaultAccessorVisibility
+     * @return void
      */
     public function setDefaultAccessorVisibility($defaultAccessorVisibility)
     {
@@ -945,6 +997,7 @@ class Database extends ScopedMappingModel
      * Sets the default mutator visibility.
      *
      * @param string $defaultMutatorVisibility
+     * @return void
      */
     public function setDefaultMutatorVisibility($defaultMutatorVisibility)
     {
@@ -961,6 +1014,9 @@ class Database extends ScopedMappingModel
         return $this->defaultMutatorVisibility;
     }
 
+    /**
+     * @return void
+     */
     public function __clone()
     {
         $tables = [];
@@ -984,6 +1040,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param boolean $identifierQuoting
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

@@ -31,12 +31,16 @@ class ModelManager extends AbstractManager
      * Sets the filesystem object.
      *
      * @param Filesystem $filesystem
+     * @return void
      */
     public function setFilesystem(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
     }
 
+    /**
+     * @return void
+     */
     public function build()
     {
         $this->validate();
@@ -93,12 +97,14 @@ class ModelManager extends AbstractManager
                                         if (!$child->getAncestor() && $child->getClassName() === $table->getPhpName()) {
                                             continue;
                                         }
+                                        /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
                                     $overwrite = false;
                                     foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
+                                        /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);

@@ -47,6 +47,7 @@ class SqlitePlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+     * @return void
      */
     protected function initialize()
     {
@@ -71,11 +72,17 @@ class SqlitePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
     }
 
+    /**
+     * @return string
+     */
     public function getSchemaDelimiter()
     {
         return '§';
     }
 
+    /**
+     * @return int[]
+     */
     public function getDefaultTypeSizes()
     {
         return [
@@ -89,7 +96,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
@@ -127,7 +134,7 @@ ALTER TABLE %s ADD %s;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
@@ -161,10 +168,10 @@ ALTER TABLE %s ADD %s;
                     //or an expression in parentheses.
                     || false !== array_search(
                         $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
-                    || substr(trim($column->getDefaultValue()), 0, 1) == '('
+                    || substr(trim($column->getDefaultValue()), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
-                    || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
+                    || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL')
                 ;
 
                 if ($sqlChangeNotSupported) {
@@ -246,6 +253,9 @@ DROP TABLE %s;
         return $sql;
     }
 
+    /**
+     * @return string
+     */
     public function getBeginDDL()
     {
         return '
@@ -253,6 +263,9 @@ PRAGMA foreign_keys = OFF;
 ';
     }
 
+    /**
+     * @return string
+     */
     public function getEndDDL()
     {
         return '
@@ -261,7 +274,9 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
      */
     public function getAddTablesDDL(Database $database)
     {
@@ -346,7 +361,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRemoveColumnDDL(Column $column)
     {
@@ -355,7 +370,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
@@ -364,7 +379,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -373,7 +388,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -382,7 +397,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
@@ -391,7 +406,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAddPrimaryKeyDDL(Table $table)
     {
@@ -400,7 +415,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
@@ -409,7 +424,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
@@ -419,17 +434,26 @@ PRAGMA foreign_keys = ON;
 
     /**
      * @link       http://www.sqlite.org/autoinc.html
+     * @return string
      */
     public function getAutoIncrement()
     {
         return 'PRIMARY KEY AUTOINCREMENT';
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 1024;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return string
+     */
     public function getColumnDDL(Column $col)
     {
         if ($col->isAutoIncrement()) {
@@ -450,6 +474,11 @@ PRAGMA foreign_keys = ON;
         return parent::getColumnDDL($col);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $table = clone $table;
@@ -528,6 +557,11 @@ PRAGMA foreign_keys = ON;
         return $script;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         return !in_array($sqlType, [
@@ -540,21 +574,26 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsSchemas()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return true;
     }
-
 }

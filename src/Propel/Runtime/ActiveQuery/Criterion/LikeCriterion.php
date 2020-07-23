@@ -43,7 +43,7 @@ class LikeCriterion extends AbstractCriterion
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreStringCase = (Boolean) $b;
+        $this->ignoreStringCase = (bool) $b;
 
         return $this;
     }
@@ -63,6 +63,7 @@ class LikeCriterion extends AbstractCriterion
      *
      * @param string $sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
+     * @return void
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {

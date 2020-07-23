@@ -29,6 +29,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @param ConnectionInterface $con
      * @param array               $settings An array of settings.
+     * @return void
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -45,6 +46,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      * @param string              $charset
      *
      * @throws \Propel\Runtime\Adapter\Exception\UnsupportedEncodingException
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -67,6 +69,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      * @param array       $params
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
+     * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {

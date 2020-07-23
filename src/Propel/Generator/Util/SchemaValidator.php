@@ -50,6 +50,11 @@ class SchemaValidator
         return 0 === count($this->errors);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return void
+     */
     protected function validateDatabaseTables(Database $database)
     {
         $phpNames = [];
@@ -72,6 +77,11 @@ class SchemaValidator
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
     protected function validateTableAttributes(Table $table)
     {
         $reservedTableNames = ['table_name'];
@@ -81,6 +91,11 @@ class SchemaValidator
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
     protected function validateTableColumns(Table $table)
     {
         if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {

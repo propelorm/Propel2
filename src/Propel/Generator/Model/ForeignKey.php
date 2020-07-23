@@ -117,8 +117,6 @@ class ForeignKey extends MappingModel
      */
     public function __construct($name = null)
     {
-        parent::__construct();
-
         if (null !== $name) {
             $this->setName($name);
         }
@@ -127,6 +125,9 @@ class ForeignKey extends MappingModel
         $this->onDelete       = self::NONE;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
@@ -142,6 +143,9 @@ class ForeignKey extends MappingModel
         $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
+    /**
+     * @return void
+     */
     protected function doNaming()
     {
         if (!$this->name || $this->autoNaming) {
@@ -243,6 +247,7 @@ class ForeignKey extends MappingModel
      * Sets the onDelete behavior.
      *
      * @param string $behavior
+     * @return void
      */
     public function setOnDelete($behavior)
     {
@@ -253,6 +258,7 @@ class ForeignKey extends MappingModel
      * Sets the onUpdate behavior.
      *
      * @param string|null $behavior
+     * @return void
      */
     public function setOnUpdate($behavior)
     {
@@ -275,6 +281,7 @@ class ForeignKey extends MappingModel
      * Sets the foreign key name.
      *
      * @param string $name
+     * @return void
      */
     public function setName($name)
     {
@@ -292,6 +299,7 @@ class ForeignKey extends MappingModel
 
     /**
      * @param string $interface
+     * @return void
      */
     public function setInterface($interface)
     {
@@ -312,6 +320,7 @@ class ForeignKey extends MappingModel
      * Sets a phpName to use for this foreign key.
      *
      * @param string $name
+     * @return void
      */
     public function setPhpName($name)
     {
@@ -332,6 +341,7 @@ class ForeignKey extends MappingModel
      * Sets a refPhpName to use for this foreign key.
      *
      * @param string $name
+     * @return void
      */
     public function setRefPhpName($name)
     {
@@ -352,6 +362,7 @@ class ForeignKey extends MappingModel
      * Sets the default join strategy for this foreign key (if any).
      *
      * @param string $join
+     * @return void
      */
     public function setDefaultJoin($join)
     {
@@ -418,6 +429,7 @@ class ForeignKey extends MappingModel
      * Sets the foreign table common name of the FK.
      *
      * @param string $tableName
+     * @return void
      */
     public function setForeignTableCommonName($tableName)
     {
@@ -453,6 +465,7 @@ class ForeignKey extends MappingModel
      * Set the foreign schema name of the foreign key.
      *
      * @param string $schemaName
+     * @return void
      */
     public function setForeignSchemaName($schemaName)
     {
@@ -463,6 +476,7 @@ class ForeignKey extends MappingModel
      * Sets the parent Table of the foreign key.
      *
      * @param \Propel\Generator\Model\Table $parent
+     * @return void
      */
     public function setTable(Table $parent)
     {
@@ -504,6 +518,7 @@ class ForeignKey extends MappingModel
      *
      * @param mixed $ref1 A Column object or an associative array or a string
      * @param mixed $ref2 A Column object or a single string name
+     * @return void
      */
     public function addReference($ref1, $ref2 = null)
     {
@@ -545,6 +560,7 @@ class ForeignKey extends MappingModel
     /**
      * Clears the references of this foreign key.
      *
+     * @return void
      */
     public function clearReferences()
     {
@@ -823,7 +839,7 @@ class ForeignKey extends MappingModel
         $result = [];
 
         foreach ($mapping as $map) {
-            list ($left, $right) = $map;
+            [$left, $right] = $map;
             $item = [];
             $item[0] = $left instanceof Column ? ':' . $left->getName() : $left;
             $item[1] = $right instanceof Column ? ':' . $right->getName() : $right;
@@ -888,6 +904,7 @@ class ForeignKey extends MappingModel
      * generated.
      *
      * @param boolean $skip
+     * @return void
      */
     public function setSkipSql($skip)
     {
@@ -920,9 +937,16 @@ class ForeignKey extends MappingModel
         return (boolean) $this->getInverseFK();
     }
 
+    /**
+     * @return \Propel\Generator\Model\ForeignKey|null
+     */
     public function getInverseFK()
     {
         $foreignTable = $this->getForeignTable();
+        if (!$foreignTable) {
+            throw new \RuntimeException('No foreign table given');
+        }
+
         $map = $this->getInverseMapping();
 
         foreach ($foreignTable->getForeignKeys() as $refFK) {
@@ -932,6 +956,8 @@ class ForeignKey extends MappingModel
                 return $refFK;
             }
         }
+
+        return null;
     }
 
     /**

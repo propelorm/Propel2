@@ -31,7 +31,7 @@ abstract class AbstractCommand extends Command
     protected $filesystem;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -103,6 +103,12 @@ abstract class AbstractCommand extends Command
         return $this->filesystem;
     }
 
+    /**
+     * @param string $directory
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
     protected function createDirectory($directory)
     {
         $filesystem = $this->getFilesystem();
@@ -156,7 +162,7 @@ abstract class AbstractCommand extends Command
      */
     protected function connectionToProperties($connection, $section = null)
     {
-        list($name, $dsn, $infos) = $this->parseConnection($connection);
+        [$name, $dsn, $infos] = $this->parseConnection($connection);
         $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
         $config['propel']['database']['connections'][$name]['adapter'] = strtolower($infos['adapter']);
         $config['propel']['database']['connections'][$name]['dsn'] = $dsn;

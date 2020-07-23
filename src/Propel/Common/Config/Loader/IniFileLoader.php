@@ -47,11 +47,9 @@ class IniFileLoader extends FileLoader
     /**
      * Loads a resource, merge it with the default configuration array and resolve its parameters.
      *
-     * @param  mixed  $file The resource
-     * @param  string $type The resource type
+     * @param  string  $file The resource
+     * @param  string|null $type The resource type
      * @return array  The configuration array
-     *
-     * @return array
      *
      * @throws \InvalidArgumentException                                if configuration file not found
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException When ini file is not valid
@@ -143,6 +141,8 @@ class IniFileLoader extends FileLoader
      * @param array  $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
+     *
+     * @return void
      */
     private function parseKey($key, $value, array &$config)
     {

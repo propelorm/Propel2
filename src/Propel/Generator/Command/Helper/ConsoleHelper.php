@@ -11,6 +11,10 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     protected $input;
     protected $output;
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -81,7 +85,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     /**
      * @inheritdoc
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
+    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
         return parent::select(
                                 $this->output,

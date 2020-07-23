@@ -22,7 +22,7 @@ use Propel\Generator\Manager\ModelManager;
 class ModelBuildCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -53,7 +53,7 @@ class ModelBuildCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -21,7 +21,7 @@ use Propel\Generator\Manager\MigrationManager;
 class MigrationStatusCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -38,7 +38,7 @@ class MigrationStatusCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -101,7 +101,7 @@ class MigrationStatusCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Latest migration was executed on %s (timestamp %d)',
                     date('Y-m-d H:i:s', $oldestMigrationTimestamp),
-                    $oldestMigrationTimestamp
+                    (string)$oldestMigrationTimestamp
                 ));
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');

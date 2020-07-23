@@ -31,6 +31,7 @@ class SqlParser
      * Also resets the parsing cursor (see getNextStatement)
      *
      * @param string $sql The SQL string to parse
+     * @return void
      */
     public function setSQL($sql)
     {
@@ -165,11 +166,17 @@ class SqlParser
         return self::parseString(file_get_contents($file));
     }
 
+    /**
+     * @return void
+     */
     public function convertLineFeedsToUnixStyle()
     {
         $this->setSQL(str_replace(["\r\n", "\r"], "\n", $this->sql));
     }
 
+    /**
+     * @return void
+     */
     public function stripSQLCommentLines()
     {
         $this->setSQL(preg_replace([

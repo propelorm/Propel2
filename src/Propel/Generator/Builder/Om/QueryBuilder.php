@@ -72,6 +72,7 @@ class QueryBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -227,6 +228,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -301,12 +303,16 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the entityNotFoundExceptionClass property which is necessary for the `requireOne` method
      * of the `ModelCriteria`
+     * @return void
      */
     protected function addEntityNotFoundExceptionClass(&$script)
     {
         $script .= "protected \$entityNotFoundExceptionClass = '" . addslashes($this->getEntityNotFoundExceptionClass()) . "';\n";
     }
 
+    /**
+     * @return string|null
+     */
     private function getEntityNotFoundExceptionClass()
     {
         return $this->getBuildProperty('generator.objectModel.entityNotFoundExceptionClass');
@@ -315,6 +321,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDeleteAll(), etc. methods.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDeleteMethods(&$script)
     {
@@ -369,6 +376,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {
@@ -382,6 +390,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the constructor for this object.
      * @param string $script The script will be modified in this method.
      * @see addConstructor()
+     * @return void
      */
     protected function addConstructor(&$script)
     {
@@ -394,7 +403,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the comment for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorComment(&$script)
     {
         $script .= "
@@ -410,7 +420,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function declaration for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorOpen(&$script)
     {
         $table = $this->getTable();
@@ -422,7 +433,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function body for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorBody(&$script)
     {
         $script .= "
@@ -432,7 +444,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function close for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorClose(&$script)
     {
         $script .= "
@@ -443,6 +456,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the factory for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactory(&$script)
     {
@@ -455,7 +469,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the comment for the factory
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addFactoryComment(&$script)
     {
         $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
@@ -473,7 +488,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function declaration for the factory
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addFactoryOpen(&$script)
     {
         $script .= "
@@ -484,6 +500,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function body for the factory
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactoryBody(&$script)
     {
@@ -505,7 +522,10 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
     /**
      * Adds the function close for the factory
+     *
      * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addFactoryClose(&$script)
     {
@@ -514,6 +534,11 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFindPk(&$script)
     {
         $class = $this->getObjectClassName();
@@ -560,7 +585,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     }
 ";
 
-            return $script;
+            return;
         }
 
         $script .= "
@@ -602,13 +627,18 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFindPkSimple(&$script)
     {
         $table = $this->getTable();
 
         // this method is not needed if the table has no primary key
         if (!$table->hasPrimaryKey()) {
-            return '';
+            return;
         }
 
         $platform = $this->getPlatform();
@@ -701,6 +731,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the findPk method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFindPkComplex(&$script)
     {
@@ -709,7 +740,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 
         // this method is not needed if the table has no primary key
         if (!$table->hasPrimaryKey()) {
-            return '';
+            return;
         }
 
         $this->declareClasses('\Propel\Runtime\Connection\ConnectionInterface');
@@ -738,6 +769,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the findPks method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFindPks(&$script)
     {
@@ -776,7 +808,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     }
 ";
 
-            return $script;
+            return;
         }
 
         $script .= "
@@ -797,6 +829,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the filterByPrimaryKey method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFilterByPrimaryKey(&$script)
     {
@@ -819,7 +852,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     }
 ";
 
-            return $script;
+            return;
         }
 
         $pks = $table->getPrimaryKey();
@@ -851,6 +884,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the filterByPrimaryKey method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFilterByPrimaryKeys(&$script)
     {
@@ -874,7 +908,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     }
 ";
 
-            return $script;
+            return;
         }
 
         $pks = $table->getPrimaryKey();
@@ -919,6 +953,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the filterByCol method for this object.
      * @param string $script The script will be modified in this method.
      * @param Column $col
+     * @return void
      */
     protected function addFilterByCol(&$script, Column $col)
     {
@@ -1140,6 +1175,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the singular filterByCol method for an Array column.
      * @param string $script The script will be modified in this method.
      * @param Column $col
+     * @return void
      */
     protected function addFilterByArrayCol(&$script, Column $col)
     {
@@ -1187,6 +1223,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param string $script The script will be modified in this method.
      * @param Column $col
+     * @return void
      */
     protected function addFilterBySetCol(&$script, Column $col)
     {
@@ -1213,6 +1250,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the filterByFk method for this object.
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk ForeignKey
+     * @return void
      */
     protected function addFilterByFk(&$script, $fk)
     {
@@ -1252,7 +1290,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             return \$this";
 
         foreach ($fk->getMapping() as $mapping) {
-            list($localColumn, $rightValueOrColumn) = $mapping;
+            [$localColumn, $rightValueOrColumn] = $mapping;
             if ($rightValueOrColumn instanceof Column) {
                 $script .= "
                 ->addUsingAlias(" . $this->getColumnConstant($localColumn) . ", " . $objectName . "->get" . $rightValueOrColumn->getPhpName() . "(), \$comparison)";
@@ -1297,6 +1335,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      *
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
+     * @return void
      */
     protected function addFilterByRefFk(&$script, ForeignKey $fk)
     {
@@ -1326,7 +1365,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
             return \$this";
         foreach ($fk->getInverseMapping() as $mapping) {
             /** @var Column $foreignColumn */
-            list($localValueOrColumn, $foreignColumn) = $mapping;
+            [$localValueOrColumn, $foreignColumn] = $mapping;
             $rightValue = "{$objectName}->get" . $foreignColumn->getPhpName() . "()";
 
             if ($localValueOrColumn instanceof Column) {
@@ -1368,6 +1407,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the joinFk method for this object.
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk ForeignKey
+     * @return void
      */
     protected function addJoinFk(&$script, $fk)
     {
@@ -1382,6 +1422,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the joinRefFk method for this object.
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
+     * @return void
      */
     protected function addJoinRefFk(&$script, ForeignKey $fk)
     {
@@ -1395,6 +1436,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds a joinRelated method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1437,6 +1479,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the useFkQuery method for this object.
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk ForeignKey
+     * @return void
      */
     protected function addUseFkQuery(&$script, $fk)
     {
@@ -1453,6 +1496,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      * Adds the useFkQuery method for this object.
      * @param string $script The script will be modified in this method.
      * @param ForeignKey $fk
+     * @return void
      */
     protected function addUseRefFkQuery(&$script, ForeignKey $fk)
     {
@@ -1468,6 +1512,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds a useRelatedQuery method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addUseRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1492,6 +1537,12 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
 ";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addFilterByCrossFK(&$script, CrossForeignKeys $crossFKs)
     {
         $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
@@ -1528,6 +1579,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the prune method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addPrune(&$script)
     {
@@ -1583,6 +1635,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePreSelect hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePreSelect(&$script)
     {
@@ -1608,6 +1661,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePreDelete hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePreDelete(&$script)
     {
@@ -1633,6 +1687,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePostDelete hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePostDelete(&$script)
     {
@@ -1659,6 +1714,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePreUpdate hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePreUpdate(&$script)
     {
@@ -1686,6 +1742,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePostUpdate hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePostUpdate(&$script)
     {
@@ -1726,12 +1783,15 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {
-        return $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
+        $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
+
+        return $script;
     }
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {
@@ -1741,6 +1801,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDelete() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDelete(&$script)
     {
@@ -1804,6 +1865,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoOnDeleteCascade(&$script)
     {
@@ -1885,6 +1947,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoOnDeleteSetNull(&$script)
     {
@@ -1962,6 +2025,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDeleteAll() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoDeleteAll(&$script)
     {

@@ -61,6 +61,9 @@ class DatabaseComparator
         $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;
     }
 
+    /**
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff
+     */
     public function getDatabaseDiff()
     {
         return $this->databaseDiff;
@@ -70,6 +73,7 @@ class DatabaseComparator
      * Sets the fromDatabase property.
      *
      * @param Database $fromDatabase
+     * @return void
      */
     public function setFromDatabase(Database $fromDatabase)
     {
@@ -90,6 +94,7 @@ class DatabaseComparator
      * Sets the toDatabase property.
      *
      * @param Database $toDatabase
+     * @return void
      */
     public function setToDatabase(Database $toDatabase)
     {
@@ -110,6 +115,7 @@ class DatabaseComparator
      * Set true to handle removed tables or false to ignore them
      *
      * @param boolean $removeTable
+     * @return void
      */
     public function setRemoveTable($removeTable)
     {
@@ -128,6 +134,7 @@ class DatabaseComparator
      * Set the list of tables excluded from the comparison
      *
      * @param string[] $excludedTables set the list of table name
+     * @return void
      */
     public function setExcludedTables(array $excludedTables)
     {
@@ -180,6 +187,7 @@ class DatabaseComparator
 
     /**
      * @param boolean $withRenaming
+     * @return void
      */
     public function setWithRenaming($withRenaming)
     {

@@ -54,6 +54,9 @@ class OnDemandIterator implements \Iterator
         $this->enableInstancePoolingOnFinish = Propel::disableInstancePooling();
     }
 
+    /**
+     * @return void
+     */
     public function closeCursor()
     {
         $this->dataFetcher->close();
@@ -101,12 +104,13 @@ class OnDemandIterator implements \Iterator
     /**
      * Advances the cursor in the statement
      * Closes the cursor if the end of the statement is reached
+     * @return void
      */
     public function next()
     {
         $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
-        $this->isValid = (Boolean) $this->currentRow;
+        $this->isValid = (bool) $this->currentRow;
         if (!$this->isValid) {
             $this->closeCursor();
         }
@@ -115,6 +119,7 @@ class OnDemandIterator implements \Iterator
     /**
      * Initializes the iterator by advancing to the first position
      * This method can only be called once (this is a NoRewindIterator)
+     * @return void
      */
     public function rewind()
     {
@@ -138,6 +143,6 @@ class OnDemandIterator implements \Iterator
      */
     public function valid()
     {
-        return (Boolean) $this->isValid;
+        return (bool) $this->isValid;
     }
 }

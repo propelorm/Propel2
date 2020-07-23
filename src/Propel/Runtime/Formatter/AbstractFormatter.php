@@ -25,36 +25,52 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 abstract class AbstractFormatter
 {
+    /**
+     * @var string|null
+     */
     protected $dbName;
 
+    /**
+     * @var string|null
+     */
     protected $class;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap|null
+     */
     protected $tableMap;
 
-    /** @var ModelWith[] $with */
-    protected $with;
+    /**
+     * @var ModelWith[] $with
+     */
+    protected $with = [];
 
-    protected $asColumns;
+    /**
+     * @var array
+     */
+    protected $asColumns = [];
 
-    protected $hasLimit;
+    /**
+     * @var bool
+     */
+    protected $hasLimit = false;
 
-    /** @var ActiveRecordInterface[] */
-    protected $currentObjects;
-
-    protected $collectionName;
+    /**
+     * @var ActiveRecordInterface[]
+     */
+    protected $currentObjects = [];
 
     /**
      * @var DataFetcherInterface
      */
     protected $dataFetcher;
 
+    /**
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     */
     public function __construct(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
     {
-        $this->with = [];
-        $this->asColumns = [];
-        $this->currentObjects = [];
-        $this->hasLimit = false;
-
         if (null !== $criteria) {
             $this->init($criteria, $dataFetcher);
         }
@@ -64,6 +80,7 @@ abstract class AbstractFormatter
      * Sets a DataFetcherInterface object.
      *
      * @param DataFetcherInterface $dataFetcher
+     * @return void
      */
     public function setDataFetcher(DataFetcherInterface $dataFetcher)
     {
@@ -110,47 +127,82 @@ abstract class AbstractFormatter
         $this->dbName = $dbName;
     }
 
+    /**
+     * @return string
+     */
     public function getDbName()
     {
         return $this->dbName;
     }
 
+    /**
+     * @param string $class
+     *
+     * @return void
+     */
     public function setClass($class)
     {
         $this->class     = $class;
         $this->tableMap  = constant($this->class . '::TABLE_MAP');
     }
 
+    /**
+     * @return string|null
+     */
     public function getClass()
     {
         return $this->class;
     }
 
+    /**
+     * @param array $withs
+     *
+     * @return void
+     */
     public function setWith($withs = [])
     {
         $this->with = $withs;
     }
 
+    /**
+     * @return \Propel\Runtime\ActiveQuery\ModelWith[]
+     */
     public function getWith()
     {
         return $this->with;
     }
 
+    /**
+     * @param array $asColumns
+     *
+     * @return void
+     */
     public function setAsColumns($asColumns = [])
     {
         $this->asColumns = $asColumns;
     }
 
+    /**
+     * @return array
+     */
     public function getAsColumns()
     {
         return $this->asColumns;
     }
 
+    /**
+     * @param bool $hasLimit
+     *
+     * @return void
+     */
     public function setHasLimit($hasLimit = false)
     {
         $this->hasLimit = $hasLimit;
     }
 
+    /**
+     * @return bool
+     */
     public function hasLimit()
     {
         return $this->hasLimit;
@@ -205,6 +257,10 @@ abstract class AbstractFormatter
      */
     abstract public function isObjectFormatter();
 
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @return void
+     */
     public function checkInit()
     {
         if (null === $this->tableMap) {
@@ -212,11 +268,17 @@ abstract class AbstractFormatter
         }
     }
 
+    /**
+     * @return \Propel\Runtime\Map\TableMap
+     */
     public function getTableMap()
     {
         return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
     }
 
+    /**
+     * @return bool
+     */
     protected function isWithOneToMany()
     {
         foreach ($this->with as $modelWith) {

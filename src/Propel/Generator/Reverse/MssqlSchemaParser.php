@@ -80,6 +80,12 @@ class MssqlSchemaParser extends AbstractSchemaParser
         return self::$mssqlTypeMap;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param array $additionalTables
+     *
+     * @return int
+     */
     public function parse(Database $database, array $additionalTables = [])
     {
         $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
@@ -116,9 +122,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * Adds Columns to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+     * @return void
      */
     protected function addColumns(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
@@ -131,7 +139,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $default = $row['COLUMN_DEF'];
             $scale = $row['SCALE'];
             $autoincrement = false;
-            if (strtolower($type) == 'int identity') {
+            if (strtolower($type) === 'int identity') {
                 $autoincrement = true;
             }
 
@@ -160,13 +168,15 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     * @return void
      */
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();
-        
+
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME
-         from sys.foreign_keys as fk 
+         from sys.foreign_keys as fk
          inner join sys.foreign_key_columns ref on ref.constraint_object_id = fk.object_id
          inner join sys.columns lcol on lcol.object_id = ref.parent_object_id and lcol.column_id = ref.parent_column_id
          inner join sys.columns rcol on rcol.object_id = ref.referenced_object_id and rcol.column_id = ref.referenced_column_id
@@ -202,9 +212,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     * @return void
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
@@ -246,6 +258,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     * @return void
      */
     protected function addPrimaryKey(Table $table)
     {

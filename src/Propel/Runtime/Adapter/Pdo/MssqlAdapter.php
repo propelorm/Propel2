@@ -32,6 +32,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @param ConnectionInterface $con
      * @param string              $charset
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -76,7 +77,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function compareRegex($left, $right)
     {
@@ -209,7 +210,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $selColCount = count($selColArr) - 1;
 
             // make sure the current column isn't * or an aggregate
-            if ($selColArr[0] != '*' && ! strstr($selColArr[0], '(')) {
+            if ($selColArr[0] !== '*' && ! strstr($selColArr[0], '(')) {
                 if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
@@ -243,7 +244,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                 // quote the alias
                 $alias = $selColArr[$selColCount];
                 // don't quote the identifier if it is already quoted
-                if ($alias[0] != '[') {
+                if ($alias[0] !== '[') {
                     $alias = $this->quoteIdentifier($alias);
                 }
 
@@ -279,6 +280,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param array       $params
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
+     * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {

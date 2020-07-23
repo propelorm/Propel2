@@ -56,8 +56,8 @@ class FileLoaderTest extends TestCase
                 '->resolve() supports % escaping by doubling it'
             ],
             [
-                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %%foo %%bar']]],
-                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %foo %bar']]],
+                ['foo' => ['bar' => ['ding' => 'I\'m a bar %%foo %%bar']]],
+                ['foo' => ['bar' => ['ding' => 'I\'m a bar %foo %bar']]],
                 '->resolve() supports % escaping by doubling it'
             ],
             [
@@ -315,7 +315,7 @@ class FileLoaderTest extends TestCase
         $this->loader->resolveParams($config);
     }
 
-    public function testCallResolveParamTwiceReturnNull()
+    public function testCallResolveParamTwiceReturnsEmpty()
     {
         $config = [
             'foo' => 'bar',
@@ -323,7 +323,7 @@ class FileLoaderTest extends TestCase
         ];
 
         $this->assertEquals(['foo' => 'bar', 'baz' => 'bar'], $this->loader->resolveParams($config));
-        $this->assertNull($this->loader->resolveParams($config));
+        $this->assertSame([], $this->loader->resolveParams($config));
     }
 }
 
@@ -339,6 +339,12 @@ class TestableFileLoader extends BaseFileLoader
 
     }
 
+    /**
+     * @param string|string[] $ext
+     * @param false|string $resource
+     *
+     * @return bool
+     */
     public function checkSupports($ext, $resource)
     {
         return parent::checkSupports($ext, $resource);

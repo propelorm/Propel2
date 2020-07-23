@@ -51,8 +51,6 @@ class DatabaseMap
     protected $tablesByPhpName = [];
 
     /**
-     * Constructor.
-     *
      * @param string $name Name of the database.
      */
     public function __construct($name)
@@ -87,6 +85,7 @@ class DatabaseMap
      * Add a new table object to the database.
      *
      * @param \Propel\Runtime\Map\TableMap $table The table to add
+     * @return void
      */
     public function addTableObject(TableMap $table)
     {

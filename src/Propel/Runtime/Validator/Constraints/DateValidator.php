@@ -20,11 +20,12 @@ use Symfony\Component\Validator\Constraint;
 class DateValidator extends SymfonyDateValidator
 {
     /**
-     * {@inheritdoc}
+     * @param mixed $value The value that should be validated
+     * @param \Symfony\Component\Validator\Constraint $constraint
+     * @return void
      */
     public function validate($value, Constraint $constraint)
     {
-
         if ($value instanceof \DateTimeInterface) {
             return;
         }

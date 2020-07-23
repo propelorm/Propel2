@@ -97,7 +97,7 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
@@ -105,7 +105,7 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
     {

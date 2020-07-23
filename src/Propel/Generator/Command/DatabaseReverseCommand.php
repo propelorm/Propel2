@@ -27,7 +27,7 @@ class DatabaseReverseCommand extends AbstractCommand
     const DEFAULT_SCHEMA_NAME       = 'schema';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -51,7 +51,7 @@ class DatabaseReverseCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

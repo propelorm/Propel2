@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Parser;
  * Validate a model object using Symfony2 Validator component
  *
  * @author Cristiano Cinotti
-*/
+ */
 class ValidateBehavior extends Behavior
 {
     /**
@@ -79,7 +79,7 @@ class ValidateBehavior extends Behavior
      * Returns the parameters associated with a given column.
      * Useful for i18n behavior
      *
-     * @param  string $columnName The column name
+     * @param  string|null $columnName The column name
      * @return array  The array of parameters associated to given column
      */
     public function getParametersFromColumnName($columnName = null)
@@ -101,7 +101,8 @@ class ValidateBehavior extends Behavior
      * Remove parameters associated with given column.
      * Useful for i18n behavior
      *
-     * @param string $columnName The column name
+     * @param string|null $columnName The column name
+     * @return void
      */
     public function removeParametersFromColumnName($columnName = null)
     {
@@ -123,6 +124,8 @@ class ValidateBehavior extends Behavior
      * Useful when modify table (i18n behavior).
      * If all the rules have been removed, the behavior can't perform validation on related tables.
      * This method introduce a rule to avoid this.
+     *
+     * @return void
      */
     public function addRuleOnPk()
     {
@@ -143,6 +146,7 @@ class ValidateBehavior extends Behavior
      * Merge $paramArray array into parameters array.
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
+     * @return void
      */
     public function mergeParameters(array $params = null)
     {
@@ -166,6 +170,7 @@ class ValidateBehavior extends Behavior
     /**
      * Convert those parameters, containing an array in YAML format
      * into a php array
+     * @return void
      */
     protected function cleanupParameters()
     {
@@ -278,10 +283,11 @@ class ValidateBehavior extends Behavior
 
     /**
      * Adds the getValidationFailures() method.
+     *
+     * @return string
      */
     protected function addGetValidationFailuresMethod()
     {
         return $this->renderTemplate('objectGetValidationFailures');
     }
-
 }

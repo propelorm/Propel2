@@ -29,11 +29,18 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string              $charset The charset encoding.
      *
      * @throws \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array $settings
+     *
+     * @return void
+     */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
         $con->query('PRAGMA foreign_keys = ON');
@@ -101,6 +108,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string  $sql
      * @param integer $offset
      * @param integer $limit
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {

@@ -88,6 +88,7 @@ class ReverseManager extends AbstractManager
      * Sets the name of a database schema to use (optional).
      *
      * @param string $schemaName
+     * @return void
      */
     public function setSchemaName($schemaName)
     {
@@ -108,6 +109,7 @@ class ReverseManager extends AbstractManager
      * Sets the php namespace to use (optional).
      *
      * @param string $namespace
+     * @return void
      */
     public function setNamespace($namespace)
     {
@@ -130,6 +132,7 @@ class ReverseManager extends AbstractManager
      * schema.xml
      *
      * @param string $databaseName
+     * @return void
      */
     public function setDatabaseName($databaseName)
     {
@@ -140,6 +143,7 @@ class ReverseManager extends AbstractManager
      * Sets whether to use the column name as phpName without any translation.
      *
      * @param boolean $samePhpName
+     * @return void
      */
     public function setSamePhpName($samePhpName)
     {
@@ -150,10 +154,11 @@ class ReverseManager extends AbstractManager
      * Sets whether to add vendor info to the schema.
      *
      * @param boolean $addVendorInfo
+     * @return void
      */
     public function setAddVendorInfo($addVendorInfo)
     {
-        $this->addVendorInfo = (Boolean) $addVendorInfo;
+        $this->addVendorInfo = (bool) $addVendorInfo;
     }
 
     /**
@@ -167,6 +172,10 @@ class ReverseManager extends AbstractManager
         return $this->samePhpName;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     * @return bool
+     */
     public function reverse()
     {
         if (!$this->getDatabaseName()) {
@@ -196,6 +205,7 @@ class ReverseManager extends AbstractManager
      */
     protected function buildModel()
     {
+        /** @var \Propel\Generator\Config\GeneratorConfig $config */
         $config     = $this->getGeneratorConfig();
         $connection = $this->getConnection();
         $databaseName = $config->getConfigProperty('reverse.connection');
@@ -255,7 +265,9 @@ class ReverseManager extends AbstractManager
      */
     protected function getConnection()
     {
+        /** @var \Propel\Generator\Config\GeneratorConfig $generatorConfig */
         $generatorConfig = $this->getGeneratorConfig();
+        /** @var string|null $database */
         $database = $generatorConfig->getConfigProperty('reverse.connection');
 
         if (null === $database) {

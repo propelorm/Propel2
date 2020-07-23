@@ -33,15 +33,54 @@ class Column extends MappingModel
 
     public static $validVisibilities = [ 'public', 'protected', 'private' ];
 
+    /**
+     * @var string|null
+     */
     private $name;
+
+    /**
+     * @var string|null
+     */
     private $description;
+
+    /**
+     * @var string|null
+     */
     private $phpName;
+
+    /**
+     * @var string|null
+     */
     private $phpSingularName;
+
+    /**
+     * @var string|null
+     */
     private $phpNamingMethod;
-    private $isNotNull;
+
+    /**
+     * @var bool
+     */
+    private $isNotNull = false;
+
+    /**
+     * @var string|null
+     */
     private $namePrefix;
+
+    /**
+     * @var string|null
+     */
     private $accessorVisibility;
+
+    /**
+     * @var string|null
+     */
     private $mutatorVisibility;
+
+    /**
+     * @var string|null
+     */
     private $typeHint;
 
     /**
@@ -70,35 +109,98 @@ class Column extends MappingModel
      * @var int|null
      */
     private $position;
-    private $isPrimaryKey;
-    private $isNodeKey;
+
+    /**
+     * @var bool
+     */
+    private $isPrimaryKey = false;
+
+    /**
+     * @var bool
+     */
+    private $isNodeKey = false;
+
+    /**
+     * @var string
+     */
     private $nodeKeySep;
-    private $isNestedSetLeftKey;
-    private $isNestedSetRightKey;
-    private $isTreeScopeKey;
-    private $isUnique;
-    private $isAutoIncrement;
-    private $isLazyLoad;
+
+    /**
+     * @var bool
+     */
+    private $isNestedSetLeftKey = false;
+
+    /**
+     * @var bool
+     */
+    private $isNestedSetRightKey = false;
+
+    /**
+     * @var bool
+     */
+    private $isTreeScopeKey = false;
+
+    /**
+     * @var bool
+     */
+    private $isUnique = false;
+
+    /**
+     * @var bool
+     */
+    private $isAutoIncrement = false;
+
+    /**
+     * @var bool
+     */
+    private $isLazyLoad = false;
+
+    /**
+     * @var array
+     */
     private $referrers = [];
-    private $isPrimaryString;
+
+    /**
+     * @var bool
+     */
+    private $isPrimaryString = false;
 
     // only one type is supported currently, which assumes the
     // column either contains the classnames or a key to
     // classnames specified in the schema.    Others may be
     // supported later.
 
+    /**
+     * @var string|null
+     */
     private $inheritanceType;
-    private $isInheritance;
-    private $isEnumeratedClasses;
+
+    /**
+     * @var bool
+     */
+    private $isInheritance = false;
+
+    /**
+     * @var bool
+     */
+    private $isEnumeratedClasses = false;
+
+    /**
+     * @var array|null
+     */
     private $inheritanceList;
 
-    // maybe this can be retrieved from vendor specific information
-    private $needsTransactionInPostgres;
+    /**
+     * maybe this can be retrieved from vendor specific information
+     *
+     * @var bool
+     */
+    private $needsTransactionInPostgres = false;
 
     /**
      * @var string[]
      */
-    protected $valueSet;
+    protected $valueSet = [];
 
     /**
      * Creates a new column and set the name.
@@ -109,8 +211,6 @@ class Column extends MappingModel
      */
     public function __construct($name = null, $type = null, $size = null)
     {
-        parent::__construct();
-
         if (null !== $name) {
             $this->setName($name);
         }
@@ -122,24 +222,10 @@ class Column extends MappingModel
         if (null !== $size) {
             $this->setSize((int)$size);
         }
-
-        $this->isAutoIncrement            = false;
-        $this->isEnumeratedClasses        = false;
-        $this->isLazyLoad                 = false;
-        $this->isNestedSetLeftKey         = false;
-        $this->isNestedSetRightKey        = false;
-        $this->isNodeKey                  = false;
-        $this->isNotNull                  = false;
-        $this->isPrimaryKey               = false;
-        $this->isPrimaryString            = false;
-        $this->isTreeScopeKey             = false;
-        $this->isUnique                   = false;
-        $this->needsTransactionInPostgres = false;
-        $this->valueSet = [];
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getTypeHint()
     {
@@ -147,13 +233,18 @@ class Column extends MappingModel
     }
 
     /**
-     * @param mixed $typeHint
+     * @param string|null $typeHint
+     * @return void
      */
     public function setTypeHint($typeHint)
     {
         $this->typeHint = $typeHint;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\EngineException
+     * @return void
+     */
     protected function setupObject()
     {
         try {
@@ -329,6 +420,7 @@ class Column extends MappingModel
      * Sets the domain for this column.
      *
      * @param Domain $domain
+     * @return void
      */
     public function setDomain(Domain $domain)
     {
@@ -379,6 +471,7 @@ class Column extends MappingModel
      * Sets the column name.
      *
      * @param string $name
+     * @return void
      */
     public function setName($name)
     {
@@ -420,6 +513,7 @@ class Column extends MappingModel
      * Sets the column description.
      *
      * @param string $description
+     * @return void
      */
     public function setDescription($description)
     {
@@ -464,6 +558,7 @@ class Column extends MappingModel
      * $phpName is passed.
      *
      * @param string $phpName
+     * @return void
      */
     public function setPhpName($phpName = null)
     {
@@ -482,6 +577,7 @@ class Column extends MappingModel
      * $phpSingularName is passed.
      *
      * @param string $phpSingularName
+     * @return void
      */
     public function setPhpSingularName($phpSingularName = null)
     {
@@ -522,6 +618,7 @@ class Column extends MappingModel
      * Sets the accessor methods visibility for this column / attribute.
      *
      * @param string $visibility
+     * @return void
      */
     public function setAccessorVisibility($visibility)
     {
@@ -551,6 +648,7 @@ class Column extends MappingModel
      * Sets the mutator methods visibility for this column / attribute.
      *
      * @param string $visibility
+     * @return void
      */
     public function setMutatorVisibility($visibility)
     {
@@ -604,6 +702,7 @@ class Column extends MappingModel
      * Sets the TableMap constant name that will identify this column.
      *
      * @param string $name
+     * @return void
      */
     public function setTableMapName($name)
     {
@@ -636,6 +735,7 @@ class Column extends MappingModel
      * Returns the location of this column within the table (one-based).
      *
      * @param integer $position
+     * @return void
      */
     public function setPosition($position)
     {
@@ -646,6 +746,7 @@ class Column extends MappingModel
      * Sets the parent table.
      *
      * @param \Propel\Generator\Model\Table $table
+     * @return void
      */
     public function setTable(Table $table)
     {
@@ -701,7 +802,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance type.
      *
-     * @return string
+     * @return string|null
      */
     public function getInheritanceType()
     {
@@ -764,10 +865,11 @@ class Column extends MappingModel
      * Sets whether or not the column is not null.
      *
      * @param boolean $flag
+     * @return void
      */
     public function setNotNull($flag = true)
     {
-        $this->isNotNull = (Boolean) $flag;
+        $this->isNotNull = (bool) $flag;
     }
 
     /**
@@ -787,10 +889,11 @@ class Column extends MappingModel
      * __toString method of an active record object.
      *
      * @param boolean $isPrimaryString
+     * @return void
      */
     public function setPrimaryString($isPrimaryString)
     {
-        $this->isPrimaryString = (Boolean) $isPrimaryString;
+        $this->isPrimaryString = (bool) $isPrimaryString;
     }
 
     /**
@@ -808,10 +911,11 @@ class Column extends MappingModel
      * Sets whether or not the column is a primary key.
      *
      * @param boolean $flag
+     * @return void
      */
     public function setPrimaryKey($flag = true)
     {
-        $this->isPrimaryKey = (Boolean) $flag;
+        $this->isPrimaryKey = (bool) $flag;
     }
 
     /**
@@ -828,10 +932,11 @@ class Column extends MappingModel
      * Sets whether or not the column is a node key of a tree.
      *
      * @param boolean $isNodeKey
+     * @return void
      */
     public function setNodeKey($isNodeKey)
     {
-        $this->isNodeKey = (Boolean) $isNodeKey;
+        $this->isNodeKey = (bool) $isNodeKey;
     }
 
     /**
@@ -848,6 +953,7 @@ class Column extends MappingModel
      * Sets the separator for the node key column in a tree.
      *
      * @param string $sep
+     * @return void
      */
     public function setNodeKeySep($sep)
     {
@@ -868,10 +974,11 @@ class Column extends MappingModel
      * Sets whether or not the column is the nested set left key of a tree.
      *
      * @param boolean $isNestedSetLeftKey
+     * @return void
      */
     public function setNestedSetLeftKey($isNestedSetLeftKey)
     {
-        $this->isNestedSetLeftKey = (Boolean) $isNestedSetLeftKey;
+        $this->isNestedSetLeftKey = (bool) $isNestedSetLeftKey;
     }
 
     /**
@@ -888,10 +995,11 @@ class Column extends MappingModel
      * Set if the column is the nested set right key of a tree.
      *
      * @param boolean $isNestedSetRightKey
+     * @return void
      */
     public function setNestedSetRightKey($isNestedSetRightKey)
     {
-        $this->isNestedSetRightKey = (Boolean) $isNestedSetRightKey;
+        $this->isNestedSetRightKey = (bool) $isNestedSetRightKey;
     }
 
     /**
@@ -908,10 +1016,11 @@ class Column extends MappingModel
      * Sets whether or not the column is the scope key of a tree.
      *
      * @param boolean $isTreeScopeKey
+     * @return void
      */
     public function setTreeScopeKey($isTreeScopeKey)
     {
-        $this->isTreeScopeKey = (Boolean) $isTreeScopeKey;
+        $this->isTreeScopeKey = (bool) $isTreeScopeKey;
     }
 
     /**
@@ -980,6 +1089,7 @@ class Column extends MappingModel
      * Adds the foreign key from another table that refers to this column.
      *
      * @param ForeignKey $fk
+     * @return void
      */
     public function addReferrer(ForeignKey $fk)
     {
@@ -1021,6 +1131,7 @@ class Column extends MappingModel
     /**
      * Clears all referrers.
      *
+     * @return void
      */
     public function clearReferrers()
     {
@@ -1030,6 +1141,7 @@ class Column extends MappingModel
     /**
      * Clears all inheritance children.
      *
+     * @return void
      */
     public function clearInheritanceList()
     {
@@ -1043,6 +1155,7 @@ class Column extends MappingModel
      * size, scale (or other domain attributes).
      *
      * @param string $mappingType
+     * @return void
      */
     public function setDomainForType($mappingType)
     {
@@ -1054,6 +1167,7 @@ class Column extends MappingModel
      *
      * @param string $mappingType
      * @see Domain::setType()
+     * @return void
      */
     public function setType($mappingType)
     {
@@ -1085,6 +1199,11 @@ class Column extends MappingModel
         return PropelTypes::getPDOType($this->getType());
     }
 
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
+     *
+     * @return bool
+     */
     public function isDefaultSqlType(PlatformInterface $platform = null)
     {
         if (null === $this->domain
@@ -1192,6 +1311,7 @@ class Column extends MappingModel
      * Sets the list of possible values for an ENUM or SET column.
      *
      * @param string|string[] $valueSet
+     * @return void
      */
     public function setValueSet($valueSet)
     {
@@ -1226,7 +1346,8 @@ class Column extends MappingModel
     /**
      * Sets the column size.
      *
-     * @param integer $size
+     * @param integer|null $size
+     * @return void
      */
     public function setSize($size)
     {
@@ -1247,6 +1368,7 @@ class Column extends MappingModel
      * Sets the column scale.
      *
      * @param integer $scale
+     * @return void
      */
     public function setScale($scale)
     {
@@ -1393,10 +1515,11 @@ class Column extends MappingModel
      * Use isAutoIncrement() to find out if it is set or not.
      *
      * @param boolean $flag
+     * @return void
      */
     public function setAutoIncrement($flag = true)
     {
-        $this->isAutoIncrement = (Boolean) $flag;
+        $this->isAutoIncrement = (bool) $flag;
     }
 
     /**
@@ -1473,6 +1596,7 @@ class Column extends MappingModel
     /**
      * Clones the current object.
      *
+     * @return void
      */
     public function __clone()
     {

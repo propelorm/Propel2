@@ -29,16 +29,15 @@ class SqlManager extends AbstractManager
     protected $connections;
 
     /**
-     * @var array
+     * @var bool
      */
-    protected $databases = null;
-
     protected $overwriteSqlMap = false;
 
     /**
      * Set the database connection settings
      *
      * @param array $connections
+     * @return void
      */
     public function setConnections($connections)
     {
@@ -55,6 +54,11 @@ class SqlManager extends AbstractManager
         return $this->connections;
     }
 
+    /**
+     * @param string $connection
+     *
+     * @return bool
+     */
     public function hasConnection($connection)
     {
         return isset($this->connections[$connection]);
@@ -70,12 +74,20 @@ class SqlManager extends AbstractManager
 
     /**
      * @param boolean $overwriteSqlMap
+     * @return void
      */
     public function setOverwriteSqlMap($overwriteSqlMap)
     {
         $this->overwriteSqlMap = (boolean) $overwriteSqlMap;
     }
 
+    /**
+     * @param string $datasource
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return array
+     */
     public function getConnection($datasource)
     {
         if (!$this->hasConnection($datasource)) {
@@ -95,11 +107,13 @@ class SqlManager extends AbstractManager
 
     /**
      * Build SQL files.
+     * @return void
      */
     public function buildSql()
     {
         $sqlDbMapContent = "# Sqlfile -> Database map\n";
         foreach ($this->getDatabases() as $datasource => $database) {
+            /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
             $platform = $database->getPlatform();
             $filename = $database->getName() . '.sql';
 
@@ -130,7 +144,8 @@ class SqlManager extends AbstractManager
     }
 
     /**
-     * @param string $datasource A datasource name.
+     * @param string|null $datasource A datasource name.
+     * @return bool
      */
     public function insertSql($datasource = null)
     {

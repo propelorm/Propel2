@@ -136,6 +136,9 @@ class AggregateColumnBehavior extends Behavior
         ]);
     }
 
+    /**
+     * @return string
+     */
     protected function addObjectUpdate()
     {
         return $this->renderTemplate('objectUpdate', [
@@ -143,6 +146,9 @@ class AggregateColumnBehavior extends Behavior
         ]);
     }
 
+    /**
+     * @return \Propel\Generator\Model\Table|null
+     */
     protected function getForeignTable()
     {
         $database = $this->getTable()->getDatabase();
@@ -155,6 +161,7 @@ class AggregateColumnBehavior extends Behavior
     }
 
     /**
+     * @throws \InvalidArgumentException
      * @return ForeignKey
      */
     protected function getForeignKey()
@@ -169,6 +176,9 @@ class AggregateColumnBehavior extends Behavior
         return array_shift($fks);
     }
 
+    /**
+     * @return \Propel\Generator\Model\Column|null
+     */
     protected function getColumn()
     {
         return $this->getTable()->getColumn($this->getParameter('name'));

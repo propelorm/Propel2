@@ -43,6 +43,7 @@ interface AdapterInterface
      *
      * @param ConnectionInterface $con
      * @param string              $charset The $string charset encoding.
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset);
 
@@ -110,7 +111,7 @@ interface AdapterInterface
      *
      * @param  string $table The table name to quo
      * @return string The quoted table name
-     **/
+     */
     public function quoteIdentifierTable($table);
 
     /**

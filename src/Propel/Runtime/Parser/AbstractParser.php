@@ -55,6 +55,12 @@ abstract class AbstractParser
         return $this->fromArray($data, $rootKey);
     }
 
+    /**
+     * @param string $data
+     * @param string $rootKey
+     *
+     * @return array
+     */
     public function listToArray($data, $rootKey = 'data')
     {
         return $this->toArray($data, $rootKey);
@@ -85,6 +91,7 @@ abstract class AbstractParser
      *
      * @param string $data The file content
      * @param string $path Path of the file to create
+     * @return mixed|null|void
      */
     public function dump($data, $path = null)
     {

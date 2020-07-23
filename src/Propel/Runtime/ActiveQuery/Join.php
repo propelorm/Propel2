@@ -45,7 +45,11 @@ class Join
     // the right parts of the join condition
     protected $right = [];
 
-    // the comparison operators for each pair of columns in the join condition
+    /**
+     * The comparison operators for each pair of columns in the join condition
+     *
+     * @var string[]
+     */
     protected $operators = [];
 
     // the type of the join (LEFT JOIN, ...)
@@ -110,6 +114,7 @@ class Join
      * @param string $right    The right column of the join condition
      *                         (may contain an alias name)
      * @param string $operator The comparison operator of the join condition, default Join::EQUAL
+     * @return void
      */
     public function addCondition($left, $right, $operator = self::EQUAL)
     {
@@ -136,8 +141,9 @@ class Join
      *
      * @param array $lefts     The left columns of the join condition
      * @param array $rights    The right columns of the join condition
-     * @param array $operators The comparison operators of the join condition, default Join::EQUAL
+     * @param string[] $operators The comparison operators of the join condition, default Join::EQUAL
      * @throws \Propel\Runtime\Exception\LogicException
+     * @return void
      */
     public function addConditions($lefts, $rights, $operators = [])
     {
@@ -168,6 +174,7 @@ class Join
      * @param string $rightColumnName
      * @param string $rightTableAlias
      * @param string $operator        The comparison operator of the join condition, default Join::EQUAL
+     * @return void
      */
     public function addExplicitCondition(
         $leftTableName,
@@ -193,11 +200,12 @@ class Join
     /**
      * @param string $leftTableName
      * @param string $leftColumnName
-     * @param mixed  $leftTableAlias
+     * @param string|null  $leftTableAlias
      * @param mixed  $leftColumnValue
      * @param string $operator
+     * @return void
      */
-    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias = null, $leftColumnValue, $operator = self::EQUAL)
+    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias, $leftColumnValue, $operator = self::EQUAL)
     {
         $this->leftTableName = $leftTableName;
         $this->leftTableAlias  = $leftTableAlias;
@@ -209,7 +217,16 @@ class Join
         $this->count++;
     }
 
-    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias = null, $rightColumnValue, $operator = self::EQUAL)
+    /**
+     * @param string $rightTableName
+     * @param string $rightColumnName
+     * @param string|null $rightTableAlias
+     * @param mixed $rightColumnValue
+     * @param string $operator
+     *
+     * @return void
+     */
+    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias, $rightColumnValue, $operator = self::EQUAL)
     {
         $this->rightTableName = $rightTableName;
         $this->rightTableAlias = $rightTableAlias;
@@ -252,8 +269,9 @@ class Join
 
     /**
      * @param string $operator the comparison operator for the join condition
+     * @return void
      */
-    public function addOperator($operator = null)
+    public function addOperator($operator)
     {
         $this->operators[] = $operator;
     }
@@ -267,6 +285,9 @@ class Join
         return $this->operators[$index];
     }
 
+    /**
+     * @return string[]
+     */
     public function getOperators()
     {
         return $this->operators;
@@ -278,6 +299,7 @@ class Join
      * @param string $joinType The type of the join. Valid join types are
      *                         null (adding the join condition to the where clause),
      *                         Criteria::LEFT_JOIN(), Criteria::RIGHT_JOIN(), and Criteria::INNER_JOIN()
+     * @return void
      */
     public function setJoinType($joinType = null)
     {
@@ -304,6 +326,7 @@ class Join
      * $join->addLeftColumnName('AUTHOR_ID');
      * </code>
      * @param string $left The name of the left column to add
+     * @return void
      */
     public function addLeftColumnName($left)
     {
@@ -314,6 +337,7 @@ class Join
      * Adds a value for a leftColumn.
      *
      * @param string|number $value an actual value
+     * @return void
      */
     public function addLeftValue($value)
     {
@@ -439,6 +463,7 @@ class Join
      * $join->addRightColumnName('ID');
      * </code>
      * @param string $right The name of the right column to add
+     * @return void
      */
     public function addRightColumnName($right)
     {
@@ -582,6 +607,7 @@ class Join
      * Set a custom join condition
      *
      * @param AbstractCriterion $joinCondition a Join condition
+     * @return void
      */
     public function setJoinCondition(AbstractCriterion $joinCondition)
     {
@@ -602,6 +628,7 @@ class Join
      * Set the custom join condition Criterion based on the conditions of this join
      *
      * @param Criteria $c A Criteria object to get Criterions from
+     * @return void
      */
     public function buildJoinCondition(Criteria $c)
     {
@@ -732,6 +759,7 @@ class Join
 
     /**
      * @param boolean $identifierQuoting
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

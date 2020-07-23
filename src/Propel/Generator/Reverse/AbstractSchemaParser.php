@@ -87,6 +87,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Sets the database connection.
      *
      * @param ConnectionInterface $dbh
+     * @return void
      */
     public function setConnection(ConnectionInterface $dbh)
     {
@@ -106,6 +107,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Setter for the migrationTable property
      *
      * @param string $migrationTable
+     * @return void
      */
     public function setMigrationTable($migrationTable)
     {
@@ -126,6 +128,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Pushes a message onto the stack of warnings.
      *
      * @param string $msg The warning message.
+     * @return void
      */
     protected function warn($msg)
     {
@@ -146,6 +149,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Sets the GeneratorConfig to use in the parsing.
      *
      * @param GeneratorConfigInterface $config
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config)
     {
@@ -218,6 +222,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
         return $vi;
     }
 
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
+     */
     public function setPlatform($platform)
     {
         $this->platform = $platform;

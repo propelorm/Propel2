@@ -39,6 +39,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+     * @return void
      */
     protected function initialize()
     {
@@ -63,16 +64,25 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
     }
 
+    /**
+     * @return string
+     */
     public function getNativeIdMethod()
     {
         return PlatformInterface::SERIAL;
     }
 
+    /**
+     * @return string
+     */
     public function getAutoIncrement()
     {
         return '';
     }
 
+    /**
+     * @return int[]
+     */
     public function getDefaultTypeSizes()
     {
         return [
@@ -85,6 +95,9 @@ class PgsqlPlatform extends DefaultPlatform
         ];
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 63;
@@ -104,6 +117,9 @@ class PgsqlPlatform extends DefaultPlatform
         return ($b ? "'t'" : "'f'");
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
         return true;
@@ -140,6 +156,11 @@ class PgsqlPlatform extends DefaultPlatform
         return $result;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     protected function getAddSequenceDDL(Table $table)
     {
         if ($table->getIdMethod() == IdMethod::NATIVE
@@ -152,8 +173,15 @@ CREATE SEQUENCE %s;
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
             );
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     protected function getDropSequenceDDL(Table $table)
     {
         if ($table->getIdMethod() == IdMethod::NATIVE
@@ -166,8 +194,15 @@ DROP SEQUENCE %s;
                 $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
             );
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
+     */
     public function getAddSchemasDDL(Database $database)
     {
         $ret = '';
@@ -183,6 +218,11 @@ DROP SEQUENCE %s;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddSchemaDDL(Table $table)
     {
         $vi = $table->getVendorInfoForType('pgsql');
@@ -192,9 +232,16 @@ CREATE SCHEMA %s;
 ";
 
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
-        };
+        }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getUseSchemaDDL(Table $table)
     {
         $vi = $table->getVendorInfoForType('pgsql');
@@ -205,8 +252,15 @@ SET search_path TO %s;
 
             return sprintf($pattern, $this->quoteIdentifier($vi->getParameter('schema')));
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getResetSchemaDDL(Table $table)
     {
         $vi = $table->getVendorInfoForType('pgsql');
@@ -215,8 +269,15 @@ SET search_path TO %s;
 SET search_path TO public;
 ";
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
+     */
     public function getAddTablesDDL(Database $database)
     {
         $ret = $this->getAddSchemasDDL($database);
@@ -284,7 +345,7 @@ COMMIT;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getAddForeignKeysDDL(Table $table)
     {
@@ -296,6 +357,11 @@ COMMIT;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $ret = '';
@@ -345,6 +411,11 @@ COMMENT ON TABLE %s IS %s;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     protected function getAddColumnsComments(Table $table)
     {
         $ret = '';
@@ -355,6 +426,11 @@ COMMENT ON TABLE %s IS %s;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
     protected function getAddColumnComment(Column $column)
     {
         $pattern = "
@@ -367,8 +443,15 @@ COMMENT ON COLUMN %s.%s IS %s;
                 $this->quote($description)
             );
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getDropTableDDL(Table $table)
     {
         $ret = '';
@@ -383,6 +466,11 @@ DROP TABLE IF EXISTS %s CASCADE;
         return $ret;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getPrimaryKeyName(Table $table)
     {
         $tableName = $table->getCommonName();
@@ -390,6 +478,11 @@ DROP TABLE IF EXISTS %s CASCADE;
         return $tableName . '_pkey';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return string
+     */
     public function getColumnDDL(Column $col)
     {
         $domain = $col->getDomain();
@@ -426,6 +519,11 @@ DROP TABLE IF EXISTS %s CASCADE;
         return implode(' ', $ddl);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Unique $unique
+     *
+     * @return string
+     */
     public function getUniqueDDL(Unique $unique)
     {
         return sprintf('CONSTRAINT %s UNIQUE (%s)',
@@ -434,6 +532,12 @@ DROP TABLE IF EXISTS %s CASCADE;
         );
     }
 
+    /**
+     * @param string $fromTableName
+     * @param string $toTableName
+     *
+     * @return string
+     */
     public function getRenameTableDDL($fromTableName, $toTableName)
     {
         if (false !== ($pos = strpos($toTableName, '.'))) {
@@ -452,27 +556,44 @@ ALTER TABLE %s RENAME TO %s;
 
     /**
      * @see Platform::supportsSchemas()
+     * @return bool
      */
     public function supportsSchemas()
     {
         return true;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         return !in_array($sqlType, ['BYTEA', 'TEXT', 'DOUBLE PRECISION']);
     }
 
+    /**
+     * @return bool
+     */
     public function hasStreamBlobImpl()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsVarcharWithoutSize()
     {
         return true;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
+     *
+     * @return string
+     */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
         $ret = parent::getModifyTableDDL($tableDiff);
@@ -592,6 +713,11 @@ DROP SEQUENCE %s CASCADE;
         return $ret;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
     public function isString($type)
     {
         $strings = ['VARCHAR'];
@@ -599,6 +725,11 @@ DROP SEQUENCE %s CASCADE;
         return in_array(strtoupper($type), $strings);
     }
 
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
     public function isNumber($type)
     {
         $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
@@ -606,6 +737,12 @@ DROP SEQUENCE %s CASCADE;
         return in_array(strtoupper($type), $numbers);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return string
+     */
     public function getUsingCast(Column $fromColumn, Column $toColumn)
     {
         $fromSqlType = strtoupper($fromColumn->getDomain()->getSqlType());
@@ -704,6 +841,15 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      * Get the PHP snippet for getting a Pk from the database.
      * Warning: duplicates logic from PgsqlAdapter::getId().
      * Any code modification here must be ported there.
+     *
+     * @param string $columnValueMutator
+     * @param string $connectionVariableName
+     * @param string $sequenceName
+     * @param string $tab
+     * @param string|null $phpType
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     * @return string|string[]|null
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = "            ", $phpType = null)
     {

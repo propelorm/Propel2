@@ -97,6 +97,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     *
+     * @return void
      */
     protected function validateModel()
     {
@@ -319,11 +321,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         // we have a duplicate class and asked for an automatic Alias
         if (false !== $alias) {
-            if ('\\Base' == substr($namespace, -5) || 'Base' == $namespace) {
+            if ('\\Base' === substr($namespace, -5) || 'Base' === $namespace) {
                 return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
             }
 
-            if ('Child' == substr($alias, 0, 5)) {
+            if ('Child' === substr($alias, 0, 5)) {
                 //we already requested Child.$class and its in use too,
                 //so use the fqcn
                 return ($namespace ? '\\' . $namespace : '') .  '\\' . $class;
@@ -431,6 +433,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->declareClassNamespacePrefix($builder->getUnqualifiedClassName(), $builder->getNamespace(), $aliasPrefix);
     }
 
+    /**
+     * @return void
+     */
     public function declareClasses()
     {
         $args = func_get_args();
@@ -766,6 +771,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param array            $shortSignature
      * @param array            $normalizedShortSignature
      * @param array            $phpDoc
+     * @return void
      */
     protected function extractCrossInformation(
         CrossForeignKeys $crossFKs,
@@ -844,7 +850,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $relCol = '';
 
         foreach ($fk->getMapping() as $mapping) {
-            list($localColumn, $foreignValueOrColumn) = $mapping;
+            [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable  = $fk->getTable();
             if (!$localColumn) {
@@ -895,7 +901,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     {
         $relCol = '';
         foreach ($fk->getMapping() as $mapping) {
-            list($localColumn, $foreignValueOrColumn) = $mapping;
+            [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
             if (!$localColumn) {
@@ -946,6 +952,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      * @param string $script  The script will be modified in this method.
+     * @return void
      */
     public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = "        ")
     {
@@ -975,6 +982,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Checks whether any registered behavior content creator on that table exists a contentName
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
      * @param string $modifier    The name of the modifier object providing the method in the behavior
+     * @return string|null
      */
     public function getBehaviorContentBase($contentName, $modifier)
     {
@@ -985,6 +993,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 return $modifier->$contentName($this);
             }
         }
+
+        return null;
     }
 
     /**
@@ -1069,6 +1079,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Opens class.
      *
      * @param string $script
+     * @return void
      */
     abstract protected function addClassOpen(&$script);
 
@@ -1081,6 +1092,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * drastically change the contents of the generated object class.
      *
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     abstract protected function addClassBody(&$script);
 
@@ -1088,6 +1100,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Closes class.
      *
      * @param string $script
+     * @return void
      */
     abstract protected function addClassClose(&$script);
 }

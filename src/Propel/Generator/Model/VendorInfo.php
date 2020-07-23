@@ -29,8 +29,6 @@ class VendorInfo extends MappingModel
      */
     public function __construct($type = null, array $parameters = [])
     {
-        parent::__construct();
-
         $this->parameters = [];
 
         if (null !== $type) {
@@ -46,6 +44,7 @@ class VendorInfo extends MappingModel
      * Sets the RDBMS type for this vendor specific information.
      *
      * @param string $type
+     * @return void
      */
     public function setType($type)
     {
@@ -67,6 +66,7 @@ class VendorInfo extends MappingModel
      *
      * @param string $name  The parameter name
      * @param mixed  $value The parameter value
+     * @return void
      */
     public function setParameter($name, $value)
     {
@@ -99,6 +99,7 @@ class VendorInfo extends MappingModel
      * Sets an associative array of parameters for vendor specific information.
      *
      * @param array $parameters Parameter data.
+     * @return void
      */
     public function setParameters(array $parameters = [])
     {
@@ -142,6 +143,9 @@ class VendorInfo extends MappingModel
         return $newInfo;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->type = $this->getAttribute('type');

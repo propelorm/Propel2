@@ -23,7 +23,7 @@ use Propel\Generator\Model\Table;
 class SortableBehaviorObjectBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
      */
     protected $behavior;
 
@@ -58,7 +58,7 @@ class SortableBehaviorObjectBuilderModifier
     protected $queryFullClassName;
 
     /**
-     * @param SortableBehavior $behavior
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
     public function __construct($behavior)
     {
@@ -66,21 +66,41 @@ class SortableBehaviorObjectBuilderModifier
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name)
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string|null
+     */
     protected function getColumnPhpName($name)
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder(AbstractOMBuilder $builder)
     {
         $this->builder = $builder;
@@ -114,11 +134,21 @@ class SortableBehaviorObjectBuilderModifier
         return 'set' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preSave($builder)
     {
         return "\$this->processSortableQueries(\$con);";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preInsert($builder)
     {
         $useScope = $this->behavior->useScope();
@@ -130,6 +160,11 @@ class SortableBehaviorObjectBuilderModifier
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preUpdate($builder)
     {
         if ($this->behavior->useScope()) {
@@ -152,8 +187,15 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
 
             return $script;
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preDelete($builder)
     {
         $useScope = $this->behavior->useScope();
@@ -165,6 +207,11 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectAttributes($builder)
     {
         $script = "
@@ -187,6 +234,11 @@ protected \$oldScope;
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         $this->setBuilder($builder);
@@ -217,6 +269,12 @@ protected \$oldScope;
         return $script;
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     public function objectFilter(&$script, $builder)
     {
         if ($this->behavior->useScope()) {
@@ -250,6 +308,8 @@ protected \$oldScope;
     /**
      * Get the wraps for getter/setter, if the rank column has not the default name
      *
+     * @param string $script
+     *
      * @return void
      */
     protected function addRankAccessors(&$script)
@@ -280,6 +340,8 @@ public function setRank(\$v)
 
     /**
      * Get the wraps for getter/setter, if the scope column has not the default name
+     *
+     * @param string $script
      *
      * @return void
      */
@@ -603,6 +665,11 @@ public function insertAtTop()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToRank(&$script)
     {
         $useScope = $this->behavior->useScope();
