@@ -150,7 +150,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $tableName = $row[0];
             $tableSchema = '';
 
-            if ('sqlite_' == substr($tableName, 0, 7)) {
+            if ('sqlite_' === substr($tableName, 0, 7)) {
                 continue;
             }
 

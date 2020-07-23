@@ -2434,7 +2434,7 @@ class Criteria
                                 $rawcvt = '';
                                 // parse the $params['raw'] for ? chars
                                 for ($r = 0, $len = strlen($raw); $r < $len; $r++) {
-                                    if ($raw[$r] == '?') {
+                                    if ($raw[$r] === '?') {
                                         $rawcvt .= ':p'.$p++;
                                     } else {
                                         $rawcvt .= $raw[$r];

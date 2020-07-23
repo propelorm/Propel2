@@ -4023,7 +4023,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $relationName = $this->getRefFKPhpNameAffix($refFK);
                 $relCol = $this->getRefFKPhpNameAffix($refFK, true);
                 $script .= "
-        if ('$relationName' == \$relationName) {
+        if ('$relationName' === \$relationName) {
             \$this->init$relCol();
             return;
         }";

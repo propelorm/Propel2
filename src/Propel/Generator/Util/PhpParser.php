@@ -102,7 +102,7 @@ class PhpParser
             // Single-character tokens.
             if (is_string($token)) {
                 if (!$isInFunction) {
-                    if ($token == '{' || $token == ';') {
+                    if ($token === '{' || $token === ';') {
                         // class-opening bracket or end of line
                         $buffer = '';
                     } else {
@@ -112,11 +112,11 @@ class PhpParser
                     continue;
                 }
                 $methodCode .= $token;
-                if ($token == '{') {
+                if ($token === '{') {
                     // Increase the bracket-counter (not the class-brackets: `$isInFunction` must be true!)
                     $functionBracketBalance++;
                 }
-                if ($token == '}') {
+                if ($token === '}') {
                     // Decrease the bracket-counter (not the class-brackets: `$isInFunction` must be true!)
                     $functionBracketBalance--;
                     if ($functionBracketBalance == 0) {

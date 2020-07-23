@@ -319,11 +319,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         // we have a duplicate class and asked for an automatic Alias
         if (false !== $alias) {
-            if ('\\Base' == substr($namespace, -5) || 'Base' == $namespace) {
+            if ('\\Base' === substr($namespace, -5) || 'Base' === $namespace) {
                 return $this->declareClassNamespace($class, $namespace, 'Base' . $class);
             }
 
-            if ('Child' == substr($alias, 0, 5)) {
+            if ('Child' === substr($alias, 0, 5)) {
                 //we already requested Child.$class and its in use too,
                 //so use the fqcn
                 return ($namespace ? '\\' . $namespace : '') .  '\\' . $class;
