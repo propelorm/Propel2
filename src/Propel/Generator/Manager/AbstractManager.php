@@ -118,6 +118,7 @@ abstract class AbstractManager
      * Sets the schemas list.
      *
      * @param array $schemas
+* @return void
      */
     public function setSchemas($schemas)
     {
@@ -128,6 +129,7 @@ abstract class AbstractManager
      * Sets the working directory path.
      *
      * @param string $workingDirectory
+* @return void
      */
     public function setWorkingDirectory($workingDirectory)
     {
@@ -216,6 +218,7 @@ abstract class AbstractManager
      * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
      * @param boolean $validate
+* @return void
      */
     public function setValidate($validate)
     {
@@ -227,6 +230,7 @@ abstract class AbstractManager
      * file(s).
      *
      * @param string $xsd
+* @return void
      */
     public function setXsd($xsd)
     {
@@ -238,6 +242,7 @@ abstract class AbstractManager
      * file(s) before validation and parsing.
      *
      * @param mixed $xsl
+* @return void
      */
     public function setXsl($xsl)
     {
@@ -248,6 +253,7 @@ abstract class AbstractManager
      * Sets the current target database encoding.
      *
      * @param string $encoding Target database encoding
+* @return void
      */
     public function setDbEncoding($encoding)
     {
@@ -258,6 +264,7 @@ abstract class AbstractManager
      * Sets a logger closure.
      *
      * @param \Closure $logger
+* @return void
      */
     public function setLoggerClosure(\Closure $logger)
     {
@@ -267,6 +274,7 @@ abstract class AbstractManager
     /**
      * Returns all matching XML schema files and loads them into data models for
      * class.
+* @return void
      */
     protected function loadDataModels()
     {
@@ -423,6 +431,7 @@ abstract class AbstractManager
      * Sets the GeneratorConfigInterface implementation.
      *
      * @param GeneratorConfigInterface $generatorConfig
+* @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {

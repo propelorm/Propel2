@@ -93,6 +93,7 @@ abstract class AbstractCriterion
     /**
     * Init some properties with the help of outer class
     * @param      Criteria $criteria The outer class
+* @return void
     */
     public function init(Criteria $criteria)
     {
@@ -112,6 +113,7 @@ abstract class AbstractCriterion
 
     /**
      * Set the $column and $table properties based on a column name or object
+* @return void
      */
     protected function setColumn($column)
     {
@@ -388,6 +390,7 @@ abstract class AbstractCriterion
 
     /**
      * Ensures deep cloning of attached objects
+* @return void
      */
     public function __clone()
     {

@@ -238,6 +238,7 @@ class TableMap
      * Set the PHP name of the Table.
      *
      * @param string $phpName The PHP Name for this table
+* @return void
      */
     public function setPhpName($phpName)
     {
@@ -259,6 +260,7 @@ class TableMap
      * tableMap and Object methods dynamically.
      *
      * @param string $classname The ClassName
+* @return void
      */
     public function setClassName($classname)
     {
@@ -294,6 +296,7 @@ class TableMap
      * Set the Package of the Table
      *
      * @param string $package The Package
+* @return void
      */
     public function setPackage($package)
     {
@@ -314,6 +317,7 @@ class TableMap
      * Set whether or not to use Id generator for primary key.
      *
      * @param boolean $bit
+* @return void
      */
     public function setUseIdGenerator($bit)
     {
@@ -334,6 +338,7 @@ class TableMap
      * Set whether or not to this table uses single table inheritance
      *
      * @param boolean $bit
+* @return void
      */
     public function setSingleTableInheritance($bit)
     {
@@ -354,6 +359,7 @@ class TableMap
      * Sets the name of the sequence used to generate a key
      *
      * @param mixed $pkInfo information needed to generate a key
+* @return void
      */
     public function setPrimaryKeyMethodInfo($pkInfo)
     {
@@ -592,6 +598,7 @@ class TableMap
      * Set the isCrossRef
 
      * @param boolean $isCrossRef
+* @return void
      */
     public function setIsCrossRef($isCrossRef)
     {
@@ -622,6 +629,7 @@ class TableMap
      * Build relations
      * Relations are lazy loaded for performance reasons
      * This method should be overridden by descendants
+* @return void
      */
     public function buildRelations()
     {
@@ -797,6 +805,7 @@ class TableMap
 
     /**
      * @param boolean $identifierQuoting
+* @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

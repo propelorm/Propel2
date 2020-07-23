@@ -45,6 +45,7 @@ class TimestampableBehavior extends Behavior
 
     /**
      * Add the create_column and update_columns to the current table
+* @return void
      */
     public function modifyTable()
     {

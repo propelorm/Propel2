@@ -93,6 +93,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $defaultDatasource
+* @return void
      */
     public function setDefaultDatasource($defaultDatasource)
     {
@@ -122,6 +123,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name         The datasource name
      * @param string $adapterClass
+* @return void
      */
     public function setAdapterClass($name, $adapterClass)
     {
@@ -133,6 +135,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Reset existing adapters classes and set new classes for all datasources.
      *
      * @param string[] $adapterClasses A list of adapters
+* @return void
      */
     public function setAdapterClasses($adapterClasses)
     {
@@ -171,6 +174,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string                                   $name    The datasource name
      * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+* @return void
      */
     public function setAdapter($name, AdapterInterface $adapter)
     {
@@ -182,6 +186,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Reset existing adapters and set new adapters for all datasources.
      *
      * @param array $adapters A list of adapters
+* @return void
      */
     public function setAdapters($adapters)
     {
@@ -214,6 +219,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
     /**
      * @param string $databaseMapClass
+* @return void
      */
     public function setDatabaseMapClass($databaseMapClass)
     {
@@ -247,6 +253,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string                          $name        The datasource name
      * @param \Propel\Runtime\Map\DatabaseMap $databaseMap
+* @return void
      */
     public function setDatabaseMap($name, DatabaseMap $databaseMap)
     {
@@ -256,6 +263,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string                                                $name    The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
+* @return void
      */
     public function setConnectionManager($name, ConnectionManagerInterface $manager)
     {
@@ -380,6 +388,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection A database connection
+* @return void
      */
     public function setConnection($name, ConnectionInterface $connection)
     {
@@ -395,6 +404,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * getProfiler() is called.
      *
      * @param string $profilerClass
+* @return void
      */
     public function setProfilerClass($profilerClass)
     {
@@ -407,6 +417,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @see \Propel\Runtime\Util\Profiler::setConfiguration()
      *
      * @param array $profilerConfiguration
+* @return void
      */
     public function setProfilerConfiguration($profilerConfiguration)
     {
@@ -418,6 +429,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Set the profiler instance.
      *
      * @param \Propel\Runtime\Util\Profiler $profiler
+* @return void
      */
     public function setProfiler($profiler)
     {
@@ -463,6 +475,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @param string          $name   the name of the logger to be set
      * @param LoggerInterface $logger A logger instance
+* @return void
      */
     public function setLogger($name, LoggerInterface $logger)
     {
@@ -535,6 +548,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string $name
      * @param array  $loggerConfiguration
+* @return void
      */
     public function setLoggerConfiguration($name, $loggerConfiguration)
     {

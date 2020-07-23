@@ -56,6 +56,7 @@ class ColumnDefaultValue
 
     /**
      * @param string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+* @return void
      */
     public function setType($type)
     {
@@ -82,6 +83,7 @@ class ColumnDefaultValue
 
     /**
      * @param string|null $value The value, as specified in the schema.
+* @return void
      */
     public function setValue($value)
     {

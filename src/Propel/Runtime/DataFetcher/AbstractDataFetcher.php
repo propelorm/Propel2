@@ -22,6 +22,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
 
     /**
      * {@inheritDoc}
+* @return void
      */
     public function setDataObject($dataObject)
     {
@@ -29,7 +30,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDataObject()
     {
@@ -37,7 +38,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetchColumn($index = null)
     {

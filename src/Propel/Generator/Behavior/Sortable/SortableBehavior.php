@@ -34,6 +34,7 @@ class SortableBehavior extends Behavior
 
     /**
      * Add the rank_column to the current table
+* @return void
      */
     public function modifyTable()
     {

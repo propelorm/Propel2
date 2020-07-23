@@ -166,6 +166,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set the current transaction depth.
      * @param int $v The new depth.
+* @return void
      */
     protected function setNestedTransactionCount($v)
     {
@@ -466,7 +467,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getSingleDataFetcher($data)
     {
@@ -474,7 +475,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDataFetcher($data)
     {
@@ -517,6 +518,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Clears any stored prepared statements for this connection.
+* @return void
      */
     public function clearStatementCache()
     {
@@ -562,6 +564,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Set the SQL code for the latest query executed by Propel
      *
      * @param string $query Executable SQL code
+* @return void
      */
     public function setLastExecutedQuery($query)
     {
@@ -572,6 +575,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Enable or disable the query debug features
      *
      * @param boolean $value True to enable debug (default), false to disable it
+* @return void
      */
     public function useDebug($value = true)
     {
@@ -586,6 +590,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * @param array $logMethods
+* @return void
      */
     public function setLogMethods($logMethods)
     {
@@ -612,6 +617,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * {@inheritDoc}
+* @return void
      */
     public function setLogger(LoggerInterface $logger)
     {
@@ -637,6 +643,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * Logs the method call or the executed SQL statement.
      *
      * @param string $msg Message to log.
+* @return void
      */
     public function log($msg)
     {

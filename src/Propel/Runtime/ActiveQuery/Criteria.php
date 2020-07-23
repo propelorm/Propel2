@@ -702,6 +702,7 @@ class Criteria
      * set, of course, in order to be useful.
      *
      * @param string $tableName
+* @return void
      */
     public function setPrimaryTableName($tableName)
     {
@@ -777,6 +778,7 @@ class Criteria
      * Criteria, overwriting previous settings.
      *
      * @param mixed $t Mappings to be stored in this map.
+* @return void
      */
     public function putAll($t)
     {
@@ -2787,6 +2789,7 @@ class Criteria
 
     /**
      * Ensures deep cloning of attached objects
+* @return void
      */
     public function __clone()
     {
@@ -2813,6 +2816,7 @@ class Criteria
 
     /**
      * @param boolean $identifierQuoting
+* @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

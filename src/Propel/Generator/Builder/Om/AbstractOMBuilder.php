@@ -771,6 +771,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param array            $shortSignature
      * @param array            $normalizedShortSignature
      * @param array            $phpDoc
+* @return void
      */
     protected function extractCrossInformation(
         CrossForeignKeys $crossFKs,
@@ -951,6 +952,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      * @param string $script  The script will be modified in this method.
+* @return void
      */
     public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = "        ")
     {

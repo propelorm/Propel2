@@ -313,6 +313,7 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
 
     /**
      * @param \PDOStatement $statement
+* @return void
      */
     public function setStatement(\PDOStatement $statement)
     {

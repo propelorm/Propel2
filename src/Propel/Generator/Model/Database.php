@@ -192,6 +192,7 @@ class Database extends ScopedMappingModel
      * Sets the PlatformInterface implementation for this database.
      *
      * @param PlatformInterface|null $platform A Platform implementation
+* @return void
      */
     public function setPlatform(PlatformInterface $platform = null)
     {
@@ -222,6 +223,7 @@ class Database extends ScopedMappingModel
      * Sets the database name.
      *
      * @param string $name
+* @return void
      */
     public function setName($name)
     {
@@ -255,6 +257,7 @@ class Database extends ScopedMappingModel
      * This parameter is overridden at the table level.
      *
      * @param string $class.
+* @return void
      */
     public function setBaseClass($class)
     {
@@ -266,6 +269,7 @@ class Database extends ScopedMappingModel
      * This parameter is overridden at the table level.
      *
      * @param string $class.
+* @return void
      */
     public function setBaseQueryClass($class)
     {
@@ -288,6 +292,7 @@ class Database extends ScopedMappingModel
      * This parameter can be overridden at the table level.
      *
      * @param string $strategy
+* @return void
      */
     public function setDefaultIdMethod($strategy)
     {
@@ -310,6 +315,7 @@ class Database extends ScopedMappingModel
      * Sets name of the default PHP naming method strategy.
      *
      * @param string $strategy
+* @return void
      */
     public function setDefaultPhpNamingMethod($strategy)
     {
@@ -334,6 +340,7 @@ class Database extends ScopedMappingModel
      *
      * @param  string                   $format
      * @throws InvalidArgumentException
+* @return void
      */
     public function setDefaultStringFormat($format)
     {
@@ -386,6 +393,7 @@ class Database extends ScopedMappingModel
      * Sets whether or not heavy indexing is enabled.
      *
      * @param boolean $flag
+* @return void
      */
     public function setHeavyIndexing($flag = true)
     {
@@ -577,6 +585,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string[] $sequences
+* @return void
      */
     public function setSequences($sequences)
     {
@@ -602,6 +611,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string $sequence
+* @return void
      */
     public function removeSequence($sequence)
     {
@@ -638,6 +648,7 @@ class Database extends ScopedMappingModel
      * Sets the database's schema.
      *
      * @param string $schema
+* @return void
      */
     public function setSchema($schema)
     {
@@ -698,6 +709,7 @@ class Database extends ScopedMappingModel
      * Sets the parent schema
      *
      * @param Schema $parent The parent schema
+* @return void
      */
     public function setParentSchema(Schema $parent)
     {
@@ -798,6 +810,7 @@ class Database extends ScopedMappingModel
      * Sets the tables' prefix.
      *
      * @param string $tablePrefix
+* @return void
      */
     public function setTablePrefix($tablePrefix)
     {
@@ -833,6 +846,7 @@ class Database extends ScopedMappingModel
     /**
      * Finalizes the setup process.
      *
+* @return void
      */
     public function doFinalInitialization()
     {
@@ -962,6 +976,7 @@ class Database extends ScopedMappingModel
      * Sets the default accessor visibility.
      *
      * @param string $defaultAccessorVisibility
+* @return void
      */
     public function setDefaultAccessorVisibility($defaultAccessorVisibility)
     {
@@ -982,6 +997,7 @@ class Database extends ScopedMappingModel
      * Sets the default mutator visibility.
      *
      * @param string $defaultMutatorVisibility
+* @return void
      */
     public function setDefaultMutatorVisibility($defaultMutatorVisibility)
     {
@@ -1024,6 +1040,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param boolean $identifierQuoting
+* @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

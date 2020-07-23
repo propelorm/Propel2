@@ -402,6 +402,7 @@ abstract class DataModelBuilder
      * Sets the GeneratorConfig object.
      *
      * @param GeneratorConfigInterface $v
+* @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $v)
     {

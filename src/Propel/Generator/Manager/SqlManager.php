@@ -37,6 +37,7 @@ class SqlManager extends AbstractManager
      * Set the database connection settings
      *
      * @param array $connections
+* @return void
      */
     public function setConnections($connections)
     {
@@ -73,6 +74,7 @@ class SqlManager extends AbstractManager
 
     /**
      * @param boolean $overwriteSqlMap
+* @return void
      */
     public function setOverwriteSqlMap($overwriteSqlMap)
     {
@@ -105,6 +107,7 @@ class SqlManager extends AbstractManager
 
     /**
      * Build SQL files.
+* @return void
      */
     public function buildSql()
     {

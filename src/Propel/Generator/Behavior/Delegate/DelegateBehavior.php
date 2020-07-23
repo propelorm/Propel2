@@ -43,6 +43,7 @@ class DelegateBehavior extends Behavior
     /**
      * Lists the delegates and checks that the behavior can use them,
      * And adds a fk from the delegate to the main table if not already set
+* @return void
      */
     public function modifyTable()
     {

@@ -163,6 +163,7 @@ class TableDiff
      * Sets the fromTable property.
      *
      * @param \Propel\Generator\Model\Table $fromTable
+* @return void
      */
     public function setFromTable(Table $fromTable)
     {
@@ -183,6 +184,7 @@ class TableDiff
      * Sets the toTable property.
      *
      * @param \Propel\Generator\Model\Table $toTable
+* @return void
      */
     public function setToTable(Table $toTable)
     {
@@ -203,6 +205,7 @@ class TableDiff
      * Sets the added columns.
      *
      * @param Column[] $columns
+* @return void
      */
     public function setAddedColumns(array $columns)
     {
@@ -217,6 +220,7 @@ class TableDiff
      *
      * @param string $name
      * @param Column $column
+* @return void
      */
     public function addAddedColumn($name, Column $column)
     {
@@ -227,6 +231,7 @@ class TableDiff
      * Removes an added column.
      *
      * @param string $columnName
+* @return void
      */
     public function removeAddedColumn($columnName)
     {
@@ -264,6 +269,7 @@ class TableDiff
      * Setter for the removedColumns property
      *
      * @param Column[] $removedColumns
+* @return void
      */
     public function setRemovedColumns(array $removedColumns)
     {
@@ -278,6 +284,7 @@ class TableDiff
      *
      * @param string $columnName
      * @param Column $removedColumn
+* @return void
      */
     public function addRemovedColumn($columnName, Column $removedColumn)
     {
@@ -288,6 +295,7 @@ class TableDiff
      * Removes a removed column.
      *
      * @param string $columnName
+* @return void
      */
     public function removeRemovedColumn($columnName)
     {
@@ -324,6 +332,7 @@ class TableDiff
      * Sets the list of modified columns.
      *
      * @param ColumnDiff[] $modifiedColumns An associative array of ColumnDiff objects
+* @return void
      */
     public function setModifiedColumns(array $modifiedColumns)
     {
@@ -338,6 +347,7 @@ class TableDiff
      *
      * @param string     $columnName
      * @param ColumnDiff $modifiedColumn
+* @return void
      */
     public function addModifiedColumn($columnName, ColumnDiff $modifiedColumn)
     {
@@ -358,6 +368,7 @@ class TableDiff
      * Sets the list of renamed columns.
      *
      * @param array $renamedColumns
+* @return void
      */
     public function setRenamedColumns(array $renamedColumns)
     {
@@ -373,6 +384,7 @@ class TableDiff
      *
      * @param Column $fromColumn
      * @param Column $toColumn
+* @return void
      */
     public function addRenamedColumn(Column $fromColumn, Column $toColumn)
     {
@@ -393,6 +405,7 @@ class TableDiff
      * Sets the list of added primary key columns.
      *
      * @param Column[] $addedPkColumns
+* @return void
      */
     public function setAddedPkColumns(array $addedPkColumns)
     {
@@ -407,6 +420,7 @@ class TableDiff
      *
      * @param string $columnName
      * @param Column $addedPkColumn
+* @return void
      */
     public function addAddedPkColumn($columnName, Column $addedPkColumn)
     {
@@ -421,6 +435,7 @@ class TableDiff
      * Removes an added primary key column.
      *
      * @param string $columnName
+* @return void
      */
     public function removeAddedPkColumn($columnName)
     {
@@ -443,6 +458,7 @@ class TableDiff
      * Sets the list of removed primary key columns.
      *
      * @param Column[] $removedPkColumns
+* @return void
      */
     public function setRemovedPkColumns(array $removedPkColumns)
     {
@@ -457,6 +473,7 @@ class TableDiff
      *
      * @param string $columnName
      * @param Column $removedPkColumn
+* @return void
      */
     public function addRemovedPkColumn($columnName, Column $removedPkColumn)
     {
@@ -467,6 +484,7 @@ class TableDiff
      * Removes a removed primary key column.
      *
      * @param string $columnName
+* @return void
      */
     public function removeRemovedPkColumn($columnName)
     {
@@ -489,6 +507,7 @@ class TableDiff
      * Sets the list of all renamed primary key columns.
      *
      * @param Column[][] $renamedPkColumns
+* @return void
      */
     public function setRenamedPkColumns(array $renamedPkColumns)
     {
@@ -504,6 +523,7 @@ class TableDiff
      *
      * @param Column $fromColumn The original column
      * @param Column $toColumn   The renamed column
+* @return void
      */
     public function addRenamedPkColumn(Column $fromColumn, Column $toColumn)
     {
@@ -534,6 +554,7 @@ class TableDiff
      * Sets the list of new added indices.
      *
      * @param Index[] $addedIndices
+* @return void
      */
     public function setAddedIndices(array $addedIndices)
     {
@@ -548,6 +569,7 @@ class TableDiff
      *
      * @param string $indexName
      * @param Index  $addedIndex
+* @return void
      */
     public function addAddedIndex($indexName, Index $addedIndex)
     {
@@ -568,6 +590,7 @@ class TableDiff
      * Sets the list of removed indices.
      *
      * @param Index[] $removedIndices
+* @return void
      */
     public function setRemovedIndices(array $removedIndices)
     {
@@ -582,6 +605,7 @@ class TableDiff
      *
      * @param string $indexName
      * @param Index  $removedIndex
+* @return void
      */
     public function addRemovedIndex($indexName, Index $removedIndex)
     {
@@ -604,6 +628,7 @@ class TableDiff
      * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
      *
      * @param Index[][] $modifiedIndices An aray of modified indices
+* @return void
      */
     public function setModifiedIndices(array $modifiedIndices)
     {
@@ -620,6 +645,7 @@ class TableDiff
      * @param string $indexName
      * @param Index  $fromIndex
      * @param Index  $toIndex
+* @return void
      */
     public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
     {
@@ -640,6 +666,7 @@ class TableDiff
      * Sets the list of added foreign keys.
      *
      * @param ForeignKey[] $addedFks
+* @return void
      */
     public function setAddedFks(array $addedFks)
     {
@@ -654,6 +681,7 @@ class TableDiff
      *
      * @param string     $fkName
      * @param ForeignKey $addedFk
+* @return void
      */
     public function addAddedFk($fkName, ForeignKey $addedFk)
     {
@@ -664,6 +692,7 @@ class TableDiff
      * Remove an added Fk column
      *
      * @param string $fkName
+* @return void
      */
     public function removeAddedFk($fkName)
     {
@@ -686,6 +715,7 @@ class TableDiff
      * Sets the list of removed foreign keys.
      *
      * @param ForeignKey[] $removedFks
+* @return void
      */
     public function setRemovedFks(array $removedFks)
     {
@@ -700,6 +730,7 @@ class TableDiff
      *
      * @param string     $fkName
      * @param ForeignKey $removedFk
+* @return void
      */
     public function addRemovedFk($fkName, ForeignKey $removedFk)
     {
@@ -710,6 +741,7 @@ class TableDiff
      * Removes a removed foreign key.
      *
      * @param string $fkName
+* @return void
      */
     public function removeRemovedFk($fkName)
     {
@@ -732,6 +764,7 @@ class TableDiff
      * Array must be [ [ ForeignKey $fromFk, ForeignKey $toFk ], [ ... ] ]
      *
      * @param ForeignKey[][] $modifiedFks
+* @return void
      */
     public function setModifiedFks(array $modifiedFks)
     {
@@ -748,6 +781,7 @@ class TableDiff
      * @param string     $fkName
      * @param ForeignKey $fromFk
      * @param ForeignKey $toFk
+* @return void
      */
     public function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk)
     {

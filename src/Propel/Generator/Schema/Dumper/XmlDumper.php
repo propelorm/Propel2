@@ -89,6 +89,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Database $database   The Database model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendDatabaseNode(Database $database, \DOMNode $parentNode)
     {
@@ -171,6 +172,7 @@ class XmlDumper implements DumperInterface
      *
      * @param VendorInfo $vendorInfo The VendorInfo model instance
      * @param \DOMNode   $parentNode The parent DOMNode object
+* @return void
      */
     private function appendVendorInformationNode(VendorInfo $vendorInfo, \DOMNode $parentNode)
     {
@@ -191,6 +193,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Table    $table      The Table model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendTableNode(Table $table, \DOMNode $parentNode)
     {
@@ -323,6 +326,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Behavior $behavior   The Behavior model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendBehaviorNode(Behavior $behavior, \DOMNode $parentNode)
     {
@@ -346,6 +350,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Column   $column     The Column model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendColumnNode(Column $column, \DOMNode $parentNode)
     {
@@ -419,6 +424,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Inheritance $inheritance The Inheritance model instance
      * @param \DOMNode    $parentNode  The parent DOMNode object
+* @return void
      */
     private function appendInheritanceNode(Inheritance $inheritance, \DOMNode $parentNode)
     {
@@ -437,6 +443,7 @@ class XmlDumper implements DumperInterface
      *
      * @param ForeignKey $foreignKey The ForeignKey model instance
      * @param \DOMNode   $parentNode The parent DOMNode object
+* @return void
      */
     private function appendForeignKeyNode(ForeignKey $foreignKey, \DOMNode $parentNode)
     {
@@ -486,6 +493,7 @@ class XmlDumper implements DumperInterface
      *
      * @param IdMethodParameter $parameter  The IdMethodParameter model instance
      * @param \DOMNode          $parentNode The parent DOMNode object
+* @return void
      */
     private function appendIdMethodParameterNode(IdMethodParameter $parameter, \DOMNode $parentNode)
     {
@@ -502,6 +510,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Index    $index      The Index model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendIndexNode(Index $index, \DOMNode $parentNode)
     {
@@ -513,6 +522,7 @@ class XmlDumper implements DumperInterface
      *
      * @param Unique   $index     The Unique model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendUniqueIndexNode(Unique $index, \DOMNode $parentNode)
     {
@@ -525,6 +535,7 @@ class XmlDumper implements DumperInterface
      * @param string   $nodeType   The node type (index or unique)
      * @param Index    $index      The Index model instance
      * @param \DOMNode $parentNode The parent DOMNode object
+* @return void
      */
     private function appendGenericIndexNode($nodeType, Index $index, \DOMNode $parentNode)
     {

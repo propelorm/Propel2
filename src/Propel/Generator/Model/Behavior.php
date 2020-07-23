@@ -92,6 +92,7 @@ class Behavior extends MappingModel
      * Sets the name of the Behavior
      *
      * @param string $name the name of the behavior
+* @return void
      */
     public function setName($name)
     {
@@ -106,6 +107,7 @@ class Behavior extends MappingModel
      * Sets the id of the Behavior
      *
      * @param string $id The id of the behavior
+* @return void
      */
     public function setId($id)
     {
@@ -147,6 +149,7 @@ class Behavior extends MappingModel
      * Sets the table this behavior is applied to
      *
      * @param \Propel\Generator\Model\Table $table
+* @return void
      */
     public function setTable(Table $table)
     {
@@ -167,6 +170,7 @@ class Behavior extends MappingModel
      * Sets the database this behavior is applied to
      *
      * @param Database $database
+* @return void
      */
     public function setDatabase(Database $database)
     {
@@ -205,6 +209,7 @@ class Behavior extends MappingModel
      * Expects an associative array looking like [ 'foo' => 'bar' ].
      *
      * @param array $parameters
+* @return void
      */
     public function setParameters(array $parameters)
     {
@@ -240,6 +245,7 @@ class Behavior extends MappingModel
      * Default is 50.
      *
      * @param integer $tableModificationOrder
+* @return void
      */
     public function setTableModificationOrder($tableModificationOrder)
     {
@@ -266,6 +272,7 @@ class Behavior extends MappingModel
      *
      * Propagates the behavior to the tables of the database and override this
      * method to have a database behavior do something special.
+* @return void
      */
     public function modifyDatabase()
     {
@@ -304,6 +311,7 @@ class Behavior extends MappingModel
      * Sets whether or not the table has been modified.
      *
      * @param boolean $modified
+* @return void
      */
     public function setTableModified($modified)
     {

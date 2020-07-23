@@ -70,6 +70,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string              $table The name of the table to lock.
      *
      * @throws \PDOException No Statement could be created or executed.
+* @return void
      */
     public function lockTable($con, $table)
     {
@@ -83,6 +84,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string              $table The name of the table to unlock.
      *
      * @throws \PDOException No Statement could be created or executed.
+* @return void
      */
     public function unlockTable($con, $table)
     {
@@ -118,6 +120,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string  $sql
      * @param integer $offset
      * @param integer $limit
+* @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {

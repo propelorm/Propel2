@@ -91,7 +91,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDataFetcher($data)
     {
@@ -99,7 +99,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getSingleDataFetcher($data)
     {
@@ -107,7 +107,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function query($statement)
     {
@@ -115,7 +115,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exec($statement)
     {

@@ -39,6 +39,7 @@ class PgsqlPlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+* @return void
      */
     protected function initialize()
     {
@@ -344,7 +345,7 @@ COMMIT;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getAddForeignKeysDDL(Table $table)
     {

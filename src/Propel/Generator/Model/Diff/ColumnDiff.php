@@ -61,6 +61,7 @@ class ColumnDiff
      * Sets for the changed properties.
      *
      * @param array $properties
+* @return void
      */
     public function setChangedProperties($properties)
     {
@@ -81,6 +82,7 @@ class ColumnDiff
      * Sets the fromColumn property.
      *
      * @param Column $fromColumn
+* @return void
      */
     public function setFromColumn(Column $fromColumn)
     {
@@ -101,6 +103,7 @@ class ColumnDiff
      * Sets the toColumn property.
      *
      * @param Column $toColumn
+* @return void
      */
     public function setToColumn(Column $toColumn)
     {

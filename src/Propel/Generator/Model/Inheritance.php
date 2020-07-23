@@ -65,6 +65,7 @@ class Inheritance extends MappingModel
      * Sets a key name.
      *
      * @param string $key
+* @return void
      */
     public function setKey($key)
     {
@@ -75,6 +76,7 @@ class Inheritance extends MappingModel
      * Sets the parent column
      *
      * @param Column $column
+* @return void
      */
     public function setColumn(Column $column)
     {
@@ -105,6 +107,7 @@ class Inheritance extends MappingModel
      * Sets the class name.
      *
      * @param string $name
+* @return void
      */
     public function setClassName($name)
     {
@@ -125,6 +128,7 @@ class Inheritance extends MappingModel
      * Sets the package.
      *
      * @param string $package
+* @return void
      */
     public function setPackage($package)
     {
@@ -145,6 +149,7 @@ class Inheritance extends MappingModel
      * Sets the ancestor.
      *
      * @param string $ancestor
+* @return void
      */
     public function setAncestor($ancestor)
     {

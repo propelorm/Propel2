@@ -47,6 +47,7 @@ class SqlitePlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+* @return void
      */
     protected function initialize()
     {

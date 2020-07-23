@@ -74,6 +74,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param mixed $value
+* @return void
      */
     public function append($value)
     {
@@ -103,6 +104,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * @param mixed $offset
      * @param mixed $value
+* @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -115,6 +117,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param mixed $offset
+* @return void
      */
     public function offsetUnset($offset)
     {
@@ -123,6 +126,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param array $input
+* @return void
      */
     public function exchangeArray($input)
     {
@@ -151,6 +155,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Set the data in the collection
      *
      * @param array $data
+* @return void
      */
     public function setData($data)
     {
@@ -270,6 +275,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Prepend one  elements to the end of the collection
      *
      * @param mixed $value the element to prepend
+* @return void
      */
     public function push($value)
     {
@@ -299,6 +305,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @param mixed $key
      * @param mixed $value
+* @return void
      */
     public function set($key, $value)
     {
@@ -392,6 +399,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param string $data
+* @return void
      */
     public function unserialize($data)
     {
@@ -407,6 +415,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Set the model of the elements in the collection
      *
      * @param string $model Name of the Propel object classes stored in the collection
+* @return void
      */
     public function setModel($model)
     {
@@ -455,6 +464,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param AbstractFormatter $formatter
+* @return void
      */
     public function setFormatter(AbstractFormatter $formatter)
     {
@@ -576,6 +586,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * Creates clones of the containing data.
+* @return void
      */
     public function __clone()
     {

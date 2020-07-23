@@ -34,6 +34,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+* @return void
      */
     public function setName($name)
     {

@@ -38,6 +38,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
 
     /**
      * @param \Propel\Runtime\Util\Profiler $profiler
+* @return void
      */
     public function setProfiler(Profiler $profiler)
     {
@@ -77,7 +78,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prepare($statement, $driver_options = null)
     {
@@ -87,7 +88,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exec($sql)
     {
@@ -97,7 +98,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function query($statement = '')
     {
@@ -108,7 +109,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function createStatementWrapper($sql)
     {
@@ -116,7 +117,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function log($msg)
     {

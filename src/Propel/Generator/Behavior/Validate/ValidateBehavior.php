@@ -102,6 +102,7 @@ class ValidateBehavior extends Behavior
      * Useful for i18n behavior
      *
      * @param string $columnName The column name
+* @return void
      */
     public function removeParametersFromColumnName($columnName = null)
     {
@@ -145,6 +146,7 @@ class ValidateBehavior extends Behavior
      * Merge $paramArray array into parameters array.
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
+* @return void
      */
     public function mergeParameters(array $params = null)
     {
@@ -168,6 +170,7 @@ class ValidateBehavior extends Behavior
     /**
      * Convert those parameters, containing an array in YAML format
      * into a php array
+* @return void
      */
     protected function cleanupParameters()
     {
@@ -280,10 +283,11 @@ class ValidateBehavior extends Behavior
 
     /**
      * Adds the getValidationFailures() method.
+     *
+     * @return string
      */
     protected function addGetValidationFailuresMethod()
     {
         return $this->renderTemplate('objectGetValidationFailures');
     }
-
 }

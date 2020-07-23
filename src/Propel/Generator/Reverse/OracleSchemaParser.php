@@ -133,6 +133,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Adds Columns to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+* @return void
      */
     protected function addColumns(Table $table)
     {
@@ -195,6 +196,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Adds Indexes to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+* @return void
      */
     protected function addIndexes(Table $table)
     {
@@ -226,6 +228,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Load foreign keys for this table.
      *
      * @param Table $table The Table model class to add FKs to
+* @return void
      */
     protected function addForeignKeys(Table $table)
     {
@@ -262,6 +265,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Loads the primary key for this table.
      *
      * @param Table $table The Table model class to add PK to.
+* @return void
      */
     protected function addPrimaryKey(Table $table)
     {

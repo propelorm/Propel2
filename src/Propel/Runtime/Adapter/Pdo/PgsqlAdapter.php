@@ -41,7 +41,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function compareRegex($left, $right)
     {
@@ -126,6 +126,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string  $sql
      * @param integer $offset
      * @param integer $limit
+* @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {

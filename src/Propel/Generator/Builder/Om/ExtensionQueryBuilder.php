@@ -76,6 +76,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * if you want to change that behavior.
      *
      * @see QueryBuilder::addClassBody()
+* @return void
      */
 
     protected function addClassBody(&$script)
@@ -110,6 +111,7 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $script  The script will be modified in this method.
      * @param string $tab
+* @return void
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
     {

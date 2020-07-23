@@ -58,6 +58,7 @@ class Schema
      * application schema.
      *
      * @param PlatformInterface $platform
+* @return void
      */
     public function setPlatform(PlatformInterface $platform)
     {
@@ -79,6 +80,7 @@ class Schema
      * Sets the generator configuration
      *
      * @param GeneratorConfigInterface $generatorConfig
+* @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
@@ -99,6 +101,7 @@ class Schema
      * Sets the schema name.
      *
      * @param string $name
+* @return void
      */
     public function setName($name)
     {
@@ -239,6 +242,7 @@ class Schema
     /**
      * Finalizes the databases initialization.
      *
+* @return void
      */
     public function doFinalInitialization()
     {
@@ -254,6 +258,7 @@ class Schema
      * Merge other Schema objects together into this Schema object.
      *
      * @param Schema[] $schemas
+* @return void
      */
     public function joinSchemas(array $schemas)
     {

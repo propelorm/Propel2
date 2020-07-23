@@ -453,6 +453,7 @@ class ModelCriteria extends BaseModelCriteria
      * by default this is null, but after useQuery this is set the to the join of that use
      *
      * @param Join $previousJoin The previousJoin for this ModelCriteria
+* @return void
      */
     public function setPreviousJoin(Join $previousJoin)
     {
@@ -821,6 +822,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param ModelCriteria $criteria     The primary criteria
      * @param Join          $previousJoin The previousJoin for this ModelCriteria
+* @return void
      */
     public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
     {
@@ -2281,6 +2283,7 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Ensures deep cloning of attached objects
+* @return void
      */
     public function __clone()
     {

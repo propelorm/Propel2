@@ -92,6 +92,7 @@ class RelationMap
 
     /**
      * @param boolean $polymorphic
+* @return void
      */
     public function setPolymorphic($polymorphic)
     {
@@ -132,6 +133,7 @@ class RelationMap
      * Set the type
      *
      * @param int $type The relation type (either self::MANY_TO_ONE, self::ONE_TO_MANY, or self::ONE_TO_ONE)
+* @return void
      */
     public function setType($type)
     {
@@ -152,6 +154,7 @@ class RelationMap
      * Set the local table
      *
      * @param \Propel\Runtime\Map\TableMap $table The local table for this relationship
+* @return void
      */
     public function setLocalTable(TableMap $table)
     {
@@ -172,6 +175,7 @@ class RelationMap
      * Set the foreign table
      *
      * @param \Propel\Runtime\Map\TableMap $table The foreign table for this relationship
+* @return void
      */
     public function setForeignTable($table)
     {
@@ -213,6 +217,7 @@ class RelationMap
      *
      * @param ColumnMap       $local   The local column
      * @param ColumnMap|mixed $foreign The foreign column or value
+* @return void
      */
     public function addColumnMapping(ColumnMap $local, $foreign)
     {
@@ -327,6 +332,7 @@ class RelationMap
      * Set the onUpdate behavior
      *
      * @param string $onUpdate
+* @return void
      */
     public function setOnUpdate($onUpdate)
     {
@@ -347,6 +353,7 @@ class RelationMap
      * Set the onDelete behavior
      *
      * @param string $onDelete
+* @return void
      */
     public function setOnDelete($onDelete)
     {

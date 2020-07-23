@@ -63,6 +63,7 @@ class Profiler
      * Set the duration which triggers the 'slow' label on details.
      *
      * @param integer $slowTreshold duration in seconds
+* @return void
      */
     public function setSlowTreshold($slowTreshold)
     {
@@ -73,6 +74,7 @@ class Profiler
      * Set the list of details to be included in a profile.
      *
      * @param array $details
+* @return void
      */
     public function setDetails($details)
     {
@@ -83,6 +85,7 @@ class Profiler
      * Set the inner glue for the details.
      *
      * @param string $innerGlue
+* @return void
      */
     public function setInnerGlue($innerGlue)
     {
@@ -93,6 +96,7 @@ class Profiler
      * Set the outer glue for the details.
      *
      * @param string $outerGlue
+* @return void
      */
     public function setOuterGlue($outerGlue)
     {
@@ -134,6 +138,7 @@ class Profiler
      * </code>
      *
      * @param array $profilerConfiguration
+* @return void
      */
     public function setConfiguration($profilerConfiguration)
     {

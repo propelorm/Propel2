@@ -104,6 +104,7 @@ class OnDemandIterator implements \Iterator
     /**
      * Advances the cursor in the statement
      * Closes the cursor if the end of the statement is reached
+* @return void
      */
     public function next()
     {
@@ -118,6 +119,7 @@ class OnDemandIterator implements \Iterator
     /**
      * Initializes the iterator by advancing to the first position
      * This method can only be called once (this is a NoRewindIterator)
+* @return void
      */
     public function rewind()
     {

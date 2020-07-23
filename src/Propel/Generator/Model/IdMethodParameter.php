@@ -58,6 +58,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter name.
      *
      * @param string $name
+* @return void
      */
     public function setName($name)
     {
@@ -78,6 +79,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter value.
      *
      * @param mixed $value
+* @return void
      */
     public function setValue($value)
     {
@@ -88,6 +90,7 @@ class IdMethodParameter extends MappingModel
      * Sets the parent table.
      *
      * @param \Propel\Generator\Model\Table $parent
+* @return void
      */
     public function setTable(Table $parent)
     {

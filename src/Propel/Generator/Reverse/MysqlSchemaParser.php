@@ -162,6 +162,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Adds Columns to the specified table.
      *
      * @param Table $table The Table model class to add columns to.
+* @return void
      */
     protected function addColumns(Table $table)
     {
@@ -277,6 +278,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+* @return void
      */
     protected function addForeignKeys(Table $table)
     {
@@ -373,6 +375,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+* @return void
      */
     protected function addIndexes(Table $table)
     {
@@ -424,6 +427,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+* @return void
      */
     protected function addPrimaryKey(Table $table)
     {
@@ -449,6 +453,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * Adds vendor-specific info for table.
      *
      * @param Table $table
+* @return void
      */
     protected function addTableVendorInfo(Table $table)
     {

@@ -34,6 +34,7 @@ class ArrayCollection extends Collection
      *
      * @throws ReadOnlyModelException
      * @throws PropelException
+* @return void
      */
     public function save($con = null)
     {
@@ -61,6 +62,7 @@ class ArrayCollection extends Collection
      *
      * @throws ReadOnlyModelException
      * @throws PropelException
+* @return void
      */
     public function delete($con = null)
     {
@@ -105,6 +107,7 @@ class ArrayCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+* @return void
      */
     public function fromArray($arr)
     {

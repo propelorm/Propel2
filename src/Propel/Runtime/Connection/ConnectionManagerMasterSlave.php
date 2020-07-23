@@ -33,6 +33,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @param boolean $isForceMasterConnection
      * @deprecated Use setForcePrimaryConnection() instead.
+* @return void
      */
     public function setForceMasterConnection($isForceMasterConnection)
     {

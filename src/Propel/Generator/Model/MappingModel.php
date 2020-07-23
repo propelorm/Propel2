@@ -37,6 +37,7 @@ abstract class MappingModel implements MappingModelInterface
      * Loads a mapping definition from an array.
      *
      * @param array $attributes
+* @return void
      */
     public function loadMapping(array $attributes)
     {

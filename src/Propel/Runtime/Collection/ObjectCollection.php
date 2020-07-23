@@ -43,6 +43,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param array $input
+* @return void
      */
     public function exchangeArray($input)
     {
@@ -64,6 +65,7 @@ class ObjectCollection extends Collection
      * Save all the elements in the collection
      *
      * @param ConnectionInterface $con
+* @return void
      */
     public function save($con = null)
     {
@@ -85,6 +87,7 @@ class ObjectCollection extends Collection
      * Delete all the elements in the collection
      *
      * @param ConnectionInterface $con
+* @return void
      */
     public function delete($con = null)
     {
@@ -127,6 +130,7 @@ class ObjectCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+* @return void
      */
     public function fromArray($arr)
     {
@@ -411,6 +415,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $offset
+* @return void
      */
     public function offsetUnset($offset)
     {
@@ -425,6 +430,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $element
+* @return void
      */
     public function removeObject($element)
     {
@@ -435,6 +441,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $value
+* @return void
      */
     public function append($value)
     {
@@ -455,6 +462,7 @@ class ObjectCollection extends Collection
     /**
      * @param mixed $offset
      * @param mixed $value
+* @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -500,6 +508,7 @@ class ObjectCollection extends Collection
      * Returns the result of $object->hashCode() if available or uses spl_object_hash($object).
      *
      * @param mixed $object
+     * @return string
      */
     protected function getHashCode($object)
     {

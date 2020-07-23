@@ -77,6 +77,7 @@ class Index extends MappingModel
      * Sets the index name.
      *
      * @param string $name
+* @return void
      */
     public function setName($name)
     {
@@ -149,6 +150,7 @@ class Index extends MappingModel
      * Sets the index parent Table.
      *
      * @param \Propel\Generator\Model\Table $table
+* @return void
      */
     public function setTable(Table $table)
     {
@@ -214,6 +216,7 @@ class Index extends MappingModel
      * Sets an array of columns to use for the index.
      *
      * @param array $columns array of array definitions $columns[]['name'] = 'columnName'
+* @return void
      */
     public function setColumns(array $columns)
     {
@@ -260,6 +263,7 @@ class Index extends MappingModel
      * Resets the columns sizes.
      *
      * This method is useful for generated indices for FKs.
+* @return void
      */
     public function resetColumnsSize()
     {
@@ -338,6 +342,7 @@ class Index extends MappingModel
 
     /**
      * @param Column[] $columnObjects
+* @return void
      */
     public function setColumnObjects($columnObjects)
     {

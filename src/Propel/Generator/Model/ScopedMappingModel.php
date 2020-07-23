@@ -129,6 +129,7 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the package name.
      *
      * @param string $package
+* @return void
      */
     public function setPackage($package)
     {
@@ -154,6 +155,7 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the schema name.
      *
      * @param string $schema
+* @return void
      */
     public function setSchema($schema)
     {

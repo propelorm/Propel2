@@ -32,6 +32,7 @@ class OnDemandCollection extends Collection
     /**
      * @param \Propel\Runtime\Formatter\ObjectFormatter    $formatter
      * @param DataFetcherInterface $dataFetcher
+* @return void
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
     {
@@ -93,6 +94,7 @@ class OnDemandCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+* @return void
      */
     public function fromArray($arr)
     {
@@ -138,6 +140,7 @@ class OnDemandCollection extends Collection
      *
      * @param integer $offset
      * @param mixed   $value
+* @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -147,6 +150,7 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      * @param  integer                                                     $offset
+* @return void
      */
     public function offsetUnset($offset)
     {
@@ -157,6 +161,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws \Propel\Runtime\Exception\PropelException
+* @return void
      */
     public function serialize()
     {
@@ -166,6 +171,7 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      * @param  string                                    $data
+* @return void
      */
     public function unserialize($data)
     {

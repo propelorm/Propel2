@@ -279,6 +279,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the total number of results of the query
      *
      * @param int $nb
+* @return void
      */
     protected function setNbResults($nb)
     {
@@ -329,6 +330,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the first page
      *
      * @param int $page
+* @return void
      */
     protected function setLastPage($page)
     {
@@ -352,6 +354,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the current page
      *
      * @param int $page
+* @return void
      */
     public function setPage($page)
     {
@@ -396,6 +399,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the maximum number results per page
      *
      * @param int $max
+* @return void
      */
     public function setMaxPerPage($max)
     {

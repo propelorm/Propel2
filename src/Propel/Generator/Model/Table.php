@@ -261,6 +261,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Executes behavior table modifiers.
      *
+* @return void
      */
     public function applyBehaviors()
     {
@@ -448,6 +449,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * @param string $indexName        The name of the index
      * @param array  $columns          The column names or objects
      * @param array  $collectedIndexes The collected indexes
+* @return void
      */
     protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes)
     {
@@ -528,6 +530,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the base class name.
      *
      * @param string $class
+* @return void
      */
     public function setBaseClass($class)
     {
@@ -538,6 +541,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the base query class name.
      *
      * @param string $class
+* @return void
      */
     public function setBaseQueryClass($class)
     {
@@ -589,6 +593,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds several columns at once.
      *
      * @param Column[] $columns An array of Column instance
+* @return void
      */
     public function addColumns(array $columns)
     {
@@ -602,6 +607,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param  Column|string   $column The Column or its name
      * @throws EngineException
+* @return void
      */
     public function removeColumn($column)
     {
@@ -692,6 +698,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds several foreign keys at once.
      *
      * @param ForeignKey[] $foreignKeys An array of ForeignKey objects
+* @return void
      */
     public function addForeignKeys(array $foreignKeys)
     {
@@ -735,6 +742,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds the foreign key from another table that refers to this table.
      *
      * @param ForeignKey $fk
+* @return void
      */
     public function addReferrer(ForeignKey $fk)
     {
@@ -759,6 +767,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param  boolean        $throwErrors
      * @throws BuildException
+* @return void
      */
     public function setupReferrers($throwErrors = false)
     {
@@ -959,6 +968,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Removes a index from the table.
      *
      * @param string $name
+* @return void
      */
     public function removeIndex($name)
     {
@@ -1171,6 +1181,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the table description.
      *
      * @param string $description
+* @return void
      */
     public function setDescription($description)
     {
@@ -1196,6 +1207,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the name to use in PHP sources.
      *
      * @param string $phpName
+* @return void
      */
     public function setPhpName($phpName)
     {
@@ -1239,6 +1251,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the table common name (without schema name).
      *
      * @param string $name
+* @return void
      */
     public function setCommonName($name)
     {
@@ -1262,6 +1275,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param  string                   $format
      * @throws InvalidArgumentException
+* @return void
      */
     public function setDefaultStringFormat($format)
     {
@@ -1318,6 +1332,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the method strategy for generating primary keys.
      *
      * @param string $idMethod
+* @return void
      */
     public function setIdMethod($idMethod)
     {
@@ -1339,6 +1354,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets whether or not this table should have its SQL DDL code generated.
      *
      * @param boolean $skip
+* @return void
      */
     public function setSkipSql($skip)
     {
@@ -1360,6 +1376,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Makes this database in read-only mode.
      *
      * @param boolean $flag True by default
+* @return void
      */
     public function setReadOnly($flag = true)
     {
@@ -1379,6 +1396,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Makes this database reload on insert statement.
      *
      * @param boolean $flag True by default
+* @return void
      */
     public function setReloadOnInsert($flag = true)
     {
@@ -1399,6 +1417,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Makes this database reload on update statement.
      *
      * @param boolean $flag True by default
+* @return void
      */
     public function setReloadOnUpdate($flag = true)
     {
@@ -1431,6 +1450,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * just a foreign key reference to it.
      *
      * @param string $alias
+* @return void
      */
     public function setAlias($alias)
     {
@@ -1451,6 +1471,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the interface objects of this table will implement.
      *
      * @param string $interface
+* @return void
      */
     public function setInterface($interface)
     {
@@ -1477,6 +1498,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * declared abstract. This helps support class hierarchies
      *
      * @param boolean $flag
+* @return void
      */
     public function setAbstract($flag = true)
     {
@@ -1773,6 +1795,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Set the database that contains this table.
      *
      * @param Database $database
+* @return void
      */
     public function setDatabase(Database $database)
     {
@@ -1837,6 +1860,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Table will be skipped, if set to true.
      *
      * @param boolean $flag
+* @return void
      */
     public function setForReferenceOnly($flag = true)
     {
@@ -1968,6 +1992,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets a cross reference status for this foreign key.
      *
      * @param boolean $flag
+* @return void
      */
     public function setIsCrossRef($flag = true)
     {
@@ -1978,6 +2003,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets a cross reference status for this foreign key.
      *
      * @param boolean $flag
+* @return void
      */
     public function setCrossRef($flag = true)
     {
@@ -2018,6 +2044,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the PHP naming method.
      *
      * @param string $phpNamingMethod
+* @return void
      */
     public function setPhpNamingMethod($phpNamingMethod)
     {
@@ -2028,6 +2055,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the default accessor visibility.
      *
      * @param string $defaultAccessorVisibility
+* @return void
      */
     public function setDefaultAccessorVisibility($defaultAccessorVisibility)
     {
@@ -2048,6 +2076,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Sets the default mutator visibility.
      *
      * @param string $defaultMutatorVisibility
+* @return void
      */
     public function setDefaultMutatorVisibility($defaultMutatorVisibility)
     {
@@ -2087,6 +2116,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     /**
      * @param boolean $identifierQuoting
+* @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {
