@@ -21,7 +21,7 @@ use Propel\Generator\Manager\MigrationManager;
 class MigrationStatusCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -38,7 +38,7 @@ class MigrationStatusCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

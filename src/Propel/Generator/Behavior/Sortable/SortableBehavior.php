@@ -185,7 +185,7 @@ class SortableBehavior extends Behavior
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function addParameter(array $parameter)
     {

@@ -41,8 +41,8 @@ interface GeneratorConfigInterface
     /**
      * Creates and configures a new Platform class.
      *
-     * @param  ConnectionInterface $con
-     * @param  string              $database
+     * @param  ConnectionInterface|null $con
+     * @param  string|null              $database
      * @return PlatformInterface|null
      *
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the platform class doesn't exists
@@ -53,8 +53,8 @@ interface GeneratorConfigInterface
     /**
      * Creates and configures a new SchemaParser class for a specified platform.
      *
-     * @param  ConnectionInterface $con
-     * @param  string              $database
+     * @param  ConnectionInterface|null $con
+     * @param  string|null              $database
      *
      * @return SchemaParserInterface|null
      *

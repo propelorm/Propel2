@@ -47,7 +47,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     protected $buildConnections = [];
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
     {
@@ -92,7 +92,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
     {

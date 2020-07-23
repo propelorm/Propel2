@@ -118,9 +118,9 @@ class Table extends ScopedMappingModel implements IdMethod
     private $identifierQuoting;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    private $forReferenceOnly = false;
+    private $forReferenceOnly;
 
     /**
      * @var bool
@@ -1825,7 +1825,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * Table will be skipped, if return true.
      *
-     * @return boolean
+     * @return boolean|null
      */
     public function isForReferenceOnly()
     {

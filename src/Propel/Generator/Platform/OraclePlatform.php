@@ -309,7 +309,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {

@@ -95,7 +95,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
@@ -133,7 +133,7 @@ ALTER TABLE %s ADD %s;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
@@ -360,7 +360,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRemoveColumnDDL(Column $column)
     {
@@ -369,7 +369,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
@@ -378,7 +378,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -387,7 +387,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -396,7 +396,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
@@ -405,7 +405,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAddPrimaryKeyDDL(Table $table)
     {
@@ -414,7 +414,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
@@ -423,7 +423,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
@@ -573,7 +573,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {

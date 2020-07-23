@@ -22,7 +22,7 @@ class ConfigConvertCommand extends AbstractCommand
     const DEFAULT_OUTPUT_FILE       = 'config.php';
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -37,7 +37,7 @@ class ConfigConvertCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

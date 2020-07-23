@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraint;
 class DateValidator extends SymfonyDateValidator
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function validate($value, Constraint $constraint)
     {

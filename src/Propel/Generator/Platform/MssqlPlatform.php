@@ -271,7 +271,7 @@ END
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {

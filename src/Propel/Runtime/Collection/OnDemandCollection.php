@@ -229,7 +229,7 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {

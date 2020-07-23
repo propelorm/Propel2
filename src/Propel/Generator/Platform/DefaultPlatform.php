@@ -1203,7 +1203,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function doQuoting($text)
     {

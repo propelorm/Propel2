@@ -379,7 +379,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function search($element)
     {
@@ -485,7 +485,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function contains($element)
     {

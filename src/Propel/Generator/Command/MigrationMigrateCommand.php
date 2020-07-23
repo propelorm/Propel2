@@ -23,7 +23,7 @@ use Propel\Generator\Util\SqlParser;
 class MigrationMigrateCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -42,7 +42,7 @@ class MigrationMigrateCommand extends AbstractCommand
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

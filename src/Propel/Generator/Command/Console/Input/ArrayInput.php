@@ -44,7 +44,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFirstArgument()
     {
@@ -60,7 +60,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function hasParameterOption($values, $onlyParams = false)
     {
@@ -84,7 +84,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getParameterOption($values, $default = false, $onlyParams = false)
     {
@@ -133,7 +133,7 @@ class ArrayInput extends Input
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function parse()
     {
