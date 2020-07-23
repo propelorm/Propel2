@@ -234,7 +234,7 @@ class Column extends MappingModel
 
     /**
      * @param string|null $typeHint
-* @return void
+     * @return void
      */
     public function setTypeHint($typeHint)
     {
@@ -420,7 +420,7 @@ class Column extends MappingModel
      * Sets the domain for this column.
      *
      * @param Domain $domain
-* @return void
+     * @return void
      */
     public function setDomain(Domain $domain)
     {
@@ -471,7 +471,7 @@ class Column extends MappingModel
      * Sets the column name.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setName($name)
     {
@@ -513,7 +513,7 @@ class Column extends MappingModel
      * Sets the column description.
      *
      * @param string $description
-* @return void
+     * @return void
      */
     public function setDescription($description)
     {
@@ -558,7 +558,7 @@ class Column extends MappingModel
      * $phpName is passed.
      *
      * @param string $phpName
-* @return void
+     * @return void
      */
     public function setPhpName($phpName = null)
     {
@@ -577,7 +577,7 @@ class Column extends MappingModel
      * $phpSingularName is passed.
      *
      * @param string $phpSingularName
-* @return void
+     * @return void
      */
     public function setPhpSingularName($phpSingularName = null)
     {
@@ -618,7 +618,7 @@ class Column extends MappingModel
      * Sets the accessor methods visibility for this column / attribute.
      *
      * @param string $visibility
-* @return void
+     * @return void
      */
     public function setAccessorVisibility($visibility)
     {
@@ -648,7 +648,7 @@ class Column extends MappingModel
      * Sets the mutator methods visibility for this column / attribute.
      *
      * @param string $visibility
-* @return void
+     * @return void
      */
     public function setMutatorVisibility($visibility)
     {
@@ -702,7 +702,7 @@ class Column extends MappingModel
      * Sets the TableMap constant name that will identify this column.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setTableMapName($name)
     {
@@ -735,7 +735,7 @@ class Column extends MappingModel
      * Returns the location of this column within the table (one-based).
      *
      * @param integer $position
-* @return void
+     * @return void
      */
     public function setPosition($position)
     {
@@ -746,7 +746,7 @@ class Column extends MappingModel
      * Sets the parent table.
      *
      * @param \Propel\Generator\Model\Table $table
-* @return void
+     * @return void
      */
     public function setTable(Table $table)
     {
@@ -865,7 +865,7 @@ class Column extends MappingModel
      * Sets whether or not the column is not null.
      *
      * @param boolean $flag
-* @return void
+     * @return void
      */
     public function setNotNull($flag = true)
     {
@@ -889,7 +889,7 @@ class Column extends MappingModel
      * __toString method of an active record object.
      *
      * @param boolean $isPrimaryString
-* @return void
+     * @return void
      */
     public function setPrimaryString($isPrimaryString)
     {
@@ -911,7 +911,7 @@ class Column extends MappingModel
      * Sets whether or not the column is a primary key.
      *
      * @param boolean $flag
-* @return void
+     * @return void
      */
     public function setPrimaryKey($flag = true)
     {
@@ -932,7 +932,7 @@ class Column extends MappingModel
      * Sets whether or not the column is a node key of a tree.
      *
      * @param boolean $isNodeKey
-* @return void
+     * @return void
      */
     public function setNodeKey($isNodeKey)
     {
@@ -953,7 +953,7 @@ class Column extends MappingModel
      * Sets the separator for the node key column in a tree.
      *
      * @param string $sep
-* @return void
+     * @return void
      */
     public function setNodeKeySep($sep)
     {
@@ -974,7 +974,7 @@ class Column extends MappingModel
      * Sets whether or not the column is the nested set left key of a tree.
      *
      * @param boolean $isNestedSetLeftKey
-* @return void
+     * @return void
      */
     public function setNestedSetLeftKey($isNestedSetLeftKey)
     {
@@ -995,7 +995,7 @@ class Column extends MappingModel
      * Set if the column is the nested set right key of a tree.
      *
      * @param boolean $isNestedSetRightKey
-* @return void
+     * @return void
      */
     public function setNestedSetRightKey($isNestedSetRightKey)
     {
@@ -1016,7 +1016,7 @@ class Column extends MappingModel
      * Sets whether or not the column is the scope key of a tree.
      *
      * @param boolean $isTreeScopeKey
-* @return void
+     * @return void
      */
     public function setTreeScopeKey($isTreeScopeKey)
     {
@@ -1089,7 +1089,7 @@ class Column extends MappingModel
      * Adds the foreign key from another table that refers to this column.
      *
      * @param ForeignKey $fk
-* @return void
+     * @return void
      */
     public function addReferrer(ForeignKey $fk)
     {
@@ -1131,7 +1131,7 @@ class Column extends MappingModel
     /**
      * Clears all referrers.
      *
-* @return void
+     * @return void
      */
     public function clearReferrers()
     {
@@ -1141,7 +1141,7 @@ class Column extends MappingModel
     /**
      * Clears all inheritance children.
      *
-* @return void
+     * @return void
      */
     public function clearInheritanceList()
     {
@@ -1155,7 +1155,7 @@ class Column extends MappingModel
      * size, scale (or other domain attributes).
      *
      * @param string $mappingType
-* @return void
+     * @return void
      */
     public function setDomainForType($mappingType)
     {
@@ -1167,7 +1167,7 @@ class Column extends MappingModel
      *
      * @param string $mappingType
      * @see Domain::setType()
-* @return void
+     * @return void
      */
     public function setType($mappingType)
     {
@@ -1311,7 +1311,7 @@ class Column extends MappingModel
      * Sets the list of possible values for an ENUM or SET column.
      *
      * @param string|string[] $valueSet
-* @return void
+     * @return void
      */
     public function setValueSet($valueSet)
     {
@@ -1347,7 +1347,7 @@ class Column extends MappingModel
      * Sets the column size.
      *
      * @param integer|null $size
-* @return void
+     * @return void
      */
     public function setSize($size)
     {
@@ -1368,7 +1368,7 @@ class Column extends MappingModel
      * Sets the column scale.
      *
      * @param integer $scale
-* @return void
+     * @return void
      */
     public function setScale($scale)
     {
@@ -1515,7 +1515,7 @@ class Column extends MappingModel
      * Use isAutoIncrement() to find out if it is set or not.
      *
      * @param boolean $flag
-* @return void
+     * @return void
      */
     public function setAutoIncrement($flag = true)
     {
@@ -1596,7 +1596,7 @@ class Column extends MappingModel
     /**
      * Clones the current object.
      *
-* @return void
+     * @return void
      */
     public function __clone()
     {

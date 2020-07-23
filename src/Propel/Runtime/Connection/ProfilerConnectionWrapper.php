@@ -38,7 +38,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
 
     /**
      * @param \Propel\Runtime\Util\Profiler $profiler
-* @return void
+     * @return void
      */
     public function setProfiler(Profiler $profiler)
     {
@@ -126,6 +126,6 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
         }
         $msg = $this->getProfiler()->getProfile() . $msg;
 
-        return parent::log($msg);
+        parent::log($msg);
     }
 }

@@ -79,11 +79,13 @@ interface ConsoleHelperInterface
 
     /**
      * @param OutputInterface $output
+     * @return void
      */
     public function setOutput(OutputInterface $output);
 
     /**
      * @param InputInterface $input
+     * @return void
      */
     public function setInput(InputInterface $input);
 
@@ -92,6 +94,7 @@ interface ConsoleHelperInterface
      *
      * @param string|array $messages The message as an array of lines of a single string
      * @param int          $options  A bitmask of options (one of the OUTPUT or VERBOSITY constants), 0 is considered the same as self::OUTPUT_NORMAL | self::VERBOSITY_NORMAL
+     * @return void
      */
     public function writeln($messages, $options = 0);
 }

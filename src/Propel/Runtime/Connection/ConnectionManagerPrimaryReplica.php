@@ -49,7 +49,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
-* @return void
+     * @return void
      */
     public function setName($name)
     {
@@ -78,7 +78,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      * For replication, set whether to always force the use of a primary connection.
      *
      * @param boolean $isForceMasterConnection
-* @return void
+     * @return void
      */
     public function setForcePrimaryConnection($isForceMasterConnection)
     {
@@ -97,7 +97,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      * </code>
      *
      * @param array $configuration
-* @return void
+     * @return void
      */
     public function setWriteConfiguration($configuration)
     {
@@ -124,7 +124,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      * </code>
      *
      * @param array $configuration
-* @return void
+     * @return void
      */
     public function setReadConfiguration($configuration)
     {

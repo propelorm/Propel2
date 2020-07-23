@@ -69,7 +69,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      * Sets the child object that we're operating on currently.
      *
      * @param Inheritance $child
-* @return void
+     * @return void
      */
     public function setChild(Inheritance $child)
     {
@@ -165,7 +165,7 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      *
      * @param string $script
      * @see ObjectBuilder::addClassBody()
-* @return void
+     * @return void
      */
     protected function addClassBody(&$script)
     {

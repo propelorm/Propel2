@@ -46,7 +46,7 @@ class MigrationManager extends AbstractManager
      * Set the database connection settings
      *
      * @param array $connections
-* @return void
+     * @return void
      */
     public function setConnections($connections)
     {
@@ -112,7 +112,7 @@ class MigrationManager extends AbstractManager
      * Set the migration table name
      *
      * @param string $migrationTable
-* @return void
+     * @return void
      */
     public function setMigrationTable($migrationTable)
     {

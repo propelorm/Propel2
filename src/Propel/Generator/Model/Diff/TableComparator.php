@@ -50,7 +50,7 @@ class TableComparator
      * Sets the table the comparator starts from.
      *
      * @param \Propel\Generator\Model\Table $fromTable
-* @return void
+     * @return void
      */
     public function setFromTable(Table $fromTable)
     {
@@ -71,7 +71,7 @@ class TableComparator
      * Sets the table the comparator goes to.
      *
      * @param \Propel\Generator\Model\Table $toTable
-* @return void
+     * @return void
      */
     public function setToTable(Table $toTable)
     {

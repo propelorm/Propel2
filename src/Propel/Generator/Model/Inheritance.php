@@ -51,10 +51,10 @@ class Inheritance extends MappingModel
     }
 
     /**
-    * Get constant names' safe value of the key name.
-    *
-    * @return string
-    */
+     * Get constant names' safe value of the key name.
+     *
+     * @return string
+     */
     public function getConstantSuffix()
     {
         $separator = PhpNameGenerator::STD_SEPARATOR_CHAR;
@@ -65,7 +65,7 @@ class Inheritance extends MappingModel
      * Sets a key name.
      *
      * @param string $key
-* @return void
+     * @return void
      */
     public function setKey($key)
     {
@@ -76,7 +76,7 @@ class Inheritance extends MappingModel
      * Sets the parent column
      *
      * @param Column $column
-* @return void
+     * @return void
      */
     public function setColumn(Column $column)
     {
@@ -107,7 +107,7 @@ class Inheritance extends MappingModel
      * Sets the class name.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setClassName($name)
     {
@@ -128,7 +128,7 @@ class Inheritance extends MappingModel
      * Sets the package.
      *
      * @param string $package
-* @return void
+     * @return void
      */
     public function setPackage($package)
     {
@@ -149,7 +149,7 @@ class Inheritance extends MappingModel
      * Sets the ancestor.
      *
      * @param string $ancestor
-* @return void
+     * @return void
      */
     public function setAncestor($ancestor)
     {

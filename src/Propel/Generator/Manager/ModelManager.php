@@ -31,7 +31,7 @@ class ModelManager extends AbstractManager
      * Sets the filesystem object.
      *
      * @param Filesystem $filesystem
-* @return void
+     * @return void
      */
     public function setFilesystem(Filesystem $filesystem)
     {

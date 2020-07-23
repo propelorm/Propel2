@@ -31,7 +31,7 @@ class SqlParser
      * Also resets the parsing cursor (see getNextStatement)
      *
      * @param string $sql The SQL string to parse
-* @return void
+     * @return void
      */
     public function setSQL($sql)
     {

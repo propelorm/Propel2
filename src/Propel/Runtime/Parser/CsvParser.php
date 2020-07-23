@@ -110,11 +110,11 @@ class CsvParser extends AbstractParser
     }
 
     /**
-    * Escapes a column (escapes quotechar with escapechar)
-    *
-    * @param string $input    A single value to be escaped for output
-    * @return string    Escaped input value
-    */
+     * Escapes a column (escapes quotechar with escapechar)
+     *
+     * @param string $input    A single value to be escaped for output
+     * @return string    Escaped input value
+     */
     protected function escape($input)
     {
         return str_replace(

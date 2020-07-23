@@ -80,7 +80,7 @@ abstract class AbstractFormatter
      * Sets a DataFetcherInterface object.
      *
      * @param DataFetcherInterface $dataFetcher
-* @return void
+     * @return void
      */
     public function setDataFetcher(DataFetcherInterface $dataFetcher)
     {

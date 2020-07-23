@@ -54,7 +54,7 @@ class DatabaseDiff
      * Sets the added tables.
      *
      * @param array $tables
-* @return void
+     * @return void
      */
     public function setAddedTables($tables)
     {
@@ -66,7 +66,7 @@ class DatabaseDiff
      *
      * @param string $name
      * @param Table  $table
-* @return void
+     * @return void
      */
     public function addAddedTable($name, Table $table)
     {
@@ -77,7 +77,7 @@ class DatabaseDiff
      * Removes an added table.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function removeAddedTable($name)
     {
@@ -97,7 +97,7 @@ class DatabaseDiff
      *
      * @param string $fromName
      * @param string $toName
-* @return void
+     * @return void
      */
     public function addPossibleRenamedTable($fromName, $toName)
     {
@@ -140,7 +140,7 @@ class DatabaseDiff
      * Sets the removes tables.
      *
      * @param \Propel\Generator\Model\Table[] $tables
-* @return void
+     * @return void
      */
     public function setRemovedTables($tables)
     {
@@ -152,7 +152,7 @@ class DatabaseDiff
      *
      * @param string $name
      * @param Table  $table
-* @return void
+     * @return void
      */
     public function addRemovedTable($name, Table $table)
     {
@@ -163,7 +163,7 @@ class DatabaseDiff
      * Removes a removed table.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function removeRemovedTable($name)
     {
@@ -206,7 +206,7 @@ class DatabaseDiff
      * Sets the modified tables
      *
      * @param \Propel\Generator\Model\Diff\TableDiff[] $tables
-* @return void
+     * @return void
      */
     public function setModifiedTables($tables)
     {
@@ -218,7 +218,7 @@ class DatabaseDiff
      *
      * @param string    $name
      * @param TableDiff $difference
-* @return void
+     * @return void
      */
     public function addModifiedTable($name, TableDiff $difference)
     {
@@ -249,7 +249,7 @@ class DatabaseDiff
      * Sets the renamed tables.
      *
      * @param string[] $tables
-* @return void
+     * @return void
      */
     public function setRenamedTables($tables)
     {
@@ -261,7 +261,7 @@ class DatabaseDiff
      *
      * @param string $fromName
      * @param string $toName
-* @return void
+     * @return void
      */
     public function addRenamedTable($fromName, $toName)
     {

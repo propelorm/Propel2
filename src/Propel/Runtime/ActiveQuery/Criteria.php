@@ -702,7 +702,7 @@ class Criteria
      * set, of course, in order to be useful.
      *
      * @param string $tableName
-* @return void
+     * @return void
      */
     public function setPrimaryTableName($tableName)
     {
@@ -778,7 +778,7 @@ class Criteria
      * Criteria, overwriting previous settings.
      *
      * @param mixed $t Mappings to be stored in this map.
-* @return void
+     * @return void
      */
     public function putAll($t)
     {
@@ -964,7 +964,7 @@ class Criteria
      *     array(FoldersTableMap::alias( 'fo', FoldersTableMap::LFT ), FoldersTableMap::alias( 'parent', FoldersTableMap::RGT ), Criteria::LESS_EQUAL )
      *   ),
      *   Criteria::LEFT_JOIN
-      * );
+     * );
      *
      * @see addJoin()
      * @param array  $conditions An array of conditions, each condition being an array (left, right, operator)
@@ -1833,7 +1833,7 @@ class Criteria
      * @param mixed                    $value
      * @param string                   $operator              A String, like Criteria::EQUAL.
      * @param boolean                  $preferColumnCondition If true, the condition is combined with an existing condition on the same column
-    *                      (necessary for Propel 1.4 compatibility).
+     *                      (necessary for Propel 1.4 compatibility).
      *                     If false, the condition is combined with the last existing condition.
      *
      * @return $this A modified Criteria object.
@@ -2577,6 +2577,8 @@ class Criteria
      * Checks whether the Criteria needs to use column aliasing
      * This is implemented in a service class rather than in Criteria itself
      * in order to avoid doing the tests when it's not necessary (e.g. for SELECTs)
+     *
+     * @return bool
      */
     public function needsSelectAliases()
     {
@@ -2789,7 +2791,7 @@ class Criteria
 
     /**
      * Ensures deep cloning of attached objects
-* @return void
+     * @return void
      */
     public function __clone()
     {
@@ -2816,7 +2818,7 @@ class Criteria
 
     /**
      * @param boolean $identifierQuoting
-* @return void
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

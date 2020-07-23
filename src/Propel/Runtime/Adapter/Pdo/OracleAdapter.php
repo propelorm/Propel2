@@ -39,7 +39,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @param ConnectionInterface $con
      * @param array $settings
-* @return void
+     * @return void
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -107,7 +107,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param integer       $offset
      * @param integer       $limit
      * @param null|Criteria $criteria
-* @return void
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {

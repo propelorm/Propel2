@@ -87,7 +87,7 @@ class ModelWith
      * Fills the ModelWith properties using a ModelJoin as source
      *
      * @param ModelJoin $join
-* @return void
+     * @return void
      */
     public function init(ModelJoin $join)
     {

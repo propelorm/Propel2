@@ -35,7 +35,7 @@ class NestedSetBehavior extends Behavior
 
     /**
      * Add the left, right and scope to the current table
-* @return void
+     * @return void
      */
     public function modifyTable()
     {

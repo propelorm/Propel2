@@ -83,7 +83,7 @@ class DefaultPlatform implements PlatformInterface
      * Sets the database connection to use for this Platform class.
      *
      * @param ConnectionInterface $con Database connection to use in this platform.
-* @return void
+     * @return void
      */
     public function setConnection(ConnectionInterface $con = null)
     {
@@ -110,7 +110,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * @param boolean $enabled
-* @return void
+     * @return void
      */
     public function setIdentifierQuoting($enabled)
     {
@@ -121,7 +121,7 @@ class DefaultPlatform implements PlatformInterface
      * Sets the GeneratorConfigInterface to use in the parsing.
      *
      * @param GeneratorConfigInterface $generatorConfig
-* @return void
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
@@ -129,7 +129,7 @@ class DefaultPlatform implements PlatformInterface
 
     /**
      * Initialize the type -> Domain mapping.
-* @return void
+     * @return void
      */
     protected function initialize()
     {
@@ -148,7 +148,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Adds a mapping entry for specified Domain.
      * @param Domain $domain
-* @return void
+     * @return void
      */
     protected function setSchemaDomainMapping(Domain $domain)
     {

@@ -75,7 +75,7 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
-* @return void
+     * @return void
      */
     protected function addClassBody(&$script)
     {

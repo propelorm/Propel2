@@ -95,7 +95,7 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array with data
+     * @param    array  $row associative array with data
      *
      * @return ActiveRecordInterface
      */

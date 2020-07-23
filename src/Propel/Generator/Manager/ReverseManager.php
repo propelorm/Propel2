@@ -88,7 +88,7 @@ class ReverseManager extends AbstractManager
      * Sets the name of a database schema to use (optional).
      *
      * @param string $schemaName
-* @return void
+     * @return void
      */
     public function setSchemaName($schemaName)
     {
@@ -109,7 +109,7 @@ class ReverseManager extends AbstractManager
      * Sets the php namespace to use (optional).
      *
      * @param string $namespace
-* @return void
+     * @return void
      */
     public function setNamespace($namespace)
     {
@@ -132,7 +132,7 @@ class ReverseManager extends AbstractManager
      * schema.xml
      *
      * @param string $databaseName
-* @return void
+     * @return void
      */
     public function setDatabaseName($databaseName)
     {
@@ -143,7 +143,7 @@ class ReverseManager extends AbstractManager
      * Sets whether to use the column name as phpName without any translation.
      *
      * @param boolean $samePhpName
-* @return void
+     * @return void
      */
     public function setSamePhpName($samePhpName)
     {
@@ -154,7 +154,7 @@ class ReverseManager extends AbstractManager
      * Sets whether to add vendor info to the schema.
      *
      * @param boolean $addVendorInfo
-* @return void
+     * @return void
      */
     public function setAddVendorInfo($addVendorInfo)
     {

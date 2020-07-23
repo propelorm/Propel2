@@ -43,7 +43,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param array $input
-* @return void
+     * @return void
      */
     public function exchangeArray($input)
     {
@@ -65,7 +65,7 @@ class ObjectCollection extends Collection
      * Save all the elements in the collection
      *
      * @param ConnectionInterface $con
-* @return void
+     * @return void
      */
     public function save($con = null)
     {
@@ -87,7 +87,7 @@ class ObjectCollection extends Collection
      * Delete all the elements in the collection
      *
      * @param ConnectionInterface $con
-* @return void
+     * @return void
      */
     public function delete($con = null)
     {
@@ -130,7 +130,7 @@ class ObjectCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
-* @return void
+     * @return void
      */
     public function fromArray($arr)
     {
@@ -415,7 +415,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $offset
-* @return void
+     * @return void
      */
     public function offsetUnset($offset)
     {
@@ -430,7 +430,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $element
-* @return void
+     * @return void
      */
     public function removeObject($element)
     {
@@ -441,7 +441,7 @@ class ObjectCollection extends Collection
 
     /**
      * @param mixed $value
-* @return void
+     * @return void
      */
     public function append($value)
     {
@@ -462,7 +462,7 @@ class ObjectCollection extends Collection
     /**
      * @param mixed $offset
      * @param mixed $value
-* @return void
+     * @return void
      */
     public function offsetSet($offset, $value)
     {

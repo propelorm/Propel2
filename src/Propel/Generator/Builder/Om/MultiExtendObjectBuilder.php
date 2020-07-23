@@ -55,7 +55,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      * Sets the child object that we're operating on currently.
      *
      * @param Inheritance $child Inheritance
-* @return void
+     * @return void
      */
     public function setChild(Inheritance $child)
     {

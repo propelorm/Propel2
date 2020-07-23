@@ -247,7 +247,7 @@ class ForeignKey extends MappingModel
      * Sets the onDelete behavior.
      *
      * @param string $behavior
-* @return void
+     * @return void
      */
     public function setOnDelete($behavior)
     {
@@ -258,7 +258,7 @@ class ForeignKey extends MappingModel
      * Sets the onUpdate behavior.
      *
      * @param string|null $behavior
-* @return void
+     * @return void
      */
     public function setOnUpdate($behavior)
     {
@@ -281,7 +281,7 @@ class ForeignKey extends MappingModel
      * Sets the foreign key name.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setName($name)
     {
@@ -299,7 +299,7 @@ class ForeignKey extends MappingModel
 
     /**
      * @param string $interface
-* @return void
+     * @return void
      */
     public function setInterface($interface)
     {
@@ -320,7 +320,7 @@ class ForeignKey extends MappingModel
      * Sets a phpName to use for this foreign key.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setPhpName($name)
     {
@@ -341,7 +341,7 @@ class ForeignKey extends MappingModel
      * Sets a refPhpName to use for this foreign key.
      *
      * @param string $name
-* @return void
+     * @return void
      */
     public function setRefPhpName($name)
     {
@@ -362,7 +362,7 @@ class ForeignKey extends MappingModel
      * Sets the default join strategy for this foreign key (if any).
      *
      * @param string $join
-* @return void
+     * @return void
      */
     public function setDefaultJoin($join)
     {
@@ -429,7 +429,7 @@ class ForeignKey extends MappingModel
      * Sets the foreign table common name of the FK.
      *
      * @param string $tableName
-* @return void
+     * @return void
      */
     public function setForeignTableCommonName($tableName)
     {
@@ -465,7 +465,7 @@ class ForeignKey extends MappingModel
      * Set the foreign schema name of the foreign key.
      *
      * @param string $schemaName
-* @return void
+     * @return void
      */
     public function setForeignSchemaName($schemaName)
     {
@@ -476,7 +476,7 @@ class ForeignKey extends MappingModel
      * Sets the parent Table of the foreign key.
      *
      * @param \Propel\Generator\Model\Table $parent
-* @return void
+     * @return void
      */
     public function setTable(Table $parent)
     {
@@ -560,7 +560,7 @@ class ForeignKey extends MappingModel
     /**
      * Clears the references of this foreign key.
      *
-* @return void
+     * @return void
      */
     public function clearReferences()
     {
@@ -904,7 +904,7 @@ class ForeignKey extends MappingModel
      * generated.
      *
      * @param boolean $skip
-* @return void
+     * @return void
      */
     public function setSkipSql($skip)
     {

@@ -126,7 +126,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string  $sql
      * @param integer $offset
      * @param integer $limit
-* @return void
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
@@ -255,6 +255,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * Explain Plan compute query getter
      *
      * @param string $query query to explain
+     * @return string
      */
     public function getExplainPlanQuery($query)
     {

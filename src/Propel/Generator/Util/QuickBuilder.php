@@ -76,7 +76,7 @@ class QuickBuilder
 
     /**
      * @param string $schema
-* @return void
+     * @return void
      */
     public function setSchema($schema)
     {
@@ -93,7 +93,7 @@ class QuickBuilder
 
     /**
      * @param string $schemaName
-* @return void
+     * @return void
      */
     public function setSchemaName($schemaName)
     {
@@ -110,7 +110,7 @@ class QuickBuilder
 
     /**
      * @param \Propel\Generator\Reverse\SchemaParserInterface $parser
-* @return void
+     * @return void
      */
     public function setParser($parser)
     {
@@ -129,7 +129,7 @@ class QuickBuilder
      * Setter for the platform property
      *
      * @param PlatformInterface $platform
-* @return void
+     * @return void
      */
     public function setPlatform($platform)
     {
@@ -156,7 +156,7 @@ class QuickBuilder
      * Setter for the config property
      *
      * @param GeneratorConfigInterface $config
-* @return void
+     * @return void
      */
     public function setConfig(GeneratorConfigInterface $config)
     {
@@ -351,7 +351,7 @@ class QuickBuilder
     /**
      * @param string[]|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
      * @param bool  $separate     pass true to get for each class a own file. better for debugging.
-* @return void
+     * @return void
      */
     public function buildClasses(array $classTargets = null, $separate = false)
     {
@@ -573,7 +573,7 @@ class QuickBuilder
 
     /**
      * @param boolean $identifierQuoting
-* @return void
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {

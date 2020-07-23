@@ -85,7 +85,7 @@ class DatabaseMap
      * Add a new table object to the database.
      *
      * @param \Propel\Runtime\Map\TableMap $table The table to add
-* @return void
+     * @return void
      */
     public function addTableObject(TableMap $table)
     {

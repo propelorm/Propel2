@@ -38,7 +38,7 @@ class PropelTemplate
      * </code>
      *
      * @param string $template the template string
-* @return void
+     * @return void
      */
     public function setTemplate($template)
     {
@@ -53,7 +53,7 @@ class PropelTemplate
      * </code>
      *
      * @param string $filePath The (absolute or relative to the include path) file path
-* @return void
+     * @return void
      */
     public function setTemplateFile($filePath)
     {

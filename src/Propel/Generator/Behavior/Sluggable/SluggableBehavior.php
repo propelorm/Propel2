@@ -45,7 +45,7 @@ class SluggableBehavior extends Behavior
     /**
      * Adds the slug_column to the current table.
      *
-* @return void
+     * @return void
      */
     public function modifyTable()
     {
@@ -69,7 +69,7 @@ class SluggableBehavior extends Behavior
      * Adds a unique constraint to the table to enforce uniqueness of the slug_column
      *
      * @param Table $table
-* @return void
+     * @return void
      */
     protected function addUniqueConstraint(Table $table)
     {

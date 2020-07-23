@@ -161,7 +161,7 @@ class PropelDateTime extends \DateTime
     /**
      * PHP "magic" function called when object is restored from serialized state.
      * Calls DateTime constructor with previously stored string value of date.
-* @return void
+     * @return void
      */
     public function __wakeup()
     {

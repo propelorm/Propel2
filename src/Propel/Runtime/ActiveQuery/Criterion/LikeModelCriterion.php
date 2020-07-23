@@ -51,7 +51,7 @@ class LikeModelCriterion extends BasicModelCriterion
      *
      * @param string $sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
-* @return void
+     * @return void
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {

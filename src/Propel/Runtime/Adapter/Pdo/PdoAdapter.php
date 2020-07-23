@@ -119,7 +119,7 @@ abstract class PdoAdapter
      *
      * @param ConnectionInterface $con
      * @param array               $settings An array of settings.
-* @return void
+     * @return void
      */
     public function initConnection(ConnectionInterface $con, array $settings)
     {
@@ -144,7 +144,7 @@ abstract class PdoAdapter
      *
      * @param ConnectionInterface $con
      * @param string              $charset The $string charset encoding.
-* @return void
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -375,7 +375,7 @@ abstract class PdoAdapter
      * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
-* @return void
+     * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {
@@ -560,7 +560,7 @@ abstract class PdoAdapter
      * @param \PDOStatement $stmt
      * @param array         $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param DatabaseMap   $dbMap
-* @return void
+     * @return void
      */
     public function bindValues(\PDOStatement $stmt, array $params, DatabaseMap $dbMap)
     {

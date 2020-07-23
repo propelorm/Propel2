@@ -22,7 +22,7 @@ class SeveralModelCriterion extends AbstractModelCriterion
      *
      * @param string $sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
-* @return void
+     * @return void
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
@@ -50,6 +50,12 @@ class SeveralModelCriterion extends AbstractModelCriterion
     /**
      * Replace only once
      * taken from http://www.php.net/manual/en/function.str-replace.php
+     *
+     * @param string $search
+     * @param string $replace
+     * @param string $subject
+     *
+     * @return string
      */
     protected static function strReplaceOnce($search, $replace, $subject)
     {

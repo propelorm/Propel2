@@ -32,7 +32,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @param ConnectionInterface $con
      * @param string              $charset
-* @return void
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
     {
@@ -280,7 +280,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param array       $params
      * @param Criteria    $values
      * @param DatabaseMap $dbMap
-* @return void
+     * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
     {

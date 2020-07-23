@@ -36,7 +36,7 @@ class MysqlPlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
-* @return void
+     * @return void
      */
     protected function initialize()
     {
@@ -76,7 +76,7 @@ class MysqlPlatform extends DefaultPlatform
      * Setter for the tableEngineKeyword property
      *
      * @param string $tableEngineKeyword
-* @return void
+     * @return void
      */
     public function setTableEngineKeyword($tableEngineKeyword)
     {
@@ -97,7 +97,7 @@ class MysqlPlatform extends DefaultPlatform
      * Setter for the defaultTableEngine property
      *
      * @param string $defaultTableEngine
-* @return void
+     * @return void
      */
     public function setDefaultTableEngine($defaultTableEngine)
     {

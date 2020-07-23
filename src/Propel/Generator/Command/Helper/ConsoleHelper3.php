@@ -149,7 +149,7 @@ class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
      */
     public function writeln($messages, $options = 0)
     {
-        return $this->output->writeln($messages, $options);
+        $this->output->writeln($messages, $options);
     }
 
     /**

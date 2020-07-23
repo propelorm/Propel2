@@ -219,7 +219,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @param Table $table The Table model class to add columns to.
      * @param int   $oid   The table OID
-* @return void
+     * @return void
      */
     protected function addColumns(Table $table, $oid)
     {
@@ -363,7 +363,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
-* @return void
+     * @return void
      */
     protected function addForeignKeys(Table $table, $oid)
     {
@@ -474,7 +474,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
-* @return void
+     * @return void
      */
     protected function addIndexes(Table $table, $oid)
     {
@@ -537,7 +537,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
-* @return void
+     * @return void
      */
     protected function addPrimaryKey(Table $table, $oid)
     {
@@ -580,7 +580,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * Adds the sequences for this database.
      *
      * @param Database $database
-* @return void
+     * @return void
      */
     protected function addSequences(Database $database)
     {

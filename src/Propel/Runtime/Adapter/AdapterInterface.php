@@ -43,6 +43,7 @@ interface AdapterInterface
      *
      * @param ConnectionInterface $con
      * @param string              $charset The $string charset encoding.
+     * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset);
 

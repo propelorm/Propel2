@@ -66,7 +66,7 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
-* @return void
+     * @return void
      */
     public function next()
     {
@@ -106,7 +106,7 @@ class PDODataFetcher extends AbstractDataFetcher
      * Not supported in PDODataFetcher.
      * It actually fetches the first row, since a foreach in php triggers that
      * function as init.
-* @return void
+     * @return void
      */
     public function rewind()
     {
@@ -116,7 +116,7 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * {@inheritDoc}
-* @return void
+     * @return void
      */
     public function close()
     {
@@ -169,7 +169,7 @@ class PDODataFetcher extends AbstractDataFetcher
      * @param int   $type
      * @param int   $maxlen
      * @param mixed $driverdata
-* @return void
+     * @return void
      */
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {

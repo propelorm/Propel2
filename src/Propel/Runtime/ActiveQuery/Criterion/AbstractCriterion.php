@@ -91,10 +91,10 @@ abstract class AbstractCriterion
     }
 
     /**
-    * Init some properties with the help of outer class
-    * @param      Criteria $criteria The outer class
-* @return void
-    */
+     * Init some properties with the help of outer class
+     * @param      Criteria $criteria The outer class
+     * @return void
+     */
     public function init(Criteria $criteria)
     {
         try {
@@ -113,7 +113,7 @@ abstract class AbstractCriterion
 
     /**
      * Set the $column and $table properties based on a column name or object
-* @return void
+     * @return void
      */
     protected function setColumn($column)
     {
@@ -301,6 +301,7 @@ abstract class AbstractCriterion
      *
      * @param string $sb    The string that will receive the Prepared Statement
      * @param array  $params A list to which Prepared Statement parameters will be appended
+     * @return void
      */
     abstract protected function appendPsForUniqueClauseTo(&$sb, array &$params);
 
@@ -390,7 +391,7 @@ abstract class AbstractCriterion
 
     /**
      * Ensures deep cloning of attached objects
-* @return void
+     * @return void
      */
     public function __clone()
     {
