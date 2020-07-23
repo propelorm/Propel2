@@ -37,6 +37,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'bit'                => PropelTypes::BOOLEAN,
         'char'               => PropelTypes::CHAR,
         'datetime'           => PropelTypes::TIMESTAMP,
+        'datetime2'          => PropelTypes::TIMESTAMP,
         'decimal() identity' => PropelTypes::DECIMAL,
         'decimal'            => PropelTypes::DECIMAL,
         'image'              => PropelTypes::LONGVARBINARY,
@@ -71,6 +72,32 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'bigint'             => PropelTypes::BIGINT,
         'sql_variant'        => PropelTypes::VARCHAR,
     ];
+
+    /**
+     * List with types where size comparison makes sense
+     * @var array
+     */
+    private static $mssqlTypesWithSize = [
+        PropelTypes::CHAR,
+        PropelTypes::DECIMAL,
+        PropelTypes::VARCHAR,
+        PropelTypes::VARBINARY
+    ];
+
+    /**
+     * https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-foreign-keys-transact-sql
+     * 0 = No action
+     * 1 = Cascade
+     * 2 = Set null
+     * 3 = Set default
+     */
+    private static $mssqlForeignKeyTypes = [
+        0 => ForeignKey::NOACTION,
+        1 => ForeignKey::CASCADE,
+        2 => ForeignKey::SETNULL,
+        3 => ForeignKey::SETDEFAULT,
+    ];
+
 
     /**
      * @see AbstractSchemaParser::getTypeMapping()
@@ -126,9 +153,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
             $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
-            $size = $row['LENGTH'];
+            $size = $row['PRECISION'];
             $isNullable = $row['NULLABLE'];
-            $default = $row['COLUMN_DEF'];
+            $default = trim(str_replace(["((", "))","('", "')","(", ")",'DEFAULT'], '',  $row['COLUMN_DEF']));
             $scale = $row['SCALE'];
             $autoincrement = false;
             if (strtolower($type) == 'int identity') {
@@ -140,6 +167,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
                 $propelType = Column::DEFAULT_TYPE;
                 $this->warn(sprintf('Column [%s.%s] has a column type (%s) that Propel does not support.', $table->getName(), $name, $type));
             }
+            if (!in_array($propelType, self::$mssqlTypesWithSize)) {
+                $size = null;
+            }
 
             $column = new Column($name);
             $column->setTable($table);
@@ -148,7 +178,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             // $column->getDomain()->replaceSqlType($type);
             $column->getDomain()->replaceSize($size);
             $column->getDomain()->replaceScale($scale);
-            if ($default !== null) {
+            if (strlen($default) > 0) {
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, ColumnDefaultValue::TYPE_VALUE));
             }
             $column->setAutoIncrement($autoincrement);
@@ -165,7 +195,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
         
-        $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME
+        $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME,
+fk.[﻿update_referential_action] as FK_ON_UPDATE_ACTION, fk.[﻿delete_referential_action] as FK_ON_DELETE_ACTION
          from sys.foreign_keys as fk 
          inner join sys.foreign_key_columns ref on ref.constraint_object_id = fk.object_id
          inner join sys.columns lcol on lcol.object_id = ref.parent_object_id and lcol.column_id = ref.parent_column_id
@@ -187,11 +218,19 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $localColumn   = $table->getColumn($lcol);
 
             if (!isset($foreignKeys[$name])) {
+                // default for mssql -> 'NO ACTION'
+                $fkactions = [
+                    'ON DELETE' => array_key_exists($row['FK_ON_DELETE_ACTION'], self::$mssqlForeignKeyTypes) ?
+                        self::$mssqlForeignKeyTypes[$row['FK_ON_DELETE_ACTION']] : ForeignKey::NOACTION,
+                    'ON UPDATE' => array_key_exists($row['FK_ON_UPDATE_ACTION'], self::$mssqlForeignKeyTypes) ?
+                        self::$mssqlForeignKeyTypes[$row['FK_ON_UPDATE_ACTION']] : ForeignKey::NOACTION,
+                ];
+
                 $fk = new ForeignKey($name);
                 $fk->setForeignTableCommonName($foreignTable->getCommonName());
                 $fk->setForeignSchemaName($foreignTable->getSchema());
-                //$fk->setOnDelete($fkactions['ON DELETE']);
-                //$fk->setOnUpdate($fkactions['ON UPDATE']);
+                $fk->setOnDelete($fkactions['ON DELETE']);
+                $fk->setOnUpdate($fkactions['ON UPDATE']);
                 $table->addForeignKey($fk);
                 $foreignKeys[$name] = $fk;
             }

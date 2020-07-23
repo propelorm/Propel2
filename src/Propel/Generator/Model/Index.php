@@ -193,8 +193,11 @@ class Index extends MappingModel
             if (isset($data['size']) && $data['size'] > 0) {
                 $this->columnsSize[$name] = $data['size'];
             }
-            if ($this->getTable()) {
-                $this->columnObjects[] = $this->getTable()->getColumn($name);
+            if ($this->getTable() && $column = $this->getTable()->getColumn($name)) {
+                $this->columnObjects[] = $column;
+                if (!isset($data['size']) && $column->getSize()) {
+                    $this->columnsSize[$name] = $column->getSize();
+                }
             }
         }
     }
