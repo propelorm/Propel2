@@ -72,6 +72,7 @@ class QueryBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -318,6 +319,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDeleteAll(), etc. methods.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDeleteMethods(&$script)
     {
@@ -372,6 +374,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {
@@ -397,7 +400,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the comment for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorComment(&$script)
     {
         $script .= "
@@ -426,7 +430,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function body for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorBody(&$script)
     {
         $script .= "
@@ -436,7 +441,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function close for the constructor
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addConstructorClose(&$script)
     {
         $script .= "
@@ -447,6 +453,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the factory for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactory(&$script)
     {
@@ -459,7 +466,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the comment for the factory
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addFactoryComment(&$script)
     {
         $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
@@ -477,7 +485,8 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function declaration for the factory
      * @param string $script The script will be modified in this method.
-     **/
+     * @return void
+     */
     protected function addFactoryOpen(&$script)
     {
         $script .= "
@@ -488,6 +497,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the function body for the factory
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactoryBody(&$script)
     {
@@ -1416,6 +1426,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds a joinRelated method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1489,6 +1500,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds a useRelatedQuery method for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addUseRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType)
     {
@@ -1663,6 +1675,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePostDelete hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePostDelete(&$script)
     {
@@ -1689,6 +1702,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePreUpdate hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePreUpdate(&$script)
     {
@@ -1716,6 +1730,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the basePostUpdate hook for this object.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBasePostUpdate(&$script)
     {
@@ -1771,6 +1786,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDelete() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDelete(&$script)
     {
@@ -1834,6 +1850,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doOnDeleteCascade() method, which provides ON DELETE CASCADE emulation.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoOnDeleteCascade(&$script)
     {
@@ -1915,6 +1932,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doOnDeleteSetNull() method, which provides ON DELETE SET NULL emulation.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoOnDeleteSetNull(&$script)
     {
@@ -1992,6 +2010,7 @@ abstract class ".$this->getUnqualifiedClassName()." extends " . $parentClass . "
     /**
      * Adds the doDeleteAll() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoDeleteAll(&$script)
     {

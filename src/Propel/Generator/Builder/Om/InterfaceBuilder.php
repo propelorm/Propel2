@@ -34,6 +34,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
      * Adds class phpdoc comment and opening of class.
      *
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -81,6 +82,7 @@ interface ".$this->getUnqualifiedClassName()."
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {

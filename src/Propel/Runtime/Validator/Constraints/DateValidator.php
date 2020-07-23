@@ -24,7 +24,6 @@ class DateValidator extends SymfonyDateValidator
      */
     public function validate($value, Constraint $constraint)
     {
-
         if ($value instanceof \DateTimeInterface) {
             return;
         }

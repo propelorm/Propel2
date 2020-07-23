@@ -23,6 +23,12 @@ use Propel\Runtime\Exception\LogicException;
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|\Propel\Runtime\Collection\Collection
+     */
     public function format(DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();

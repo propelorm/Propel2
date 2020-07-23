@@ -28,6 +28,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This is here because it is probably generic enough to apply to templates being generated
      * in different PHP versions.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addColumnAccessorMethods(&$script)
     {
@@ -75,6 +76,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      * This is here because it is probably generic enough to apply to templates being generated
      * in different PHP versions.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addColumnMutatorMethods(&$script)
     {

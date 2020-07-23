@@ -22,6 +22,11 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class StatementFormatter extends AbstractFormatter
 {
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
     public function format(DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {

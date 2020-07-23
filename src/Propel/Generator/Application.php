@@ -7,6 +7,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends \Symfony\Component\Console\Application
 {
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int
+     */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         if (extension_loaded('xdebug')) {

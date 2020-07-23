@@ -241,7 +241,7 @@ abstract class PdoAdapter
      *
      * @param  string $table The table name to quo
      * @return string The quoted table name
-     **/
+     */
     public function quoteIdentifierTable($table)
     {
         return implode(' ', array_map([$this, 'quoteIdentifier'], explode(' ', $table)));

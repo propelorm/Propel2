@@ -2,6 +2,8 @@ includes:
     - phpstan-baseline.neon
 parameters:
     level: 5
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
     paths:
         - '%rootDir%/../../../src/'
     excludes_analyse:

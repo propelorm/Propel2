@@ -1085,6 +1085,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * drastically change the contents of the generated object class.
      *
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     abstract protected function addClassBody(&$script);
 

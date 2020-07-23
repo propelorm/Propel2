@@ -110,7 +110,7 @@ interface AdapterInterface
      *
      * @param  string $table The table name to quo
      * @return string The quoted table name
-     **/
+     */
     public function quoteIdentifierTable($table);
 
     /**

@@ -134,6 +134,7 @@ class ConfigurationManager
      *
      * @param string|null $fileName  Configuration file name or directory in which resides the configuration file.
      * @param array|null $extraConf Array of configuration properties, to be merged with those loaded from file.
+     * @return void
      */
     protected function load($fileName, $extraConf)
     {
@@ -180,11 +181,12 @@ class ConfigurationManager
      * @param array $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
      *                         the constructor to pass a built-in array of configuration, without load it from file. I.e.
      *                         Propel\Generator\Config\QuickGeneratorConfig class.
+     * @return void
      */
     protected function process($extraConf = null)
     {
         if (null === $extraConf && count($this->config) <= 0) {
-            return null;
+            return;
         }
 
         $processor = new Processor();
@@ -278,6 +280,8 @@ class ConfigurationManager
 
     /**
      * Remove empty `slaves` array from configured connections.
+     *
+     * @return void
      */
     private function cleanupSlaveConnections()
     {
@@ -291,6 +295,8 @@ class ConfigurationManager
     /**
      * If not defined, set `runtime` and `generator` connections, based on `database.connections` property.
      * Check if runtime and generator connections are correctly defined.
+     *
+     * @return void
      */
     private function cleanupConnections()
     {

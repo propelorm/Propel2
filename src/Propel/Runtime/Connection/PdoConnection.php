@@ -27,6 +27,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     * @return void
      */
     public function setName($name)
     {
@@ -43,10 +44,14 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * Creates a PDO instance representing a connection to a database.
+     *
+     * @param string $dsn
+     * @param string|null $user
+     * @param string|null $password
+     * @param array|null $options
      */
     public function __construct($dsn, $user = null, $password = null, array $options = null)
     {
-
         // Convert option keys from a string to a \PDO:: constant
         $pdoOptions = [];
         if (is_array($options)) {

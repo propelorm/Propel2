@@ -211,6 +211,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the COLUMN_NAME constant to the class definition.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addColumnNameConstants(&$script)
     {
@@ -227,6 +228,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the valueSet constants for ENUM and SET columns.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addValueSetColumnConstants(&$script)
     {
@@ -247,6 +249,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the valueSet attributes for ENUM columns.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addValueSetColumnAttributes(&$script)
     {
@@ -273,6 +276,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the getValueSets() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetValueSets(&$script)
     {
@@ -291,6 +295,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the getValueSet() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetValueSet(&$script)
     {
@@ -312,6 +317,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     public function addInheritanceColumnConstants(&$script)
     {
@@ -359,6 +365,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds any attributes needed for this TableMap class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addAttributes(&$script)
     {
@@ -420,6 +427,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Closes class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {
@@ -435,6 +443,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the buildTableMap() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBuildTableMap(&$script)
     {
@@ -456,6 +465,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the addInitialize() method to the  table map class.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addInitialize(&$script)
     {
@@ -560,6 +570,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the method that build the RelationMap objects
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addBuildRelations(&$script)
     {
@@ -613,6 +624,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the behaviors getter
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetBehaviors(&$script)
     {
@@ -779,6 +791,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
      *
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetPrimaryKeyHash(&$script)
     {
@@ -835,6 +848,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds method to get the primary key from a row
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetPrimaryKeyFromRow(&$script)
     {
@@ -910,6 +924,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetOMClassMethod(&$script)
     {
@@ -928,6 +943,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds a getOMClass() for non-abstract tables that have inheritance.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetOMClass_Inheritance(&$script)
     {
@@ -992,6 +1008,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds a getOMClass() for non-abstract tables that do note use inheritance.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetOMClass_NoInheritance(&$script)
     {
@@ -1017,6 +1034,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds a getOMClass() signature for abstract tables that do not have inheritance.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetOMClass_NoInheritance_Abstract(&$script)
     {
@@ -1038,6 +1056,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the populateObject() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addPopulateObject(&$script)
     {
@@ -1096,6 +1115,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the populateObjects() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addPopulateObjects(&$script)
     {
@@ -1161,6 +1181,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the addSelectColumns() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addAddSelectColumns(&$script)
     {
@@ -1204,6 +1225,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addGetTableMap(&$script)
     {
@@ -1225,6 +1247,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the doDeleteAll() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoDeleteAll(&$script)
     {
@@ -1246,6 +1269,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the doDelete() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoDelete(&$script)
     {
@@ -1348,6 +1372,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds the doInsert() method.
      * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addDoInsert(&$script)
     {
