@@ -36,82 +36,22 @@ parameters:
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isArchiveOnInsert\\(\\)\\.$#"
-			count: 4
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isArchiveOnUpdate\\(\\)\\.$#"
-			count: 4
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isArchiveOnDelete\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehaviorObjectBuilderModifier\\:\\:postInsert\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehaviorObjectBuilderModifier\\:\\:postUpdate\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehaviorObjectBuilderModifier\\:\\:preDelete\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getArchiveTablePhpName\\(\\)\\.$#"
+			message: "#^Parameter \\#1 \\$builder of method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehavior\\:\\:getArchiveTablePhpName\\(\\) expects Propel\\\\Generator\\\\Builder\\\\Om\\\\ObjectBuilder, Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractOMBuilder given\\.$#"
 			count: 3
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getArchiveTableQueryName\\(\\)\\.$#"
+			message: "#^Parameter \\#1 \\$builder of method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehavior\\:\\:getArchiveTableQueryName\\(\\) expects Propel\\\\Generator\\\\Builder\\\\Om\\\\ObjectBuilder, Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractOMBuilder given\\.$#"
 			count: 2
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getArchivedAtColumn\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:hasArchiveClass\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isArchiveOnUpdate\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isArchiveOnDelete\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehaviorQueryBuilderModifier\\:\\:preDeleteQuery\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehaviorQueryBuilderModifier\\:\\:postUpdateQuery\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getArchiveTablePhpName\\(\\)\\.$#"
+			message: "#^Parameter \\#1 \\$builder of method Propel\\\\Generator\\\\Behavior\\\\Archivable\\\\ArchivableBehavior\\:\\:getArchiveTablePhpName\\(\\) expects Propel\\\\Generator\\\\Builder\\\\Om\\\\ObjectBuilder, Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractOMBuilder given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorQueryBuilderModifier.php
 
@@ -141,54 +81,9 @@ parameters:
 			path: src/Propel/Generator/Behavior/I18n/I18nBehavior.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:useScope\\(\\)\\.$#"
-			count: 15
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getScopes\\(\\)\\.$#"
-			count: 5
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:hasMultipleScopes\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getColumnGetter\\(\\)\\.$#"
+			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getColumnSetter\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:generateScopePhp\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:useScope\\(\\)\\.$#"
-			count: 10
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:hasMultipleScopes\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getScopes\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:generateScopePhp\\(\\)\\.$#"
-			count: 5
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
 
 		-
 			message: "#^Variable \\$paramsDoc might not be defined\\.$#"
@@ -206,54 +101,9 @@ parameters:
 			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:useScope\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorTableMapBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:hasMultipleScopes\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorTableMapBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getScopes\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorTableMapBuilderModifier.php
-
-		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getVersionTable\\(\\)\\.$#"
-			count: 6
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Behavior\\\\Versionable\\\\VersionableBehaviorObjectBuilderModifier\\:\\:postDelete\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getVersionableFks\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getVersionableReferrers\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getReferrerIdsColumn\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getReferrerVersionsColumn\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
 
 		-
 			message: "#^Variable \\$col might not be defined\\.$#"
@@ -263,7 +113,7 @@ parameters:
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:getVersionTable\\(\\)\\.$#"
 			count: 1
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorQueryBuilderModifier.php
+			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
 
 		-
 			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
@@ -416,18 +266,8 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Platform\\\\PlatformInterface\\:\\:getIdentifierPhp\\(\\)\\.$#"
 			count: 2
-			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
@@ -449,16 +289,6 @@ parameters:
 			message: "#^Parameter \\#3 \\$ehdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'endElement' given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Util/SchemaReader.php
-
-		-
-			message: "#^Parameter \\$definition of method Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\ArrayInput\\:\\:__construct\\(\\) has invalid typehint type Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\InputDefinition\\.$#"
-			count: 1
-			path: src/Propel/Generator/Command/Console/Input/ArrayInput.php
-
-		-
-			message: "#^Parameter \\#1 \\$definition of method Symfony\\\\Component\\\\Console\\\\Input\\\\Input\\:\\:__construct\\(\\) expects Symfony\\\\Component\\\\Console\\\\Input\\\\InputDefinition\\|null, Propel\\\\Generator\\\\Command\\\\Console\\\\Input\\\\InputDefinition\\|null given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Command/Console/Input/ArrayInput.php
 
 		-
 			message: "#^Parameter \\#1 \\$attempts of method Symfony\\\\Component\\\\Console\\\\Question\\\\Question\\:\\:setMaxAttempts\\(\\) expects int\\|null, true given\\.$#"
@@ -557,7 +387,7 @@ parameters:
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and int will always evaluate to false\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Model/Domain.php
 
 		-
@@ -586,21 +416,6 @@ parameters:
 			path: src/Propel/Generator/Model/Table.php
 
 		-
-			message: "#^Method Propel\\\\Generator\\\\Model\\\\Table\\:\\:getFirstPrimaryKeyColumn\\(\\) should return Propel\\\\Generator\\\\Model\\\\Column but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Table.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Model\\\\Table\\:\\:getAutoIncrementPrimaryKey\\(\\) should return Propel\\\\Generator\\\\Model\\\\Column but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Table.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\DefaultPlatform\\:\\:getBeginDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
@@ -616,39 +431,14 @@ parameters:
 			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
 		-
-			message: "#^Parameter \\#1 \\$size of method Propel\\\\Generator\\\\Model\\\\Column\\:\\:setSize\\(\\) expects int, null given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\MssqlPlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/MssqlPlatform.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Generator/Platform/MysqlPlatform.php
 
 		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\MysqlPlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/MysqlPlatform.php
-
-		-
 			message: "#^Left side of && is always true\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Platform/MysqlPlatform.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\OraclePlatform\\:\\:getAddPrimaryKeyDDL\\(\\) should return string but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/OraclePlatform.php
-
-		-
-			message: "#^Method Propel\\\\Generator\\\\Platform\\\\OraclePlatform\\:\\:getPrimaryKeyDDL\\(\\) should return string\\|null but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/OraclePlatform.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -716,16 +506,6 @@ parameters:
 			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int\\<1, max\\>\\|int\\<min, \\-1\\> given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method DOMElement\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/BehaviorLocator.php
@@ -761,13 +541,13 @@ parameters:
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:build\\(\\)\\.$#"
-			count: 4
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setChild\\(\\)\\.$#"
+			count: 2
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setChild\\(\\)\\.$#"
-			count: 2
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:build\\(\\)\\.$#"
+			count: 3
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
@@ -827,6 +607,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$code of class Propel\\\\Runtime\\\\Exception\\\\PropelException constructor expects int, null given\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:_endif\\(\\) should return \\$this\\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) but returns Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\|Propel\\\\Runtime\\\\Util\\\\PropelConditionalProxy\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
@@ -896,27 +681,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:preDelete\\(\\) should return int but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:postDelete\\(\\) should return int but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:preUpdate\\(\\) should return int but return statement is missing\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:postUpdate\\(\\) should return int but return statement is missing\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
@@ -1076,6 +841,11 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
@@ -1083,6 +853,11 @@ parameters:
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
 			count: 1
+			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:populateObject\\(\\)\\.$#"
+			count: 2
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
@@ -1109,6 +884,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Map/ColumnMap.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:setQueryKey\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Util/PropelModelPager.php
 
 		-
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"

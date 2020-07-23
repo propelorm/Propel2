@@ -1321,7 +1321,7 @@ class Column extends MappingModel
     /**
      * Sets the column size.
      *
-     * @param integer $size
+     * @param integer|null $size
      */
     public function setSize($size)
     {

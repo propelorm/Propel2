@@ -183,7 +183,7 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getBeginDDL()
     {

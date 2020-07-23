@@ -361,11 +361,11 @@ class XmlDumper implements DumperInterface
 
         $domain = $column->getDomain();
         if ($size = $domain->getSize()) {
-            $columnNode->setAttribute('size', $size);
+            $columnNode->setAttribute('size', (string)$size);
         }
 
         if (null !== ($scale = $domain->getScale())) {
-            $columnNode->setAttribute('scale', $scale);
+            $columnNode->setAttribute('scale', (string)$scale);
         }
 
         $platform = $column->getPlatform();

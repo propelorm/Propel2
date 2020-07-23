@@ -1066,6 +1066,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Get the early table behaviors
      *
+     * @deprecated Unused (no isEarly() method available).
+     *
      * @return \Propel\Generator\Model\Behavior[] Array of Behavior objects
      */
     public function getEarlyBehaviors()
@@ -1875,7 +1877,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * Useful for tables with a PK using a single column.
      *
-     * @return Column
+     * @return Column|null
      */
     public function getFirstPrimaryKeyColumn()
     {
@@ -1884,6 +1886,8 @@ class Table extends ScopedMappingModel implements IdMethod
                 return $col;
             }
         }
+
+        return null;
     }
 
     /**
@@ -1915,7 +1919,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the auto incremented primary key.
      *
-     * @return Column
+     * @return Column|null
      */
     public function getAutoIncrementPrimaryKey()
     {
@@ -1926,6 +1930,8 @@ class Table extends ScopedMappingModel implements IdMethod
                 }
             }
         }
+
+        return null;
     }
 
     /**

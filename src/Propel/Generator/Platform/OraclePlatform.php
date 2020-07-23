@@ -94,7 +94,7 @@ class OraclePlatform extends DefaultPlatform
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getBeginDDL()
     {
@@ -181,6 +181,8 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
         if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
             return parent::getAddPrimaryKeyDDL($table);
         }
+
+        return '';
     }
 
     /**

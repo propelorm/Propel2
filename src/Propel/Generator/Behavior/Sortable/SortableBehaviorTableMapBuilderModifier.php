@@ -18,7 +18,7 @@ namespace Propel\Generator\Behavior\Sortable;
 class SortableBehaviorTableMapBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
      */
     protected $behavior;
 
@@ -28,7 +28,7 @@ class SortableBehaviorTableMapBuilderModifier
     protected $table;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
     public function __construct($behavior)
     {

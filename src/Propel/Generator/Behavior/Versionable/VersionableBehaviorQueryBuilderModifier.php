@@ -18,7 +18,7 @@ namespace Propel\Generator\Behavior\Versionable;
 class VersionableBehaviorQueryBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
      */
     protected $behavior;
     /**
@@ -39,7 +39,7 @@ class VersionableBehaviorQueryBuilderModifier
     protected $queryClassName;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
      */
     public function __construct($behavior)
     {

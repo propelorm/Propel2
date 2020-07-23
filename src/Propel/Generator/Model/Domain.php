@@ -205,7 +205,7 @@ class Domain extends MappingModel
     /**
      * Sets the size.
      *
-     * @param integer $size
+     * @param integer|null $size
      */
     public function setSize($size)
     {
@@ -215,7 +215,7 @@ class Domain extends MappingModel
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param integer $size
+     * @param integer|null $size
      */
     public function replaceSize($size)
     {

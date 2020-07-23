@@ -417,7 +417,9 @@ class QuickBuilder
         $script = '';
 
         foreach ($classTargets as $target) {
-            $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+            /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $abstractBuilder */
+            $abstractBuilder = $this->getConfig()->getConfiguredBuilder($table, $target);
+            $class = $abstractBuilder->build();
             $script .= $this->fixNamespaceDeclarations($class);
         }
 

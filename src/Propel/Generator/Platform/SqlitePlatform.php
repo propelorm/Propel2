@@ -253,7 +253,7 @@ DROP TABLE %s;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getBeginDDL()
     {

@@ -18,7 +18,7 @@ namespace Propel\Generator\Behavior\Archivable;
 class ArchivableBehaviorQueryBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehavior
      */
     protected $behavior;
 
@@ -28,7 +28,7 @@ class ArchivableBehaviorQueryBuilderModifier
     protected $table;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Archivable\ArchivableBehavior $behavior
      */
     public function __construct($behavior)
     {
@@ -82,6 +82,8 @@ if (\$this->archiveOnDelete) {
 }
 ";
         }
+
+        return null;
     }
 
     /**
@@ -100,6 +102,8 @@ if (\$this->archiveOnUpdate) {
 }
 ";
         }
+
+        return null;
     }
 
     /**

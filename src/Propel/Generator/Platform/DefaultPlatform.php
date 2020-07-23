@@ -298,10 +298,11 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Gets the requests to execute at the beginning of a DDL file
      *
-     * @return string|null
+     * @return string
      */
     public function getBeginDDL()
     {
+        return '';
     }
 
     /**

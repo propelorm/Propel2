@@ -34,21 +34,21 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
-
+            $type = $col->getType();
             // if they're not using the DateTime class than we will generate "compatibility" accessor method
-            if (PropelTypes::DATE === $col->getType()
-                || PropelTypes::TIME === $col->getType()
-                || PropelTypes::TIMESTAMP === $col->getType()
+            if (PropelTypes::DATE === $type
+                || PropelTypes::TIME === $type
+                || PropelTypes::TIMESTAMP === $type
             ) {
                 $this->addTemporalAccessor($script, $col);
-            } elseif (PropelTypes::OBJECT === $col->getType()) {
+            } elseif (PropelTypes::OBJECT === $type) {
                 $this->addObjectAccessor($script, $col);
-            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+            } elseif (PropelTypes::PHP_ARRAY === $type) {
                 $this->addArrayAccessor($script, $col);
                 if ($col->isNamePlural()) {
                     $this->addHasArrayElement($script, $col);
                 }
-            } elseif (PropelTypes::JSON === $col->getType()) {
+            } elseif (PropelTypes::JSON === $type) {
                 $this->addJsonAccessor($script, $col);
             } elseif ($col->isEnumType()) {
                 $this->addEnumAccessor($script, $col);

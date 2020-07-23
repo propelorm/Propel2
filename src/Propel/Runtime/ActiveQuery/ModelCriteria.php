@@ -1484,10 +1484,11 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function preDelete(ConnectionInterface $con)
     {
+        return null;
     }
 
     /**
@@ -1505,10 +1506,11 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * @param int $affectedRows
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function postDelete($affectedRows, ConnectionInterface $con)
     {
+        return null;
     }
 
     /**
@@ -1628,7 +1630,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param array               $values               The associative array of columns and values for the update
      * @param ConnectionInterface $con                  The connection object used by the query
      * @param boolean             $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
-     * @return int
+     * @return int|null
      */
     protected function basePreUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
@@ -1639,10 +1641,11 @@ class ModelCriteria extends BaseModelCriteria
      * @param array $values
      * @param ConnectionInterface $con
      * @param bool $forceIndividualSaves
-     * @return int
+     * @return int|null
      */
     protected function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
+        return null;
     }
 
     /**
@@ -1650,7 +1653,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param int                 $affectedRows the number of updated rows
      * @param ConnectionInterface $con          The connection object used by the query
-     * @return int
+     * @return int|null
      */
     protected function basePostUpdate($affectedRows, ConnectionInterface $con)
     {
@@ -1660,10 +1663,11 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * @param int $affectedRows
      * @param ConnectionInterface $con
-     * @return int
+     * @return int|null
      */
     protected function postUpdate($affectedRows, ConnectionInterface $con)
     {
+        return null;
     }
 
     /**

@@ -23,7 +23,7 @@ use Propel\Generator\Model\Table;
 class SortableBehaviorObjectBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
      */
     protected $behavior;
 
@@ -58,7 +58,7 @@ class SortableBehaviorObjectBuilderModifier
     protected $queryFullClassName;
 
     /**
-     * @param SortableBehavior $behavior
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
     public function __construct($behavior)
     {
