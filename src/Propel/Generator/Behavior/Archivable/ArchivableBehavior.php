@@ -148,7 +148,7 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return mixed
      */
@@ -162,7 +162,7 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string
      */

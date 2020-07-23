@@ -185,6 +185,8 @@ class TableMap
     /**
      * Initialize the TableMap to build columns, relations, etc
      * This method should be overridden by descendants
+     *
+     * @return void
      */
     public function initialize()
     {
@@ -194,6 +196,7 @@ class TableMap
      * Set the DatabaseMap containing this TableMap.
      *
      * @param DatabaseMap $dbMap A DatabaseMap.
+     * @return void
      */
     public function setDatabaseMap(DatabaseMap $dbMap)
     {
@@ -214,6 +217,7 @@ class TableMap
      * Set the name of the Table.
      *
      * @param string $name The name of the table.
+     * @return void
      */
     public function setName($name)
     {

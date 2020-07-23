@@ -54,7 +54,7 @@ class Behavior extends MappingModel
      *
      * @var array
      */
-    protected $parameters = [ ];
+    protected $parameters = [];
 
     /**
      * Wether or not the table has been

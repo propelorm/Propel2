@@ -110,6 +110,7 @@ class SqlManager extends AbstractManager
     {
         $sqlDbMapContent = "# Sqlfile -> Database map\n";
         foreach ($this->getDatabases() as $datasource => $database) {
+            /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
             $platform = $database->getPlatform();
             $filename = $database->getName() . '.sql';
 

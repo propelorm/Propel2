@@ -201,6 +201,7 @@ class MigrationDiffCommand extends AbstractCommand
             }
 
             $conn     = $manager->getAdapterConnection($name);
+            /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
             if ($input->getOption('disable-identifier-quoting')) {
                 $platform->setIdentifierQuoting(false);

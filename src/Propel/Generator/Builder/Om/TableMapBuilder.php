@@ -461,6 +461,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     {
 
         $table = $this->getTable();
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform();
 
         $script .= "

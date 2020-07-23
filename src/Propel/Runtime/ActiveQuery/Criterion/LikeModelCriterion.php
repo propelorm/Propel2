@@ -30,7 +30,7 @@ class LikeModelCriterion extends BasicModelCriterion
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreStringCase = (Boolean) $b;
+        $this->ignoreStringCase = (bool) $b;
 
         return $this;
     }

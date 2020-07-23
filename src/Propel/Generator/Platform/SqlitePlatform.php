@@ -167,10 +167,10 @@ ALTER TABLE %s ADD %s;
                     //or an expression in parentheses.
                     || false !== array_search(
                         $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
-                    || substr(trim($column->getDefaultValue()), 0, 1) == '('
+                    || substr(trim($column->getDefaultValue()), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
-                    || ($column->isNotNull() && $column->getDefaultValue() == 'NULL')
+                    || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL')
                 ;
 
                 if ($sqlChangeNotSupported) {

@@ -85,7 +85,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     /**
      * @inheritdoc
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
+    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
         return parent::select(
                                 $this->output,

@@ -37,39 +37,42 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @var Column[]
      */
-    private $columns;
+    private $columns = [];
 
     /**
      * @var ForeignKey[]
      */
-    private $foreignKeys;
+    private $foreignKeys = [];
 
     /**
      * @var ForeignKey[]
      */
-    private $foreignKeysByName;
+    private $foreignKeysByName = [];
 
     /**
      * @var string[]
      */
-    private $foreignTableNames;
+    private $foreignTableNames = [];
 
     /**
      * @var Index[]
      */
-    private $indices;
+    private $indices = [];
 
     /**
      * @var Unique[]
      */
-    private $unices;
-    private $idMethodParameters;
+    private $unices = [];
+    /**
+     * @var IdMethodParameter[]
+     */
+    private $idMethodParameters = [];
     private $commonName;
     private $originCommonName;
     private $description;
     private $phpName;
     private $idMethod;
-    private $allowPkInsert;
+    private $allowPkInsert = false;
     private $phpNamingMethod;
 
     /**
@@ -80,36 +83,54 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @var ForeignKey[]
      */
-    private $referrers;
-    private $containsForeignPK;
+    private $referrers = [];
+
+    /**
+     * @var bool
+     */
+    private $containsForeignPK = false;
+
     /**
      * @var Column|null
      */
     private $inheritanceColumn;
-    private $skipSql;
-    private $readOnly;
-    private $isAbstract;
+
+    private $skipSql = false;
+    private $readOnly = false;
+    private $isAbstract = false;
     private $alias;
     private $interface;
     private $baseClass;
     private $baseQueryClass;
-    private $columnsByName;
-    private $columnsByLowercaseName;
-    private $columnsByPhpName;
-    private $needsTransactionInPostgres;
+    private $columnsByName = [];
+    private $columnsByLowercaseName = [];
+    private $columnsByPhpName = [];
+    private $needsTransactionInPostgres = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
-    private $heavyIndexing;
+    private $heavyIndexing = false;
 
     /**
-     * @var boolean
+     * @var bool|null
      */
     private $identifierQuoting;
-    private $forReferenceOnly;
-    private $reloadOnInsert;
-    private $reloadOnUpdate;
+
+    /**
+     * @var bool
+     */
+    private $forReferenceOnly = false;
+
+    /**
+     * @var bool
+     */
+    private $reloadOnInsert = false;
+
+    /**
+     * @var bool
+     */
+    private $reloadOnUpdate = false;
 
     /**
      * The default accessor visibility.
@@ -129,7 +150,14 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $defaultMutatorVisibility;
 
-    protected $isCrossRef;
+    /**
+     * @var bool
+     */
+    protected $isCrossRef = false;
+
+    /**
+     * @var string|null
+     */
     protected $defaultStringFormat;
 
     /**
@@ -148,25 +176,6 @@ class Table extends ScopedMappingModel implements IdMethod
         $this->idMethod                  = IdMethod::NO_ID_METHOD;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
         $this->defaultMutatorVisibility  = static::VISIBILITY_PUBLIC;
-        $this->allowPkInsert             = false;
-        $this->isAbstract                = false;
-        $this->isCrossRef                = false;
-        $this->readOnly                  = false;
-        $this->reloadOnInsert            = false;
-        $this->reloadOnUpdate            = false;
-        $this->skipSql                   = false;
-        $this->behaviors                 = [];
-        $this->columns                   = [];
-        $this->columnsByName             = [];
-        $this->columnsByPhpName          = [];
-        $this->columnsByLowercaseName    = [];
-        $this->foreignKeys               = [];
-        $this->foreignKeysByName         = [];
-        $this->foreignTableNames         = [];
-        $this->idMethodParameters        = [];
-        $this->indices                   = [];
-        $this->referrers                 = [];
-        $this->unices                    = [];
     }
 
     /**
@@ -891,7 +900,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setContainsForeignPK($containsForeignPK)
     {
-        $this->containsForeignPK = (Boolean) $containsForeignPK;
+        $this->containsForeignPK = (bool) $containsForeignPK;
     }
 
     /**
@@ -1333,7 +1342,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setSkipSql($skip)
     {
-        $this->skipSql = (Boolean) $skip;
+        $this->skipSql = (bool) $skip;
     }
 
     /**

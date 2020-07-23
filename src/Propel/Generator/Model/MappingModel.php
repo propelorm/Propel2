@@ -100,7 +100,7 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         if (is_numeric($value)) {
-            return (Boolean) $value;
+            return (bool) $value;
         }
 
         return in_array(strtolower($value),  [ 'true', 't', 'y', 'yes' ], true);

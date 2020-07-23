@@ -194,6 +194,7 @@ class MigrationManager extends AbstractManager
      */
     public function createMigrationTable($datasource)
     {
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform($datasource);
         // modelize the table
         $database = new Database($datasource);

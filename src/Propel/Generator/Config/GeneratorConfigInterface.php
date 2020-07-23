@@ -26,7 +26,7 @@ interface GeneratorConfigInterface
      *
      * @param  Table            $table
      * @param  string           $type
-     * @return DataModelBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     public function getConfiguredBuilder(Table $table, $type);
 

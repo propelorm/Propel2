@@ -514,7 +514,7 @@ class Criteria
      */
     public function setUseTransaction($v)
     {
-        $this->useTransaction = (Boolean) $v;
+        $this->useTransaction = (bool) $v;
     }
 
     /**
@@ -1097,7 +1097,7 @@ class Criteria
      */
     public function hasSelectQueries()
     {
-        return (Boolean) $this->selectQueries;
+        return (bool) $this->selectQueries;
     }
 
     /**
@@ -1222,7 +1222,7 @@ class Criteria
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreCase = (Boolean) $b;
+        $this->ignoreCase = (bool) $b;
 
         return $this;
     }
@@ -1251,7 +1251,7 @@ class Criteria
      */
     public function setSingleRecord($b)
     {
-        $this->singleRecord = (Boolean) $b;
+        $this->singleRecord = (bool) $b;
 
         return $this;
     }

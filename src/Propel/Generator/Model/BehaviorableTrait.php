@@ -14,7 +14,7 @@ trait BehaviorableTrait
     /**
      * @var Behavior[]
      */
-    protected $behaviors;
+    protected $behaviors = [];
 
     /**
      * @var BehaviorLocator

@@ -51,13 +51,13 @@ interface ConsoleHelperInterface
      * @param string $question
      * @param array  $choices
      * @param string $default
-     * @param bool   $attempts
+     * @param int|null   $attempts
      * @param string $errorMessage
      * @param bool   $multiselect
      *
      * @return mixed
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false);
+    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false);
 
     /**
      * @param string    $question

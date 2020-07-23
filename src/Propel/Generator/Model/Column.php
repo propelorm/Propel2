@@ -857,7 +857,7 @@ class Column extends MappingModel
      */
     public function setNotNull($flag = true)
     {
-        $this->isNotNull = (Boolean) $flag;
+        $this->isNotNull = (bool) $flag;
     }
 
     /**
@@ -880,7 +880,7 @@ class Column extends MappingModel
      */
     public function setPrimaryString($isPrimaryString)
     {
-        $this->isPrimaryString = (Boolean) $isPrimaryString;
+        $this->isPrimaryString = (bool) $isPrimaryString;
     }
 
     /**
@@ -901,7 +901,7 @@ class Column extends MappingModel
      */
     public function setPrimaryKey($flag = true)
     {
-        $this->isPrimaryKey = (Boolean) $flag;
+        $this->isPrimaryKey = (bool) $flag;
     }
 
     /**
@@ -921,7 +921,7 @@ class Column extends MappingModel
      */
     public function setNodeKey($isNodeKey)
     {
-        $this->isNodeKey = (Boolean) $isNodeKey;
+        $this->isNodeKey = (bool) $isNodeKey;
     }
 
     /**
@@ -961,7 +961,7 @@ class Column extends MappingModel
      */
     public function setNestedSetLeftKey($isNestedSetLeftKey)
     {
-        $this->isNestedSetLeftKey = (Boolean) $isNestedSetLeftKey;
+        $this->isNestedSetLeftKey = (bool) $isNestedSetLeftKey;
     }
 
     /**
@@ -981,7 +981,7 @@ class Column extends MappingModel
      */
     public function setNestedSetRightKey($isNestedSetRightKey)
     {
-        $this->isNestedSetRightKey = (Boolean) $isNestedSetRightKey;
+        $this->isNestedSetRightKey = (bool) $isNestedSetRightKey;
     }
 
     /**
@@ -1001,7 +1001,7 @@ class Column extends MappingModel
      */
     public function setTreeScopeKey($isTreeScopeKey)
     {
-        $this->isTreeScopeKey = (Boolean) $isTreeScopeKey;
+        $this->isTreeScopeKey = (bool) $isTreeScopeKey;
     }
 
     /**
@@ -1491,7 +1491,7 @@ class Column extends MappingModel
      */
     public function setAutoIncrement($flag = true)
     {
-        $this->isAutoIncrement = (Boolean) $flag;
+        $this->isAutoIncrement = (bool) $flag;
     }
 
     /**

@@ -28,7 +28,6 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Database extends ScopedMappingModel
 {
-
     use BehaviorableTrait;
 
     /**
@@ -390,7 +389,7 @@ class Database extends ScopedMappingModel
      */
     public function setHeavyIndexing($flag = true)
     {
-        $this->heavyIndexing = (Boolean) $flag;
+        $this->heavyIndexing = (bool) $flag;
     }
 
     /**

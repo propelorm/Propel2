@@ -109,7 +109,7 @@ class OnDemandIterator implements \Iterator
     {
         $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
-        $this->isValid = (Boolean) $this->currentRow;
+        $this->isValid = (bool) $this->currentRow;
         if (!$this->isValid) {
             $this->closeCursor();
         }
@@ -141,6 +141,6 @@ class OnDemandIterator implements \Iterator
      */
     public function valid()
     {
-        return (Boolean) $this->isValid;
+        return (bool) $this->isValid;
     }
 }

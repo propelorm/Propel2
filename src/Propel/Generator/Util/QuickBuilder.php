@@ -272,7 +272,9 @@ class QuickBuilder
         if (false === $diff) {
             return null;
         }
-        $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $platform = $this->database->getPlatform();
+        $sql = $platform->getModifyDatabaseDDL($diff);
 
         $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
@@ -313,7 +315,10 @@ class QuickBuilder
      */
     public function getSQL()
     {
-        return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $platform = $this->getPlatform();
+
+        return $platform->getAddTablesDDL($this->getDatabase());
     }
 
     /**
@@ -427,12 +432,14 @@ class QuickBuilder
             if ($col->isEnumeratedClasses()) {
                 foreach ($col->getChildren() as $child) {
                     if ($child->getAncestor()) {
+                        /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                         $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
                         $builder->setChild($child);
                         $class = $builder->build();
                         $script .= $this->fixNamespaceDeclarations($class);
 
                         foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
+                            /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                             $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                             $builder->setChild($child);
                             $class = $builder->build();

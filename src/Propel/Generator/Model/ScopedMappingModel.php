@@ -84,6 +84,8 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the namespace.
      *
      * @param string $namespace
+     *
+     * @return void
      */
     public function setNamespace($namespace)
     {

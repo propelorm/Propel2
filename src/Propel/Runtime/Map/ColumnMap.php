@@ -298,7 +298,7 @@ class ColumnMap
      */
     public function setPrimaryKey($pk)
     {
-        $this->pk = (Boolean) $pk;
+        $this->pk = (bool) $pk;
     }
 
     /**
@@ -318,7 +318,7 @@ class ColumnMap
      */
     public function setNotNull($nn)
     {
-        $this->notNull = (Boolean) $nn;
+        $this->notNull = (bool) $nn;
     }
 
     /**
@@ -533,7 +533,7 @@ class ColumnMap
      */
     public function setPrimaryString($pkString)
     {
-        $this->isPkString = (Boolean) $pkString;
+        $this->isPkString = (bool) $pkString;
     }
 
     /**

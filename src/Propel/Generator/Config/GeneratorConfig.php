@@ -133,7 +133,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             throw new ClassNotFoundException(sprintf('Reverse SchemaParser class for `%s` not found.', $reverse));
         }
 
-        /** @var SchemaParserInterface $parser */
+        /** @var \Propel\Generator\Reverse\AbstractSchemaParser $parser */
         $parser = $this->getInstance($reverseClass, null, '\\Propel\\Generator\\Reverse\\SchemaParserInterface');
         $parser->setConnection($con);
         $parser->setMigrationTable($this->get()['migrations']['tableName']);

@@ -125,6 +125,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      */
     protected function addColumns(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 
@@ -137,7 +138,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $default = $row['COLUMN_DEF'];
             $scale = $row['SCALE'];
             $autoincrement = false;
-            if (strtolower($type) == 'int identity') {
+            if (strtolower($type) === 'int identity') {
                 $autoincrement = true;
             }
 
@@ -171,6 +172,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     {
         $database = $table->getDatabase();
 
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME
          from sys.foreign_keys as fk
          inner join sys.foreign_key_columns ref on ref.constraint_object_id = fk.object_id
@@ -211,6 +213,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
         $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
 

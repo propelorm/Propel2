@@ -805,6 +805,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $dateTimeClass = $this->getDateTimeClass($column);
 
         $handleMysqlDate = false;
+        $mysqlInvalidDateString = '';
         if ($this->getPlatform() instanceof MysqlPlatform) {
             if ($column->getType() === PropelTypes::TIMESTAMP) {
                 $handleMysqlDate = true;
@@ -6028,6 +6029,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\PDO'
         );
         $table = $this->getTable();
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform();
         $primaryKeyMethodInfo = '';
         if ($table->getIdMethodParameters()) {

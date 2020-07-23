@@ -299,6 +299,7 @@ class I18nBehavior extends Behavior
 
                 // validate behavior: move rules associated to the column
                 if ($table->hasBehavior('validate')) {
+                    /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validateBehavior */
                     $validateBehavior = $table->getBehavior('validate');
                     $params = $validateBehavior->getParametersFromColumnName($columnName);
                     $i18nValidateParams = array_merge($i18nValidateParams, $params);
@@ -320,6 +321,7 @@ class I18nBehavior extends Behavior
             $i18nTable->addBehavior($i18nVbehavior);
 
             // current table must have almost 1 validation rule
+            /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validate */
             $validate = $table->getBehavior('validate');
             $validate->addRuleOnPk();
         }

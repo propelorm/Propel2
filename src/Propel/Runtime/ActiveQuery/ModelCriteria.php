@@ -962,7 +962,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function keepQuery($isKeepQuery = true)
     {
-        $this->isKeepQuery = (Boolean) $isKeepQuery;
+        $this->isKeepQuery = (bool) $isKeepQuery;
 
         return $this;
     }

@@ -153,7 +153,7 @@ class ReverseManager extends AbstractManager
      */
     public function setAddVendorInfo($addVendorInfo)
     {
-        $this->addVendorInfo = (Boolean) $addVendorInfo;
+        $this->addVendorInfo = (bool) $addVendorInfo;
     }
 
     /**
@@ -200,6 +200,7 @@ class ReverseManager extends AbstractManager
      */
     protected function buildModel()
     {
+        /** @var \Propel\Generator\Config\GeneratorConfig $config */
         $config     = $this->getGeneratorConfig();
         $connection = $this->getConnection();
         $databaseName = $config->getConfigProperty('reverse.connection');
@@ -259,7 +260,9 @@ class ReverseManager extends AbstractManager
      */
     protected function getConnection()
     {
+        /** @var \Propel\Generator\Config\GeneratorConfig $generatorConfig */
         $generatorConfig = $this->getGeneratorConfig();
+        /** @var string|null $database */
         $database = $generatorConfig->getConfigProperty('reverse.connection');
 
         if (null === $database) {

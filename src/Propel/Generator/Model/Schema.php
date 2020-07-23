@@ -264,7 +264,7 @@ class Schema
                     $db = $this->getDatabase($addDbName, false);
                     // temporarily reset database namespace to avoid double namespace decoration (see ticket #1355)
                     $namespace = $db->getNamespace();
-                    $db->setNamespace(null);
+                    $db->setNamespace('');
                     // join tables
                     foreach ($addDb->getTables() as $addTable) {
                         if ($db->getTable($addTable->getName())) {

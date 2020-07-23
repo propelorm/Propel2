@@ -116,12 +116,14 @@ class ConcreteInheritanceBehavior extends Behavior
                 continue;
             }
 
-            if ($behavior->getName() == 'concrete_inheritance_parent' || $behavior->getName() == 'concrete_inheritance') {
+            if ($behavior->getName() === 'concrete_inheritance_parent' || $behavior->getName() === 'concrete_inheritance') {
                 continue;
             }
             // validate behavior. If validate behavior already exists, clone only rules from parent
             if ('validate' === $behavior->getName() && $table->hasBehavior('validate')) {
-                $table->getBehavior('validate')->mergeParameters($behavior->getParameters());
+                /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validateBehavior */
+                $validateBehavior = $table->getBehavior('validate');
+                $validateBehavior->mergeParameters($behavior->getParameters());
 
                 continue;
             }
