@@ -97,6 +97,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     *
+     * @return void
      */
     protected function validateModel()
     {
@@ -1073,6 +1075,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Opens class.
      *
      * @param string $script
+     * @return void
      */
     abstract protected function addClassOpen(&$script);
 
@@ -1093,6 +1096,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Closes class.
      *
      * @param string $script
+     * @return void
      */
     abstract protected function addClassClose(&$script);
 }

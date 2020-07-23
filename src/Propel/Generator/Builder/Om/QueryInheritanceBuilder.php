@@ -119,7 +119,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -181,7 +182,8 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Adds the factory for this object.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addFactory(&$script)
     {

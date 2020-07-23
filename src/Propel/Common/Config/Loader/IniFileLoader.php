@@ -141,6 +141,8 @@ class IniFileLoader extends FileLoader
      * @param array  $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
+     *
+     * @return void
      */
     private function parseKey($key, $value, array &$config)
     {

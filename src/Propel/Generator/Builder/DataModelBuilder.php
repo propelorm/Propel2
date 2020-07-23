@@ -411,6 +411,7 @@ abstract class DataModelBuilder
     /**
      * Sets the table for this builder.
      * @param Table $table
+     * @return void
      */
     public function setTable(Table $table)
     {
@@ -451,6 +452,7 @@ abstract class DataModelBuilder
      * Platform setter
      *
      * @param PlatformInterface $platform
+     * @return void
      */
     public function setPlatform(PlatformInterface $platform)
     {
@@ -486,6 +488,7 @@ abstract class DataModelBuilder
     /**
      * Pushes a message onto the stack of warnings.
      * @param string $msg The warning message.
+     * @return void
      */
     protected function warn($msg)
     {

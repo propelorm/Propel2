@@ -267,6 +267,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();

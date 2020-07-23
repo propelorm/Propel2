@@ -79,7 +79,7 @@ class TimestampableBehavior extends Behavior
      * @param string $columnName
      * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
-     * @return mixed
+     * @return string
      */
     protected function getColumnConstant($columnName, $builder)
     {

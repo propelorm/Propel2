@@ -34,6 +34,11 @@ class PropelDateTime extends \DateTime
      */
     private $tzString;
 
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     protected static function isTimestamp($value)
     {
         if (!is_numeric($value)) {

@@ -61,12 +61,12 @@ abstract class FileLoader extends BaseFileLoader
      * Replaces parameter placeholders (%name%) by their values for all parameters.
      *
      * @param array $configuration The configuration array to resolve
-     * @return array|null
+     * @return array
      */
     public function resolveParams(array $configuration)
     {
         if ($this->resolved) {
-            return null;
+            return $configuration;
         }
 
         $this->config = $configuration;
@@ -107,6 +107,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string|string[] $ext An extension or an array of extensions
      * @param string|false $resource A resource
+     * @return bool
      */
     protected function checkSupports($ext, $resource)
     {

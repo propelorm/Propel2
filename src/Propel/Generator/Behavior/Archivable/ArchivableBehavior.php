@@ -150,7 +150,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
-     * @return mixed
+     * @return string
      */
     public function getArchiveTablePhpName($builder)
     {

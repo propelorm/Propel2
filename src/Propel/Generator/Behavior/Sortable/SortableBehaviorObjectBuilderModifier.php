@@ -66,16 +66,31 @@ class SortableBehaviorObjectBuilderModifier
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name)
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string|null
+     */
     protected function getColumnPhpName($name)
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
@@ -650,6 +665,11 @@ public function insertAtTop()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addMoveToRank(&$script)
     {
         $useScope = $this->behavior->useScope();

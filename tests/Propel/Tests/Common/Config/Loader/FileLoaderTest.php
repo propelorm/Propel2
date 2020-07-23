@@ -339,6 +339,12 @@ class TestableFileLoader extends BaseFileLoader
 
     }
 
+    /**
+     * @param string|string[] $ext
+     * @param false|string $resource
+     *
+     * @return bool
+     */
     public function checkSupports($ext, $resource)
     {
         return parent::checkSupports($ext, $resource);

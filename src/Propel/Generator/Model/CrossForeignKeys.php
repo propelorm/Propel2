@@ -182,6 +182,7 @@ class CrossForeignKeys
 
     /**
      * @param ForeignKey $foreignKey
+     * @return void
      */
     public function addCrossForeignKey(ForeignKey $foreignKey)
     {

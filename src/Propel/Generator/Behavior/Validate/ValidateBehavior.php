@@ -123,6 +123,8 @@ class ValidateBehavior extends Behavior
      * Useful when modify table (i18n behavior).
      * If all the rules have been removed, the behavior can't perform validation on related tables.
      * This method introduce a rule to avoid this.
+     *
+     * @return void
      */
     public function addRuleOnPk()
     {

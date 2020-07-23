@@ -65,11 +65,21 @@ class PhpParser
         return $this->isAddPhp ? $this->removePhp($this->code) : $this->code;
     }
 
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
     protected function addPhp($code)
     {
         return '<?php '. $code;
     }
 
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
     protected function removePhp($code)
     {
         return substr($code, 6);
@@ -80,7 +90,7 @@ class PhpParser
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function findMethod($methodName)
     {
@@ -134,7 +144,7 @@ class PhpParser
                 }
             } else {
                 // Tokens consisting of (possibly) more than one character.
-                list($id, $text) = $token;
+                [$id, $text] = $token;
                 switch ($id) {
                     case T_FUNCTION:
                         // If we encounter the keyword 'function', flip the `isInFunction` flag to
@@ -204,7 +214,7 @@ class PhpParser
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
      * @param string $newCode    The code to add to the class
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function addMethodAfter($methodName, $newCode)
     {
@@ -223,7 +233,7 @@ class PhpParser
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
      * @param string $newCode    The code to add to the class
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function addMethodBefore($methodName, $newCode)
     {

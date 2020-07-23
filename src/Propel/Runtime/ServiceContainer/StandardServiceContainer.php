@@ -306,6 +306,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * This method frees any database connection handles that have been
      * opened by the getConnection() method.
+     *
+     * @return void
      */
     public function closeConnections()
     {

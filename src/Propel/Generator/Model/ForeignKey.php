@@ -508,6 +508,7 @@ class ForeignKey extends MappingModel
      *
      * @param mixed $ref1 A Column object or an associative array or a string
      * @param mixed $ref2 A Column object or a single string name
+     * @return void
      */
     public function addReference($ref1, $ref2 = null)
     {

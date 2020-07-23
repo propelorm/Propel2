@@ -191,6 +191,7 @@ class Behavior extends MappingModel
      * [ 'name' => 'foo', 'value' => bar ]
      *
      * @param array $parameter
+     * @return void
      */
     public function addParameter(array $parameter)
     {

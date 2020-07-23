@@ -98,6 +98,7 @@ class Propel
      *
      * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
+     * @return void
      */
     public static function init($configFile)
     {
@@ -125,6 +126,7 @@ class Propel
      * Set the service container instance.
      *
      * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface $serviceContainer
+     * @return void
      */
     public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
     {
@@ -182,10 +184,12 @@ class Propel
      *
      * This method frees any database connection handles that have been
      * opened by the getConnection() method.
+     *
+     * @return void
      */
     public static function closeConnections()
     {
-        return self::$serviceContainer->closeConnections();
+        self::$serviceContainer->closeConnections();
     }
 
     /**

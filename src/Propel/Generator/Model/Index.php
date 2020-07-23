@@ -179,6 +179,7 @@ class Index extends MappingModel
      * Adds a new column to the index.
      *
      * @param Column|array $data Column or attributes from XML.
+     * @return void
      */
     public function addColumn($data)
     {

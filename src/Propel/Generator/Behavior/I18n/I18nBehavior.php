@@ -40,12 +40,24 @@ class I18nBehavior extends Behavior
 
     protected $tableModificationOrder = 70;
 
+    /**
+     * @var \Propel\Generator\Behavior\I18n\I18nBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\I18n\I18nBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $i18nTable;
 
+    /**
+     * @return void
+     */
     public function modifyDatabase()
     {
         foreach ($this->getDatabase()->getTables() as $table) {
@@ -282,7 +294,7 @@ class I18nBehavior extends Behavior
      *
      * @return void
      */
-    protected function moveI18nColumns(): void
+    protected function moveI18nColumns()
     {
         $table     = $this->getTable();
         $i18nTable = $this->i18nTable;

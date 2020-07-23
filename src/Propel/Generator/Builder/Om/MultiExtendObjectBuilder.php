@@ -103,7 +103,8 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -183,7 +184,8 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     /**
      * Closes class.
      *
-     * @param string $script
+     * @param string $script The script will be modified in this method.
+     * @return void
      */
     protected function addClassClose(&$script)
     {

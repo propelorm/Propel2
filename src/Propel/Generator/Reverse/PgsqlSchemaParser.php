@@ -126,6 +126,13 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         return count($tableWraps);
     }
 
+    /**
+     * @param array $tableWraps
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
     protected function parseTables(&$tableWraps, Database $database, Table $filterTable = null)
     {
         $stmt = null;

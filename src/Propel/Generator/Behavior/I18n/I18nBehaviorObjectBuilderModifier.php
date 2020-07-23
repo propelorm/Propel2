@@ -218,7 +218,7 @@ class I18nBehaviorObjectBuilderModifier
     }
 
     /**
-     * FIXME: the connection used by getCurrentTranslation in the generated code cannot be specified by the user
+     * @todo The connection used by getCurrentTranslation in the generated code cannot be specified by the user
      *
      * @param \Propel\Generator\Model\Column $column
      *
@@ -249,7 +249,7 @@ class I18nBehaviorObjectBuilderModifier
     }
 
     /**
-     * FIXME: the connection used by getCurrentTranslation in the generated code cannot be specified by the user
+     * @todo The connection used by getCurrentTranslation in the generated code cannot be specified by the user
      *
      * @param \Propel\Generator\Model\Column $column
      *

@@ -510,6 +510,7 @@ class Database extends ScopedMappingModel
      * Adds several tables at once.
      *
      * @param Table[] $tables An array of Table instances
+     * @return void
      */
     public function addTables(array $tables)
     {
@@ -592,6 +593,7 @@ class Database extends ScopedMappingModel
 
     /**
      * @param string $sequence
+     * @return void
      */
     public function addSequence($sequence)
     {
