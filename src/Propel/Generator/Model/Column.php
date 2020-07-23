@@ -113,12 +113,12 @@ class Column extends MappingModel
     /**
      * @var bool
      */
-    private $isPrimaryKey;
+    private $isPrimaryKey = false;
 
     /**
      * @var bool
      */
-    private $isNodeKey;
+    private $isNodeKey = false;
 
     /**
      * @var string
@@ -128,32 +128,32 @@ class Column extends MappingModel
     /**
      * @var bool
      */
-    private $isNestedSetLeftKey;
+    private $isNestedSetLeftKey = false;
 
     /**
      * @var bool
      */
-    private $isNestedSetRightKey;
+    private $isNestedSetRightKey = false;
 
     /**
      * @var bool
      */
-    private $isTreeScopeKey;
+    private $isTreeScopeKey = false;
 
     /**
      * @var bool
      */
-    private $isUnique;
+    private $isUnique = false;
 
     /**
      * @var bool
      */
-    private $isAutoIncrement;
+    private $isAutoIncrement = false;
 
     /**
      * @var bool
      */
-    private $isLazyLoad;
+    private $isLazyLoad = false;
 
     /**
      * @var array
@@ -163,7 +163,7 @@ class Column extends MappingModel
     /**
      * @var bool
      */
-    private $isPrimaryString;
+    private $isPrimaryString = false;
 
     // only one type is supported currently, which assumes the
     // column either contains the classnames or a key to
@@ -178,12 +178,12 @@ class Column extends MappingModel
     /**
      * @var bool
      */
-    private $isInheritance;
+    private $isInheritance = false;
 
     /**
      * @var bool
      */
-    private $isEnumeratedClasses;
+    private $isEnumeratedClasses = false;
 
     /**
      * @var array|null
@@ -195,7 +195,7 @@ class Column extends MappingModel
      *
      * @var bool
      */
-    private $needsTransactionInPostgres;
+    private $needsTransactionInPostgres = false;
 
     /**
      * @var string[]

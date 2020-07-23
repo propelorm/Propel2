@@ -69,7 +69,7 @@ class SchemaReader
     /**
      * @var bool
      */
-    private $isForReferenceOnly;
+    private $isForReferenceOnly = false;
 
     /**
      * @var string|null

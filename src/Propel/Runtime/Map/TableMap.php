@@ -109,7 +109,7 @@ class TableMap
      *
      * @var boolean
      */
-    protected $useIdGenerator;
+    protected $useIdGenerator = false;
 
     /**
      * Whether the table uses single table inheritance
@@ -163,7 +163,7 @@ class TableMap
     /**
      * @var boolean
      */
-    protected $identifierQuoting = null;
+    protected $identifierQuoting = false;
 
     /**
      * Construct a new TableMap.
@@ -317,7 +317,7 @@ class TableMap
      */
     public function setUseIdGenerator($bit)
     {
-        $this->useIdGenerator = $bit;
+        $this->useIdGenerator = (bool)$bit;
     }
 
     /**

@@ -54,7 +54,7 @@ abstract class AbstractManager
      * Whether to perform validation (XSD) on the schema.xml file(s).
      * @var boolean
      */
-    protected $validate;
+    protected $validate = false;
 
     /**
      * The XSD schema file to use for validation.

@@ -163,7 +163,7 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return bool|null
+     * @return bool
      */
     public function isIdentifierQuotingEnabled()
     {
