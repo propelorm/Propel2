@@ -26,14 +26,29 @@ class CsvParser extends AbstractParser
 
     // these settings are predefined for Excel CSV format
 
+    /**
+     * @var string
+     */
     public $delimiter = ',';
 
+    /**
+     * @var string
+     */
     public $lineTerminator = "\r\n";
 
+    /**
+     * @var string
+     */
     public $quotechar = '"';
 
+    /**
+     * @var string
+     */
     public $escapechar = '\\';
 
+    /**
+     * @var int
+     */
     public $quoting = self::QUOTE_MINIMAL;
 
     /**

@@ -19,13 +19,20 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateColumnRelationBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'foreign_table' => '',
         'update_method' => '',
         'aggregate_name' => '',
     ];
 
+    /**
+     * @return bool
+     */
     public function allowMultiple()
     {
         return true;

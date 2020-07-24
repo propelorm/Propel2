@@ -632,7 +632,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param LoggerInterface $logger
      *
      * @return void
      */
@@ -686,6 +686,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
 
     /**
      * Forward any call to a method not found to the wrapped connection.
+     *
+     * @param string $method
+     * @param mixed $args
+     *
+     * @return mixed
      */
     public function __call($method, $args)
     {

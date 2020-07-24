@@ -41,8 +41,6 @@ class SchemaValidator
     protected $errors = [];
 
     /**
-     * SchemaValidator constructor.
-     *
      * @param \Propel\Generator\Model\Schema $schema
      */
     public function __construct(Schema $schema)

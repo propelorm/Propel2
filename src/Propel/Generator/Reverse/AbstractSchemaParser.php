@@ -174,7 +174,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a type mapping from native type to Propel type.
      *
-     * @return array The mapped Propel type.
+     * @return string[] The mapped Propel type.
      */
     abstract protected function getTypeMapping();
 
@@ -218,6 +218,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Gets a new VendorInfo object for this platform with specified params.
      *
      * @param array $params
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     protected function getNewVendorInfoObject(array $params)
     {

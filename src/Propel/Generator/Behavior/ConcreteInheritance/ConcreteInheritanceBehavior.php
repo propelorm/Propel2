@@ -30,7 +30,11 @@ class ConcreteInheritanceBehavior extends Behavior
      */
     protected $builder;
 
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'extends' => '',
         'descendant_column' => 'descendant_class',

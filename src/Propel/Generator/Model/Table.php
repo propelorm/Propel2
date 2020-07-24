@@ -67,18 +67,39 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $idMethodParameters = [];
 
+    /**
+     * @var string
+     */
     private $commonName;
 
+    /**
+     * @var string
+     */
     private $originCommonName;
 
+    /**
+     * @var string
+     */
     private $description;
 
+    /**
+     * @var string
+     */
     private $phpName;
 
+    /**
+     * @var string
+     */
     private $idMethod;
 
+    /**
+     * @var bool
+     */
     private $allowPkInsert = false;
 
+    /**
+     * @var string|null
+     */
     private $phpNamingMethod;
 
     /**
@@ -101,26 +122,59 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private $inheritanceColumn;
 
+    /**
+     * @var bool
+     */
     private $skipSql = false;
 
+    /**
+     * @var bool
+     */
     private $readOnly = false;
 
+    /**
+     * @var bool
+     */
     private $isAbstract = false;
 
+    /**
+     * @var string|null
+     */
     private $alias;
 
+    /**
+     * @var string|null
+     */
     private $interface;
 
+    /**
+     * @var string|null
+     */
     private $baseClass;
 
+    /**
+     * @var string|null
+     */
     private $baseQueryClass;
 
+    /**
+     * @var array
+     */
     private $columnsByName = [];
 
+    /**
+     * @var array
+     */
     private $columnsByLowercaseName = [];
 
+    /**
+     * @var array
+     */
     private $columnsByPhpName = [];
 
+    /**
+     * @var bool
+     */
     private $needsTransactionInPostgres = false;
 
     /**
@@ -1071,7 +1125,8 @@ class Table extends ScopedMappingModel implements IdMethod
 
         $idx = new Index();
         $idx->loadMapping($index);
-        foreach ((array)@$index['columns'] as $column) {
+        $columns = !empty($index['columns']) ? (array)$index['columns'] : [];
+        foreach ($columns as $column) {
             $idx->addColumn($column);
         }
 

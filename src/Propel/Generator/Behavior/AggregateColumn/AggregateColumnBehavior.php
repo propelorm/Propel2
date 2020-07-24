@@ -21,7 +21,11 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateColumnBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array
+     */
     protected $parameters = [
         'name' => null,
         'expression' => null,

@@ -110,7 +110,8 @@ class MigrationDiffCommand extends AbstractCommand
 
         foreach ($manager->getDatabases() as $appDatabase) {
             $name = $appDatabase->getName();
-            if (!$params = @$connections[$name]) {
+            $params = $connections[$name] ?? [];
+            if (!$params) {
                 $output->writeln(sprintf('<info>No connection configured for database "%s"</info>', $name));
             }
 
@@ -121,7 +122,7 @@ class MigrationDiffCommand extends AbstractCommand
             $conn = $manager->getAdapterConnection($name);
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
 
-            if (!$platform->supportsMigrations()) {
+            if ($platform && !$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
 
                 continue;

@@ -23,12 +23,14 @@ use Symfony\Component\Yaml\Parser;
 class ValidateBehavior extends Behavior
 {
     /**
-     * @var object $builder The current builder
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder $builder The current builder
      */
     protected $builder;
 
     /**
      * Add behavior methods to model class
+     *
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
      *
      * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
@@ -151,6 +153,8 @@ class ValidateBehavior extends Behavior
      * Merge $paramArray array into parameters array.
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
+     *
+     * @param array|null $params
      *
      * @return void
      */

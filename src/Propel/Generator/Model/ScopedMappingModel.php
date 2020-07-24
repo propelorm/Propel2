@@ -60,6 +60,8 @@ abstract class ScopedMappingModel extends MappingModel
      * Returns a build property by its name.
      *
      * @param string $name
+     *
+     * @return string
      */
     abstract protected function getBuildProperty($name);
 

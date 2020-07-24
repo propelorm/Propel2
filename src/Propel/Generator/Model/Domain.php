@@ -23,10 +23,19 @@ use Propel\Generator\Exception\EngineException;
  */
 class Domain extends MappingModel
 {
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $description;
 
+    /**
+     * @var int|null
+     */
     private $size;
 
     /**
@@ -34,8 +43,14 @@ class Domain extends MappingModel
      */
     private $scale;
 
+    /**
+     * @var string|null
+     */
     private $mappingType;
 
+    /**
+     * @var string|null
+     */
     private $sqlType;
 
     /**
@@ -205,7 +220,7 @@ class Domain extends MappingModel
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param int $scale
+     * @param int|null $scale
      *
      * @return void
      */
@@ -277,7 +292,7 @@ class Domain extends MappingModel
     /**
      * Replaces the mapping type if the new value is not null.
      *
-     * @param string $mappingType
+     * @param string|null $mappingType
      *
      * @return void
      */

@@ -114,8 +114,14 @@ class Criteria
 
     public const LOGICAL_AND = 'AND';
 
+    /**
+     * @var bool
+     */
     protected $ignoreCase = false;
 
+    /**
+     * @var bool
+     */
     protected $singleRecord = false;
 
     /**
@@ -224,8 +230,14 @@ class Criteria
      */
     protected $queryComment;
 
+    /**
+     * @var array
+     */
     protected $aliases = [];
 
+    /**
+     * @var bool
+     */
     protected $useTransaction = false;
 
     /**
@@ -1525,7 +1537,7 @@ class Criteria
             return null;
         }
 
-        /** @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null */
+        /** @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null $removed */
         $removed = $this->map[$key];
         unset($this->map[$key]);
         if ($removed instanceof AbstractCriterion) {
@@ -1574,6 +1586,8 @@ class Criteria
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
      *
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $crit
+     *
      * @return bool
      */
     public function equals($crit)
@@ -1582,7 +1596,6 @@ class Criteria
             return false;
         }
 
-        /** @var \Propel\Runtime\ActiveQuery\Criteria $crit */
         if ($this === $crit) {
             return true;
         }
@@ -1796,6 +1809,11 @@ class Criteria
      *  - addAnd(column, value, comparison)
      *  - addAnd(column, value)
      *  - addAnd(Criterion)
+     *
+     * @param mixed $p1
+     * @param mixed|null $p2
+     * @param mixed|null $p3
+     * @param bool $preferColumnCondition
      *
      * @return $this A modified Criteria object.
      */
@@ -2105,6 +2123,7 @@ class Criteria
      * Quotes identifier based on $this->isIdentifierQuotingEnabled() and $tableMap->isIdentifierQuotingEnabled.
      *
      * @param string $string
+     * @param string $tableName
      *
      * @return string
      */
@@ -2519,7 +2538,7 @@ class Criteria
 
                 throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
             }
-        } // foreach table in the criteria
+        }
 
         return $affectedRows;
     }
@@ -2686,7 +2705,7 @@ class Criteria
 
                 throw new PropelException(sprintf('Unable to execute DELETE statement [%s]', $sql), 0, $e);
             }
-        } // for each table
+        }
 
         return $affectedRows;
     }

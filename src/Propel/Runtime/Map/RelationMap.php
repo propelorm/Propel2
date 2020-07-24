@@ -38,16 +38,34 @@ class RelationMap
 
     public const LEFT_TO_RIGHT = 1;
 
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $pluralName;
 
+    /**
+     * @var int
+     */
     protected $type;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap
+     */
     protected $localTable;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap
+     */
     protected $foreignTable;
 
+    /**
+     * @var bool
+     */
     protected $polymorphic = false;
 
     /**
@@ -67,8 +85,14 @@ class RelationMap
      */
     protected $foreignColumns = [];
 
+    /**
+     * @var string|null
+     */
     protected $onUpdate;
 
+    /**
+     * @var string|null
+     */
     protected $onDelete;
 
     /**
@@ -348,7 +372,7 @@ class RelationMap
     /**
      * Get the onUpdate behavior
      *
-     * @return int the relation type
+     * @return string|null
      */
     public function getOnUpdate()
     {
@@ -370,7 +394,7 @@ class RelationMap
     /**
      * Get the onDelete behavior
      *
-     * @return int the relation type
+     * @return string|null
      */
     public function getOnDelete()
     {

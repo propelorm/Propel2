@@ -57,6 +57,13 @@ trait TableMapTrait
         return $toNames[$key];
     }
 
+    /**
+     * @param array $row
+     * @param string $fromType
+     * @param string $toType
+     *
+     * @return array
+     */
     public static function translateFieldNames($row, $fromType, $toType)
     {
         $toNames = static::getFieldNames($toType);

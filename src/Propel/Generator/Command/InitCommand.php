@@ -27,8 +27,14 @@ use Symfony\Component\Finder\Finder;
  */
 class InitCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     private $defaultSchemaDir;
 
+    /**
+     * @var string
+     */
     private $defaultPhpDir;
 
     /**

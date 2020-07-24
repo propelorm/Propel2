@@ -154,6 +154,9 @@ class ArrayInput extends Input
     /**
      * Adds a short option value.
      *
+     * @param string $shortcut
+     * @param mixed|null $value
+     *
      * @throws \Symfony\Component\Console\Exception\InvalidOptionException When option given doesn't exist
      *
      * @return void
@@ -170,9 +173,10 @@ class ArrayInput extends Input
     /**
      * Adds a long option value.
      *
-     * @throws \Symfony\Component\Console\Exception\InvalidOptionException When option given doesn't exist
-     * @throws \Symfony\Component\Console\Exception\InvalidOptionException When a required value is missing
+     * @param string $name
+     * @param mixed|null $value
      *
+     * @throws \Symfony\Component\Console\Exception\InvalidOptionException When a required value is missing
      * @return void
      */
     private function addLongOption(string $name, $value)

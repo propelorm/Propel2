@@ -629,6 +629,8 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @see DefaultPlatform::getModifyColumnDDL
      *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff $columnDiff
+     *
      * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -805,6 +807,8 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getModifyColumnsDDL
      *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
+     *
      * @return string
      */
     public function getModifyColumnsDDL($columnDiffs)
@@ -823,6 +827,8 @@ DROP SEQUENCE %s CASCADE;
      * @author Niklas Närhinen <niklas@narhinen.net>
      *
      * @see DefaultPlatform::getAddColumnsDLL
+     *
+     * @param \Propel\Generator\Model\Column[] $columns
      *
      * @return string
      */
@@ -843,6 +849,8 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getDropIndexDDL
      *
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getDropIndexDDL(Index $index)
@@ -857,9 +865,9 @@ ALTER TABLE %s DROP CONSTRAINT %s;
                 $this->quoteIdentifier($index->getTable()->getName()),
                 $this->quoteIdentifier($index->getName())
             );
-        } else {
-            return parent::getDropIndexDDL($index);
         }
+
+        return parent::getDropIndexDDL($index);
     }
 
     /**

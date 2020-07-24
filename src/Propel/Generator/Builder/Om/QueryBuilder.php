@@ -234,6 +234,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @see ObjectBuilder::addClassBody()
      *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)
@@ -308,6 +310,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Adds the entityNotFoundExceptionClass property which is necessary for the `requireOne` method
      * of the `ModelCriteria`
+     *
+     * @param string $script
      *
      * @return void
      */
@@ -1486,6 +1490,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Adds a joinRelated method for this object.
      *
      * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Table|null $fkTable
+     * @param string $queryClass
+     * @param string $relationName
+     * @param string $joinType
      *
      * @return void
      */
@@ -1568,6 +1576,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Adds a useRelatedQuery method for this object.
      *
      * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Table $fkTable
+     * @param string $queryClass
+     * @param string $relationName
+     * @param string $joinType
      *
      * @return void
      */
@@ -1839,6 +1851,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Checks whether any registered behavior on that table has a modifier for a hook
      *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
      *
      * @return bool
      */
@@ -1852,6 +1865,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $script The script will be modified in this method.
+     * @param string $tab
+     *
+     * @return string
      */
     public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
     {

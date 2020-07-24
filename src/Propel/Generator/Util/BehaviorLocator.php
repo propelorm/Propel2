@@ -26,8 +26,14 @@ class BehaviorLocator
 {
     public const BEHAVIOR_PACKAGE_TYPE = 'propel-behavior';
 
+    /**
+     * @var array|null
+     */
     private $behaviors;
 
+    /**
+     * @var string|null
+     */
     private $composerDir;
 
     /**

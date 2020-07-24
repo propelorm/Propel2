@@ -39,8 +39,14 @@ class Join
     // the left parts of the join condition
     protected $left = [];
 
+    /**
+     * @var array
+     */
     protected $leftValues = [];
 
+    /**
+     * @var array
+     */
     protected $rightValues = [];
 
     // the right parts of the join condition
@@ -53,23 +59,48 @@ class Join
      */
     protected $operators = [];
 
-    // the type of the join (LEFT JOIN, ...)
+    /**
+     * The type of the join (LEFT JOIN, ...)
+     *
+     * @var string|null
+     */
     protected $joinType;
 
-    // the number of conditions in the join
+    /**
+     * The number of conditions in the join
+     *
+     * @var int
+     */
     protected $count = 0;
 
-    // the database adapter
+    /**
+     * @var \Propel\Runtime\Adapter\AdapterInterface|null
+     */
     protected $db;
 
+    /**
+     * @var string|null
+     */
     protected $leftTableName;
 
+    /**
+     * @var string|null
+     */
     protected $rightTableName;
 
+    /**
+     * @var string|null
+     */
     protected $leftTableAlias;
 
+    /**
+     * @var string|null
+     */
     protected $rightTableAlias;
 
+    /**
+     * @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null
+     */
     protected $joinCondition;
 
     /**

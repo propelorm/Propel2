@@ -14,6 +14,8 @@ interface DataFetcherInterface extends Iterator, Countable
      * Sets the dataObject.
      *
      * @param mixed $dataObject
+     *
+     * @return void
      */
     public function setDataObject($dataObject);
 
@@ -90,6 +92,8 @@ interface DataFetcherInterface extends Iterator, Countable
 
     /**
      * Frees the resultSet.
+     *
+     * @return void
      */
     public function close();
 

@@ -171,7 +171,7 @@ class PropelTypes
      * Mapping between mapping types and PDO type constants (for prepared
      * statement settings).
      *
-     * @var array
+     * @var int[]
      */
     private static $mappingTypeToPDOTypeMap = [
         self::CHAR => PDO::PARAM_STR,
@@ -211,6 +211,9 @@ class PropelTypes
         self::JSON => PDO::PARAM_STR,
     ];
 
+    /**
+     * @var string[]
+     */
     private static $pdoTypeNames = [
         PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
         PDO::PARAM_NULL => 'PDO::PARAM_NULL',
@@ -235,6 +238,8 @@ class PropelTypes
     /**
      * Returns the PDO type (PDO::PARAM_* constant) value.
      *
+     * @param string $type
+     *
      * @return int
      */
     public static function getPDOType($type)
@@ -244,6 +249,8 @@ class PropelTypes
 
     /**
      * Returns the PDO type ('PDO::PARAM_*' constant) name.
+     *
+     * @param string $type
      *
      * @return string
      */

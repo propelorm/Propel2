@@ -15,5 +15,8 @@ namespace Propel\Runtime\Adapter\MSSQL;
  */
 class MssqlDebugPDO extends MssqlPropelPDO
 {
+    /**
+     * @var bool
+     */
     public $useDebug = true;
 }

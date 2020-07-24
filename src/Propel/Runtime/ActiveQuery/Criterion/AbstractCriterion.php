@@ -28,7 +28,9 @@ abstract class AbstractCriterion
     public const UND = ' AND ';
     public const ODER = ' OR ';
 
-
+    /**
+     * @var mixed
+     */
     protected $value;
 
     /**
@@ -123,6 +125,8 @@ abstract class AbstractCriterion
 
     /**
      * Set the $column and $table properties based on a column name or object
+     *
+     * @param ColumnMap|string $column
      *
      * @return void
      */
@@ -331,6 +335,8 @@ abstract class AbstractCriterion
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
      *
+     * @param object|null $obj
+     *
      * @return bool
      */
     public function equals($obj)
@@ -388,6 +394,9 @@ abstract class AbstractCriterion
     /**
      * method supporting recursion through all criterions to give
      * us a string array of tables from each criterion
+     *
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $c
+     * @param array $s
      *
      * @return void
      */

@@ -27,7 +27,7 @@ class Unique extends Index
     /**
      * Returns whether or not this index is unique.
      *
-     * Returns Boolean
+     * @return bool
      */
     public function isUnique()
     {

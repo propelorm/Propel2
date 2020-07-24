@@ -40,5 +40,8 @@ interface ConnectionManagerInterface
      */
     public function getReadConnection(?AdapterInterface $adapter = null);
 
+    /**
+     * @return void
+     */
     public function closeConnections();
 }

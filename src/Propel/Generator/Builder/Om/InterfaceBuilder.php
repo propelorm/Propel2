@@ -75,6 +75,8 @@ interface " . $this->getUnqualifiedClassName() . "
      *
      * @see ObjectBuilder::addClassBody()
      *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)
@@ -95,4 +97,4 @@ interface " . $this->getUnqualifiedClassName() . "
 } // " . $this->getUnqualifiedClassName() . "
 ";
     }
-} // ExtensionObjectBuilder
+}

@@ -32,8 +32,14 @@ if (!defined('T_ML_COMMENT')) {
  */
 class PhpParser
 {
+    /**
+     * @var string
+     */
     protected $code;
 
+    /**
+     * @var bool
+     */
     protected $isAddPhp;
 
     /**

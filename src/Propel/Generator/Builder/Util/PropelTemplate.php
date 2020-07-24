@@ -75,6 +75,8 @@ class PropelTemplate
      *
      * @param array $vars An associative array of arguments to be rendered
      *
+     * @throws InvalidArgumentException
+     *
      * @return string The rendered template
      */
     public function render($vars = [])

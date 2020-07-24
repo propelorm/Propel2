@@ -64,6 +64,8 @@ class ClassTools
     /**
      * Gets the baseClass path if specified for table/db.
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return string
      */
     public static function getBaseClass(Table $table)
@@ -73,6 +75,8 @@ class ClassTools
 
     /**
      * Gets the interface path if specified for table.
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return string
      */
@@ -102,6 +106,9 @@ class ClassTools
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public static function getPropelReservedMethods()
     {
         return [

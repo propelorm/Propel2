@@ -161,6 +161,9 @@ class DatabaseComparator
      * @param \Propel\Generator\Model\Database $fromDatabase
      * @param \Propel\Generator\Model\Database $toDatabase
      * @param bool $caseInsensitive
+     * @param bool $withRenaming
+     * @param bool $removeTable
+     * @param array $excludedTables
      *
      * @return \Propel\Generator\Model\Diff\DatabaseDiff|bool
      */

@@ -87,12 +87,24 @@ class SchemaReader
      */
     private $currentPackage;
 
+    /**
+     * @var string|null
+     */
     private $currentXmlFile;
 
+    /**
+     * @var string|null
+     */
     private $defaultPackage;
 
+    /**
+     * @var bool
+     */
     private $firstPass;
 
+    /**
+     * @var string
+     */
     private $encoding;
 
     /**

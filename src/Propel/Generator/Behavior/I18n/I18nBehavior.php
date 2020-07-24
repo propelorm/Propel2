@@ -26,7 +26,11 @@ class I18nBehavior extends Behavior
 {
     public const DEFAULT_LOCALE = 'en_US';
 
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array
+     */
     protected $parameters = [
         'i18n_table' => '%TABLE%_i18n',
         'i18n_phpname' => '%PHPNAME%I18n',
@@ -38,6 +42,9 @@ class I18nBehavior extends Behavior
         'locale_alias' => '',
     ];
 
+    /**
+     * @var int
+     */
     protected $tableModificationOrder = 70;
 
     /**

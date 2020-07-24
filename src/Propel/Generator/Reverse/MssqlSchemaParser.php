@@ -32,7 +32,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * Map MSSQL native types to Propel types.
      *
-     * @var array
+     * @var string[]
      */
     private static $mssqlTypeMap = [
         'binary' => PropelTypes::BINARY,
@@ -76,6 +76,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * @see AbstractSchemaParser::getTypeMapping()
+     *
+     * @return string[]
      */
     protected function getTypeMapping()
     {
@@ -171,6 +173,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * Load foreign keys for this table.
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     protected function addForeignKeys(Table $table)
@@ -213,6 +217,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return void
      */
@@ -260,6 +266,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return void
      */

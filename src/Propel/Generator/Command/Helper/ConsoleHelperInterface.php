@@ -45,6 +45,11 @@ interface ConsoleHelperInterface
      */
     public function writeBlock($text, $style = 'info');
 
+    /**
+     * @param string[] $items
+     *
+     * @return void
+     */
     public function writeSummary($items);
 
     /**

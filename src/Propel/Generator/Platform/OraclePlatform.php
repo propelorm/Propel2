@@ -338,6 +338,8 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *             one fell swoop.
      *
      * @see Platform::supportsSchemas()
+     *
+     * @return bool
      */
     public function supportsSchemas()
     {
@@ -435,10 +437,17 @@ CREATE %sINDEX %s ON %s (%s)%s;
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from OracleAdapter::bindValue().
      * Any code modification here must be ported there.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     * @param string $identifier
+     * @param string $columnValueAccessor
+     * @param string $tab
+     *
+     * @return string
      */
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
-        if ($column->getType() == PropelTypes::CLOB_EMU) {
+        if ($column->getType() === PropelTypes::CLOB_EMU) {
             return sprintf(
                 "%s\$stmt->bindParam(%s, %s, %s, strlen(%s));
 ",

@@ -257,7 +257,7 @@ class Database extends ScopedMappingModel
      * Sets the name of the base super class inherited by active record objects.
      * This parameter is overridden at the table level.
      *
-     * @param string $class.
+     * @param string $class
      *
      * @return void
      */
@@ -270,7 +270,7 @@ class Database extends ScopedMappingModel
      * Sets the name of the base super class inherited by query objects.
      * This parameter is overridden at the table level.
      *
-     * @param string $class.
+     * @param string $class
      *
      * @return void
      */

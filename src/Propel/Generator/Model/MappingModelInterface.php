@@ -26,6 +26,8 @@ interface MappingModelInterface
      * Loads a model definition from an array.
      *
      * @param array $attributes
+     *
+     * @return void
      */
     public function loadMapping(array $attributes);
 }

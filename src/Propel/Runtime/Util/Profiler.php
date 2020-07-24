@@ -17,14 +17,29 @@ use Propel\Common\Config\Exception\InvalidConfigurationException;
  */
 class Profiler
 {
+    /**
+     * @var float
+     */
     protected $slowTreshold;
 
+    /**
+     * @var string
+     */
     protected $innerGlue;
 
+    /**
+     * @var string
+     */
     protected $outerGlue;
 
-    protected $snapshot;
+    /**
+     * @var array
+     */
+    protected $snapshot = [];
 
+    /**
+     * @var array
+     */
     protected $details = [
         'time' => [
             'name' => 'Time',

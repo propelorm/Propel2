@@ -339,6 +339,8 @@ class Schema
      * Magic string method
      *
      * @see toString()
+     *
+     * @return string
      */
     public function __toString()
     {

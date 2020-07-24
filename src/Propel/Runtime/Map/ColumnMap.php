@@ -60,7 +60,7 @@ class ColumnMap
     /**
      * The default value for this column
      *
-     * @var mixed
+     * @var string|null
      */
     protected $defaultValue;
 
@@ -360,7 +360,7 @@ class ColumnMap
     /**
      * Sets the default value for this column.
      *
-     * @param mixed $defaultValue the default value for the column
+     * @param string|null $defaultValue the default value for the column
      *
      * @return void
      */
@@ -372,7 +372,7 @@ class ColumnMap
     /**
      * Gets the default value for this column.
      *
-     * @return mixed String or NULL
+     * @return string|null
      */
     public function getDefaultValue()
     {

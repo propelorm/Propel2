@@ -78,6 +78,8 @@ class ExtensionObjectBuilder extends AbstractObjectBuilder
      *
      * @see ObjectBuilder::addClassBody()
      *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)

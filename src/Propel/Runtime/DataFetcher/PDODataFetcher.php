@@ -41,7 +41,9 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * Sets a new fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH). Returns previous fetch style.
      *
-     * @var int
+     * @param int $style
+     *
+     * @return int
      */
     public function setStyle($style)
     {
@@ -54,7 +56,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * Returns current fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH).
      *
-     * @var int
+     * @return int
      */
     public function getStyle()
     {
@@ -74,8 +76,6 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @return void
      */
     public function next()
@@ -127,8 +127,6 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @return void
      */
     public function close()

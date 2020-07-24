@@ -12,10 +12,19 @@ use Traversable;
 
 class BaseModelCriteria extends Criteria implements IteratorAggregate
 {
+    /**
+     * @var string|null
+     */
     protected $modelName;
 
+    /**
+     * @var string|null
+     */
     protected $modelTableMapName;
 
+    /**
+     * @var string|null
+     */
     protected $modelAlias;
 
     /**
@@ -23,10 +32,21 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     protected $tableMap;
 
+    /**
+     * @var \Propel\Runtime\Formatter\AbstractFormatter|null
+     */
     protected $formatter;
 
+    /**
+     * @var array
+     */
     protected $with = [];
 
+    /**
+     * @phpstan-param class-string<\Propel\Runtime\Formatter\AbstractFormatter>
+     *
+     * @var string
+     */
     protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 
     /**

@@ -19,6 +19,9 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
  */
 class LikeModelCriterion extends BasicModelCriterion
 {
+    /**
+     * @var bool
+     */
     protected $ignoreStringCase = false;
 
     /**

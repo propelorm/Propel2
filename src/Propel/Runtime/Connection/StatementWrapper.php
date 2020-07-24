@@ -38,7 +38,8 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * This is only used in logging the binding of variables.
      *
      * @see self::bindValue()
-     * @var array
+     *
+     * @var string[]
      */
     protected static $typeMap = [
         0 => 'PDO::PARAM_NULL',
@@ -242,6 +243,8 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * The fetch_style parameter determines how the Connection returns the row.
      *
      * @param int $fetchStyle Controls how the next row will be returned to the caller.
+     * @param int $cursorOrientation
+     * @param int $cursorOffset
      *
      * @return mixed
      */
@@ -254,6 +257,8 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * Returns an array containing all of the result set rows.
      *
      * @param int|null $fetchStyle Controls the contents of the returned array as documented in fetch()
+     * @param mixed|null $fetchArgument
+     * @param array $ctorArgs
      *
      * @return array
      */

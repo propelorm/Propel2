@@ -232,6 +232,8 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the NOT NULL string for the configured RDBMS.
      *
+     * @param bool $notNull
+     *
      * @return string
      */
     public function getNullString($notNull)
@@ -332,6 +334,8 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Builds the DDL SQL to drop a table
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return string
      */
     public function getDropTableDDL(Table $table)
@@ -344,6 +348,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Builds the DDL SQL to add a table
      * without index and foreign keys
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return string
      */
@@ -386,6 +392,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Builds the DDL SQL for a Column object.
      *
+     * @param \Propel\Generator\Model\Column $col
+     *
      * @return string
      */
     public function getColumnDDL(Column $col)
@@ -414,6 +422,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
     /**
      * Returns the SQL for the default value of a Column object
+     *
+     * @param \Propel\Generator\Model\Column $col
      *
      * @return string
      */
@@ -483,6 +493,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Returns the name of a table primary key.
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyName(Table $table)
@@ -494,6 +506,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
     /**
      * Returns the SQL for the primary key of a Table object.
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return string
      */
@@ -941,6 +955,8 @@ ALTER TABLE %s%s;
      * Builds the DDL SQL to alter a table
      * based on a TableDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTableColumnsDDL(TableDiff $tableDiff)
@@ -970,6 +986,8 @@ ALTER TABLE %s%s;
      * Builds the DDL SQL to alter a table's primary key
      * based on a TableDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
+     *
      * @return string
      */
     public function getModifyTablePrimaryKeyDDL(TableDiff $tableDiff)
@@ -987,6 +1005,8 @@ ALTER TABLE %s%s;
     /**
      * Builds the DDL SQL to alter a table's indices
      * based on a TableDiff instance
+     *
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
      *
      * @return string
      */
@@ -1014,6 +1034,8 @@ ALTER TABLE %s%s;
     /**
      * Builds the DDL SQL to alter a table's foreign keys
      * based on a TableDiff instance
+     *
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
      *
      * @return string
      */

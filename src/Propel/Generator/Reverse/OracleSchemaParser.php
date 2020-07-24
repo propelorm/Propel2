@@ -43,7 +43,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var array
+     * @var string[]
      */
     private static $oracleTypeMap = [
         'BLOB' => PropelTypes::BLOB,
@@ -66,7 +66,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return string[]
      */
     protected function getTypeMapping()
     {
@@ -78,6 +78,8 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Database $database The Database model class to add tables to.
      * @param \Propel\Generator\Model\Table[] $additionalTables
+     *
+     * @return int
      */
     public function parse(Database $database, array $additionalTables = [])
     {

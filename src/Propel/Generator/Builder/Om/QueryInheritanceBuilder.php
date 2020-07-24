@@ -26,6 +26,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
 {
     /**
      * The current child "object" we are operating on.
+     *
+     * @var \Propel\Generator\Model\Inheritance|null
      */
     protected $child;
 

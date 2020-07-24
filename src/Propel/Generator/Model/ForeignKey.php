@@ -754,6 +754,8 @@ class ForeignKey extends MappingModel
     /**
      * Returns a foreign column object.
      *
+     * @param int $index
+     *
      * @return \Propel\Generator\Model\Column
      */
     public function getForeignColumn($index = 0)

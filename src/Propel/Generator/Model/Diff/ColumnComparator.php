@@ -45,6 +45,12 @@ class ColumnComparator
         return false;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return array
+     */
     public static function compareColumns(Column $fromColumn, Column $toColumn)
     {
         $changedProperties = [];

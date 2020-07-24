@@ -28,11 +28,18 @@ class DelegateBehavior extends Behavior
     public const ONE_TO_ONE = 1;
     public const MANY_TO_ONE = 2;
 
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'to' => '',
     ];
 
+    /**
+     * @var int[]
+     */
     protected $delegates = [];
 
     /**

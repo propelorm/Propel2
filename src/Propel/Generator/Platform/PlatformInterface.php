@@ -42,6 +42,8 @@ interface PlatformInterface
      * Sets a database connection to use (for quoting, etc.).
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con The database connection to use in this Platform class.
+     *
+     * @return void
      */
     public function setConnection(?ConnectionInterface $con = null);
 
@@ -56,6 +58,8 @@ interface PlatformInterface
      * Sets the GeneratorConfigInterface which contains any generator build properties.
      *
      * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig);
 
@@ -94,6 +98,8 @@ interface PlatformInterface
      * Returns the RDBMS-specific SQL fragment for <code>NULL</code>
      *   or <code>NOT NULL</code>.
      *
+     * @param bool $notNull
+     *
      * @return string
      */
     public function getNullString($notNull);
@@ -108,12 +114,16 @@ interface PlatformInterface
     /**
      * Returns the DDL SQL for a Column object.
      *
+     * @param \Propel\Generator\Model\Column $col
+     *
      * @return string
      */
     public function getColumnDDL(Column $col);
 
     /**
      * Returns the SQL for the default value of a Column object.
+     *
+     * @param \Propel\Generator\Model\Column $col
      *
      * @return string
      */
@@ -137,6 +147,8 @@ interface PlatformInterface
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return string
      */
@@ -275,6 +287,8 @@ interface PlatformInterface
      * which the most Platforms requires but which is not always explicitly defined in the table model.
      *
      * @param \Propel\Generator\Model\Table $table The table object which gets modified.
+     *
+     * @return void
      */
     public function normalizeTable(Table $table);
 
@@ -299,6 +313,8 @@ interface PlatformInterface
 
     /**
      * @param bool $enabled
+     *
+     * @return void
      */
     public function setIdentifierQuoting($enabled);
 }

@@ -1868,8 +1868,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$varName = null;
         }
 ";
-            } // foreach fk
-        } /* if col is foreign key */
+            }
+        }
 
         foreach ($column->getReferrers() as $refFK) {
             $tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
@@ -1898,10 +1898,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 }
             }
 ";
-                    } // if (isLocalPrimaryKey
-                } // foreach col->getPrimaryKeys()
-            } // if tablFk != table
-        } // foreach
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2684,8 +2684,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$clo = \$col;";
                 }
                 $n++;
-            } // if col->isLazyLoad()
-        } /* foreach */
+            }
+        }
 
         if ($this->getBuildProperty('generator.objectModel.addSaveMethod')) {
             $script .= "
@@ -3032,6 +3032,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Adds the switch-statement for looking up the array-key name for toArray
      *
      * @see toArray
+     *
+     * @param string $phpName
+     * @param \Propel\Generator\Model\Table $table
+     * @param bool $plural
+     *
+     * @return string
      */
     protected function addToArrayKeyLookUp($phpName, Table $table, $plural)
     {
@@ -4699,6 +4705,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
  // addRefererGet()
 
     /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
      * @return void
      */
     protected function addRefFKSet(&$script, ForeignKey $refFK)
@@ -5548,6 +5557,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * @param string $script
      * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKGet(&$script, CrossForeignKeys $crossFKs)
     {
@@ -5826,11 +5837,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * @param string $script
      * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKCount(&$script, CrossForeignKeys $crossFKs)
     {
         $refFK = $crossFKs->getIncomingForeignKey();
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
 
         $multi = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
 
@@ -6472,6 +6485,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Boosts ActiveRecord::doInsert() by doing more calculations at buildtime.
      *
      * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return string
      */
     protected function addDoInsertBodyRaw()
     {

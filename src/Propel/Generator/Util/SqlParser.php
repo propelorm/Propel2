@@ -20,14 +20,29 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class SqlParser
 {
+    /**
+     * @var string
+     */
     protected $delimiter = ';';
 
+    /**
+     * @var int
+     */
     protected $delimiterLength = 1;
 
+    /**
+     * @var string
+     */
     protected $sql = '';
 
+    /**
+     * @var int
+     */
     protected $len = 0;
 
+    /**
+     * @var int
+     */
     protected $pos = 0;
 
     /**

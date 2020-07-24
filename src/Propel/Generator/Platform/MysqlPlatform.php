@@ -32,12 +32,15 @@ use Propel\Generator\Model\Unique;
  */
 class MysqlPlatform extends DefaultPlatform
 {
+    /**
+     * @var string
+     */
     protected $tableEngineKeyword = 'ENGINE';
 
-  // overwritten in propel config
+    /**
+     * @var string
+     */
     protected $defaultTableEngine = 'InnoDB';
-
-  // overwritten in propel config
 
     /**
      * Initializes db specific domain mapping.
@@ -573,6 +576,8 @@ DROP INDEX %s ON %s;
     /**
      * Builds the DDL SQL for an Index object.
      *
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getIndexDDL(Index $index)
@@ -691,6 +696,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff $databaseDiff
+     *
      * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
@@ -723,6 +730,9 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
     /**
      * Builds the DDL SQL to rename a table
      *
+     * @param string $fromTableName
+     * @param string $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
@@ -740,6 +750,8 @@ RENAME TABLE %s TO %s;
 
     /**
      * Builds the DDL SQL to remove a column
+     *
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return string
      */
@@ -759,6 +771,9 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to rename a column
      *
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
      * @return string
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
@@ -769,6 +784,8 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to modify a column
      *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff $columnDiff
+     *
      * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -778,6 +795,9 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to change a column
+     *
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
      *
      * @return string
      */
@@ -797,6 +817,8 @@ ALTER TABLE %s CHANGE %s %s;
 
     /**
      * Builds the DDL SQL to modify a list of columns
+     *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
      *
      * @return string
      */
@@ -865,6 +887,8 @@ ALTER TABLE %s ADD %s %s;
 
     /**
      * @see Platform::supportsSchemas()
+     *
+     * @return bool
      */
     public function supportsSchemas()
     {

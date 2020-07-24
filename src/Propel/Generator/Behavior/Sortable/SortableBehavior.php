@@ -22,17 +22,30 @@ use Propel\Generator\Model\Behavior;
  */
 class SortableBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'rank_column' => 'sortable_rank',
         'use_scope' => 'false',
         'scope_column' => '',
     ];
 
+    /**
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehaviorTableMapBuilderModifier|null
+     */
     protected $tableMapBuilderModifier;
 
     /**

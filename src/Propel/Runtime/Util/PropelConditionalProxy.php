@@ -40,12 +40,24 @@ class PropelConditionalProxy
      */
     protected $criteria;
 
+    /**
+     * @var \Propel\Runtime\Util\PropelConditionalProxy|null
+     */
     protected $parent;
 
+    /**
+     * @var bool
+     */
     protected $state;
 
+    /**
+     * @var bool
+     */
     protected $wasTrue;
 
+    /**
+     * @var bool
+     */
     protected $parentState;
 
     /**
@@ -73,7 +85,7 @@ class PropelConditionalProxy
      *
      * @param bool $cond
      *
-     * @return $this|$this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _if($cond)
     {
@@ -85,7 +97,7 @@ class PropelConditionalProxy
      *
      * @param bool $cond ignored
      *
-     * @return $this|$this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _elseif($cond)
     {
@@ -95,7 +107,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @return $this|$this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _else()
     {
@@ -106,7 +118,7 @@ class PropelConditionalProxy
      * Returns the parent object
      * Allows for conditional statements in a fluid interface.
      *
-     * @return $this|$this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _endif()
     {
@@ -137,7 +149,7 @@ class PropelConditionalProxy
     }
 
     /**
-     * @return $this|null
+     * @return self|null
      */
     public function getParentProxy()
     {

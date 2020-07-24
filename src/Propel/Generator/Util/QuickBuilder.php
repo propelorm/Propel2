@@ -183,6 +183,15 @@ class QuickBuilder
         return $this->config;
     }
 
+    /**
+     * @param string $schema
+     * @param string|null $dsn
+     * @param string|null $user
+     * @param string|null $pass
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     *
+     * @return \Propel\Runtime\Connection\ConnectionWrapper
+     */
     public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
     {
         $builder = new self();
@@ -505,6 +514,10 @@ class QuickBuilder
 
     /**
      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     *
+     * @param string $source
+     *
+     * @return string
      */
     public function fixNamespaceDeclarations($source)
     {

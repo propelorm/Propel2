@@ -32,7 +32,14 @@ class Column extends MappingModel
     public const DEFAULT_VISIBILITY = 'public';
     public const CONSTANT_PREFIX = 'COL_';
 
-    public static $validVisibilities = [ 'public', 'protected', 'private' ];
+    /**
+     * @var string[]
+     */
+    public static $validVisibilities = [
+        'public',
+        'protected',
+        'private',
+    ];
 
     /**
      * @var string|null
@@ -1423,7 +1430,7 @@ class Column extends MappingModel
      *
      * Example: (size[,scale]) <-> (10) or (10,2)
      *
-     * return string
+     * @return string
      */
     public function getSizeDefinition()
     {

@@ -20,5 +20,12 @@
     <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison">
         <severity>0</severity>
     </rule>
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Spryker.Commenting.DocBlockReturnSelf">
+        <severity>0</severity>
+    </rule>
 
 </ruleset>

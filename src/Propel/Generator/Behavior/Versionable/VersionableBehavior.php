@@ -20,7 +20,11 @@ use Propel\Generator\Model\ForeignKey;
  */
 class VersionableBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'version_column' => 'version',
         'version_table' => '',
@@ -38,10 +42,19 @@ class VersionableBehavior extends Behavior
      */
     protected $versionTable;
 
+    /**
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
+    /**
+     * @var int
+     */
     protected $tableModificationOrder = 80;
 
     /**

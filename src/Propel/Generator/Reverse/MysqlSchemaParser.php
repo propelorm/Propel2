@@ -35,7 +35,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Map MySQL native types to Propel types.
      *
-     * @var array
+     * @var string[]
      */
     private static $mysqlTypeMap = [
         'tinyint' => PropelTypes::TINYINT,
@@ -69,6 +69,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'set' => PropelTypes::CHAR,
     ];
 
+    /**
+     * @var int[]
+     */
     protected static $defaultTypeSizes = [
         'char' => 1,
         'tinyint' => 4,
@@ -81,7 +84,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return string[]
      */
     protected function getTypeMapping()
     {
@@ -185,6 +188,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @param array $row An associative array with the following keys:
      *                     Field, Type, Null, Key, Default, Extra.
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return \Propel\Generator\Model\Column
      */
@@ -284,6 +288,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Load foreign keys for this table.
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     protected function addForeignKeys(Table $table)
@@ -382,6 +388,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Load indexes for this table
      *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     protected function addIndexes(Table $table)
@@ -434,6 +442,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return void
      */

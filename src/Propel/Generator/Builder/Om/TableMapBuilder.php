@@ -1255,7 +1255,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
                 $script .= "
             \$criteria->addSelectColumn({$col->getFQConstantName()});";
             } // if !col->isLazyLoad
-        } // foreach
+        }
         $script .= "
         } else {";
         foreach ($this->getTable()->getColumns() as $col) {
@@ -1263,7 +1263,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
                 $script .= "
             \$criteria->addSelectColumn(\$alias . '." . $col->getName() . "');";
             } // if !col->isLazyLoad
-        } // foreach
+        }
         $script .= "
         }";
         $script .= "

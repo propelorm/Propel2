@@ -33,12 +33,24 @@ class OnDemandIterator implements Iterator
      */
     protected $dataFetcher;
 
+    /**
+     * @var array|null
+     */
     protected $currentRow;
 
+    /**
+     * @var int
+     */
     protected $currentKey;
 
+    /**
+     * @var bool
+     */
     protected $isValid;
 
+    /**
+     * @var bool
+     */
     protected $enableInstancePoolingOnFinish;
 
     /**

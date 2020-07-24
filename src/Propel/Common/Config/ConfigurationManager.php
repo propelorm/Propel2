@@ -116,7 +116,7 @@ class ConfigurationManager
      */
     public function getConnectionParametersArray($section = 'runtime')
     {
-        if (!in_array($section, ['runtime', 'generator'])) {
+        if (!in_array($section, ['runtime', 'generator'], true)) {
             return null;
         }
 

@@ -79,6 +79,8 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @see QueryBuilder::addClassBody()
      *
+     * @param string $script
+     *
      * @return void
      */
     protected function addClassBody(&$script)
@@ -104,6 +106,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      * Checks whether any registered behavior on that table has a modifier for a hook
      *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
      *
      * @return bool
      */

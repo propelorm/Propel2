@@ -33,6 +33,12 @@ class ArrayFormatter extends AbstractFormatter
      */
     protected $emptyVariable;
 
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     * @return array|\Propel\Runtime\Collection\Collection
+     */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
@@ -53,7 +59,7 @@ class ArrayFormatter extends AbstractFormatter
         foreach ($dataFetcher as $row) {
             $object = &$this->getStructuredArrayFromRow($row);
             if ($object) {
-                $items[] = & $object;
+                $items[] = &$object;
             }
         }
 
@@ -205,12 +211,12 @@ class ArrayFormatter extends AbstractFormatter
                     !in_array(
                         $this->alreadyHydratedObjects[$relAlias][$key],
                         $arrayToAugment[$modelWith->getRelationName()]
-                    )
+                    , true)
                 ) {
-                    $arrayToAugment[$modelWith->getRelationName()][] = & $this->alreadyHydratedObjects[$relAlias][$key];
+                    $arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
                 }
             } else {
-                $arrayToAugment[$modelWith->getRelationName()] = & $this->alreadyHydratedObjects[$relAlias][$key];
+                $arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
             }
 
             $hydrationChain[$modelWith->getRightPhpName()] = &$this->alreadyHydratedObjects[$relAlias][$key];

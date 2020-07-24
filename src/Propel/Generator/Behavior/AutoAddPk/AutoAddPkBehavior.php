@@ -19,7 +19,11 @@ use Propel\Generator\Model\Behavior;
  */
 class AutoAddPkBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'name' => 'id',
         'autoIncrement' => 'true',

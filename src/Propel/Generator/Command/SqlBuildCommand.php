@@ -57,22 +57,27 @@ class SqlBuildCommand extends AbstractCommand
                         $configOptions['propel']['paths']['schemaDir'] = $option;
 
                         break;
+
                     case 'output-dir':
                         $configOptions['propel']['paths']['sqlDir'] = $option;
 
                         break;
-                    case 'schema-name';
+
+                    case 'schema-name':
                         $configOptions['propel']['generator']['schema']['basename'] = $option;
 
                         break;
+
                     case 'table-prefix':
                         $configOptions['propel']['generator']['tablePrefix'] = $option;
 
                         break;
-                    case 'mysql-engine';
+
+                    case 'mysql-engine':
                         $configOptions['propel']['database']['adapters']['mysql']['tableType'] = $option;
 
                         break;
+
                     case 'composer-dir':
                         $configOptions['propel']['paths']['composerDir'] = $option;
 

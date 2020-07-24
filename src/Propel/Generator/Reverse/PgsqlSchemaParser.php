@@ -31,9 +31,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Map PostgreSQL native types to Propel types.
      *
-     * @var array
+     * @var string[]
      */
-    
     private static $pgsqlTypeMap = [
         'bool' => PropelTypes::BOOLEAN,
         'boolean' => PropelTypes::BOOLEAN,
@@ -78,6 +77,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'json' => PropelTypes::JSON,
     ];
 
+    /**
+     * @var int[]
+     */
     protected static $defaultTypeSizes = [
         'char' => 1,
         'character' => 1,
@@ -90,7 +92,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return string[]
      */
     protected function getTypeMapping()
     {
@@ -367,6 +369,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Load foreign keys for this table.
      *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
+     *
      * @return void
      */
     protected function addForeignKeys(Table $table, $oid)
@@ -488,6 +493,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Load indexes for this table
      *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
+     *
      * @return void
      */
     protected function addIndexes(Table $table, $oid)
@@ -550,6 +558,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
      *
      * @return void
      */

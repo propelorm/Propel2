@@ -272,6 +272,8 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the class doesn't exists
      * @throws \Propel\Generator\Exception\InvalidArgumentException if the interface doesn't exists
      * @throws \Propel\Generator\Exception\BuildException if the class isn't an implementation of the given interface
+     *
+     * @return object
      */
     private function getInstance($className, $arguments = null, $interfaceName = null)
     {

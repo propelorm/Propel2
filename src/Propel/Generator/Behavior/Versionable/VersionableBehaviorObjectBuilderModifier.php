@@ -114,6 +114,8 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * Get the getter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related getter, e.g. 'getVersion'
      */
     protected function getColumnGetter($name = 'version_column')
@@ -123,6 +125,8 @@ class VersionableBehaviorObjectBuilderModifier
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */

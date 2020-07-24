@@ -29,6 +29,9 @@ abstract class AbstractCommand extends Command
     public const CODE_SUCCESS = 0;
     public const CODE_ERROR = 1;
 
+    /**
+     * @var \Symfony\Component\Filesystem\Filesystem|null
+     */
     protected $filesystem;
 
     /**
@@ -125,7 +128,7 @@ abstract class AbstractCommand extends Command
     /**
      * Parse a connection string and return an array with name, dsn and extra informations
      *
-     * @parama string $connection The connection string
+     * @param string $connection The connection string
      *
      * @return array
      */

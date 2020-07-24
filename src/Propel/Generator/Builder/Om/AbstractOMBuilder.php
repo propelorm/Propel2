@@ -110,6 +110,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Creates a $obj = new Book(); code snippet. Can be used by frameworks, for instance, to
      * extend this behavior, e.g. initialize the object after creating the instance or so.
      *
+     * @param string $objName
+     * @param string $clsName
+     *
      * @return string Some code
      */
     public function buildObjectInstanceCreationCode($objName, $clsName)
@@ -878,6 +881,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * one column in a table that points to the same foreign table, then a 'RelatedByLocalColName' suffix
      * will be appended.
      *
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @throws \Propel\Generator\Exception\RuntimeException
      *
      * @return string
@@ -937,6 +942,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $className . $this->getRefRelatedBySuffix($fk);
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @throws \Propel\Generator\Exception\RuntimeException
+     *
+     * @return string
+     */
     protected static function getRefRelatedBySuffix(ForeignKey $fk)
     {
         $relCol = '';
@@ -995,6 +1007,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
      * @param string $modifier The name of the modifier object providing the method in the behavior
      * @param string $script The script will be modified in this method.
+     * @param string $tab
      *
      * @return void
      */

@@ -182,8 +182,9 @@ class ModelCriteria extends BaseModelCriteria
      * @see Criteria::add()
      *
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
-     *                      Or an array of condition names
+     *   Or an array of condition names
      * @param mixed $value A value for the condition
+     * @param int|null $bindingType
      *
      * @return $this The current object, for fluid interface
      */
@@ -219,6 +220,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *                      Or an array of condition names
      * @param mixed $value A value for the condition
+     * @param int|null $bindingType
      *
      * @return $this The current object, for fluid interface
      */
@@ -560,6 +562,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param string $clause SQL clause, may contain column and table phpNames
      * @param mixed $value An optional value to bind to the clause
      * @param string|null $operator The operator to use to add the condition. Defaults to 'AND'
+     * @param int|null $bindingType
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
@@ -623,6 +626,7 @@ class ModelCriteria extends BaseModelCriteria
      * @see Criteria::addJoinObject()
      *
      * @param \Propel\Runtime\ActiveQuery\Join $join A join object
+     * @param string|null $name
      *
      * @return $this The current object, for fluid interface
      */
@@ -1974,9 +1978,10 @@ class ModelCriteria extends BaseModelCriteria
      * </code>
      *
      * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
+     * @param bool $failSilently
      *
-     * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownModelException
      * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownColumnException
+     * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownModelException
      *
      * @return array List($columnMap, $realColumnName)
      */
@@ -2271,7 +2276,12 @@ class ModelCriteria extends BaseModelCriteria
      * where XXX is a column phpName.
      * Supports XXXJoin(), where XXX is a join direction (in 'left', 'right', 'inner')
      *
+     * @param string $name
+     * @param array $arguments
+     *
      * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return mixed
      */
     public function __call($name, $arguments)
     {
@@ -2280,7 +2290,7 @@ class ModelCriteria extends BaseModelCriteria
         foreach ($methods as $method) {
             if (strpos($name, $method) === 0) {
                 $columns = substr($name, strlen($method));
-                if (in_array($method, ['findBy', 'findOneBy', 'requireOneBy']) && strpos($columns, 'And') !== false) {
+                if (in_array($method, ['findBy', 'findOneBy', 'requireOneBy'], true) && strpos($columns, 'And') !== false) {
                     $method = $method . 'Array';
                     $columns = explode('And', $columns);
                     $conditions = [];

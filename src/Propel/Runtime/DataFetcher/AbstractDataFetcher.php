@@ -21,9 +21,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return void
+     * @inheritDoc
      */
     public function setDataObject($dataObject)
     {

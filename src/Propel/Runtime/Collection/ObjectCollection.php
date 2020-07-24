@@ -25,9 +25,15 @@ use Propel\Runtime\Propel;
  */
 class ObjectCollection extends Collection
 {
-    protected $index;
+    /**
+     * @var array
+     */
+    protected $index = [];
 
-    protected $indexSplHash;
+    /**
+     * @var array
+     */
+    protected $indexSplHash = [];
 
     /**
      * @param array $data
@@ -417,8 +423,6 @@ class ObjectCollection extends Collection
      */
     protected function rebuildIndex()
     {
-        $this->index = [];
-        $this->indexSplHash = [];
         foreach ($this->data as $idx => $value) {
             $hashCode = $this->getHashCode($value);
             $this->index[$hashCode] = $idx;

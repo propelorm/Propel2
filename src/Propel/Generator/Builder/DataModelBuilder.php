@@ -541,6 +541,8 @@ abstract class DataModelBuilder
      *
      * @see OMBuilder#getClassName()
      *
+     * @param string $identifier
+     *
      * @return string
      */
     public function prefixClassName($identifier)

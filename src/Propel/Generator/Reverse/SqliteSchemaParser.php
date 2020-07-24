@@ -27,6 +27,9 @@ use Propel\Generator\Model\Unique;
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {
+    /**
+     * @var bool
+     */
     protected $addVendorInfo;
 
     /**
@@ -321,6 +324,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return void
      */

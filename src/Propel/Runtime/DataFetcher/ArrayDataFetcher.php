@@ -17,8 +17,6 @@ class ArrayDataFetcher extends AbstractDataFetcher
     protected $indexType = TableMap::TYPE_PHPNAME;
 
     /**
-     * {@inheritDoc}
-     *
      * @return void
      */
     public function next()
@@ -64,8 +62,6 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @return void
      */
     public function rewind()
@@ -106,8 +102,6 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @return void
      */
     public function close()

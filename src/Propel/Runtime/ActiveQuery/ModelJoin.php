@@ -25,10 +25,23 @@ class ModelJoin extends Join
      */
     protected $relationMap;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap|null
+     */
     protected $tableMap;
 
+    /**
+     * @var \Propel\Runtime\ActiveQuery\ModelJoin|null
+     */
     protected $previousJoin;
 
+    /**
+     * @param \Propel\Runtime\Map\RelationMap $relationMap
+     * @param string|null $leftTableAlias
+     * @param string|null $relationAlias
+     *
+     * @return $this
+     */
     public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
     {
         $leftCols = $relationMap->getLeftColumns();
@@ -123,7 +136,7 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function getPreviousJoin()
     {

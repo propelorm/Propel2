@@ -421,10 +421,10 @@ class TableMap
      * @param string $type A string specifying the Propel type.
      * @param bool $isNotNull Whether column does not allow NULL values.
      * @param int|null $size An int specifying the size.
+     * @param string|null $defaultValue
      * @param bool|null $pk True if column is a primary key.
      * @param string|bool $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
-     * @param string|null $defaultValue The default value for this column.
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
      */
@@ -810,6 +810,12 @@ class TableMap
         return null;
     }
 
+    /**
+     * @param string $classname
+     * @param string $type
+     *
+     * @return mixed
+     */
     public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
     {
         $callable = [$classname::TABLE_MAP, 'getFieldnames'];
@@ -817,6 +823,14 @@ class TableMap
         return call_user_func($callable, $type);
     }
 
+    /**
+     * @param string $classname
+     * @param string $fieldname
+     * @param string $fromType
+     * @param string $toType
+     *
+     * @return mixed
+     */
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
     {
         $callable = [$classname::TABLE_MAP, 'translateFieldname'];
@@ -844,6 +858,8 @@ class TableMap
     }
 
     /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
      * @return array|null null if not covered by only pk
      */
     public function extractPrimaryKey(Criteria $criteria)

@@ -26,6 +26,9 @@ use Propel\Generator\Model\Unique;
  */
 class MssqlPlatform extends DefaultPlatform
 {
+    /**
+     * @var int
+     */
     protected static $dropCount = 0;
 
     /**
@@ -96,6 +99,8 @@ class MssqlPlatform extends DefaultPlatform
      * together with index and foreign keys.
      * Since MSSQL always checks it the tables in foreign key definitions exist,
      * the foreign key DDLs are moved after all tables are created
+     *
+     * @param \Propel\Generator\Model\Database $database
      *
      * @return string
      */
@@ -260,6 +265,8 @@ END
 
     /**
      * @see Platform::supportsSchemas()
+     *
+     * @return bool
      */
     public function supportsSchemas()
     {

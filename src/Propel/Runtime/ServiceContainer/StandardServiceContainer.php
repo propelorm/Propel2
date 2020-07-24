@@ -45,6 +45,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $defaultDatasource = ServiceContainerInterface::DEFAULT_DATASOURCE_NAME;
 
     /**
+     * @phpstan-var class-string<\Propel\Runtime\Map\DatabaseMap>
+     *
      * @var string
      */
     protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;

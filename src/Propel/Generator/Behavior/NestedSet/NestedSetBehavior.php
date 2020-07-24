@@ -19,7 +19,11 @@ use Propel\Generator\Model\Behavior;
  */
 class NestedSetBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
         'left_column' => 'tree_left',
         'right_column' => 'tree_right',
@@ -29,8 +33,14 @@ class NestedSetBehavior extends Behavior
         'method_proxies' => 'false',
     ];
 
+    /**
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
     /**

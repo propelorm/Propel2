@@ -8,8 +8,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterface
 {
+    /**
+     * @var \Symfony\Component\Console\Input\InputInterface
+     */
     protected $input;
 
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface
+     */
     protected $output;
 
     /**

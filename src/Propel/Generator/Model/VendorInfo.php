@@ -18,8 +18,14 @@ namespace Propel\Generator\Model;
  */
 class VendorInfo extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     private $type;
 
+    /**
+     * @var array
+     */
     private $parameters;
 
     /**

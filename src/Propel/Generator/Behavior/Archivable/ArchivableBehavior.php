@@ -21,7 +21,11 @@ use Propel\Generator\Model\Index;
  */
 class ArchivableBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array
+     */
     protected $parameters = [
         'archive_table' => '',
         'archive_phpname' => null,
@@ -38,8 +42,14 @@ class ArchivableBehavior extends Behavior
      */
     protected $archiveTable;
 
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
     /**

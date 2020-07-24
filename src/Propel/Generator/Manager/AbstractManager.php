@@ -223,7 +223,7 @@ abstract class AbstractManager
     {
         $dbs = $this->getDatabases();
 
-        return @$dbs[$name];
+        return $dbs[$name] ?? null;
     }
 
     /**

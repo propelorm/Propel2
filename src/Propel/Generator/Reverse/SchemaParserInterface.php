@@ -32,6 +32,8 @@ interface SchemaParserInterface
      * Sets the database connection.
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface $dbh
+     *
+     * @return void
      */
     public function setConnection(ConnectionInterface $dbh);
 
@@ -39,6 +41,8 @@ interface SchemaParserInterface
      * Sets the GeneratorConfig to use in the parsing.
      *
      * @param \Propel\Generator\Config\GeneratorConfigInterface $config
+     *
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config);
 
@@ -56,6 +60,8 @@ interface SchemaParserInterface
 
     /**
      * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
      */
     public function setPlatform($platform);
 
@@ -65,7 +71,7 @@ interface SchemaParserInterface
      * @param \Propel\Generator\Model\Database $database
      * @param \Propel\Generator\Model\Table[] $additionalTables additional tables to parse and add to $database
      *
-     * @return int number of generated tables
+     * @return int Number of generated tables
      */
     public function parse(Database $database, array $additionalTables = []);
 }
