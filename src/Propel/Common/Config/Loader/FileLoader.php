@@ -90,11 +90,14 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @throws \Propel\Common\Config\Exception\InputOutputException If the path isnot readable
      *
-     * @return array|string
+     * @return string
      */
     protected function getPath($file)
     {
         $path = $this->locator->locate($file);
+        if (!is_string($path)) {
+            throw new InputOutputException("$file must return a single path.");
+        }
 
         if (!is_readable($path)) {
             throw new InputOutputException("You don't have permissions to access configuration file $file.");

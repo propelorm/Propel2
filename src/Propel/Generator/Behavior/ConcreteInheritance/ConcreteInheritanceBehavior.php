@@ -290,7 +290,7 @@ public function syncParentToChild($parentClass \$parent)
         if ($columns === true) {
             $columns = $parentTable->getColumns();
         } else {
-            $columnNames = $columns;
+            $columnNames = $columns ?: [];
             $columns = [];
             foreach ($columnNames as $columnName) {
                 $column = $this->getTable()->getColumn($columnName);

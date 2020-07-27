@@ -36,10 +36,19 @@ class Schema
      */
     private $platform;
 
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var bool
+     */
     private $isInitialized;
 
+    /**
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
+     */
     protected $generatorConfig;
 
     /**

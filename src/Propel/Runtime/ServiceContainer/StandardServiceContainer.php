@@ -229,6 +229,8 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
+     * @phpstan-param class-string<\Propel\Runtime\Map\DatabaseMap> $databaseMapClass
+     *
      * @param string $databaseMapClass
      *
      * @return void
@@ -416,6 +418,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * The service container uses this class to instantiate a new profiler when
      * getProfiler() is called.
+     *
+     * @phpstan-param class-string<\Propel\Runtime\Util\Profiler> $profilerClass
      *
      * @param string $profilerClass
      *

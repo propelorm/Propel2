@@ -29,7 +29,7 @@ class Domain extends MappingModel
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $description;
 
@@ -58,6 +58,9 @@ class Domain extends MappingModel
      */
     private $defaultValue;
 
+    /**
+     * @var \Propel\Generator\Model\Database|null
+     */
     private $database;
 
     /**
@@ -124,8 +127,8 @@ class Domain extends MappingModel
             $this->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
         }
 
-        $this->size = $this->getAttribute('size');
-        $this->scale = $this->getAttribute('scale');
+        $this->size = $this->getAttribute('size') ? (int)$this->getAttribute('size') : null;
+        $this->scale = $this->getAttribute('scale') ? (int)$this->getAttribute('scale') : null;
         $this->description = $this->getAttribute('description');
     }
 
@@ -463,11 +466,11 @@ class Domain extends MappingModel
         }
 
         if ($this->size) {
-            $domainNode->setAttribute('size', $this->size);
+            $domainNode->setAttribute('size', (string)$this->size);
         }
 
         if ($this->scale) {
-            $domainNode->setAttribute('scale', $this->scale);
+            $domainNode->setAttribute('scale', (string)$this->scale);
         }
 
         if ($this->description) {

@@ -48,9 +48,8 @@
     "scripts": {
         "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
         "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
-        "stan": [
-            "vendor/bin/phpstan analyze"
-        ]
+        "stan": "vendor/bin/phpstan analyze",
+        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline"
     },
     "extra": {
         "branch-alias": {

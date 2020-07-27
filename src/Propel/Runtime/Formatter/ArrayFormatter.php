@@ -37,6 +37,7 @@ class ArrayFormatter extends AbstractFormatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
+     *
      * @return array|\Propel\Runtime\Collection\Collection
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
@@ -210,8 +211,9 @@ class ArrayFormatter extends AbstractFormatter
                     !isset($arrayToAugment[$modelWith->getRelationName()]) ||
                     !in_array(
                         $this->alreadyHydratedObjects[$relAlias][$key],
-                        $arrayToAugment[$modelWith->getRelationName()]
-                    , true)
+                        $arrayToAugment[$modelWith->getRelationName()],
+                        true
+                    )
                 ) {
                     $arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
                 }

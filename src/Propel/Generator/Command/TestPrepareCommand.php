@@ -69,7 +69,7 @@ class TestPrepareCommand extends AbstractCommand
     {
         parent::__construct();
 
-        $this->root = realpath(__DIR__ . '/../../../../');
+        $this->root = (string)realpath(__DIR__ . '/../../../../');
     }
 
     /**

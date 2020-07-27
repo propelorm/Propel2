@@ -126,7 +126,7 @@ abstract class AbstractCriterion
     /**
      * Set the $column and $table properties based on a column name or object
      *
-     * @param ColumnMap|string $column
+     * @param \Propel\Runtime\Map\ColumnMap|string $column
      *
      * @return void
      */

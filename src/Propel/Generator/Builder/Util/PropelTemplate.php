@@ -21,12 +21,12 @@ use Propel\Generator\Exception\InvalidArgumentException;
 class PropelTemplate
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $template;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $templateFile;
 
@@ -75,7 +75,7 @@ class PropelTemplate
      *
      * @param array $vars An associative array of arguments to be rendered
      *
-     * @throws InvalidArgumentException
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string The rendered template
      */

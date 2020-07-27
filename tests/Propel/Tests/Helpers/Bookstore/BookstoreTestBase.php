@@ -23,6 +23,7 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
      * @var Boolean
      */
     protected static $isInitialized = false;
+
     /**
      * @var \PDO|\Propel\Runtime\Connection\ConnectionWrapper
      */

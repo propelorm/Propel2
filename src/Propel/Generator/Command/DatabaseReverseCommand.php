@@ -56,7 +56,7 @@ class DatabaseReverseCommand extends AbstractCommand
     {
         $configOptions = [];
 
-        $connection = $input->getArgument('connection');
+        $connection = (string)$input->getArgument('connection');
         if (strpos($connection, ':') === false) {
             //treat it as connection name
             $configOptions['propel']['reverse']['connection'] = $connection;

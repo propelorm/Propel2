@@ -198,9 +198,9 @@ class ObjectBuilder extends AbstractObjectBuilder
             if (!in_array($val, $valueSet)) {
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
-            $defaultValue = array_search($val, $valueSet);
+            $defaultValue = (string)array_search($val, $valueSet);
         } elseif ($column->isSetType()) {
-            $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
+            $defaultValue = (string)SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
@@ -4186,9 +4186,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if ($rightValueOrColumn instanceof Column) {
                 $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
 
-                if ($cptype == 'int' || $cptype == 'float' || $cptype == 'double') {
+                if ($cptype === 'int' || $cptype === 'float' || $cptype === 'double') {
                     $conditional .= $and . '$this->' . $clo . ' != 0';
-                } elseif ($cptype == 'string') {
+                } elseif ($cptype === 'string') {
                     $conditional .= $and . '($this->' . $clo . ' !== "" && $this->' . $clo . ' !== null)';
                 } else {
                     $conditional .= $and . '$this->' . $clo . ' !== null';
@@ -6510,7 +6510,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         // if non auto-increment but using sequence, get the id first
-        if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == 'native') {
+        if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() === 'native') {
             $column = $table->getFirstPrimaryKeyColumn();
             if (!$column) {
                 throw new PropelException('Cannot find primary key column in table `' . $table->getName() . '`.');
@@ -6571,7 +6571,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 ";
 
         // if auto-increment, get the id after
-        if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == 'native') {
+        if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() === 'native') {
             $script .= "
         try {";
             $script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);

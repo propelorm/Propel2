@@ -517,7 +517,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         \$this->setIdentifierQuoting(" . ($table->isIdentifierQuotingEnabled() ? 'true' : 'false') . ");
         \$this->setClassName('" . addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()) . "');
         \$this->setPackage('" . parent::getPackage() . "');";
-        if ($table->getIdMethod() == 'native') {
+        if ($table->getIdMethod() === 'native') {
             $script .= "
         \$this->setUseIdGenerator(true);";
         } else {
@@ -696,7 +696,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
-     * @param array $pkphp An array of PHP var names / method calls representing complete pk.
+     * @param string[]|string $pkphp An array of PHP var names / method calls representing complete pk.
      *
      * @return string
      */

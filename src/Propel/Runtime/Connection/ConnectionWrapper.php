@@ -632,7 +632,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * @param LoggerInterface $logger
+     * @param \Psr\Log\LoggerInterface $logger
      *
      * @return void
      */
@@ -675,7 +675,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         do {
             $callingMethod = $backtrace[$i]['function'];
             $i++;
-        } while ($callingMethod == 'log' && $i < $stackSize);
+        } while ($callingMethod === 'log' && $i < $stackSize);
 
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;

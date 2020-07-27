@@ -133,7 +133,9 @@ class ArrayInput extends Input
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return void
      */
     protected function parse()
     {
@@ -177,6 +179,7 @@ class ArrayInput extends Input
      * @param mixed|null $value
      *
      * @throws \Symfony\Component\Console\Exception\InvalidOptionException When a required value is missing
+     *
      * @return void
      */
     private function addLongOption(string $name, $value)

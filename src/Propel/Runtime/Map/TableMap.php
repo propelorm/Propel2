@@ -423,7 +423,7 @@ class TableMap
      * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue
      * @param bool|null $pk True if column is a primary key.
-     * @param string|bool $fkTable A String with the foreign key table name.
+     * @param string|bool|null $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.

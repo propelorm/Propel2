@@ -64,7 +64,9 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * @inheritDoc
+     * @param null $style
+     *
+     * @return array|null
      */
     public function fetch($style = null)
     {

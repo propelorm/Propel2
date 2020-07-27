@@ -231,7 +231,7 @@ class Criteria
     protected $queryComment;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $aliases = [];
 
@@ -1666,13 +1666,13 @@ class Criteria
     {
         // merge limit
         $limit = $criteria->getLimit();
-        if ($limit != 0 && $this->getLimit() === - 1) {
+        if ($limit && $this->getLimit() === -1) {
             $this->limit = $limit;
         }
 
         // merge offset
         $offset = $criteria->getOffset();
-        if ($offset != 0 && $this->getOffset() === 0) {
+        if ($offset && $this->getOffset() === 0) {
             $this->offset = $offset;
         }
 

@@ -11,6 +11,7 @@
 namespace Propel\Generator\Config;
 
 use Propel\Common\Config\ConfigurationManager;
+use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
@@ -29,6 +30,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
+    protected const PLURALIZER = PluralizerInterface::class;
+
     /**
      * @var \Propel\Generator\Util\BehaviorLocator
      */
@@ -156,6 +159,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     {
         $classname = $this->getConfigProperty('generator.objectModel.builders.' . $type);
 
+        /** @var \Propel\Generator\Builder\DataModelBuilder $builder */
         $builder = $this->getInstance($classname, $table);
         $builder->setGeneratorConfig($this);
 
@@ -171,7 +175,10 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     {
         $classname = $this->get()['generator']['objectModel']['pluralizerClass'];
 
-        return $this->getInstance($classname, null, '\\Propel\\Common\\Pluralizer\\PluralizerInterface');
+        /** @var \Propel\Common\Pluralizer\PluralizerInterface $pluralizer */
+        $pluralizer = $this->getInstance($classname, null, static::PLURALIZER);
+
+        return $pluralizer;
     }
 
     /**
@@ -186,7 +193,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             $connectionNames = $this->get()['generator']['connections'];
 
             $reverseConnection = $this->getConfigProperty('reverse.connection');
-            if ($reverseConnection !== null && !in_array($reverseConnection, $connectionNames)) {
+            if ($reverseConnection !== null && !in_array($reverseConnection, $connectionNames, true)) {
                 $connectionNames[] = $reverseConnection;
             }
 

@@ -36,9 +36,10 @@ class UniqueValidator extends ConstraintValidator
 
         $columnName = sprintf('%s.%s', $tableMap::TABLE_NAME, $this->context->getPropertyName());
 
-        if ($this->context->getObject()->isNew() && $matches->count() > 0) {
+        $object = $this->context->getObject();
+        if ($object->isNew() && $matches->count() > 0) {
             $this->context->addViolation($constraint->message);
-        } elseif ($this->context->getObject()->isModified() && $matches->count() > (in_array($columnName, $this->context->getObject()->getModifiedColumns()) ? 0 : 1)) {
+        } elseif ($object->isModified() && $matches->count() > (in_array($columnName, $object->getModifiedColumns()) ? 0 : 1)) {
             $this->context->addViolation($constraint->message);
         }
     }

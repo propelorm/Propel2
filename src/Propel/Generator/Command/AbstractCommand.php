@@ -35,7 +35,9 @@ abstract class AbstractCommand extends Command
     protected $filesystem;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return void
      */
     protected function configure()
     {

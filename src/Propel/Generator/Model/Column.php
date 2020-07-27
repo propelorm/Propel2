@@ -337,6 +337,7 @@ class Column extends MappingModel
 
             // Add type, size information to associated Domain object
             $domain->replaceSqlType($this->getAttribute('sqlType'));
+
             if (
                 !$this->getAttribute('size')
                 && $domain->getType() === 'VARCHAR'
@@ -346,11 +347,12 @@ class Column extends MappingModel
             ) {
                 $size = 255;
             } else {
-                $size = $this->getAttribute('size');
+                $size = $this->getAttribute('size') ? (int)$this->getAttribute('size') : null;
             }
-
             $domain->replaceSize($size);
-            $domain->replaceScale($this->getAttribute('scale'));
+
+            $scale = $this->getAttribute('scale') ? (int)$this->getAttribute('scale') : null;
+            $domain->replaceScale($scale);
 
             $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
             if ($defval !== null && strtolower($defval) !== 'null') {

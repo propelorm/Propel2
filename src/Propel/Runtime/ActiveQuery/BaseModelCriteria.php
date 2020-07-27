@@ -43,7 +43,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     protected $with = [];
 
     /**
-     * @phpstan-param class-string<\Propel\Runtime\Formatter\AbstractFormatter>
+     * @phpstan-var class-string<\Propel\Runtime\Formatter\AbstractFormatter>
      *
      * @var string
      */

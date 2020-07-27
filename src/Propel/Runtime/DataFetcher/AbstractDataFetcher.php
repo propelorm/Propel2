@@ -29,7 +29,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * @inheritDoc
+     * @return \Propel\Runtime\DataFetcher\PDODataFetcher
      */
     public function getDataObject()
     {

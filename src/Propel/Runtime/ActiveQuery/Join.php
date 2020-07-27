@@ -36,7 +36,11 @@ class Join
     public const EQUAL = '=';
     public const INNER_JOIN = 'INNER JOIN';
 
-    // the left parts of the join condition
+    /**
+     * The left parts of the join condition
+     *
+     * @var array
+     */
     protected $left = [];
 
     /**
@@ -49,7 +53,11 @@ class Join
      */
     protected $rightValues = [];
 
-    // the right parts of the join condition
+    /**
+     * The right parts of the join condition
+     *
+     * @var array
+     */
     protected $right = [];
 
     /**

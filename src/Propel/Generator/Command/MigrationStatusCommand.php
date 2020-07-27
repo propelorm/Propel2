@@ -59,6 +59,7 @@ class MigrationStatusCommand extends AbstractCommand
         $manager->setGeneratorConfig($generatorConfig);
 
         $connections = [];
+        /** @var string[] $optionConnections */
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();

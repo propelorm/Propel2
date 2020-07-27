@@ -59,6 +59,9 @@ class ModelCriteria extends BaseModelCriteria
     public const FORMAT_OBJECT = '\Propel\Runtime\Formatter\ObjectFormatter';
     public const FORMAT_ON_DEMAND = '\Propel\Runtime\Formatter\OnDemandFormatter';
 
+    /**
+     * @var bool
+     */
     protected $useAliasInSQL = false;
 
     /**
@@ -66,12 +69,23 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected $primaryCriteria;
 
+    /**
+     * @var bool
+     */
     protected $isWithOneToMany = false;
 
-    // this is introduced to prevent useQuery->join from going wrong
+    /**
+     * This is introduced to prevent useQuery->join from going wrong
+     *
+     * @var \Propel\Runtime\ActiveQuery\Join|null
+     */
     protected $previousJoin;
 
-    // whether to clone the current object before termination methods
+    /**
+     * Whether to clone the current object before termination methods
+     *
+     * @var bool
+     */
     protected $isKeepQuery = true;
 
     // this is for the select method
@@ -80,7 +94,11 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected $select;
 
-    // temporary property used in replaceNames
+    /**
+     * temporary property used in replaceNames
+     *
+     * @var string|null
+     */
     protected $currentAlias;
 
     /**

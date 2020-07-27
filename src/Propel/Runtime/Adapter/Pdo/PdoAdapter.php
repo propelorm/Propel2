@@ -78,7 +78,10 @@ abstract class PdoAdapter
     }
 
     /**
-     * @inheritDoc
+     * @param string $left
+     * @param string $right
+     *
+     * @return string
      */
     public function compareRegex($left, $right)
     {
