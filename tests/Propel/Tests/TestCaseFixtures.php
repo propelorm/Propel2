@@ -91,7 +91,9 @@ class TestCaseFixtures extends TestCase
             $ns = '\\Propel\\Generator\\Command';
             $r  = new \ReflectionClass($ns.'\\'.$file->getBasename('.php'));
             if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
-                $app->add($r->newInstance());
+                /** @var \Symfony\Component\Console\Command\Command $command */
+                $command = $r->newInstance();
+                $app->add($command);
             }
         }
         if (0 !== strpos($dsn, 'sqlite:')) {
@@ -232,7 +234,7 @@ class TestCaseFixtures extends TestCase
     /**
      * Returns current database driver.
      *
-     * @return string[]
+     * @return string
      */
     protected function getDriver()
     {

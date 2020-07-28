@@ -10,8 +10,9 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use PDO;
+use PDOStatement;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -24,7 +25,6 @@ use Propel\Runtime\Map\ColumnMap;
  */
 class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
-
     /**
      * Returns SQL which concatenates the second string to the first.
      *
@@ -41,9 +41,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
@@ -55,7 +55,8 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s)
@@ -66,10 +67,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Locks the specified table.
      *
-     * @param ConnectionInterface $con   The Propel connection to use.
-     * @param string              $table The name of the table to lock.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con The Propel connection to use.
+     * @param string $table The name of the table to lock.
      *
-     * @throws \PDOException No Statement could be created or executed.
      * @return void
      */
     public function lockTable($con, $table)
@@ -80,10 +80,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Unlocks the specified table.
      *
-     * @param ConnectionInterface $con   The Propel connection to use.
-     * @param string              $table The name of the table to unlock.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con The Propel connection to use.
+     * @param string $table The name of the table to unlock.
      *
-     * @throws \PDOException No Statement could be created or executed.
      * @return void
      */
     public function unlockTable($con, $table)
@@ -94,7 +93,8 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifier()
      *
-     * @param  string $text
+     * @param string $text
+     *
      * @return string
      */
     public function quoteIdentifier($text)
@@ -105,7 +105,8 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param  string $table
+     * @param string $table
+     *
      * @return string
      */
     public function quoteIdentifierTable($table)
@@ -117,15 +118,16 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::applyLimit()
      *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     *
      * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
-        $offset = (int) $offset;
-        $limit = (int) $limit;
+        $offset = (int)$offset;
+        $limit = (int)$limit;
 
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
@@ -137,33 +139,34 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
     public function random($seed = null)
     {
-        return 'rand('.((int) $seed).')';
+        return 'rand(' . ((int)$seed) . ')';
     }
 
     /**
      * @see AdapterInterface::bindValue()
      *
      * @param \PDOStatement $stmt
-     * @param string        $parameter
-     * @param mixed         $value
-     * @param ColumnMap     $cMap
-     * @param null|integer  $position
+     * @param string $parameter
+     * @param mixed $value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
+     * @param int|null $position
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if (\PDO::PARAM_BOOL === $pdoType) {
-            $value = (int) $value;
-            $pdoType = \PDO::PARAM_INT;
+        if ($pdoType === PDO::PARAM_BOOL) {
+            $value = (int)$value;
+            $pdoType = PDO::PARAM_INT;
 
             return $stmt->bindValue($parameter, $value, $pdoType);
         }
@@ -182,6 +185,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Prepare the parameters for a PDO connection.
      * Protects MySQL from charset injection risk.
+     *
      * @see http://www.propelorm.org/ticket/1360
      *
      * @param array $params the connection parameters from the configuration
@@ -191,7 +195,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     protected function prepareParams($params)
     {
         if (isset($params['settings']['charset'])) {
-            if (false === strpos($params['dsn'], ';charset=')) {
+            if (strpos($params['dsn'], ';charset=') === false) {
                 $params['dsn'] .= ';charset=' . $params['settings']['charset'];
                 unset($params['settings']['charset']);
             }

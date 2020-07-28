@@ -19,10 +19,14 @@ use Propel\Generator\Model\Behavior;
  */
 class QueryCacheBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'backend'     => 'apc',
-        'lifetime'    => 3600,
+        'backend' => 'apc',
+        'lifetime' => '3600',
     ];
 
     /**
@@ -43,6 +47,7 @@ class QueryCacheBehavior extends Behavior
             case 'backend':
                 $script .= "protected static \$cacheBackend = array();
             ";
+
                 break;
             case 'apc':
                 break;
@@ -50,6 +55,7 @@ class QueryCacheBehavior extends Behavior
             default:
                 $script .= "protected static \$cacheBackend;
             ";
+
                 break;
         }
 
@@ -124,18 +130,20 @@ public function cacheContains(\$key)
                 $script .= "
 
     return apc_fetch(\$key);";
+
                 break;
             case 'array':
                 $script .= "
 
     return isset(self::\$cacheBackend[\$key]);";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
-                break;
 
+                break;
         }
         $script .= "
 }
@@ -150,21 +158,24 @@ public function cacheContains(\$key)
     protected function addCacheStore(&$script)
     {
         $script .= "
-public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('lifetime') . ")
+public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter('lifetime') . ")
 {";
         switch ($this->getParameter('backend')) {
             case 'apc':
                 $script .= "
     apc_store(\$key, \$value, \$lifetime);";
+
                 break;
             case 'array':
                 $script .= "
     self::\$cacheBackend[\$key] = \$value;";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
+
                 break;
         }
         $script .= "
@@ -187,16 +198,19 @@ public function cacheFetch(\$key)
                 $script .= "
 
     return apc_fetch(\$key);";
+
                 break;
             case 'array':
                 $script .= "
 
     return isset(self::\$cacheBackend[\$key]) ? self::\$cacheBackend[\$key] : null;";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
+
                 break;
         }
         $script .= "
@@ -220,8 +234,8 @@ public function doSelect(ConnectionInterface \$con = null)
     }
     \$this->configureSelectColumns();
 
-    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName ."::DATABASE_NAME);
-    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName ."::DATABASE_NAME);
+    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName . "::DATABASE_NAME);
+    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName . "::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {

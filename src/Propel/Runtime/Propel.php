@@ -10,11 +10,8 @@
 
 namespace Propel\Runtime;
 
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
-use Psr\Log\LoggerInterface;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -36,52 +33,52 @@ class Propel
     /**
      * The Propel version.
      */
-    const VERSION = '2.0.0-dev';
+    public const VERSION = '2.0.0-dev';
 
     /**
      * A constant for <code>default</code>.
      */
-    const DEFAULT_NAME = "default";
+    public const DEFAULT_NAME = 'default';
 
     /**
      * A constant defining 'System is unusable' logging level
      */
-    const LOG_EMERG = 550;
+    public const LOG_EMERG = 550;
 
     /**
      * A constant defining 'Immediate action required' logging level
      */
-    const LOG_ALERT = 550;
+    public const LOG_ALERT = 550;
 
     /**
      * A constant defining 'Critical conditions' logging level
      */
-    const LOG_CRIT = 500;
+    public const LOG_CRIT = 500;
 
     /**
      * A constant defining 'Error conditions' logging level
      */
-    const LOG_ERR = 400;
+    public const LOG_ERR = 400;
 
     /**
      * A constant defining 'Warning conditions' logging level
      */
-    const LOG_WARNING = 300;
+    public const LOG_WARNING = 300;
 
     /**
      * A constant defining 'Normal but significant' logging level
      */
-    const LOG_NOTICE = 200;
+    public const LOG_NOTICE = 200;
 
     /**
      * A constant defining 'Informational' logging level
      */
-    const LOG_INFO = 200;
+    public const LOG_INFO = 200;
 
     /**
      * A constant defining 'Debug-level messages' logging level
      */
-    const LOG_DEBUG = 100;
+    public const LOG_DEBUG = 100;
 
     /**
      * @var \Propel\Runtime\ServiceContainer\ServiceContainerInterface
@@ -89,15 +86,17 @@ class Propel
     private static $serviceContainer;
 
     /**
-     * @var boolean Whether the object instance pooling is enabled
+     * @var bool Whether the object instance pooling is enabled
      */
     private static $isInstancePoolingEnabled = true;
 
     /**
      * Configure Propel using the given config file.
      *
-     * @param string $configFile Path (absolute or relative to include_path) to config file.
      * @deprecated Why don't you just include the configuration file?
+     *
+     * @param string $configFile Path (absolute or relative to include_path) to config file.
+     *
      * @return void
      */
     public static function init($configFile)
@@ -115,7 +114,7 @@ class Propel
      */
     public static function getServiceContainer()
     {
-        if (null === self::$serviceContainer) {
+        if (self::$serviceContainer === null) {
             self::$serviceContainer = new StandardServiceContainer();
         }
 
@@ -126,6 +125,7 @@ class Propel
      * Set the service container instance.
      *
      * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface $serviceContainer
+     *
      * @return void
      */
     public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
@@ -146,7 +146,7 @@ class Propel
      *
      * If the adapter does not yet exist, build it using the related adapterClass.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
@@ -160,7 +160,7 @@ class Propel
      *
      * The database maps are "registered" by the generated map builder classes.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
@@ -198,7 +198,7 @@ class Propel
      * If the connection has not been opened, open it using the related
      * connectionSettings. If the connection has already been opened, return it.
      *
-     * @param string $name The datasource name
+     * @param string|null $name The datasource name
      * @param string $mode The connection mode (this applies to replication systems).
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
@@ -217,9 +217,7 @@ class Propel
      * @param string $name The datasource name that is used to look up the DSN
      *                     from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
-     *
-     * @throws PropelException - if connection is not properly configured
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public static function getWriteConnection($name)
     {
@@ -236,7 +234,7 @@ class Propel
      * @param string $name The datasource name that is used to look up the DSN
      *                     from the runtime configuration file. Empty name not allowed.
      *
-     * @return ConnectionInterface A database connection
+     * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
     public static function getReadConnection($name)
     {
@@ -256,7 +254,7 @@ class Propel
     /**
      * Get the configured logger.
      *
-     * @return LoggerInterface Configured log class
+     * @return \Psr\Log\LoggerInterface Configured log class
      */
     public static function getLogger()
     {
@@ -269,7 +267,7 @@ class Propel
      * logging message will be discarded without any further action
      *
      * @param string $message The message that will be logged.
-     * @param int    $level   The logging level.
+     * @param int $level The logging level.
      *
      * @return void
      */
@@ -280,24 +278,31 @@ class Propel
         switch ($level) {
             case self::LOG_EMERG:
                 $logger->emergency($message);
+
                 break;
             case self::LOG_ALERT:
                 $logger->alert($message);
+
                 break;
             case self::LOG_CRIT:
                 $logger->critical($message);
+
                 break;
             case self::LOG_ERR:
                 $logger->error($message);
+
                 break;
             case self::LOG_WARNING:
                 $logger->warning($message);
+
                 break;
             case self::LOG_NOTICE:
                 $logger->notice($message);
+
                 break;
             case self::LOG_INFO:
                 $logger->info($message);
+
                 break;
             default:
                 $logger->debug($message);
@@ -307,8 +312,8 @@ class Propel
     /**
      * Disable instance pooling.
      *
-     * @return boolean true if the method changed the instance pooling state,
-     *                 false if it was already disabled
+     * @return bool true if the method changed the instance pooling state,
+     * false if it was already disabled
      */
     public static function disableInstancePooling()
     {
@@ -323,8 +328,8 @@ class Propel
     /**
      * Enable instance pooling (enabled by default).
      *
-     * @return boolean true if the method changed the instance pooling state,
-     *                 false if it was already enabled
+     * @return bool true if the method changed the instance pooling state,
+     * false if it was already enabled
      */
     public static function enableInstancePooling()
     {
@@ -339,7 +344,7 @@ class Propel
     /**
      *  the instance pooling behaviour. True by default.
      *
-     * @return boolean Whether the pooling is enabled or not.
+     * @return bool Whether the pooling is enabled or not.
      */
     public static function isInstancePoolingEnabled()
     {

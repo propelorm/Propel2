@@ -10,16 +10,13 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-
 /**
  * RelationMap is used to model a database relationship.
  *
  * GENERAL NOTE
  * ------------
  * The propel.map classes are abstract building-block classes for modeling
- * the database at runtime.  These classes are similar (a lite version) to the
+ * the database at runtime. These classes are similar (a lite version) to the
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
@@ -28,33 +25,51 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 class RelationMap
 {
     // types
-    const MANY_TO_ONE       = 1;
+    public const MANY_TO_ONE = 1;
 
-    const ONE_TO_MANY       = 2;
+    public const ONE_TO_MANY = 2;
 
-    const ONE_TO_ONE        = 3;
+    public const ONE_TO_ONE = 3;
 
-    const MANY_TO_MANY      = 4;
+    public const MANY_TO_MANY = 4;
 
     // representations
-    const LOCAL_TO_FOREIGN  = 0;
+    public const LOCAL_TO_FOREIGN = 0;
 
-    const LEFT_TO_RIGHT     = 1;
+    public const LEFT_TO_RIGHT = 1;
 
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $pluralName;
 
+    /**
+     * @var int
+     */
     protected $type;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap
+     */
     protected $localTable;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap
+     */
     protected $foreignTable;
 
+    /**
+     * @var bool
+     */
     protected $polymorphic = false;
 
     /**
-     * @var ColumnMap[]
+     * @var \Propel\Runtime\Map\ColumnMap[]
      */
     protected $localColumns = [];
 
@@ -70,8 +85,14 @@ class RelationMap
      */
     protected $foreignColumns = [];
 
+    /**
+     * @var string|null
+     */
     protected $onUpdate;
 
+    /**
+     * @var string|null
+     */
     protected $onDelete;
 
     /**
@@ -83,7 +104,7 @@ class RelationMap
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPolymorphic()
     {
@@ -91,7 +112,8 @@ class RelationMap
     }
 
     /**
-     * @param boolean $polymorphic
+     * @param bool $polymorphic
+     *
      * @return void
      */
     public function setPolymorphic($polymorphic)
@@ -126,13 +148,14 @@ class RelationMap
      */
     public function getPluralName()
     {
-        return null !== $this->pluralName ? $this->pluralName : ($this->name . 's');
+        return $this->pluralName !== null ? $this->pluralName : ($this->name . 's');
     }
 
     /**
      * Set the type
      *
      * @param int $type The relation type (either self::MANY_TO_ONE, self::ONE_TO_MANY, or self::ONE_TO_ONE)
+     *
      * @return void
      */
     public function setType($type)
@@ -154,6 +177,7 @@ class RelationMap
      * Set the local table
      *
      * @param \Propel\Runtime\Map\TableMap $table The local table for this relationship
+     *
      * @return void
      */
     public function setLocalTable(TableMap $table)
@@ -175,6 +199,7 @@ class RelationMap
      * Set the foreign table
      *
      * @param \Propel\Runtime\Map\TableMap $table The foreign table for this relationship
+     *
      * @return void
      */
     public function setForeignTable($table)
@@ -199,7 +224,7 @@ class RelationMap
      */
     public function getLeftTable()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalTable() : $this->getForeignTable();
+        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getLocalTable() : $this->getForeignTable();
     }
 
     /**
@@ -209,14 +234,15 @@ class RelationMap
      */
     public function getRightTable()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignTable() : $this->getLocalTable();
+        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
     }
 
     /**
      * Add a column mapping
      *
-     * @param ColumnMap       $local   The local column
-     * @param ColumnMap|mixed $foreign The foreign column or value
+     * @param \Propel\Runtime\Map\ColumnMap $local The local column
+     * @param \Propel\Runtime\Map\ColumnMap|mixed $foreign The foreign column or value
+     *
      * @return void
      */
     public function addColumnMapping(ColumnMap $local, $foreign)
@@ -238,19 +264,22 @@ class RelationMap
      *  - If the value is RelationMap::LOCAL_TO_FOREIGN, then the returned array is local => foreign
      *  - If the value is RelationMap::LEFT_TO_RIGHT, then the returned array is left => right
      *
-     * @param  int   $direction How the associative array must return columns
+     * @param int $direction How the associative array must return columns
+     *
      * @return array Associative array (local => foreign) of fully qualified column names
      */
     public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
     {
         $h = [];
-        if (RelationMap::LEFT_TO_RIGHT === $direction
-            && RelationMap::MANY_TO_ONE === $this->getType()) {
+        if (
+            $direction === RelationMap::LEFT_TO_RIGHT
+            && $this->getType() === RelationMap::MANY_TO_ONE
+        ) {
             $direction = RelationMap::LOCAL_TO_FOREIGN;
         }
 
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            if (RelationMap::LOCAL_TO_FOREIGN === $direction) {
+            if ($direction === RelationMap::LOCAL_TO_FOREIGN) {
                 $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
             } else {
                 $h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
@@ -263,7 +292,7 @@ class RelationMap
     /**
      * Returns true if the relation has more than one column mapping
      *
-     * @return boolean
+     * @return bool
      */
     public function isComposite()
     {
@@ -283,7 +312,7 @@ class RelationMap
     /**
      * Get the local columns
      *
-     * @return ColumnMap[]
+     * @return \Propel\Runtime\Map\ColumnMap[]
      */
     public function getLocalColumns()
     {
@@ -293,7 +322,7 @@ class RelationMap
     /**
      * Get the foreign columns
      *
-     * @return ColumnMap[]
+     * @return \Propel\Runtime\Map\ColumnMap[]
      */
     public function getForeignColumns()
     {
@@ -303,21 +332,21 @@ class RelationMap
     /**
      * Get the left columns of the relation
      *
-     * @return ColumnMap[]
+     * @return \Propel\Runtime\Map\ColumnMap[]
      */
     public function getLeftColumns()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getLocalColumns() : $this->getForeignColumns();
+        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getLocalColumns() : $this->getForeignColumns();
     }
 
     /**
      * Get the right columns of the relation
      *
-     * @return ColumnMap[]
+     * @return \Propel\Runtime\Map\ColumnMap[]
      */
     public function getRightColumns()
     {
-        return RelationMap::MANY_TO_ONE === $this->getType() ? $this->getForeignColumns() : $this->getLocalColumns();
+        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getForeignColumns() : $this->getLocalColumns();
     }
 
     /**
@@ -332,6 +361,7 @@ class RelationMap
      * Set the onUpdate behavior
      *
      * @param string $onUpdate
+     *
      * @return void
      */
     public function setOnUpdate($onUpdate)
@@ -342,7 +372,7 @@ class RelationMap
     /**
      * Get the onUpdate behavior
      *
-     * @return integer the relation type
+     * @return string|null
      */
     public function getOnUpdate()
     {
@@ -353,6 +383,7 @@ class RelationMap
      * Set the onDelete behavior
      *
      * @param string $onDelete
+     *
      * @return void
      */
     public function setOnDelete($onDelete)
@@ -363,7 +394,7 @@ class RelationMap
     /**
      * Get the onDelete behavior
      *
-     * @return int the relation type
+     * @return string|null
      */
     public function getOnDelete()
     {

@@ -9,8 +9,8 @@
  */
 
 namespace Propel\Common\Util;
-use Propel\Common\Exception\SetColumnConverterException;
 
+use Propel\Common\Exception\SetColumnConverterException;
 
 /**
  * Class converts SET column values between integer and string/array representation.
@@ -24,9 +24,10 @@ class SetColumnConverter
      *
      * @param mixed $val
      * @param array $valueSet
-     * @return string|int
      *
-     * @throws SetColumnConverterException
+     * @throws \Propel\Common\Exception\SetColumnConverterException
+     *
+     * @return string|int
      */
     public static function convertToInt($val, array $valueSet)
     {
@@ -53,14 +54,13 @@ class SetColumnConverter
      * @param mixed $val
      * @param array $valueSet
      *
-     * @return array
+     * @throws \Propel\Common\Exception\SetColumnConverterException
      *
-     * @throws SetColumnConverterException
+     * @return array
      */
     public static function convertIntToArray($val, array $valueSet)
     {
         if ($val === null) {
-
             return [];
         }
         $bitValueArr = array_reverse(str_split(base_convert($val, 10, 2)));
@@ -73,6 +73,7 @@ class SetColumnConverter
                 $valueArr[] = $valueSet[$bit];
             }
         }
+
         return $valueArr;
     }
 }

@@ -19,13 +19,20 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateColumnRelationBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'foreign_table'     => '',
-        'update_method'     => '',
-        'aggregate_name'    => '',
+        'foreign_table' => '',
+        'update_method' => '',
+        'aggregate_name' => '',
     ];
 
+    /**
+     * @return bool
+     */
     public function allowMultiple()
     {
         return true;
@@ -85,9 +92,9 @@ protected \$old{$relationName}{$aggregateName};
         $relationName = $this->getRelationName($builder);
 
         return $this->renderTemplate('objectUpdateRelated', [
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName),
             'updateMethodName' => $this->getParameter('update_method'),
         ]);
     }
@@ -211,12 +218,12 @@ protected \$old{$relationName}{$aggregateName};
         );
 
         return $this->renderTemplate('queryFindRelated', [
-            'foreignTable'     => $this->getForeignTable(),
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
+            'foreignTable' => $this->getForeignTable(),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName . $this->getParameter('aggregate_name')),
             'foreignQueryName' => $foreignQueryBuilder->getClassName(),
-            'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
+            'refRelationName' => $builder->getRefFKPhpNameAffix($foreignKey),
         ]);
     }
 
@@ -230,9 +237,9 @@ protected \$old{$relationName}{$aggregateName};
         $relationName = $this->getRelationName($builder);
 
         return $this->renderTemplate('queryUpdateRelated', [
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName . $this->getParameter('aggregate_name')),
             'updateMethodName' => $this->getParameter('update_method'),
         ]);
     }
@@ -253,6 +260,7 @@ protected \$old{$relationName}{$aggregateName};
         $foreignTable = $this->getForeignTable();
         // let's infer the relation from the foreign table
         $fks = $this->getTable()->getForeignKeysReferencingTable($foreignTable->getName());
+
         // FIXME doesn't work when more than one fk to the same table
         return array_shift($fks);
     }

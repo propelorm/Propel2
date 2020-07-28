@@ -12,7 +12,6 @@ namespace Propel\Generator\Behavior\Sortable;
 
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Table;
 
 /**
  * Behavior to add sortable columns and abilities
@@ -141,7 +140,7 @@ class SortableBehaviorObjectBuilderModifier
      */
     public function preSave($builder)
     {
-        return "\$this->processSortableQueries(\$con);";
+        return '$this->processSortableQueries($con);';
     }
 
     /**
@@ -155,7 +154,7 @@ class SortableBehaviorObjectBuilderModifier
         $this->setBuilder($builder);
 
         return "if (!\$this->isColumnModified({$this->tableMapClassName}::RANK_COL)) {
-    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con) + 1);
+    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con) + 1);
 }
 ";
     }
@@ -173,7 +172,7 @@ class SortableBehaviorObjectBuilderModifier
             $condition = [];
 
             foreach ($this->behavior->getScopes() as $scope) {
-                $condition[] = "\$this->isColumnModified({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).")";
+                $condition[] = "\$this->isColumnModified({$this->tableMapClassName}::" . Column::CONSTANT_PREFIX . strtoupper($scope) . ')';
             }
 
             $condition = implode(' OR ', $condition);
@@ -202,7 +201,7 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
         $this->setBuilder($builder);
 
         return "
-{$this->queryClassName}::sortableShiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, ". ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+{$this->queryClassName}::sortableShiftRank(-1, \$this->{$this->getColumnGetter()}() + 1, null, " . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 {$this->tableMapClassName}::clearInstancePool();
 ";
     }
@@ -243,11 +242,13 @@ protected \$oldScope;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('rank' !== $this->getParameter('rank_column')) {
+        if ($this->getParameter('rank_column') !== 'rank') {
             $this->addRankAccessors($script);
         }
-        if ($this->behavior->useScope()
-            && 'scope_value' !== $this->getParameter('scope_column')) {
+        if (
+            $this->behavior->useScope()
+            && $this->getParameter('scope_column') !== 'scope_value'
+        ) {
             $this->addScopeAccessors($script);
         }
         $this->addIsFirst($script);
@@ -279,7 +280,6 @@ protected \$oldScope;
     {
         if ($this->behavior->useScope()) {
             if ($this->behavior->hasMultipleScopes()) {
-
                 foreach ($this->behavior->getScopes() as $idx => $scope) {
                     $name = strtolower($this->behavior->getTable()->getColumn($scope)->getName());
 
@@ -290,7 +290,6 @@ protected \$oldScope;
 ";
                     $script = str_replace($search, $replace, $script);
                 }
-
             } else {
                 $scope = current($this->behavior->getScopes());
                 $name = strtolower($this->behavior->getTable()->getColumn($scope)->getName());
@@ -347,7 +346,6 @@ public function setRank(\$v)
      */
     protected function addScopeAccessors(&$script)
     {
-
         $script .= "
 /**
  * Wrap the getter for scope value
@@ -368,19 +366,18 @@ public function getScopeValue(\$returnNulls = true)
                 $script .= "
     \$onlyNulls &= null === (\$result[] = \$this->{$this->behavior->getColumnGetter($scopeField)}());
 ";
-
             }
 
             $script .= "
 
     return \$onlyNulls && \$returnNulls ? null : \$result;
 ";
-        } else if ($this->behavior->getColumnForParameter('scope_column')->isEnumType()){
+        } elseif ($this->behavior->getColumnForParameter('scope_column')->isEnumType()) {
             $columnConstant = strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $this->getColumnAttribute('scope_column')));
             $script .= "
     return array_search(\$this->{$this->getColumnGetter('scope_column')}(), {$this->tableMapClassName}::getValueSet({$this->tableMapClassName}::COL_{$columnConstant}));
             ";
-        } else if ($this->behavior->getColumnForParameter('scope_column')->isSetType()){
+        } elseif ($this->behavior->getColumnForParameter('scope_column')->isSetType()) {
             $columnConstant = strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $this->getColumnAttribute('scope_column')));
             $script .= "
     try {
@@ -390,7 +387,6 @@ public function getScopeValue(\$returnNulls = true)
     }
             ";
         } else {
-
             $script .= "
 
     return \$this->{$this->getColumnGetter('scope_column')}();
@@ -411,19 +407,16 @@ public function setScopeValue(\$v)
 ";
 
         if ($this->behavior->hasMultipleScopes()) {
-
             foreach ($this->behavior->getScopes() as $idx => $scopeField) {
                 $script .= "
     \$this->{$this->behavior->getColumnSetter($scopeField)}(\$v === null ? null : \$v[$idx]);
 ";
             }
-
         } else {
             $script .= "
 
     return \$this->{$this->getColumnSetter('scope_column')}(\$v);
 ";
-
         }
         $script .= "
 }
@@ -468,7 +461,7 @@ public function isFirst()
  */
 public function isLast(ConnectionInterface \$con = null)
 {
-    return \$this->{$this->getColumnGetter()}() == {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+    return \$this->{$this->getColumnGetter()}() == {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 }
 ";
     }
@@ -509,7 +502,6 @@ public function getNext(ConnectionInterface \$con = null)
     \$query->filterByRank(\$this->{$this->getColumnGetter()}() + 1, $methodSignature);
 ";
         } else {
-
             $script .= "
     \$query->filterByRank(\$this->{$this->getColumnGetter()}() + 1);
 ";
@@ -559,7 +551,6 @@ public function getPrevious(ConnectionInterface \$con = null)
     \$query->filterByRank(\$this->{$this->getColumnGetter()}() - 1, $methodSignature);
 ";
         } else {
-
             $script .= "
     \$query->filterByRank(\$this->{$this->getColumnGetter()}() - 1);
 ";
@@ -596,7 +587,7 @@ public function getPrevious(ConnectionInterface \$con = null)
 public function insertAtRank(\$rank, ConnectionInterface \$con = null)
 {";
         $script .= "
-    \$maxRank = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+    \$maxRank = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
     if (\$rank < 1 || \$rank > \$maxRank + 1) {
         throw new PropelException('Invalid rank ' . \$rank);
     }
@@ -606,7 +597,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
         // Keep the list modification query for the save() transaction
         \$this->sortableQueries []= array(
             'callable'  => array('{$queryClassName}', 'sortableShiftRank'),
-            'arguments' => array(1, \$rank, null, " . ($useScope ? "\$this->getScopeValue()" : '') . ")
+            'arguments' => array(1, \$rank, null, " . ($useScope ? '$this->getScopeValue()' : '') . ")
         );
     }
 
@@ -637,7 +628,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
 public function insertAtBottom(ConnectionInterface \$con = null)
 {";
         $script .= "
-    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con) + 1);
+    \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con) + 1);
 
     return \$this;
 }
@@ -693,7 +684,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
-    if (\$newRank < 1 || \$newRank > {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con)) {
+    if (\$newRank < 1 || \$newRank > {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con)) {
         throw new PropelException('Invalid rank ' . \$newRank);
     }
 
@@ -705,7 +696,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
     \$con->transaction(function () use (\$con, \$oldRank, \$newRank) {
         // shift the objects between the old and the new rank
         \$delta = (\$oldRank < \$newRank) ? -1 : 1;
-        {$this->queryClassName}::sortableShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+        {$this->queryClassName}::sortableShiftRank(\$delta, min(\$oldRank, \$newRank), max(\$oldRank, \$newRank), " . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 
         // move the object to its new rank
         \$this->{$this->getColumnSetter()}(\$newRank);
@@ -885,7 +876,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
     }
 
     return \$con->transaction(function () use (\$con) {
-        \$bottom = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? "\$this->getScopeValue(), " : '') . "\$con);
+        \$bottom = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 
         return \$this->moveToRank(\$bottom, \$con);
     });
@@ -903,7 +894,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
- * Removes the current object from the list".($useScope ? ' (moves it to the null scope)' : '').".
+ * Removes the current object from the list" . ($useScope ? ' (moves it to the null scope)' : '') . ".
  * The modifications are not persisted until the object is saved.
  *
  * @return    \$this|{$this->objectClassName} the current object
@@ -925,7 +916,7 @@ public function removeFromList()
     // Keep the list modification query for the save() transaction
     \$this->sortableQueries[] = array(
         'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
-        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ", \$this->getScopeValue()" : '') . ")
+        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ', $this->getScopeValue()' : '') . ")
     );
     // remove the object from the list
     \$this->{$this->getColumnSetter('rank_column')}(null);

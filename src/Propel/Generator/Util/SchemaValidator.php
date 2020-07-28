@@ -10,8 +10,8 @@
 
 namespace Propel\Generator\Util;
 
-use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
 
 /**
@@ -30,16 +30,26 @@ use Propel\Generator\Model\Table;
  */
 class SchemaValidator
 {
+    /**
+     * @var \Propel\Generator\Model\Schema
+     */
     protected $schema;
+
+    /**
+     * @var string[]
+     */
     protected $errors = [];
 
+    /**
+     * @param \Propel\Generator\Model\Schema $schema
+     */
     public function __construct(Schema $schema)
     {
         $this->schema = $schema;
     }
 
     /**
-     * @return boolean true if valid, false otherwise
+     * @return bool true if valid, false otherwise
      */
     public function validate()
     {
@@ -47,7 +57,7 @@ class SchemaValidator
             $this->validateDatabaseTables($database);
         }
 
-        return 0 === count($this->errors);
+        return count($this->errors) === 0;
     }
 
     /**
@@ -106,7 +116,7 @@ class SchemaValidator
             if (in_array($column->getPhpName(), $phpNames)) {
                 $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());
             }
-            $phpNames[]= $column->getPhpName();
+            $phpNames[] = $column->getPhpName();
         }
     }
 

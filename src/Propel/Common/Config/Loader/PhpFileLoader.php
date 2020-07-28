@@ -31,14 +31,13 @@ class PhpFileLoader extends FileLoader
     /**
      * Loads a PHP file.
      *
-     * @param string  $file The resource
+     * @param string $file The resource
      * @param string|null $type The resource type
      *
-     * @return array
-     *
-     * @throws \InvalidArgumentException                                if configuration file not found
+     * @throws \InvalidArgumentException if configuration file not found
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException if invalid json file
-     * @throws \Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
+     *
+     * @return array
      */
     public function load($file, $type = null)
     {
@@ -63,10 +62,10 @@ class PhpFileLoader extends FileLoader
      * Returns true if this class supports the given resource.
      * It supports both .php and .inc extensions.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
     public function supports($resource, $type = null)
     {

@@ -24,18 +24,22 @@ class DatabaseDiff
      * @var \Propel\Generator\Model\Table[]
      */
     protected $addedTables;
+
     /**
      * @var \Propel\Generator\Model\Table[]
      */
     protected $removedTables;
+
     /**
      * @var \Propel\Generator\Model\Diff\TableDiff[]
      */
     protected $modifiedTables;
+
     /**
      * @var string[]
      */
     protected $renamedTables;
+
     /**
      * @var string[]
      */
@@ -43,17 +47,18 @@ class DatabaseDiff
 
     public function __construct()
     {
-        $this->addedTables    = [];
-        $this->removedTables  = [];
+        $this->addedTables = [];
+        $this->removedTables = [];
         $this->modifiedTables = [];
-        $this->renamedTables  = [];
-        $this->possibleRenamedTables  = [];
+        $this->renamedTables = [];
+        $this->possibleRenamedTables = [];
     }
 
     /**
      * Sets the added tables.
      *
      * @param array $tables
+     *
      * @return void
      */
     public function setAddedTables($tables)
@@ -65,7 +70,8 @@ class DatabaseDiff
      * Adds an added table.
      *
      * @param string $name
-     * @param Table  $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     public function addAddedTable($name, Table $table)
@@ -77,6 +83,7 @@ class DatabaseDiff
      * Removes an added table.
      *
      * @param string $name
+     *
      * @return void
      */
     public function removeAddedTable($name)
@@ -97,6 +104,7 @@ class DatabaseDiff
      *
      * @param string $fromName
      * @param string $toName
+     *
      * @return void
      */
     public function addPossibleRenamedTable($fromName, $toName)
@@ -107,7 +115,7 @@ class DatabaseDiff
     /**
      * Returns the list of added tables.
      *
-     * @return Table[]
+     * @return \Propel\Generator\Model\Table[]
      */
     public function getAddedTables()
     {
@@ -117,7 +125,7 @@ class DatabaseDiff
     /**
      * Returns the number of added tables.
      *
-     * @return integer
+     * @return int
      */
     public function countAddedTables()
     {
@@ -140,6 +148,7 @@ class DatabaseDiff
      * Sets the removes tables.
      *
      * @param \Propel\Generator\Model\Table[] $tables
+     *
      * @return void
      */
     public function setRemovedTables($tables)
@@ -151,7 +160,8 @@ class DatabaseDiff
      * Adds a table to remove.
      *
      * @param string $name
-     * @param Table  $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     public function addRemovedTable($name, Table $table)
@@ -163,6 +173,7 @@ class DatabaseDiff
      * Removes a removed table.
      *
      * @param string $name
+     *
      * @return void
      */
     public function removeRemovedTable($name)
@@ -173,7 +184,7 @@ class DatabaseDiff
     /**
      * Returns the list of removed tables.
      *
-     * @return Table[]
+     * @return \Propel\Generator\Model\Table[]
      */
     public function getRemovedTables()
     {
@@ -183,7 +194,7 @@ class DatabaseDiff
     /**
      * Returns the number of removed tables.
      *
-     * @return integer
+     * @return int
      */
     public function countRemovedTables()
     {
@@ -206,6 +217,7 @@ class DatabaseDiff
      * Sets the modified tables
      *
      * @param \Propel\Generator\Model\Diff\TableDiff[] $tables
+     *
      * @return void
      */
     public function setModifiedTables($tables)
@@ -216,8 +228,9 @@ class DatabaseDiff
     /**
      * Adds a table difference.
      *
-     * @param string    $name
-     * @param TableDiff $difference
+     * @param string $name
+     * @param \Propel\Generator\Model\Diff\TableDiff $difference
+     *
      * @return void
      */
     public function addModifiedTable($name, TableDiff $difference)
@@ -228,7 +241,7 @@ class DatabaseDiff
     /**
      * Returns the number of modified tables.
      *
-     * @return integer
+     * @return int
      */
     public function countModifiedTables()
     {
@@ -238,7 +251,7 @@ class DatabaseDiff
     /**
      * Returns the modified tables.
      *
-     * @return TableDiff[]
+     * @return \Propel\Generator\Model\Diff\TableDiff[]
      */
     public function getModifiedTables()
     {
@@ -249,6 +262,7 @@ class DatabaseDiff
      * Sets the renamed tables.
      *
      * @param string[] $tables
+     *
      * @return void
      */
     public function setRenamedTables($tables)
@@ -261,6 +275,7 @@ class DatabaseDiff
      *
      * @param string $fromName
      * @param string $toName
+     *
      * @return void
      */
     public function addRenamedTable($fromName, $toName)
@@ -281,7 +296,7 @@ class DatabaseDiff
     /**
      * Returns the number of renamed tables.
      *
-     * @return integer
+     * @return int
      */
     public function countRenamedTables()
     {
@@ -291,7 +306,7 @@ class DatabaseDiff
     /**
      * Returns the reverse diff for this diff.
      *
-     * @return DatabaseDiff
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff
      */
     public function getReverseDiff()
     {

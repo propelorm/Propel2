@@ -10,8 +10,8 @@
 
 namespace Propel\Common\Config\Loader;
 
-use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\IniParseException;
+use Propel\Common\Config\Exception\InvalidArgumentException;
 
 /**
  * IniFileLoader loads parameters from INI files.
@@ -23,7 +23,6 @@ use Propel\Common\Config\Exception\IniParseException;
  */
 class IniFileLoader extends FileLoader
 {
-
     /**
      * Separator for nesting levels of configuration data identifiers.
      *
@@ -34,10 +33,10 @@ class IniFileLoader extends FileLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
     public function supports($resource, $type = null)
     {
@@ -47,19 +46,19 @@ class IniFileLoader extends FileLoader
     /**
      * Loads a resource, merge it with the default configuration array and resolve its parameters.
      *
-     * @param  string  $file The resource
-     * @param  string|null $type The resource type
-     * @return array  The configuration array
+     * @param string $file The resource
+     * @param string|null $type The resource type
      *
-     * @throws \InvalidArgumentException                                if configuration file not found
+     * @throws \InvalidArgumentException if configuration file not found
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException When ini file is not valid
-     * @throws \Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
+     *
+     * @return array The configuration array
      */
     public function load($file, $type = null)
     {
         $ini = parse_ini_file($this->getPath($file), true, INI_SCANNER_RAW);
 
-        if (false === $ini) {
+        if ($ini === false) {
             throw new InvalidArgumentException("The configuration file '$file' has invalid content.");
         }
 
@@ -72,7 +71,9 @@ class IniFileLoader extends FileLoader
     /**
      * Parse data from the configuration array, to transform nested sections into associative arrays
      * and to fix int/float/bool typing
-     * @param  array $data
+     *
+     * @param array $data
+     *
      * @return array
      */
     private function parse(array $data)
@@ -98,8 +99,9 @@ class IniFileLoader extends FileLoader
     /**
      * Process a nested section
      *
-     * @param  array $sections
-     * @param  mixed $value
+     * @param array $sections
+     * @param mixed $value
+     *
      * @return array
      */
     private function buildNestedSection($sections, $value)
@@ -119,7 +121,8 @@ class IniFileLoader extends FileLoader
     /**
      * Parse a section.
      *
-     * @param  array $section
+     * @param array $section
+     *
      * @return array
      */
     private function parseSection(array $section)
@@ -138,7 +141,7 @@ class IniFileLoader extends FileLoader
      *
      * @param string $key
      * @param string $value
-     * @param array  $config
+     * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
      *
@@ -151,7 +154,8 @@ class IniFileLoader extends FileLoader
 
             if (!strlen($pieces[0]) || !strlen($pieces[1])) {
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
-            } elseif (!isset($config[$pieces[0]])) {
+            }
+            if (!isset($config[$pieces[0]])) {
                 if ($pieces[0] === '0' && !empty($config)) {
                     $config = [$pieces[0] => $config];
                 } else {
@@ -159,17 +163,18 @@ class IniFileLoader extends FileLoader
                 }
             } elseif (!is_array($config[$pieces[0]])) {
                 throw new IniParseException(sprintf(
-                    'Cannot create sub-key for "%s", as key already exists', $pieces[0]
+                    'Cannot create sub-key for "%s", as key already exists',
+                    $pieces[0]
                 ));
             }
 
             $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
-        } else if (is_string($value) && in_array(strtolower($value), array("true", "false"))) {
-            $config[$key] = (strtolower($value) === "true");
-        } else if ($value === (string)(int) $value) {
-            $config[$key] = (int) $value;
-        } else if ($value === (string)(float) $value) {
-            $config[$key] = (float) $value;
+        } elseif (is_string($value) && in_array(strtolower($value), ['true', 'false'], true)) {
+            $config[$key] = (strtolower($value) === 'true');
+        } elseif ($value === (string)(int)$value) {
+            $config[$key] = (int)$value;
+        } elseif ($value === (string)(float)$value) {
+            $config[$key] = (float)$value;
         } else {
             $config[$key] = $value;
         }

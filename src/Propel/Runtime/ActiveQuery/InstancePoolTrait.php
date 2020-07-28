@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Countable;
 use Propel\Runtime\Propel;
 
 trait InstancePoolTrait
@@ -28,7 +29,7 @@ trait InstancePoolTrait
     public static function addInstanceToPool($object, $key = null)
     {
         if (Propel::isInstancePoolingEnabled()) {
-            if (null === $key) {
+            if ($key === null) {
                 $key = static::getInstanceKey($object);
             }
 
@@ -45,17 +46,19 @@ trait InstancePoolTrait
     {
         if (!($value instanceof Criteria) && is_object($value)) {
             $pk = $value->getPrimaryKey();
-            if (((is_array($pk) || $pk instanceof \Countable) && count($pk) > 1)
-                || is_object($pk)) {
+            if (
+                ((is_array($pk) || $pk instanceof Countable) && count($pk) > 1)
+                || is_object($pk)
+            ) {
                 $pk = serialize($pk);
             }
 
-            return (string) $pk;
+            return (string)$pk;
         }
 
         if (is_scalar($value)) {
             // assume we've been passed a primary key
-            return (string) $value;
+            return (string)$value;
         }
     }
 
@@ -66,7 +69,7 @@ trait InstancePoolTrait
      */
     public static function removeInstanceFromPool($value)
     {
-        if (Propel::isInstancePoolingEnabled() && null !== $value) {
+        if (Propel::isInstancePoolingEnabled() && $value !== null) {
             $key = static::getInstanceKey($value);
             if ($key) {
                 unset(self::$instances[$key]);

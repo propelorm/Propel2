@@ -10,13 +10,11 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveQuery\ModelWith;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
 
 /**
  * Abstract class for query formatter
@@ -41,7 +39,7 @@ abstract class AbstractFormatter
     protected $tableMap;
 
     /**
-     * @var ModelWith[] $with
+     * @var \Propel\Runtime\ActiveQuery\ModelWith[] $with
      */
     protected $with = [];
 
@@ -56,12 +54,12 @@ abstract class AbstractFormatter
     protected $hasLimit = false;
 
     /**
-     * @var ActiveRecordInterface[]
+     * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface[]
      */
     protected $currentObjects = [];
 
     /**
-     * @var DataFetcherInterface
+     * @var \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     protected $dataFetcher;
 
@@ -69,9 +67,9 @@ abstract class AbstractFormatter
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      */
-    public function __construct(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
+    public function __construct(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
     {
-        if (null !== $criteria) {
+        if ($criteria !== null) {
             $this->init($criteria, $dataFetcher);
         }
     }
@@ -79,7 +77,8 @@ abstract class AbstractFormatter
     /**
      * Sets a DataFetcherInterface object.
      *
-     * @param DataFetcherInterface $dataFetcher
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
+     *
      * @return void
      */
     public function setDataFetcher(DataFetcherInterface $dataFetcher)
@@ -90,7 +89,7 @@ abstract class AbstractFormatter
     /**
      * Returns the current DataFetcherInterface object.
      *
-     * @return DataFetcherInterface
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function getDataFetcher()
     {
@@ -101,12 +100,12 @@ abstract class AbstractFormatter
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
      *
-     * @param BaseModelCriteria    $criteria
-     * @param DataFetcherInterface $dataFetcher
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @return $this The current formatter object
      */
-    public function init(BaseModelCriteria $criteria, DataFetcherInterface $dataFetcher = null)
+    public function init(BaseModelCriteria $criteria, ?DataFetcherInterface $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
         $this->setClass($criteria->getModelName());
@@ -122,6 +121,11 @@ abstract class AbstractFormatter
 
     // DataObject getters & setters
 
+    /**
+     * @param string $dbName
+     *
+     * @return void
+     */
     public function setDbName($dbName)
     {
         $this->dbName = $dbName;
@@ -142,8 +146,8 @@ abstract class AbstractFormatter
      */
     public function setClass($class)
     {
-        $this->class     = $class;
-        $this->tableMap  = constant($this->class . '::TABLE_MAP');
+        $this->class = $class;
+        $this->tableMap = constant($this->class . '::TABLE_MAP');
     }
 
     /**
@@ -211,7 +215,7 @@ abstract class AbstractFormatter
     /**
      * Returns a Collection object or a simple array.
      *
-     * @return Collection|array
+     * @return \Propel\Runtime\Collection\Collection|array
      */
     protected function getCollection()
     {
@@ -219,7 +223,7 @@ abstract class AbstractFormatter
 
         $class = $this->getCollectionClassName();
         if ($class) {
-            /** @var Collection $collection */
+            /** @var \Propel\Runtime\Collection\Collection $collection */
             $collection = new $class();
             $collection->setModel($this->class);
             $collection->setFormatter($this);
@@ -239,18 +243,28 @@ abstract class AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
-     * @return ActiveRecordInterface The original record
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface The original record
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         return $record;
     }
 
-    abstract public function format(DataFetcherInterface $dataFetcher = null);
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return mixed
+     */
+    abstract public function format(?DataFetcherInterface $dataFetcher = null);
 
-    abstract public function formatOne(DataFetcherInterface $dataFetcher = null);
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return mixed
+     */
+    abstract public function formatOne(?DataFetcherInterface $dataFetcher = null);
 
     /**
      * @return bool
@@ -259,11 +273,12 @@ abstract class AbstractFormatter
 
     /**
      * @throws \Propel\Runtime\Exception\PropelException
+     *
      * @return void
      */
     public function checkInit()
     {
-        if (null === $this->tableMap) {
+        if ($this->tableMap === null) {
             throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
         }
     }
@@ -293,12 +308,12 @@ abstract class AbstractFormatter
     /**
      * Gets a Propel object hydrated from a selection of columns in statement row
      *
-     * @param array  $row   associative array indexed by column number,
+     * @param array $row associative array indexed by column number,
      *                      as returned by DataFetcher::fetch()
      * @param string $class The classname of the object to create
-     * @param int    $col   The start column for the hydration (modified)
+     * @param int $col The start column for the hydration (modified)
      *
-     * @return ActiveRecordInterface
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {

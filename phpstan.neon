@@ -1,7 +1,7 @@
 includes:
     - phpstan-baseline.neon
 parameters:
-    level: 5
+    level: 6
     checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
     paths:
@@ -25,4 +25,3 @@ parameters:
         -
         	message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder\\:\\:root\\(\\)\\.$#"
         	path: src/Propel/Common/Config/PropelConfiguration.php
-        - '#PHPDoc tag @throws with type .+FileLoaderLoadException|.+LoaderLoadException is not subtype of Throwable#'

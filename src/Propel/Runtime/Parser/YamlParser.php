@@ -22,8 +22,9 @@ class YamlParser extends AbstractParser
     /**
      * Converts data from an associative array to YAML.
      *
-     * @param  array $array Source data to convert
-     * @param string $rootKey
+     * @param array $array Source data to convert
+     * @param string|null $rootKey
+     *
      * @return string Converted data, as a YAML string
      */
     public function fromArray($array, $rootKey = null)
@@ -34,8 +35,9 @@ class YamlParser extends AbstractParser
     /**
      * Alias for YamlParser::fromArray()
      *
-     * @param  array $array Source data to convert
-     * @param string $rootKey
+     * @param array $array Source data to convert
+     * @param string|null $rootKey
+     *
      * @return string Converted data, as a YAML string
      */
     public function toYAML($array, $rootKey = null)
@@ -46,9 +48,10 @@ class YamlParser extends AbstractParser
     /**
      * Converts data from YAML to an associative array.
      *
-     * @param  string $data Source data to convert, as a YAML string
-     * @param string $rootKey
-     * @return array  Converted data
+     * @param string $data Source data to convert, as a YAML string
+     * @param string|null $rootKey
+     *
+     * @return array Converted data
      */
     public function toArray($data, $rootKey = null)
     {
@@ -68,9 +71,10 @@ class YamlParser extends AbstractParser
     /**
      * Alias for YamlParser::toArray()
      *
-     * @param  string $data Source data to convert, as a YAML string
-     * @param string $rootKey
-     * @return array  Converted data
+     * @param string $data Source data to convert, as a YAML string
+     * @param string|null $rootKey
+     *
+     * @return array Converted data
      */
     public function fromYAML($data, $rootKey = null)
     {

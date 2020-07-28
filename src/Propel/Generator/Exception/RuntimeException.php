@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Exception;
 
-class RuntimeException extends \RuntimeException implements ExceptionInterface
+use RuntimeException as CoreRuntimeException;
+
+class RuntimeException extends CoreRuntimeException implements ExceptionInterface
 {
 }

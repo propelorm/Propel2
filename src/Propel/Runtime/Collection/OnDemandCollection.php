@@ -10,11 +10,10 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Map\TableMap;
 
 /**
@@ -30,8 +29,9 @@ class OnDemandCollection extends Collection
     private $lastIterator;
 
     /**
-     * @param \Propel\Runtime\Formatter\ObjectFormatter    $formatter
-     * @param DataFetcherInterface $dataFetcher
+     * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
+     *
      * @return void
      */
     public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
@@ -43,15 +43,15 @@ class OnDemandCollection extends Collection
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param string  $keyColumn              If null, the returned array uses an incremental index.
+     * @param string|null $keyColumn If null, the returned array uses an incremental index.
      *                                        Otherwise, the array is indexed using the specified column
-     * @param boolean $usePrefix              If true, the returned array prefixes keys
-     *                                        with the model class name ('Article_0', 'Article_1', etc).
-     * @param string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     * @param bool $usePrefix If true, the returned array prefixes keys
+     * with the model class name ('Article_0', 'Article_1', etc).
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
      *                                        TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
      *                                        TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
+     * @param bool $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param array $alreadyDumpedObjects List of objects to skip to avoid recursion
      *
      * <code>
      * $bookCollection->toArray();
@@ -73,14 +73,19 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = [])
-    {
+    public function toArray(
+        $keyColumn = null,
+        $usePrefix = false,
+        $keyType = TableMap::TYPE_PHPNAME,
+        $includeLazyLoadColumns = true,
+        $alreadyDumpedObjects = []
+    ) {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
         /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
         foreach ($this as $key => $obj) {
-            $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+            $key = $keyColumn === null ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
         }
@@ -94,6 +99,9 @@ class OnDemandCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
      * @return void
      */
     public function fromArray($arr)
@@ -104,7 +112,7 @@ class OnDemandCollection extends Collection
     // IteratorAggregate Interface
 
     /**
-     * @return OnDemandIterator
+     * @return \Propel\Runtime\Collection\OnDemandIterator
      */
     public function getIterator()
     {
@@ -114,10 +122,11 @@ class OnDemandCollection extends Collection
     // ArrayAccess Interface
 
     /**
-     * @throws \Propel\Runtime\Exception\PropelException
-     * @param  integer                                   $offset
+     * @param int $offset
      *
-     * @return boolean
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return bool
      */
     public function offsetExists($offset)
     {
@@ -125,8 +134,9 @@ class OnDemandCollection extends Collection
     }
 
     /**
+     * @param int $offset
+     *
      * @throws \Propel\Runtime\Exception\PropelException
-     * @param  integer                                   $offset
      *
      * @return mixed
      */
@@ -136,10 +146,11 @@ class OnDemandCollection extends Collection
     }
 
     /**
+     * @param int $offset
+     * @param mixed $value
+     *
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
      *
-     * @param integer $offset
-     * @param mixed   $value
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -148,8 +159,10 @@ class OnDemandCollection extends Collection
     }
 
     /**
+     * @param int $offset
+     *
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
-     * @param  integer                                                     $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -161,6 +174,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws \Propel\Runtime\Exception\PropelException
+     *
      * @return string
      */
     public function serialize()
@@ -169,8 +183,10 @@ class OnDemandCollection extends Collection
     }
 
     /**
+     * @param string $data
+     *
      * @throws \Propel\Runtime\Exception\PropelException
-     * @param  string                                    $data
+     *
      * @return void
      */
     public function unserialize($data)
@@ -183,7 +199,7 @@ class OnDemandCollection extends Collection
     /**
      * Returns the number of rows in the resultset
      *
-     * @return integer Number of results
+     * @return int Number of results
      */
     public function count()
     {
@@ -196,6 +212,7 @@ class OnDemandCollection extends Collection
      * @param mixed $value
      *
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
      * @return void
      */
     public function append($value)
@@ -207,6 +224,7 @@ class OnDemandCollection extends Collection
      * @param mixed $value
      *
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
      * @return int
      */
     public function prepend($value)
@@ -218,6 +236,7 @@ class OnDemandCollection extends Collection
      * @param array $input
      *
      * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
      * @return void
      */
     public function exchangeArray($input)
@@ -227,6 +246,7 @@ class OnDemandCollection extends Collection
 
     /**
      * @throws \Propel\Runtime\Exception\PropelException
+     *
      * @return array
      */
     public function getArrayCopy()
@@ -235,7 +255,9 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
     {

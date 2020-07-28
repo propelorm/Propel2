@@ -11,49 +11,54 @@
 namespace Propel\Generator\Command;
 
 use Propel\Generator\Config\GeneratorConfig;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
 abstract class AbstractCommand extends Command
 {
-    public const DEFAULT_CONFIG_DIRECTORY   = '.';
+    public const DEFAULT_CONFIG_DIRECTORY = '.';
 
     public const CODE_SUCCESS = 0;
     public const CODE_ERROR = 1;
 
+    /**
+     * @var \Symfony\Component\Filesystem\Filesystem|null
+     */
     protected $filesystem;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
+     *
+     * @return void
      */
     protected function configure()
     {
         $this
-            ->addOption('platform',  null, InputOption::VALUE_REQUIRED,  'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.')
-            ->addOption('config-dir', null, InputOption::VALUE_REQUIRED,  'The directory where the configuration file is placed.', self::DEFAULT_CONFIG_DIRECTORY)
-            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory')
-        ;
+            ->addOption('platform', null, InputOption::VALUE_REQUIRED, 'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.')
+            ->addOption('config-dir', null, InputOption::VALUE_REQUIRED, 'The directory where the configuration file is placed.', self::DEFAULT_CONFIG_DIRECTORY)
+            ->addOption('recursive', null, InputOption::VALUE_NONE, 'Search recursive for *schema.xml inside the input directory');
     }
 
     /**
      * Returns a new `GeneratorConfig` object with your `$properties` merged with
      * the configuration properties in the `config-dir` folder.
      *
-     * @param array $properties Properties to add to the configuration. They usually come from command line.
-     * @param InputInterface|null $input
+     * @param array|null $properties Properties to add to the configuration. They usually come from command line.
+     * @param \Symfony\Component\Console\Input\InputInterface|null $input
      *
-     * @return GeneratorConfig
+     * @return \Propel\Generator\Config\GeneratorConfig
      */
-    protected function getGeneratorConfig(array $properties = null, InputInterface $input = null)
+    protected function getGeneratorConfig(?array $properties = null, ?InputInterface $input = null)
     {
-        if (null === $input) {
+        if ($input === null) {
             return new GeneratorConfig(null, $properties);
         }
 
@@ -64,6 +69,7 @@ abstract class AbstractCommand extends Command
         if ($input->hasParameterOption('--recursive')) {
             $properties['propel']['generator']['recursive'] = $input->getOption('recursive');
         }
+
         return new GeneratorConfig($input->getOption('config-dir'), $properties);
     }
 
@@ -71,7 +77,7 @@ abstract class AbstractCommand extends Command
      * Find every schema files.
      *
      * @param string|string[] $directory Path to the input directory
-     * @param bool         $recursive Search for file inside the input directory and all subdirectories
+     * @param bool $recursive Search for file inside the input directory and all subdirectories
      *
      * @return array List of schema files
      */
@@ -92,11 +98,11 @@ abstract class AbstractCommand extends Command
     /**
      * Returns a Filesystem instance.
      *
-     * @return Filesystem
+     * @return \Symfony\Component\Filesystem\Filesystem
      */
     protected function getFilesystem()
     {
-        if (null === $this->filesystem) {
+        if ($this->filesystem === null) {
             $this->filesystem = new Filesystem();
         }
 
@@ -107,6 +113,7 @@ abstract class AbstractCommand extends Command
      * @param string $directory
      *
      * @throws \RuntimeException
+     *
      * @return void
      */
     protected function createDirectory($directory)
@@ -116,31 +123,31 @@ abstract class AbstractCommand extends Command
         try {
             $filesystem->mkdir($directory);
         } catch (IOException $e) {
-            throw new \RuntimeException(sprintf('Unable to write the "%s" directory', $directory), 0, $e);
+            throw new RuntimeException(sprintf('Unable to write the "%s" directory', $directory), 0, $e);
         }
     }
 
     /**
      * Parse a connection string and return an array with name, dsn and extra informations
      *
-     * @parama string $connection The connection string
+     * @param string $connection The connection string
      *
      * @return array
      */
     protected function parseConnection($connection)
     {
-        $pos  = strpos($connection, '=');
+        $pos = strpos($connection, '=');
         $name = substr($connection, 0, $pos);
-        $dsn  = substr($connection, $pos + 1, strlen($connection));
+        $dsn = substr($connection, $pos + 1, strlen($connection));
 
-        $pos  = strpos($dsn, ':');
+        $pos = strpos($dsn, ':');
         $adapter = substr($dsn, 0, $pos);
 
         $extras = [];
         foreach (explode(';', $dsn) as $element) {
             $parts = preg_split('/=/', $element);
 
-            if (2 === count($parts)) {
+            if (count($parts) === 2) {
                 $extras[strtolower($parts[0])] = urldecode($parts[1]);
             }
         }
@@ -156,7 +163,7 @@ abstract class AbstractCommand extends Command
      * where "bookstore" is your propel database name (used in your schema.xml).
      *
      * @param string $connection The connection string
-     * @param string $section The section where the connection must be registered in (generator, runtime...)
+     * @param string|null $section The section where the connection must be registered in (generator, runtime...)
      *
      * @return array
      */
@@ -169,11 +176,11 @@ abstract class AbstractCommand extends Command
         $config['propel']['database']['connections'][$name]['user'] = isset($infos['user']) && $infos['user'] ? $infos['user'] : null;
         $config['propel']['database']['connections'][$name]['password'] = isset($infos['password']) ? $infos['password'] : null;
 
-        if (null === $section) {
+        if ($section === null) {
             $section = 'generator';
         }
 
-        if ('reverse' === $section) {
+        if ($section === 'reverse') {
             $config['propel']['reverse']['connection'] = $name;
         } else {
             $config['propel'][$section]['connections'][] = $name;
@@ -188,11 +195,11 @@ abstract class AbstractCommand extends Command
      * @param string $option The name of the input option to check
      * @param \Symfony\Component\Console\Input\InputInterface $input object
      *
-     * @return boolean
+     * @return bool
      */
     protected function hasInputOption($option, $input)
     {
-        return $input->hasOption($option) && null !== $input->getOption($option);
+        return $input->hasOption($option) && $input->getOption($option) !== null;
     }
 
     /**
@@ -201,10 +208,10 @@ abstract class AbstractCommand extends Command
      * @param string $argument The name of the input argument to check
      * @param \Symfony\Component\Console\Input\InputInterface $input object
      *
-     * @return boolean
+     * @return bool
      */
     protected function hasInputArgument($argument, $input)
     {
-        return $input->hasArgument($argument) && null !== $input->getArgument($argument);
+        return $input->hasArgument($argument) && $input->getArgument($argument) !== null;
     }
 }

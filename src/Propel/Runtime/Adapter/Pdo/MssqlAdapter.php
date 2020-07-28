@@ -10,13 +10,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\SqlAdapterInterface;
-use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
+use Propel\Runtime\Adapter\Exception\MalformedClauseException;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -30,8 +30,9 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see AdapterInterface::setCharset()
      *
-     * @param ConnectionInterface $con
-     * @param string              $charset
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string $charset
+     *
      * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
@@ -54,9 +55,9 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
@@ -68,7 +69,8 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s)
@@ -81,13 +83,14 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("dbo.RegexMatch(%s, %s", $left, $right);
+        return sprintf('dbo.RegexMatch(%s, %s', $left, $right);
     }
 
     /**
      * @see AdapterInterface::quoteIdentifier()
      *
-     * @param  string $text
+     * @param string $text
+     *
      * @return string
      */
     public function quoteIdentifier($text)
@@ -98,7 +101,8 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param  string $table
+     * @param string $table
+     *
      * @return string
      */
     public function quoteIdentifierTable($table)
@@ -110,12 +114,13 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
     public function random($seed = null)
     {
-        return 'RAND(' . ((int) $seed) . ')';
+        return 'RAND(' . ((int)$seed) . ')';
     }
 
     /**
@@ -124,12 +129,17 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * This rewrites the $sql query to apply the offset and limit.
      * some of the ORDER BY logic borrowed from Doctrine MsSqlPlatform
      *
-     * @see AdapterInterface::applyLimit()
-     * @author    Benjamin Runnels <kraven@kraven.org>
+     * @author Benjamin Runnels <kraven@kraven.org>
      *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
+     * @see AdapterInterface::applyLimit()
+     *
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     *
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws \Propel\Runtime\Adapter\Exception\ColumnNotFoundException
+     * @throws \Propel\Runtime\Adapter\Exception\MalformedClauseException
      *
      * @return void
      */
@@ -152,15 +162,16 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $len = strlen($sql);
 
         for ($i = $selectTextLen; $i < $len; $i++) {
-            if ('(' === $sql[$i]) {
+            if ($sql[$i] === '(') {
                 $parenthesisMatch++;
-            } else if (')' === $sql[$i]) {
+            } elseif ($sql[$i] === ')') {
                 $parenthesisMatch--;
-            } else if (0 === $parenthesisMatch && $i === stripos($sql, ' from ', $i)) {
+            } elseif ($parenthesisMatch === 0 && $i === stripos($sql, ' from ', $i)) {
                 // If we hit a 'from' clause outside of matching parenthesis, split the
                 // query string into `SELECT $selectStatement FROM $fromStatement`
                 $selectStatement = trim(substr($sql, $selectTextLen, $i - $selectTextLen));
                 $fromStatement = trim(substr($sql, $i + 6));
+
                 break;
             }
         }
@@ -176,7 +187,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
         // if we're starting at offset 0 then there's no need to simulate limit,
         // just grab the top $limit number of rows
-        if (0 === $offset) {
+        if ($offset === 0) {
             $sql = $selectText . 'TOP ' . $limit . ' ' . $selectStatement . ' FROM ' . $fromStatement;
 
             return;
@@ -186,7 +197,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $orderStatement = stristr($fromStatement, 'ORDER BY');
         $orders = '';
 
-        if (false !== $orderStatement) {
+        if ($orderStatement !== false) {
             // remove order statement from the from statement
             $fromStatement = trim(str_replace($orderStatement, '', $fromStatement));
 
@@ -194,10 +205,10 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $orders = explode(',', $order);
 
             $nbOrders = count($orders);
-            for ($i = 0; $i < $nbOrders; $i ++) {
+            for ($i = 0; $i < $nbOrders; $i++) {
                 $orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = [
                     'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
-                    'key' => $i
+                    'key' => $i,
                 ];
             }
         }
@@ -210,15 +221,15 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $selColCount = count($selColArr) - 1;
 
             // make sure the current column isn't * or an aggregate
-            if ($selColArr[0] !== '*' && ! strstr($selColArr[0], '(')) {
+            if ($selColArr[0] !== '*' && !strstr($selColArr[0], '(')) {
                 if (isset($orderArr[$selColArr[0]])) {
                     $orders[$orderArr[$selColArr[0]]['key']] = $selColArr[0] . ' ' . $orderArr[$selColArr[0]]['sort'];
                 }
 
                 // use the alias if one was present otherwise use the column name
-                $alias = (! stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
+                $alias = (!stristr($selCol, ' AS ')) ? $selColArr[0] : $selColArr[$selColCount];
                 // don't quote the identifier if it is already quoted
-                if ('[' !== $alias[0]) {
+                if ($alias[0] !== '[') {
                     $alias = $this->quoteIdentifier($alias);
                 }
 
@@ -276,10 +287,11 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see parent::cleanupSQL()
      *
-     * @param string      $sql
-     * @param array       $params
-     * @param Criteria    $values
-     * @param DatabaseMap $dbMap
+     * @param string $sql
+     * @param array $params
+     * @param \Propel\Runtime\ActiveQuery\Criteria $values
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
      * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
@@ -287,7 +299,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $i = 1;
         $paramCols = [];
         foreach ($params as $param) {
-            if (null !== $param['table']) {
+            if ($param['table'] !== null) {
                 $column = $dbMap->getTable($param['table'])->getColumn($param['column']);
                 /* MSSQL pdo_dblib and pdo_mssql blob values must be converted to hex and then the hex added
                  * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
@@ -314,7 +326,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             unset($paramCols);
             preg_match_all('/:p\d/', $sql, $matches);
             foreach ($matches[0] as $key => $match) {
-                $sql = str_replace($match, ':p'.($key+1), $sql);
+                $sql = str_replace($match, ':p' . ($key + 1), $sql);
             }
         }
     }

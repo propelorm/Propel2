@@ -20,9 +20,9 @@ namespace Propel\Generator\Builder\Om;
  */
 class ExtensionQueryBuilder extends AbstractOMBuilder
 {
-
     /**
      * Returns the name of the current class being built.
+     *
      * @return string
      */
     public function getUnprefixedClassName()
@@ -32,7 +32,9 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
 
     /**
      * Adds class phpdoc comment and opening of class.
+     *
      * @param string $script The script will be modified in this method.
+     *
      * @return void
      */
     protected function addClassOpen(&$script)
@@ -64,7 +66,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  */";
         }
         $script .= "
-class ".$this->getUnqualifiedClassName()." extends $baseClassName
+class " . $this->getUnqualifiedClassName() . " extends $baseClassName
 {
 ";
     }
@@ -76,16 +78,20 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * if you want to change that behavior.
      *
      * @see QueryBuilder::addClassBody()
+     *
+     * @param string $script
+     *
      * @return void
      */
-
     protected function addClassBody(&$script)
     {
     }
 
     /**
      * Closes class.
+     *
      * @param string $script The script will be modified in this method.
+     *
      * @return void
      */
     protected function addClassClose(&$script)
@@ -93,13 +99,16 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
         $script .= "
 }
 ";
-        $this->applyBehaviorModifier('extensionQueryFilter', $script, "");
+        $this->applyBehaviorModifier('extensionQueryFilter', $script, '');
     }
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     *
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
+     *
+     * @return bool
      */
     public function hasBehaviorModifier($hookName, $modifier = '')
     {
@@ -108,24 +117,27 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
+     *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string $script  The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param string $tab
+     *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
+    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
+     *
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     *
      * @return string|null
      */
     public function getBehaviorContent($contentName)
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
-
 }

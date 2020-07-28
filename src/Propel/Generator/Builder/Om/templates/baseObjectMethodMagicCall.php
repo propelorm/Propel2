@@ -30,7 +30,7 @@
      *
      * @return array|string
      */
-    public function __<?php echo ($behaviorCallScript)? 'parentCall' : 'call'?>($name, $params)
+    public function __<?php echo ($behaviorCallScript) ? 'parentCall' : 'call'?>($name, $params)
     {
         if (0 === strpos($name, 'get')) {
             $virtualColumn = substr($name, 3);

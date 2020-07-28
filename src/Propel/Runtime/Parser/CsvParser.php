@@ -19,17 +19,36 @@ namespace Propel\Runtime\Parser;
  */
 class CsvParser extends AbstractParser
 {
-    const QUOTE_NONE = 0;
-    const QUOTE_ALL = 1;
-    const QUOTE_NONNUMERIC = 2;
-    const QUOTE_MINIMAL = 3;
+    public const QUOTE_NONE = 0;
+    public const QUOTE_ALL = 1;
+    public const QUOTE_NONNUMERIC = 2;
+    public const QUOTE_MINIMAL = 3;
 
     // these settings are predefined for Excel CSV format
 
+    /**
+     * @var string
+     */
     public $delimiter = ',';
+
+    /**
+     * @var string
+     */
     public $lineTerminator = "\r\n";
+
+    /**
+     * @var string
+     */
     public $quotechar = '"';
-    public $escapechar = "\\";
+
+    /**
+     * @var string
+     */
+    public $escapechar = '\\';
+
+    /**
+     * @var int
+     */
     public $quoting = self::QUOTE_MINIMAL;
 
     /**
@@ -37,8 +56,8 @@ class CsvParser extends AbstractParser
      *
      * @param array $array Source data to convert
      * @param string|null $rootKey Will not be used for converting because csv is flat
-     * @param boolean $isList Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the output should contain a heading line
+     * @param bool $isList Whether the input data contains more than one row
+     * @param bool $includeHeading Whether the output should contain a heading line
      *
      * @return string Converted data, as a CSV string
      */
@@ -76,7 +95,8 @@ class CsvParser extends AbstractParser
     /**
      * Accepts a row of data and returns it formatted
      *
-     * @param  array $row An array of data to be formatted for output to the file
+     * @param array $row An array of data to be formatted for output to the file
+     *
      * @return array The formatted array
      */
     protected function formatRow($row)
@@ -91,17 +111,20 @@ class CsvParser extends AbstractParser
                     break;
                 case self::QUOTE_ALL:
                     $column = $this->quote($this->escape($column));
+
                     break;
                 case self::QUOTE_NONNUMERIC:
                     if (preg_match('/[^0-9]/', $column)) {
                         $column = $this->quote($this->escape($column));
                     }
+
                     break;
                 case self::QUOTE_MINIMAL:
                 default:
                     if ($this->containsSpecialChars($column)) {
                         $column = $this->quote($this->escape($column));
                     }
+
                     break;
             }
         }
@@ -112,8 +135,9 @@ class CsvParser extends AbstractParser
     /**
      * Escapes a column (escapes quotechar with escapechar)
      *
-     * @param string $input    A single value to be escaped for output
-     * @return string    Escaped input value
+     * @param string $input A single value to be escaped for output
+     *
+     * @return string Escaped input value
      */
     protected function escape($input)
     {
@@ -127,7 +151,8 @@ class CsvParser extends AbstractParser
     /**
      * Quotes a column with quotechar
      *
-     * @param  string $input A single value to be quoted for output
+     * @param string $input A single value to be quoted for output
+     *
      * @return string Quoted input value
      */
     protected function quote($input)
@@ -138,8 +163,9 @@ class CsvParser extends AbstractParser
     /**
      * Returns true if input contains quotechar, delimiter or any of the characters in lineTerminator
      *
-     * @param  string  $input A single value to be checked for special characters
-     * @return boolean True if contains any special characters
+     * @param string $input A single value to be checked for special characters
+     *
+     * @return bool True if contains any special characters
      */
     protected function containsSpecialChars($input)
     {
@@ -147,7 +173,7 @@ class CsvParser extends AbstractParser
         $special_chars[] = $this->quotechar;
         $special_chars[] = $this->delimiter;
         foreach ($special_chars as $char) {
-            if (false !== strpos($input, $char)) {
+            if (strpos($input, $char) !== false) {
                 return true;
             }
         }
@@ -158,7 +184,8 @@ class CsvParser extends AbstractParser
     /**
      * Serializes a value to place it into a CSV output
      *
-     * @param  mixed  $input
+     * @param mixed $input
+     *
      * @return string
      */
     protected function serialize($input)
@@ -169,9 +196,9 @@ class CsvParser extends AbstractParser
     /**
      * Alias for CsvParser::fromArray()
      *
-     * @param array   $array          Source data to convert
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the output should contain a heading line
+     * @param array $array Source data to convert
+     * @param bool $isList Whether the input data contains more than one row
+     * @param bool $includeHeading Whether the output should contain a heading line
      *
      * @return string Converted data, as a CSV string
      */
@@ -185,8 +212,8 @@ class CsvParser extends AbstractParser
      *
      * @param string $data Source data to convert, as a CSV string
      * @param string|null $rootKey Will not be used for converting because csv is flat
-     * @param boolean $isList Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the input contains a heading line
+     * @param bool $isList Whether the input data contains more than one row
+     * @param bool $includeHeading Whether the input contains a heading line
      *
      * @return array Converted data
      */
@@ -204,7 +231,7 @@ class CsvParser extends AbstractParser
             foreach ($rows as $row) {
                 $values = $this->cleanupRow($this->getColumns($row));
                 if ($values !== []) {
-                    $array []= array_combine($keys, $values);
+                    $array[] = array_combine($keys, $values);
                 }
             }
         } else {
@@ -250,7 +277,8 @@ class CsvParser extends AbstractParser
     /**
      * Accepts a formatted row of data and returns it raw
      *
-     * @param  array $row An array of data from a CSV output
+     * @param array $row An array of data from a CSV output
+     *
      * @return array The cleaned up array
      */
     protected function cleanupRow($row)
@@ -262,7 +290,7 @@ class CsvParser extends AbstractParser
             if ($this->isSerialized($column)) {
                 $column = $this->unserialize($column);
             }
-            if ('N;' === $column) {
+            if ($column === 'N;') {
                 $column = null;
             }
             $row[$key] = $column;
@@ -274,7 +302,7 @@ class CsvParser extends AbstractParser
     /**
      * @param string $input
      *
-     * @return false|int
+     * @return int|false
      */
     protected function isQuoted($input)
     {
@@ -312,7 +340,7 @@ class CsvParser extends AbstractParser
      *
      * @param string $input
      *
-     * @return false|int
+     * @return int|false
      */
     protected function isSerialized($input)
     {
@@ -322,7 +350,8 @@ class CsvParser extends AbstractParser
     /**
      * Unserializes a value from CSV output
      *
-     * @param  string $input
+     * @param string $input
+     *
      * @return mixed
      */
     protected function unserialize($input)
@@ -333,9 +362,9 @@ class CsvParser extends AbstractParser
     /**
      * Alias for CsvParser::toArray()
      *
-     * @param string  $data           Source data to convert, as a CSV string
-     * @param boolean $isList         Whether the input data contains more than one row
-     * @param boolean $includeHeading Whether the input contains a heading line
+     * @param string $data Source data to convert, as a CSV string
+     * @param bool $isList Whether the input data contains more than one row
+     * @param bool $includeHeading Whether the input contains a heading line
      *
      * @return array Converted data
      */

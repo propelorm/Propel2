@@ -20,13 +20,28 @@ use Propel\Runtime\Map\TableMap;
  */
 class ModelJoin extends Join
 {
-    /** @var RelationMap */
+    /**
+     * @var \Propel\Runtime\Map\RelationMap
+     */
     protected $relationMap;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap|null
+     */
     protected $tableMap;
 
+    /**
+     * @var \Propel\Runtime\ActiveQuery\ModelJoin|null
+     */
     protected $previousJoin;
 
+    /**
+     * @param \Propel\Runtime\Map\RelationMap $relationMap
+     * @param string|null $leftTableAlias
+     * @param string|null $relationAlias
+     *
+     * @return $this
+     */
     public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
     {
         $leftCols = $relationMap->getLeftColumns();
@@ -34,8 +49,8 @@ class ModelJoin extends Join
         $leftValues = $relationMap->getLocalValues();
         $nbColumns = $relationMap->countColumnMappings();
 
-        for ($i=0; $i < $nbColumns; $i++) {
-            if (null !== $leftValues[$i]) {
+        for ($i = 0; $i < $nbColumns; $i++) {
+            if ($leftValues[$i] !== null) {
                 if ($relationMap->getType() === RelationMap::ONE_TO_MANY) {
                     //one-to-many
                     $this->addForeignValueCondition(
@@ -73,7 +88,7 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return RelationMap
+     * @return \Propel\Runtime\Map\RelationMap
      */
     public function getRelationMap()
     {
@@ -83,7 +98,7 @@ class ModelJoin extends Join
     /**
      * Sets the right tableMap for this join
      *
-     * @param TableMap $tableMap The table map to use
+     * @param \Propel\Runtime\Map\TableMap $tableMap The table map to use
      *
      * @return $this The current join object, for fluid interface
      */
@@ -97,11 +112,11 @@ class ModelJoin extends Join
     /**
      * Gets the right tableMap for this join
      *
-     * @return TableMap The table map
+     * @return \Propel\Runtime\Map\TableMap The table map
      */
     public function getTableMap()
     {
-        if (null === $this->tableMap && null !== $this->relationMap) {
+        if ($this->tableMap === null && $this->relationMap !== null) {
             $this->tableMap = $this->relationMap->getRightTable();
         }
 
@@ -121,7 +136,7 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return ModelJoin
+     * @return self
      */
     public function getPreviousJoin()
     {
@@ -133,13 +148,13 @@ class ModelJoin extends Join
      */
     public function isPrimary()
     {
-        return null === $this->previousJoin;
+        return $this->previousJoin === null;
     }
 
     /**
      * @param string $relationAlias
      *
-     * @return \Propel\Runtime\ActiveQuery\ModelJoin
+     * @return $this
      */
     public function setRelationAlias($relationAlias)
     {
@@ -178,8 +193,9 @@ class ModelJoin extends Join
      * This method only works if PreviousJoin has been defined,
      * which only happens when you provide dotted relations when calling join
      *
-     * @param  Object $startObject the start object all joins originate from and which has already hydrated
-     * @return Object the base Object of this join
+     * @param object $startObject the start object all joins originate from and which has already hydrated
+     *
+     * @return object The base Object of this join
      */
     public function getObjectToRelate($startObject)
     {
@@ -206,8 +222,7 @@ class ModelJoin extends Join
         return parent::equals($join)
             && $this->relationMap == $join->getRelationMap()
             && $this->previousJoin == $join->getPreviousJoin()
-            && $this->rightTableAlias == $join->getRightTableAlias()
-        ;
+            && $this->rightTableAlias == $join->getRightTableAlias();
     }
 
     /**

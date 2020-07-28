@@ -75,9 +75,12 @@ class ModelWith
      */
     protected $rightPhpName;
 
-    public function __construct(ModelJoin $join = null)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelJoin|null $join
+     */
+    public function __construct(?ModelJoin $join = null)
     {
-        if (null !== $join) {
+        if ($join !== null) {
             $this->init($join);
         }
     }
@@ -86,7 +89,8 @@ class ModelWith
      * Define the joined hydration schema based on a join object.
      * Fills the ModelWith properties using a ModelJoin as source
      *
-     * @param ModelJoin $join
+     * @param \Propel\Runtime\ActiveQuery\ModelJoin $join
+     *
      * @return void
      */
     public function init(ModelJoin $join)
@@ -122,7 +126,7 @@ class ModelWith
      */
     public function setModelName($modelName)
     {
-        if (0 === strpos($modelName, '\\')) {
+        if (strpos($modelName, '\\') === 0) {
             $this->modelName = substr($modelName, 1);
         } else {
             $this->modelName = $modelName;
@@ -314,7 +318,7 @@ class ModelWith
      */
     public function isPrimary()
     {
-        return null === $this->leftPhpName;
+        return $this->leftPhpName === null;
     }
 
     /**

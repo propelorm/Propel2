@@ -10,9 +10,11 @@
 
 namespace Propel\Runtime\Exception;
 
+use BadMethodCallException as CoreBadMethodCallException;
+
 /**
  * @author William Durand <william.durand1@gmail.com>
  */
-class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
+class BadMethodCallException extends CoreBadMethodCallException implements ExceptionInterface
 {
 }

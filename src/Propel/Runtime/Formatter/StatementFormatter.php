@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * statement formatter for Propel query
@@ -27,7 +27,7 @@ class StatementFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function format(DataFetcherInterface $dataFetcher = null)
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -43,7 +43,7 @@ class StatementFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|null
      */
-    public function formatOne(DataFetcherInterface $dataFetcher = null)
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -58,9 +58,10 @@ class StatementFormatter extends AbstractFormatter
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record
      *
      * @throws \Propel\Runtime\Exception\PropelException
-     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|void|null
+     *
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null|void
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         throw new PropelException('The Statement formatter cannot transform a record into a statement');
     }

@@ -21,6 +21,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use SQLite3;
 
 /**
  * SQLite PlatformInterface implementation.
@@ -35,7 +36,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @var bool|null
      */
-    protected $foreignKeySupport = null;
+    protected $foreignKeySupport;
 
     /**
      * If we should alter the table through creating a temporarily created table,
@@ -47,13 +48,14 @@ class SqlitePlatform extends DefaultPlatform
 
     /**
      * Initializes db specific domain mapping.
+     *
      * @return void
      */
     protected function initialize()
     {
         parent::initialize();
 
-        $version = \SQLite3::version();
+        $version = SQLite3::version();
         $version = $version['versionString'];
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
@@ -86,34 +88,35 @@ class SqlitePlatform extends DefaultPlatform
     public function getDefaultTypeSizes()
     {
         return [
-            'char'      => 1,
+            'char' => 1,
             'character' => 1,
-            'integer'   => 32,
-            'bigint'    => 64,
-            'smallint'  => 16,
-            'double precision' => 54
+            'integer' => 32,
+            'bigint' => 64,
+            'smallint' => 16,
+            'double precision' => 54,
         ];
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         parent::setGeneratorConfig($generatorConfig);
 
-        if (null !== ($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey'))) {
-            $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);;
+        if (($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey')) !== null) {
+            $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);
         }
-        if (null !== ($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround'))) {
-            $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);;;
+        if (($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround')) !== null) {
+            $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);
         }
     }
 
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @param  Column[] $columns
+     * @param \Propel\Generator\Model\Column[] $columns
+     *
      * @return string
      */
     public function getAddColumnsDDL($columns)
@@ -124,7 +127,8 @@ ALTER TABLE %s ADD %s;
 ";
         foreach ($columns as $column) {
             $tableName = $column->getTable()->getName();
-            $ret .= sprintf($pattern,
+            $ret .= sprintf(
+                $pattern,
                 $this->quoteIdentifier($tableName),
                 $this->getColumnDDL($column)
             );
@@ -134,7 +138,7 @@ ALTER TABLE %s ADD %s;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
@@ -154,10 +158,8 @@ ALTER TABLE %s ADD %s;
         );
 
         if ($this->tableAlteringWorkaround && !$changedNotEditableThroughDirectDDL && $tableDiff->hasAddedColumns()) {
-
             $addedCols = $tableDiff->getAddedColumns();
             foreach ($addedCols as $column) {
-
                 $sqlChangeNotSupported = false
 
                     //The column may not have a PRIMARY KEY or UNIQUE constraint.
@@ -166,19 +168,20 @@ ALTER TABLE %s ADD %s;
 
                     //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
-                    || false !== array_search(
-                        $column->getDefaultValue(), ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'])
+                    || array_search(
+                        $column->getDefaultValue(),
+                        ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP']
+                    ) !== false
                     || substr(trim($column->getDefaultValue()), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
-                    || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL')
-                ;
+                    || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL');
 
                 if ($sqlChangeNotSupported) {
                     $changedNotEditableThroughDirectDDL = true;
+
                     break;
                 }
-
             }
         }
 
@@ -193,7 +196,8 @@ ALTER TABLE %s ADD %s;
      * Creates a temporarily created table with the new schema,
      * moves all items into it and drops the origin as well as renames the temp table to the origin then.
      *
-     * @param  TableDiff $tableDiff
+     * @param \Propel\Generator\Model\Diff\TableDiff $tableDiff
+     *
      * @return string
      */
     public function getMigrationTableDDL(TableDiff $tableDiff)
@@ -206,15 +210,15 @@ INSERT INTO %s (%s) SELECT %s FROM %s;
 DROP TABLE %s;
 ";
 
-        $originTable     = clone $tableDiff->getFromTable();
-        $newTable        = clone $tableDiff->getToTable();
+        $originTable = clone $tableDiff->getFromTable();
+        $newTable = clone $tableDiff->getToTable();
 
         $originTableName = $originTable->getName();
-        $tempTableName   = $newTable->getCommonName().'__temp__'.uniqid();
+        $tempTableName = $newTable->getCommonName() . '__temp__' . uniqid();
 
         $originTableFields = $this->getColumnListDDL($originTable->getColumns());
 
-        $fieldMap = []; /** struct: [<oldCol> => <newCol>] */
+        $fieldMap = [];
         //start with modified columns
         foreach ($tableDiff->getModifiedColumns() as $diff) {
             $fieldMap[$diff->getFromColumn()->getName()] = $diff->getToColumn()->getName();
@@ -231,13 +235,13 @@ DROP TABLE %s;
                     $fieldMap[$col->getName()] = $col->getName();
                 }
             }
-
         }
 
         $createTable = $this->getAddTableDDL($newTable);
         $createTable .= $this->getAddIndicesDDL($newTable);
 
-        $sql = sprintf($pattern,
+        $sql = sprintf(
+            $pattern,
             $this->quoteIdentifier($tempTableName), //CREATE TEMPORARY TABLE %s
             $originTableFields, //select %s
             $this->quoteIdentifier($originTableName), //from %s
@@ -299,7 +303,8 @@ PRAGMA foreign_keys = ON;
      * so we have to flag both as NOT NULL and create in either way a UNIQUE constraint over pks since
      * those UNIQUE is otherwise automatically created by the sqlite engine.
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     public function normalizeTable(Table $table)
@@ -312,12 +317,14 @@ PRAGMA foreign_keys = ON;
                 foreach ($unique->getColumns() as $columnName) {
                     if (!$table->getColumn($columnName)->isPrimaryKey()) {
                         $coversAllPrimaryKeys = false;
+
                         break;
                     }
                 }
                 if ($coversAllPrimaryKeys) {
                     //there's already a unique constraint with the composite pk
                     $pkUniqueExist = true;
+
                     break;
                 }
             }
@@ -349,6 +356,9 @@ PRAGMA foreign_keys = ON;
 
     /**
      * Returns the SQL for the primary key of a Table object
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
@@ -361,7 +371,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRemoveColumnDDL(Column $column)
     {
@@ -370,7 +380,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
     {
@@ -379,7 +389,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
     {
@@ -388,7 +398,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getModifyColumnsDDL($columnDiffs)
     {
@@ -397,7 +407,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDropPrimaryKeyDDL(Table $table)
     {
@@ -406,7 +416,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAddPrimaryKeyDDL(Table $table)
     {
@@ -415,7 +425,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
@@ -424,7 +434,7 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
@@ -433,7 +443,8 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
-     * @link       http://www.sqlite.org/autoinc.html
+     * @link http://www.sqlite.org/autoinc.html
+     *
      * @return string
      */
     public function getAutoIncrement()
@@ -461,9 +472,11 @@ PRAGMA foreign_keys = ON;
             $col->setDomainForType('INTEGER');
         }
 
-        if ($col->getDefaultValue()
+        if (
+            $col->getDefaultValue()
             && $col->getDefaultValue()->isExpression()
-            && 'CURRENT_TIMESTAMP' === $col->getDefaultValue()->getValue()) {
+            && $col->getDefaultValue()->getValue() === 'CURRENT_TIMESTAMP'
+        ) {
             //sqlite use CURRENT_TIMESTAMP different than mysql/pgsql etc
             //we set it to the more common behavior
             $col->setDefaultValue(
@@ -519,7 +532,8 @@ PRAGMA foreign_keys = ON;
 );
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines)
@@ -537,9 +551,10 @@ PRAGMA foreign_keys = ON;
             return '';
         }
 
-        $pattern = "FOREIGN KEY (%s) REFERENCES %s (%s)";
+        $pattern = 'FOREIGN KEY (%s) REFERENCES %s (%s)';
 
-        $script = sprintf($pattern,
+        $script = sprintf(
+            $pattern,
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
             $this->getColumnListDDL($fk->getForeignColumnObjects())
@@ -570,11 +585,11 @@ PRAGMA foreign_keys = ON;
             'BLOB',
             'MEDIUMBLOB',
             'LONGBLOB',
-        ]);
+        ], true);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function doQuoting($text)
     {

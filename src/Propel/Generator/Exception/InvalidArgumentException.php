@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
+use InvalidArgumentException as CoreInvalidArgumentException;
+
+class InvalidArgumentException extends CoreInvalidArgumentException implements ExceptionInterface
 {
 }

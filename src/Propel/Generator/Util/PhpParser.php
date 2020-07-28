@@ -18,6 +18,7 @@ if (!defined('T_ML_COMMENT')) {
 
 /**
  * Service class for parsing PHP code strings and editing them
+ *
  * @example Basic usage:
  * <code>
  * $script = file_get_contents($fileName);
@@ -31,8 +32,14 @@ if (!defined('T_ML_COMMENT')) {
  */
 class PhpParser
 {
+    /**
+     * @var string
+     */
     protected $code;
 
+    /**
+     * @var bool
+     */
     protected $isAddPhp;
 
     /**
@@ -40,14 +47,14 @@ class PhpParser
      *
      * @var (string|false)[]
      */
-    private $knownMethodCache = array();
+    private $knownMethodCache = [];
 
     /**
      * Parser constructor
      *
-     * @param string  $code     PHP code to parse
-     * @param boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
-     *                          to be seen as code by the tokenizer.
+     * @param string $code PHP code to parse
+     * @param bool $isAddPhp Whether the supplied code needs a supplementary '<?php '
+     * to be seen as code by the tokenizer.
      */
     public function __construct($code, $isAddPhp = false)
     {
@@ -72,7 +79,7 @@ class PhpParser
      */
     protected function addPhp($code)
     {
-        return '<?php '. $code;
+        return '<?php ' . $code;
     }
 
     /**
@@ -119,6 +126,7 @@ class PhpParser
                         // comment or public|protected|private
                         $buffer .= $token;
                     }
+
                     continue;
                 }
                 $methodCode .= $token;
@@ -152,6 +160,7 @@ class PhpParser
                         $isInFunction = true;
                         $methodCode .= $buffer . $text;
                         $buffer = '';
+
                         break;
                     default:
                         if ($isInFunction) {
@@ -159,6 +168,7 @@ class PhpParser
                         } else {
                             $buffer .= $text;
                         }
+
                         break;
                 }
             }
@@ -166,6 +176,7 @@ class PhpParser
 
         // method not found
         $this->knownMethodCache[$methodName] = false;
+
         return false;
     }
 
@@ -192,7 +203,7 @@ class PhpParser
      * Parse the code looking for a method definition, and replaces the code if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to use in place of the old method definition
+     * @param string $newCode The code to use in place of the old method definition
      *
      * @return mixed false if not found, or the method code string if found
      */
@@ -212,14 +223,14 @@ class PhpParser
      * Parse the code looking for a method definition, and adds the code after if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to add to the class
+     * @param string $newCode The code to add to the class
      *
      * @return string|false false if not found, or the method code string if found
      */
     public function addMethodAfter($methodName, $newCode)
     {
         if ($methodCode = $this->findMethod($methodName)) {
-            $this->code = str_replace($methodCode, $methodCode. $newCode, $this->code);
+            $this->code = str_replace($methodCode, $methodCode . $newCode, $this->code);
 
             return $methodCode;
         }
@@ -231,7 +242,7 @@ class PhpParser
      * Parse the code looking for a method definition, and adds the code before if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to add to the class
+     * @param string $newCode The code to add to the class
      *
      * @return string|false false if not found, or the method code string if found
      */

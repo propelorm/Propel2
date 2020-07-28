@@ -14,8 +14,8 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\FileLocator;
-use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Config\Loader\FileLoader as BaseFileLoader;
 
 /**
  * Abstract class used by all file-based loaders.
@@ -46,11 +46,11 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Constructor.
      *
-     * @param FileLocatorInterface|null $locator A FileLocator instance
+     * @param \Symfony\Component\Config\FileLocatorInterface|null $locator A FileLocator instance
      */
-    public function __construct(FileLocatorInterface $locator = null)
+    public function __construct(?FileLocatorInterface $locator = null)
     {
-        if (null === $locator) {
+        if ($locator === null) {
             $locator = new FileLocator();
         }
 
@@ -61,6 +61,7 @@ abstract class FileLoader extends BaseFileLoader
      * Replaces parameter placeholders (%name%) by their values for all parameters.
      *
      * @param array $configuration The configuration array to resolve
+     *
      * @return array
      */
     public function resolveParams(array $configuration)
@@ -87,13 +88,16 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string $file The resource
      *
-     * @return array|string
-     * @throws \InvalidArgumentException                            If the file is not found
      * @throws \Propel\Common\Config\Exception\InputOutputException If the path isnot readable
+     *
+     * @return string
      */
     protected function getPath($file)
     {
         $path = $this->locator->locate($file);
+        if (!is_string($path)) {
+            throw new InputOutputException("$file must return a single path.");
+        }
 
         if (!is_readable($path)) {
             throw new InputOutputException("You don't have permissions to access configuration file $file.");
@@ -107,6 +111,9 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string|string[] $ext An extension or an array of extensions
      * @param string|false $resource A resource
+     *
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException
+     *
      * @return bool
      */
     protected function checkSupports($ext, $resource)
@@ -118,7 +125,7 @@ abstract class FileLoader extends BaseFileLoader
         $info = pathinfo($resource);
         $extension = $info['extension'];
 
-        if ('dist' === $extension) {
+        if ($extension === 'dist') {
             $extension = pathinfo($info['filename'], PATHINFO_EXTENSION);
         }
 
@@ -127,7 +134,7 @@ abstract class FileLoader extends BaseFileLoader
         }
 
         if (!is_array($ext)) {
-            throw new \InvalidArgumentException('$ext must be string or string[]');
+            throw new InvalidArgumentException('$ext must be string or string[]');
         }
 
         $supported = false;
@@ -135,6 +142,7 @@ abstract class FileLoader extends BaseFileLoader
         foreach ($ext as $value) {
             if ($value === $extension) {
                 $supported = true;
+
                 break;
             }
         }
@@ -153,11 +161,10 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Replaces parameter placeholders (%name%) by their values.
      *
-     * @param mixed $value     The value to be resolved
+     * @param mixed $value The value to be resolved
      * @param array $resolving An array of keys that are being resolved (used internally to detect circular references)
      *
      * @return mixed The resolved value
-     *
      */
     private function resolveValue($value, array $resolving = [])
     {
@@ -180,12 +187,12 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Resolves parameters inside a string
      *
-     * @param string $value     The string to resolve
-     * @param array  $resolving An array of keys that are being resolved (used internally to detect circular references)
+     * @param string $value The string to resolve
+     * @param array $resolving An array of keys that are being resolved (used internally to detect circular references)
      *
-     * @return string                                                   The resolved string
-     * @throws \Propel\Common\Config\Exception\RuntimeException         if a problem occurs
-     * @throws \Propel\Common\Config\Exception\InvalidArgumentException if a parameter is non-existent
+     * @throws \Propel\Common\Config\Exception\RuntimeException if a problem occurs
+     *
+     * @return string The resolved string
      */
     private function resolveString($value, array $resolving = [])
     {
@@ -228,7 +235,7 @@ abstract class FileLoader extends BaseFileLoader
                 throw new RuntimeException(sprintf('A string value must be composed of strings and/or numbers, but found parameter "%s" of type %s inside string value "%s".', $key, gettype($resolved), $value));
             }
 
-            $resolved = (string) $resolved;
+            $resolved = (string)$resolved;
             $resolving[$key] = true;
 
             return $self->isResolved() ? $resolved : $self->resolveString($resolved, $resolving);
@@ -238,7 +245,8 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Return unescaped variable.
      *
-     * @param  mixed       $value The variable to unescape
+     * @param mixed $value The variable to unescape
+     *
      * @return array|mixed
      */
     private function unescapeValue($value)
@@ -264,8 +272,9 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param mixed $property_key The key, in the configuration values array, to return the respective value
      *
-     * @return mixed
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException when non-existent key in configuration array
+     *
+     * @return mixed
      */
     private function get($property_key)
     {
@@ -273,7 +282,7 @@ abstract class FileLoader extends BaseFileLoader
 
         $ret = $this->getValue($property_key, null, $found);
 
-        if (false === $found) {
+        if ($found === false) {
             throw new InvalidArgumentException("Parameter '$property_key' not found in configuration file.");
         }
 
@@ -283,15 +292,15 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Scan recursively an array to find a value of a given key.
      *
-     * @param string  $property_key The array key
-     * @param array|null   $config       The array to scan
-     * @param boolean $found        if the key was found
+     * @param string $property_key The array key
+     * @param array|null $config The array to scan
+     * @param bool $found if the key was found
      *
      * @return mixed The value or null if not found
      */
     private function getValue($property_key, $config, &$found)
     {
-        if (null === $config) {
+        if ($config === null) {
             $config = $this->config;
         }
 
@@ -304,7 +313,7 @@ abstract class FileLoader extends BaseFileLoader
             if (is_array($value)) {
                 $ret = $this->getValue($property_key, $value, $found);
 
-                if (null !== $ret) {
+                if ($ret !== null) {
                     return $ret;
                 }
             }
@@ -316,16 +325,17 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string $value The value to parse
      *
-     * @return string|null
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException if the environment variable is not set
+     *
+     * @return string|null
      */
     private function parseEnvironmentParams($value)
     {
         // env.variable is an environment variable
         $env = explode('.', $value);
-        if ('env' === $env[0]) {
+        if ($env[0] === 'env') {
             $envParam = getenv($env[1]);
-            if (false === $envParam) {
+            if ($envParam === false) {
                 throw new InvalidArgumentException("Environment variable '$env[1]' is not defined.");
             }
 

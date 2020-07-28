@@ -10,12 +10,10 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\OnDemandCollection;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
+use ReflectionClass;
 
 /**
  * Object formatter for Propel query
@@ -26,6 +24,9 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class OnDemandFormatter extends ObjectFormatter
 {
+    /**
+     * @var bool
+     */
     protected $isSingleTableInheritance = false;
 
     /**
@@ -34,7 +35,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return $this
      */
-    public function init(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
+    public function init(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
 
@@ -47,9 +48,10 @@ class OnDemandFormatter extends ObjectFormatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
+     *
      * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
      */
-    public function format(DataFetcherInterface $dataFetcher = null)
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         if ($dataFetcher) {
@@ -77,13 +79,13 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @return OnDemandCollection
+     * @return \Propel\Runtime\Collection\OnDemandCollection
      */
     public function getCollection()
     {
         $class = $this->getCollectionClassName();
 
-        /** @var OnDemandCollection $collection */
+        /** @var \Propel\Runtime\Collection\OnDemandCollection $collection */
         $collection = new $class();
         $collection->setModel($this->class);
 
@@ -95,9 +97,9 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     * @param    array  $row associative array with data
+     * @param array $row associative array with data
      *
-     * @return ActiveRecordInterface
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     public function getAllObjectsFromRow($row)
     {
@@ -110,9 +112,10 @@ class OnDemandFormatter extends ObjectFormatter
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
-                $refl = new \ReflectionClass($class);
+                $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+
                     continue;
                 }
             } else {
@@ -132,6 +135,7 @@ class OnDemandFormatter extends ObjectFormatter
                 if ($modelWith->isAdd()) {
                     call_user_func([$startObject, $modelWith->getInitMethod()], false);
                 }
+
                 continue;
             }
             if (isset($hydrationChain)) {

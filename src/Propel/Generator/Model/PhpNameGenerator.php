@@ -32,15 +32,17 @@ class PhpNameGenerator implements NameGeneratorInterface
      * directly to php names without modification.
      * <code>CONV_METHOD_UNDERSCORE</code> will capitalize the first
      * letter, remove underscores, and capitalize each letter before
-     * an underscore.  All other letters are lowercased. "phpname"
+     * an underscore. All other letters are lowercased. "phpname"
      * works the same as the <code>CONV_METHOD_PHPNAME</code> method
      * but will not lowercase any characters.
      *
-     * @param  string[] $inputs List expected to contain two (optional: three) parameters,
+     * @see NameGenerator
+     *
+     * @param string[] $inputs List expected to contain two (optional: three) parameters,
      *                          element 0 contains name to convert, element 1 contains method for conversion,
      *                          optional element 2 contains prefix to be striped from name
-     * @return string   The generated name.
-     * @see NameGenerator
+     *
+     * @return string The generated name.
      */
     public function generateName($inputs)
     {
@@ -59,12 +61,15 @@ class PhpNameGenerator implements NameGeneratorInterface
         switch ($method) {
             case self::CONV_METHOD_CLEAN:
                 $phpName = $this->cleanMethod($schemaName);
+
                 break;
             case self::CONV_METHOD_PHPNAME:
                 $phpName = $this->phpnameMethod($schemaName);
+
                 break;
             case self::CONV_METHOD_NOCHANGE:
                 $phpName = $this->nochangeMethod($schemaName);
+
                 break;
             case self::CONV_METHOD_UNDERSCORE:
             default:
@@ -84,16 +89,18 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * my_CLASS_name -> MyClassName
      *
-     * @param  string $schemaName name to be converted.
-     * @return string Converted name.
      * @see NameGenerator
      * @see #underscoreMethod()
+     *
+     * @param string $schemaName name to be converted.
+     *
+     * @return string Converted name.
      */
     protected function underscoreMethod($schemaName)
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while (false !== $tok) {
+        while ($tok !== false) {
             $name .= ucfirst(strtolower($tok));
             $tok = strtok(self::STD_SEPARATOR_CHAR);
         }
@@ -102,17 +109,19 @@ class PhpNameGenerator implements NameGeneratorInterface
     }
 
     /**
-     * Converts a database schema name to php object name.  Removes
+     * Converts a database schema name to php object name. Removes
      * any character that is not a letter or a number and capitalizes
      * first letter of the name, the first letter of each alphanumeric
      * block and converts the rest of the letters to lowercase.
      *
      * T$NAMA$RFO_max => TNamaRfoMax
      *
-     * @param  string $schemaName name to be converted.
-     * @return string Converted name.
      * @see NameGenerator
      * @see #underscoreMethod()
+     *
+     * @param string $schemaName name to be converted.
+     *
+     * @return string Converted name.
      */
     protected function cleanMethod($schemaName)
     {
@@ -131,22 +140,24 @@ class PhpNameGenerator implements NameGeneratorInterface
     }
 
     /**
-     * Converts a database schema name to php object name.  Operates
+     * Converts a database schema name to php object name. Operates
      * same as underscoreMethod but does not convert anything to
      * lowercase.
      *
      * my_CLASS_name -> MyCLASSName
      *
-     * @param  string $schemaName name to be converted.
-     * @return string Converted name.
      * @see NameGenerator
      * @see #underscoreMethod(String)
+     *
+     * @param string $schemaName name to be converted.
+     *
+     * @return string Converted name.
      */
     protected function phpnameMethod($schemaName)
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
-        while (false !== $tok) {
+        while ($tok !== false) {
             $name .= ucfirst($tok);
             $tok = strtok(self::STD_SEPARATOR_CHAR);
         }
@@ -155,11 +166,12 @@ class PhpNameGenerator implements NameGeneratorInterface
     }
 
     /**
-     * Converts a database schema name to PHP object name.  In this
+     * Converts a database schema name to PHP object name. In this
      * case no conversion is made.
      *
-     * @param  string $name name to be converted.
-     * @return string The <code>name</code> parameter, unchanged.
+     * @param string $name name to be converted.
+     *
+     * @return string
      */
     protected function nochangeMethod($name)
     {

@@ -10,7 +10,8 @@
 
 namespace Propel\Generator\Util;
 
-use \Propel\Runtime\Connection\ConnectionInterface;
+use PDOStatement;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
@@ -19,11 +20,29 @@ use \Propel\Runtime\Connection\ConnectionInterface;
  */
 class SqlParser
 {
+    /**
+     * @var string
+     */
     protected $delimiter = ';';
+
+    /**
+     * @var int
+     */
     protected $delimiterLength = 1;
 
+    /**
+     * @var string
+     */
     protected $sql = '';
+
+    /**
+     * @var int
+     */
     protected $len = 0;
+
+    /**
+     * @var int
+     */
     protected $pos = 0;
 
     /**
@@ -31,6 +50,7 @@ class SqlParser
      * Also resets the parsing cursor (see getNextStatement)
      *
      * @param string $sql The SQL string to parse
+     *
      * @return void
      */
     public function setSQL($sql)
@@ -54,10 +74,10 @@ class SqlParser
      * Execute a list of DDL statements based on a string
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param string              $input      The SQL statements
-     * @param ConnectionInterface $connection a connection object
+     * @param string $input The SQL statements
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return integer the number of executed statements
+     * @return int the number of executed statements
      */
     public static function executeString($input, ConnectionInterface $connection)
     {
@@ -68,10 +88,10 @@ class SqlParser
      * Execute a list of DDL statements based on the path to the SQL file
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param string              $file       the path to the SQL file
-     * @param ConnectionInterface $connection a connection object
+     * @param string $file the path to the SQL file
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return integer the number of executed statements
+     * @return int the number of executed statements
      */
     public static function executeFile($file, ConnectionInterface $connection)
     {
@@ -82,10 +102,10 @@ class SqlParser
      * Execute a list of DDL statements based on an array
      * Does not use transactions since they are not supported in DDL statements
      *
-     * @param array               $statements a list of SQL statements
-     * @param ConnectionInterface $connection a connection object
+     * @param array $statements a list of SQL statements
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return integer the number of executed statements
+     * @return int the number of executed statements
      */
     protected static function executeStatements($statements, ConnectionInterface $connection)
     {
@@ -93,7 +113,7 @@ class SqlParser
 
         foreach ($statements as $statement) {
             $stmt = $connection->prepare($statement);
-            if ($stmt instanceof \PDOStatement) {
+            if ($stmt instanceof PDOStatement) {
                 // only execute if has no error
                 $stmt->execute();
                 $executed++;
@@ -105,6 +125,7 @@ class SqlParser
 
     /**
      * Explodes a SQL string into an array of SQL statements.
+     *
      * @example
      * <code>
      * echo SqlParser::parseString("-- Table foo
@@ -116,14 +137,15 @@ class SqlParser
      * ) ENGINE=InnoDB;");
      * // results in
      * // array(
-     * //   "DROP TABLE foo;",
-     * //   "CREATE TABLE foo (
-     * //      id int(11) NOT NULL AUTO_INCREMENT,
-     * //      title varchar(255) NOT NULL,
-     * //      PRIMARY KEY (id),
-     * //   ) ENGINE=InnoDB;"
+     * // "DROP TABLE foo;",
+     * // "CREATE TABLE foo (
+     * // id int(11) NOT NULL AUTO_INCREMENT,
+     * // title varchar(255) NOT NULL,
+     * // PRIMARY KEY (id),
+     * // ) ENGINE=InnoDB;"
      * // )
      * </code>
+     *
      * @param string $input The SQL code to parse
      *
      * @return array A list of SQL statement strings
@@ -140,19 +162,21 @@ class SqlParser
 
     /**
      * Explodes a SQL file into an array of SQL statements.
+     *
      * @example
      * <code>
      * echo SqlParser::parseFile('/var/tmp/foo.sql');
      * // results in
      * // array(
-     * //   "DROP TABLE foo;",
-     * //   "CREATE TABLE foo (
-     * //      id int(11) NOT NULL AUTO_INCREMENT,
-     * //      title varchar(255) NOT NULL,
-     * //      PRIMARY KEY (id),
-     * //   ) ENGINE=InnoDB;"
+     * // "DROP TABLE foo;",
+     * // "CREATE TABLE foo (
+     * // id int(11) NOT NULL AUTO_INCREMENT,
+     * // title varchar(255) NOT NULL,
+     * // PRIMARY KEY (id),
+     * // ) ENGINE=InnoDB;"
      * // )
      * </code>
+     *
      * @param string $file The absolute path to the file to parse
      *
      * @return array A list of SQL statement strings
@@ -181,7 +205,7 @@ class SqlParser
     {
         $this->setSQL(preg_replace([
             '#^\s*(//|--|\#).*(\n|$)#m',    // //, --, or # style comments
-            '#^\s*/\*.*?\*/#s'              // c-style comments
+            '#^\s*/\*.*?\*/#s',              // c-style comments
         ], '', $this->sql));
     }
 
@@ -218,11 +242,12 @@ class SqlParser
             $char = isset($this->sql[$this->pos]) ? $this->sql[$this->pos] : '';
             // check flags for strings or escaper
             switch ($char) {
-                case "\\":
+                case '\\':
                     $isAfterBackslash = true;
+
                     break;
                 case "'":
-                case "\"":
+                case '"':
                     if ($isInString && $stringQuotes == $char) {
                         if (!$isAfterBackslash) {
                             $isInString = false;
@@ -231,14 +256,15 @@ class SqlParser
                         $stringQuotes = $char;
                         $isInString = true;
                     }
+
                     break;
             }
             $this->pos++;
-            if ($char !== "\\") {
+            if ($char !== '\\') {
                 $isAfterBackslash = false;
             }
             if (!$isInString) {
-                if (false !== strpos($lowercaseString, 'delimiter ')) {
+                if (strpos($lowercaseString, 'delimiter ') !== false) {
                     // remove DELIMITER from string because it's a command-line keyword only
                     $parsedString = trim(str_ireplace('delimiter ', '', $parsedString));
                     // set new delimiter
@@ -256,18 +282,22 @@ class SqlParser
                     } else {
                         // reset helper variable
                         $lowercaseString = '';
+
                         continue;
                     }
                 }
                 // get next characters if we have multiple characters in delimiter
                 $nextChars = '';
                 for ($i = 0; $i < $this->delimiterLength - 1; $i++) {
-                    if (!isset($this->sql[$this->pos + $i])) break;
+                    if (!isset($this->sql[$this->pos + $i])) {
+                        break;
+                    }
                     $nextChars .= $this->sql[$this->pos + $i];
                 }
                 // check for end of statement
-                if ($char.$nextChars == $this->delimiter) {
+                if ($char . $nextChars == $this->delimiter) {
                     $this->pos += $i; // increase position
+
                     return trim($parsedString);
                 }
                 // avoid using strtolower on the whole parsed string every time new character is added
@@ -276,7 +306,7 @@ class SqlParser
             }
             $parsedString .= $char;
         }
+
         return trim($parsedString);
     }
-
 }

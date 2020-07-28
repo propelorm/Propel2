@@ -20,15 +20,13 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
 {
-
     /**
      * For SQLite this method has no effect, since SQLite doesn't support specifying a character
      * set (or, another way to look at it, it doesn't require a single character set per DB).
      *
-     * @param ConnectionInterface $con     A PDO connection instance.
-     * @param string              $charset The charset encoding.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con A PDO connection instance.
+     * @param string $charset The charset encoding.
      *
-     * @throws \Propel\Runtime\Exception\PropelException If the specified charset doesn't match sqlite_libencoding()
      * @return void
      */
     public function setCharset(ConnectionInterface $con, $charset)
@@ -47,9 +45,10 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
         parent::initConnection($con, $settings);
 
         //add regex support
-        $con->sqliteCreateFunction('regexp', function($pattern, $value) {
+        $con->sqliteCreateFunction('regexp', function ($pattern, $value) {
             mb_regex_encoding('UTF-8');
-            return (false !== mb_ereg($pattern, $value)) ? 1 : 0;
+
+            return (mb_ereg($pattern, $value) !== false) ? 1 : 0;
         });
     }
 
@@ -69,9 +68,9 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
@@ -83,7 +82,8 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s)
@@ -94,7 +94,8 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifier()
      *
-     * @param  string $text
+     * @param string $text
+     *
      * @return string
      */
     public function quoteIdentifier($text)
@@ -105,9 +106,10 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::applyLimit()
      *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     *
      * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
@@ -120,7 +122,8 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
     public function random($seed = null)

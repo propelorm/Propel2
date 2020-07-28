@@ -10,8 +10,10 @@
 
 namespace Propel\Generator\Model;
 
+use InvalidArgumentException;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
+use ReflectionObject;
 
 /**
  * Information about behaviors of a table.
@@ -24,14 +26,14 @@ class Behavior extends MappingModel
     /**
      * The table object on which the behavior is applied.
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $table;
 
     /**
      * The database object.
      *
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $database;
 
@@ -60,7 +62,7 @@ class Behavior extends MappingModel
      * Wether or not the table has been
      * modified by the behavior.
      *
-     * @var boolean
+     * @var bool
      */
     protected $isTableModified = false;
 
@@ -92,6 +94,7 @@ class Behavior extends MappingModel
      * Sets the name of the Behavior
      *
      * @param string $name the name of the behavior
+     *
      * @return void
      */
     public function setName($name)
@@ -107,6 +110,7 @@ class Behavior extends MappingModel
      * Sets the id of the Behavior
      *
      * @param string $id The id of the behavior
+     *
      * @return void
      */
     public function setId($id)
@@ -149,6 +153,7 @@ class Behavior extends MappingModel
      * Sets the table this behavior is applied to
      *
      * @param \Propel\Generator\Model\Table $table
+     *
      * @return void
      */
     public function setTable(Table $table)
@@ -159,7 +164,7 @@ class Behavior extends MappingModel
     /**
      * Returns the table this behavior is applied to
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getTable()
     {
@@ -169,7 +174,8 @@ class Behavior extends MappingModel
     /**
      * Sets the database this behavior is applied to
      *
-     * @param Database $database
+     * @param \Propel\Generator\Model\Database $database
+     *
      * @return void
      */
     public function setDatabase(Database $database)
@@ -181,7 +187,7 @@ class Behavior extends MappingModel
      * Returns the table this behavior is applied to if behavior is applied to
      * a database element.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     public function getDatabase()
     {
@@ -195,6 +201,7 @@ class Behavior extends MappingModel
      * [ 'name' => 'foo', 'value' => bar ]
      *
      * @param array $parameter
+     *
      * @return void
      */
     public function addParameter(array $parameter)
@@ -209,6 +216,7 @@ class Behavior extends MappingModel
      * Expects an associative array looking like [ 'foo' => 'bar' ].
      *
      * @param array $parameters
+     *
      * @return void
      */
     public function setParameters(array $parameters)
@@ -229,7 +237,8 @@ class Behavior extends MappingModel
     /**
      * Returns a single parameter by its name.
      *
-     * @param  string $name
+     * @param string $name
+     *
      * @return mixed
      */
     public function getParameter($name)
@@ -244,12 +253,13 @@ class Behavior extends MappingModel
      *
      * Default is 50.
      *
-     * @param integer $tableModificationOrder
+     * @param int $tableModificationOrder
+     *
      * @return void
      */
     public function setTableModificationOrder($tableModificationOrder)
     {
-        $this->tableModificationOrder = (int) $tableModificationOrder;
+        $this->tableModificationOrder = (int)$tableModificationOrder;
     }
 
     /**
@@ -259,7 +269,7 @@ class Behavior extends MappingModel
      *
      * Default is 50.
      *
-     * @return integer
+     * @return int
      */
     public function getTableModificationOrder()
     {
@@ -272,6 +282,7 @@ class Behavior extends MappingModel
      *
      * Propagates the behavior to the tables of the database and override this
      * method to have a database behavior do something special.
+     *
      * @return void
      */
     public function modifyDatabase()
@@ -289,7 +300,7 @@ class Behavior extends MappingModel
     /**
      * Returns the list of all tables in the same database.
      *
-     * @return Table[] A collection of Table instance
+     * @return \Propel\Generator\Model\Table[] A collection of Table instance
      */
     protected function getTables()
     {
@@ -310,7 +321,8 @@ class Behavior extends MappingModel
     /**
      * Sets whether or not the table has been modified.
      *
-     * @param boolean $modified
+     * @param bool $modified
+     *
      * @return void
      */
     public function setTableModified($modified)
@@ -321,7 +333,7 @@ class Behavior extends MappingModel
     /**
      * Returns whether or not the table has been modified.
      *
-     * @return boolean
+     * @return bool
      */
     public function isTableModified()
     {
@@ -333,9 +345,12 @@ class Behavior extends MappingModel
      * passed as arguments. The template file name is relative to the behavior's
      * directory name.
      *
-     * @param  string $filename
-     * @param  array  $vars
-     * @param  string $templateDir
+     * @param string $filename
+     * @param array $vars
+     * @param string $templateDir
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return string
      */
     public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
@@ -345,7 +360,8 @@ class Behavior extends MappingModel
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+                throw new InvalidArgumentException(sprintf(
+                    'Template "%s" not found in "%s" directory',
                     $filename,
                     $this->getDirname() . $templateDir
                 ));
@@ -366,8 +382,8 @@ class Behavior extends MappingModel
      */
     protected function getDirname()
     {
-        if (null === $this->dirname) {
-            $r = new \ReflectionObject($this);
+        if ($this->dirname === null) {
+            $r = new ReflectionObject($this);
             $this->dirname = dirname($r->getFileName());
         }
 
@@ -378,8 +394,9 @@ class Behavior extends MappingModel
      * Returns a column object using a name stored in the behavior parameters.
      * Useful for table behaviors.
      *
-     * @param  string $name
-     * @return Column
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Column
      */
     public function getColumnForParameter($name)
     {
@@ -388,6 +405,7 @@ class Behavior extends MappingModel
 
     /**
      * @throws \Propel\Generator\Exception\LogicException
+     *
      * @return void
      */
     protected function setupObject()
@@ -452,7 +470,7 @@ class Behavior extends MappingModel
     /**
      * Returns whether or not this behavior has additional builders.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAdditionalBuilders()
     {

@@ -106,13 +106,15 @@ class VersionableBehaviorObjectBuilderModifier
      */
     protected function setBuilder($builder)
     {
-        $this->builder         = $builder;
+        $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
-        $this->queryClassName  = $builder->getQueryClassName();
+        $this->queryClassName = $builder->getQueryClassName();
     }
 
     /**
      * Get the getter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related getter, e.g. 'getVersion'
      */
@@ -123,6 +125,8 @@ class VersionableBehaviorObjectBuilderModifier
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */
@@ -225,7 +229,7 @@ protected \$enforceVersion = false;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addVersionSetter($script);
             $this->addVersionGetter($script);
         }
@@ -350,9 +354,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
         }
 
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
-
             if ($fk->isLocalPrimaryKey()) {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk);
                 $script .= "
     if (\$this->single{$fkGetter}) {
@@ -369,7 +371,6 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
     }
 ";
             } else {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
                 $script .= "
     if (\$this->coll{$fkGetter}) {
@@ -405,7 +406,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
      */
     protected function addAddVersion(&$script)
     {
-        $versionTable       = $this->behavior->getVersionTable();
+        $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
 
         $script .= "
@@ -423,7 +424,7 @@ public function addVersion(ConnectionInterface \$con = null)
     \$version = new {$versionARClassName}();";
         foreach ($this->table->getColumns() as $col) {
             $script .= "
-    \$version->set" . $col->getPhpName() . "(\$this->get" . $col->getPhpName() . "());";
+    \$version->set" . $col->getPhpName() . '($this->get' . $col->getPhpName() . '());';
         }
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
@@ -532,7 +533,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         $columns = $this->table->getColumns();
         foreach ($columns as $col) {
             $script .= "
-    \$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
+    \$this->set" . $col->getPhpName() . '($version->get' . $col->getPhpName() . '());';
         }
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
@@ -878,7 +879,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
-        $versionGetter = 'get'.$relCol;
+        $versionGetter = 'get' . $relCol;
         $colPrefix = Column::CONSTANT_PREFIX;
 
         $script .= <<<EOF

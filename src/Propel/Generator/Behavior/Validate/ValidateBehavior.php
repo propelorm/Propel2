@@ -23,12 +23,16 @@ use Symfony\Component\Yaml\Parser;
 class ValidateBehavior extends Behavior
 {
     /**
-     * @param object $builder The current builder
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder $builder The current builder
      */
     protected $builder;
 
     /**
      * Add behavior methods to model class
+     *
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string
      */
@@ -79,13 +83,14 @@ class ValidateBehavior extends Behavior
      * Returns the parameters associated with a given column.
      * Useful for i18n behavior
      *
-     * @param  string|null $columnName The column name
-     * @return array  The array of parameters associated to given column
+     * @param string|null $columnName The column name
+     *
+     * @return array The array of parameters associated to given column
      */
     public function getParametersFromColumnName($columnName = null)
     {
         $array = [];
-        if (null !== $columnName) {
+        if ($columnName !== null) {
             $this->cleanupParameters();
             foreach ($this->getParameters() as $key => $parameter) {
                 if ($parameter['column'] === $columnName) {
@@ -102,11 +107,12 @@ class ValidateBehavior extends Behavior
      * Useful for i18n behavior
      *
      * @param string|null $columnName The column name
+     *
      * @return void
      */
     public function removeParametersFromColumnName($columnName = null)
     {
-        if (null !== $columnName) {
+        if ($columnName !== null) {
             $newParams = [];
             $parameters = $this->getParameters();
             foreach ($parameters as $key => $parameter) {
@@ -131,11 +137,12 @@ class ValidateBehavior extends Behavior
     {
         if (!count($this->getParameters())) {
             $pk = $this->getTable()->getPrimaryKey();
-            $parameters = ['auto_rule' => [
-                'column'     => $pk[0]->getName(),
+            $parameters = [
+            'auto_rule' => [
+                'column' => $pk[0]->getName(),
                 'validators' => 'Type',
-                'options'    => [
-                    'type'   => $pk[0]->getPhpType(),
+                'options' => [
+                    'type' => $pk[0]->getPhpType(),
                 ],
             ]];
             $this->setParameters($parameters);
@@ -146,11 +153,14 @@ class ValidateBehavior extends Behavior
      * Merge $paramArray array into parameters array.
      * This method avoid that there are rules with the same name, when adding parameters programmatically.
      * Useful for Concrete Inheritance behavior.
+     *
+     * @param array|null $params
+     *
      * @return void
      */
-    public function mergeParameters(array $params = null)
+    public function mergeParameters(?array $params = null)
     {
-        if (null !== $params) {
+        if ($params !== null) {
             $parameters = $this->getParameters();
             $out = [];
             $i = 1;
@@ -170,6 +180,7 @@ class ValidateBehavior extends Behavior
     /**
      * Convert those parameters, containing an array in YAML format
      * into a php array
+     *
      * @return void
      */
     protected function cleanupParameters()
@@ -186,6 +197,8 @@ class ValidateBehavior extends Behavior
 
     /**
      * Add loadValidatorMetadata() method
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string
      */
@@ -228,6 +241,8 @@ class ValidateBehavior extends Behavior
      *
      * @param array $properties
      *
+     * @throws \Propel\Generator\Exception\ConstraintNotFoundException
+     *
      * @return string
      */
     protected function getClassConstraint(array $properties)
@@ -243,11 +258,12 @@ class ValidateBehavior extends Behavior
             }
         }
 
-        throw new ConstraintNotFoundException('The constraint class '.$properties['validator'].' does not exist.');
+        throw new ConstraintNotFoundException('The constraint class ' . $properties['validator'] . ' does not exist.');
     }
 
     /**
      * Adds the validate() method.
+     *
      * @return string The code to be added to model class
      */
     protected function addValidateMethod()
@@ -275,9 +291,9 @@ class ValidateBehavior extends Behavior
 
         return $this->renderTemplate('objectValidate', [
             'hasForeignKeys' => $hasForeignKeys,
-            'aVarNames'      => $aVarNames,
-            'refFkVarNames'  => $refFkVarNames,
-            'collVarNames'   => $collVarNames
+            'aVarNames' => $aVarNames,
+            'refFkVarNames' => $refFkVarNames,
+            'collVarNames' => $collVarNames,
         ]);
     }
 

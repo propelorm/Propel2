@@ -10,13 +10,14 @@
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Exception\InvalidArgumentException;
+use PDO;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
  */
-class PdoConnection extends \PDO implements ConnectionInterface
+class PdoConnection extends PDO implements ConnectionInterface
 {
     use TransactionTrait;
 
@@ -27,6 +28,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     *
      * @return void
      */
     public function setName($name)
@@ -50,7 +52,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
      * @param string|null $password
      * @param array|null $options
      */
-    public function __construct($dsn, $user = null, $password = null, array $options = null)
+    public function __construct($dsn, $user = null, $password = null, ?array $options = null)
     {
         // Convert option keys from a string to a \PDO:: constant
         $pdoOptions = [];
@@ -63,7 +65,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
         parent::__construct($dsn, $user, $password, $pdoOptions);
 
-        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -71,15 +73,16 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * This is overridden here to allow names corresponding to PDO constant names.
      *
-     * @param integer $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
-     * @param mixed   $value     The attribute value.
+     * @param int $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
+     * @param mixed $value The attribute value.
+     *
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
      *
      * @return bool
-     * @throws InvalidArgumentException
      */
     public function setAttribute($attribute, $value)
     {
-        if (is_string($attribute) && false === strpos($attribute, '::')) {
+        if (is_string($attribute) && strpos($attribute, '::') === false) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
                 throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
@@ -137,7 +140,8 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  string|null        $name
+     * @param string|null $name
+     *
      * @return string|int
      */
     public function lastInsertId($name = null)
@@ -148,8 +152,9 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  string                                     $statement
-     * @param  array                                      $driver_options
+     * @param string $statement
+     * @param array|null $driver_options
+     *
      * @return bool|\PDOStatement|void
      */
     public function prepare($statement, $driver_options = null)
@@ -160,12 +165,13 @@ class PdoConnection extends \PDO implements ConnectionInterface
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  string $string
-     * @param  int    $parameter_type
+     * @param string $string
+     * @param int $parameterType
+     *
      * @return string
      */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR)
+    public function quote($string, $parameterType = PDO::PARAM_STR)
     {
-        return parent::quote($string, $parameter_type);
+        return parent::quote($string, $parameterType);
     }
 }

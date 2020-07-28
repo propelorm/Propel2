@@ -10,8 +10,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\EngineException;
-
 /**
  * The generic interface to a name generation algorithm.
  *
@@ -26,17 +24,17 @@ interface NameGeneratorInterface
      * The character used by most implementations as the separator
      * between name elements.
      */
-    const STD_SEPARATOR_CHAR = '_';
+    public const STD_SEPARATOR_CHAR = '_';
 
     /**
      * Traditional method for converting schema table and column names
-     * to PHP names.  The <code>CONV_METHOD_XXX</code> constants
+     * to PHP names. The <code>CONV_METHOD_XXX</code> constants
      * define how names for columns and tables in the database schema
      * will be converted to PHP source names.
      *
      * @see PhpNameGenerator::underscoreMethod()
      */
-    const CONV_METHOD_UNDERSCORE = 'underscore';
+    public const CONV_METHOD_UNDERSCORE = 'underscore';
 
     /**
      * Heavier method for converting schema table and column names
@@ -47,7 +45,7 @@ interface NameGeneratorInterface
      * constants define how names for columns and tales in the
      * database schema will be converted to PHP source names.
      */
-    const CONV_METHOD_CLEAN = 'clean';
+    public const CONV_METHOD_CLEAN = 'clean';
 
     /**
      * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
@@ -55,21 +53,23 @@ interface NameGeneratorInterface
      *
      * @see PhpNameGenerator::phpnameMethod()
      */
-    const CONV_METHOD_PHPNAME = 'phpname';
+    public const CONV_METHOD_PHPNAME = 'phpname';
 
     /**
      * Specifies no modification when converting from a schema column
      * or table name to a PHP name.
      */
-    const CONV_METHOD_NOCHANGE = 'nochange';
+    public const CONV_METHOD_NOCHANGE = 'nochange';
 
     /**
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param  string[]        $inputs Inputs used to generate a name.
-     * @return string          The generated name.
-     * @throws EngineException
+     * @param string[] $inputs Inputs used to generate a name.
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return string The generated name.
      */
     public function generateName($inputs);
 }

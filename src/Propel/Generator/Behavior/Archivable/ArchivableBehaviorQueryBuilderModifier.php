@@ -136,7 +136,7 @@ if (\$this->archiveOnUpdate) {
     {
         return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
-            'modelTableMap'       => $builder->getTableMapClass(),
+            'modelTableMap' => $builder->getTableMapClass(),
         ]);
     }
 

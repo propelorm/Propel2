@@ -12,9 +12,7 @@ namespace Propel\Generator\Behavior\Archivable;
 
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -23,25 +21,40 @@ use Propel\Generator\Model\Table;
  */
 class ArchivableBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array
+     */
     protected $parameters = [
-        'archive_table'       => '',
-        'archive_phpname'     => null,
-        'archive_class'       => '',
-        'log_archived_at'     => 'true',
-        'archived_at_column'  => 'archived_at',
-        'archive_on_insert'   => 'false',
-        'archive_on_update'   => 'false',
-        'archive_on_delete'   => 'true',
+        'archive_table' => '',
+        'archive_phpname' => null,
+        'archive_class' => '',
+        'log_archived_at' => 'true',
+        'archived_at_column' => 'archived_at',
+        'archive_on_insert' => 'false',
+        'archive_on_update' => 'false',
+        'archive_on_delete' => 'true',
     ];
 
     /**
-     * @var Table|null
+     * @var \Propel\Generator\Model\Table|null
      */
     protected $archiveTable;
+
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
+
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
+    /**
+     * @return void
+     */
     public function modifyDatabase()
     {
         foreach ($this->getDatabase()->getTables() as $table) {
@@ -60,6 +73,7 @@ class ArchivableBehavior extends Behavior
 
     /**
      * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
      * @return void
      */
     public function modifyTable()
@@ -83,12 +97,12 @@ class ArchivableBehavior extends Behavior
         if (!$database->hasTable($archiveTableName)) {
             // create the version table
             $archiveTable = $database->addTable([
-                'name'      => $archiveTableName,
-                'phpName'   => $this->getParameter('archive_phpname'),
-                'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
+                'name' => $archiveTableName,
+                'phpName' => $this->getParameter('archive_phpname'),
+                'package' => $table->getPackage(),
+                'schema' => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-                'identifierQuoting' => $table->getIdentifierQuoting()
+                'identifierQuoting' => $table->getIdentifierQuoting(),
             ]);
             $archiveTable->isArchiveTable = true;
             // copy all the columns
@@ -106,7 +120,7 @@ class ArchivableBehavior extends Behavior
             if ($this->getParameter('log_archived_at') == 'true') {
                 $archiveTable->addColumn([
                     'name' => $this->getParameter('archived_at_column'),
-                    'type' => 'TIMESTAMP'
+                    'type' => 'TIMESTAMP',
                 ]);
             }
             // do not copy foreign keys
@@ -140,7 +154,7 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @return Table|null
+     * @return \Propel\Generator\Model\Table|null
      */
     public function getArchiveTable()
     {
@@ -184,11 +198,11 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @return Column|null
+     * @return \Propel\Generator\Model\Column|null
      */
     public function getArchivedAtColumn()
     {
-        if ($this->getArchiveTable() && 'true' === $this->getParameter('log_archived_at')) {
+        if ($this->getArchiveTable() && $this->getParameter('log_archived_at') === 'true') {
             return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
         }
 
@@ -200,7 +214,7 @@ class ArchivableBehavior extends Behavior
      */
     public function isArchiveOnInsert()
     {
-        return 'true' === $this->getParameter('archive_on_insert');
+        return $this->getParameter('archive_on_insert') === 'true';
     }
 
     /**
@@ -208,7 +222,7 @@ class ArchivableBehavior extends Behavior
      */
     public function isArchiveOnUpdate()
     {
-        return 'true' === $this->getParameter('archive_on_update');
+        return $this->getParameter('archive_on_update') === 'true';
     }
 
     /**
@@ -216,15 +230,15 @@ class ArchivableBehavior extends Behavior
      */
     public function isArchiveOnDelete()
     {
-        return 'true' === $this->getParameter('archive_on_delete');
+        return $this->getParameter('archive_on_delete') === 'true';
     }
 
     /**
-     * @return \Propel\Generator\Behavior\Archivable\ArchivableBehavior|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorObjectBuilderModifier
+     * @return $this|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorObjectBuilderModifier
      */
     public function getObjectBuilderModifier()
     {
-        if (null === $this->objectBuilderModifier) {
+        if ($this->objectBuilderModifier === null) {
             $this->objectBuilderModifier = new ArchivableBehaviorObjectBuilderModifier($this);
         }
 
@@ -232,11 +246,11 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Behavior\Archivable\ArchivableBehavior|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorQueryBuilderModifier
+     * @return $this|\Propel\Generator\Behavior\Archivable\ArchivableBehaviorQueryBuilderModifier
      */
     public function getQueryBuilderModifier()
     {
-        if (null === $this->queryBuilderModifier) {
+        if ($this->queryBuilderModifier === null) {
             $this->queryBuilderModifier = new ArchivableBehaviorQueryBuilderModifier($this);
         }
 

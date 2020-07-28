@@ -47,26 +47,25 @@ class SortableBehaviorTableMapBuilderModifier
         $col = '';
 
         if ($this->behavior->useScope()) {
-
             if ($this->behavior->hasMultipleScopes()) {
                 $columns = [];
                 foreach ($this->behavior->getScopes() as $scope) {
-                    $columns[] = "$tableName.".strtoupper($scope);
+                    $columns[] = "$tableName." . strtoupper($scope);
                 }
                 $col = json_encode($columns);
                 $col = "'$col'";
             } else {
                 $colNames = $this->getColumnConstant('scope_column');
-                $col =  "'$tableName.$colNames'";
+                $col = "'$tableName.$colNames'";
             }
         }
 
         return $this->behavior->renderTemplate('tableMapSortable', [
             'rankColumn' => $this->getColumnConstant('rank_column'),
             'multiScope' => $this->behavior->hasMultipleScopes(),
-            'scope'      => $col,
-            'tableName'  => $this->table->getName(),
-            'useScope'   => $this->behavior->useScope(),
+            'scope' => $col,
+            'tableName' => $this->table->getName(),
+            'useScope' => $this->behavior->useScope(),
         ]);
     }
 
@@ -79,5 +78,4 @@ class SortableBehaviorTableMapBuilderModifier
     {
         return $this->behavior->getColumnForParameter($name)->getName();
     }
-
 }
