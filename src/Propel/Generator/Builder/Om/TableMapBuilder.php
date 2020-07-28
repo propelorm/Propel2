@@ -231,7 +231,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     const " . $col->getConstantName() . " = '" . $this->getTable()->getName() . '.' . $col->getName() . "';
 ";
-        } // foreach
+        }
     }
 
     /**
@@ -586,7 +586,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
                 $script .= "
         \$this->getColumn('$columnName')->setPrimaryString(true);";
             }
-        } // foreach
+        }
 
         $script .= "
     } // initialize()

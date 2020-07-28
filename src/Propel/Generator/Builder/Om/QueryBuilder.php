@@ -1614,7 +1614,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      */
     protected function addFilterByCrossFK(&$script, CrossForeignKeys $crossFKs)
     {
-        $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
+        $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
 
         foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
             $queryClass = $this->getQueryClassName();
@@ -1622,7 +1622,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             $foreignTable = $crossFK->getForeignTable();
             $fkPhpName = $foreignTable->getPhpName();
             $crossTableName = $crossRefTable->getName();
-            $relName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relName = $this->getFKPhpNameAffix($crossFK, false);
             $objectName = '$' . $foreignTable->getCamelCaseName();
             $script .= "
     /**
@@ -2022,9 +2022,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
 
                     $script .= "
             \$affectedRows += \$query->delete(\$con);";
-                } // if cascade && fkey table name != curr table name
-            } // if not for ref only
-        } // foreach foreign keys
+                }
+            }
+        }
         $script .= "
         }
 
@@ -2104,9 +2104,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
 
                     $script .= "\$query->update(\$updateValues, \$con);
 ";
-                } // if setnull && fkey table name != curr table name
-            } // if not for ref only
-        } // foreach foreign keys
+                }
+            }
+        }
 
         $script .= "
         }
