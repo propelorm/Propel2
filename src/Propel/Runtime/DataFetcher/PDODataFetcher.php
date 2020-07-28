@@ -64,7 +64,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * @param null $style
+     * @param int|null $style
      *
      * @return array|null
      */

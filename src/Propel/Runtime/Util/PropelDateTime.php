@@ -49,20 +49,18 @@ class PropelDateTime extends DateTime
         if (!is_numeric($value)) {
             return false;
         }
-
         if (strlen((string)$value) === 8) {
             return false;
         }
 
-        $stamp = strtotime($value);
-
+        $stamp = strtotime((string)$value);
         if ($stamp === false) {
             return true;
         }
 
-        $month = (int)date('m', $value);
-        $day = (int)date('d', $value);
-        $year = (int)date('Y', $value);
+        $month = (int)date('m', (int)$value);
+        $day = (int)date('d', (int)$value);
+        $year = (int)date('Y', (int)$value);
 
         return checkdate($month, $day, $year);
     }

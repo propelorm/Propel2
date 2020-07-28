@@ -8,7 +8,7 @@ namespace Propel\Runtime\DataFetcher;
 abstract class AbstractDataFetcher implements DataFetcherInterface
 {
     /**
-     * @var mixed
+     * @var mixed|null
      */
     protected $dataObject;
 
@@ -21,7 +21,9 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * @inheritDoc
+     * @param mixed|null $dataObject
+     *
+     * @return void
      */
     public function setDataObject($dataObject)
     {
@@ -29,7 +31,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * @return \Propel\Runtime\DataFetcher\PDODataFetcher
+     * @return mixed
      */
     public function getDataObject()
     {
