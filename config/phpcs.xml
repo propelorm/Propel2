@@ -23,6 +23,15 @@
     <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements">
         <severity>0</severity>
     </rule>
+    <rule ref="Generic.PHP.NoSilencedErrors">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.PHP.Eval">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <severity>0</severity>
+    </rule>
 
     <rule ref="Spryker.Commenting.DocBlockReturnSelf">
         <severity>0</severity>

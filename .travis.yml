@@ -1,9 +1,7 @@
 language: php
 
 git:
-  strategy: clone
   depth: 1
-  quiet: true
 
 dist: bionic
 
@@ -488,6 +486,7 @@ jobs:
         - composer install --prefer-dist --no-interaction
       script:
         - composer stan
+        - composer cs-check
 
   allow_failures:
     - php: nightly
