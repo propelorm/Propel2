@@ -13,14 +13,15 @@ Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.
 
 Propel uses the following Symfony Components:
 
-* [Console](https://github.com/symfony/Console)
-* [Yaml](https://github.com/symfony/Yaml)
-* [Finder](https://github.com/symfony/Finder)
-* [Validator](https://github.com/symfony/Validator)
-* [Filesystem](https://github.com/symfony/Filesystem)
 * [Config](https://github.com/symfony/config)
+* [Console](https://github.com/symfony/console)
+* [Filesystem](https://github.com/symfony/filesystem)
+* [Finder](https://github.com/symfony/finder)
+* [Translation](https://github.com/symfony/translation)
+* [Validator](https://github.com/symfony/validator)
+* [Yaml](https://github.com/symfony/yaml)
 
-Propel also relies on [**Composer**](https://github.com/composer/composer) to manage dependencies but you
+Propel primarily relies on [**Composer**](https://github.com/composer/composer) to manage dependencies, but you
 also can use [ClassLoader](https://github.com/symfony/ClassLoader) (see the `autoload.php.dist` file for instance).
 
 
@@ -32,7 +33,7 @@ Read the [Propel documentation](http://propelorm.org/documentation/01-installati
 ## Contribute
 
 Everybody can contribute to Propel. Just fork it, and send Pull Requests.
-You have to follow [Propel2 Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit
+You have to follow [Propel Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit
 tests as much as possible. Also [check out the roadmap](https://github.com/propelorm/Propel2/wiki) to get an overview of what we are working on!
 
 Please see our [contribution guideline](http://propelorm.org/contribute.html). Thank you!
