@@ -165,6 +165,9 @@ class TableMap
      */
     protected $identifierQuoting = null;
 
+    /** @var string|null */
+    protected $collectionClassName = null;
+
     /**
      * Construct a new TableMap.
      */
@@ -275,11 +278,10 @@ class TableMap
      */
     public function getCollectionClassName()
     {
-        $collectionClass = $this->getClassName().'Collection';
-        if (class_exists($collectionClass)) {
-            return $collectionClass;
+        if ($this->collectionClassName !== null) {
+            return $this->collectionClassName;
         }
-        
+
         return '\Propel\Runtime\Collection\ObjectCollection';
     }
 
