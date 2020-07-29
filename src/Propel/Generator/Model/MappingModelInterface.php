@@ -17,15 +17,17 @@ namespace Propel\Generator\Model;
  */
 interface MappingModelInterface
 {
-    const DEFAULT_STRING_FORMAT = 'YAML';
-    const VISIBILITY_PUBLIC     = 'public';
-    const VISIBILITY_PRIVATE    = 'private';
-    const VISIBILITY_PROTECTED  = 'protected';
+    public const DEFAULT_STRING_FORMAT = 'YAML';
+    public const VISIBILITY_PUBLIC = 'public';
+    public const VISIBILITY_PRIVATE = 'private';
+    public const VISIBILITY_PROTECTED = 'protected';
 
     /**
      * Loads a model definition from an array.
      *
      * @param array $attributes
+     *
+     * @return void
      */
     public function loadMapping(array $attributes);
 }

@@ -19,51 +19,102 @@ use Propel\Generator\Model\Column;
  */
 class VersionableBehaviorObjectBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
+     */
     protected $behavior;
+
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
+
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
+
+    /**
+     * @var string
+     */
     protected $objectClassName;
 
+    /**
+     * @var string
+     */
+    protected $queryClassName;
+
+    /**
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name = 'version_column')
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnPhpName($name = 'version_column')
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    /**
+     * @return string
+     */
     protected function getVersionQueryClassName()
     {
         return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
 
+    /**
+     * @return string
+     */
     protected function getActiveRecordClassName()
     {
         return $this->builder->getObjectClassName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder($builder)
     {
-        $this->builder         = $builder;
+        $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
-        $this->queryClassName  = $builder->getQueryClassName();
+        $this->queryClassName = $builder->getQueryClassName();
     }
 
     /**
      * Get the getter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related getter, e.g. 'getVersion'
      */
@@ -75,6 +126,8 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * Get the setter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related setter, e.g. 'setVersion'
      */
     protected function getColumnSetter($name = 'version_column')
@@ -82,6 +135,11 @@ class VersionableBehaviorObjectBuilderModifier
         return 'set' . $this->getColumnPhpName($name);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preSave($builder)
     {
         $script = "if (\$this->isVersioningNecessary()) {
@@ -100,6 +158,11 @@ class VersionableBehaviorObjectBuilderModifier
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function postSave($builder)
     {
         return "if (isset(\$createVersion)) {
@@ -107,6 +170,11 @@ class VersionableBehaviorObjectBuilderModifier
 }";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null
+     */
     public function postDelete($builder)
     {
         $this->builder = $builder;
@@ -118,8 +186,15 @@ class VersionableBehaviorObjectBuilderModifier
 
             return $script;
         }
+
+        return null;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectAttributes($builder)
     {
         $script = '';
@@ -129,6 +204,11 @@ class VersionableBehaviorObjectBuilderModifier
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addEnforceVersionAttribute(&$script)
     {
         $script .= "
@@ -140,11 +220,16 @@ protected \$enforceVersion = false;
         ";
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addVersionSetter($script);
             $this->addVersionGetter($script);
         }
@@ -165,6 +250,11 @@ protected \$enforceVersion = false;
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addVersionSetter(&$script)
     {
         $script .= "
@@ -181,6 +271,11 @@ public function setVersion(\$v)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addVersionGetter(&$script)
     {
         $script .= "
@@ -196,6 +291,11 @@ public function getVersion()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addEnforceVersioning(&$script)
     {
         $objectClass = $this->builder->getStubObjectBuilder()->getClassname();
@@ -214,6 +314,11 @@ public function enforceVersioning()
         ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsVersioningNecessary(&$script)
     {
         $queryClassName = $this->builder->getQueryClassName();
@@ -249,9 +354,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
         }
 
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
-
             if ($fk->isLocalPrimaryKey()) {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk);
                 $script .= "
     if (\$this->single{$fkGetter}) {
@@ -268,7 +371,6 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
     }
 ";
             } else {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
                 $script .= "
     if (\$this->coll{$fkGetter}) {
@@ -297,9 +399,14 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addAddVersion(&$script)
     {
-        $versionTable       = $this->behavior->getVersionTable();
+        $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
 
         $script .= "
@@ -317,7 +424,7 @@ public function addVersion(ConnectionInterface \$con = null)
     \$version = new {$versionARClassName}();";
         foreach ($this->table->getColumns() as $col) {
             $script .= "
-    \$version->set" . $col->getPhpName() . "(\$this->get" . $col->getPhpName() . "());";
+    \$version->set" . $col->getPhpName() . '($this->get' . $col->getPhpName() . '());';
         }
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
@@ -365,6 +472,11 @@ public function addVersion(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addToVersion(&$script)
     {
         $ARclassName = $this->getActiveRecordClassName();
@@ -390,6 +502,11 @@ public function toVersion(\$versionNumber, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addPopulateFromVersion(&$script)
     {
         $ARclassName = $this->getActiveRecordClassName();
@@ -413,14 +530,18 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         $script .= "
     \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionColumnName}()] = \$this;";
 
-        foreach ($this->table->getColumns() as $col) {
+        $columns = $this->table->getColumns();
+        foreach ($columns as $col) {
             $script .= "
-    \$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
+    \$this->set" . $col->getPhpName() . '($version->get' . $col->getPhpName() . '());';
         }
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getId())->getVersionTable();
+
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior */
+            $behavior = $fk->getForeignTable()->getBehavior($this->behavior->getId());
+            $foreignVersionTable = $behavior->getVersionTable();
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
             $fkColumnName = $fk->getLocalColumnName();
@@ -450,6 +571,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $plural = false;
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural);
             $foreignTable = $fk->getTable();
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $foreignBehavior */
             $foreignBehavior = $foreignTable->getBehavior($this->behavior->getId());
             $foreignVersionTable = $foreignBehavior->getVersionTable();
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
@@ -491,6 +613,11 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetLastVersionNumber(&$script)
     {
         $script .= "
@@ -516,6 +643,11 @@ public function getLastVersionNumber(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addIsLastVersion(&$script)
     {
         $script .= "
@@ -533,6 +665,11 @@ public function isLastVersion(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetOneVersion(&$script)
     {
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getVersionTable()));
@@ -555,6 +692,11 @@ public function getOneVersion(\$versionNumber, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetAllVersions(&$script)
     {
         $versionTable = $this->behavior->getVersionTable();
@@ -582,6 +724,11 @@ public function getAllVersions(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addComputeDiff(&$script)
     {
         $script .= "
@@ -648,6 +795,11 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCompareVersion(&$script)
     {
         $script .= "
@@ -678,6 +830,11 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', ConnectionIn
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCompareVersions(&$script)
     {
         $script .= "
@@ -709,6 +866,11 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetLastVersions(&$script)
     {
         $plural = true;
@@ -717,7 +879,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
-        $versionGetter = 'get'.$relCol;
+        $versionGetter = 'get' . $relCol;
         $colPrefix = Column::CONSTANT_PREFIX;
 
         $script .= <<<EOF

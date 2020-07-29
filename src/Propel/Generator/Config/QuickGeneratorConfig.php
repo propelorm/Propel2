@@ -11,24 +11,25 @@
 namespace Propel\Generator\Config;
 
 use Propel\Common\Config\ConfigurationManager;
-use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
-use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
-use \Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Generator\Util\BehaviorLocator;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
     /**
-     * @var BehaviorLocator
+     * @var \Propel\Generator\Util\BehaviorLocator|null
      */
-    protected $behaviorLocator = null;
+    protected $behaviorLocator;
 
+    /**
+     * @param array|null $extraConf
+     */
     public function __construct($extraConf = [])
     {
-        if (null === $extraConf) {
+        if ($extraConf === null) {
             $extraConf = [];
         }
 
@@ -42,19 +43,19 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
                            'classname' => 'Propel\Runtime\Connection\DebugPDO',
                            'dsn' => 'sqlite::memory:',
                            'user' => '',
-                           'password' => ''
-                       ]
-                   ]
+                           'password' => '',
+                       ],
+                   ],
                ],
                'runtime' => [
                    'defaultConnection' => 'default',
-                   'connections' => ['default']
+                   'connections' => ['default'],
                ],
                'generator' => [
                    'defaultConnection' => 'default',
-                   'connections' => ['default']
-               ]
-           ]
+                   'connections' => ['default'],
+               ],
+           ],
         ];
 
         $configs = array_replace_recursive($configs, $extraConf);
@@ -65,15 +66,18 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
      * Gets a configured data model builder class for specified table and based
      * on type ('ddl', 'sql', etc.).
      *
-     * @param  Table            $table
-     * @param  string           $type
-     * @return DataModelBuilder
+     * @param \Propel\Generator\Model\Table $table
+     * @param string $type
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return \Propel\Generator\Builder\DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
         $class = $this->getConfigProperty('generator.objectModel.builders.' . $type);
 
-        if (null === $class) {
+        if ($class === null) {
             throw new InvalidArgumentException("Invalid data model builder type `$type`");
         }
 
@@ -86,7 +90,7 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
     /**
      * Returns a configured Pluralizer class.
      *
-     * @return PluralizerInterface
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
     public function getConfiguredPluralizer()
     {
@@ -94,21 +98,24 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
+    public function getConfiguredPlatform(?ConnectionInterface $con = null, $database = null)
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
+    public function getConfiguredSchemaParser(?ConnectionInterface $con = null, $database = null)
     {
         return null;
     }
 
+    /**
+     * @return \Propel\Generator\Util\BehaviorLocator
+     */
     public function getBehaviorLocator()
     {
         if (!$this->behaviorLocator) {

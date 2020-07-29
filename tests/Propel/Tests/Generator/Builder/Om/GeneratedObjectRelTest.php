@@ -405,6 +405,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertSame($author, $ret);
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollection()
     {
         // Ensure no data
@@ -710,6 +713,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithCustomNamedFKs()
     {
         // Ensure no data

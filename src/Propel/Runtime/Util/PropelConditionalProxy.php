@@ -19,41 +19,60 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @example
  * <code>
- * $c->_if(true)        // returns $c
- *     ->doStuff()      // executed
- *   ->_else()          // returns a PropelConditionalProxy instance
+ * $c->_if(true) // returns $c
+ *     ->doStuff() // executed
+ *   ->_else() // returns a PropelConditionalProxy instance
  *     ->doOtherStuff() // not executed
- *   ->_endif();        // returns $c
- * $c->_if(false)       // returns a PropelConditionalProxy instance
- *     ->doStuff()      // not executed
- *   ->_else()          // returns $c
+ *   ->_endif(); // returns $c
+ * $c->_if(false) // returns a PropelConditionalProxy instance
+ *     ->doStuff() // not executed
+ *   ->_else() // returns $c
  *     ->doOtherStuff() // executed
- *   ->_endif();        // returns $c
+ *   ->_endif(); // returns $c
  * @see Criteria
  *
  * @author Francois Zaninotto
  */
 class PropelConditionalProxy
 {
-    /** @var Criteria */
+    /**
+     * @var \Propel\Runtime\ActiveQuery\Criteria
+     */
     protected $criteria;
 
+    /**
+     * @var \Propel\Runtime\Util\PropelConditionalProxy|null
+     */
     protected $parent;
 
+    /**
+     * @var bool
+     */
     protected $state;
 
+    /**
+     * @var bool
+     */
     protected $wasTrue;
 
+    /**
+     * @var bool
+     */
     protected $parentState;
 
-    public function __construct(Criteria $criteria, $cond, self $proxy = null)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param mixed $cond
+     * @param \Propel\Runtime\Util\PropelConditionalProxy|self|null $proxy
+     */
+    public function __construct(Criteria $criteria, $cond, ?self $proxy = null)
     {
         $this->criteria = $criteria;
         $this->wasTrue = false;
         $this->setConditionalState($cond);
         $this->parent = $proxy;
 
-        if (null === $proxy) {
+        if ($proxy === null) {
             $this->parentState = true;
         } else {
             $this->parentState = $proxy->getConditionalState();
@@ -64,9 +83,9 @@ class PropelConditionalProxy
      * Returns a new level PropelConditionalProxy instance.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param boolean $cond
+     * @param bool $cond
      *
-     * @return $this|PropelConditionalProxy|Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _if($cond)
     {
@@ -76,9 +95,9 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @param boolean $cond ignored
+     * @param bool $cond ignored
      *
-     * @return $this|PropelConditionalProxy|Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _elseif($cond)
     {
@@ -88,7 +107,7 @@ class PropelConditionalProxy
     /**
      * Allows for conditional statements in a fluid interface.
      *
-     * @return $this|PropelConditionalProxy|Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _else()
     {
@@ -99,7 +118,7 @@ class PropelConditionalProxy
      * Returns the parent object
      * Allows for conditional statements in a fluid interface.
      *
-     * @return $this|PropelConditionalProxy|Criteria
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _endif()
     {
@@ -109,26 +128,37 @@ class PropelConditionalProxy
     /**
      * return the current conditional status
      *
-     * @return boolean
+     * @return bool
      */
     protected function getConditionalState()
     {
         return $this->state && $this->parentState;
     }
 
+    /**
+     * @param mixed $cond
+     *
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     */
     protected function setConditionalState($cond)
     {
-        $this->state = (Boolean) $cond;
+        $this->state = (bool)$cond;
         $this->wasTrue = $this->wasTrue || $this->state;
 
         return $this->getCriteriaOrProxy();
     }
 
+    /**
+     * @return self|null
+     */
     public function getParentProxy()
     {
         return $this->parent;
     }
 
+    /**
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     */
     public function getCriteriaOrProxy()
     {
         if ($this->state && $this->parentState) {
@@ -138,6 +168,12 @@ class PropelConditionalProxy
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return $this
+     */
     public function __call($name, $arguments)
     {
         return $this;

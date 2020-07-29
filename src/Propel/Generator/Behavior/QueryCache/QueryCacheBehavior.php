@@ -19,14 +19,26 @@ use Propel\Generator\Model\Behavior;
  */
 class QueryCacheBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'backend'     => 'apc',
-        'lifetime'    => 3600,
+        'backend' => 'apc',
+        'lifetime' => '3600',
     ];
 
+    /**
+     * @var string
+     */
     private $tableClassName;
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryAttributes($builder)
     {
         $script = "protected \$queryKey = '';
@@ -35,6 +47,7 @@ class QueryCacheBehavior extends Behavior
             case 'backend':
                 $script .= "protected static \$cacheBackend = array();
             ";
+
                 break;
             case 'apc':
                 break;
@@ -42,12 +55,18 @@ class QueryCacheBehavior extends Behavior
             default:
                 $script .= "protected static \$cacheBackend;
             ";
+
                 break;
         }
 
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
         $builder->declareClasses('\Propel\Runtime\Propel');
@@ -64,6 +83,11 @@ class QueryCacheBehavior extends Behavior
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetQueryKey(&$script)
     {
         $script .= "
@@ -76,6 +100,11 @@ public function setQueryKey(\$key)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetQueryKey(&$script)
     {
         $script .= "
@@ -86,6 +115,11 @@ public function getQueryKey()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCacheContains(&$script)
     {
         $script .= "
@@ -96,42 +130,52 @@ public function cacheContains(\$key)
                 $script .= "
 
     return apc_fetch(\$key);";
+
                 break;
             case 'array':
                 $script .= "
 
     return isset(self::\$cacheBackend[\$key]);";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
-                break;
 
+                break;
         }
         $script .= "
 }
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCacheStore(&$script)
     {
         $script .= "
-public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('lifetime') . ")
+public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter('lifetime') . ")
 {";
         switch ($this->getParameter('backend')) {
             case 'apc':
                 $script .= "
     apc_store(\$key, \$value, \$lifetime);";
+
                 break;
             case 'array':
                 $script .= "
     self::\$cacheBackend[\$key] = \$value;";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
+
                 break;
         }
         $script .= "
@@ -139,6 +183,11 @@ public function cacheStore(\$key, \$value, \$lifetime = " .$this->getParameter('
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCacheFetch(&$script)
     {
         $script .= "
@@ -149,16 +198,19 @@ public function cacheFetch(\$key)
                 $script .= "
 
     return apc_fetch(\$key);";
+
                 break;
             case 'array':
                 $script .= "
 
     return isset(self::\$cacheBackend[\$key]) ? self::\$cacheBackend[\$key] : null;";
+
                 break;
             case 'custom':
             default:
                 $script .= "
     throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
+
                 break;
         }
         $script .= "
@@ -166,6 +218,11 @@ public function cacheFetch(\$key)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDoSelect(&$script)
     {
         $script .= "
@@ -177,8 +234,8 @@ public function doSelect(ConnectionInterface \$con = null)
     }
     \$this->configureSelectColumns();
 
-    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName ."::DATABASE_NAME);
-    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName ."::DATABASE_NAME);
+    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName . "::DATABASE_NAME);
+    \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName . "::DATABASE_NAME);
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
@@ -197,7 +254,7 @@ public function doSelect(ConnectionInterface \$con = null)
             Propel::log(\$e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
-        
+
     if (\$key && !\$this->cacheContains(\$key)) {
             \$this->cacheStore(\$key, \$sql);
     }
@@ -207,6 +264,11 @@ public function doSelect(ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDoCount(&$script)
     {
         $script .= "
@@ -260,7 +322,7 @@ public function doCount(ConnectionInterface \$con = null)
         Propel::log(\$e->getMessage(), Propel::LOG_ERR);
         throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', \$sql), 0, \$e);
     }
-    
+
     if (\$key && !\$this->cacheContains(\$key)) {
             \$this->cacheStore(\$key, \$sql);
     }

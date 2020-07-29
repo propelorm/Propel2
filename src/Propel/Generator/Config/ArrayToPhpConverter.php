@@ -9,6 +9,7 @@
  */
 
 namespace Propel\Generator\Config;
+
 use Propel\Runtime\Propel;
 
 /**
@@ -49,7 +50,7 @@ class ArrayToPhpConverter
                 if (isset($params['slaves'])) {
                     $conf .= "
 \$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
-\$manager->setReadConfiguration(" . var_export($params['slaves'], true). ");";
+\$manager->setReadConfiguration(" . var_export($params['slaves'], true) . ');';
                 } elseif (isset($params['dsn'])) {
                     $conf .= "
 \$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
@@ -63,7 +64,7 @@ class ArrayToPhpConverter
                     unset($connection['adapter']);
                     unset($connection['slaves']);
                     $conf .= "
-\$manager->{$masterConfigurationSetter}(". var_export($connection, true) . ");";
+\$manager->{$masterConfigurationSetter}(" . var_export($connection, true) . ');';
                 }
 
                 $conf .= "
@@ -95,7 +96,7 @@ class ArrayToPhpConverter
 
             if ($profilerConf) {
                 $conf .= "
-\$serviceContainer->setProfilerConfiguration(" . var_export($profilerConf, true) . ");";
+\$serviceContainer->setProfilerConfiguration(" . var_export($profilerConf, true) . ');';
             }
             unset($c['profiler']);
         }
@@ -104,7 +105,7 @@ class ArrayToPhpConverter
         if (isset($c['log']) && count($c['log']) > 0) {
             foreach ($c['log'] as $key => $logger) {
                 $conf .= "
-\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ");";
+\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ');';
             }
             unset($c['log']);
         }

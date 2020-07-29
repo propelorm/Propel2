@@ -24,29 +24,21 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @var array
      */
-    protected $attributes;
+    protected $attributes = [];
 
     /**
      * The list of vendor's information.
      *
-     * @var array
+     * @var \Propel\Generator\Model\VendorInfo[]
      */
-    protected $vendorInfos;
-
-    /**
-     * Constructor.
-     *
-     */
-    public function __construct()
-    {
-        $this->attributes  = [];
-        $this->vendorInfos = [];
-    }
+    protected $vendorInfos = [];
 
     /**
      * Loads a mapping definition from an array.
      *
      * @param array $attributes
+     *
+     * @return void
      */
     public function loadMapping(array $attributes)
     {
@@ -58,6 +50,8 @@ abstract class MappingModel implements MappingModelInterface
      * This method must be implemented by children classes to hydrate and
      * configure the current object with the loaded mapping definition stored in
      * the protected $attributes array.
+     *
+     * @return void
      */
     abstract protected function setupObject();
 
@@ -79,8 +73,9 @@ abstract class MappingModel implements MappingModelInterface
      * If the attribute is not set, then the second default value is
      * returned instead.
      *
-     * @param  string $name
-     * @param  mixed  $default
+     * @param string $name
+     * @param mixed|null $default
+     *
      * @return mixed
      */
     public function getAttribute($name, $default = null)
@@ -98,8 +93,9 @@ abstract class MappingModel implements MappingModelInterface
      *
      * This is to support the default value when used with a boolean column.
      *
-     * @param  mixed   $value
-     * @return boolean
+     * @param mixed $value
+     *
+     * @return bool
      */
     protected function booleanValue($value)
     {
@@ -108,12 +104,17 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         if (is_numeric($value)) {
-            return (Boolean) $value;
+            return (bool)$value;
         }
 
-        return in_array(strtolower($value),  [ 'true', 't', 'y', 'yes' ], true);
+        return in_array(strtolower($value), [ 'true', 't', 'y', 'yes' ], true);
     }
 
+    /**
+     * @param string $stringValue
+     *
+     * @return string|null
+     */
     protected function getDefaultValueForArray($stringValue)
     {
         $stringValue = trim($stringValue);
@@ -128,7 +129,7 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         $value = implode(' | ', $values);
-        if (empty($value) || ' | ' === $value) {
+        if (empty($value) || $value === ' | ') {
             return null;
         }
 
@@ -136,10 +137,10 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
-     * Converts the default string for set columns to an array. 
-     * 
+     * Converts the default string for set columns to an array.
+     *
      * @param string $stringValue
-     * 
+     *
      * @return array|null
      */
     protected function getDefaultValueForSet($stringValue)
@@ -157,14 +158,16 @@ abstract class MappingModel implements MappingModelInterface
         if (count($values) === 0) {
             return null;
         }
+
         return $values;
     }
 
     /**
      * Adds a new VendorInfo instance to this current model object.
      *
-     * @param  VendorInfo|array $vendor
-     * @return VendorInfo
+     * @param \Propel\Generator\Model\VendorInfo|array $vendor
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     public function addVendorInfo($vendor)
     {
@@ -183,8 +186,9 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Returns a VendorInfo object by its type.
      *
-     * @param  string     $type
-     * @return VendorInfo
+     * @param string $type
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     public function getVendorInfoForType($type)
     {
@@ -198,11 +202,10 @@ abstract class MappingModel implements MappingModelInterface
     /**
      * Returns the list of all vendor information.
      *
-     * @return VendorInfo[]
+     * @return \Propel\Generator\Model\VendorInfo[]
      */
     public function getVendorInformation()
     {
         return $this->vendorInfos;
     }
-
 }

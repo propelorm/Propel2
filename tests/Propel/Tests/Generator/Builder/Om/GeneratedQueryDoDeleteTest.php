@@ -58,7 +58,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  */
 class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();

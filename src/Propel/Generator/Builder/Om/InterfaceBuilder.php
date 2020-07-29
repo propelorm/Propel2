@@ -11,7 +11,7 @@
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP5 stub interface for user object model (OM).
+ * Generates the empty stub interface for user object model (OM).
  *
  * This class produces the empty stub interface when the interface="" attribute is used
  * in the the schema xml.
@@ -33,7 +33,9 @@ class InterfaceBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -60,7 +62,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
  * application requirements.  This interface will only be generated as
  * long as it does not already exist in the output directory.
  */
-interface ".$this->getUnqualifiedClassName()."
+interface " . $this->getUnqualifiedClassName() . "
 {
 ";
     }
@@ -72,6 +74,10 @@ interface ".$this->getUnqualifiedClassName()."
      * if you want to change that behavior.
      *
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -80,7 +86,10 @@ interface ".$this->getUnqualifiedClassName()."
 
     /**
      * Closes class.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassClose(&$script)
     {
@@ -88,5 +97,4 @@ interface ".$this->getUnqualifiedClassName()."
 } // " . $this->getUnqualifiedClassName() . "
 ";
     }
-
-} // ExtensionObjectBuilder
+}

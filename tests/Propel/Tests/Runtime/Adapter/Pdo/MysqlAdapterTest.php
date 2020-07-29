@@ -79,7 +79,7 @@ class MysqlAdapterTest extends TestCaseFixtures
     protected function getPdoMock()
     {
         $con = $this
-            ->getMock('\Propel\Runtime\Connection\ConnectionInterface');
+            ->getMockBuilder('\Propel\Runtime\Connection\ConnectionInterface')->getMock();
 
         $con
             ->expects($this->never())

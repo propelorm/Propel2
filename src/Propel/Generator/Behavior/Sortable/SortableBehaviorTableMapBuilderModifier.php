@@ -18,51 +18,64 @@ namespace Propel\Generator\Behavior\Sortable;
 class SortableBehaviorTableMapBuilderModifier
 {
     /**
-     * @var SortableBehavior
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
      */
     protected $behavior;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function staticAttributes($builder)
     {
         $tableName = $this->table->getName();
         $col = '';
 
         if ($this->behavior->useScope()) {
-
             if ($this->behavior->hasMultipleScopes()) {
-                $col = [];
-                
+                $columns = [];
                 foreach ($this->behavior->getScopes() as $scope) {
-                    $col[] = "$tableName.".strtoupper($scope);
+                    $columns[] = "$tableName." . strtoupper($scope);
                 }
-                $col = json_encode($col);
+                $col = json_encode($columns);
                 $col = "'$col'";
             } else {
                 $colNames = $this->getColumnConstant('scope_column');
-                $col =  "'$tableName.$colNames'";
+                $col = "'$tableName.$colNames'";
             }
         }
 
         return $this->behavior->renderTemplate('tableMapSortable', [
             'rankColumn' => $this->getColumnConstant('rank_column'),
             'multiScope' => $this->behavior->hasMultipleScopes(),
-            'scope'      => $col,
-            'tableName'  => $this->table->getName(),
-            'useScope'   => $this->behavior->useScope(),
+            'scope' => $col,
+            'tableName' => $this->table->getName(),
+            'useScope' => $this->behavior->useScope(),
         ]);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnConstant($name)
     {
         return $this->behavior->getColumnForParameter($name)->getName();
     }
-
 }

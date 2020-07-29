@@ -7,7 +7,7 @@
  *
  * @throws PropelException If the object has no corresponding archive.
  *
- * @return $this|<?php echo $objectClassName ?> The current object (for fluent API support)
+ * @return $this The current object (for fluent API support)
  */
 public function restoreFromArchive(ConnectionInterface $con = null)
 {

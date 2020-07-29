@@ -155,7 +155,11 @@ END;
 
 DROP INDEX "bar_fk";
 
+ALTER TABLE "foo" DROP CONSTRAINT "bax_unique";
+
 CREATE INDEX "baz_fk" ON "foo" ("baz");
+
+ALTER TABLE "foo" ADD CONSTRAINT "bax_bay_unique" UNIQUE ("bax","bay");
 
 DROP INDEX "bar_baz_fk";
 

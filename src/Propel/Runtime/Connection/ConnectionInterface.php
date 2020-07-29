@@ -10,9 +10,12 @@
 
 namespace Propel\Runtime\Connection;
 
+use PDO;
+
 /**
  * Interface for Propel Connection object.
  * Based on the PDO interface.
+ *
  * @see http://php.net/manual/en/book.pdo.php
  *
  * @author Francois Zaninotto
@@ -21,6 +24,8 @@ interface ConnectionInterface
 {
     /**
      * @param string $name The datasource name associated to this connection
+     *
+     * @return void
      */
     public function setName($name);
 
@@ -38,7 +43,7 @@ interface ConnectionInterface
      * Calling Connection::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function beginTransaction();
 
@@ -48,7 +53,7 @@ interface ConnectionInterface
      * commit() returns the database connection to autocommit mode until the
      * next call to connection::beginTransaction() starts a new transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function commit();
 
@@ -60,7 +65,7 @@ interface ConnectionInterface
      * If the database was set to autocommit mode, this function will restore
      * autocommit mode after it has rolled back the transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function rollBack();
 
@@ -74,7 +79,7 @@ interface ConnectionInterface
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string $attribute The name of the attribute to retrieve,
+     * @param string|int $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
@@ -85,10 +90,10 @@ interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute
-     * @param mixed  $value
+     * @param string|int $attribute
+     * @param mixed $value
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
     public function setAttribute($attribute, $value);
 
@@ -99,10 +104,10 @@ interface ConnectionInterface
      * object, depending on the underlying driver. For example, PDO_PGSQL()
      * requires you to specify the name of a sequence object for the name parameter.
      *
-     * @param string $name Name of the sequence object from which the ID should be
+     * @param string|null $name Name of the sequence object from which the ID should be
      *                     returned.
      *
-     * @return string If a sequence name was not specified for the name parameter,
+     * @return string|int If a sequence name was not specified for the name parameter,
      *                returns a string representing the row ID of the last row that was
      *                inserted into the database.
      *                If a sequence name was specified for the name parameter, returns
@@ -112,14 +117,14 @@ interface ConnectionInterface
     public function lastInsertId($name = null);
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function getSingleDataFetcher($data);
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
@@ -133,9 +138,9 @@ interface ConnectionInterface
      *
      * @param callable $callable A callable to be wrapped in a transaction
      *
-     * @return mixed Returns the result of the callable.
-     *
      * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
+     *
+     * @return mixed Returns the result of the callable.
      */
     public function transaction(callable $callable);
 
@@ -161,14 +166,14 @@ interface ConnectionInterface
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement      This must be a valid SQL statement for the target
+     * @param string $statement This must be a valid SQL statement for the target
      *                               database server.
-     * @param array  $driver_options
+     * @param array|null $driver_options
+     *
+     * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
      * @return \PDOStatement|bool A Statement object if the database server
      *                            successfully prepares, FALSE otherwise.
-
-     * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      */
     public function prepare($statement, $driver_options = null);
 
@@ -178,8 +183,9 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function query($statement);
 
@@ -190,13 +196,13 @@ interface ConnectionInterface
      * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
      *
-     * @param string $string         The string to be quoted.
-     * @param int    $parameter_type Provides a data type hint for drivers that
+     * @param string $string The string to be quoted.
+     * @param int $parameterType Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
      * @return string A quoted string that is theoretically safe to pass into an
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR);
+    public function quote($string, $parameterType = PDO::PARAM_STR);
 }

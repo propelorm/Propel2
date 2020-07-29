@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Exception;
 
-class LogicException extends \LogicException implements ExceptionInterface
+use LogicException as CoreLogicException;
+
+class LogicException extends CoreLogicException implements ExceptionInterface
 {
 }

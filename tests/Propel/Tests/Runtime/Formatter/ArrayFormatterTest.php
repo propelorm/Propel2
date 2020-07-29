@@ -28,7 +28,7 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  */
 class ArrayFormatterTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();

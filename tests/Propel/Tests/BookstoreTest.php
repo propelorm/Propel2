@@ -12,6 +12,7 @@ namespace Propel\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
+use Propel\Runtime\Collection\Collection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -712,5 +713,33 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
         $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
         $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
+    }
+
+    public function testIssue1493()
+    {
+        $review = new Review();
+        $review->setReviewedBy("Reviewer");
+        $review->setRecommended(true);
+        $review->setReviewDate(time());
+        $review->save();
+
+        $review = new Review();
+        $review->setReviewedBy("Reviewer");
+        $review->setRecommended(true);
+        $review->setReviewDate(time());
+        $review->save();
+
+        $this->assertCount(2, ReviewQuery::create()->find(), 'reviews were saved to database');
+
+        $book = new Book();
+        $book->setISBN("0140422161");
+        $book->setTitle("Don Juan");
+
+        $book->getReviews();
+        $book->setReviews(new Collection());
+
+        $book->save();
+
+        $this->assertCount(2, ReviewQuery::create()->find(), 'reviews are still there');
     }
 }

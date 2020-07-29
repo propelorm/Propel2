@@ -4,7 +4,7 @@ namespace Propel\Tests\Generator\Schema\Dumper;
 
 use Propel\Generator\Schema\Dumper\XmlDumper;
 
-class XmlDumperTest extends \PHPUnit_Framework_TestCase
+class XmlDumperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * The XmlDumper instance.
@@ -32,12 +32,12 @@ class XmlDumperTest extends \PHPUnit_Framework_TestCase
         return trim(file_get_contents(realpath(__DIR__.'/../../../Resources/'.$filename)));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dumper = new XmlDumper();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->dumper = null;
     }

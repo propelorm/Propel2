@@ -2,6 +2,7 @@
 
 namespace Propel\Runtime\DataFetcher;
 
+use PDO;
 use Propel\Runtime\Map\TableMap;
 
 /**
@@ -14,7 +15,7 @@ use Propel\Runtime\Map\TableMap;
 class PDODataFetcher extends AbstractDataFetcher
 {
     /**
-     * @var array
+     * @var array|null
      */
     private $current;
 
@@ -25,51 +26,63 @@ class PDODataFetcher extends AbstractDataFetcher
 
     /**
      * For SQLITE rowCount emulation.
-     * @var integer
+     *
+     * @var int
      */
     private $cachedCount;
 
     /**
      * fetch style (default FETCH_NUM)
-     * @var integer
+     *
+     * @var int
      */
-    private $style = \PDO::FETCH_NUM;
+    private $style = PDO::FETCH_NUM;
 
     /**
      * Sets a new fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH). Returns previous fetch style.
-     * @var integer
+     *
+     * @param int $style
+     *
+     * @return int
      */
-    public function setStyle($style) {
+    public function setStyle($style)
+    {
         $old_style = $this->style;
         $this->style = $style;
+
         return $old_style;
     }
 
     /**
      * Returns current fetch style (FETCH_NUM, FETCH_ASSOC or FETCH_BOTH).
-     * @var integer
+     *
+     * @return int
      */
-    public function getStyle() {
+    public function getStyle()
+    {
         return $this->style;
     }
 
     /**
-     * {@inheritDoc}
+     * @param int|null $style
+     *
+     * @return array|null
      */
     public function fetch($style = null)
     {
-        if (is_null($style)) {
+        if ($style === null) {
             $style = $this->style;
         }
+
         return $this->getDataObject()->fetch($style);
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
     public function next()
     {
-        if (null !== $this->dataObject) {
+        if ($this->dataObject !== null) {
             $this->current = $this->dataObject->fetch($this->style);
             if ($this->current) {
                 $this->index++;
@@ -78,7 +91,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function current()
     {
@@ -86,7 +99,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function key()
     {
@@ -94,51 +107,54 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function valid()
     {
-        return null !== $this->current && false !== $this->current;
+        return $this->current !== null && $this->current !== false;
     }
 
     /**
      * Not supported in PDODataFetcher.
      * It actually fetches the first row, since a foreach in php triggers that
      * function as init.
+     *
+     * @return void
      */
     public function rewind()
     {
-        if ($this->dataObject)
+        if ($this->dataObject) {
             $this->current = $this->dataObject->fetch($this->style);
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
     public function close()
     {
         $this->getDataObject()->closeCursor();
         $this->setDataObject(null); //so the connection can be garbage collected
         $this->current = null;
-        $this->index   = -1;
+        $this->index = -1;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function count()
     {
-        if ($this->dataObject && 'sqlite' === $this->dataObject->getConnection()->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+        if ($this->dataObject && $this->dataObject->getConnection()->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             $lastQuery = $this->dataObject->getStatement()->queryString;
-            if ('SELECT ' === substr(trim(strtoupper($lastQuery)), 0, 7)) {
+            if (substr(trim(strtoupper($lastQuery)), 0, 7) === 'SELECT ') {
                 // SQLITE does not support rowCount() in 3.x on SELECTs anymore
                 // so emulate it
-                if (null === $this->cachedCount) {
-                    $sql = sprintf("SELECT COUNT(*) FROM (%s)", $lastQuery);
+                if ($this->cachedCount === null) {
+                    $sql = sprintf('SELECT COUNT(*) FROM (%s)', $lastQuery);
                     $stmt = $this->dataObject->getConnection()->prepare($sql);
                     $stmt->execute($this->dataObject->getBoundValues());
                     $count = $stmt->fetchColumn();
-                    $this->cachedCount = $count+0;
+                    $this->cachedCount = $count + 0;
                 }
 
                 return $this->cachedCount;
@@ -149,7 +165,7 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getIndexType()
     {
@@ -163,13 +179,16 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @param mixed $column
      * @param mixed $param
-     * @param int   $type
-     * @param int   $maxlen
+     * @param int|null $type
+     * @param int|null $maxlen
      * @param mixed $driverdata
+     *
+     * @return void
      */
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {
-        if ($this->dataObject)
+        if ($this->dataObject) {
             $this->dataObject->bindColumn($column, $param, $type, $maxlen, $driverdata);
+        }
     }
 }

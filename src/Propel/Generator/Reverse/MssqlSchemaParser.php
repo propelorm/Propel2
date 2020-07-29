@@ -11,14 +11,15 @@
 namespace Propel\Generator\Reverse;
 
 // TODO: to remove
+use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Database;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Unique;
 
 /**
  * Microsoft SQL Server database schema parser.
@@ -30,56 +31,65 @@ class MssqlSchemaParser extends AbstractSchemaParser
 {
     /**
      * Map MSSQL native types to Propel types.
-     * @var array
+     *
+     * @var string[]
      */
     private static $mssqlTypeMap = [
-        'binary'             => PropelTypes::BINARY,
-        'bit'                => PropelTypes::BOOLEAN,
-        'char'               => PropelTypes::CHAR,
-        'datetime'           => PropelTypes::TIMESTAMP,
+        'binary' => PropelTypes::BINARY,
+        'bit' => PropelTypes::BOOLEAN,
+        'char' => PropelTypes::CHAR,
+        'datetime' => PropelTypes::TIMESTAMP,
         'decimal() identity' => PropelTypes::DECIMAL,
-        'decimal'            => PropelTypes::DECIMAL,
-        'image'              => PropelTypes::LONGVARBINARY,
-        'int'                => PropelTypes::INTEGER,
-        'int identity'       => PropelTypes::INTEGER,
-        'integer'            => PropelTypes::INTEGER,
-        'money'              => PropelTypes::DECIMAL,
-        'nchar'              => PropelTypes::CHAR,
-        'ntext'              => PropelTypes::LONGVARCHAR,
+        'decimal' => PropelTypes::DECIMAL,
+        'image' => PropelTypes::LONGVARBINARY,
+        'int' => PropelTypes::INTEGER,
+        'int identity' => PropelTypes::INTEGER,
+        'integer' => PropelTypes::INTEGER,
+        'money' => PropelTypes::DECIMAL,
+        'nchar' => PropelTypes::CHAR,
+        'ntext' => PropelTypes::LONGVARCHAR,
         'numeric() identity' => PropelTypes::NUMERIC,
-        'numeric'            => PropelTypes::NUMERIC,
-        'nvarchar'           => PropelTypes::VARCHAR,
-        'real'               => PropelTypes::REAL,
-        'float'              => PropelTypes::FLOAT,
-        'smalldatetime'      => PropelTypes::TIMESTAMP,
-        'smallint'           => PropelTypes::SMALLINT,
-        'smallint identity'  => PropelTypes::SMALLINT,
-        'smallmoney'         => PropelTypes::DECIMAL,
-        'sysname'            => PropelTypes::VARCHAR,
-        'text'               => PropelTypes::LONGVARCHAR,
-        'timestamp'          => PropelTypes::BINARY,
-        'tinyint identity'   => PropelTypes::TINYINT,
-        'tinyint'            => PropelTypes::TINYINT,
-        'uniqueidentifier'   => PropelTypes::CHAR,
-        'varbinary'          => PropelTypes::VARBINARY,
-        'varbinary(max)'     => PropelTypes::CLOB,
-        'varchar'            => PropelTypes::VARCHAR,
-        'varchar(max)'       => PropelTypes::CLOB,
-        'geometry'           => PropelTypes::GEOMETRY,
+        'numeric' => PropelTypes::NUMERIC,
+        'nvarchar' => PropelTypes::VARCHAR,
+        'real' => PropelTypes::REAL,
+        'float' => PropelTypes::FLOAT,
+        'smalldatetime' => PropelTypes::TIMESTAMP,
+        'smallint' => PropelTypes::SMALLINT,
+        'smallint identity' => PropelTypes::SMALLINT,
+        'smallmoney' => PropelTypes::DECIMAL,
+        'sysname' => PropelTypes::VARCHAR,
+        'text' => PropelTypes::LONGVARCHAR,
+        'timestamp' => PropelTypes::BINARY,
+        'tinyint identity' => PropelTypes::TINYINT,
+        'tinyint' => PropelTypes::TINYINT,
+        'uniqueidentifier' => PropelTypes::CHAR,
+        'varbinary' => PropelTypes::VARBINARY,
+        'varbinary(max)' => PropelTypes::CLOB,
+        'varchar' => PropelTypes::VARCHAR,
+        'varchar(max)' => PropelTypes::CLOB,
+        'geometry' => PropelTypes::GEOMETRY,
         // SQL Server 2000 only
-        'bigint identity'    => PropelTypes::BIGINT,
-        'bigint'             => PropelTypes::BIGINT,
-        'sql_variant'        => PropelTypes::VARCHAR,
+        'bigint identity' => PropelTypes::BIGINT,
+        'bigint' => PropelTypes::BIGINT,
+        'sql_variant' => PropelTypes::VARCHAR,
     ];
 
     /**
      * @see AbstractSchemaParser::getTypeMapping()
+     *
+     * @return string[]
      */
     protected function getTypeMapping()
     {
         return self::$mssqlTypeMap;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param array $additionalTables
+     *
+     * @return int
+     */
     public function parse(Database $database, array $additionalTables = [])
     {
         $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
@@ -115,15 +125,17 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param Table $table The Table model class to add columns to.
+     * @param \Propel\Generator\Model\Table $table The Table model class to add columns to.
+     *
+     * @return void
      */
     protected function addColumns(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
-        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
+        $dataFetcher->setStyle(PDO::FETCH_ASSOC);
 
         foreach ($dataFetcher as $row) {
-
             $name = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $type = $row['TYPE_NAME'];
             $size = $row['LENGTH'];
@@ -131,7 +143,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $default = $row['COLUMN_DEF'];
             $scale = $row['SCALE'];
             $autoincrement = false;
-            if (strtolower($type) == 'int identity') {
+            if (strtolower($type) === 'int identity') {
                 $autoincrement = true;
             }
 
@@ -160,23 +172,27 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load foreign keys for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
     protected function addForeignKeys(Table $table)
     {
         $database = $table->getDatabase();
-        
+
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("select fk.name as CONSTRAINT_NAME, lcol.name as COLUMN_NAME, rtab.name as FK_TABLE_NAME, rcol.name as FK_COLUMN_NAME
-         from sys.foreign_keys as fk 
+         from sys.foreign_keys as fk
          inner join sys.foreign_key_columns ref on ref.constraint_object_id = fk.object_id
          inner join sys.columns lcol on lcol.object_id = ref.parent_object_id and lcol.column_id = ref.parent_column_id
          inner join sys.columns rcol on rcol.object_id = ref.referenced_object_id and rcol.column_id = ref.referenced_column_id
          inner join sys.tables rtab on rtab.object_id = ref.referenced_object_id
-         where fk.parent_object_id = OBJECT_ID('".$table->getName()."')");
-        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
+         where fk.parent_object_id = OBJECT_ID('" . $table->getName() . "')");
+        $dataFetcher->setStyle(PDO::FETCH_ASSOC);
 
         $foreignKeys = []; // local store to avoid duplicates
         foreach ($dataFetcher as $row) {
-
             $name = $this->cleanDelimitedIdentifiers($row['CONSTRAINT_NAME']);
             $lcol = $this->cleanDelimitedIdentifiers($row['COLUMN_NAME']);
             $ftbl = $this->cleanDelimitedIdentifiers($row['FK_TABLE_NAME']);
@@ -184,7 +200,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
             $foreignTable = $database->getTable($ftbl);
             $foreignColumn = $foreignTable->getColumn($fcol);
-            $localColumn   = $table->getColumn($lcol);
+            $localColumn = $table->getColumn($lcol);
 
             if (!isset($foreignKeys[$name])) {
                 $fk = new ForeignKey($name);
@@ -197,16 +213,20 @@ class MssqlSchemaParser extends AbstractSchemaParser
             }
             $foreignKeys[$name]->addReference($localColumn, $foreignColumn);
         }
-
     }
 
     /**
      * Load indexes for this table
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
     protected function addIndexes(Table $table)
     {
+        /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
-        $dataFetcher->setStyle(\PDO::FETCH_ASSOC);
+        $dataFetcher->setStyle(PDO::FETCH_ASSOC);
 
         $indexes = [];
         foreach ($dataFetcher as $row) {
@@ -216,7 +236,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             $isPk = $this->cleanDelimitedIdentifiers($row['PRIMARY_KEY']);
             $isUnique = $this->cleanDelimitedIdentifiers($row['UNIQUE']);
 
-            $localColumn   = $table->getColumn($colName);
+            $localColumn = $table->getColumn($colName);
 
             // ignore PRIMARY index
             if ($isPk) {
@@ -246,6 +266,10 @@ class MssqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
     protected function addPrimaryKey(Table $table)
     {
@@ -254,7 +278,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
             INNER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ON
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
             WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
-            (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '".$table->getName()."')");
+            (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '" . $table->getName() . "')");
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -267,9 +291,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * according to the identifier definition, we have to clean simple quote (') around the identifier name
      * returns by mssql
+     *
      * @see http://msdn.microsoft.com/library/ms175874.aspx
      *
-     * @param  string $identifier
+     * @param string $identifier
+     *
      * @return string
      */
     protected function cleanDelimitedIdentifiers($identifier)

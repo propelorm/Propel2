@@ -184,7 +184,11 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
         $expected = "
 DROP INDEX `bar_fk` ON `foo`;
 
+DROP INDEX `bax_unique` ON `foo`;
+
 CREATE INDEX `baz_fk` ON `foo` (`baz`);
+
+CREATE UNIQUE INDEX `bax_bay_unique` ON `foo` (`bax`, `bay`);
 
 DROP INDEX `bar_baz_fk` ON `foo`;
 

@@ -10,6 +10,8 @@
 
 namespace Propel\Generator\Model;
 
+use DOMDocument;
+use DOMNode;
 use Propel\Generator\Exception\EngineException;
 
 /**
@@ -21,13 +23,44 @@ use Propel\Generator\Exception\EngineException;
  */
 class Domain extends MappingModel
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string|null
+     */
     private $description;
+
+    /**
+     * @var int|null
+     */
     private $size;
+
+    /**
+     * @var int|null
+     */
     private $scale;
+
+    /**
+     * @var string|null
+     */
     private $mappingType;
+
+    /**
+     * @var string|null
+     */
     private $sqlType;
+
+    /**
+     * @var \Propel\Generator\Model\ColumnDefaultValue|null
+     */
     private $defaultValue;
+
+    /**
+     * @var \Propel\Generator\Model\Database|null
+     */
     private $database;
 
     /**
@@ -35,34 +68,34 @@ class Domain extends MappingModel
      *
      * If this domain needs a name, it must be specified manually.
      *
-     * @param string  $type    Propel type.
-     * @param string  $sqlType SQL type.
-     * @param integer $size
-     * @param integer $scale
+     * @param string|null $type Propel type.
+     * @param string|null $sqlType SQL type.
+     * @param int|null $size
+     * @param int|null $scale
      */
     public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
     {
-        parent::__construct();
-
-        if (null !== $type) {
+        if ($type !== null) {
             $this->setType($type);
         }
 
-        if (null !== $size) {
+        if ($size !== null) {
             $this->setSize($size);
         }
 
-        if (null !== $scale) {
+        if ($scale !== null) {
             $this->setScale($scale);
         }
 
-        $this->setSqlType(null !== $sqlType ? $sqlType : $type);
+        $this->setSqlType($sqlType !== null ? $sqlType : $type);
     }
 
     /**
      * Copies the values from current object into passed-in Domain.
      *
-     * @param Domain $domain Domain to copy values into.
+     * @param \Propel\Generator\Model\Domain $domain Domain to copy values into.
+     *
+     * @return void
      */
     public function copy(Domain $domain)
     {
@@ -75,6 +108,9 @@ class Domain extends MappingModel
         $this->mappingType = $domain->getType();
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $schemaType = strtoupper($this->getAttribute('type'));
@@ -85,21 +121,23 @@ class Domain extends MappingModel
 
         // Default value
         $defval = $this->getAttribute('defaultValue', $this->getAttribute('default'));
-        if (null !== $defval) {
+        if ($defval !== null) {
             $this->setDefaultValue(new ColumnDefaultValue($defval, ColumnDefaultValue::TYPE_VALUE));
-        } elseif (null !== $this->getAttribute('defaultExpr')) {
+        } elseif ($this->getAttribute('defaultExpr') !== null) {
             $this->setDefaultValue(new ColumnDefaultValue($this->getAttribute('defaultExpr'), ColumnDefaultValue::TYPE_EXPR));
         }
 
-        $this->size = $this->getAttribute('size');
-        $this->scale = $this->getAttribute('scale');
+        $this->size = $this->getAttribute('size') ? (int)$this->getAttribute('size') : null;
+        $this->scale = $this->getAttribute('scale') ? (int)$this->getAttribute('scale') : null;
         $this->description = $this->getAttribute('description');
     }
 
     /**
      * Sets the owning database object (if this domain is being setup via XML).
      *
-     * @param Database $database
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return void
      */
     public function setDatabase(Database $database)
     {
@@ -109,7 +147,7 @@ class Domain extends MappingModel
     /**
      * Returns the owning database object (if this domain was setup via XML).
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     public function getDatabase()
     {
@@ -130,6 +168,8 @@ class Domain extends MappingModel
      * Sets the domain description.
      *
      * @param string $description
+     *
+     * @return void
      */
     public function setDescription($description)
     {
@@ -150,6 +190,8 @@ class Domain extends MappingModel
      * Sets the domain name.
      *
      * @param string $name
+     *
+     * @return void
      */
     public function setName($name)
     {
@@ -159,7 +201,7 @@ class Domain extends MappingModel
     /**
      * Returns the scale value.
      *
-     * @return integer
+     * @return int|null
      */
     public function getScale()
     {
@@ -169,29 +211,33 @@ class Domain extends MappingModel
     /**
      * Sets the scale value.
      *
-     * @param integer $scale
+     * @param int $scale
+     *
+     * @return void
      */
     public function setScale($scale)
     {
-        $this->scale = null === $scale ? null : (int) $scale;
+        $this->scale = $scale === null ? null : (int)$scale;
     }
 
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param integer $scale
+     * @param int|null $scale
+     *
+     * @return void
      */
     public function replaceScale($scale)
     {
-        if (null !== $scale) {
-            $this->scale = (int) $scale;
+        if ($scale !== null) {
+            $this->scale = (int)$scale;
         }
     }
 
     /**
      * Returns the size.
      *
-     * @return integer
+     * @return int
      */
     public function getSize()
     {
@@ -201,22 +247,26 @@ class Domain extends MappingModel
     /**
      * Sets the size.
      *
-     * @param integer $size
+     * @param int|null $size
+     *
+     * @return void
      */
     public function setSize($size)
     {
-        $this->size = null === $size ? null : (int) $size;
+        $this->size = $size === null ? null : (int)$size;
     }
 
     /**
      * Replaces the size if the new value is not null.
      *
-     * @param integer $size
+     * @param int|null $size
+     *
+     * @return void
      */
     public function replaceSize($size)
     {
-        if (null !== $size) {
-            $this->size = (int) $size;
+        if ($size !== null) {
+            $this->size = (int)$size;
         }
     }
 
@@ -234,6 +284,8 @@ class Domain extends MappingModel
      * Sets the mapping type.
      *
      * @param string $mappingType
+     *
+     * @return void
      */
     public function setType($mappingType)
     {
@@ -243,11 +295,13 @@ class Domain extends MappingModel
     /**
      * Replaces the mapping type if the new value is not null.
      *
-     * @param string $mappingType
+     * @param string|null $mappingType
+     *
+     * @return void
      */
     public function replaceType($mappingType)
     {
-        if (null !== $mappingType) {
+        if ($mappingType !== null) {
             $this->mappingType = $mappingType;
         }
     }
@@ -255,7 +309,7 @@ class Domain extends MappingModel
     /**
      * Returns the default value object.
      *
-     * @return ColumnDefaultValue
+     * @return \Propel\Generator\Model\ColumnDefaultValue|null
      */
     public function getDefaultValue()
     {
@@ -265,11 +319,13 @@ class Domain extends MappingModel
     /**
      * Returns the default value, type-casted for use in PHP OM.
      *
-     * @return mixed
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return string|array|bool|null
      */
     public function getPhpDefaultValue()
     {
-        if (null === $this->defaultValue) {
+        if ($this->defaultValue === null) {
             return null;
         }
 
@@ -281,10 +337,10 @@ class Domain extends MappingModel
             return $this->booleanValue($this->defaultValue->getValue());
         }
 
-        if (PropelTypes::PHP_ARRAY === $this->mappingType) {
+        if ($this->mappingType === PropelTypes::PHP_ARRAY) {
             return $this->getDefaultValueForArray($this->defaultValue->getValue());
         }
-        if (PropelTypes::SET === $this->mappingType) {
+        if ($this->mappingType === PropelTypes::SET) {
             return $this->getDefaultValueForSet($this->defaultValue->getValue());
         }
 
@@ -294,7 +350,9 @@ class Domain extends MappingModel
     /**
      * Sets the default value.
      *
-     * @param ColumnDefaultValue $value
+     * @param \Propel\Generator\Model\ColumnDefaultValue $value
+     *
+     * @return void
      */
     public function setDefaultValue(ColumnDefaultValue $value)
     {
@@ -304,11 +362,13 @@ class Domain extends MappingModel
     /**
      * Replaces the default value if the new value is not null.
      *
-     * @param ColumnDefaultValue $value
+     * @param \Propel\Generator\Model\ColumnDefaultValue|null $value
+     *
+     * @return void
      */
-    public function replaceDefaultValue(ColumnDefaultValue $value = null)
+    public function replaceDefaultValue(?ColumnDefaultValue $value = null)
     {
-        if (null !== $value) {
+        if ($value !== null) {
             $this->defaultValue = $value;
         }
     }
@@ -327,6 +387,8 @@ class Domain extends MappingModel
      * Sets the SQL type.
      *
      * @param string $sqlType
+     *
+     * @return void
      */
     public function setSqlType($sqlType)
     {
@@ -336,11 +398,13 @@ class Domain extends MappingModel
     /**
      * Replaces the SQL type if the new value is not null.
      *
-     * @param string $sqlType
+     * @param string|null $sqlType
+     *
+     * @return void
      */
     public function replaceSqlType($sqlType)
     {
-        if (null !== $sqlType) {
+        if ($sqlType !== null) {
             $this->sqlType = $sqlType;
         }
     }
@@ -352,17 +416,20 @@ class Domain extends MappingModel
      */
     public function getSizeDefinition()
     {
-        if (null === $this->size) {
+        if ($this->size === null) {
             return '';
         }
 
-        if (null !== $this->scale) {
+        if ($this->scale !== null) {
             return sprintf('(%u,%u)', $this->size, $this->scale);
         }
 
         return sprintf('(%u)', $this->size);
     }
 
+    /**
+     * @return void
+     */
     public function __clone()
     {
         if ($this->defaultValue) {
@@ -372,12 +439,16 @@ class Domain extends MappingModel
 
     /**
      * @todo Remove? This method is never called.
+     *
      * @param \DOMNode $node
+     *
+     * @return void
      */
-    public function appendXml(\DOMNode $node)
+    public function appendXml(DOMNode $node)
     {
-        $doc = ($node instanceof \DOMDocument) ? $node : $node->ownerDocument;
+        $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
+        /** @var \DOMElement $domainNode */
         $domainNode = $node->appendChild($doc->createElement('domain'));
         $domainNode->setAttribute('type', $this->getType());
         $domainNode->setAttribute('name', $this->getName());
@@ -395,11 +466,11 @@ class Domain extends MappingModel
         }
 
         if ($this->size) {
-            $domainNode->setAttribute('size', $this->size);
+            $domainNode->setAttribute('size', (string)$this->size);
         }
 
         if ($this->scale) {
-            $domainNode->setAttribute('scale', $this->scale);
+            $domainNode->setAttribute('scale', (string)$this->scale);
         }
 
         if ($this->description) {

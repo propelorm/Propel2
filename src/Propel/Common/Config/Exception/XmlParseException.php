@@ -15,32 +15,37 @@ class XmlParseException extends RuntimeException implements ExceptionInterface
     /**
      * Create an exception based on LibXMLError objects
      *
-     * @param array $errors Array of LibXMLError objects
      * @see http://www.php.net/manual/en/class.libxmlerror.php
+     *
+     * @param array $errors Array of LibXMLError objects
      */
     public function __construct(array $errors)
     {
         $numErrors = count($errors);
 
-        if (1 == $numErrors) {
-            $message = "An error occurred ";
-        } elseif ($numErrors >1) {
-            $message = "Some errors occurred ";
+        $message = '';
+        if ($numErrors == 1) {
+            $message = 'An error occurred ';
+        } elseif ($numErrors > 1) {
+            $message = 'Some errors occurred ';
         }
         $message .= "while parsing XML configuration file:\n";
 
         foreach ($errors as $error) {
-            $message .= " - ";
+            $message .= ' - ';
 
             switch ($error->level) {
                 case LIBXML_ERR_WARNING:
                     $message .= "Warning $error->code: ";
+
                     break;
                 case LIBXML_ERR_ERROR:
                     $message .= "Error $error->code: ";
+
                     break;
                 case LIBXML_ERR_FATAL:
                     $message .= "Fatal Error $error->code: ";
+
                     break;
             }
 

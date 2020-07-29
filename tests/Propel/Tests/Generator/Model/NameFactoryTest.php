@@ -48,51 +48,18 @@ class NameFactoryTest extends BaseTestCase
     /**
      * Two dimensional arrays of inputs for each algorithm.
      */
-    private static $INPUTS = [];
+    private $inputs = [];
 
 
     /**
      * Given the known inputs, the expected name outputs.
      */
-    private static $OUTPUTS = [];
+    private $outputs = [];
 
     /**
      * Used as an input.
      */
     private $database;
-
-    /**
-     * Creates a new instance.
-     *
-     */
-    public function __construct()
-    {
-        self::$INPUTS = [
-                [ [self::makeString(61), "I", 1],
-                        [self::makeString(61), "I", 2],
-                        [self::makeString(65), "I", 3],
-                        [self::makeString(4), "FK", 1],
-                        [self::makeString(5), "FK", 2]
-                    ],
-                [
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE],
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME],
-                        ["MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE]
-                    ]
-                ];
-
-
-        self::$OUTPUTS = [
-                        [
-                            self::makeString(60) . "_I_1",
-                            self::makeString(60) . "_I_2",
-                            self::makeString(60) . "_I_3",
-                            self::makeString(4) . "_FK_1",
-                            self::makeString(5) . "_FK_2"],
-                        ["MyUser", "MYUSER", "MY_USER"]
-                    ];
-
-    }
 
     /**
      * Creates a string of the specified length consisting entirely of
@@ -113,8 +80,33 @@ class NameFactoryTest extends BaseTestCase
     }
 
     /** Sets up the Propel model. */
-    public function setUp()
+    public function setUp(): void
     {
+        $this->inputs = [
+            [
+                [self::makeString(61), "I", 1],
+                [self::makeString(61), "I", 2],
+                [self::makeString(65), "I", 3],
+                [self::makeString(4), "FK", 1],
+                [self::makeString(5), "FK", 2]
+            ],
+            [
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_UNDERSCORE],
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_PHPNAME],
+                ["MY_USER", NameGeneratorInterface::CONV_METHOD_NOCHANGE]
+            ]
+        ];
+
+        $this->outputs = [
+            [
+                self::makeString(60) . "_I_1",
+                self::makeString(60) . "_I_2",
+                self::makeString(60) . "_I_3",
+                self::makeString(4) . "_FK_1",
+                self::makeString(5) . "_FK_2"
+            ],
+            ["MyUser", "MYUSER", "MY_USER"]
+        ];
         $schema = new Schema(new MysqlPlatform());
         $this->database = new Database();
         $schema->addDatabase($this->database);
@@ -128,12 +120,12 @@ class NameFactoryTest extends BaseTestCase
         $algosCount = count(self::$ALGORITHMS);
         for ($algoIndex = 0; $algoIndex < $algosCount; $algoIndex++) {
             $algo = self::$ALGORITHMS[$algoIndex];
-            $algoInputs = self::$INPUTS[$algoIndex];
+            $algoInputs = $this->inputs[$algoIndex];
             $nbAlgoInputs = count($algoInputs);
             for ($i = 0; $i < $nbAlgoInputs; $i++) {
                 $inputs = $this->makeInputs($algo, $algoInputs[$i]);
                 $generated = NameFactory::generateName($algo, $inputs);
-                $expected = self::$OUTPUTS[$algoIndex][$i];
+                $expected = $this->outputs[$algoIndex][$i];
                 $this->assertEquals($expected, $generated, "Algorithm " . $algo . " failed to generate an unique name");
             }
         }

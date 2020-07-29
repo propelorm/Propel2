@@ -33,7 +33,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class AggregateColumnBehaviorTest extends BookstoreTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         include_once(__DIR__.'/AggregateColumnsBehaviorTestClasses.php');

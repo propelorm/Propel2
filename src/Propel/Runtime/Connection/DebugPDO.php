@@ -17,5 +17,8 @@ namespace Propel\Runtime\Connection;
  */
 class DebugPDO extends ConnectionWrapper
 {
+    /**
+     * @var bool
+     */
     public $useDebug = true;
 }

@@ -41,7 +41,7 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      */
     public $con;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $config = sprintf('%s-conf.php', $this->databaseName);
         $path = 'reverse-bookstore' === $this->databaseName ? 'reverse/mysql' : $this->databaseName;

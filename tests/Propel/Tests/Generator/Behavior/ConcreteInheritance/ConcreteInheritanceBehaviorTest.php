@@ -40,7 +40,7 @@ use Propel\Generator\Util\QuickBuilder;
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -133,7 +133,7 @@ EOF;
 
     public function testModifyTableNoCopyDataKeepsAutoIncrement()
     {
-        $this->setExpectedException('Propel\\Runtime\\Exception\\PropelException');
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
         $content = new ConcreteContent();
         $content->save();
         $c = new Criteria;

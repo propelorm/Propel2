@@ -22,10 +22,11 @@ class IndexComparator
     /**
      * Computes the difference between two index objects.
      *
-     * @param  Index   $fromIndex
-     * @param  Index   $toIndex
-     * @param  boolean $caseInsensitive
-     * @return boolean
+     * @param \Propel\Generator\Model\Index $fromIndex
+     * @param \Propel\Generator\Model\Index $toIndex
+     * @param bool $caseInsensitive
+     *
+     * @return bool
      */
     public static function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
     {

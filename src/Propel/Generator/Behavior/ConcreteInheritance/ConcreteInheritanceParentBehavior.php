@@ -21,11 +21,23 @@ use Propel\Generator\Model\Behavior;
  */
 class ConcreteInheritanceParentBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     */
+    protected $builder;
+
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'descendant_column' => 'descendant_class'
+        'descendant_column' => 'descendant_class',
     ];
 
+    /**
+     * @return void
+     */
     public function modifyTable()
     {
         $table = $this->getTable();
@@ -33,16 +45,24 @@ class ConcreteInheritanceParentBehavior extends Behavior
             $table->addColumn([
                 'name' => $this->getParameter('descendant_column'),
                 'type' => 'VARCHAR',
-                'size' => 100
+                'size' => 100,
             ]);
         }
     }
 
+    /**
+     * @return string
+     */
     protected function getColumnGetter()
     {
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         $this->builder = $builder;
@@ -54,6 +74,11 @@ class ConcreteInheritanceParentBehavior extends Behavior
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHasChildObject(&$script)
     {
         $script .= "
@@ -69,6 +94,11 @@ public function hasChildObject()
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetChildObject(&$script)
     {
         $script .= "

@@ -22,9 +22,9 @@ class ProfilerTest extends BaseTestCase
         $profiler->setDetails([]);
         $profiler->setSlowTreshold(1000);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
-        $this->assertEquals('     ', $res);
+        $this->assertSame('     ', $res);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
-        $this->assertEquals('SLOW ', $res);
+        $this->assertSame('SLOW ', $res);
     }
 
     public function testGetProfileBetweenDoesNotAddSlowTresholdWhenValueIsNull()
@@ -33,9 +33,9 @@ class ProfilerTest extends BaseTestCase
         $profiler->setDetails([]);
         $profiler->setSlowTreshold(0);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
-        $this->assertEquals('', $res);
+        $this->assertSame('', $res);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
-        $this->assertEquals('', $res);
+        $this->assertSame('', $res);
     }
 
     public function testGetProfileBetweenAddsTime()
@@ -102,7 +102,7 @@ class ProfilerTest extends BaseTestCase
             ['microtime' => 1.000, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357],
             ['microtime' => 1.0345, 'memoryUsage' => 245643, 'memoryPeakUsage' => 343245]
         );
-        $this->assertEquals('     Time: 34.5ms | Memory: 240kB | Delta: -95.3kB | Peak: 335kB | ', $res);
+        $this->assertSame('     Time: 34.5ms | Memory: 240kB | Delta: -95.3kB | Peak: 335kB | ', $res);
     }
 
     public function providerForTestFormatMemory()
@@ -126,7 +126,7 @@ class ProfilerTest extends BaseTestCase
      */
     public function testFormatMemory($input, $output)
     {
-        $this->assertEquals(Profiler::formatMemory($input), $output);
+        $this->assertSame(Profiler::formatMemory($input), $output);
     }
 
     public function providerForTestFormatMemoryPrecision()
@@ -146,7 +146,7 @@ class ProfilerTest extends BaseTestCase
      */
     public function testFormatMemoryPrecision($input, $output)
     {
-        $this->assertEquals(Profiler::formatMemory(12345.6789, $input), $output);
+        $this->assertSame(Profiler::formatMemory(12345.6789, $input), $output);
     }
 
     public function providerForTestFormatDuration()
@@ -193,7 +193,7 @@ class ProfilerTest extends BaseTestCase
      */
     public function testFormatDurationPrecision($input, $output)
     {
-        $this->assertEquals(Profiler::formatDuration(123.456789, $input), $output);
+        $this->assertSame(Profiler::formatDuration(123.456789, $input), $output);
     }
 
     public function providerForTestToPrecision()
@@ -209,7 +209,7 @@ class ProfilerTest extends BaseTestCase
             [123.4567890, number_format(123)],
             [12.34567890, number_format(12.3, 1)],
             [1.234567890, number_format(1.23, 2)],
-            [0, 0],
+            [0, '0'],
             [0.123456789, number_format(0.123, 3)],
             [0.012345678, number_format(0.0123, 4)],
             [0.001234567, number_format(0.00123, 5)],
@@ -225,13 +225,13 @@ class ProfilerTest extends BaseTestCase
      */
     public function testToPrecision($input, $output)
     {
-        $this->assertEquals(Profiler::toPrecision($input), $output);
+        $this->assertSame(Profiler::toPrecision($input), $output);
     }
 
     public function providerForTestToPrecisionPrecision()
     {
         return [
-            [0, 0],
+            [0, '0'],
             [1, number_format(100)],
             [2, number_format(120)],
             [3, number_format(123)],
@@ -246,6 +246,6 @@ class ProfilerTest extends BaseTestCase
      */
     public function testToPrecisionPrecision($input, $output)
     {
-        $this->assertEquals(Profiler::toPrecision(123.456789, $input), $output);
+        $this->assertSame(Profiler::toPrecision(123.456789, $input), $output);
     }
 }

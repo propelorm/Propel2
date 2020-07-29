@@ -29,7 +29,7 @@ use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
  */
 class ObjectFormatterInheritanceTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $b1 = new BookstoreEmployee();

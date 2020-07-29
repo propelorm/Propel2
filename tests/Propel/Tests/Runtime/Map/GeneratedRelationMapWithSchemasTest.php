@@ -15,8 +15,6 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
- * Test class for PHP5TableMapBuilder with schemas.
- *
  * @author Ulf Hermann
  *
  * @group database
@@ -28,7 +26,7 @@ class GeneratedRelationMapWithSchemasTest extends TestCaseFixturesDatabase
      */
     protected $databaseMap;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore-schemas');

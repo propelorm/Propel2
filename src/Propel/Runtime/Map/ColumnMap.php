@@ -10,9 +10,9 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
-use Propel\Generator\Model\PropelTypes;
 
 /**
  * ColumnMap is used to model a column of a table in a database.
@@ -20,7 +20,7 @@ use Propel\Generator\Model\PropelTypes;
  * GENERAL NOTE
  * ------------
  * The propel.map classes are abstract building-block classes for modeling
- * the database at runtime.  These classes are similar (a lite version) to the
+ * the database at runtime. These classes are similar (a lite version) to the
  * propel.engine.database.model classes, which are build-time modeling classes.
  * These classes in themselves do not do any database metadata lookups.
  *
@@ -31,55 +31,71 @@ class ColumnMap
 {
     /**
      * Propel type of the column
+     *
+     * @var string
      */
     protected $type;
 
     /**
      * Size of the column
+     *
+     * @var int
      */
     protected $size = 0;
 
     /**
      * Is it a primary key?
      *
-     * @var boolean
+     * @var bool
      */
     protected $pk = false;
 
     /**
      * Is null value allowed?
      *
-     * @var boolean
+     * @var bool
      */
     protected $notNull = false;
 
     /**
      * The default value for this column
+     *
+     * @var string|null
      */
     protected $defaultValue;
 
     /**
      * Name of the table that this column is related to
+     *
+     * @var string
      */
     protected $relatedTableName = '';
 
     /**
      * Name of the column that this column is related to
+     *
+     * @var string
      */
     protected $relatedColumnName = '';
 
     /**
      * The TableMap for this column
+     *
+     * @var \Propel\Runtime\Map\TableMap
      */
     protected $table;
 
     /**
      * The name of the column
+     *
+     * @var string
      */
     protected $columnName;
 
     /**
      * The php name of the column
+     *
+     * @var string
      */
     protected $phpName;
 
@@ -93,15 +109,13 @@ class ColumnMap
     /**
      * Is this a primaryString column?
      *
-     * @var boolean
+     * @var bool
      */
     protected $isPkString = false;
 
     /**
-     * Constructor.
-     *
      * @param string $name The name of the column.
-     * @param      \Propel\Runtime\Map\TableMap containingTable TableMap of the table this column is in.
+     * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
      */
     public function __construct($name, TableMap $containingTable)
     {
@@ -153,6 +167,8 @@ class ColumnMap
      * Set the php name of this column.
      *
      * @param string $phpName A string representing the PHP name.
+     *
+     * @return void
      */
     public function setPhpName($phpName)
     {
@@ -173,6 +189,8 @@ class ColumnMap
      * Set the Propel type of this column.
      *
      * @param string $type A string representing the Propel type (e.g. PropelTypes::DATE).
+     *
+     * @return void
      */
     public function setType($type)
     {
@@ -202,7 +220,7 @@ class ColumnMap
     /**
      * Whether this is a BLOB, LONGVARBINARY, or VARBINARY.
      *
-     * @return boolean
+     * @return bool
      */
     public function isLob()
     {
@@ -216,7 +234,7 @@ class ColumnMap
     /**
      * Whether this is a DATE/TIME/TIMESTAMP column.
      *
-     * @return boolean
+     * @return bool
      */
     public function isTemporal()
     {
@@ -232,7 +250,7 @@ class ColumnMap
     /**
      * Whether this column is numeric (int, decimal, bigint etc).
      *
-     * @return boolean
+     * @return bool
      */
     public function isNumeric()
     {
@@ -251,7 +269,7 @@ class ColumnMap
 
     /**
      * Whether this column is of type set.
-     * 
+     *
      * @return bool
      */
     public function isSetType()
@@ -262,7 +280,7 @@ class ColumnMap
     /**
      * Whether this column is a text column (varchar, char, longvarchar).
      *
-     * @return boolean
+     * @return bool
      */
     public function isText()
     {
@@ -277,6 +295,8 @@ class ColumnMap
      * Set the size of this column.
      *
      * @param int $size An int specifying the size.
+     *
+     * @return void
      */
     public function setSize($size)
     {
@@ -296,17 +316,19 @@ class ColumnMap
     /**
      * Set if this column is a primary key or not.
      *
-     * @param boolean $pk True if column is a primary key.
+     * @param bool $pk True if column is a primary key.
+     *
+     * @return void
      */
     public function setPrimaryKey($pk)
     {
-        $this->pk = (Boolean) $pk;
+        $this->pk = (bool)$pk;
     }
 
     /**
      * Is this column a primary key?
      *
-     * @return boolean True if column is a primary key.
+     * @return bool True if column is a primary key.
      */
     public function isPrimaryKey()
     {
@@ -316,17 +338,19 @@ class ColumnMap
     /**
      * Set if this column may be null.
      *
-     * @param boolean $nn True if column may be null.
+     * @param bool $nn True if column may be null.
+     *
+     * @return void
      */
     public function setNotNull($nn)
     {
-        $this->notNull = (Boolean) $nn;
+        $this->notNull = (bool)$nn;
     }
 
     /**
      * Is null value allowed ?
      *
-     * @return boolean True if column may not be null.
+     * @return bool True if column may not be null.
      */
     public function isNotNull()
     {
@@ -336,7 +360,9 @@ class ColumnMap
     /**
      * Sets the default value for this column.
      *
-     * @param mixed $defaultValue the default value for the column
+     * @param string|null $defaultValue the default value for the column
+     *
+     * @return void
      */
     public function setDefaultValue($defaultValue)
     {
@@ -345,7 +371,8 @@ class ColumnMap
 
     /**
      * Gets the default value for this column.
-     * @return mixed String or NULL
+     *
+     * @return string|null
      */
     public function getDefaultValue()
     {
@@ -355,8 +382,10 @@ class ColumnMap
     /**
      * Set the foreign key for this column.
      *
-     * @param string $tableName  The name of the table that is foreign.
+     * @param string $tableName The name of the table that is foreign.
      * @param string $columnName The name of the column that is foreign.
+     *
+     * @return void
      */
     public function setForeignKey($tableName, $columnName)
     {
@@ -373,7 +402,7 @@ class ColumnMap
     /**
      * Is this column a foreign key?
      *
-     * @return boolean True if column is a foreign key.
+     * @return bool True if column is a foreign key.
      */
     public function isForeignKey()
     {
@@ -382,6 +411,8 @@ class ColumnMap
 
     /**
      * Get the RelationMap object for this foreign key
+     *
+     * @return \Propel\Runtime\Map\RelationMap|null
      */
     public function getRelation()
     {
@@ -390,13 +421,17 @@ class ColumnMap
         }
 
         foreach ($this->getTable()->getRelations() as $relation) {
-            if (RelationMap::MANY_TO_ONE === $relation->getType()) {
-                if ($relation->getForeignTable()->getName() === $this->getRelatedTableName()
-                    && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())) {
+            if ($relation->getType() === RelationMap::MANY_TO_ONE) {
+                if (
+                    $relation->getForeignTable()->getName() === $this->getRelatedTableName()
+                    && array_key_exists($this->getFullyQualifiedName(), $relation->getColumnMappings())
+                ) {
                     return $relation;
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -432,8 +467,9 @@ class ColumnMap
     /**
      * Get the TableMap object that this column is related to.
      *
-     * @return \Propel\Runtime\Map\TableMap                              The related TableMap object
      * @throws \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
+     *
+     * @return \Propel\Runtime\Map\TableMap The related TableMap object
      */
     public function getRelatedTable()
     {
@@ -447,8 +483,7 @@ class ColumnMap
     /**
      * Get the TableMap object that this column is related to.
      *
-     * @return \Propel\Runtime\Map\ColumnMap                             The related ColumnMap object
-     * @throws \Propel\Runtime\Map\Exception\ForeignKeyNotFoundException when called on a column with no foreign key
+     * @return self The related ColumnMap object
      */
     public function getRelatedColumn()
     {
@@ -459,6 +494,8 @@ class ColumnMap
      * Set the valueSet of this column (only valid for ENUM and SET columns).
      *
      * @param array $values A list of allowed values
+     *
+     * @return void
      */
     public function setValueSet($values)
     {
@@ -475,11 +512,21 @@ class ColumnMap
         return $this->valueSet;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     public function isInValueSet($value)
     {
         return in_array($value, $this->valueSet);
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return string|int|false
+     */
     public function getValueSetKey($value)
     {
         return array_search($value, $this->valueSet);
@@ -488,8 +535,10 @@ class ColumnMap
     /**
      * Performs DB-specific ignore case, but only if the column type necessitates it.
      *
-     * @param string                                   $str The expression we want to apply the ignore case formatting to (e.g. the column name).
+     * @param string $str The expression we want to apply the ignore case formatting to (e.g. the column name).
      * @param \Propel\Runtime\Adapter\AdapterInterface $db
+     *
+     * @return string
      */
     public function ignoreCase($str, AdapterInterface $db)
     {
@@ -505,14 +554,15 @@ class ColumnMap
      *
      * article.first_name becomes FIRST_NAME
      *
-     * @param  string $name
+     * @param string $name
+     *
      * @return string Normalized column name.
      */
     public static function normalizeName($name)
     {
-        if (false !== ($pos = strrpos($name, '.'))) {
+        if (($pos = strrpos($name, '.')) !== false) {
             $name = substr($name, $pos + 1);
-	     $name = trim($name," \t\n\r\0\x0B`'()\"[]~!-{}%^&.");
+            $name = trim($name, " \t\n\r\0\x0B`'()\"[]~!-{}%^&.");
         }
 
         return strtoupper($name);
@@ -521,17 +571,19 @@ class ColumnMap
     /**
      * Set this column to be a primaryString column.
      *
-     * @param boolean $pkString
+     * @param bool $pkString
+     *
+     * @return void
      */
     public function setPrimaryString($pkString)
     {
-        $this->isPkString = (Boolean) $pkString;
+        $this->isPkString = (bool)$pkString;
     }
 
     /**
      * Is this column a primaryString column?
      *
-     * @return boolean True, if this column is the primaryString column.
+     * @return bool True, if this column is the primaryString column.
      */
     public function isPrimaryString()
     {

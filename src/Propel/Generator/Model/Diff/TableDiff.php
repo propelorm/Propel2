@@ -26,35 +26,35 @@ class TableDiff
     /**
      * The first Table object.
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table|null
      */
     protected $fromTable;
 
     /**
      * The second Table object.
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table|null
      */
     protected $toTable;
 
     /**
      * The list of added columns.
      *
-     * @var array
+     * @var \Propel\Generator\Model\Column[]
      */
     protected $addedColumns;
 
     /**
      * The list of removed columns.
      *
-     * @var array
+     * @var \Propel\Generator\Model\Column[]
      */
     protected $removedColumns;
 
     /**
      * The list of modified columns.
      *
-     * @var array
+     * @var \Propel\Generator\Model\Diff\ColumnDiff[]
      */
     protected $modifiedColumns;
 
@@ -68,14 +68,14 @@ class TableDiff
     /**
      * The list of added primary key columns.
      *
-     * @var array
+     * @var \Propel\Generator\Model\Column[]
      */
     protected $addedPkColumns;
 
     /**
      * The list of removed primary key columns.
      *
-     * @var array
+     * @var \Propel\Generator\Model\Column[]
      */
     protected $removedPkColumns;
 
@@ -117,7 +117,7 @@ class TableDiff
     /**
      * The list of removed foreign keys.
      *
-     * @var array
+     * @var \Propel\Generator\Model\ForeignKey[]
      */
     protected $removedFks;
 
@@ -131,38 +131,40 @@ class TableDiff
     /**
      * Constructor.
      *
-     * @param Table $fromTable The first table
-     * @param Table $toTable   The second table
+     * @param \Propel\Generator\Model\Table|null $fromTable The first table
+     * @param \Propel\Generator\Model\Table|null $toTable The second table
      */
-    public function __construct(Table $fromTable = null, Table $toTable = null)
+    public function __construct(?Table $fromTable = null, ?Table $toTable = null)
     {
-        if (null !== $fromTable) {
+        if ($fromTable !== null) {
             $this->setFromTable($fromTable);
         }
 
-        if (null !== $toTable) {
+        if ($toTable !== null) {
             $this->setToTable($toTable);
         }
 
-        $this->addedColumns     = [];
-        $this->removedColumns   = [];
-        $this->modifiedColumns  = [];
-        $this->renamedColumns   = [];
-        $this->addedPkColumns   = [];
+        $this->addedColumns = [];
+        $this->removedColumns = [];
+        $this->modifiedColumns = [];
+        $this->renamedColumns = [];
+        $this->addedPkColumns = [];
         $this->removedPkColumns = [];
         $this->renamedPkColumns = [];
-        $this->addedIndices     = [];
-        $this->modifiedIndices  = [];
-        $this->removedIndices   = [];
-        $this->addedFks         = [];
-        $this->modifiedFks      = [];
-        $this->removedFks       = [];
+        $this->addedIndices = [];
+        $this->modifiedIndices = [];
+        $this->removedIndices = [];
+        $this->addedFks = [];
+        $this->modifiedFks = [];
+        $this->removedFks = [];
     }
 
     /**
      * Sets the fromTable property.
      *
-     * @param Table $fromTable
+     * @param \Propel\Generator\Model\Table $fromTable
+     *
+     * @return void
      */
     public function setFromTable(Table $fromTable)
     {
@@ -172,7 +174,7 @@ class TableDiff
     /**
      * Returns the fromTable property.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table|null
      */
     public function getFromTable()
     {
@@ -182,7 +184,9 @@ class TableDiff
     /**
      * Sets the toTable property.
      *
-     * @param Table $toTable
+     * @param \Propel\Generator\Model\Table $toTable
+     *
+     * @return void
      */
     public function setToTable(Table $toTable)
     {
@@ -192,7 +196,7 @@ class TableDiff
     /**
      * Returns the toTable property.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getToTable()
     {
@@ -202,7 +206,9 @@ class TableDiff
     /**
      * Sets the added columns.
      *
-     * @param Column[] $columns
+     * @param \Propel\Generator\Model\Column[] $columns
+     *
+     * @return void
      */
     public function setAddedColumns(array $columns)
     {
@@ -216,7 +222,9 @@ class TableDiff
      * Adds an added column.
      *
      * @param string $name
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addAddedColumn($name, Column $column)
     {
@@ -227,6 +235,8 @@ class TableDiff
      * Removes an added column.
      *
      * @param string $columnName
+     *
+     * @return void
      */
     public function removeAddedColumn($columnName)
     {
@@ -238,7 +248,7 @@ class TableDiff
     /**
      * Returns the list of added columns
      *
-     * @return Column[]
+     * @return \Propel\Generator\Model\Column[]
      */
     public function getAddedColumns()
     {
@@ -248,20 +258,25 @@ class TableDiff
     /**
      * Returns an added column by its name.
      *
-     * @param  string      $columnName
-     * @return Column|null
+     * @param string $columnName
+     *
+     * @return \Propel\Generator\Model\Column|null
      */
     public function getAddedColumn($columnName)
     {
         if (isset($this->addedColumns[$columnName])) {
             return $this->addedColumns[$columnName];
         }
+
+        return null;
     }
 
     /**
      * Setter for the removedColumns property
      *
-     * @param Column[] $removedColumns
+     * @param \Propel\Generator\Model\Column[] $removedColumns
+     *
+     * @return void
      */
     public function setRemovedColumns(array $removedColumns)
     {
@@ -275,7 +290,9 @@ class TableDiff
      * Adds a removed column.
      *
      * @param string $columnName
-     * @param Column $removedColumn
+     * @param \Propel\Generator\Model\Column $removedColumn
+     *
+     * @return void
      */
     public function addRemovedColumn($columnName, Column $removedColumn)
     {
@@ -286,6 +303,8 @@ class TableDiff
      * Removes a removed column.
      *
      * @param string $columnName
+     *
+     * @return void
      */
     public function removeRemovedColumn($columnName)
     {
@@ -295,7 +314,7 @@ class TableDiff
     /**
      * Getter for the removedColumns property.
      *
-     * @return Column[]
+     * @return \Propel\Generator\Model\Column[]
      */
     public function getRemovedColumns()
     {
@@ -307,19 +326,23 @@ class TableDiff
      *
      * @param string $columnName
      *
-     * @param Column
+     * @return \Propel\Generator\Model\Column|null
      */
     public function getRemovedColumn($columnName)
     {
         if (isset($this->removedColumns[$columnName])) {
             return $this->removedColumns[$columnName];
         }
+
+        return null;
     }
 
     /**
      * Sets the list of modified columns.
      *
-     * @param ColumnDiff[] $modifiedColumns An associative array of ColumnDiff objects
+     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $modifiedColumns An associative array of ColumnDiff objects
+     *
+     * @return void
      */
     public function setModifiedColumns(array $modifiedColumns)
     {
@@ -332,8 +355,10 @@ class TableDiff
     /**
      * Add a column difference
      *
-     * @param string     $columnName
-     * @param ColumnDiff $modifiedColumn
+     * @param string $columnName
+     * @param \Propel\Generator\Model\Diff\ColumnDiff $modifiedColumn
+     *
+     * @return void
      */
     public function addModifiedColumn($columnName, ColumnDiff $modifiedColumn)
     {
@@ -343,7 +368,7 @@ class TableDiff
     /**
      * Getter for the modifiedColumns property
      *
-     * @return ColumnDiff[]
+     * @return \Propel\Generator\Model\Diff\ColumnDiff[]
      */
     public function getModifiedColumns()
     {
@@ -354,12 +379,14 @@ class TableDiff
      * Sets the list of renamed columns.
      *
      * @param array $renamedColumns
+     *
+     * @return void
      */
     public function setRenamedColumns(array $renamedColumns)
     {
         $this->renamedColumns = [];
         foreach ($renamedColumns as $columns) {
-            list($fromColumn, $toColumn) = $columns;
+            [$fromColumn, $toColumn] = $columns;
             $this->addRenamedColumn($fromColumn, $toColumn);
         }
     }
@@ -367,8 +394,10 @@ class TableDiff
     /**
      * Add a renamed column
      *
-     * @param Column $fromColumn
-     * @param Column $toColumn
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return void
      */
     public function addRenamedColumn(Column $fromColumn, Column $toColumn)
     {
@@ -388,7 +417,9 @@ class TableDiff
     /**
      * Sets the list of added primary key columns.
      *
-     * @param Column[] $addedPkColumns
+     * @param \Propel\Generator\Model\Column[] $addedPkColumns
+     *
+     * @return void
      */
     public function setAddedPkColumns(array $addedPkColumns)
     {
@@ -402,7 +433,11 @@ class TableDiff
      * Add an added Pk column
      *
      * @param string $columnName
-     * @param Column $addedPkColumn
+     * @param \Propel\Generator\Model\Column $addedPkColumn
+     *
+     * @throws \Propel\Generator\Exception\DiffException
+     *
+     * @return void
      */
     public function addAddedPkColumn($columnName, Column $addedPkColumn)
     {
@@ -417,6 +452,8 @@ class TableDiff
      * Removes an added primary key column.
      *
      * @param string $columnName
+     *
+     * @return void
      */
     public function removeAddedPkColumn($columnName)
     {
@@ -438,7 +475,9 @@ class TableDiff
     /**
      * Sets the list of removed primary key columns.
      *
-     * @param Column[] $removedPkColumns
+     * @param \Propel\Generator\Model\Column[] $removedPkColumns
+     *
+     * @return void
      */
     public function setRemovedPkColumns(array $removedPkColumns)
     {
@@ -452,7 +491,9 @@ class TableDiff
      * Add a removed Pk column
      *
      * @param string $columnName
-     * @param Column $removedColumn
+     * @param \Propel\Generator\Model\Column $removedPkColumn
+     *
+     * @return void
      */
     public function addRemovedPkColumn($columnName, Column $removedPkColumn)
     {
@@ -463,6 +504,8 @@ class TableDiff
      * Removes a removed primary key column.
      *
      * @param string $columnName
+     *
+     * @return void
      */
     public function removeRemovedPkColumn($columnName)
     {
@@ -484,13 +527,15 @@ class TableDiff
     /**
      * Sets the list of all renamed primary key columns.
      *
-     * @param Column[] $renamedPkColumns
+     * @param \Propel\Generator\Model\Column[][] $renamedPkColumns
+     *
+     * @return void
      */
     public function setRenamedPkColumns(array $renamedPkColumns)
     {
         $this->renamedPkColumns = [];
         foreach ($renamedPkColumns as $columns) {
-            list($fromColumn, $toColumn) = $columns;
+            [$fromColumn, $toColumn] = $columns;
             $this->addRenamedPkColumn($fromColumn, $toColumn);
         }
     }
@@ -498,8 +543,10 @@ class TableDiff
     /**
      * Adds a renamed primary key column.
      *
-     * @param Column $fromColumn The original column
-     * @param Column $toColumn   The renamed column
+     * @param \Propel\Generator\Model\Column $fromColumn The original column
+     * @param \Propel\Generator\Model\Column $toColumn The renamed column
+     *
+     * @return void
      */
     public function addRenamedPkColumn(Column $fromColumn, Column $toColumn)
     {
@@ -519,7 +566,7 @@ class TableDiff
     /**
      * Whether the primary key was modified
      *
-     * @return boolean
+     * @return bool
      */
     public function hasModifiedPk()
     {
@@ -529,7 +576,9 @@ class TableDiff
     /**
      * Sets the list of new added indices.
      *
-     * @param Index[] $addedIndices
+     * @param \Propel\Generator\Model\Index[] $addedIndices
+     *
+     * @return void
      */
     public function setAddedIndices(array $addedIndices)
     {
@@ -543,7 +592,9 @@ class TableDiff
      * Add an added index.
      *
      * @param string $indexName
-     * @param Index  $addedIndex
+     * @param \Propel\Generator\Model\Index $addedIndex
+     *
+     * @return void
      */
     public function addAddedIndex($indexName, Index $addedIndex)
     {
@@ -553,7 +604,7 @@ class TableDiff
     /**
      * Getter for the addedIndices property
      *
-     * @return Index[]
+     * @return \Propel\Generator\Model\Index[]
      */
     public function getAddedIndices()
     {
@@ -563,7 +614,9 @@ class TableDiff
     /**
      * Sets the list of removed indices.
      *
-     * @param Index[] $removedIndices
+     * @param \Propel\Generator\Model\Index[] $removedIndices
+     *
+     * @return void
      */
     public function setRemovedIndices(array $removedIndices)
     {
@@ -577,7 +630,9 @@ class TableDiff
      * Adds a removed index.
      *
      * @param string $indexName
-     * @param Index  $removedIndex
+     * @param \Propel\Generator\Model\Index $removedIndex
+     *
+     * @return void
      */
     public function addRemovedIndex($indexName, Index $removedIndex)
     {
@@ -587,7 +642,7 @@ class TableDiff
     /**
      * Getter for the removedIndices property
      *
-     * @return Index[]
+     * @return \Propel\Generator\Model\Index[]
      */
     public function getRemovedIndices()
     {
@@ -599,13 +654,15 @@ class TableDiff
      *
      * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
      *
-     * @param Index[] $modifiedIndices An aray of modified indices
+     * @param \Propel\Generator\Model\Index[][] $modifiedIndices An aray of modified indices
+     *
+     * @return void
      */
     public function setModifiedIndices(array $modifiedIndices)
     {
         $this->modifiedIndices = [];
         foreach ($modifiedIndices as $indices) {
-            list($fromIndex, $toIndex) = $indices;
+            [$fromIndex, $toIndex] = $indices;
             $this->addModifiedIndex($fromIndex->getName(), $fromIndex, $toIndex);
         }
     }
@@ -614,8 +671,10 @@ class TableDiff
      * Add a modified index.
      *
      * @param string $indexName
-     * @param Index  $fromIndex
-     * @param Index  $toIndex
+     * @param \Propel\Generator\Model\Index $fromIndex
+     * @param \Propel\Generator\Model\Index $toIndex
+     *
+     * @return void
      */
     public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex)
     {
@@ -635,7 +694,9 @@ class TableDiff
     /**
      * Sets the list of added foreign keys.
      *
-     * @param ForeignKey[] $addedFks
+     * @param \Propel\Generator\Model\ForeignKey[] $addedFks
+     *
+     * @return void
      */
     public function setAddedFks(array $addedFks)
     {
@@ -648,8 +709,10 @@ class TableDiff
     /**
      * Adds an added foreign key.
      *
-     * @param string     $fkName
-     * @param ForeignKey $addedFk
+     * @param string $fkName
+     * @param \Propel\Generator\Model\ForeignKey $addedFk
+     *
+     * @return void
      */
     public function addAddedFk($fkName, ForeignKey $addedFk)
     {
@@ -660,6 +723,8 @@ class TableDiff
      * Remove an added Fk column
      *
      * @param string $fkName
+     *
+     * @return void
      */
     public function removeAddedFk($fkName)
     {
@@ -671,7 +736,7 @@ class TableDiff
     /**
      * Getter for the addedFks property
      *
-     * @return ForeignKey[]
+     * @return \Propel\Generator\Model\ForeignKey[]
      */
     public function getAddedFks()
     {
@@ -681,7 +746,9 @@ class TableDiff
     /**
      * Sets the list of removed foreign keys.
      *
-     * @param ForeignKey[] $removedFks
+     * @param \Propel\Generator\Model\ForeignKey[] $removedFks
+     *
+     * @return void
      */
     public function setRemovedFks(array $removedFks)
     {
@@ -694,8 +761,10 @@ class TableDiff
     /**
      * Adds a removed foreign key column.
      *
-     * @param string     $fkName
-     * @param ForeignKey $removedColumn
+     * @param string $fkName
+     * @param \Propel\Generator\Model\ForeignKey $removedFk
+     *
+     * @return void
      */
     public function addRemovedFk($fkName, ForeignKey $removedFk)
     {
@@ -706,6 +775,8 @@ class TableDiff
      * Removes a removed foreign key.
      *
      * @param string $fkName
+     *
+     * @return void
      */
     public function removeRemovedFk($fkName)
     {
@@ -715,7 +786,7 @@ class TableDiff
     /**
      * Returns the list of removed foreign keys.
      *
-     * @return ForeignKey[]
+     * @return \Propel\Generator\Model\ForeignKey[]
      */
     public function getRemovedFks()
     {
@@ -727,13 +798,15 @@ class TableDiff
      *
      * Array must be [ [ ForeignKey $fromFk, ForeignKey $toFk ], [ ... ] ]
      *
-     * @param ForeignKey[] $modifiedFks
+     * @param \Propel\Generator\Model\ForeignKey[][] $modifiedFks
+     *
+     * @return void
      */
     public function setModifiedFks(array $modifiedFks)
     {
         $this->modifiedFks = [];
         foreach ($modifiedFks as $foreignKeys) {
-            list($fromForeignKey, $toForeignKey) = $foreignKeys;
+            [$fromForeignKey, $toForeignKey] = $foreignKeys;
             $this->addModifiedFk($fromForeignKey->getName(), $fromForeignKey, $toForeignKey);
         }
     }
@@ -741,9 +814,11 @@ class TableDiff
     /**
      * Adds a modified foreign key.
      *
-     * @param string     $fkName
-     * @param ForeignKey $fromFk
-     * @param ForeignKey $toFk
+     * @param string $fkName
+     * @param \Propel\Generator\Model\ForeignKey $fromFk
+     * @param \Propel\Generator\Model\ForeignKey $toFk
+     *
+     * @return void
      */
     public function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk)
     {
@@ -764,7 +839,7 @@ class TableDiff
      * Returns whether or not there are
      * some modified foreign keys.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasModifiedFks()
     {
@@ -775,7 +850,7 @@ class TableDiff
      * Returns whether or not there are
      * some modified indices.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasModifiedIndices()
     {
@@ -786,7 +861,7 @@ class TableDiff
      * Returns whether or not there are
      * some modified columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasModifiedColumns()
     {
@@ -797,7 +872,7 @@ class TableDiff
      * Returns whether or not there are
      * some removed foreign keys.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRemovedFks()
     {
@@ -808,7 +883,7 @@ class TableDiff
      * Returns whether or not there are
      * some removed indices.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRemovedIndices()
     {
@@ -819,7 +894,7 @@ class TableDiff
      * Returns whether or not there are
      * some renamed columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRenamedColumns()
     {
@@ -830,7 +905,7 @@ class TableDiff
      * Returns whether or not there are
      * some removed columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRemovedColumns()
     {
@@ -841,7 +916,7 @@ class TableDiff
      * Returns whether or not there are
      * some added columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAddedColumns()
     {
@@ -852,7 +927,7 @@ class TableDiff
      * Returns whether or not there are
      * some added indices.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAddedIndices()
     {
@@ -863,7 +938,7 @@ class TableDiff
      * Returns whether or not there are
      * some added foreign keys.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAddedFks()
     {
@@ -874,7 +949,7 @@ class TableDiff
      * Returns whether or not there are
      * some added primary key columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAddedPkColumns()
     {
@@ -885,7 +960,7 @@ class TableDiff
      * Returns whether or not there are
      * some removed primary key columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRemovedPkColumns()
     {
@@ -896,7 +971,7 @@ class TableDiff
      * Returns whether or not there are
      * some renamed primary key columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRenamedPkColumns()
     {
@@ -906,7 +981,7 @@ class TableDiff
     /**
      * Returns the reverse diff for this diff.
      *
-     * @return TableDiff
+     * @return \Propel\Generator\Model\Diff\TableDiff
      */
     public function getReverseDiff()
     {
@@ -998,6 +1073,7 @@ class TableDiff
     /**
      * Clones the current diff object.
      *
+     * @return void
      */
     public function __clone()
     {
@@ -1033,13 +1109,13 @@ class TableDiff
         if ($modifiedColumns = $this->getModifiedColumns()) {
             $ret .= "    modifiedColumns:\n";
             foreach ($modifiedColumns as $colDiff) {
-                $ret .= (string) $colDiff;
+                $ret .= (string)$colDiff;
             }
         }
         if ($renamedColumns = $this->getRenamedColumns()) {
             $ret .= "    renamedColumns:\n";
             foreach ($renamedColumns as $columnRenaming) {
-                list($fromColumn, $toColumn) = $columnRenaming;
+                [$fromColumn, $toColumn] = $columnRenaming;
                 $ret .= sprintf("      %s: %s\n", $fromColumn->getName(), $toColumn->getName());
             }
         }
@@ -1077,7 +1153,7 @@ class TableDiff
             $ret .= "    modifiedFks:\n";
             foreach ($modifiedFks as $fkName => $fkFromTo) {
                 $ret .= sprintf("      %s:\n", $fkName);
-                list($fromFk, $toFk) = $fkFromTo;
+                [$fromFk, $toFk] = $fkFromTo;
                 $fromLocalColumns = json_encode($fromFk->getLocalColumns());
                 $toLocalColumns = json_encode($toFk->getLocalColumns());
                 if ($fromLocalColumns != $toLocalColumns) {

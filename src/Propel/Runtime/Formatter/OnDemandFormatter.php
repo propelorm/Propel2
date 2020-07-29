@@ -10,12 +10,10 @@
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\OnDemandCollection;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
+use ReflectionClass;
 
 /**
  * Object formatter for Propel query
@@ -26,9 +24,18 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class OnDemandFormatter extends ObjectFormatter
 {
+    /**
+     * @var bool
+     */
     protected $isSingleTableInheritance = false;
 
-    public function init(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return $this
+     */
+    public function init(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
 
@@ -37,7 +44,14 @@ class OnDemandFormatter extends ObjectFormatter
         return $this;
     }
 
-    public function format(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
+     */
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         if ($dataFetcher) {
@@ -56,19 +70,22 @@ class OnDemandFormatter extends ObjectFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\OnDemandCollection';
     }
 
     /**
-     * @return OnDemandCollection
+     * @return \Propel\Runtime\Collection\OnDemandCollection
      */
     public function getCollection()
     {
         $class = $this->getCollectionClassName();
 
-        /** @var OnDemandCollection $collection */
+        /** @var \Propel\Runtime\Collection\OnDemandCollection $collection */
         $collection = new $class();
         $collection->setModel($this->class);
 
@@ -80,9 +97,9 @@ class OnDemandFormatter extends ObjectFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array with data
+     * @param array $row associative array with data
      *
-     * @return ActiveRecordInterface
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     public function getAllObjectsFromRow($row)
     {
@@ -95,9 +112,10 @@ class OnDemandFormatter extends ObjectFormatter
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
-                $refl = new \ReflectionClass($class);
+                $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+
                     continue;
                 }
             } else {
@@ -113,10 +131,11 @@ class OnDemandFormatter extends ObjectFormatter
             }
             // as we may be in a left join, the endObject may be empty
             // in which case it should not be related to the previous object
-            if (null === $endObject || $endObject->isPrimaryKeyNull()) {
+            if ($endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
                     call_user_func([$startObject, $modelWith->getInitMethod()], false);
                 }
+
                 continue;
             }
             if (isset($hydrationChain)) {

@@ -11,8 +11,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * statement formatter for Propel query
@@ -22,7 +22,12 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class StatementFormatter extends AbstractFormatter
 {
-    public function format(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -33,7 +38,12 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher;
     }
 
-    public function formatOne(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|null
+     */
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -44,11 +54,21 @@ class StatementFormatter extends AbstractFormatter
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }
 
-    public function formatRecord(ActiveRecordInterface $record = null)
+    /**
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null|void
+     */
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         throw new PropelException('The Statement formatter cannot transform a record into a statement');
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;

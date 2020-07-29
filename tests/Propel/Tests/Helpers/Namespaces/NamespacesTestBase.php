@@ -18,14 +18,14 @@ use Propel\Tests\TestCase;
  */
 abstract class NamespacesTestBase extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         if (!file_exists(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php')) {
             $this->markTestSkipped('You must build the namespaced project for this tests to run');
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
     }

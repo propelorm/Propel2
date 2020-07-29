@@ -24,7 +24,7 @@ class AbstractCommandTest extends TestCase
 {
     protected $command;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->command = new TestableAbstractCommand();
     }
@@ -84,10 +84,12 @@ class TestableAbstractCommand extends AbstractCommand
         return parent::parseConnection($connection);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->getSchemas($input->getOption('config-dir'), $input->getOption('recursive'));
 
         $output->write(count($result));
+
+        return 0;
     }
 }

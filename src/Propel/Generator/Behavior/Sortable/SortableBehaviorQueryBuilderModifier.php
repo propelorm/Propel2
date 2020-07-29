@@ -19,34 +19,70 @@ use Propel\Generator\Model\Column;
  */
 class SortableBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Sortable\SortableBehavior
+     */
     protected $behavior;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
 
+    /**
+     * @var string
+     */
     protected $objectClassName;
 
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
+    /**
+     * @var string
+     */
     protected $tableMapClassName;
 
+    /**
+     * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Column
+     */
     protected function getColumn($name)
     {
         return $this->behavior->getColumnForParameter($name);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
@@ -55,9 +91,13 @@ class SortableBehaviorQueryBuilderModifier
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
-
         $this->setBuilder($builder);
         $this->builder->declareClasses(
             '\Propel\Runtime\Propel',
@@ -69,14 +109,16 @@ class SortableBehaviorQueryBuilderModifier
         if ($this->behavior->useScope()) {
             $this->addInList($script);
         }
-        if ('rank' !== $this->getParameter('rank_column')) {
+        if ($this->getParameter('rank_column') !== 'rank') {
             $this->addFilterByRank($script);
             $this->addOrderByRank($script);
         }
 
         // select termination methods
-        if ('rank' !== $this->getParameter('rank_column')
-            || $this->behavior->useScope()) {
+        if (
+            $this->getParameter('rank_column') !== 'rank'
+            || $this->behavior->useScope()
+        ) {
             $this->addFindOneByRank($script);
         }
         $this->addFindList($script);
@@ -98,6 +140,11 @@ class SortableBehaviorQueryBuilderModifier
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     public function addSortableApplyScopeCriteria(&$script)
     {
         $script .= "
@@ -115,24 +162,28 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
         if ($this->behavior->hasMultipleScopes()) {
             foreach ($this->behavior->getScopes() as $idx => $scope) {
                 $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper($scope).", \$scope[$idx], Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::" . Column::CONSTANT_PREFIX . strtoupper($scope) . ", \$scope[$idx], Criteria::EQUAL);
 ";
             }
         } else {
             $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::".Column::CONSTANT_PREFIX.strtoupper(current($this->behavior->getScopes())).", \$scope, Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::" . Column::CONSTANT_PREFIX . strtoupper(current($this->behavior->getScopes())) . ", \$scope, Criteria::EQUAL);
 ";
         }
 
         $script .= "
 }
 ";
-
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addInList(&$script)
     {
-        list($methodSignature, $paramsDoc, $buildScope) = $this->behavior->generateScopePhp();
+        [$methodSignature, $paramsDoc, $buildScope] = $this->behavior->generateScopePhp();
         $script .= "
 /**
  * Returns the objects in a certain list, from the list scope
@@ -151,11 +202,16 @@ public function inList($methodSignature)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFilterByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc) = $this->behavior->generateScopePhp();
+            [$methodSignature, $paramsDoc] = $this->behavior->generateScopePhp();
         }
 
         $script .= "
@@ -172,7 +228,7 @@ $paramsDoc
  *
  * @return    " . $this->queryClassName . " The current query, for fluid interface
  */
-public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : "") . ")
+public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') . ")
 {";
 
         if ($useScope) {
@@ -192,6 +248,11 @@ public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : "") .
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addOrderByRank(&$script)
     {
         $script .= "
@@ -220,11 +281,16 @@ public function orderByRank(\$order = Criteria::ASC)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFindOneByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc, ) = $this->behavior->generateScopePhp();
+            [$methodSignature, $paramsDoc] = $this->behavior->generateScopePhp();
         }
 
         $script .= "
@@ -241,7 +307,7 @@ $paramsDoc";
  *
  * @return    {$this->objectClassName}
  */
-public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : "") . "ConnectionInterface \$con = null)
+public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : '') . "ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $methodSignature = str_replace(' = null', '', $methodSignature);
@@ -250,22 +316,27 @@ public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : ""
         $script .= "
 
     return \$this
-        ->filterByRank(\$rank" . ($useScope ? ", $methodSignature" : "") . ")
+        ->filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') . ")
         ->findOne(\$con);
 }
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFindList(&$script)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc) = $this->behavior->generateScopePhp();
+            [$methodSignature, $paramsDoc] = $this->behavior->generateScopePhp();
         }
 
         $script .= "
 /**
- * Returns " . ($useScope ? 'a' : 'the') ." list of objects
+ * Returns " . ($useScope ? 'a' : 'the') . " list of objects
  *";
         if ($useScope) {
             $script .= "
@@ -278,7 +349,7 @@ $paramsDoc
  *
  * @return     mixed the list of results, formatted by the current formatter
  */
-public function findList(" . ($useScope ? "$methodSignature, " : "") . "\$con = null)
+public function findList(" . ($useScope ? "$methodSignature, " : '') . "\$con = null)
 {";
 
         if ($useScope) {
@@ -300,11 +371,16 @@ public function findList(" . ($useScope ? "$methodSignature, " : "") . "\$con = 
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetMaxRank(&$script)
     {
         $useScope = $this->behavior->useScope();
         if ($useScope) {
-            list($methodSignature, $paramsDoc, $buildScope) = $this->behavior->generateScopePhp();
+            [$methodSignature, $paramsDoc, $buildScope] = $this->behavior->generateScopePhp();
         }
 
         $script .= "
@@ -320,7 +396,7 @@ $paramsDoc";
  *
  * @return    integer highest position
  */
-public function getMaxRank(" . ($useScope ? "$methodSignature, " : "") . "ConnectionInterface \$con = null)
+public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -340,6 +416,11 @@ public function getMaxRank(" . ($useScope ? "$methodSignature, " : "") . "Connec
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addGetMaxRankArray(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -358,7 +439,7 @@ public function getMaxRank(" . ($useScope ? "$methodSignature, " : "") . "Connec
  *
  * @return    integer highest position
  */
-public function getMaxRankArray(" . ($useScope ? "\$scope, " : "") . "ConnectionInterface \$con = null)
+public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -377,6 +458,11 @@ public function getMaxRankArray(" . ($useScope ? "\$scope, " : "") . "Connection
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addReorder(&$script)
     {
         $columnGetter = 'get' . $this->behavior->getColumnForParameter('rank_column')->getPhpName();
@@ -415,6 +501,11 @@ public function reorder(\$order, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addRetrieveByRank(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -432,7 +523,7 @@ public function reorder(\$order, ConnectionInterface \$con = null)
  *
  * @return {$this->objectClassName}
  */
-static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function retrieveByRank(\$rank, " . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -451,6 +542,11 @@ static public function retrieveByRank(\$rank, " . ($useScope ? "\$scope = null, 
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDoSelectOrderByRank(&$script)
     {
         $queryClassName = $this->queryClassName;
@@ -489,6 +585,11 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addRetrieveList(&$script)
     {
         $script .= "
@@ -511,6 +612,11 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCountList(&$script)
     {
         $script .= "
@@ -532,6 +638,11 @@ static public function countList(\$scope, ConnectionInterface \$con = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addDeleteList(&$script)
     {
         $script .= "
@@ -552,6 +663,12 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
 }
 ";
     }
+
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addShiftRank(&$script)
     {
         $useScope = $this->behavior->useScope();
@@ -570,7 +687,7 @@ static public function deleteList(\$scope, ConnectionInterface \$con = null)
         $script .= "
  * @param      ConnectionInterface \$con Connection to use.
  */
-static public function sortableShiftRank(\$delta, \$first, \$last = null, " . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function sortableShiftRank(\$delta, \$first, \$last = null, " . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);

@@ -18,6 +18,7 @@ if (!defined('T_ML_COMMENT')) {
 
 /**
  * Service class for parsing PHP code strings and editing them
+ *
  * @example Basic usage:
  * <code>
  * $script = file_get_contents($fileName);
@@ -31,23 +32,29 @@ if (!defined('T_ML_COMMENT')) {
  */
 class PhpParser
 {
+    /**
+     * @var string
+     */
     protected $code;
 
+    /**
+     * @var bool
+     */
     protected $isAddPhp;
 
     /**
      * methodName => methodCode
      *
-     * @var string[]
+     * @var (string|false)[]
      */
-    private $knownMethodCache = array();
+    private $knownMethodCache = [];
 
     /**
      * Parser constructor
      *
-     * @param string  $code     PHP code to parse
-     * @param boolean $isAddPhp Whether the supplied code needs a supplementary '<?php '
-     *                          to be seen as code by the tokenizer.
+     * @param string $code PHP code to parse
+     * @param bool $isAddPhp Whether the supplied code needs a supplementary '<?php '
+     * to be seen as code by the tokenizer.
      */
     public function __construct($code, $isAddPhp = false)
     {
@@ -65,11 +72,21 @@ class PhpParser
         return $this->isAddPhp ? $this->removePhp($this->code) : $this->code;
     }
 
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
     protected function addPhp($code)
     {
-        return '<?php '. $code;
+        return '<?php ' . $code;
     }
 
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
     protected function removePhp($code)
     {
         return substr($code, 6);
@@ -80,7 +97,7 @@ class PhpParser
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function findMethod($methodName)
     {
@@ -102,21 +119,22 @@ class PhpParser
             // Single-character tokens.
             if (is_string($token)) {
                 if (!$isInFunction) {
-                    if ($token == '{' || $token == ';') {
+                    if ($token === '{' || $token === ';') {
                         // class-opening bracket or end of line
                         $buffer = '';
                     } else {
                         // comment or public|protected|private
                         $buffer .= $token;
                     }
+
                     continue;
                 }
                 $methodCode .= $token;
-                if ($token == '{') {
+                if ($token === '{') {
                     // Increase the bracket-counter (not the class-brackets: `$isInFunction` must be true!)
                     $functionBracketBalance++;
                 }
-                if ($token == '}') {
+                if ($token === '}') {
                     // Decrease the bracket-counter (not the class-brackets: `$isInFunction` must be true!)
                     $functionBracketBalance--;
                     if ($functionBracketBalance == 0) {
@@ -134,7 +152,7 @@ class PhpParser
                 }
             } else {
                 // Tokens consisting of (possibly) more than one character.
-                list($id, $text) = $token;
+                [$id, $text] = $token;
                 switch ($id) {
                     case T_FUNCTION:
                         // If we encounter the keyword 'function', flip the `isInFunction` flag to
@@ -142,6 +160,7 @@ class PhpParser
                         $isInFunction = true;
                         $methodCode .= $buffer . $text;
                         $buffer = '';
+
                         break;
                     default:
                         if ($isInFunction) {
@@ -149,6 +168,7 @@ class PhpParser
                         } else {
                             $buffer .= $text;
                         }
+
                         break;
                 }
             }
@@ -156,6 +176,7 @@ class PhpParser
 
         // method not found
         $this->knownMethodCache[$methodName] = false;
+
         return false;
     }
 
@@ -182,7 +203,7 @@ class PhpParser
      * Parse the code looking for a method definition, and replaces the code if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to use in place of the old method definition
+     * @param string $newCode The code to use in place of the old method definition
      *
      * @return mixed false if not found, or the method code string if found
      */
@@ -202,14 +223,14 @@ class PhpParser
      * Parse the code looking for a method definition, and adds the code after if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to add to the class
+     * @param string $newCode The code to add to the class
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function addMethodAfter($methodName, $newCode)
     {
         if ($methodCode = $this->findMethod($methodName)) {
-            $this->code = str_replace($methodCode, $methodCode. $newCode, $this->code);
+            $this->code = str_replace($methodCode, $methodCode . $newCode, $this->code);
 
             return $methodCode;
         }
@@ -221,9 +242,9 @@ class PhpParser
      * Parse the code looking for a method definition, and adds the code before if found
      *
      * @param string $methodName The name of the method to find, e.g. 'getAuthor'
-     * @param string $newCode    The code to add to the class
+     * @param string $newCode The code to add to the class
      *
-     * @return mixed false if not found, or the method code string if found
+     * @return string|false false if not found, or the method code string if found
      */
     public function addMethodBefore($methodName, $newCode)
     {

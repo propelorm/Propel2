@@ -40,13 +40,13 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
     /**
      * @dataProvider conditionsForTestReplaceNamesWithNamespaces
      */
-    public function testReplaceNamesWithNamespaces($origClause, $columnPhpName = false, $modifiedClause)
+    public function testReplaceNamesWithNamespaces($origClause, $columnPhpName, $modifiedClause)
     {
         $c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', 'Foo\\Bar\\NamespacedBook');
-        $this->doTestReplaceNames($c, \Foo\Bar\Map\NamespacedBookTableMap::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, \Foo\Bar\Map\NamespacedBookTableMap::getTableMap(),  $origClause, $columnPhpName, $modifiedClause);
     }
 
-    public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
+    public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
     {
         $c->replaceNames($origClause);
         $columns = $c->replacedColumns;

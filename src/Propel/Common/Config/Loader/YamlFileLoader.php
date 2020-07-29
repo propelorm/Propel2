@@ -24,14 +24,13 @@ class YamlFileLoader extends FileLoader
     /**
      * Loads a Yaml file.
      *
-     * @param mixed  $file The resource
-     * @param string $type The resource type
+     * @param string $file The resource
+     * @param string|null $type The resource type
+     *
+     * @throws \Symfony\Component\Yaml\Exception\ParseException if something goes wrong in parsing file
+     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
      *
      * @return array
-     *
-     * @throws \InvalidArgumentException                            if configuration file not found
-     * @throws \Symfony\Component\Yaml\Exception\ParseException     if something goes wrong in parsing file
-     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
      */
     public function load($file, $type = null)
     {
@@ -44,7 +43,7 @@ class YamlFileLoader extends FileLoader
         $content = Yaml::parse(file_get_contents($path));
 
         //config file is empty
-        if (null === $content) {
+        if ($content === null) {
             $content = [];
         }
 
@@ -61,10 +60,10 @@ class YamlFileLoader extends FileLoader
      * Returns true if this class supports the given resource.
      * Both 'yml' and 'yaml' extensions are accepted.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
     public function supports($resource, $type = null)
     {

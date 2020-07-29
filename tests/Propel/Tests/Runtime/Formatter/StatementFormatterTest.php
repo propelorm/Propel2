@@ -34,7 +34,7 @@ use \PDO;
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();

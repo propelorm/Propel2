@@ -18,5 +18,4 @@ namespace Propel\Generator\Exception;
  */
 class DiffException extends RuntimeException implements ExceptionInterface
 {
-
 }

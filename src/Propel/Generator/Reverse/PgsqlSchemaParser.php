@@ -10,6 +10,7 @@
 
 namespace Propel\Generator\Reverse;
 
+use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
@@ -18,6 +19,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use stdClass;
 
 /**
  * Postgresql database schema parser.
@@ -28,65 +30,69 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 {
     /**
      * Map PostgreSQL native types to Propel types.
-     * @var array
+     *
+     * @var string[]
      */
-    /** Map MySQL native types to Propel (JDBC) types. */
     private static $pgsqlTypeMap = [
-        'bool'        => PropelTypes::BOOLEAN,
-        'boolean'     => PropelTypes::BOOLEAN,
-        'tinyint'     => PropelTypes::TINYINT,
-        'smallint'    => PropelTypes::SMALLINT,
-        'mediumint'   => PropelTypes::SMALLINT,
-        'int2'        => PropelTypes::SMALLINT,
-        'int'         => PropelTypes::INTEGER,
-        'int4'        => PropelTypes::INTEGER,
-        'serial4'     => PropelTypes::INTEGER,
-        'integer'     => PropelTypes::INTEGER,
-        'int8'        => PropelTypes::BIGINT,
-        'bigint'      => PropelTypes::BIGINT,
-        'bigserial'   => PropelTypes::BIGINT,
-        'serial8'     => PropelTypes::BIGINT,
-        'int24'       => PropelTypes::BIGINT,
-        'real'        => PropelTypes::REAL,
-        'float'       => PropelTypes::FLOAT,
-        'float4'      => PropelTypes::REAL,
-        'decimal'     => PropelTypes::DECIMAL,
-        'numeric'     => PropelTypes::DECIMAL,
-        'double'      => PropelTypes::DOUBLE,
-        'float8'      => PropelTypes::DOUBLE,
-        'char'        => PropelTypes::CHAR,
-        'character'   => PropelTypes::CHAR,
-        'character varying'   => PropelTypes::VARCHAR,
-        'varchar'     => PropelTypes::VARCHAR,
-        'date'        => PropelTypes::DATE,
-        'time'        => PropelTypes::TIME,
-        'timetz'      => PropelTypes::TIME,
+        'bool' => PropelTypes::BOOLEAN,
+        'boolean' => PropelTypes::BOOLEAN,
+        'tinyint' => PropelTypes::TINYINT,
+        'smallint' => PropelTypes::SMALLINT,
+        'mediumint' => PropelTypes::SMALLINT,
+        'int2' => PropelTypes::SMALLINT,
+        'int' => PropelTypes::INTEGER,
+        'int4' => PropelTypes::INTEGER,
+        'serial4' => PropelTypes::INTEGER,
+        'integer' => PropelTypes::INTEGER,
+        'int8' => PropelTypes::BIGINT,
+        'bigint' => PropelTypes::BIGINT,
+        'bigserial' => PropelTypes::BIGINT,
+        'serial8' => PropelTypes::BIGINT,
+        'int24' => PropelTypes::BIGINT,
+        'real' => PropelTypes::REAL,
+        'float' => PropelTypes::FLOAT,
+        'float4' => PropelTypes::REAL,
+        'decimal' => PropelTypes::DECIMAL,
+        'numeric' => PropelTypes::DECIMAL,
+        'double' => PropelTypes::DOUBLE,
+        'float8' => PropelTypes::DOUBLE,
+        'char' => PropelTypes::CHAR,
+        'character' => PropelTypes::CHAR,
+        'character varying' => PropelTypes::VARCHAR,
+        'varchar' => PropelTypes::VARCHAR,
+        'date' => PropelTypes::DATE,
+        'time' => PropelTypes::TIME,
+        'timetz' => PropelTypes::TIME,
         //'year' => PropelTypes::YEAR,  PropelTypes::YEAR does not exist... does this need to be mapped to a different propel type?
-        'datetime'    => PropelTypes::TIMESTAMP,
-        'timestamp'   => PropelTypes::TIMESTAMP,
+        'datetime' => PropelTypes::TIMESTAMP,
+        'timestamp' => PropelTypes::TIMESTAMP,
         'timestamptz' => PropelTypes::TIMESTAMP,
-        'bytea'       => PropelTypes::BLOB,
-        'text'        => PropelTypes::LONGVARCHAR,
+        'bytea' => PropelTypes::BLOB,
+        'text' => PropelTypes::LONGVARCHAR,
         'time without time zone' => PropelTypes::TIME,
         'time with time zone' => PropelTypes::TIME,
         'timestamp without time zone' => PropelTypes::TIMESTAMP,
         'timestamp with time zone' => PropelTypes::TIMESTAMP,
         'double precision' => PropelTypes::DOUBLE,
+        'json' => PropelTypes::JSON,
     ];
 
+    /**
+     * @var int[]
+     */
     protected static $defaultTypeSizes = [
-        'char'      => 1,
+        'char' => 1,
         'character' => 1,
-        'integer'   => 32,
-        'bigint'    => 64,
-        'smallint'  => 16,
-        'double precision' => 54
+        'integer' => 32,
+        'bigint' => 64,
+        'smallint' => 16,
+        'double precision' => 54,
     ];
 
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return string[]
      */
     protected function getTypeMapping()
     {
@@ -96,9 +102,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Parses a database schema.
      *
-     * @param  Database $database
-     * @param  Table[]  $additionalTables
-     * @return integer
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table[] $additionalTables
+     *
+     * @return int
      */
     public function parse(Database $database, array $additionalTables = [])
     {
@@ -126,7 +133,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         return count($tableWraps);
     }
 
-    protected function parseTables(&$tableWraps, Database $database, Table $filterTable = null)
+    /**
+     * @param array $tableWraps
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
+    protected function parseTables(&$tableWraps, Database $database, ?Table $filterTable = null)
     {
         $stmt = null;
 
@@ -148,12 +162,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
             $sql .= ' AND c.relname = ?';
             $params[] = $filterTable->getCommonName();
-
-        } else if (!$database->getSchema()) {
+        } elseif (!$database->getSchema()) {
+            /** @var \PDOStatement $stmt */
             $stmt = $this->dbh->query('SELECT schema_name FROM information_schema.schemata');
             $searchPath = [];
 
-            while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $searchPath[] = $row['schema_name'];
             }
 
@@ -164,7 +178,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = implode(', ', $searchPath);
             $sql .= "
             AND n.nspname IN ($searchPath)";
-
         } elseif ($database->getSchema()) {
             $sql .= "
             AND n.nspname = ?";
@@ -173,12 +186,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $sql .= "
           ORDER BY relname";
+
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->prepare($sql);
 
         $stmt->execute($params);
 
         // First load the tables (important that this happen before filling out details of tables)
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
             $namespaceName = $row['nspname'];
             if ($name == $this->getMigrationTable()) {
@@ -186,7 +201,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             }
             $oid = $row['oid'];
             $table = new Table($name);
-            if ('public' !== $namespaceName) {
+            if ($namespaceName !== 'public') {
                 $table->setSchema($namespaceName);
             }
             $table->setIdMethod($database->getDefaultIdMethod());
@@ -195,20 +210,21 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $database->addTable($table);
 
                 // Create a wrapper to hold these tables and their associated OID
-                $wrap = new \stdClass;
+                $wrap = new stdClass();
                 $wrap->table = $table;
                 $wrap->oid = $oid;
                 $tableWraps[] = $wrap;
             }
         }
-
     }
 
     /**
      * Adds Columns to the specified table.
      *
-     * @param Table $table The Table model class to add columns to.
-     * @param int   $oid   The table OID
+     * @param \Propel\Generator\Model\Table $table The Table model class to add columns to.
+     * @param int $oid The table OID
+     *
+     * @return void
      */
     protected function addColumns(Table $table, $oid)
     {
@@ -221,7 +237,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         if ($schema = $table->getSchema()) {
             $searchPath = '?';
             $params = [$schema];
-        } else if (!$table->getDatabase()->getSchema()) {
+        } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             $searchPathString = $stmt->fetchColumn();
 
@@ -252,8 +268,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $params[] = $table->getCommonName();
         $stmt->execute($params);
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $size = $row['character_maximum_length'];
             if (!$size) {
                 $size = $row['numeric_precision'];
@@ -263,11 +278,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $name = $row['column_name'];
             $type = $row['data_type'];
             $default = $row['column_default'];
-            $isNullable = (true === $row['is_nullable'] || 'YES' === strtoupper($row['is_nullable']));
+            $isNullable = ($row['is_nullable'] === true || strtoupper($row['is_nullable']) === 'YES');
 
             // Check to ensure that this column isn't an array data type
-            if ('ARRAY' === $type) {
+            if ($type === 'ARRAY') {
                 $this->warn(sprintf('Array datatypes are not currently supported [%s.%s]', $table->getName(), $name));
+
                 continue;
             }
 
@@ -276,7 +292,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             // if column has a default
             if ((strlen(trim($default)) > 0)) {
                 if (!preg_match('/^nextval\(/', $default)) {
-                    $strDefault= preg_replace('/::[\W\D]*/', '', $default);
+                    $strDefault = preg_replace('/::[\W\D]*/', '', $default);
                 } else {
                     $autoincrement = true;
                     $default = null;
@@ -288,14 +304,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $propelType = $this->getMappedPropelType($type);
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
-                $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type ('.$type.') that Propel does not support.');
+                $this->warn('Column [' . $table->getName() . '.' . $name . '] has a column type (' . $type . ') that Propel does not support.');
             }
 
             if (isset(static::$defaultTypeSizes[$type]) && $size == static::$defaultTypeSizes[$type]) {
                 $size = null;
             }
 
-            if ('SERIAL' === substr(strtoupper($type), 0, 6)) {
+            if (substr(strtoupper($type), 0, 6) === 'SERIAL') {
                 $autoincrement = true;
                 $default = null;
             }
@@ -308,8 +324,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->replaceScale($scale);
             }
 
-            if (null !== $default) {
-                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+            if ($default !== null) {
+                if ($this->isColumnDefaultExpression($default)) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;
@@ -326,7 +342,37 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     }
 
     /**
+     * @param string $default
+     *
+     * @return bool
+     */
+    protected function isColumnDefaultExpression($default)
+    {
+        $containsFunctionCall = substr($default, 0, 1) !== "'" && strpos($default, '(');
+
+        if ($containsFunctionCall) {
+            return true;
+        }
+
+        $defaultColumnValueExpressions = [
+            'CURRENT_TIMESTAMP' => 'CURRENT_TIMESTAMP',
+            'LOCALTIMESTAMP' => 'LOCALTIMESTAMP',
+        ];
+
+        if (isset($defaultColumnValueExpressions[strtoupper($default)])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Load foreign keys for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
+     *
+     * @return void
      */
     protected function addForeignKeys(Table $table, $oid)
     {
@@ -357,8 +403,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $stmt->execute();
 
         $foreignKeys = [];
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['conname'];
             $localTable = $row['fktab'];
             $localColumns = explode(',', trim($row['fkcols'], '{}'));
@@ -369,45 +414,55 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             switch ($row['confupdtype']) {
                 case 'c':
                     $onupdate = ForeignKey::CASCADE;
+
                     break;
                 case 'd':
                     $onupdate = ForeignKey::SETDEFAULT;
+
                     break;
                 case 'n':
                     $onupdate = ForeignKey::SETNULL;
+
                     break;
                 case 'r':
                     $onupdate = ForeignKey::RESTRICT;
+
                     break;
                 default:
                 case 'a':
                     // NOACTION is the postgresql default
                     $onupdate = ForeignKey::NONE;
+
                     break;
             }
             // On Delete
             switch ($row['confdeltype']) {
                 case 'c':
                     $ondelete = ForeignKey::CASCADE;
+
                     break;
                 case 'd':
                     $ondelete = ForeignKey::SETDEFAULT;
+
                     break;
                 case 'n':
                     $ondelete = ForeignKey::SETNULL;
+
                     break;
                 case 'r':
                     $ondelete = ForeignKey::RESTRICT;
+
                     break;
                 default:
                 case 'a':
                     // NOACTION is the postgresql default
                     $ondelete = ForeignKey::NONE;
+
                     break;
             }
 
             $foreignTable = $database->getTable($foreignTableName);
-            $localTable   = $database->getTable($localTable);
+            $localTable = $database->getTable($localTable);
 
             if (!$foreignTable) {
                 continue;
@@ -437,6 +492,11 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
+     *
+     * @return void
      */
     protected function addIndexes(Table $table, $oid)
     {
@@ -460,7 +520,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $indexes = [];
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['idxname'];
             $unique = (in_array($row['indisunique'], ['t', true, 1, '1']) ? true : false);
 
@@ -478,13 +538,12 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();
 
-                $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
+                $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
 
                 $indexes[$name]->setTable($table);
                 $indexes[$name]->addColumn([
-                    "name" => $row2['attname']
+                    'name' => $row2['attname'],
                 ]);
-
             }
         }
 
@@ -499,10 +558,14 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
     /**
      * Loads the primary key for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param int $oid
+     *
+     * @return void
      */
     protected function addPrimaryKey(Table $table, $oid)
     {
-
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)
             cls.relname as idxname,
@@ -517,7 +580,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $arrColumns = explode(' ', $row['indkey']);
             foreach ($arrColumns as $intColNum) {
                 $stmt2 = $this->dbh->prepare("SELECT a.attname
@@ -528,7 +591,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();
 
-                $row2 = $stmt2->fetch(\PDO::FETCH_ASSOC);
+                $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
                 if (!$table->getColumn($row2['attname'])) {
                     continue;
                 }
@@ -540,7 +603,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Adds the sequences for this database.
      *
-     * @param Database $database
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return void
      */
     protected function addSequences(Database $database)
     {
@@ -570,7 +635,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         ");
         $stmt->execute($params);
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['nspname'] . '.' . $row['relname'];
             $database->addSequence($name);
         }

@@ -10,11 +10,11 @@ use Propel\Tests\TestCase;
  * This test proves the bug described in https://github.com/propelorm/Propel2/issues/733.
  *
  * @group database
- */ 
+ */
 class Issue733Test extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('\Issue733Test1')) {
             $schema = <<<EOF
@@ -27,7 +27,7 @@ class Issue733Test extends TestCase
             <parameter name="i18n_columns" value="bar" />
             <parameter name="locale_column" value="language" />
         </behavior>
-    </table>   
+    </table>
     <table name="issue_733_test_2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="foo" type="INTEGER" />

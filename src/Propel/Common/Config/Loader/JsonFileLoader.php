@@ -22,14 +22,12 @@ class JsonFileLoader extends FileLoader
     /**
      * Loads an Json file.
      *
-     * @param mixed  $file The resource
-     * @param string $type The resource type
+     * @param string $file The resource
+     * @param string|null $type The resource type
+     *
+     * @throws \Propel\Common\Config\Exception\JsonParseException if invalid json file
      *
      * @return array
-     *
-     * @throws \InvalidArgumentException                            if configuration file not found
-     * @throws \Propel\Common\Config\Exception\JsonParseException   if invalid json file
-     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
      */
     public function load($file, $type = null)
     {
@@ -37,11 +35,11 @@ class JsonFileLoader extends FileLoader
 
         $content = [];
 
-        if ('' !== $json) {
+        if ($json !== '') {
             $content = json_decode($json, true);
             $error = json_last_error();
 
-            if (JSON_ERROR_NONE !== $error) {
+            if ($error !== JSON_ERROR_NONE) {
                 throw new JsonParseException($error);
             }
         }
@@ -54,10 +52,10 @@ class JsonFileLoader extends FileLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
     public function supports($resource, $type = null)
     {

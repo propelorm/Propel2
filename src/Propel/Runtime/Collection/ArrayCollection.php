@@ -10,10 +10,8 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Class for iterating over a list of Propel objects stored as arrays
@@ -23,24 +21,25 @@ use Propel\Runtime\Connection\ConnectionInterface;
 class ArrayCollection extends Collection
 {
     /**
-     * @var
+     * @var object
      */
     protected $workerObject;
 
     /**
      * Save all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
      *
-     * @throws ReadOnlyModelException
-     * @throws PropelException
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
+     * @return void
      */
     public function save($con = null)
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
         }
-        if (null === $con) {
+        if ($con === null) {
             $con = $this->getWriteConnection();
         }
         $con->transaction(function () use ($con) {
@@ -57,17 +56,18 @@ class ArrayCollection extends Collection
     /**
      * Delete all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
      *
-     * @throws ReadOnlyModelException
-     * @throws PropelException
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
+     * @return void
      */
     public function delete($con = null)
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
         }
-        if (null === $con) {
+        if ($con === null) {
             $con = $this->getWriteConnection();
         }
         $con->transaction(function () use ($con) {
@@ -83,16 +83,17 @@ class ArrayCollection extends Collection
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param  boolean $usePrefix
-     * @return array   The list of the primary keys of the collection
+     * @param bool $usePrefix
+     *
+     * @return array The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
-        $ret      = [];
+        $ret = [];
         $callable = [$this->getTableMapClass(), 'getPrimaryKeyFromRow'];
 
         foreach ($this as $key => $element) {
-            $key       = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
+            $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = call_user_func($callable, array_values($element));
         }
 
@@ -105,10 +106,12 @@ class ArrayCollection extends Collection
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+     *
+     * @return void
      */
     public function fromArray($arr)
     {
-        $obj  = $this->getWorkerObject();
+        $obj = $this->getWorkerObject();
         foreach ($arr as $element) {
             $obj->clear();
             $obj->fromArray($element);
@@ -120,26 +123,25 @@ class ArrayCollection extends Collection
      * Get an array representation of the collection
      * This is not an alias for getData(), since it returns a copy of the data
      *
-     * @param string  $keyColumn If null, the returned array uses an incremental index.
+     * @param string|null $keyColumn If null, the returned array uses an incremental index.
      *                           Otherwise, the array is indexed using the specified column
-     * @param boolean $usePrefix If true, the returned array prefixes keys
-     *                           with the model class name ('Article_0', 'Article_1', etc).
-     *
+     * @param bool $usePrefix If true, the returned array prefixes keys
+     * with the model class name ('Article_0', 'Article_1', etc).
      * <code>
      * $bookCollection->toArray();
      * array(
-     *  0 => array('Id' => 123, 'Title' => 'War And Peace'),
-     *  1 => array('Id' => 456, 'Title' => 'Don Juan'),
+     * 0 => array('Id' => 123, 'Title' => 'War And Peace'),
+     * 1 => array('Id' => 456, 'Title' => 'Don Juan'),
      * )
      * $bookCollection->toArray('Id');
      * array(
-     *  123 => array('Id' => 123, 'Title' => 'War And Peace'),
-     *  456 => array('Id' => 456, 'Title' => 'Don Juan'),
+     * 123 => array('Id' => 123, 'Title' => 'War And Peace'),
+     * 456 => array('Id' => 456, 'Title' => 'Don Juan'),
      * )
      * $bookCollection->toArray(null, true);
      * array(
-     *  'Book_0' => array('Id' => 123, 'Title' => 'War And Peace'),
-     *  'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
+     * 'Book_0' => array('Id' => 123, 'Title' => 'War And Peace'),
+     * 'Book_1' => array('Id' => 456, 'Title' => 'Don Juan'),
      * )
      * </code>
      *
@@ -149,7 +151,7 @@ class ArrayCollection extends Collection
     {
         $ret = [];
         foreach ($this as $key => $element) {
-            $key = null === $keyColumn ? $key : $element[$keyColumn];
+            $key = $keyColumn === null ? $key : $element[$keyColumn];
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $element;
         }
@@ -160,14 +162,14 @@ class ArrayCollection extends Collection
     /**
      * Synonym for toArray(), to provide a similar interface to PropelObjectCollection
      *
-     * @param string  $keyColumn
-     * @param boolean $usePrefix
+     * @param string|null $keyColumn
+     * @param bool $usePrefix
      *
      * @return array
      */
     public function getArrayCopy($keyColumn = null, $usePrefix = false)
     {
-        if (null === $keyColumn && false === $usePrefix) {
+        if ($keyColumn === null && $usePrefix === false) {
             return parent::getArrayCopy();
         }
 
@@ -198,12 +200,13 @@ class ArrayCollection extends Collection
     }
 
     /**
-     * @throws PropelException
-     * @return ActiveRecordInterface
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     protected function getWorkerObject()
     {
-        if (null === $this->workerObject) {
+        if ($this->workerObject === null) {
             $model = $this->getModel();
             if (empty($model)) {
                 throw new PropelException('You must set the collection model before interacting with it');

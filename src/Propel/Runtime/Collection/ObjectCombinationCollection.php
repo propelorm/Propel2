@@ -10,7 +10,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 
 /**
@@ -20,20 +19,20 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
  */
 class ObjectCombinationCollection extends ObjectCollection
 {
-
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param  boolean $usePrefix
-     * @return array   The list of the primary keys of the collection
+     * @param bool $usePrefix
+     *
+     * @return array The list of the primary keys of the collection
      */
     public function getPrimaryKeys($usePrefix = true)
     {
         $ret = [];
 
-        /** @var $obj ActiveRecordInterface */
         foreach ($this as $combination) {
             $pkCombo = [];
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
             foreach ($combination as $key => $obj) {
                 $pkCombo[$key] = $obj->getPrimaryKey();
             }
@@ -44,7 +43,7 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function push($value)
     {
@@ -55,6 +54,7 @@ class ObjectCombinationCollection extends ObjectCollection
      * Returns all values from one position/column.
      *
      * @param int $position beginning with 1
+     *
      * @return array
      */
     public function getObjectsFromPosition($position = 1)
@@ -63,11 +63,12 @@ class ObjectCombinationCollection extends ObjectCollection
         foreach ($this as $array) {
             $result[] = $array[$position - 1];
         }
+
         return $result;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function search($element)
     {
@@ -85,13 +86,15 @@ class ObjectCombinationCollection extends ObjectCollection
         foreach ($this as $pos => $combination) {
             $found = true;
             foreach ($combination as $idx => $obj) {
-                if (null === $obj) {
+                if ($obj === null) {
                     if ($obj !== $hashes[$idx]) {
                         $found = false;
+
                         break;
                     }
                 } elseif ($isActiveRecord[$idx] ? $obj->hashCode() !== $hashes[$idx] : $obj !== $hashes[$idx]) {
                     $found = false;
+
                     break;
                 }
             }
@@ -104,21 +107,20 @@ class ObjectCombinationCollection extends ObjectCollection
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function removeObject($element)
     {
-        if (false !== ($pos = call_user_func_array([$this, 'search'], func_get_args()))) {
+        if (($pos = call_user_func_array([$this, 'search'], func_get_args())) !== false) {
             $this->remove($pos);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function contains($element)
     {
-        return false !== call_user_func_array([$this, 'search'], func_get_args());
+        return call_user_func_array([$this, 'search'], func_get_args()) !== false;
     }
-
 }

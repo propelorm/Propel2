@@ -10,38 +10,61 @@
 
 namespace Propel\Runtime\ActiveRecord;
 
+use RecursiveIterator;
+
 /**
  * Pre-order node iterator for Node objects.
  *
  * @author Heltem <heltem@o2php.com>
  */
-class NestedSetRecursiveIterator implements \RecursiveIterator
+class NestedSetRecursiveIterator implements RecursiveIterator
 {
-    protected $topNode = null;
+    /**
+     * @var object
+     */
+    protected $topNode;
 
-    protected $curNode = null;
+    /**
+     * @var object
+     */
+    protected $curNode;
 
+    /**
+     * @param object $node
+     */
     public function __construct($node)
     {
         $this->topNode = $node;
         $this->curNode = $node;
     }
 
+    /**
+     * @return void
+     */
     public function rewind()
     {
         $this->curNode = $this->topNode;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
-        return null !== $this->curNode;
+        return $this->curNode !== null;
     }
 
+    /**
+     * @return mixed
+     */
     public function current()
     {
         return $this->curNode;
     }
 
+    /**
+     * @return string
+     */
     public function key()
     {
         $method = method_exists($this->curNode, 'getPath') ? 'getPath' : 'getAncestors';
@@ -53,13 +76,16 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
         return implode('.', $key);
     }
 
+    /**
+     * @return void
+     */
     public function next()
     {
         $nextNode = null;
         $method = method_exists($this->curNode, 'retrieveNextSibling') ? 'retrieveNextSibling' : 'getNextSibling';
         if ($this->valid()) {
-            while (null === $nextNode) {
-                if (null === $this->curNode) {
+            while ($nextNode === null) {
+                if ($this->curNode === null) {
                     break;
                 }
 
@@ -71,15 +97,19 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
             }
             $this->curNode = $nextNode;
         }
-
-        return $this->curNode;
     }
 
+    /**
+     * @return bool
+     */
     public function hasChildren()
     {
         return $this->curNode->hasChildren();
     }
 
+    /**
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator
+     */
     public function getChildren()
     {
         $method = method_exists($this->curNode, 'retrieveFirstChild') ? 'retrieveFirstChild' : 'getFirstChild';

@@ -10,13 +10,8 @@
 
 namespace Propel\Generator\Config;
 
-use Propel\Common\Pluralizer\PluralizerInterface;
-use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Platform\PlatformInterface;
-use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Generator\Util\BehaviorLocator;
 
 interface GeneratorConfigInterface
 {
@@ -24,49 +19,50 @@ interface GeneratorConfigInterface
      * Returns a configured data model builder class for specified table and
      * based on type ('ddl', 'sql', etc.).
      *
-     * @param  Table            $table
-     * @param  string           $type
-     * @return DataModelBuilder
+     * @param \Propel\Generator\Model\Table $table
+     * @param string $type
+     *
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     public function getConfiguredBuilder(Table $table, $type);
 
     /**
      * Returns a configured Pluralizer class.
      *
-     * @return PluralizerInterface
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
     public function getConfiguredPluralizer();
-
 
     /**
      * Creates and configures a new Platform class.
      *
-     * @param  ConnectionInterface $con
-     * @param  string              $database
-     * @return PlatformInterface
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     * @param string|null $database
      *
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the platform class doesn't exists
-     * @throws \Propel\Generator\Exception\BuildException         if the class isn't an implementation of PlatformInterface
+     * @throws \Propel\Generator\Exception\BuildException if the class isn't an implementation of PlatformInterface
+     *
+     * @return \Propel\Generator\Platform\PlatformInterface|null
      */
-    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null);
+    public function getConfiguredPlatform(?ConnectionInterface $con = null, $database = null);
 
     /**
      * Creates and configures a new SchemaParser class for a specified platform.
      *
-     * @param  ConnectionInterface $con
-     * @param  string              $database
-     *
-     * @return SchemaParserInterface
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     * @param string|null $database
      *
      * @throws \Propel\Generator\Exception\ClassNotFoundException if the class doesn't exist
-     * @throws \Propel\Generator\Exception\BuildException         if the class isn't an implementation of SchemaParserInterface
+     * @throws \Propel\Generator\Exception\BuildException if the class isn't an implementation of SchemaParserInterface
+     *
+     * @return \Propel\Generator\Reverse\SchemaParserInterface|null
      */
-    public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null);
+    public function getConfiguredSchemaParser(?ConnectionInterface $con = null, $database = null);
 
     /**
      * Returns the behavior locator.
      *
-     * @return BehaviorLocator
+     * @return \Propel\Generator\Util\BehaviorLocator
      */
     public function getBehaviorLocator();
 
@@ -79,7 +75,9 @@ interface GeneratorConfigInterface
      * <code>'database.adapter.mysql.tableType</code>
      *
      * @param string $name The name of property, expressed as a dot separated level hierarchy
+     *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
+     *
      * @return mixed The configuration property
      */
     public function getConfigProperty($name);

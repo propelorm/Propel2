@@ -9,55 +9,78 @@
  */
 
 namespace Propel\Runtime\Util;
+
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 
 /**
-* Profiler for Propel
-*/
+ * Profiler for Propel
+ */
 class Profiler
 {
+    /**
+     * @var float
+     */
     protected $slowTreshold;
 
+    /**
+     * @var string
+     */
     protected $innerGlue;
 
+    /**
+     * @var string
+     */
     protected $outerGlue;
 
-    protected $snapshot;
+    /**
+     * @var array
+     */
+    protected $snapshot = [];
 
+    /**
+     * @var array
+     */
     protected $details = [
         'time' => [
-            'name'      => 'Time',
+            'name' => 'Time',
             'precision' => 3,
-            'pad'       => 8
+            'pad' => 8,
         ],
         'mem' => [
-            'name'      => 'Memory',
+            'name' => 'Memory',
             'precision' => 3,
-            'pad'       => 8
+            'pad' => 8,
         ],
         'memDelta' => [
-            'name'      => 'Memory Delta',
+            'name' => 'Memory Delta',
             'precision' => 3,
-            'pad'       => 8
+            'pad' => 8,
         ],
         'memPeak' => [
-            'name'      => 'Memory Peak',
+            'name' => 'Memory Peak',
             'precision' => 3,
-            'pad'       => 8
+            'pad' => 8,
         ],
     ];
 
+    /**
+     * @param float $slowTreshold
+     * @param string $innerGlue
+     * @param string $outerGlue
+     */
     public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
     {
         $this->slowTreshold = $slowTreshold;
-        $this->innerGlue    = $innerGlue;
-        $this->outerGlue    = $outerGlue;
+        $this->innerGlue = $innerGlue;
+        $this->outerGlue = $outerGlue;
     }
 
     /**
      * Set the duration which triggers the 'slow' label on details.
      *
-     * @param integer $slowTreshold duration in seconds
+     * @param int $slowTreshold duration in seconds
+     *
+     * @return void
      */
     public function setSlowTreshold($slowTreshold)
     {
@@ -68,6 +91,8 @@ class Profiler
      * Set the list of details to be included in a profile.
      *
      * @param array $details
+     *
+     * @return void
      */
     public function setDetails($details)
     {
@@ -78,6 +103,8 @@ class Profiler
      * Set the inner glue for the details.
      *
      * @param string $innerGlue
+     *
+     * @return void
      */
     public function setInnerGlue($innerGlue)
     {
@@ -88,6 +115,8 @@ class Profiler
      * Set the outer glue for the details.
      *
      * @param string $outerGlue
+     *
+     * @return void
      */
     public function setOuterGlue($outerGlue)
     {
@@ -129,6 +158,8 @@ class Profiler
      * </code>
      *
      * @param array $profilerConfiguration
+     *
+     * @return void
      */
     public function setConfiguration($profilerConfiguration)
     {
@@ -157,22 +188,31 @@ class Profiler
     {
         return [
             'slowTreshold' => $this->slowTreshold,
-            'details'      => $this->details,
-            'innerGlue'    => $this->innerGlue,
-            'outerGlue'    => $this->outerGlue,
+            'details' => $this->details,
+            'innerGlue' => $this->innerGlue,
+            'outerGlue' => $this->outerGlue,
         ];
     }
 
+    /**
+     * @return void
+     */
     public function start()
     {
         $this->snapshot = self::getSnapshot();
     }
 
+    /**
+     * @return bool
+     */
     public function isSlow()
     {
         return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
     }
 
+    /**
+     * @return string
+     */
     public function getProfile()
     {
         return $this->getProfileBetween($this->snapshot, self::getSnapshot());
@@ -188,7 +228,9 @@ class Profiler
      * @see self::getSnapshot()
      *
      * @param array $startSnapshot A snapshot, as returned by self::getSnapshot().
-     * @param array $endSnapshot   A snapshot, as returned by self::getSnapshot().
+     * @param array $endSnapshot A snapshot, as returned by self::getSnapshot().
+     *
+     * @throws \Propel\Common\Config\Exception\InvalidConfigurationException
      *
      * @return string
      */
@@ -209,23 +251,25 @@ class Profiler
             switch ($detailName) {
                 case 'time':
                     $value = self::formatDuration($endSnapshot['microtime'] - $startSnapshot['microtime'], $config['precision']);
+
                     break;
                 case 'mem':
                     $value = self::formatMemory($endSnapshot['memoryUsage'], $config['precision']);
+
                     break;
                 case 'memDelta':
                     $value = $endSnapshot['memoryUsage'] - $startSnapshot['memoryUsage'];
                     $value = ($value > 0 ? '+' : '') . self::formatMemory($value, $config['precision']);
+
                     break;
                 case 'memPeak':
                     $value = self::formatMemory($endSnapshot['memoryPeakUsage'], $config['precision']);
+
                     break;
                 default:
                     throw new InvalidConfigurationException("`$detailName` isn't a valid profiler key (Section: propel.runtime.profiler).");
-                    break;
             }
             $profile .= $config['name'] . $this->innerGlue . str_pad($value, $config['pad'], ' ', STR_PAD_LEFT) . $this->outerGlue;
-
         }
 
         return $profile;
@@ -239,8 +283,8 @@ class Profiler
     public static function getSnapshot()
     {
         return [
-            'microtime'       => microtime(true),
-            'memoryUsage'     => memory_get_usage(),
+            'microtime' => microtime(true),
+            'memoryUsage' => memory_get_usage(),
             'memoryPeakUsage' => memory_get_peak_usage(),
         ];
     }
@@ -248,8 +292,8 @@ class Profiler
     /**
      * Format a byte count into a human-readable representation.
      *
-     * @param integer $bytes     Byte count to convert. Can be negative.
-     * @param integer $precision How many decimals to include.
+     * @param int|float $bytes Byte count to convert. Can be negative.
+     * @param int $precision How many decimals to include.
      *
      * @return string
      */
@@ -270,8 +314,8 @@ class Profiler
     /**
      * Format a duration into a human-readable representation.
      *
-     * @param double  $duration  Duration to format, in seconds.
-     * @param integer $precision How many decimals to include.
+     * @param float $duration Duration to format, in seconds.
+     * @param int $precision How many decimals to include.
      *
      * @return string
      */
@@ -290,19 +334,18 @@ class Profiler
     /**
      * Rounding to significant digits (sort of like JavaScript's toPrecision()).
      *
+     * @param float|int $number Value to round
+     * @param int $significantFigures Number of significant figures
      *
-     * @param float   $number             Value to round
-     * @param integer $significantFigures Number of significant figures
-     *
-     * @return float
+     * @return string
      */
     public static function toPrecision($number, $significantFigures = 3)
     {
-        if (0 === $number) {
-            return 0;
+        if ((float)$number === 0.0) {
+            return '0';
         }
 
-        $significantDecimals = (int) floor($significantFigures - log10(abs($number)));
+        $significantDecimals = (int)floor($significantFigures - log10(abs($number)));
         $magnitude = pow(10, $significantDecimals);
         $shifted = round($number * $magnitude);
 

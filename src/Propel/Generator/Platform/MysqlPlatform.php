@@ -10,18 +10,19 @@
 
 namespace Propel\Generator\Platform;
 
+use PDO;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Diff\ColumnDiff;
+use Propel\Generator\Model\Diff\DatabaseDiff;
 use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\ColumnDiff;
-use Propel\Generator\Model\Diff\DatabaseDiff;
 
 /**
  * MySql PlatformInterface implementation.
@@ -31,11 +32,20 @@ use Propel\Generator\Model\Diff\DatabaseDiff;
  */
 class MysqlPlatform extends DefaultPlatform
 {
-    protected $tableEngineKeyword = 'ENGINE';  // overwritten in propel config
-    protected $defaultTableEngine = 'InnoDB';  // overwritten in propel config
+    /**
+     * @var string
+     */
+    protected $tableEngineKeyword = 'ENGINE';
+
+    /**
+     * @var string
+     */
+    protected $defaultTableEngine = 'InnoDB';
 
     /**
      * Initializes db specific domain mapping.
+     *
+     * @return void
      */
     protected function initialize()
     {
@@ -55,6 +65,11 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
     }
 
+    /**
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
+     * @return void
+     */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         parent::setGeneratorConfig($generatorConfig);
@@ -70,6 +85,8 @@ class MysqlPlatform extends DefaultPlatform
      * Setter for the tableEngineKeyword property
      *
      * @param string $tableEngineKeyword
+     *
+     * @return void
      */
     public function setTableEngineKeyword($tableEngineKeyword)
     {
@@ -90,6 +107,8 @@ class MysqlPlatform extends DefaultPlatform
      * Setter for the defaultTableEngine property
      *
      * @param string $defaultTableEngine
+     *
+     * @return void
      */
     public function setDefaultTableEngine($defaultTableEngine)
     {
@@ -106,26 +125,43 @@ class MysqlPlatform extends DefaultPlatform
         return $this->defaultTableEngine;
     }
 
+    /**
+     * @return string
+     */
     public function getAutoIncrement()
     {
         return 'AUTO_INCREMENT';
     }
 
+    /**
+     * @return int
+     */
     public function getMaxColumnNameLength()
     {
         return 64;
     }
 
+    /**
+     * @return bool
+     */
     public function supportsNativeDeleteTrigger()
     {
-        return strtolower($this->getDefaultTableEngine()) == 'innodb';
+        return strtolower($this->getDefaultTableEngine()) === 'innodb';
     }
 
+    /**
+     * @return bool
+     */
     public function supportsIndexSize()
     {
         return true;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return bool
+     */
     public function supportsForeignKeys(Table $table)
     {
         $vendorSpecific = $table->getVendorInfoForType('mysql');
@@ -137,9 +173,14 @@ class MysqlPlatform extends DefaultPlatform
             $mysqlTableType = $this->getDefaultTableEngine();
         }
 
-        return strtolower($mysqlTableType) == 'innodb';
+        return strtolower($mysqlTableType) === 'innodb';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return string
+     */
     public function getAddTablesDDL(Database $database)
     {
         $ret = '';
@@ -155,6 +196,9 @@ class MysqlPlatform extends DefaultPlatform
         return $ret;
     }
 
+    /**
+     * @return string
+     */
     public function getBeginDDL()
     {
         return "
@@ -164,6 +208,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 ";
     }
 
+    /**
+     * @return string
+     */
     public function getEndDDL()
     {
         return "
@@ -175,14 +222,13 @@ SET FOREIGN_KEY_CHECKS = 1;
     /**
      * Returns the SQL for the primary key of a Table object
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
      *
      * @return string
      */
     public function getPrimaryKeyDDL(Table $table)
     {
         if ($table->hasPrimaryKey()) {
-
             $keys = $table->getPrimaryKey();
 
             //MySQL throws an 'Incorrect table definition; there can be only one auto column and it must be defined as a key'
@@ -199,8 +245,15 @@ SET FOREIGN_KEY_CHECKS = 1;
 
             return 'PRIMARY KEY (' . $this->getColumnListDDL($keys) . ')';
         }
+
+        return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getAddTableDDL(Table $table)
     {
         $lines = [];
@@ -258,7 +311,8 @@ CREATE TABLE %s
 ) %s=%s%s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines),
             $this->getTableEngineKeyword(),
@@ -267,6 +321,11 @@ CREATE TABLE %s
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string[]
+     */
     protected function getTableOptions(Table $table)
     {
         $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
@@ -276,24 +335,24 @@ CREATE TABLE %s
         // List of supported table options
         // see http://dev.mysql.com/doc/refman/5.5/en/create-table.html
         $supportedOptions = [
-            'AutoIncrement'   => 'AUTO_INCREMENT',
-            'AvgRowLength'    => 'AVG_ROW_LENGTH',
-            'Charset'         => 'CHARACTER SET',
-            'Checksum'        => 'CHECKSUM',
-            'Collate'         => 'COLLATE',
-            'Connection'      => 'CONNECTION',
-            'DataDirectory'   => 'DATA DIRECTORY',
+            'AutoIncrement' => 'AUTO_INCREMENT',
+            'AvgRowLength' => 'AVG_ROW_LENGTH',
+            'Charset' => 'CHARACTER SET',
+            'Checksum' => 'CHECKSUM',
+            'Collate' => 'COLLATE',
+            'Connection' => 'CONNECTION',
+            'DataDirectory' => 'DATA DIRECTORY',
             'Delay_key_write' => 'DELAY_KEY_WRITE',
-            'DelayKeyWrite'   => 'DELAY_KEY_WRITE',
-            'IndexDirectory'  => 'INDEX DIRECTORY',
-            'InsertMethod'    => 'INSERT_METHOD',
-            'KeyBlockSize'    => 'KEY_BLOCK_SIZE',
-            'MaxRows'         => 'MAX_ROWS',
-            'MinRows'         => 'MIN_ROWS',
-            'Pack_Keys'       => 'PACK_KEYS',
-            'PackKeys'        => 'PACK_KEYS',
-            'RowFormat'       => 'ROW_FORMAT',
-            'Union'           => 'UNION',
+            'DelayKeyWrite' => 'DELAY_KEY_WRITE',
+            'IndexDirectory' => 'INDEX DIRECTORY',
+            'InsertMethod' => 'INSERT_METHOD',
+            'KeyBlockSize' => 'KEY_BLOCK_SIZE',
+            'MaxRows' => 'MAX_ROWS',
+            'MinRows' => 'MIN_ROWS',
+            'Pack_Keys' => 'PACK_KEYS',
+            'PackKeys' => 'PACK_KEYS',
+            'RowFormat' => 'ROW_FORMAT',
+            'Union' => 'UNION',
         ];
 
         $noQuotedValue = array_flip([
@@ -313,19 +372,24 @@ CREATE TABLE %s
             }
 
             // if we have a param value, then parse it out
-            if (!is_null($parameterValue)) {
+            if ($parameterValue !== null) {
                 // if the value is numeric or is parameter is in $noQuotedValue, then there is no need for quotes
                 if (!is_numeric($parameterValue) && !isset($noQuotedValue[$name])) {
                     $parameterValue = $this->quote($parameterValue);
                 }
 
-                $tableOptions [] = sprintf('%s=%s', $sqlName, $parameterValue);
+                $tableOptions[] = sprintf('%s=%s', $sqlName, $parameterValue);
             }
         }
 
         return $tableOptions;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
     public function getDropTableDDL(Table $table)
     {
         return "
@@ -333,6 +397,13 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 ";
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return string
+     */
     public function getColumnDDL(Column $col)
     {
         $domain = $col->getDomain();
@@ -342,18 +413,18 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 
         // Special handling of TIMESTAMP/DATETIME types ...
         // See: http://propel.phpdb.org/trac/ticket/538
-        if ($sqlType == 'DATETIME') {
+        if ($sqlType === 'DATETIME') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 // DATETIME values can only have constant expressions
                 $sqlType = 'TIMESTAMP';
             }
-        } elseif ($sqlType == 'DATE') {
+        } elseif ($sqlType === 'DATE') {
             $def = $domain->getDefaultValue();
             if ($def && $def->isExpression()) {
                 throw new EngineException('DATE columns cannot have default *expressions* in MySQL.');
             }
-        } elseif ($sqlType == 'TEXT' || $sqlType == 'BLOB') {
+        } elseif ($sqlType === 'TEXT' || $sqlType === 'BLOB') {
             if ($domain->getDefaultValue()) {
                 throw new EngineException('BLOB and TEXT columns cannot have DEFAULT values. in MySQL.');
             }
@@ -369,27 +440,29 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         if ($colinfo->hasParameter('Unsigned')) {
             $unsigned = $colinfo->getParameter('Unsigned');
             switch (strtoupper($unsigned)) {
-                case 'FALSE': break;
+                case 'FALSE':
+                    break;
                 case 'TRUE':
                     $ddl[] = 'UNSIGNED';
+
                     break;
                 default:
-                    throw new EngineException('Unexpected value "'.$unsigned.'" for MySQL vendor column parameter "Unsigned", expecting "true" or "false".');
+                    throw new EngineException('Unexpected value "' . $unsigned . '" for MySQL vendor column parameter "Unsigned", expecting "true" or "false".');
             }
         }
         if ($colinfo->hasParameter('Charset')) {
-            $ddl[] = 'CHARACTER SET '. $this->quote($colinfo->getParameter('Charset'));
+            $ddl[] = 'CHARACTER SET ' . $this->quote($colinfo->getParameter('Charset'));
         }
         if ($colinfo->hasParameter('Collation')) {
-            $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collation'));
+            $ddl[] = 'COLLATE ' . $this->quote($colinfo->getParameter('Collation'));
         } elseif ($colinfo->hasParameter('Collate')) {
-            $ddl[] = 'COLLATE '. $this->quote($colinfo->getParameter('Collate'));
+            $ddl[] = 'COLLATE ' . $this->quote($colinfo->getParameter('Collate'));
         }
-        if ($sqlType == 'TIMESTAMP') {
+        if ($sqlType === 'TIMESTAMP') {
             if ($notNullString == '') {
                 $notNullString = 'NULL';
             }
-            if ($defaultSetting == '' && $notNullString == 'NOT NULL') {
+            if ($defaultSetting == '' && $notNullString === 'NOT NULL') {
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
             if ($notNullString) {
@@ -420,7 +493,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      * Creates a comma-separated list of column names for the index.
      * For MySQL unique indexes there is the option of specifying size, so we cannot simply use
      * the getColumnsList() method.
-     * @param  Index  $index
+     *
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     protected function getIndexColumnListDDL(Index $index)
@@ -436,7 +511,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     /**
      * Builds the DDL SQL to drop the primary key of a table.
      *
-     * @param  Table  $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return string
      */
     public function getDropPrimaryKeyDDL(Table $table)
@@ -449,7 +525,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
 ALTER TABLE %s DROP PRIMARY KEY;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($table->getName())
         );
     }
@@ -457,7 +534,8 @@ ALTER TABLE %s DROP PRIMARY KEY;
     /**
      * Builds the DDL SQL to add an Index.
      *
-     * @param  Index  $index
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getAddIndexDDL(Index $index)
@@ -466,7 +544,8 @@ ALTER TABLE %s DROP PRIMARY KEY;
 CREATE %sINDEX %s ON %s (%s);
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
@@ -477,7 +556,8 @@ CREATE %sINDEX %s ON %s (%s);
     /**
      * Builds the DDL SQL to drop an Index.
      *
-     * @param  Index  $index
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getDropIndexDDL(Index $index)
@@ -486,7 +566,8 @@ CREATE %sINDEX %s ON %s (%s);
 DROP INDEX %s ON %s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName())
         );
@@ -494,17 +575,26 @@ DROP INDEX %s ON %s;
 
     /**
      * Builds the DDL SQL for an Index object.
+     *
+     * @param \Propel\Generator\Model\Index $index
+     *
      * @return string
      */
     public function getIndexDDL(Index $index)
     {
-        return sprintf('%sINDEX %s (%s)',
+        return sprintf(
+            '%sINDEX %s (%s)',
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
             $this->getIndexColumnListDDL($index)
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\Index $index
+     *
+     * @return string
+     */
     protected function getIndexType(Index $index)
     {
         $type = '';
@@ -518,14 +608,25 @@ DROP INDEX %s ON %s;
         return $type;
     }
 
+    /**
+     * @param \Propel\Generator\Model\Unique $unique
+     *
+     * @return string
+     */
     public function getUniqueDDL(Unique $unique)
     {
-        return sprintf('UNIQUE INDEX %s (%s)',
+        return sprintf(
+            'UNIQUE INDEX %s (%s)',
             $this->quoteIdentifier($unique->getName()),
             $this->getIndexColumnListDDL($unique)
         );
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string
+     */
     public function getAddForeignKeyDDL(ForeignKey $fk)
     {
         if ($this->supportsForeignKeys($fk->getTable())) {
@@ -538,7 +639,7 @@ DROP INDEX %s ON %s;
     /**
      * Builds the DDL SQL for a ForeignKey object.
      *
-     * @param ForeignKey $fk
+     * @param \Propel\Generator\Model\ForeignKey $fk
      *
      * @return string
      */
@@ -551,22 +652,35 @@ DROP INDEX %s ON %s;
         return '';
     }
 
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return string|null
+     */
     public function getDropForeignKeyDDL(ForeignKey $fk)
     {
-        if (!$this->supportsForeignKeys($fk->getTable())) return '';
+        if (!$this->supportsForeignKeys($fk->getTable())) {
+            return '';
+        }
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
-            return;
+            return null;
         }
         $pattern = "
 ALTER TABLE %s DROP FOREIGN KEY %s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
             $this->quoteIdentifier($fk->getName())
         );
     }
 
+    /**
+     * @param string $comment
+     *
+     * @return string
+     */
     public function getCommentBlockDDL($comment)
     {
         $pattern = "
@@ -582,11 +696,12 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      * Builds the DDL SQL to modify a database
      * based on a DatabaseDiff instance
      *
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff $databaseDiff
+     *
      * @return string
      */
     public function getModifyDatabaseDDL(DatabaseDiff $databaseDiff)
     {
-
         $ret = '';
 
         foreach ($databaseDiff->getRemovedTables() as $table) {
@@ -614,6 +729,10 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 
     /**
      * Builds the DDL SQL to rename a table
+     *
+     * @param string $fromTableName
+     * @param string $toTableName
+     *
      * @return string
      */
     public function getRenameTableDDL($fromTableName, $toTableName)
@@ -622,7 +741,8 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
 RENAME TABLE %s TO %s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($fromTableName),
             $this->quoteIdentifier($toTableName)
         );
@@ -630,6 +750,8 @@ RENAME TABLE %s TO %s;
 
     /**
      * Builds the DDL SQL to remove a column
+     *
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return string
      */
@@ -639,7 +761,8 @@ RENAME TABLE %s TO %s;
 ALTER TABLE %s DROP %s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->quoteIdentifier($column->getName())
         );
@@ -647,6 +770,10 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to rename a column
+     *
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
      * @return string
      */
     public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
@@ -657,6 +784,8 @@ ALTER TABLE %s DROP %s;
     /**
      * Builds the DDL SQL to modify a column
      *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff $columnDiff
+     *
      * @return string
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff)
@@ -666,6 +795,10 @@ ALTER TABLE %s DROP %s;
 
     /**
      * Builds the DDL SQL to change a column
+     *
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
      * @return string
      */
     public function getChangeColumnDDL(Column $fromColumn, Column $toColumn)
@@ -674,14 +807,18 @@ ALTER TABLE %s DROP %s;
 ALTER TABLE %s CHANGE %s %s;
 ";
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
             $this->quoteIdentifier($fromColumn->getName()),
             $this->getColumnDDL($toColumn)
         );
     }
+
     /**
      * Builds the DDL SQL to modify a list of columns
+     *
+     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
      *
      * @return string
      */
@@ -698,7 +835,7 @@ ALTER TABLE %s CHANGE %s %s;
     /**
      * Builds the DDL SQL to add a column
      *
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
      *
      * @return string
      */
@@ -710,19 +847,21 @@ ALTER TABLE %s ADD %s %s;
         $tableColumns = $column->getTable()->getColumns();
 
         // Default to add first if no column is found before the current one
-        $insertPositionDDL = "FIRST";
+        $insertPositionDDL = 'FIRST';
         foreach ($tableColumns as $i => $tableColumn) {
             // We found the column, use the one before it if it's not the first
             if ($tableColumn->getName() == $column->getName()) {
                 // We have a column that is not the first one
                 if ($i > 0) {
-                    $insertPositionDDL = "AFTER " . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
+                    $insertPositionDDL = 'AFTER ' . $this->quoteIdentifier($tableColumns[$i - 1]->getName());
                 }
+
                 break;
             }
         }
 
-        return sprintf($pattern,
+        return sprintf(
+            $pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->getColumnDDL($column),
             $insertPositionDDL
@@ -732,7 +871,7 @@ ALTER TABLE %s ADD %s %s;
     /**
      * Builds the DDL SQL to add a list of columns
      *
-     * @param  Column[] $columns
+     * @param \Propel\Generator\Model\Column[] $columns
      *
      * @return string
      */
@@ -748,12 +887,19 @@ ALTER TABLE %s ADD %s %s;
 
     /**
      * @see Platform::supportsSchemas()
+     *
+     * @return bool
      */
     public function supportsSchemas()
     {
         return true;
     }
 
+    /**
+     * @param string $sqlType
+     *
+     * @return bool
+     */
     public function hasSize($sqlType)
     {
         return !in_array($sqlType, [
@@ -765,21 +911,26 @@ ALTER TABLE %s ADD %s %s;
         ]);
     }
 
+    /**
+     * @return int[]
+     */
     public function getDefaultTypeSizes()
     {
         return [
-            'char'     => 1,
-            'tinyint'  => 4,
+            'char' => 1,
+            'tinyint' => 4,
             'smallint' => 6,
-            'int'      => 11,
-            'bigint'   => 20,
-            'decimal'  => 10,
+            'int' => 11,
+            'bigint' => 20,
+            'decimal' => 10,
         ];
     }
 
     /**
      * Escape the string for RDBMS.
-     * @param  string $text
+     *
+     * @param string $text
+     *
      * @return string
      */
     public function disconnectedEscapeText($text)
@@ -788,13 +939,14 @@ ALTER TABLE %s ADD %s %s;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * MySQL documentation says that identifiers cannot contain '.'. Thus it
      * should be safe to split the string by '.' and quote each part individually
      * to allow for a <schema>.<table> or <table>.<column> syntax.
      *
-     * @param  string $text the identifier
+     * @param string $text the identifier
+     *
      * @return string the quoted identifier
      */
     public function doQuoting($text)
@@ -802,11 +954,19 @@ ALTER TABLE %s ADD %s %s;
         return '`' . strtr($text, ['.' => '`.`']) . '`';
     }
 
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = "            ")
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     * @param string $identifier
+     * @param string $columnValueAccessor
+     * @param string $tab
+     *
+     * @return string
+     */
+    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if ($column->getPDOType() === \PDO::PARAM_BOOL) {
+        if ($column->getPDOType() === PDO::PARAM_BOOL) {
             return sprintf(
                 "
 %s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",

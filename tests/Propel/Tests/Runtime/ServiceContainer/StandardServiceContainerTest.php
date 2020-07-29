@@ -31,12 +31,12 @@ class StandardServiceContainerTest extends BaseTestCase
      */
     protected $sc;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->sc = new StandardServiceContainer;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->sc = null;
     }
@@ -146,7 +146,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testCheckInvalidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
+        $logger = $this->getMockBuilder('Monolog\Logger')
+            ->setMethods(['warning'])
+            ->setConstructorArgs(['mylogger'])
+            ->getMock();
         $logger->expects($this->once())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);
@@ -155,7 +158,10 @@ class StandardServiceContainerTest extends BaseTestCase
 
     public function testCheckValidVersion()
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
+        $logger = $this->getMockBuilder('Monolog\Logger')
+            ->setMethods(['warning'])
+            ->setConstructorArgs(['mylogger'])
+            ->getMock();
         $logger->expects($this->never())->method('warning');
 
         $this->sc->setLogger('defaultLogger', $logger);

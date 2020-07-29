@@ -239,7 +239,7 @@ class TableTest extends ModelTestCase
 
     public function testSetInvalidDefaultStringFormat()
     {
-        $this->setExpectedException('Propel\Generator\Exception\InvalidArgumentException');
+        $this->expectException(\Propel\Generator\Exception\InvalidArgumentException::class);
 
         $table = new Table();
         $table->setDefaultStringFormat('FOO');
@@ -287,7 +287,7 @@ class TableTest extends ModelTestCase
         $table = new Table('books');
         $column = $this->getColumnMock('created_at', ['phpName' => 'CreatedAt']);
 
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $table->addColumn($column);
         $table->addColumn($column);
@@ -303,8 +303,8 @@ class TableTest extends ModelTestCase
             ->will($this->returnValue(true))
         ;
 
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
-        $children[] = $this->getMock('Propel\Generator\Model\Inheritance');
+        $children[] = $this->getMockBuilder('Propel\Generator\Model\Inheritance')->getMock();
+        $children[] = $this->getMockBuilder('Propel\Generator\Model\Inheritance')->getMock();
 
         $column
             ->expects($this->any())
@@ -392,7 +392,7 @@ class TableTest extends ModelTestCase
 
     public function testCantRemoveColumnWhichIsNotInTable()
     {
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $column1 = $this->getColumnMock('title');
 
@@ -740,7 +740,7 @@ class TableTest extends ModelTestCase
         $table->addForeignKey($fk1);
         $table->addForeignKey($fk2);
 
-        $this->setExpectedException('Propel\Generator\Exception\EngineException');
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
         $table->addForeignKey($fk3);
         $this->fail('Expected to throw an EngineException due to duplicate foreign key.');
     }

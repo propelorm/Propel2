@@ -17,20 +17,40 @@ namespace Propel\Generator\Behavior\Archivable;
  */
 class ArchivableBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehavior
+     */
     protected $behavior;
+
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @param \Propel\Generator\Behavior\Archivable\ArchivableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryAttributes($builder)
     {
         $script = '';
@@ -46,6 +66,11 @@ class ArchivableBehaviorQueryBuilderModifier
         return $script;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null
+     */
     public function preDeleteQuery($builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
@@ -57,8 +82,15 @@ if (\$this->archiveOnDelete) {
 }
 ";
         }
+
+        return null;
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null
+     */
     public function postUpdateQuery($builder)
     {
         if ($this->behavior->isArchiveOnUpdate()) {
@@ -70,9 +102,13 @@ if (\$this->archiveOnUpdate) {
 }
 ";
         }
+
+        return null;
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function queryMethods($builder)
@@ -92,17 +128,21 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     protected function addArchive($builder)
     {
         return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
-            'modelTableMap'       => $builder->getTableMapClass(),
+            'modelTableMap' => $builder->getTableMapClass(),
         ]);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnUpdate($builder)
@@ -111,6 +151,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addUpdateWithoutArchive($builder)
@@ -119,6 +161,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSetArchiveOnDelete($builder)
@@ -127,6 +171,8 @@ if (\$this->archiveOnUpdate) {
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)
