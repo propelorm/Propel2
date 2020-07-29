@@ -11,9 +11,6 @@
     <exclude-pattern>*/templates/*</exclude-pattern>
 
     <!-- exclude for now -->
-    <rule ref="Spryker.Commenting.FileDocBlock">
-        <severity>0</severity>
-    </rule>
     <rule ref="Spryker.ControlStructures.NoInlineAssignment">
         <severity>0</severity>
     </rule>
