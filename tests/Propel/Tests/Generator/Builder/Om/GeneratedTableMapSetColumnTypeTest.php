@@ -10,8 +10,8 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Map\ComplexColumnTypeEntity103TableMap;
 use Propel\Generator\Util\QuickBuilder;
-
 use Propel\Tests\TestCase;
 
 /**
@@ -21,6 +21,9 @@ use Propel\Tests\TestCase;
  */
 class GeneratedTableMapSetColumnTypeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity103')) {
@@ -51,6 +54,8 @@ EOF;
 
     /**
      * @dataProvider valueSetConstantProvider
+     *
+     * @return void
      */
     public function testValueSetConstants($constantName, $value)
     {
@@ -58,15 +63,21 @@ EOF;
         $this->assertEquals($value, constant($constantName));
     }
 
+    /**
+     * @return void
+     */
     public function testGetValueSets()
     {
-        $expected = [\Map\ComplexColumnTypeEntity103TableMap::COL_BAR => ['foo', 'bar', 'baz', '1', '4', '(', 'foo bar']];
-        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSets());
+        $expected = [ComplexColumnTypeEntity103TableMap::COL_BAR => ['foo', 'bar', 'baz', '1', '4', '(', 'foo bar']];
+        $this->assertEquals($expected, ComplexColumnTypeEntity103TableMap::getValueSets());
     }
 
+    /**
+     * @return void
+     */
     public function testGetValueSet()
     {
         $expected = ['foo', 'bar', 'baz', '1', '4', '(', 'foo bar'];
-        $this->assertEquals($expected, \Map\ComplexColumnTypeEntity103TableMap::getValueSet(\Map\ComplexColumnTypeEntity103TableMap::COL_BAR));
+        $this->assertEquals($expected, ComplexColumnTypeEntity103TableMap::getValueSet(ComplexColumnTypeEntity103TableMap::COL_BAR));
     }
 }

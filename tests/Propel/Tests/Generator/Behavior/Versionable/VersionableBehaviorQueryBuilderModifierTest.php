@@ -11,6 +11,7 @@
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
 use Propel\Generator\Util\QuickBuilder;
+use VersionableBehaviorTest10Query;
 
 /**
  * Tests for VersionableBehavior class
@@ -19,6 +20,9 @@ use Propel\Generator\Util\QuickBuilder;
  */
 class VersionableBehaviorQueryBuilderModifierTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('VersionableBehaviorTest10')) {
@@ -35,12 +39,15 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsVersioningEnabled()
     {
-        $this->assertTrue(\VersionableBehaviorTest10Query::isVersioningEnabled());
-        \VersionableBehaviorTest10Query::disableVersioning();
-        $this->assertFalse(\VersionableBehaviorTest10Query::isVersioningEnabled());
-        \VersionableBehaviorTest10Query::enableVersioning();
-        $this->assertTrue(\VersionableBehaviorTest10Query::isVersioningEnabled());
+        $this->assertTrue(VersionableBehaviorTest10Query::isVersioningEnabled());
+        VersionableBehaviorTest10Query::disableVersioning();
+        $this->assertFalse(VersionableBehaviorTest10Query::isVersioningEnabled());
+        VersionableBehaviorTest10Query::enableVersioning();
+        $this->assertTrue(VersionableBehaviorTest10Query::isVersioningEnabled());
     }
 }

@@ -21,18 +21,21 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class Ticket520Test extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testNewObjectsAvailableWhenSaveNotCalled()
     {
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $a->addBook($b2);
 
         // Passing no Criteria means "use the internal collection or query the database"
@@ -41,43 +44,49 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertEquals(2, count($books));
     }
 
+    /**
+     * @return void
+     */
     public function testNewObjectsNotAvailableWithCriteria()
     {
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, '%Hitchhiker%', Criteria::LIKE);
 
         $guides = $a->getBooks($c);
         $this->assertEquals(0, count($guides), 'Passing a Criteria means "force a database query"');
     }
 
+    /**
+     * @return void
+     */
     public function testNewObjectsAvailableAfterCriteria()
     {
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, '%Hitchhiker%', Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -85,24 +94,27 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertEquals(2, count($books), 'A previous query with a Criteria does not erase the internal collection');
     }
 
+    /**
+     * @return void
+     */
     public function testSavedObjectsWithCriteria()
     {
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $b2->setISBN('FA404-2');
         $a->addBook($b2);
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, "%Hitchhiker%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, '%Hitchhiker%', Criteria::LIKE);
 
         $guides = $a->getBooks($c);
 
@@ -111,16 +123,19 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertEquals(1, count($booksAfterSave), 'A previous query with a Criteria is not cached');
     }
 
+    /**
+     * @return void
+     */
     public function testAddNewObjectAfterSave()
     {
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $a->save();
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
@@ -135,6 +150,9 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertFalse($b1->isNew(), 'related objects are also saved after fetching them');
     }
 
+    /**
+     * @return void
+     */
     public function testAddNewObjectAfterSaveWithPoisonedCache()
     {
         /* This is like testAddNewObjectAfterSave(),
@@ -142,14 +160,14 @@ class Ticket520Test extends BookstoreTestBase
         before adding the book by calling getBooks(). */
 
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $a->save();
         $a->getBooks();
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
@@ -158,24 +176,27 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertTrue($books->contains($b1), 'new related objects not deleted after fetching them');
     }
 
+    /**
+     * @return void
+     */
     public function testCachePoisoning()
     {
         /* Like testAddNewObjectAfterSaveWithPoisonedCache, emphasizing
         cache poisoning. */
 
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $a->save();
 
         $c = new Criteria();
-        $c->add(BookTableMap::COL_TITLE, "%Restaurant%", Criteria::LIKE);
+        $c->add(BookTableMap::COL_TITLE, '%Restaurant%', Criteria::LIKE);
 
         $this->assertEquals(0, count($a->getBooks($c)));
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
@@ -188,21 +209,24 @@ class Ticket520Test extends BookstoreTestBase
         $this->assertEquals(0, count($a->getBooks($c)));
     }
 
+    /**
+     * @return void
+     */
     public function testDeletedBookDisappears()
     {
         $this->markTestSkipped();
 
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $b1->setISBN('FA404-2');
         $a->addBook($b2);
 
@@ -221,6 +245,9 @@ class Ticket520Test extends BookstoreTestBase
         $a's $colBooks field. */
     }
 
+    /**
+     * @return void
+     */
     public function testNewObjectsGetLostOnJoin()
     {
         /* While testNewObjectsAvailableWhenSaveNotCalled passed as of
@@ -231,20 +258,20 @@ class Ticket520Test extends BookstoreTestBase
         $this->markTestSkipped();
 
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $p = new Publisher();
         $p->setName('Pan Books Ltd.');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('FA404-1');
         $b1->setPublisher($p); // uh... did not check that :^)
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $b1->setISBN('FA404-2');
         $b2->setPublisher($p);
         $a->addBook($b2);

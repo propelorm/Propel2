@@ -33,8 +33,7 @@ propel:
       connections:
           - wrongsource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -51,8 +50,7 @@ propel:
           - mysource
           - wrongsource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -68,8 +66,7 @@ propel:
       connections:
           - wrongsource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -86,8 +83,7 @@ propel:
           - wrongsource
           - mysource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -109,8 +105,7 @@ propel:
           - wrongsource
 
 
-"
-            , 'runtime'],
+", 'runtime'],
         ];
     }
 
@@ -132,8 +127,7 @@ propel:
       connections:
           - mysource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -149,8 +143,7 @@ propel:
       connections:
           - mysource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -172,8 +165,7 @@ propel:
           - mysource
 
 
-"
-            , 'runtime'],
+", 'runtime'],
         ];
     }
 
@@ -192,8 +184,7 @@ propel:
   <starred>false</starred>
  </movie>
 </movies>
-XML
-            , ['movie' => [0 => ['title' => 'Star Wars', 'starred' => true], 1 => ['title' => 'The Lord Of The Rings', 'starred' => false]]]
+XML, ['movie' => [0 => ['title' => 'Star Wars', 'starred' => true], 1 => ['title' => 'The Lord Of The Rings', 'starred' => false]]],
             ],
             [<<< XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -210,8 +201,8 @@ XML
     </logger>
   </log>
 </config>
-XML
-            , ['log' => [
+XML, [
+            'log' => [
                 'logger' => [
                     [
                         'type' => 'stream',
@@ -225,7 +216,7 @@ XML
                         'name' => 'bookstore',
                     ],
                 ],
-            ]]
+            ]],
             ],
             [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -247,8 +238,8 @@ XML
     </datasource>
   </datasources>
 </config>
-EOF
-            , ['datasources' => [
+EOF, [
+            'datasources' => [
                 'bookstore' => [
                     'adapter' => 'mysql',
                     'connection' => ['dsn' => 'mysql:host=localhost;dbname=bookstore'],
@@ -260,7 +251,7 @@ EOF
                     ],
                 ],
                 'default' => 'bookstore',
-            ]]
+            ]],
             ],
             [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -274,8 +265,8 @@ EOF
     </datasource>
   </datasources>
 </config>
-EOF
-            , ['datasources' => [
+EOF, [
+            'datasources' => [
                 'bookstore' => [
                     'adapter' => 'mysql',
                     'connection' => [
@@ -283,7 +274,7 @@ EOF
                     ],
                 ],
                 'default' => 'bookstore',
-            ]]
+            ]],
             ],
             [<<<EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -298,8 +289,8 @@ EOF
     <outerGlue> | </outerGlue>
   </profiler>
  </config>
-EOF
-            , ['profiler' => [
+EOF, [
+            'profiler' => [
                 'class' => '\Runtime\Runtime\Util\Profiler',
                 'slowTreshold' => 0.2,
                 'details' => [
@@ -307,13 +298,14 @@ EOF
                     'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => '8'],
                 ],
                 'innerGlue' => ': ',
-                'outerGlue' => ' | '
-            ]]
-            ]
+                'outerGlue' => ' | ',
+            ]],
+            ],
         ];
     }
 
-    public function providerForXmlToArrayConverterXmlInclusions() {
+    public function providerForXmlToArrayConverterXmlInclusions()
+    {
         return [
             [
                 <<<XML
@@ -324,17 +316,16 @@ EOF
                 xpointer="xpointer( /database/* )"
                 />
 </database>
-XML
-                , <<<XML
+XML, <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="mixin" defaultIdMethod="native">
     <table name="book" phpName="Book"/>
 </database>
-XML
-            , ['table' => [
+XML, [
+        'table' => [
                 'name' => 'book',
                 'phpName' => 'Book',
-            ]]
+            ]],
             ],
         ];
     }

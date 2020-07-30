@@ -10,10 +10,12 @@
 
 namespace Propel\Tests;
 
-use Propel\Generator\Command\TestPrepareCommand;
+use PDO;
 use Propel\Runtime\Propel;
+use ReflectionClass;
 use Symfony\Component\Console\Application;
-use Propel\Runtime\Connection\ConnectionInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -35,16 +37,20 @@ class TestCaseFixtures extends TestCase
      * Depending on this type we return the correct runninOn* results,
      * also getSql() and getDriver() is based on that.
      *
-     * @var ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $con;
 
     public static $lastBuildDsn;
+
     public static $lastBuildMode;
+
     public static $lastReadConfigs;
 
     /**
      * Setup fixture. Needed here because we want to have a realistic code coverage value.
+     *
+     * @return void
      */
     protected function setUp(): void
     {
@@ -54,7 +60,7 @@ class TestCaseFixtures extends TestCase
             'command' => 'test:prepare',
             '--vendor' => $this->getDriver(),
             '--dsn' => $dsn,
-            '--verbose' => true
+            '--verbose' => true,
         ];
 
         if (!static::$withDatabaseSchema) {
@@ -77,19 +83,20 @@ class TestCaseFixtures extends TestCase
 
             if ($skip) {
                 $this->readAllRuntimeConfigs();
+
                 //skip, as we've already created all fixtures for current database connection.
                 return;
             }
         }
 
         $finder = new Finder();
-        $finder->files()->name('*.php')->in(__DIR__.'/../../../src/Propel/Generator/Command')->depth(0);
+        $finder->files()->name('*.php')->in(__DIR__ . '/../../../src/Propel/Generator/Command')->depth(0);
 
         $app = new Application('Propel', Propel::VERSION);
 
         foreach ($finder as $file) {
             $ns = '\\Propel\\Generator\\Command';
-            $r  = new \ReflectionClass($ns.'\\'.$file->getBasename('.php'));
+            $r = new ReflectionClass($ns . '\\' . $file->getBasename('.php'));
             if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
                 /** @var \Symfony\Component\Console\Command\Command $command */
                 $command = $r->newInstance();
@@ -104,18 +111,20 @@ class TestCaseFixtures extends TestCase
             $options['--password'] = getenv('DB_PW');
         }
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput($options);
+        $input = new ArrayInput($options);
 
-        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $output = new BufferedOutput();
         $app->setAutoExit(false);
         if (0 !== $app->run($input, $output)) {
             echo $output->fetch();
             $this->fail('Can not initialize fixtures.');
+
             return;
         }
 
         $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
-        file_put_contents($builtInfo,
+        file_put_contents(
+            $builtInfo,
             "$dsn\n$mode\nFixtures has been created. Delete this file to let the test suite regenerate all fixtures."
         );
 
@@ -136,27 +145,30 @@ class TestCaseFixtures extends TestCase
         if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r'))) {
             fgets($h);
             $secondLine = fgets($h);
+
             return static::$lastBuildMode = trim($secondLine);
         }
     }
 
     /**
      * Reads and includes all *-conf.php of Fixtures/ folder.
+     *
+     * @return void
      */
     protected function readAllRuntimeConfigs()
     {
-        if (static::$lastReadConfigs === static::$lastBuildMode.':'.static::$lastBuildDsn) {
+        if (static::$lastReadConfigs === static::$lastBuildMode . ':' . static::$lastBuildDsn) {
             return;
         }
 
         $finder = new Finder();
-        $finder->files()->name('*-conf.php')->in(__DIR__.'/../../Fixtures/');
+        $finder->files()->name('*-conf.php')->in(__DIR__ . '/../../Fixtures/');
 
         foreach ($finder as $file) {
             include_once($file->getPathname());
         }
 
-        static::$lastReadConfigs = static::$lastBuildMode.':'.static::$lastBuildDsn;
+        static::$lastReadConfigs = static::$lastBuildMode . ':' . static::$lastBuildDsn;
     }
 
     /**
@@ -180,13 +192,14 @@ class TestCaseFixtures extends TestCase
      * Returns the current connection DSN.
      *
      * @param string $database
-     * @param boolean $withCredentials
+     * @param bool $withCredentials
+     *
      * @return string
      */
     protected function getConnectionDsn($database = 'bookstore', $withCredentials = false)
     {
-        $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
-        /** @var $manager \Propel\Runtime\Connection\ConnectionManagerSingle */
+        $serviceContainer = Propel::getServiceContainer();
+        /** @var \Propel\Runtime\Connection\ConnectionManagerSingle $manager */
         $manager = $serviceContainer->getConnectionManager($database);
         $configuration = $manager->getConfiguration();
         $dsn = $configuration['dsn'];
@@ -216,6 +229,7 @@ class TestCaseFixtures extends TestCase
             if (!file_exists($path)) {
                 touch($path);
             }
+
             return 'sqlite:' . realpath($path);
         }
 
@@ -230,7 +244,6 @@ class TestCaseFixtures extends TestCase
         return $dsn;
     }
 
-
     /**
      * Returns current database driver.
      *
@@ -238,7 +251,7 @@ class TestCaseFixtures extends TestCase
      */
     protected function getDriver()
     {
-        $driver = $this->con ? $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME) : null;
+        $driver = $this->con ? $this->con->getAttribute(PDO::ATTR_DRIVER_NAME) : null;
 
         if (null === $driver && $currentDSN = $this->getBuiltDsn()) {
             $driver = explode(':', $currentDSN)[0];

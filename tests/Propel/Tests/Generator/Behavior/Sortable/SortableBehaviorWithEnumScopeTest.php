@@ -11,8 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Tests\Bookstore\Behavior\SortableTable13Query;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable13TableMap;
-use Propel\Tests\Bookstore\Behavior\SortableTable13 as Table13;
 
 /**
  * Tests for SortableBehavior class
@@ -23,6 +21,9 @@ use Propel\Tests\Bookstore\Behavior\SortableTable13 as Table13;
  */
 class SortableBehaviorWithEnumScopeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -30,6 +31,9 @@ class SortableBehaviorWithEnumScopeTest extends TestCase
         $this->populateTable13();
     }
 
+    /**
+     * @return void
+     */
     public function testEnumRank()
     {
         $entries = SortableTable13Query::create()->find();

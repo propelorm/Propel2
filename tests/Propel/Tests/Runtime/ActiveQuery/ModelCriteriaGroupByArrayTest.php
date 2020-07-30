@@ -10,10 +10,10 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * @group database
@@ -22,60 +22,66 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
 {
     /**
      * @dataProvider dataForTestException
+     *
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testGroupByArrayThrowException($groupBy)
     {
         $authors = AuthorQuery::create()
             ->leftJoinBook()
-            ->select(array('FirstName', 'LastName'))
+            ->select(['FirstName', 'LastName'])
             ->withColumn('COUNT(Book.Id)', 'nbBooks')
             ->groupBy($groupBy)
             ->orderByLastName()
             ->find();
     }
     
+    /**
+     * @return void
+     */
     public function testGroupByArray()
     {
         $stephenson = new Author();
-        $stephenson->setFirstName("Neal");
-        $stephenson->setLastName("Stephenson");
+        $stephenson->setFirstName('Neal');
+        $stephenson->setLastName('Stephenson');
         $stephenson->save();
 
         $byron = new Author();
-        $byron->setFirstName("George");
-        $byron->setLastName("Byron");
+        $byron->setFirstName('George');
+        $byron->setLastName('Byron');
         $byron->save();
         
         $phoenix = new Book();
-        $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
-        $phoenix->setISBN("043935806X");
+        $phoenix->setTitle('Harry Potter and the Order of the Phoenix');
+        $phoenix->setISBN('043935806X');
         $phoenix->setAuthor($stephenson);
         $phoenix->save();
         
         $qs = new Book();
-        $qs->setISBN("0380977427");
-        $qs->setTitle("Quicksilver");
+        $qs->setISBN('0380977427');
+        $qs->setTitle('Quicksilver');
         $qs->setAuthor($stephenson);
         $qs->save();
 
         $dj = new Book();
-        $dj->setISBN("0140422161");
-        $dj->setTitle("Don Juan");
+        $dj->setISBN('0140422161');
+        $dj->setTitle('Don Juan');
         $dj->setAuthor($stephenson);
         $dj->save();
 
         $td = new Book();
-        $td->setISBN("067972575X");
-        $td->setTitle("The Tin Drum");
+        $td->setISBN('067972575X');
+        $td->setTitle('The Tin Drum');
         $td->setAuthor($byron);
         $td->save();
         
         $authors = AuthorQuery::create()
             ->leftJoinBook()
-            ->select(array('FirstName', 'LastName'))
+            ->select(['FirstName', 'LastName'])
             ->withColumn('COUNT(Book.Id)', 'nbBooks')
-            ->groupBy(array('FirstName', 'LastName'))
+            ->groupBy(['FirstName', 'LastName'])
             ->orderByLastName()
             ->find();
         
@@ -94,10 +100,10 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
     
     public function dataForTestException()
     {
-        return array(
-            'empty string' => array(''),
-            'null' => array(null),
-            'array' => array(array())
-        );
+        return [
+            'empty string' => [''],
+            'null' => [null],
+            'array' => [[]],
+        ];
     }
 }

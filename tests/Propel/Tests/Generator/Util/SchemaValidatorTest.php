@@ -10,12 +10,13 @@
 
 namespace Propel\Tests\Generator\Util;
 
-use Propel\Generator\Util\SchemaValidator;
-use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Model\Schema;
+use DomDocument;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Generator\Util\SchemaValidator;
 use Propel\Tests\TestCase;
 
 class SchemaValidatorTest extends TestCase
@@ -31,6 +32,9 @@ class SchemaValidatorTest extends TestCase
         return $schema;
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsTrueForEmptySchema()
     {
         $schema = new Schema();
@@ -38,6 +42,9 @@ class SchemaValidatorTest extends TestCase
         $this->assertTrue($validator->validate());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsTrueForValidSchema()
     {
         $xmlSchema = <<<EOF
@@ -60,9 +67,11 @@ EOF;
         $this->assertTrue($validator->validate());
     }
 
+    /**
+     * @return void
+     */
     public function testDatabasePackageName()
     {
-
         $schema = <<<EOF
 <database name="bookstore" package="my.sub-directory">
     <table name="book">
@@ -71,12 +80,15 @@ EOF;
     </table>
 </database>
 EOF;
-        $dom = new \DomDocument('1.0', 'UTF-8');
+        $dom = new DomDocument('1.0', 'UTF-8');
         $dom->loadXML($schema);
 
-        $this->assertTrue($dom->schemaValidate(__DIR__.'/../../../../../resources/xsd/database.xsd'));
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../../../resources/xsd/database.xsd'));
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsFalseWhenTwoTablesHaveSamePhpName()
     {
         $table1 = new Table('foo');
@@ -96,6 +108,9 @@ EOF;
         $this->assertContains('Table "bar" declares a phpName already used in another table', $validator->getErrors());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsTrueWhenTwoTablesHaveSamePhpNameInDifferentNamespaces()
     {
         $column1 = new Column('id');
@@ -125,6 +140,9 @@ EOF;
         $this->assertTrue($validator->validate());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsFalseWhenTableHasNoPk()
     {
         $schema = $this->getSchemaForTable(new Table('foo'));
@@ -134,6 +152,9 @@ EOF;
         $this->assertContains('Table "foo" does not have a primary key defined. Propel requires all tables to have a primary key.', $validator->getErrors());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsTrueWhenTableHasNoPkButIsAView()
     {
         $table = new Table('foo');
@@ -145,6 +166,9 @@ EOF;
         $this->assertTrue($validator->validate());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsFalseWhenTableHasAReservedName()
     {
         $schema = $this->getSchemaForTable(new Table('TABLE_NAME'));
@@ -154,6 +178,9 @@ EOF;
         $this->assertContains('Table "TABLE_NAME" uses a reserved keyword as name', $validator->getErrors());
     }
 
+    /**
+     * @return void
+     */
     public function testValidateReturnsFalseWhenTwoColumnsHaveSamePhpName()
     {
         $column1 = new Column('foo');

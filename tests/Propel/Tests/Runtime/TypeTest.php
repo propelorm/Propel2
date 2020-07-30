@@ -1,12 +1,12 @@
 <?php
 
 /**
-* This file is part of the Propel package.
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*
-* @license MIT License
-*/
+ * This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license MIT License
+ */
 
 namespace Propel\Tests\Runtime;
 
@@ -14,15 +14,20 @@ use Propel\Tests\Bookstore\Map\TypeObjectTableMap;
 use Propel\Tests\Bookstore\TypeObject;
 use Propel\Tests\Bookstore\TypeObjectQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use ReflectionClass;
+use TypeTests\DummyObjectClass;
 
 /**
  * @group database
  */
 class TypeTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testTypeHintClass()
     {
-        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
         $method = $reflection->getMethod('setDummyObject');
         $param = $method->getParameters()[0];
 
@@ -30,9 +35,12 @@ class TypeTest extends BookstoreTestBase
         $this->assertTrue($param->allowsNull());
     }
 
+    /**
+     * @return void
+     */
     public function testTypeHintArray()
     {
-        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
         $method = $reflection->getMethod('setSomeArray');
         $param = $method->getParameters()[0];
 
@@ -40,9 +48,12 @@ class TypeTest extends BookstoreTestBase
         $this->assertTrue($param->allowsNull());
     }
 
+    /**
+     * @return void
+     */
     public function testInterface()
     {
-        $reflection = new \ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
         $method = $reflection->getMethod('setTypeObject');
         $param = $method->getParameters()[0];
 
@@ -50,6 +61,9 @@ class TypeTest extends BookstoreTestBase
         $this->assertTrue($param->allowsNull());
     }
 
+    /**
+     * @return void
+     */
     public function testObjectType()
     {
         TypeObjectQuery::create()->deleteAll();
@@ -58,7 +72,7 @@ class TypeTest extends BookstoreTestBase
         $b = '3456&*(][';
         $c = "_$%^xxx\0d2";
 
-        $objectInstance = new TypeTests\DummyObjectClass();
+        $objectInstance = new DummyObjectClass();
         $objectInstance->setPropPublic($a);
         $objectInstance->setPropProtected($b);
         $objectInstance->setPropPrivate($c);
@@ -76,7 +90,6 @@ class TypeTest extends BookstoreTestBase
         
         $typeObjectEntity->setDetails($objectInstance);
         $this->assertFalse($typeObjectEntity->isModified('details'));
-
 
         $clone = clone $objectInstance;
         $clone->setPropPublic('changed');
@@ -104,7 +117,6 @@ class TypeTest extends BookstoreTestBase
         $this->assertEquals($detailsObject, $typeObjectEntity->getDetails());
         $this->assertEquals('changed', $typeObjectEntity->getDetails()->getPropPublic());
 
-
         // same but with a more complex object
         $q = TypeObjectQuery::create();
         $typeObjectEntity->setDetails($q);
@@ -117,5 +129,4 @@ class TypeTest extends BookstoreTestBase
 
         $this->assertEquals($q, $typeObjectEntity->getDetails());
     }
-
 }

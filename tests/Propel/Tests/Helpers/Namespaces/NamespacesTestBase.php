@@ -18,6 +18,9 @@ use Propel\Tests\TestCase;
  */
 abstract class NamespacesTestBase extends TestCase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         if (!file_exists(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php')) {
@@ -25,6 +28,9 @@ abstract class NamespacesTestBase extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         Propel::init(__DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');

@@ -10,12 +10,14 @@
 
 namespace Propel\Tests\Runtime\Util;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\Util\Profiler;
+use Propel\Tests\Helpers\BaseTestCase;
 
 class ProfilerTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenAddsSlowTreshold()
     {
         $profiler = new Profiler();
@@ -27,6 +29,9 @@ class ProfilerTest extends BaseTestCase
         $this->assertSame('SLOW ', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenDoesNotAddSlowTresholdWhenValueIsNull()
     {
         $profiler = new Profiler();
@@ -38,6 +43,9 @@ class ProfilerTest extends BaseTestCase
         $this->assertSame('', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenAddsTime()
     {
         $profiler = new Profiler();
@@ -49,6 +57,9 @@ class ProfilerTest extends BaseTestCase
         $this->assertEquals('Time: 1.11s  | ', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenAddsMemoryUsage()
     {
         $profiler = new Profiler();
@@ -60,6 +71,9 @@ class ProfilerTest extends BaseTestCase
         $this->assertEquals('Memory: 68.4GB | ', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenAddsMemoryDeltaUsage()
     {
         $profiler = new Profiler();
@@ -73,6 +87,9 @@ class ProfilerTest extends BaseTestCase
         $this->assertEquals('Delta: -68.2GB | ', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenAddsMemoryPeakUsage()
     {
         $profiler = new Profiler();
@@ -84,14 +101,17 @@ class ProfilerTest extends BaseTestCase
         $this->assertEquals('Peak: 68.4GB | ', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfileBetweenCombinesDetails()
     {
         $profiler = new Profiler();
         $profiler->setDetails([
-            'time'     => ['name' => 'Time', 'precision' => 3, 'pad' => 3],
-            'mem'      => ['name' => 'Memory', 'precision' => 3, 'pad' => 3],
+            'time' => ['name' => 'Time', 'precision' => 3, 'pad' => 3],
+            'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => 3],
             'memDelta' => ['name' => 'Delta', 'precision' => 3, 'pad' => 3],
-            'memPeak'  => ['name' => 'Peak', 'precision' => 3, 'pad' => 3],
+            'memPeak' => ['name' => 'Peak', 'precision' => 3, 'pad' => 3],
         ]);
         $res = $profiler->getProfileBetween(
             ['microtime' => 1.234, 'memoryUsage' => 343245, 'memoryPeakUsage' => 314357],
@@ -123,6 +143,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestFormatMemory
+     *
+     * @return void
      */
     public function testFormatMemory($input, $output)
     {
@@ -143,6 +165,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestFormatMemoryPrecision
+     *
+     * @return void
      */
     public function testFormatMemoryPrecision($input, $output)
     {
@@ -170,6 +194,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestFormatDuration
+     *
+     * @return void
      */
     public function testFormatDuration($input, $output)
     {
@@ -190,6 +216,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestFormatDurationPrecision
+     *
+     * @return void
      */
     public function testFormatDurationPrecision($input, $output)
     {
@@ -222,6 +250,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestToPrecision
+     *
+     * @return void
      */
     public function testToPrecision($input, $output)
     {
@@ -243,6 +273,8 @@ class ProfilerTest extends BaseTestCase
 
     /**
      * @dataProvider providerForTestToPrecisionPrecision
+     *
+     * @return void
      */
     public function testToPrecisionPrecision($input, $output)
     {

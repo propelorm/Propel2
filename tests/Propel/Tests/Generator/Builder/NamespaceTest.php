@@ -10,8 +10,19 @@
 
 namespace Propel\Tests\Generator\Builder;
 
+use Baz\Map\NamespacedPublisherTableMap;
+use Baz\NamespacedPublisher;
+use Baz\NamespacedPublisherQuery;
+use Foo\Bar\Map\NamespacedAuthorTableMap;
+use Foo\Bar\Map\NamespacedBookTableMap;
+use Foo\Bar\NamespacedAuthor;
+use Foo\Bar\NamespacedAuthorQuery;
+use Foo\Bar\NamespacedBook;
+use Foo\Bar\NamespacedBookQuery;
+use Foo\Bar\NamespacedBookstoreEmployeeQuery;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
+use Foo\Bar\NamespacedBookstoreEmployee;
 
 /**
  * Tests for Namespaces in generated classes class
@@ -33,23 +44,29 @@ class NamespaceTest extends TestCaseFixturesDatabase
 //        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
 //    }
 
+    /**
+     * @return void
+     */
     public function testInsert()
     {
-        $book = new \Foo\Bar\NamespacedBook();
+        $book = new NamespacedBook();
         $book->setTitle('foo');
         $book->setISBN('something');
         $book->save();
         $this->assertFalse($book->isNew());
 
-        $publisher = new \Baz\NamespacedPublisher();
+        $publisher = new NamespacedPublisher();
         $publisher->save();
         $this->assertFalse($publisher->isNew());
     }
 
+    /**
+     * @return void
+     */
     public function testUpdate()
     {
-        \Foo\Bar\Map\NamespacedBookTableMap::getTableMap();
-        $book = new \Foo\Bar\NamespacedBook();
+        NamespacedBookTableMap::getTableMap();
+        $book = new NamespacedBook();
         $book->setTitle('foo');
         $book->setISBN('something');
         $book->save();
@@ -58,12 +75,15 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($book->isNew());
     }
 
+    /**
+     * @return void
+     */
     public function testRelate()
     {
-        $author = new \Foo\Bar\NamespacedAuthor();
+        $author = new NamespacedAuthor();
         $author->setFirstName('Chuck');
         $author->setLastname('Norris');
-        $book = new \Foo\Bar\NamespacedBook();
+        $book = new NamespacedBook();
         $book->setNamespacedAuthor($author);
         $book->setTitle('foo');
         $book->setISBN('something');
@@ -71,10 +91,10 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($book->isNew());
         $this->assertFalse($author->isNew());
 
-        $author = new \Foo\Bar\NamespacedAuthor();
+        $author = new NamespacedAuthor();
         $author->setFirstName('Henning');
         $author->setLastname('Mankell');
-        $book = new \Foo\Bar\NamespacedBook();
+        $book = new NamespacedBook();
         $book->setTitle('Mördare utan ansikte');
         $book->setISBN('1234');
         $author->addNamespacedBook($book);
@@ -82,8 +102,8 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($book->isNew());
         $this->assertFalse($author->isNew());
 
-        $publisher = new \Baz\NamespacedPublisher();
-        $book = new \Foo\Bar\NamespacedBook();
+        $publisher = new NamespacedPublisher();
+        $book = new NamespacedBook();
         $book->setTitle('Där vi en gång gått');
         $book->setISBN('1234');
         $book->setNamespacedPublisher($publisher);
@@ -92,109 +112,130 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertFalse($publisher->isNew());
     }
 
+    /**
+     * @return void
+     */
     public function testBasicQuery()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        \Baz\NamespacedPublisherQuery::create()->deleteAll();
-        $noNamespacedBook = \Foo\Bar\NamespacedBookQuery::create()->findOne();
+        NamespacedBookQuery::create()->deleteAll();
+        NamespacedPublisherQuery::create()->deleteAll();
+        $noNamespacedBook = NamespacedBookQuery::create()->findOne();
         $this->assertNull($noNamespacedBook);
-        $noPublisher = \Baz\NamespacedPublisherQuery::create()->findOne();
+        $noPublisher = NamespacedPublisherQuery::create()->findOne();
         $this->assertNull($noPublisher);
     }
 
+    /**
+     * @return void
+     */
     public function testFind()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        $book = new \Foo\Bar\NamespacedBook();
+        NamespacedBookQuery::create()->deleteAll();
+        $book = new NamespacedBook();
         $book->setTitle('War And Peace');
         $book->setISBN('1234');
         $book->save();
-        $book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
+        $book2 = NamespacedBookQuery::create()->findPk($book->getId());
         $this->assertEquals($book, $book2);
-        $book3 = \Foo\Bar\NamespacedBookQuery::create()->findOneByTitle($book->getTitle());
+        $book3 = NamespacedBookQuery::create()->findOneByTitle($book->getTitle());
         $this->assertEquals($book, $book3);
     }
 
+    /**
+     * @return void
+     */
     public function testGetRelatedManyToOne()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        \Baz\NamespacedPublisherQuery::create()->deleteAll();
-        $publisher = new \Baz\NamespacedPublisher();
-        $book = new \Foo\Bar\NamespacedBook();
+        NamespacedBookQuery::create()->deleteAll();
+        NamespacedPublisherQuery::create()->deleteAll();
+        $publisher = new NamespacedPublisher();
+        $book = new NamespacedBook();
         $book->setTitle('Something');
         $book->setISBN('1234');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
-        $book2 = \Foo\Bar\NamespacedBookQuery::create()->findPk($book->getId());
+        NamespacedBookTableMap::clearInstancePool();
+        NamespacedPublisherTableMap::clearInstancePool();
+        $book2 = NamespacedBookQuery::create()->findPk($book->getId());
         $publisher2 = $book2->getNamespacedPublisher();
         $this->assertEquals($publisher->getId(), $publisher2->getId());
     }
 
+    /**
+     * @return void
+     */
     public function testGetRelatedOneToMany()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        \Baz\NamespacedPublisherQuery::create()->deleteAll();
-        $author = new \Foo\Bar\NamespacedAuthor();
+        NamespacedBookQuery::create()->deleteAll();
+        NamespacedPublisherQuery::create()->deleteAll();
+        $author = new NamespacedAuthor();
         $author->setFirstName('Foo');
         $author->setLastName('Bar');
-        $book = new \Foo\Bar\NamespacedBook();
+        $book = new NamespacedBook();
         $book->setTitle('Quux');
         $book->setISBN('1235');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
-        $author2 = \Foo\Bar\NamespacedAuthorQuery::create()->findPk($author->getId());
+        NamespacedBookTableMap::clearInstancePool();
+        NamespacedAuthorTableMap::clearInstancePool();
+        $author2 = NamespacedAuthorQuery::create()->findPk($author->getId());
         $book2 = $author2->getNamespacedBooks()->getFirst();
         $this->assertEquals($book->getId(), $book2->getId());
     }
 
+    /**
+     * @return void
+     */
     public function testFindWithManyToOne()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        \Baz\NamespacedPublisherQuery::create()->deleteAll();
-        $publisher = new \Baz\NamespacedPublisher();
-        $book = new \Foo\Bar\NamespacedBook();
+        NamespacedBookQuery::create()->deleteAll();
+        NamespacedPublisherQuery::create()->deleteAll();
+        $publisher = new NamespacedPublisher();
+        $book = new NamespacedBook();
         $book->setTitle('asdf');
         $book->setISBN('something');
         $book->setNamespacedPublisher($publisher);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Baz\Map\NamespacedPublisherTableMap::clearInstancePool();
-        $book2 = \Foo\Bar\NamespacedBookQuery::create()
+        NamespacedBookTableMap::clearInstancePool();
+        NamespacedPublisherTableMap::clearInstancePool();
+        $book2 = NamespacedBookQuery::create()
             ->joinWith('NamespacedPublisher')
             ->findPk($book->getId());
         $publisher2 = $book2->getNamespacedPublisher();
         $this->assertEquals($publisher->getId(), $publisher2->getId());
     }
 
+    /**
+     * @return void
+     */
     public function testFindWithOneToMany()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
-        \Foo\Bar\NamespacedAuthorQuery::create()->deleteAll();
-        $author = new \Foo\Bar\NamespacedAuthor();
+        NamespacedBookQuery::create()->deleteAll();
+        NamespacedAuthorQuery::create()->deleteAll();
+        $author = new NamespacedAuthor();
         $author->setFirstName('Foo');
         $author->setLastName('Bar');
-        $book = new \Foo\Bar\NamespacedBook();
+        $book = new NamespacedBook();
         $book->setTitle('asdf');
         $book->setISBN('something');
         $book->setNamespacedAuthor($author);
         $book->save();
-        \Foo\Bar\Map\NamespacedBookTableMap::clearInstancePool();
-        \Foo\Bar\Map\NamespacedAuthorTableMap::clearInstancePool();
-        $author2 = \Foo\Bar\NamespacedAuthorQuery::create()
+        NamespacedBookTableMap::clearInstancePool();
+        NamespacedAuthorTableMap::clearInstancePool();
+        $author2 = NamespacedAuthorQuery::create()
             ->joinWith('NamespacedBook')
             ->findPk($author->getId());
         $book2 = $author2->getNamespacedBooks()->getFirst();
         $this->assertEquals($book->getId(), $book2->getId());
     }
 
+    /**
+     * @return void
+     */
     public function testSingleTableInheritance()
     {
-        \Foo\Bar\NamespacedBookstoreEmployeeQuery::create()->deleteAll();
-        $emp = new \Foo\Bar\NamespacedBookstoreEmployee();
+        NamespacedBookstoreEmployeeQuery::create()->deleteAll();
+        $emp = new NamespacedBookstoreEmployee();
         $emp->setName('Henry');
         $emp->save();
         $man = new \Foo\Bar\NamespacedBookstoreManager();
@@ -203,28 +244,31 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $cas = new \Foo\Bar\NamespacedBookstoreCashier();
         $cas->setName('William');
         $cas->save();
-        $emps = \Foo\Bar\NamespacedBookstoreEmployeeQuery::create()
+        $emps = NamespacedBookstoreEmployeeQuery::create()
             ->orderByName()
             ->find();
         $this->assertEquals(3, count($emps));
-        $this->assertTrue($emps[0] instanceof \Foo\Bar\NamespacedBookstoreEmployee);
-        $this->assertTrue($emps[1] instanceof \Foo\Bar\NamespacedBookstoreManager);
-        $this->assertTrue($emps[2] instanceof \Foo\Bar\NamespacedBookstoreCashier);
+        $this->assertTrue($emps[0] instanceof NamespacedBookstoreEmployee);
+        $this->assertTrue($emps[1] instanceof NamespacedBookstoreManager);
+        $this->assertTrue($emps[2] instanceof NamespacedBookstoreCashier);
         $nbMan = \Foo\Bar\NamespacedBookstoreManagerQuery::create()
             ->count();
         $this->assertEquals(1, $nbMan);
     }
 
+    /**
+     * @return void
+     */
     public function testManyToMany()
     {
-        \Foo\Bar\NamespacedBookQuery::create()->deleteAll();
+        NamespacedBookQuery::create()->deleteAll();
         \Baz\NamespacedBookClubQuery::create()->deleteAll();
         \Baz\NamespacedBookListRelQuery::create()->deleteAll();
-        $book1 = new \Foo\Bar\NamespacedBook();
+        $book1 = new NamespacedBook();
         $book1->setTitle('bar');
         $book1->setISBN('1234');
         $book1->save();
-        $book2 = new \Foo\Bar\NamespacedBook();
+        $book2 = new NamespacedBook();
         $book2->setTitle('foo');
         $book2->setISBN('4567');
         $book2->save();
@@ -233,25 +277,28 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $bookClub1->addNamespacedBook($book2);
         $bookClub1->setGroupLeader('Someone1');
         $bookClub1->save();
-        $bookClub2 = new \Baz\NamespacedBookClub();
+        $bookClub2 = new NamespacedBookClub();
         $bookClub2->addNamespacedBook($book1);
         $bookClub2->setGroupLeader('Someone2');
         $bookClub2->save();
         $this->assertEquals(2, $book1->countNamespacedBookClubs());
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
-        $nbRels = \Baz\NamespacedBookListRelQuery::create()->count();
+        $nbRels = NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
         $con = Propel::getServiceContainer()->getConnection(\Baz\Map\NamespacedBookListRelTableMap::DATABASE_NAME);
-        $books = \Foo\Bar\NamespacedBookQuery::create()
+        $books = NamespacedBookQuery::create()
             ->orderByTitle()
             ->joinWith('NamespacedBookListRel')
             ->joinWith('NamespacedBookListRel.NamespacedBookClub')
             ->find($con);
     }
 
+    /**
+     * @return void
+     */
     public function testUseQuery()
     {
-        $book = \Foo\Bar\NamespacedBookQuery::create()
+        $book = NamespacedBookQuery::create()
             ->useNamespacedPublisherQuery()
                 ->filterByName('foo')
             ->endUse()

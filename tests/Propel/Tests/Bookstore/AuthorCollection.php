@@ -6,5 +6,4 @@ use Propel\Runtime\Collection\ObjectCollection;
 
 class AuthorCollection extends ObjectCollection
 {
-
 }

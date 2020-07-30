@@ -8,26 +8,23 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Util;
+
+use MyNameSpace\Map\QuickBuildFoo1TableMap;
+use MyNameSpace\QuickBuildFoo1;
+use MyNameSpace2\QuickBuildFoo2;
+use MyNameSpace2\QuickBuildFoo2Query;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\QuickBuilder;
-
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Propel;
+use Propel\Tests\TestCase;
 
-use MyNameSpace\QuickBuildFoo1;
-use MyNameSpace\QuickBuildFoo1Query;
-use MyNameSpace\Map\QuickBuildFoo1TableMap;
-
-use MyNameSpace2\QuickBuildFoo2;
-use MyNameSpace2\QuickBuildFoo2Query;
-use \Propel\Tests\TestCase;
-
-/**
- *
- */
 class QuickBuilderTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testGetPlatform()
     {
         $builder = new QuickBuilder();
@@ -55,6 +52,8 @@ EOF;
 
     /**
      * @dataProvider simpleSchemaProvider
+     *
+     * @return void
      */
     public function testGetDatabase($builder)
     {
@@ -66,6 +65,8 @@ EOF;
 
     /**
      * @dataProvider simpleSchemaProvider
+     *
+     * @return void
      */
     public function testGetSQL($builder)
     {
@@ -90,6 +91,8 @@ EOF;
 
     /**
      * @dataProvider simpleSchemaProvider
+     *
+     * @return void
      */
     public function testGetClasses($builder)
     {
@@ -102,6 +105,8 @@ EOF;
 
     /**
      * @dataProvider simpleSchemaProvider
+     *
+     * @return void
      */
     public function testGetClassesLimitedClassTargets($builder)
     {
@@ -114,6 +119,8 @@ EOF;
 
     /**
      * @dataProvider simpleSchemaProvider
+     *
+     * @return void
      */
     public function testBuildClasses($builder)
     {
@@ -123,6 +130,9 @@ EOF;
         $this->assertTrue(QuickBuildFoo1TableMap::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
     }
 
+    /**
+     * @return void
+     */
     public function testBuild()
     {
         $xmlSchema = <<<EOF
@@ -143,5 +153,4 @@ EOF;
         $this->assertEquals(1, QuickBuildFoo2Query::create()->count());
         $this->assertEquals($foo, QuickBuildFoo2Query::create()->findOne());
     }
-
 }

@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Behavior;
 
+use Propel\Tests\Bookstore\Behavior\Base\testObjectFilter;
 use Propel\Tests\Bookstore\Behavior\Table3;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
@@ -22,6 +23,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class ObjectBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         //prevent issue DSN not Found
@@ -29,12 +33,18 @@ class ObjectBehaviorTest extends BookstoreTestBase
         parent::setUp();
     }
 
+    /**
+     * @return void
+     */
     public function testObjectAttributes()
     {
         $t = new Table3();
         $this->assertEquals($t->customAttribute, 1, 'objectAttributes hook is called when adding attributes');
     }
 
+    /**
+     * @return void
+     */
     public function testPreSave()
     {
         $t = new Table3();
@@ -49,6 +59,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t->preSave, 1, 'preSave hook is called on object modification');
     }
 
+    /**
+     * @return void
+     */
     public function testPostSave()
     {
         $t = new Table3();
@@ -63,6 +76,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t->postSave, 1, 'postSave hook is called on object modification');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectBuilderPreInsert()
     {
         $t = new Table3();
@@ -77,6 +93,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t->preInsert, 0, 'preInsert hook is not called on object modification');
     }
 
+    /**
+     * @return void
+     */
     public function testPostInsert()
     {
         $t = new Table3();
@@ -91,6 +110,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t->postInsert, 0, 'postInsert hook is not called on object modification');
     }
 
+    /**
+     * @return void
+     */
     public function testPreUpdate()
     {
         $t = new Table3();
@@ -105,6 +127,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertFalse($t->preUpdateIsAfterSave, 'preUpdate hook is called before save');
     }
 
+    /**
+     * @return void
+     */
     public function testPostUpdate()
     {
         $t = new Table3();
@@ -119,6 +144,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertTrue($t->postUpdateIsAfterSave, 'postUpdate hook is called after save');
     }
 
+    /**
+     * @return void
+     */
     public function testPreDelete()
     {
         $t = new Table3();
@@ -130,6 +158,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertTrue($t->preDeleteIsBeforeDelete, 'preDelete hook is called before deletion');
     }
 
+    /**
+     * @return void
+     */
     public function testPostDelete()
     {
         $t = new Table3();
@@ -141,6 +172,9 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertFalse($t->postDeleteIsBeforeDelete, 'postDelete hook is called before deletion');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectMethods()
     {
         $t = new Table3();
@@ -148,19 +182,28 @@ class ObjectBehaviorTest extends BookstoreTestBase
         $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', $t->hello(), 'objectMethods hook is called with the object builder as parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectCall()
     {
         $t = new Table3();
         $this->assertEquals('bar', $t->foo(), 'objectCall hook is called when building the magic __call()');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectFilter()
     {
         $t = new Table3();
-        $this->assertTrue(class_exists('Propel\Tests\Bookstore\Behavior\Base\testObjectFilter'),
+        $this->assertTrue(
+            class_exists('Propel\Tests\Bookstore\Behavior\Base\testObjectFilter'),
             'objectFilter hook allows complete manipulation of the generated script'
         );
-        $this->assertEquals('Propel\Generator\Builder\Om\ObjectBuilder', \Propel\Tests\Bookstore\Behavior\Base\testObjectFilter::FOO,
+        $this->assertEquals(
+            'Propel\Generator\Builder\Om\ObjectBuilder',
+            testObjectFilter::FOO,
             'objectFilter hook is called with the object builder as parameter'
         );
     }

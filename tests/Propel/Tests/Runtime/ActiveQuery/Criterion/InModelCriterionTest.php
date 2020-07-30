@@ -10,11 +10,10 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\Collection\ArrayCollection;
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
+use Propel\Runtime\Collection\ArrayCollection;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for InModelCriterion.
@@ -23,6 +22,9 @@ use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
  */
 class InModelCriterionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesAnInConditionByDefault()
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', ['foo']);
@@ -33,11 +35,14 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesANotInConditionWhenSpecified()
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', ['foo']);
@@ -48,11 +53,14 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT IN (:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToWithArrayValueCreatesAnInCondition()
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', ['foo', 'bar']);
@@ -64,11 +72,14 @@ class InModelCriterionTest extends BaseTestCase
         $this->assertEquals('A.COL IN (:p1,:p2)', $ps);
         $expected = [
             ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
-            ['table' => 'A', 'column' => 'COL', 'value' => 'bar']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'bar'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToWithScalarValueCreatesAnInCondition()
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL IN ?', 'A.COL', 'foo');
@@ -79,7 +90,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
@@ -90,12 +101,14 @@ class InModelCriterionTest extends BaseTestCase
             [''],
             [0],
             [true],
-            [false]
+            [false],
         ];
     }
 
     /**
      * @dataProvider providerForNotEmptyValues
+     *
+     * @return void
      */
     public function testAppendPsToWithNotEmptyValueCreatesAnInCondition($notEmptyValue)
     {
@@ -107,7 +120,7 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue]
+            ['table' => 'A', 'column' => 'COL', 'value' => $notEmptyValue],
         ];
         $this->assertEquals($expected, $params);
     }
@@ -116,12 +129,14 @@ class InModelCriterionTest extends BaseTestCase
     {
         return [
             [[]],
-            [null]
+            [null],
         ];
     }
 
     /**
      * @dataProvider providerForEmptyValues
+     *
+     * @return void
      */
     public function testAppendPsToWithInAndEmptyValueCreatesAnAlwaysFalseCondition($emptyValue)
     {
@@ -137,8 +152,10 @@ class InModelCriterionTest extends BaseTestCase
     }
 
    /**
-     * @dataProvider providerForEmptyValues
-     */
+    * @dataProvider providerForEmptyValues
+    *
+    * @return void
+    */
     public function testAppendPsToWithNotInAndEmptyValueCreatesAnAlwaysTrueCondition($emptyValue)
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL NOT IN ?', 'A.COL', $emptyValue);
@@ -153,8 +170,10 @@ class InModelCriterionTest extends BaseTestCase
     }
 
    /**
-     * @dataProvider providerForEmptyValues
-     */
+    * @dataProvider providerForEmptyValues
+    *
+    * @return void
+    */
     public function testAppendPsToWithNotInAndEmptyValueIsCaseInsensitive($emptyValue)
     {
         $cton = new InModelCriterion(new Criteria(), 'A.COL not in ?', 'A.COL', $emptyValue);
@@ -168,6 +187,9 @@ class InModelCriterionTest extends BaseTestCase
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToWithArrayCollection()
     {
         $collection = new ArrayCollection(['foo']);
@@ -179,9 +201,8 @@ class InModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL IN (:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
-
 }

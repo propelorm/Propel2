@@ -11,7 +11,6 @@
 namespace Propel\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -32,6 +31,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  */
 class BookstoreLoggingTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -40,6 +42,9 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         AuthorQuery::create()->deleteAll();
     }
 
+    /**
+     * @return void
+     */
     public function testSetterAndGetter()
     {
         $book = new Book();
@@ -69,6 +74,9 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $log->save();
     }
 
+    /**
+     * @return void
+     */
     public function testQueryFilter()
     {
         $book = new Book();
@@ -132,9 +140,10 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
     }
 
     /**
-     *
      * @group mysql
      * @group pgsql
+     *
+     * @return void
      */
     public function testQueryJoins()
     {

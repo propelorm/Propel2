@@ -10,9 +10,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\BookstoreCashier;
 use Propel\Tests\Bookstore\BookstoreCashierQuery;
 use Propel\Tests\Bookstore\BookstoreEmployee;
@@ -20,12 +18,12 @@ use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookstoreManager;
 use Propel\Tests\Bookstore\BookstoreManagerQuery;
 use Propel\Tests\Bookstore\DistributionManager;
+use Propel\Tests\Bookstore\DistributionQuery;
 use Propel\Tests\Bookstore\DistributionStore;
 use Propel\Tests\Bookstore\DistributionVirtualStore;
-use Propel\Tests\Bookstore\DistributionQuery;
 use Propel\Tests\Bookstore\Map\DistributionTableMap;
-
-use Propel\Runtime\Propel;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for MultiExtensionQueryBuilder.
@@ -51,6 +49,8 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
 
     /**
      * @dataProvider constructProvider
+     *
+     * @return void
      */
     public function testConstruct($class)
     {
@@ -59,6 +59,9 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $this->assertTrue($query instanceof $class, 'the create() factory returns an instance of the correct class');
     }
 
+    /**
+     * @return void
+     */
     public function testFindFilter()
     {
         BookstoreDataPopulator::depopulate($this->con);
@@ -78,6 +81,9 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $this->assertEquals(2, $nbCash, 'find() in sub query returns only child results');
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateFilter()
     {
         BookstoreDataPopulator::depopulate($this->con);
@@ -94,6 +100,9 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $this->assertEquals(1, $nbMan, 'Update in sub query affects only child results');
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteFilter()
     {
         BookstoreDataPopulator::depopulate($this->con);
@@ -110,6 +119,9 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $this->assertEquals(2, $nbCash, 'Delete in sub query affects only child results');
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteAllFilter()
     {
         BookstoreDataPopulator::depopulate($this->con);
@@ -124,6 +136,9 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $this->assertEquals(2, $nbCash, 'Delete in sub query affects only child results');
     }
 
+    /**
+     * @return void
+     */
     public function testFindPkSimpleWithSingleTableInheritanceReturnCorrectClass()
     {
         Propel::disableInstancePooling();
@@ -137,18 +152,33 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $cashier2 = new BookstoreCashier();
         $cashier2->save($this->con);
 
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreEmployee', BookstoreEmployeeQuery::create()->findPk($employee->getId()),
-            'findPk() return right object : BookstoreEmployee');
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreManager', BookstoreEmployeeQuery::create()->findPk($manager->getId()),
-            'findPk() return right object : BookstoreManager');
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreCashier', BookstoreEmployeeQuery::create()->findPk($cashier1->getId()),
-            'findPk() return right object : BookstoreCashier');
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\BookstoreCashier', BookstoreEmployeeQuery::create()->findPk($cashier2->getId()),
-            'findPk() return right object : BookstoreCashier');
+        $this->assertInstanceOf(
+            '\Propel\Tests\Bookstore\BookstoreEmployee',
+            BookstoreEmployeeQuery::create()->findPk($employee->getId()),
+            'findPk() return right object : BookstoreEmployee'
+        );
+        $this->assertInstanceOf(
+            '\Propel\Tests\Bookstore\BookstoreManager',
+            BookstoreEmployeeQuery::create()->findPk($manager->getId()),
+            'findPk() return right object : BookstoreManager'
+        );
+        $this->assertInstanceOf(
+            '\Propel\Tests\Bookstore\BookstoreCashier',
+            BookstoreEmployeeQuery::create()->findPk($cashier1->getId()),
+            'findPk() return right object : BookstoreCashier'
+        );
+        $this->assertInstanceOf(
+            '\Propel\Tests\Bookstore\BookstoreCashier',
+            BookstoreEmployeeQuery::create()->findPk($cashier2->getId()),
+            'findPk() return right object : BookstoreCashier'
+        );
 
         Propel::enableInstancePooling();
     }
 
+    /**
+     * @return void
+     */
     public function testGetCorrectTableMapClassWithAbstractSingleTableInheritance()
     {
         $this->assertInstanceOf('\Propel\Tests\Bookstore\Map\DistributionTableMap', DistributionTableMap::getTableMap(), 'getTableMap should return the right table map');
@@ -156,6 +186,8 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
 
     /**
      * This test prove failure with propel.emulateForeignKeyConstraints = true
+     *
+     * @return void
      */
     public function testDeleteCascadeWithAbstractSingleTableInheritance()
     {
@@ -165,7 +197,10 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $manager->delete();
     }
 
-    public function  testFindPkSimpleWithAbstractSingleTableInheritanceReturnCorrectClass()
+    /**
+     * @return void
+     */
+    public function testFindPkSimpleWithAbstractSingleTableInheritanceReturnCorrectClass()
     {
         Propel::disableInstancePooling();
 
@@ -183,10 +218,16 @@ class QueryBuilderInheritanceTest extends BookstoreTestBase
         $distributionVirtualStore->setDistributionManager($manager);
         $distributionVirtualStore->save();
 
-        $this->assertInstanceOf('Propel\Tests\Bookstore\DistributionStore', DistributionQuery::create()->findPk($distributionStore->getId()),
-            'findPk() return right object : DistributionStore');
-        $this->assertInstanceOf('Propel\Tests\Bookstore\DistributionVirtualStore', DistributionQuery::create()->findPk($distributionVirtualStore->getId()),
-            'findPk() return right object : DistributionVirtualStore');
+        $this->assertInstanceOf(
+            'Propel\Tests\Bookstore\DistributionStore',
+            DistributionQuery::create()->findPk($distributionStore->getId()),
+            'findPk() return right object : DistributionStore'
+        );
+        $this->assertInstanceOf(
+            'Propel\Tests\Bookstore\DistributionVirtualStore',
+            DistributionQuery::create()->findPk($distributionVirtualStore->getId()),
+            'findPk() return right object : DistributionVirtualStore'
+        );
 
         Propel::enableInstancePooling();
     }

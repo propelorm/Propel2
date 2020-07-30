@@ -21,6 +21,9 @@ use Propel\Tests\Bookstore\Behavior\SortableTable14Query;
  */
 class SortableBehaviorWithSetScopeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -28,6 +31,9 @@ class SortableBehaviorWithSetScopeTest extends TestCase
         $this->populateTable14();
     }
 
+    /**
+     * @return void
+     */
     public function testEnumRank()
     {
         $entries = SortableTable14Query::create()->find();

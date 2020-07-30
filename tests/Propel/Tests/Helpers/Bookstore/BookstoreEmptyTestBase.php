@@ -17,6 +17,8 @@ abstract class BookstoreEmptyTestBase extends BookstoreTestBase
 {
     /**
      * This is run before each unit test; it empties the database.
+     *
+     * @return void
      */
     protected function setUp(): void
     {
@@ -25,5 +27,4 @@ abstract class BookstoreEmptyTestBase extends BookstoreTestBase
             BookstoreDataPopulator::depopulate($this->con);
         }
     }
-
 }

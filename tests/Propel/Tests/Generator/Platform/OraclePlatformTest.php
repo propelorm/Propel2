@@ -17,9 +17,6 @@ use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\OraclePlatform;
 
-/**
- *
- */
 class OraclePlatformTest extends PlatformTestProvider
 {
     /**
@@ -32,6 +29,9 @@ class OraclePlatformTest extends PlatformTestProvider
         return new OraclePlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
@@ -40,6 +40,9 @@ class OraclePlatformTest extends PlatformTestProvider
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
@@ -54,6 +57,8 @@ class OraclePlatformTest extends PlatformTestProvider
 
     /**
      * @dataProvider providerForTestGetAddTablesDDL
+     *
+     * @return void
      */
     public function testGetAddTablesDDL($schema)
     {
@@ -118,6 +123,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     *
+     * @return void
      */
     public function testGetAddTablesSkipSQLDDL($schema)
     {
@@ -131,6 +138,8 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSimplePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLSimplePK($schema)
     {
@@ -153,6 +162,8 @@ CREATE SEQUENCE foo_SEQ
 
     /**
      * @dataProvider providerForTestGetAddTableDDLCompositePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLCompositePK($schema)
     {
@@ -172,6 +183,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (foo,bar);
 
     /**
      * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     *
+     * @return void
      */
     public function testGetAddTableDDLUniqueIndex($schema)
     {
@@ -192,6 +205,9 @@ CREATE SEQUENCE foo_SEQ
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');
@@ -201,6 +217,9 @@ DROP TABLE foo CASCADE CONSTRAINTS;
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableWithSequenceDDL()
     {
         $table = new Table('foo');
@@ -216,6 +235,9 @@ DROP SEQUENCE foo_sequence;
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCustomSqlType()
     {
         $column = new Column('foo');
@@ -231,13 +253,18 @@ DROP SEQUENCE foo_sequence;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetPrimaryKeyDDLSimpleKey($table)
     {
-        $expected ='CONSTRAINT foo_pk PRIMARY KEY (bar)';
+        $expected = 'CONSTRAINT foo_pk PRIMARY KEY (bar)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLLongTableName()
     {
         $table = new Table('this_table_has_a_very_long_name');
@@ -248,6 +275,9 @@ DROP SEQUENCE foo_sequence;
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLCompositeKey()
     {
         $table = new Table('foo');
@@ -263,6 +293,8 @@ DROP SEQUENCE foo_sequence;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetDropPrimaryKeyDDL($table)
     {
@@ -274,6 +306,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_pk;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetAddPrimaryKeyDDL($table)
     {
@@ -285,6 +319,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (bar);
 
     /**
      * @dataProvider providerForTestGetIndicesDDL
+     *
+     * @return void
      */
     public function testAddIndicesDDL($table)
     {
@@ -298,6 +334,8 @@ CREATE INDEX foo_index ON foo (bar1);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testAddIndexDDL($index)
     {
@@ -309,6 +347,8 @@ CREATE INDEX babar ON foo (bar1,bar2);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testDropIndexDDL($index)
     {
@@ -320,6 +360,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testGetIndexDDL($index)
     {
@@ -329,6 +371,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetUniqueDDL
+     *
+     * @return void
      */
     public function testGetUniqueDDL($index)
     {
@@ -338,6 +382,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeysDDL($table)
     {
@@ -355,6 +401,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeyDDL($fk)
     {
@@ -368,6 +416,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeySkipSqlDDL($fk)
     {
@@ -377,6 +427,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeyDDL($fk)
     {
@@ -388,6 +440,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeySkipSqlDDL($fk)
     {
@@ -397,6 +451,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetForeignKeyDDL($fk)
     {
@@ -408,6 +464,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetForeignKeySkipSqlDDL($fk)
     {
@@ -415,6 +473,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
     }
 
+    /**
+     * @return void
+     */
     public function testGetCommentBlockDDL()
     {
         $expected = "
@@ -425,6 +486,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetOracleBlockStorageDDL()
     {
         $schema = <<<EOF
@@ -589,5 +653,4 @@ EOF;
 
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
-
 }

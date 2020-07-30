@@ -21,8 +21,12 @@ use Propel\Tests\TestCase;
 class BehaviorTest extends TestCase
 {
     private $schemaReader;
+
     private $appData;
 
+    /**
+     * @return void
+     */
     public function testSetupObject()
     {
         $b = new Behavior();
@@ -30,6 +34,9 @@ class BehaviorTest extends TestCase
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
     }
 
+    /**
+     * @return void
+     */
     public function testSetupObjectWithMultipleBehaviorWithNoId()
     {
         $b = new Propel\Tests\Helpers\MultipleBehavior();
@@ -39,6 +46,9 @@ class BehaviorTest extends TestCase
         $this->assertEquals($b->getId(), 'foo', 'setupObject() sets the Behavior id from its name when no explicit id is given');
     }
 
+    /**
+     * @return void
+     */
     public function testSetupObjectWithMultipleBehaviorWithId()
     {
         $b = new Propel\Tests\Helpers\MultipleBehavior();
@@ -50,6 +60,8 @@ class BehaviorTest extends TestCase
 
     /**
      * @expectedException Propel\Generator\Exception\LogicException
+     *
+     * @return void
      */
     public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
     {
@@ -57,6 +69,9 @@ class BehaviorTest extends TestCase
         $b->loadMapping(['name' => 'foo', 'id' => 'lala']);
     }
 
+    /**
+     * @return void
+     */
     public function testName()
     {
         $b = new Behavior();
@@ -65,6 +80,9 @@ class BehaviorTest extends TestCase
         $this->assertEquals($b->getName(), 'foo', 'setName() sets the name, and getName() gets it');
     }
 
+    /**
+     * @return void
+     */
     public function testTable()
     {
         $b = new Behavior();
@@ -75,6 +93,9 @@ class BehaviorTest extends TestCase
         $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');
     }
 
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $b = new Behavior();
@@ -93,6 +114,7 @@ class BehaviorTest extends TestCase
     /**
      * test if the tables get the package name from the properties file
      *
+     * @return void
      */
     public function testSchemaReader()
     {
@@ -126,6 +148,8 @@ EOF;
 
   /**
    * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
+   *
+   * @return void
    */
     public function testUnknownBehavior()
     {
@@ -141,6 +165,9 @@ EOF;
         $appData = $schemaReader->parseString($schema);
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTable()
     {
         $schemaReader = new SchemaReader();
@@ -158,6 +185,9 @@ EOF;
         $this->assertEquals(count($table->getColumns()), 4, 'A behavior can modify its table by implementing modifyTable()');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyDatabase()
     {
         $schemaReader = new SchemaReader();
@@ -174,6 +204,9 @@ EOF;
         $this->assertTrue(array_key_exists('timestampable', $table->getBehaviors()), 'A database behavior is automatically copied to all its table');
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnForParameter()
     {
         $schemaReader = new SchemaReader();

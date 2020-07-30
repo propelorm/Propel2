@@ -10,18 +10,17 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Propel;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for Join.
  *
  * @author François Zaninotto
- * @version    $Id$
+ * @version $Id$
  */
 class JoinTest extends BaseTestCase
 {
@@ -32,6 +31,9 @@ class JoinTest extends BaseTestCase
      */
     private $savedAdapter;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
@@ -41,18 +43,27 @@ class JoinTest extends BaseTestCase
         Propel::getServiceContainer()->setAdapter(null, new SqliteAdapter());
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         Propel::getServiceContainer()->setAdapter(null, $this->savedAdapter);
         parent::tearDown();
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyConditions()
     {
         $j = new Join();
         $this->assertEquals([], $j->getConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testAddCondition()
     {
         $j = new Join();
@@ -62,6 +73,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('bar', $j->getRightColumn());
     }
 
+    /**
+     * @return void
+     */
     public function testGetConditions()
     {
         $j = new Join();
@@ -70,6 +84,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals($expect, $j->getConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testAddConditionWithOperator()
     {
         $j = new Join();
@@ -78,6 +95,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals($expect, $j->getConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testAddConditions()
     {
         $j = new Join();
@@ -85,7 +105,7 @@ class JoinTest extends BaseTestCase
         $j->addCondition('baz', 'bal');
         $expect = [
             ['left' => 'foo', 'operator' => '=', 'right' => 'bar'],
-            ['left' => 'baz', 'operator' => '=', 'right' => 'bal']
+            ['left' => 'baz', 'operator' => '=', 'right' => 'bal'],
         ];
         $this->assertEquals(['=', '='], $j->getOperators());
         $this->assertEquals(['foo', 'baz'], $j->getLeftColumns());
@@ -93,6 +113,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals($expect, $j->getConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testAddExplicitConditionWithoutAlias()
     {
         $j = new Join();
@@ -107,6 +130,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals(1, $j->countConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testAddExplicitconditionWithOneAlias()
     {
         $j = new Join();
@@ -117,6 +143,10 @@ class JoinTest extends BaseTestCase
     }
 
     //used in polymorphic relation
+
+    /**
+     * @return void
+     */
     public function testConditionalJoin()
     {
         $j = new Join();
@@ -127,6 +157,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('LEFT JOIN author a ON (log.AUTHOR_ID=a.ID AND log.target_type=\'author\')', $j->getClause($params));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExplicitConditionWithAlias()
     {
         $j = new Join();
@@ -140,6 +173,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('Blias', $j->getRightTableAlias());
     }
 
+    /**
+     * @return void
+     */
     public function testAddExplicitConditionWithOperator()
     {
         $j = new Join();
@@ -149,12 +185,18 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('b.bar', $j->getRightColumn());
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyJoinType()
     {
         $j = new Join();
         $this->assertEquals(Join::INNER_JOIN, $j->getJoinType());
     }
 
+    /**
+     * @return void
+     */
     public function testSetJoinType()
     {
         $j = new Join();
@@ -162,6 +204,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('foo', $j->getJoinType());
     }
 
+    /**
+     * @return void
+     */
     public function testSimpleConstructor()
     {
         $j = new Join('foo', 'bar', 'LEFT JOIN');
@@ -170,17 +215,23 @@ class JoinTest extends BaseTestCase
         $this->assertEquals('LEFT JOIN', $j->getJoinType());
     }
 
+    /**
+     * @return void
+     */
     public function testCompositeConstructor()
     {
         $j = new Join(['foo1', 'foo2'], ['bar1', 'bar2'], 'LEFT JOIN');
         $expect = [
             ['left' => 'foo1', 'operator' => '=', 'right' => 'bar1'],
-            ['left' => 'foo2', 'operator' => '=', 'right' => 'bar2']
+            ['left' => 'foo2', 'operator' => '=', 'right' => 'bar2'],
         ];
         $this->assertEquals($expect, $j->getConditions());
         $this->assertEquals('LEFT JOIN', $j->getJoinType());
     }
 
+    /**
+     * @return void
+     */
     public function testCountConditions()
     {
         $j = new Join();
@@ -191,6 +242,9 @@ class JoinTest extends BaseTestCase
         $this->assertEquals(2, $j->countConditions());
     }
 
+    /**
+     * @return void
+     */
     public function testEquality()
     {
         $j1 = new Join('foo', 'bar', 'INNER JOIN');

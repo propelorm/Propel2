@@ -10,17 +10,16 @@
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
+use Propel\Runtime\Propel;
 use Propel\Tests\BookstoreSchemas\Bookstore;
 use Propel\Tests\BookstoreSchemas\BookstoreContest;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntry;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
-use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
-
-use Propel\Runtime\Propel;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
@@ -32,6 +31,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
+    /**
+     * @return void
+     */
     public function testParametersWithSchema()
     {
         $storeTable = BookstoreTableMap::getTableMap();
@@ -39,6 +41,9 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $this->assertTrue(method_exists('Propel\Tests\BookstoreSchemas\Bookstore', 'getTotalContestEntries'));
     }
 
+    /**
+     * @return void
+     */
     public function testComputeWithSchema()
     {
         $con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);

@@ -10,38 +10,39 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\Exception\PropelException;
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstoreQuery;
-use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\BookstoreQuery;
+use Propel\Tests\Bookstore\BookstoreSale;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
-use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
+use Propel\Tests\Bookstore\MediaQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewQuery;
-use Propel\Tests\Bookstore\Map\ReviewTableMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Tests the generated Object classes.
  *
- * The database is reloaded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test. This
  * means that you can always rely on the contents of the databases being the same
- * for each test method in this class.  See the BookstoreDataPopulator::populate()
+ * for each test method in this class. See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  *
  * @group database
@@ -50,6 +51,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 {
     /**
      * Test the reload() method.
+     *
+     * @return void
      */
     public function testReload()
     {
@@ -67,11 +70,12 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $this->assertEquals($origName, $a->getFirstName());
         $this->assertFalse($a->isModified());
-
     }
 
     /**
      * Test reload(deep=true) method.
+     *
+     * @return void
      */
     public function testReloadDeep()
     {
@@ -87,17 +91,19 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $b->setAuthor($a);
 
-        $this->assertNotEquals($origAuthor, $b->getAuthor(), "Expected just-set object to be different from obj from DB");
+        $this->assertNotEquals($origAuthor, $b->getAuthor(), 'Expected just-set object to be different from obj from DB');
         $this->assertTrue($b->isModified());
 
-        $b->reload($deep=true);
+        $b->reload($deep = true);
 
-        $this->assertEquals($origAuthor, $b->getAuthor(), "Expected object in DB to be restored");
+        $this->assertEquals($origAuthor, $b->getAuthor(), 'Expected object in DB to be restored');
         $this->assertFalse($a->isModified());
     }
 
     /**
      * Test deleting an object using the delete() method.
+     *
+     * @return void
      */
     public function testDelete()
     {
@@ -112,19 +118,21 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         // 3) make sure it can't be save()d now that it's deleted
         try {
-            $book->setTitle("Will Fail");
+            $book->setTitle('Will Fail');
             $book->save();
-            $this->fail("Expect an exception to be thrown when attempting to save() a deleted object.");
-        } catch (PropelException $e) {}
+            $this->fail('Expect an exception to be thrown when attempting to save() a deleted object.');
+        } catch (PropelException $e) {
+        }
 
             // 4) make sure that it doesn't exist in db
             $book = BookQuery::create()->findPk($bookId);
-        $this->assertNull($book, "Expect NULL from retrieveByPK on deleted Book.");
-
+        $this->assertNull($book, 'Expect NULL from retrieveByPK on deleted Book.');
     }
 
     /**
      * Tests new one-to-one functionality.
+     *
+     * @return void
      */
     public function testOneToOne()
     {
@@ -134,15 +142,16 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($emp);
-        $acct->setLogin("testuser");
-        $acct->setPassword("testpass");
+        $acct->setLogin('testuser');
+        $acct->setPassword('testpass');
 
-        $this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, "Expected same object instance.");
+        $this->assertSame($emp->getBookstoreEmployeeAccount(), $acct, 'Expected same object instance.');
     }
 
     /**
      * Test the type sensitivity of the returning columns.
      *
+     * @return void
      */
     public function testTypeSensitive()
     {
@@ -151,7 +160,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $book = BookQuery::create()->findOne();
 
         $r = new Review();
-        $r->setReviewedBy("testTypeSensitive Tester");
+        $r->setReviewedBy('testTypeSensitive Tester');
         $r->setReviewDate(time());
         $r->setBook($book);
         $r->setRecommended(true);
@@ -167,18 +176,19 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         // reload and verify that the types are the same
         $r2 = ReviewQuery::create()->findPk($id);
 
-        $this->assertInternalType('integer', $r2->getId(), "Expected getId() to return an integer.");
-        $this->assertInternalType('string', $r2->getReviewedBy(), "Expected getReviewedBy() to return a string.");
-        $this->assertInternalType('boolean', $r2->getRecommended(), "Expected getRecommended() to return a boolean.");
-        $this->assertInstanceOf('\Propel\Tests\Bookstore\Book', $r2->getBook(), "Expected getBook() to return a Book.");
-        $this->assertInternalType('float', $r2->getBook()->getPrice(), "Expected Book->getPrice() to return a float.");
-        $this->assertInstanceOf('\DateTime', $r2->getReviewDate(null), "Expected Book->getReviewDate() to return a DateTime.");
-
+        $this->assertInternalType('integer', $r2->getId(), 'Expected getId() to return an integer.');
+        $this->assertInternalType('string', $r2->getReviewedBy(), 'Expected getReviewedBy() to return a string.');
+        $this->assertInternalType('boolean', $r2->getRecommended(), 'Expected getRecommended() to return a boolean.');
+        $this->assertInstanceOf('\Propel\Tests\Bookstore\Book', $r2->getBook(), 'Expected getBook() to return a Book.');
+        $this->assertInternalType('float', $r2->getBook()->getPrice(), 'Expected Book->getPrice() to return a float.');
+        $this->assertInstanceOf('\DateTime', $r2->getReviewDate(null), 'Expected Book->getReviewDate() to return a DateTime.');
     }
 
     /**
      * This is a test for expected exceptions when saving UNIQUE.
      * See http://propel.phpdb.org/trac/ticket/2
+     *
+     * @return void
      */
     public function testSaveUnique()
     {
@@ -190,8 +200,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($emp);
-        $acct->setLogin("foo");
-        $acct->setPassword("bar");
+        $acct->setLogin('foo');
+        $acct->setPassword('bar');
         $acct->save();
 
         // now attempt to create a new acct
@@ -199,18 +209,18 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         try {
             $acct2->save();
-            $this->fail("Expected PropelException in first attempt to save object with duplicate value for UNIQUE constraint.");
-        } catch (\Exception $x) {
+            $this->fail('Expected PropelException in first attempt to save object with duplicate value for UNIQUE constraint.');
+        } catch (Exception $x) {
             try {
                 // attempt to save it again
                 $acct3 = $acct->copy();
                 $acct3->save();
-                $this->fail("Expected PropelException in second attempt to save object with duplicate value for UNIQUE constraint.");
-            } catch (\Exception $x) {
+                $this->fail('Expected PropelException in second attempt to save object with duplicate value for UNIQUE constraint.');
+            } catch (Exception $x) {
                 // this is expected.
             }
             // now let's double check that it can succeed if we're not violating the constraint.
-            $acct3->setLogin("foo2");
+            $acct3->setLogin('foo2');
             $acct3->save();
         }
 
@@ -219,6 +229,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
     /**
      * Test the BaseObject#equals().
+     *
+     * @return void
      */
     public function testEquals()
     {
@@ -227,34 +239,39 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $b = BookQuery::create()->findOne();
         $c = new Book();
         $c->setId($b->getId());
-        $this->assertTrue($b->equals($c), "Expected Book objects to be equal()");
+        $this->assertTrue($b->equals($c), 'Expected Book objects to be equal()');
 
         $a = new Author();
         $a->setId($b->getId());
-        $this->assertFalse($b->equals($a), "Expected Book and Author with same primary key NOT to match.");
+        $this->assertFalse($b->equals($a), 'Expected Book and Author with same primary key NOT to match.');
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultFkColVal()
     {
         BookstoreDataPopulator::populate();
 
         $sale = new BookstoreSale();
-        $this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have a default bookstore_id of 1.");
+        $this->assertEquals(1, $sale->getBookstoreId(), 'Expected BookstoreSale object to have a default bookstore_id of 1.');
 
         $bookstore = BookstoreQuery::create()->findOne();
 
         $sale->setBookstore($bookstore);
-        $this->assertEquals($bookstore->getId(), $sale->getBookstoreId(), "Expected FK id to have changed when assigned a valid FK.");
+        $this->assertEquals($bookstore->getId(), $sale->getBookstoreId(), 'Expected FK id to have changed when assigned a valid FK.');
 
         $sale->setBookstore(null);
-        $this->assertEquals(1, $sale->getBookstoreId(), "Expected BookstoreSale object to have reset to default ID.");
+        $this->assertEquals(1, $sale->getBookstoreId(), 'Expected BookstoreSale object to have reset to default ID.');
 
         $sale->setPublisher(null);
-        $this->assertEquals(null, $sale->getPublisherId(), "Expected BookstoreSale object to have reset to NULL publisher ID.");
+        $this->assertEquals(null, $sale->getPublisherId(), 'Expected BookstoreSale object to have reset to NULL publisher ID.');
     }
 
     /**
      * Test copyInto method.
+     *
+     * @return void
      */
     public function testCopyInto_Deep()
     {
@@ -284,7 +301,10 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
     /**
      * Test the toArray() method with new lazyLoad param.
-     * @link       http://propel.phpdb.org/trac/ticket/527
+     *
+     * @link http://propel.phpdb.org/trac/ticket/527
+     *
+     * @return void
      */
     public function testToArrayLazyLoad()
     {
@@ -293,10 +313,9 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $m = MediaQuery::create()
             ->filterByCoverImage(null, Criteria::NOT_EQUAL)
             ->filterByExcerpt(null, Criteria::NOT_EQUAL)
-            ->findOne()
-        ;
+            ->findOne();
         if ($m === null) {
-            $this->fail("Test requires at least one media row w/ cover_image and excerpt NOT NULL");
+            $this->fail('Test requires at least one media row w/ cover_image and excerpt NOT NULL');
         }
 
         $arr1 = $m->toArray(TableMap::TYPE_COLNAME);
@@ -314,6 +333,9 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($expectedDiff, $diffKeys);
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayIncludesForeignObjects()
     {
         BookstoreDataPopulator::populate();
@@ -334,12 +356,15 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
             'Price',
             'PublisherId',
             'AuthorId',
-            'Author'
+            'Author',
         ];
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() can return sub arrays for hydrated related objects');
         $this->assertEquals('George', $arr1['Author']['FirstName'], 'toArray() can return sub arrays for hydrated related objects');
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayIncludesForeignReferrers()
     {
         $a1 = new Author();
@@ -360,5 +385,4 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals('Anna Karenina', $arr['Books'][1]['Title']);
         $this->assertEquals('*RECURSION*', $arr['Books'][0]['Author']);
     }
-
 }

@@ -10,18 +10,15 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\OnDemandFormatter;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for OnDemandFormatter.
@@ -32,6 +29,9 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  */
 class OnDemandFormatterTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     public function testFormatterReenablesInstancePoolAfterIteration()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -50,6 +50,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $this->assertTrue(Propel::isInstancePoolingEnabled());
     }
 
+    /**
+     * @return void
+     */
     public function testFormatterReenablesInstancePoolAfterClosingCursor()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -65,6 +68,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         $this->assertTrue(Propel::isInstancePoolingEnabled());
     }
 
+    /**
+     * @return void
+     */
     public function testFormatterDoesNotReenableInstancePoolIfItWasInitiallyDisabled()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -81,6 +87,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         Propel::enableInstancePooling();
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoCriteria()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -91,10 +100,13 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
             $books = $formatter->format($stmt);
             $this->fail('OnDemandFormatter::format() trows an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'OnDemandFormatter::format() trows an exception when called with no valid criteria');
+            $this->assertTrue(true, 'OnDemandFormatter::format() trows an exception when called with no valid criteria');
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -114,6 +126,8 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testFormatManyResultsIteratedTwice()
     {
@@ -133,13 +147,16 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatALotOfResults()
     {
         $nbBooks = 50;
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         Propel::disableInstancePooling();
         $book = new Book();
-        for ($i=0; $i < $nbBooks; $i++) {
+        for ($i = 0; $i < $nbBooks; $i++) {
             $book->clear();
             $book->setTitle('BookTest' . $i);
             $book->setISBN('FA404-' . $i);
@@ -162,7 +179,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         Propel::enableInstancePooling();
     }
 
-
+    /**
+     * @return void
+     */
     public function testFormatOneResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -181,6 +200,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -197,6 +219,9 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -209,5 +234,4 @@ class OnDemandFormatterTest extends BookstoreEmptyTestBase
 
         $this->assertTrue($book instanceof Book, 'OnDemandFormatter::formatOne() returns a model object');
     }
-
 }

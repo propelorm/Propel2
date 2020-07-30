@@ -10,17 +10,17 @@
 
 namespace Propel\Tests\Runtime\collection;
 
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for ObjectCollection.
@@ -31,12 +31,18 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
  */
 class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);
     }
 
+    /**
+     * @return void
+     */
     public function testSave()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -56,6 +62,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testDelete()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -70,6 +79,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, count($books));
     }
 
+    /**
+     * @return void
+     */
     public function testFromArray()
     {
         $author = new Author();
@@ -78,7 +90,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $author->save();
         $books = [
             ['Title' => 'Mansfield Park', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()],
-            ['Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()]
+            ['Title' => 'Pride And Prejudice', 'ISBN' => 'FA404', 'AuthorId' => $author->getId()],
         ];
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Book');
@@ -95,6 +107,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, $booksByJane);
     }
 
+    /**
+     * @return void
+     */
     public function testToArray()
     {
         BookTableMap::clearInstancePool();
@@ -115,7 +130,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             'Book_0',
             'Book_1',
             'Book_2',
-            'Book_3'
+            'Book_3',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
 
@@ -128,11 +143,14 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             'Book_Harry Potter and the Order of the Phoenix',
             'Book_Quicksilver',
             'Book_Don Juan',
-            'Book_The Tin Drum'
+            'Book_The Tin Drum',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
     }
 
+    /**
+     * @return void
+     */
     public function testGetArrayCopy()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -152,7 +170,7 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             'Book_0',
             'Book_1',
             'Book_2',
-            'Book_3'
+            'Book_3',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
 
@@ -165,11 +183,14 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
             'Book_Harry Potter and the Order of the Phoenix',
             'Book_Quicksilver',
             'Book_Don Juan',
-            'Book_The Tin Drum'
+            'Book_The Tin Drum',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
     }
 
+    /**
+     * @return void
+     */
     public function testToKeyValue()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -197,6 +218,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($expected, $booksArray, 'toKeyValue() uses primary key for the key and __toString() for the value if no field name is passed');
     }
 
+    /**
+     * @return void
+     */
     public function testToKeyIndex()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -227,6 +251,10 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $booksArray = $books->toKeyIndex();
         $this->assertEquals($expected, $booksArray, 'toKeyIndex() uses primary key for the key');
     }
+
+    /**
+     * @return void
+     */
     public function testGetColumnValues()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->find();
@@ -256,6 +284,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($expected, $booksArray, 'getColumnValues() uses primary key for the key');
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelation()
     {
         AuthorTableMap::clearInstancePool();
@@ -268,6 +299,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, count($books), 'populateRelation() the list of related objects');
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelationCriteria()
     {
         AuthorTableMap::clearInstancePool();
@@ -279,6 +313,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(3, count($books), 'populateRelation() accepts an optional criteria object to filter the query');
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelationEmpty()
     {
         AuthorTableMap::clearInstancePool();
@@ -295,6 +332,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($count, $this->con->getQueryCount(), 'populateRelation() doesn\'t issue a new query on empty collections');
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelationOneToMany()
     {
         AuthorTableMap::clearInstancePool();
@@ -310,6 +350,9 @@ class ObjectCollectionWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals($count + 1, $this->con->getQueryCount(), 'populateRelation() populates a one-to-many relationship with a single supplementary query');
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelationManyToOne()
     {
         $con = Propel::getServiceContainer()->getReadConnection(BookTableMap::DATABASE_NAME);

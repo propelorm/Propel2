@@ -10,14 +10,12 @@
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\OnDemandCollection;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\Collection\OnDemandCollection;
+use Propel\Runtime\Propel;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for OnDemandCollection.
@@ -28,6 +26,9 @@ use Propel\Runtime\ActiveQuery\PropelQuery;
  */
 class OnDemandCollectionTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +37,9 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
         $this->books = PropelQuery::from('\Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)->find();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->books = null;
@@ -43,12 +47,18 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
         Propel::enableInstancePooling();
     }
 
+    /**
+     * @return void
+     */
     public function testSetFormatter()
     {
         $this->assertTrue($this->books instanceof OnDemandCollection);
         $this->assertEquals(4, count($this->books));
     }
 
+    /**
+     * @return void
+     */
     public function testKeys()
     {
         $i = 0;
@@ -60,6 +70,8 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testoffsetExists()
     {
@@ -68,6 +80,8 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testoffsetGet()
     {
@@ -76,6 +90,8 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testoffsetSet()
     {
@@ -84,12 +100,17 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testoffsetUnset()
     {
         $this->books->offsetUnset(2);
     }
 
+    /**
+     * @return void
+     */
     public function testToArray()
     {
         $this->assertNotEquals([], $this->books->toArray());
@@ -98,10 +119,11 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testFromArray()
     {
         $this->books->fromArray([]);
     }
-
 }

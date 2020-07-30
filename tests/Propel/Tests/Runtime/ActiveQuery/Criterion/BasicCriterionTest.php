@@ -10,11 +10,10 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for BasicCriterion.
@@ -23,7 +22,9 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
  */
 class BasicCriterionTest extends BaseTestCase
 {
-
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesAnEqualConditionByDefault()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', 'foo');
@@ -34,11 +35,14 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL=:p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToAcceptsAComparisonType()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', 'foo', Criteria::GREATER_THAN);
@@ -49,11 +53,14 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL>:p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesACaseInsensitiveComparisonIfSpecified()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', 'foo');
@@ -66,7 +73,7 @@ class BasicCriterionTest extends BaseTestCase
 
         $this->assertEquals('UPPER(A.COL)=UPPER(:p1)', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
@@ -76,12 +83,14 @@ class BasicCriterionTest extends BaseTestCase
         return [
             [Criteria::CURRENT_DATE],
             [Criteria::CURRENT_TIME],
-            [Criteria::CURRENT_TIMESTAMP]
+            [Criteria::CURRENT_TIMESTAMP],
         ];
     }
 
     /**
      * @dataProvider supportedANSIFunctions
+     *
+     * @return void
      */
     public function testAppendPsToAcceptsAnANSIDateFunctionForValue($ansiFunction)
     {
@@ -95,6 +104,9 @@ class BasicCriterionTest extends BaseTestCase
         $this->assertEquals([], $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsCanHandleEqualToNull()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null);
@@ -107,6 +119,9 @@ class BasicCriterionTest extends BaseTestCase
         $this->assertEquals([], $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsCanHandleNotEqualToNull()
     {
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null, Criteria::NOT_EQUAL);
@@ -121,6 +136,8 @@ class BasicCriterionTest extends BaseTestCase
 
     /**
      * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     *
+     * @return void
      */
     public function testAppendPsThrowsExceptionWhenValueIsNullAndComparisonIsComplex()
     {
@@ -129,7 +146,5 @@ class BasicCriterionTest extends BaseTestCase
         $params = [];
         $ps = '';
         $cton->appendPsTo($ps, $params);
-
     }
-
 }

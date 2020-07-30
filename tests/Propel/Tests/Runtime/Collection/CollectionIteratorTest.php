@@ -19,6 +19,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class CollectionIteratorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testIsEmpty()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -28,6 +31,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         $this->assertFalse($iterator->isEmpty(), 'isEmpty() returns false on a non empty collection');
     }
 
+    /**
+     * @return void
+     */
     public function testGetPosition()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -41,6 +47,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetFirst()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -50,6 +59,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         $this->assertEquals('bar1', $iterator->getFirst(), 'getFirst() returns value of the first element in the collection');
     }
 
+    /**
+     * @return void
+     */
     public function testIsFirst()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -64,6 +76,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrevious()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -76,6 +91,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         $this->assertEquals('bar1', $iterator->getCurrent(), 'getPrevious() decrements the internal pointer');
     }
 
+    /**
+     * @return void
+     */
     public function testGetCurrent()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -88,6 +106,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetNext()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -100,6 +121,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         $this->assertNull($iterator->getNext(), 'getNext() returns null when the internal pointer is at the end of the list');
     }
 
+    /**
+     * @return void
+     */
     public function testGetLast()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -110,6 +134,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         $this->assertEquals('bar3', $iterator->getCurrent(), 'getLast() moves the internal pointer to the last element');
     }
 
+    /**
+     * @return void
+     */
     public function testIsLast()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -123,6 +150,9 @@ class CollectionIteratorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsOdd()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -130,10 +160,13 @@ class CollectionIteratorTest extends BookstoreTestBase
         $data = ['bar1', 'bar2', 'bar3'];
         $iterator = new CollectionIterator(new Collection($data));
         foreach ($iterator as $key => $value) {
-            $this->assertEquals((boolean) ($key % 2), $iterator->isOdd(), 'isOdd() returns true only when the key is odd');
+            $this->assertEquals((bool)($key % 2), $iterator->isOdd(), 'isOdd() returns true only when the key is odd');
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsEven()
     {
         $iterator = new CollectionIterator(new Collection());
@@ -141,8 +174,7 @@ class CollectionIteratorTest extends BookstoreTestBase
         $data = ['bar1', 'bar2', 'bar3'];
         $iterator = new CollectionIterator(new Collection($data));
         foreach ($iterator as $key => $value) {
-            $this->assertEquals(!(boolean) ($key % 2), $iterator->isEven(), 'isEven() returns true only when the key is even');
+            $this->assertEquals(!(bool)($key % 2), $iterator->isEven(), 'isEven() returns true only when the key is even');
         }
     }
-
 }

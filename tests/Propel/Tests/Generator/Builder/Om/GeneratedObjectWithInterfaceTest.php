@@ -9,16 +9,17 @@
  */
 
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Runtime\Propel;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 class GeneratedObjectWithInterfaceTest extends TestCase
 {
-      public function setUp(): void
-      {
-            if (!class_exists('Foo\MyClassWithInterface')) {
-                  $schema = <<<EOF
+    /**
+     * @return void
+     */
+    public function setUp(): void
+    {
+        if (!class_exists('Foo\MyClassWithInterface')) {
+              $schema = <<<EOF
 <database name="a-database" namespace="Foo">
     <table name="my_class_with_interface" interface="MyInterface">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
@@ -27,11 +28,14 @@ class GeneratedObjectWithInterfaceTest extends TestCase
 </database>
 EOF;
             QuickBuilder::buildSchema($schema);
-            }
-      }
+        }
+    }
 
-      public function testClassHasInterface()
-      {
-            $this->assertInstanceOf('Foo\MyInterface', new \Foo\MyClassWithInterface());
-      }
+    /**
+     * @return void
+     */
+    public function testClassHasInterface()
+    {
+          $this->assertInstanceOf('Foo\MyInterface', new \Foo\MyClassWithInterface());
+    }
 }

@@ -10,12 +10,6 @@
 
 namespace Propel\Tests;
 
-use Propel\Generator\Command\TestPrepareCommand;
-use Propel\Runtime\Propel;
-use Symfony\Component\Console\Application;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Symfony\Component\Finder\Finder;
-
 /**
  * The same as TestCaseFixtures but makes additional sure that
  * database schema has been updated.

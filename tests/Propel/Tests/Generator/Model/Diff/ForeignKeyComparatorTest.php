@@ -10,17 +10,19 @@
  */
 
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Diff\ForeignKeyComparator;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\ForeignKeyComparator;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
- *
  */
 class PropelForeignComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testCompareNoDifference()
     {
         $c1 = new Column('Foo');
@@ -38,6 +40,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertFalse(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareCaseInsensitive()
     {
         $c1 = new Column('Foo');
@@ -55,6 +60,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertFalse(ForeignKeyComparator::computeDiff($fk1, $fk2, true));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareLocalColumn()
     {
         $c1 = new Column('Foo');
@@ -72,6 +80,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareForeignColumn()
     {
         $c1 = new Column('Foo');
@@ -89,6 +100,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareColumnMappings()
     {
         $c1 = new Column('Foo');
@@ -109,6 +123,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareOnUpdate()
     {
         $c1 = new Column('Foo');
@@ -128,6 +145,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareOnDelete()
     {
         $c1 = new Column('Foo');
@@ -147,6 +167,9 @@ class PropelForeignComparatorTest extends TestCase
         $this->assertTrue(ForeignKeyComparator::computeDiff($fk1, $fk2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSort()
     {
         $c1 = new Column('Foo');

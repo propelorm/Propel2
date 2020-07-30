@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
-
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
@@ -21,11 +20,13 @@ use Propel\Tests\TestCase;
  * Test class for OMBuilder.
  *
  * @author François Zaninotto
- * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
+ * @version $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class AbstractOMBuilderTest extends TestCase
 {
-
+    /**
+     * @return void
+     */
     public function testClear()
     {
         $b = new Book();
@@ -38,6 +39,9 @@ class AbstractOMBuilderTest extends TestCase
         $this->assertFalse($b->isDeleted(), 'clear() sets the object to not deleted');
     }
 
+    /**
+     * @return void
+     */
     public function testToStringUsesDefaultStringFormat()
     {
         $author = new Author();
@@ -51,7 +55,7 @@ Email: null
 Age: null
 
 EOF;
-        $this->assertEquals($expected, (string) $author, 'generated __toString() uses default string format and exportTo()');
+        $this->assertEquals($expected, (string)$author, 'generated __toString() uses default string format and exportTo()');
 
         $publisher = new Publisher();
         $publisher->setId(345345);
@@ -64,11 +68,13 @@ EOF;
 </data>
 
 EOF;
-        $this->assertEquals($expected, (string) $publisher, 'generated __toString() uses default string format and exportTo()');
+        $this->assertEquals($expected, (string)$publisher, 'generated __toString() uses default string format and exportTo()');
     }
 
     /**
      * @dataProvider dataGetPackagePath
+     *
+     * @return void
      */
     public function testGetPackagePath($package, $expectedPath)
     {
@@ -100,7 +106,6 @@ EOF;
             ['foo.bar/baz.map', 'foo.bar/baz/map'],
         ];
     }
-
 }
 
 class OMBuilderMock extends AbstractOMBuilder
@@ -111,6 +116,9 @@ class OMBuilderMock extends AbstractOMBuilder
     {
     }
 
+    /**
+     * @return void
+     */
     public function setPackage($pkg)
     {
         $this->pkg = $pkg;
@@ -121,22 +129,31 @@ class OMBuilderMock extends AbstractOMBuilder
         return $this->pkg;
     }
 
+    /**
+     * @return void
+     */
     public function getUnprefixedClassName()
     {
     }
 
+    /**
+     * @return void
+     */
     protected function addClassOpen(&$script)
     {
-
     }
 
+    /**
+     * @return void
+     */
     protected function addClassBody(&$script)
     {
-
     }
 
+    /**
+     * @return void
+     */
     protected function addClassClose(&$script)
     {
-
     }
 }

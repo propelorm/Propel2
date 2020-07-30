@@ -19,16 +19,23 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 {
     /**
      * Contains the builder instance of the updated schema (removed FK)
-     * @var QuickBuilder
+     *
+     * @var \Propel\Generator\Util\QuickBuilder
      */
     private $updatedBuilder;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->removeTables();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->removeTables();
@@ -37,6 +44,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 
     /**
      * Remove issue617 tables.
+     *
+     * @return void
      */
     public function removeTables()
     {
@@ -46,6 +55,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 
     /**
      * Setups the initial schema.
+     *
+     * @return void
      */
     private function setupInitSchema()
     {
@@ -112,12 +123,13 @@ CREATE TABLE `issue617_group`
 
         $this->assertContains($expected, $sql);
         $this->updateSchema($builder->getDatabase());
-
     }
 
     /**
      * Drop the foreign key in the `_user` table and check whether it generates
      * the correct `DROP` SQL.
+     *
+     * @return void
      */
     private function dropForeignKey()
     {
@@ -169,6 +181,10 @@ ALTER TABLE `issue617_user`
     /*
      * Checks if FKs are really deleted.
      */
+
+    /**
+     * @return void
+     */
     private function checkDeletedFk()
     {
         $this->readDatabase();
@@ -183,6 +199,8 @@ ALTER TABLE `issue617_user`
     /**
      * Checks if a changed schema with removed FK does really delete the FK.
      * Based on a real use-case, reverse classes and `computeDiff`.
+     *
+     * @return void
      */
     public function testDropForeignKey()
     {
@@ -191,6 +209,5 @@ ALTER TABLE `issue617_user`
         $this->setupInitSchema();
         $this->dropForeignKey();
         $this->checkDeletedFk();
-
     }
 }

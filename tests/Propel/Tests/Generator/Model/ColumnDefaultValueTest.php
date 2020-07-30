@@ -9,11 +9,10 @@
  */
 
 use Propel\Generator\Model\ColumnDefaultValue;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for ColumnDefaultValue class.
- *
  */
 class ColumnDefaultValueTest extends TestCase
 {
@@ -30,6 +29,8 @@ class ColumnDefaultValueTest extends TestCase
 
     /**
      * @dataProvider equalsProvider
+     *
+     * @return void
      */
     public function testEquals($def1, $def2, $test)
     {

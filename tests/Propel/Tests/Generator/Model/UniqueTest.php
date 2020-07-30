@@ -22,6 +22,7 @@ class UniqueTest extends ModelTestCase
     /**
      * @dataProvider provideTableSpecificAttributes
      *
+     * @return void
      */
     public function testCreateDefaultUniqueIndexName($tableName, $maxColumnNameLength, $indexName)
     {
@@ -29,13 +30,12 @@ class UniqueTest extends ModelTestCase
         $database
             ->expects($this->any())
             ->method('getMaxColumnNameLength')
-            ->will($this->returnValue($maxColumnNameLength))
-        ;
+            ->will($this->returnValue($maxColumnNameLength));
 
         $table = $this->getTableMock($tableName, [
             'common_name' => $tableName,
-            'unices'      => [ new Unique(), new Unique() ],
-            'database'    => $database,
+            'unices' => [ new Unique(), new Unique() ],
+            'database' => $database,
         ]);
 
         $index = new Unique();

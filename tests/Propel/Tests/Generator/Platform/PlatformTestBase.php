@@ -18,7 +18,6 @@ use Propel\Tests\TestCase;
  */
 abstract class PlatformTestBase extends TestCase
 {
-
     protected function getDatabaseFromSchema($schema)
     {
         $xtad = new SchemaReader($this->getPlatform());
@@ -31,5 +30,4 @@ abstract class PlatformTestBase extends TestCase
     {
         return $this->getDatabaseFromSchema($schema)->getTable($tableName);
     }
-
 }

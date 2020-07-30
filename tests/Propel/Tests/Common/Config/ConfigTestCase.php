@@ -21,9 +21,10 @@ use Symfony\Component\Filesystem\Filesystem;
 class ConfigTestCase extends TestCase
 {
     /**
+     * @var null
      * Symfony\Component\Filesystem\Filesystem instance
      */
-    private $fileSystem = null;
+    private $fileSystem;
 
     public function getFilesystem()
     {
@@ -38,7 +39,9 @@ class ConfigTestCase extends TestCase
      * Create a temporary config file inside the system temporary directory
      *
      * @param string $filename File Name
-     * @param string $content  File content
+     * @param string $content File content
+     *
+     * @return void
      */
     public function dumpTempFile($filename, $content)
     {

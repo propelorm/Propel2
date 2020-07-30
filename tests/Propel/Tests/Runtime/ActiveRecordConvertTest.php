@@ -24,6 +24,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
 {
     private $book;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -81,6 +84,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testToXML($expected)
     {
@@ -89,6 +94,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testFromXML($expected)
     {
@@ -137,6 +144,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testToYAML($expected)
     {
@@ -145,6 +154,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testFromYAML($expected)
     {
@@ -174,6 +185,8 @@ EOF;
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
     public function testToJSON($expected)
     {
@@ -182,6 +195,8 @@ EOF;
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
     public function testfromJSON($expected)
     {
@@ -209,6 +224,8 @@ EOF;
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testToCSV($expected)
     {
@@ -217,6 +234,8 @@ EOF;
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testfromCSV($expected)
     {
@@ -234,5 +253,4 @@ EOF;
 
         $this->assertEquals($this->book, $book);
     }
-
 }

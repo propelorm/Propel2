@@ -7,7 +7,9 @@ namespace Propel\Tests\Generator\Migration;
  */
 class PrimaryKeyTest extends MigrationTestCase
 {
-
+    /**
+     * @return void
+     */
     public function testAdd()
     {
         $originXml = '
@@ -30,6 +32,9 @@ class PrimaryKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testRemove()
     {
         $originXml = '
@@ -52,6 +57,9 @@ class PrimaryKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChange()
     {
         $originXml = '
@@ -76,6 +84,9 @@ class PrimaryKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChangeName()
     {
         $originXml = '
@@ -98,6 +109,9 @@ class PrimaryKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChangeSize()
     {
         $originXml = '
@@ -119,5 +133,4 @@ class PrimaryKeyTest extends MigrationTestCase
 ';
         $this->migrateAndTest($originXml, $targetXml);
     }
-
 }

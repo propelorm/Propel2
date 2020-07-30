@@ -10,6 +10,7 @@
 
 namespace Propel\Tests\Generator\Model;
 
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Domain;
 
 /**
@@ -19,6 +20,9 @@ use Propel\Generator\Model\Domain;
  */
 class DomainTest extends ModelTestCase
 {
+    /**
+     * @return void
+     */
     public function testCreateNewDomain()
     {
         $domain = new Domain('FLOAT', 'DOUBLE', 10, 2);
@@ -32,6 +36,7 @@ class DomainTest extends ModelTestCase
     /**
      * @dataProvider provideDomainData
      *
+     * @return void
      */
     public function testSetupObject($default, $expression)
     {
@@ -39,12 +44,11 @@ class DomainTest extends ModelTestCase
         $platform
             ->expects($this->any())
             ->method('getDomainForType')
-            ->will($this->returnValue(new Domain('BOOLEAN')))
-        ;
+            ->will($this->returnValue(new Domain('BOOLEAN')));
 
         $domain = new Domain();
         $domain->setDatabase($this->getDatabaseMock('bookstore', [
-            'platform' => $platform
+            'platform' => $platform,
         ]));
         $domain->loadMapping([
             'type' => 'BOOLEAN',
@@ -72,6 +76,9 @@ class DomainTest extends ModelTestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testSetDatabase()
     {
         $domain = new Domain();
@@ -80,6 +87,9 @@ class DomainTest extends ModelTestCase
         $this->assertInstanceOf('Propel\Generator\Model\Database', $domain->getDatabase());
     }
 
+    /**
+     * @return void
+     */
     public function testReplaceMappingAndSqlTypes()
     {
         $value = $this->getColumnDefaultValueMock();
@@ -94,6 +104,9 @@ class DomainTest extends ModelTestCase
         $this->assertInstanceOf('Propel\Generator\Model\ColumnDefaultValue', $value);
     }
 
+    /**
+     * @return void
+     */
     public function testGetNoPhpDefaultValue()
     {
         $domain = new Domain();
@@ -101,14 +114,16 @@ class DomainTest extends ModelTestCase
         $this->assertNull($domain->getPhpDefaultValue());
     }
 
+    /**
+     * @return void
+     */
     public function testGetPhpDefaultValue()
     {
         $value = $this->getColumnDefaultValueMock();
         $value
             ->expects($this->once())
             ->method('getValue')
-            ->will($this->returnValue('foo'))
-        ;
+            ->will($this->returnValue('foo'));
 
         $domain = new Domain('VARCHAR');
         $domain->setDefaultValue($value);
@@ -119,6 +134,7 @@ class DomainTest extends ModelTestCase
     /**
      * @dataProvider provideBooleanValues
      *
+     * @return void
      */
     public function testGetBooleanValue($mappingType, $booleanAsString, $expected)
     {
@@ -126,8 +142,7 @@ class DomainTest extends ModelTestCase
         $value
             ->expects($this->once())
             ->method('getValue')
-            ->will($this->returnValue($booleanAsString))
-        ;
+            ->will($this->returnValue($booleanAsString));
 
         $domain = new Domain($mappingType);
         $domain->setDefaultValue($value);
@@ -153,25 +168,28 @@ class DomainTest extends ModelTestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testCantGetPhpDefaultValue()
     {
         $value = $this->getColumnDefaultValueMock();
         $value
             ->expects($this->once())
             ->method('isExpression')
-            ->will($this->returnValue(true))
-        ;
+            ->will($this->returnValue(true));
 
         $domain = new Domain();
         $domain->setDefaultValue($value);
 
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+        $this->expectException(EngineException::class);
         $domain->getPhpDefaultValue();
     }
 
     /**
      * @dataProvider provideSizeDefinitions
      *
+     * @return void
      */
     public function testGetSizeDefinition($size, $scale, $definition)
     {
@@ -189,6 +207,9 @@ class DomainTest extends ModelTestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testCopyDomain()
     {
         $value = $this->getColumnDefaultValueMock();
@@ -219,8 +240,7 @@ class DomainTest extends ModelTestCase
         $value = $this
             ->getMockBuilder('Propel\Generator\Model\ColumnDefaultValue')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         return $value;
     }

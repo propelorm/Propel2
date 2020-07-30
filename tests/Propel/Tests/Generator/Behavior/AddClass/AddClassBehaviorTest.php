@@ -20,6 +20,9 @@ use Propel\Tests\TestCaseFixtures;
  */
 class AddClassBehaviorTest extends TestCaseFixtures
 {
+    /**
+     * @return void
+     */
     public function testClassExists()
     {
         $t = new AddClassTableFooClass();

@@ -20,11 +20,17 @@ use Propel\Tests\TestCase;
  */
 class TableBehaviorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTable()
     {
         $t = Table3TableMap::getTableMap();

@@ -12,8 +12,8 @@
 namespace Propel\Tests\Generator\Behavior;
 
 use Propel\Tests\BookstoreSchemas\Book;
-use Propel\Tests\BookstoreSchemas\SecondHandBook;
 use Propel\Tests\BookstoreSchemas\Map\BookTableMap;
+use Propel\Tests\BookstoreSchemas\SecondHandBook;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
@@ -25,6 +25,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class ConcreteInheritanceBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
+    /**
+     * @return void
+     */
     public function testParentBehaviorWithSchemas()
     {
         $behaviors = BookTableMap::getTableMap()->getBehaviors();
@@ -32,6 +35,9 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendant_column parameter to the parent behavior');
     }
 
+    /**
+     * @return void
+     */
     public function testGetParentOrCreateNewWithSchemas()
     {
         $second_hand_book = new SecondHandBook();
@@ -40,5 +46,4 @@ class ConcreteInheritanceBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $this->assertTrue($book->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
         $this->assertEquals('Propel\Tests\BookstoreSchemas\SecondHandBook', $book->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
     }
-
 }

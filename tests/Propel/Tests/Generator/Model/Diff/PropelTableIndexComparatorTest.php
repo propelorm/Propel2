@@ -11,25 +11,30 @@
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
+use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\TableComparator;
-use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Platform\MysqlPlatform;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the Column methods of the TableComparator service class.
- *
  */
 class PropelTableIndexComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSameIndices()
     {
         $t1 = new Table();
@@ -58,6 +63,9 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNotSameIndices()
     {
         $t1 = new Table();
@@ -87,6 +95,9 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertTrue($diff instanceof TableDiff);
     }
 
+    /**
+     * @return void
+     */
     public function testCompareCaseInsensitive()
     {
         $t1 = new Table();
@@ -117,6 +128,9 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertNotFalse(TableComparator::computeDiff($t1, $t2, $caseInsensitive = false));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareAddedIndices()
     {
         $t1 = new Table();
@@ -142,6 +156,9 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertEquals(['Foo_Index' => $i2], $tableDiff->getAddedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRemovedIndices()
     {
         $t1 = new Table();
@@ -167,6 +184,9 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertEquals(['Bar_Index' => $i1], $tableDiff->getRemovedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareModifiedIndices()
     {
         $t1 = new Table();
@@ -199,5 +219,4 @@ class PropelTableIndexComparatorTest extends TestCase
         $this->assertEquals(1, count($tableDiff->getModifiedIndices()));
         $this->assertEquals(['Foo_Index' => [$i1, $i2]], $tableDiff->getModifiedIndices());
     }
-
 }

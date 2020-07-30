@@ -10,20 +10,25 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
-use Propel\Common\Config\Loader\YamlFileLoader;
 use Propel\Common\Config\FileLocator;
+use Propel\Common\Config\Loader\YamlFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
-use Symfony\Component\Yaml\Exception\ParseException;
 
 class YamlFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->loader = new YamlFileLoader(new FileLocator(sys_get_temp_dir()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.yaml'), '->supports() returns true if the resource is loadable');
@@ -34,6 +39,9 @@ class YamlFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.bar.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testYamlFileCanBeLoaded()
     {
         $content = <<<EOF
@@ -49,8 +57,10 @@ EOF;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "inexistent.yaml" does not exist (in:
+     *
+     * @return void
      */
     public function testYamlFileDoesNotExist()
     {
@@ -58,8 +68,10 @@ EOF;
     }
 
     /**
-     * @expectedException        Symfony\Component\Yaml\Exception\ParseException
+     * @expectedException Symfony\Component\Yaml\Exception\ParseException
      * @expectedExceptionMessage Unable to parse
+     *
+     * @return void
      */
     public function testYamlFileHasInvalidContent()
     {
@@ -72,7 +84,9 @@ EOF;
         $this->loader->load('nonvalid.yaml');
     }
 
-
+    /**
+     * @return void
+     */
     public function testYamlFileIsEmpty()
     {
         $content = '';
@@ -86,7 +100,10 @@ EOF;
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.yaml.
+     *
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testYamlFileNotReadableThrowsException()
     {
@@ -101,6 +118,5 @@ EOF;
         $actual = $this->loader->load('notreadable.yaml');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }

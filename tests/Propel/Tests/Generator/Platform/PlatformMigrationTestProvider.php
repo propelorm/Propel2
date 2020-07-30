@@ -11,17 +11,16 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Table;
 
 /**
  * provider for platform migration unit tests
  */
 abstract class PlatformMigrationTestProvider extends PlatformTestBase
 {
-
     public function providerForTestGetModifyDatabaseDDL()
     {
         $schema1 = <<<EOF
@@ -127,7 +126,7 @@ EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
 
-        return [[TableComparator::computeDiff($t1,$t2)]];
+        return [[TableComparator::computeDiff($t1, $t2)]];
     }
 
     public function providerForTestGetModifyTableColumnsDDL()
@@ -457,8 +456,8 @@ EOF;
         $t2->addColumn($c4);
 
         return [[[
-            ColumnComparator::computeDiff($c1, $c3),
-            ColumnComparator::computeDiff($c2, $c4)
+        ColumnComparator::computeDiff($c1, $c3),
+        ColumnComparator::computeDiff($c2, $c4),
         ]]];
     }
 
@@ -579,5 +578,4 @@ EOF;
 
         return [[$diff]];
     }
-
 }

@@ -20,6 +20,9 @@ use Propel\Tests\TestCase;
  */
 class VendorInfoTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testSetupObject()
     {
         $info = new VendorInfo();
@@ -28,6 +31,9 @@ class VendorInfoTest extends TestCase
         $this->assertSame('foo', $info->getType());
     }
 
+    /**
+     * @return void
+     */
     public function testGetSetType()
     {
         $info = new VendorInfo('foo');
@@ -36,6 +42,9 @@ class VendorInfoTest extends TestCase
         $this->assertTrue($info->isEmpty());
     }
 
+    /**
+     * @return void
+     */
     public function testSetParameter()
     {
         $info = new VendorInfo();
@@ -46,6 +55,9 @@ class VendorInfoTest extends TestCase
         $this->assertSame('bar', $info->getParameter('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetParameters()
     {
         $info = new VendorInfo();
@@ -56,6 +68,9 @@ class VendorInfoTest extends TestCase
         $this->assertArrayHasKey('baz', $info->getParameters());
     }
 
+    /**
+     * @return void
+     */
     public function testMergeVendorInfo()
     {
         $current = new VendorInfo('mysql');

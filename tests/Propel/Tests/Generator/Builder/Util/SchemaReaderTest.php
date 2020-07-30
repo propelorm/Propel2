@@ -18,10 +18,13 @@ class SchemaReaderTest extends TestCase
     /**
      * The schema reader.
      *
-     * @var SchemaReader
+     * @var \Propel\Generator\Builder\Util\SchemaReader
      */
     private $reader;
 
+    /**
+     * @return void
+     */
     public function testParseStringEmptySchema()
     {
         if (defined('HHVM_VERSION')) {
@@ -37,6 +40,9 @@ EOF;
         $this->assertEquals($xml, $schema->toString());
     }
 
+    /**
+     * @return void
+     */
     public function testParseStringSchemaWithoutXmlDeclaration()
     {
         if (defined('HHVM_VERSION')) {
@@ -55,12 +61,17 @@ EOF;
 
     /**
      * @expectedException \Propel\Generator\Exception\SchemaException
+     *
+     * @return void
      */
     public function testParseStringIncorrectSchema()
     {
         $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>');
     }
 
+    /**
+     * @return void
+     */
     public function testParseStringDatabase()
     {
         $schema = $this->reader->parseString('<database name="foo"></database>');
@@ -75,6 +86,9 @@ EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
+    /**
+     * @return void
+     */
     public function testParseStringTable()
     {
         $xmlSchema = '<database name="foo"><table name="bar"><column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/></table></database>';
@@ -95,6 +109,9 @@ EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
+    /**
+     * @return void
+     */
     public function testParseFile()
     {
         $schema = $this->reader->parseFile($this->getSchemaFile('testSchema.xml'));
@@ -111,6 +128,9 @@ EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
+    /**
+     * @return void
+     */
     public function testParseFileExternalSchema()
     {
         $schema = $this->reader->parseFile($this->getSchemaFile('outerSchema.xml'));
@@ -130,11 +150,17 @@ EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
     }
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->reader = new SchemaReader();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->reader = null;

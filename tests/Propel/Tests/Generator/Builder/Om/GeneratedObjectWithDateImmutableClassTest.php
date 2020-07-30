@@ -10,11 +10,13 @@
 
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 class GeneratedObjectWithDateImmutableClassTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('Foo\SomeTableA')) {
@@ -33,9 +35,9 @@ EOF;
                     'generator' => [
                         'dateTime' => [
                             'dateTimeClass' => 'DateTimeImmutable',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
             $builder->setSchema($schema);
             $builder->setConfig($config);
@@ -55,6 +57,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testDateTimeInterface()
     {
         $ModelA = new \Foo\SomeTableA();
@@ -66,6 +71,9 @@ EOF;
         $this->assertInstanceOf('\DateTimeInterface', $ModelB->getCreatedAt());
     }
 
+    /**
+     * @return void
+     */
     public function testFieldTypes()
     {
         $ModelA = new \Foo\SomeTableA();
@@ -77,6 +85,9 @@ EOF;
         $this->assertInstanceOf('\DateTime', $ModelB->getCreatedAt());
     }
 
+    /**
+     * @return void
+     */
     public function testWithDateTimeToArrayWorks()
     {
         $Date = new DateTime('now');
