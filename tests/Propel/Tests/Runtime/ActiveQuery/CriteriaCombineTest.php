@@ -52,6 +52,9 @@ class CriteriaCombineTest extends BaseTestCase
         Propel::getServiceContainer()->setAdapter($defaultDatasource, new SqliteAdapter());
     }
 
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'sqlite';

@@ -10,7 +10,11 @@
 
 namespace Propel\Tests\Generator\Builder;
 
+use Baz\Map\NamespacedBookListRelTableMap;
 use Baz\Map\NamespacedPublisherTableMap;
+use Baz\NamespacedBookClub;
+use Baz\NamespacedBookClubQuery;
+use Baz\NamespacedBookListRelQuery;
 use Baz\NamespacedPublisher;
 use Baz\NamespacedPublisherQuery;
 use Foo\Bar\Map\NamespacedAuthorTableMap;
@@ -19,10 +23,13 @@ use Foo\Bar\NamespacedAuthor;
 use Foo\Bar\NamespacedAuthorQuery;
 use Foo\Bar\NamespacedBook;
 use Foo\Bar\NamespacedBookQuery;
+use Foo\Bar\NamespacedBookstoreCashier;
+use Foo\Bar\NamespacedBookstoreEmployee;
 use Foo\Bar\NamespacedBookstoreEmployeeQuery;
+use Foo\Bar\NamespacedBookstoreManager;
+use Foo\Bar\NamespacedBookstoreManagerQuery;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
-use Foo\Bar\NamespacedBookstoreEmployee;
 
 /**
  * Tests for Namespaces in generated classes class
@@ -238,10 +245,10 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $emp = new NamespacedBookstoreEmployee();
         $emp->setName('Henry');
         $emp->save();
-        $man = new \Foo\Bar\NamespacedBookstoreManager();
+        $man = new NamespacedBookstoreManager();
         $man->setName('John');
         $man->save();
-        $cas = new \Foo\Bar\NamespacedBookstoreCashier();
+        $cas = new NamespacedBookstoreCashier();
         $cas->setName('William');
         $cas->save();
         $emps = NamespacedBookstoreEmployeeQuery::create()
@@ -251,7 +258,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertTrue($emps[0] instanceof NamespacedBookstoreEmployee);
         $this->assertTrue($emps[1] instanceof NamespacedBookstoreManager);
         $this->assertTrue($emps[2] instanceof NamespacedBookstoreCashier);
-        $nbMan = \Foo\Bar\NamespacedBookstoreManagerQuery::create()
+        $nbMan = NamespacedBookstoreManagerQuery::create()
             ->count();
         $this->assertEquals(1, $nbMan);
     }
@@ -262,8 +269,8 @@ class NamespaceTest extends TestCaseFixturesDatabase
     public function testManyToMany()
     {
         NamespacedBookQuery::create()->deleteAll();
-        \Baz\NamespacedBookClubQuery::create()->deleteAll();
-        \Baz\NamespacedBookListRelQuery::create()->deleteAll();
+        NamespacedBookClubQuery::create()->deleteAll();
+        NamespacedBookListRelQuery::create()->deleteAll();
         $book1 = new NamespacedBook();
         $book1->setTitle('bar');
         $book1->setISBN('1234');
@@ -272,7 +279,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $book2->setTitle('foo');
         $book2->setISBN('4567');
         $book2->save();
-        $bookClub1 = new \Baz\NamespacedBookClub();
+        $bookClub1 = new NamespacedBookClub();
         $bookClub1->addNamespacedBook($book1);
         $bookClub1->addNamespacedBook($book2);
         $bookClub1->setGroupLeader('Someone1');
@@ -285,7 +292,7 @@ class NamespaceTest extends TestCaseFixturesDatabase
         $this->assertEquals(1, $book2->countNamespacedBookClubs());
         $nbRels = NamespacedBookListRelQuery::create()->count();
         $this->assertEquals(3, $nbRels);
-        $con = Propel::getServiceContainer()->getConnection(\Baz\Map\NamespacedBookListRelTableMap::DATABASE_NAME);
+        $con = Propel::getServiceContainer()->getConnection(NamespacedBookListRelTableMap::DATABASE_NAME);
         $books = NamespacedBookQuery::create()
             ->orderByTitle()
             ->joinWith('NamespacedBookListRel')

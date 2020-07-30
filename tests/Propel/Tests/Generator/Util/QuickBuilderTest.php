@@ -127,7 +127,7 @@ EOF;
         $builder->buildClasses();
         $foo = new QuickBuildFoo1();
         $this->assertTrue($foo instanceof ActiveRecordInterface);
-        $this->assertTrue(QuickBuildFoo1TableMap::getTableMap() instanceof \MyNameSpace\Map\QuickBuildFoo1TableMap);
+        $this->assertTrue(QuickBuildFoo1TableMap::getTableMap() instanceof QuickBuildFoo1TableMap);
     }
 
     /**

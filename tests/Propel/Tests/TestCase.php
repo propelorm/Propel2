@@ -14,6 +14,9 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 class TestCase extends PHPUnitTestCase
 {
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'sqlite';
@@ -111,6 +114,8 @@ class TestCase extends PHPUnitTestCase
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
      * @return \Propel\Generator\Reverse\SchemaParserInterface
      */
     protected function getParser($con)
