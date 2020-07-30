@@ -11,7 +11,6 @@
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
 use Exception;
-use Fixtures\PublicTable9;
 use Map\NestedSetTable9TableMap;
 use NestedSetTable10;
 use NestedSetTable9;
@@ -21,6 +20,7 @@ use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
+use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable9;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
