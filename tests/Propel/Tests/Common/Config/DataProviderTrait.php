@@ -15,6 +15,9 @@ namespace Propel\Tests\Common\Config;
  */
 trait DataProviderTrait
 {
+    /**
+     * @return string[][]
+     */
     public function providerForInvalidConnections()
     {
         return [
@@ -109,6 +112,9 @@ propel:
         ];
     }
 
+    /**
+     * @return string[][]
+     */
     public function providerForInvalidDefaultConnection()
     {
         return [
@@ -169,6 +175,9 @@ propel:
         ];
     }
 
+    /**
+     * @return array
+     */
     public function providerForXmlToArrayConverter()
     {
         return [
@@ -304,6 +313,9 @@ EOF, [
         ];
     }
 
+    /**
+     * @return array
+     */
     public function providerForXmlToArrayConverterXmlInclusions()
     {
         $xmlOne = <<<XML
