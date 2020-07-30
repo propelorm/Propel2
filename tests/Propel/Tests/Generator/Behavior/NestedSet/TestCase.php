@@ -10,13 +10,13 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Fixtures\PublicTable10;
-use Fixtures\PublicTable9;
 use Map\NestedSetTable10TableMap;
 use Map\NestedSetTable9TableMap;
 use NestedSetTable10Query;
 use NestedSetTable9Query;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
+use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable9;
 use Propel\Tests\TestCase as BaseTestCase;
 
 /**

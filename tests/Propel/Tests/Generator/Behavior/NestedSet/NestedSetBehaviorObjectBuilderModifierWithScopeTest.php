@@ -10,10 +10,10 @@
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
-use Fixtures\PublicTable10;
 use Map\NestedSetTable10TableMap;
 use NestedSetTable10;
 use NestedSetTable10Query;
+use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
