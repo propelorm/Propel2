@@ -11,6 +11,7 @@
 namespace Propel\Tests\Runtime;
 
 use Propel\Runtime\Propel;
+use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Propel\Tests\Helpers\BaseTestCase;
 
@@ -21,7 +22,7 @@ class PropelTest extends BaseTestCase
      */
     public function testGetServiceContainerReturnsAServiceContainer()
     {
-        $this->assertInstanceOf('\Propel\Runtime\ServiceContainer\ServiceContainerInterface', Propel::getServiceContainer());
+        $this->assertInstanceOf(ServiceContainerInterface::class, Propel::getServiceContainer());
     }
 
     /**

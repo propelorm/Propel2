@@ -14,8 +14,9 @@ use Propel\Tests\Bookstore\Map\TypeObjectTableMap;
 use Propel\Tests\Bookstore\TypeObject;
 use Propel\Tests\Bookstore\TypeObjectQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Runtime\TypeTests\TypeObjectInterface;
 use ReflectionClass;
-use TypeTests\DummyObjectClass;
+use Propel\Tests\Runtime\TypeTests\DummyObjectClass;
 
 /**
  * @group database
@@ -27,11 +28,11 @@ class TypeTest extends BookstoreTestBase
      */
     public function testTypeHintClass()
     {
-        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass(TypeObject::class);
         $method = $reflection->getMethod('setDummyObject');
         $param = $method->getParameters()[0];
 
-        $this->assertEquals('Propel\Tests\Runtime\TypeTests\DummyObjectClass', $param->getClass()->name);
+        $this->assertEquals(DummyObjectClass::class, $param->getClass()->name);
         $this->assertTrue($param->allowsNull());
     }
 
@@ -40,7 +41,7 @@ class TypeTest extends BookstoreTestBase
      */
     public function testTypeHintArray()
     {
-        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass(TypeObject::class);
         $method = $reflection->getMethod('setSomeArray');
         $param = $method->getParameters()[0];
 
@@ -53,11 +54,11 @@ class TypeTest extends BookstoreTestBase
      */
     public function testInterface()
     {
-        $reflection = new ReflectionClass('Propel\Tests\Bookstore\TypeObject');
+        $reflection = new ReflectionClass(TypeObject::class);
         $method = $reflection->getMethod('setTypeObject');
         $param = $method->getParameters()[0];
 
-        $this->assertEquals('Propel\Tests\Runtime\TypeTests\TypeObjectInterface', $param->getClass()->name);
+        $this->assertEquals(TypeObjectInterface::class, $param->getClass()->name);
         $this->assertTrue($param->allowsNull());
     }
 
@@ -87,7 +88,7 @@ class TypeTest extends BookstoreTestBase
         $this->assertEquals($c, $typeObjectEntity->getDetails()->getPropPrivate());
 
         $typeObjectEntity->save();
-        
+
         $typeObjectEntity->setDetails($objectInstance);
         $this->assertFalse($typeObjectEntity->isModified('details'));
 
@@ -96,7 +97,7 @@ class TypeTest extends BookstoreTestBase
 
         $typeObjectEntity->setDetails($clone);
         $this->assertTrue($typeObjectEntity->isModified('details'));
-            
+
 
         TypeObjectTableMap::clearInstancePool();
         $typeObjectEntity = TypeObjectQuery::create()->findOne();
