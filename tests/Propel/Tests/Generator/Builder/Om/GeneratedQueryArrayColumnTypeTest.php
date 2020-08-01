@@ -20,9 +20,9 @@ use Propel\Runtime\ActiveQuery\Criteria;
  *
  * @author Francois Zaninotto
  */
-class GeneratedQueryArrayColumnTypeTest extends \PHPUnit_Framework_TestCase
+class GeneratedQueryArrayColumnTypeTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('\ComplexColumnTypeEntity11')) {
             $schema = <<<EOF

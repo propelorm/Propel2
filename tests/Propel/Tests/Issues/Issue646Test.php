@@ -21,7 +21,7 @@ use Propel\Tests\TestCaseFixtures;
 class Issue646Test extends TestCaseFixtures
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!class_exists('\PkDate')) {
@@ -45,7 +45,7 @@ class Issue646Test extends TestCaseFixtures
 
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         \PkDateQuery::create()->deleteAll();

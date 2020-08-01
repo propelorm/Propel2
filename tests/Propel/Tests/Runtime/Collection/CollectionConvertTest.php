@@ -27,7 +27,7 @@ class CollectionConvertTest extends TestCaseFixtures
 {
     private $coll;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $book1 = new Book();

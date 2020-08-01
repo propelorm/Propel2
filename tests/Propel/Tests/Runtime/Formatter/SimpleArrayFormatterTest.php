@@ -22,7 +22,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  */
 class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();

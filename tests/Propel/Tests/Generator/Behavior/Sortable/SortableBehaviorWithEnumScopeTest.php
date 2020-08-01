@@ -23,7 +23,7 @@ use Propel\Tests\Bookstore\Behavior\SortableTable13 as Table13;
  */
 class SortableBehaviorWithEnumScopeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

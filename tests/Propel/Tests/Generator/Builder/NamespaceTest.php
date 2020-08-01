@@ -21,13 +21,13 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class NamespaceTest extends TestCaseFixturesDatabase
 {
-//    protected function setUp()
+//    protected function setUp(): void
 //    {
 //        parent::setUp();
 //        Propel::init(__DIR__ . '/../../../../Fixtures/namespaced/build/conf/bookstore_namespaced-conf.php');
 //    }
 //
-//    protected function tearDown()
+//    protected function tearDown(): void
 //    {
 //        parent::tearDown();
 //        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');

@@ -94,4 +94,9 @@
         </foreign-key>
     </table>
 
+    <table name="fixture_for_testing_time_expressions" schema="contest" reloadOnInsert="true">
+        <column name="current_timestamp" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" />
+        <column name="localtimestamp" type="TIMESTAMP" defaultExpr="LOCALTIMESTAMP" />
+    </table>
+
 </database>

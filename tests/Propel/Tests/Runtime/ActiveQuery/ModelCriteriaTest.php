@@ -141,13 +141,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @dataProvider conditionsForTestReplaceNames
      */
-    public function testReplaceNames($origClause, $columnPhpName = false, $modifiedClause)
+    public function testReplaceNames($origClause, $columnPhpName, $modifiedClause)
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName, $modifiedClause);
     }
 
-    public function doTestReplaceNames(Criteria $c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
+    public function doTestReplaceNames(Criteria $c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
     {
         $c->replaceNames($origClause);
         $columns = $c->replacedColumns;
@@ -2761,7 +2761,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     public function testRequirePkThrowsException()
     {
-        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
 
         BookQuery::create()->requirePk(-1337);
     }
@@ -2774,7 +2774,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     public function testRequireOneThrowsException()
     {
-        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
 
         BookQuery::create()->filterByTitle('Not existing title')->requireOne();
     }
@@ -2787,7 +2787,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     public function testMagicRequireOneThrowsException()
     {
-        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
 
         BookQuery::create()->requireOneById(-1337);
     }
@@ -2800,7 +2800,7 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     public function testMagicRequireOneWithAndThrowsException()
     {
-        $this->setExpectedException('\Propel\Runtime\Exception\EntityNotFoundException', 'Book could not be found');
+        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
 
         BookQuery::create()->requireOneByTitleAndId('Not Existing Book', -1337);
     }

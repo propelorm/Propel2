@@ -1455,12 +1455,12 @@ EOF;
         $this->assertEquals(1, BookQuery::create()->count());
         $this->assertEquals(2, BookSummaryQuery::create()->count());
 
-        $newBookSammary = new BookSummary();
-        $newBookSammary->setSummary('My sammary');
+        $newBookSummary = new BookSummary();
+        $newBookSummary->setSummary('My summary');
 
         // Kind of new collection
         $coll = clone $coll;
-        $coll[] = $newBookSammary;
+        $coll[] = $newBookSummary;
 
         $b->setBookSummaries($coll);
         $b->save();
@@ -1471,11 +1471,11 @@ EOF;
         $this->assertEquals(3, BookSummaryQuery::create()->count());
 
         // Add a new object
-        $newBookSammary1 = new BookSummary();
-        $newBookSammary1->setSummary('My sammary 1');
+        $newBookSummary1 = new BookSummary();
+        $newBookSummary1->setSummary('My summary 1');
 
         // Existing collection - The fix around reference is tested here.
-        $coll[] = $newBookSammary1;
+        $coll[] = $newBookSummary1;
 
         $b->setBookSummaries($coll);
         $b->save();

@@ -17,14 +17,14 @@ class QuickGeneratorConfigTest extends TestCase
 {
     protected $generatorConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->generatorConfig = new QuickGeneratorConfig();
     }
 
     public function testGetConfiguredBuilder()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
@@ -36,7 +36,7 @@ class QuickGeneratorConfigTest extends TestCase
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
     }
 

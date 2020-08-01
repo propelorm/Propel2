@@ -21,7 +21,7 @@ use \DateTimeZone;
  * @author Alan Pinstein
  * @author Soenke Ruempler
  */
-class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
+class PropelDateTimeTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -214,6 +214,7 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(false, TestPropelDateTime::isTimestamp('20110325'));
         $this->assertEquals(true, TestPropelDateTime::isTimestamp(1319580000));
+        $this->assertEquals(true, TestPropelDateTime::isTimestamp('1319580000'));
         $this->assertEquals(false, TestPropelDateTime::isTimestamp('2011-07-20 00:00:00'));
     }
 
@@ -246,6 +247,11 @@ class PropelDateTimeTest extends \PHPUnit_Framework_TestCase
 
 class TestPropelDateTime extends PropelDateTime
 {
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
     public static function isTimestamp($value)
     {
         return parent::isTimestamp($value);

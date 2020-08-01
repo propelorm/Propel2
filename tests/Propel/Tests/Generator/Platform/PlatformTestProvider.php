@@ -247,6 +247,25 @@ EOF;
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function providerForTestGetUniqueIndexDDL(): array
+    {
+        $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
+        $column1 = new Column('bar1');
+        $column1->getDomain()->copy(new Domain('FOOTYPE'));
+        $table->addColumn($column1);
+        $index = new Unique('babar');
+        $index->addColumn($column1);
+        $table->addIndex($index);
+
+        return [
+            [$index]
+        ];
+    }
+
     public function providerForTestPrimaryKeyDDL()
     {
         $table = new Table('foo');

@@ -17,6 +17,9 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 
 use \PDO;
 
+/**
+ * @deprecated Will be removed with the deprecated class.
+ */
 class ConnectionManagerMasterSlaveTest extends BaseTestCase
 {
     public function testGetNameReturnsNullByDefault()

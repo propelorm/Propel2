@@ -20,7 +20,7 @@ class TestCase extends BaseTestCase
 {
     protected $con;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('NestedSetTable9')) {
             $schema = <<<XML

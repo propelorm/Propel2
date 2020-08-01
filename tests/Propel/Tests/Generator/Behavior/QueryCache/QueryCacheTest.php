@@ -25,7 +25,7 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class QueryCacheTest extends BookstoreTestBase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;
@@ -79,7 +79,7 @@ class QueryCacheTest extends BookstoreTestBase
 
         $this->assertEquals($expectedSql, $renderedSql);
     }
-    
+
     public function testWithPaginate()
     {
         QuerycacheTable1Query::create()->deleteAll();
@@ -92,19 +92,19 @@ class QueryCacheTest extends BookstoreTestBase
             $coll[]= $b;
         }
         $coll->save();
-        
+
         $pager = $this->getPager(2, 1);
         $this->assertEquals(5, $pager->getNbResults());
-        
+
         $results = $pager->getResults();
         $this->assertEquals('query cache with paginate offset 0 limit 2', $pager->getQuery()->getQueryKey());
         $this->assertEquals(2, count($results));
         $this->assertEquals('Title1', $results[1]->getTitle());
-        
+
         //jump to page 3
         $pager = $this->getPager(2, 3);
         $this->assertEquals(5, $pager->getNbResults());
-        
+
         $results = $pager->getResults();
         $this->assertEquals('query cache with paginate offset 4 limit 2', $pager->getQuery()->getQueryKey());
         $this->assertEquals(1, count($results));
@@ -123,13 +123,13 @@ class QueryCacheTest extends BookstoreTestBase
 
         $this->assertNull($q->cacheFetch('test4'), 'The query is not cached,  if it has thrown exception');
     }
-    
+
     protected function getPager($maxPerPage, $page = 1)
     {
         $query = QuerycacheTable1Query::create()
             ->setQueryKey('query cache with paginate')
             ->orderByTitle();
-        
+
         $pager = new PropelModelPager($query, $maxPerPage);
         $pager->setPage($page);
         $pager->init();

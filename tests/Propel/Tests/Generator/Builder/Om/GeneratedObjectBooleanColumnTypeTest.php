@@ -20,7 +20,7 @@ use \Propel\Tests\TestCase;
  */
 class GeneratedObjectBooleanColumnTypeTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity4')) {
             $schema = <<<EOF

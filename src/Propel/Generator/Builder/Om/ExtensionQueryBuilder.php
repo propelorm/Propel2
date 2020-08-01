@@ -1,17 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
 
 /**
- * Generates the empty PHP5 stub class for object query
+ * Generates the empty stub class for object query
  *
  * This class produces the empty stub class that can be customized with application
  * business logic, custom behavior, etc.
@@ -20,9 +18,9 @@ namespace Propel\Generator\Builder\Om;
  */
 class ExtensionQueryBuilder extends AbstractOMBuilder
 {
-
     /**
      * Returns the name of the current class being built.
+     *
      * @return string
      */
     public function getUnprefixedClassName()
@@ -32,7 +30,10 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
 
     /**
      * Adds class phpdoc comment and opening of class.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -60,11 +61,10 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
- *
  */";
         }
         $script .= "
-class ".$this->getUnqualifiedClassName()." extends $baseClassName
+class " . $this->getUnqualifiedClassName() . " extends $baseClassName
 {
 ";
     }
@@ -76,52 +76,66 @@ class ".$this->getUnqualifiedClassName()." extends $baseClassName
      * if you want to change that behavior.
      *
      * @see QueryBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
-
     protected function addClassBody(&$script)
     {
     }
 
     /**
      * Closes class.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassClose(&$script)
     {
         $script .= "
 }
 ";
-        $this->applyBehaviorModifier('extensionQueryFilter', $script, "");
+        $this->applyBehaviorModifier('extensionQueryFilter', $script, '');
     }
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @return boolean
+     *
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
+     *
+     * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = null)
+    public function hasBehaviorModifier($hookName, $modifier = '')
     {
          return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
+     *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string &$script  The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param string $tab
+     *
+     * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
+    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
 
     /**
      * Checks whether any registered behavior content creator on that table exists a contentName
+     *
      * @param string $contentName The name of the content as called from one of this class methods, e.g. "parentClassName"
+     *
+     * @return string|null
      */
     public function getBehaviorContent($contentName)
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
-
 }

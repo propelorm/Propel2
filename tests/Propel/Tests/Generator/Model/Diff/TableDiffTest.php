@@ -12,7 +12,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\DefaultPlatform;
 
-class TableDiffTest extends \PHPUnit_Framework_TestCase
+class TableDiffTest extends \PHPUnit\Framework\TestCase
 {
     public function testDefaultObjectState()
     {
