@@ -2,11 +2,14 @@
 
 require_once __DIR__.'/../autoload.php.dist';
 
-// check if user is root and 
+// check if user is root and
 if (function_exists("posix_getuid")) {
     if (posix_getuid() == 0)
         die("You must run tests suite with an unprivileged user.");
 }
+
+define('DS', DIRECTORY_SEPARATOR);
+define('FIXTURES', __DIR__ . DS . 'Fixtures' . DS);
 
 echo sprintf("Tests started in temp %s.\n", sys_get_temp_dir());
 /**

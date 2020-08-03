@@ -58,7 +58,7 @@ class PropelTemplateTest extends TestCase
     public function testRenderFile()
     {
         $t = new PropelTemplate();
-        $t->setTemplateFile(dirname(__FILE__) . '/template.php');
+        $t->setTemplateFile(FIXTURES . 'generator' . DS . 'builder' . DS . 'template.php');
         $res = $t->render(['name' => 'John']);
         $this->assertEquals('Hello, John', $res);
     }
