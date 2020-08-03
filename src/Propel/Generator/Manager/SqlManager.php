@@ -187,6 +187,22 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
+            if (isset($this->connections[$database]['settings']['queries']) &&
+            count($this->connections[$database]['settings']['queries'])) {
+                $initQueries = $this->connections[$database]['settings']['queries'];
+                $con->transaction(function () use ($con, $initQueries) {
+                    foreach ($initQueries as $query) {
+                        try {
+                            $stmt = $con->prepare($query);
+                            $stmt->execute();
+                        } catch (Exception $e) {
+                            $message = sprintf('Init query failed: %s', $query);
+                            throw new Exception($message, 0, $e);
+                        }
+                    }
+                }
+            }
+            
             $con->transaction(function () use ($con, $sqls) {
                 foreach ($sqls as $sql) {
                     try {
