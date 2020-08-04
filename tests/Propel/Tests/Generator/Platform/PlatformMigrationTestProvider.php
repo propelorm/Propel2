@@ -21,6 +21,9 @@ use Propel\Generator\Model\Table;
  */
 abstract class PlatformMigrationTestProvider extends PlatformTestBase
 {
+    /**
+     * @return array
+     */
     public function providerForTestGetModifyDatabaseDDL()
     {
         $schema1 = <<<EOF

@@ -18,5 +18,8 @@ namespace Propel\Tests;
  */
 class TestCaseFixturesDatabase extends TestCaseFixtures
 {
+    /**
+     * @var bool
+     */
     protected static $withDatabaseSchema = true;
 }

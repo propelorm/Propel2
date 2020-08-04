@@ -8,6 +8,9 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Builder\Om;
+
+use ComplexColumnTypeEntity4;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 
@@ -50,6 +53,9 @@ EOF;
         $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'hasXy'));
     }
 
+    /**
+     * @return array
+     */
     public function providerForSetter()
     {
         return [

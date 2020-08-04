@@ -22,6 +22,10 @@ class UniqueTest extends ModelTestCase
     /**
      * @dataProvider provideTableSpecificAttributes
      *
+     * @param string $tableName
+     * @param int $maxColumnNameLength
+     * @param string $indexName
+     *
      * @return void
      */
     public function testCreateDefaultUniqueIndexName($tableName, $maxColumnNameLength, $indexName)
@@ -45,6 +49,9 @@ class UniqueTest extends ModelTestCase
         $this->assertSame($indexName, $index->getName());
     }
 
+    /**
+     * @return array
+     */
     public function provideTableSpecificAttributes()
     {
         return [

@@ -99,6 +99,8 @@ XML;
     }
 
     /**
+     * @param string $schema
+     *
      * @return void
      */
     protected function buildClasses($schema)

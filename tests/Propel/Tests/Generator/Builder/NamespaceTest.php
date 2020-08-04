@@ -298,6 +298,12 @@ class NamespaceTest extends TestCaseFixturesDatabase
             ->joinWith('NamespacedBookListRel')
             ->joinWith('NamespacedBookListRel.NamespacedBookClub')
             ->find($con);
+
+        $array = $books->toArray();
+        $this->assertCount(2, $array);
+
+        $expected = 'Someone1';
+        $this->assertSame($expected, $array[0]['NamespacedBookListRels'][0]['NamespacedBookClub']['GroupLeader']);
     }
 
     /**

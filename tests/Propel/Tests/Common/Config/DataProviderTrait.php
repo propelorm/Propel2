@@ -352,7 +352,7 @@ EOF;
             'table' => [
                 'name' => 'book',
                 'phpName' => 'Book',
-            ]
+            ],
         ];
 
         return [

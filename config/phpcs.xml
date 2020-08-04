@@ -30,8 +30,4 @@
         <severity>0</severity>
     </rule>
 
-    <rule ref="Spryker.Commenting.DocBlockReturnSelf">
-        <severity>0</severity>
-    </rule>
-
 </ruleset>

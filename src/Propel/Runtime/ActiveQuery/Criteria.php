@@ -771,11 +771,13 @@ class Criteria
      * @param string $key
      * @param mixed $value
      *
-     * @return $this Instance of self.
+     * @return $this
      */
     public function put($key, $value)
     {
-        return $this->add($key, $value);
+        $this->add($key, $value);
+
+        return $this;
     }
 
     /**
@@ -936,7 +938,9 @@ class Criteria
                 $conditions[] = $condition;
             }
 
-            return $this->addMultipleJoin($conditions, $joinType);
+            $this->addMultipleJoin($conditions, $joinType);
+
+            return $this;
         }
 
         $join = new Join();
@@ -966,7 +970,9 @@ class Criteria
 
         $join->setJoinType($joinType);
 
-        return $this->addJoinObject($join);
+        $this->addJoinObject($join);
+
+        return $this;
     }
 
     /**
@@ -1042,7 +1048,9 @@ class Criteria
         $join->setJoinType($joinType);
         $join->setJoinCondition($joinCondition);
 
-        return $this->addJoinObject($join);
+        $this->addJoinObject($join);
+
+        return $this;
     }
 
     /**
@@ -1886,10 +1894,14 @@ class Criteria
         if ($this->defaultCombineOperator === Criteria::LOGICAL_OR) {
             $this->defaultCombineOperator = Criteria::LOGICAL_AND;
 
-            return $this->addOr($p1, $value, $operator, $preferColumnCondition);
+            $this->addOr($p1, $value, $operator, $preferColumnCondition);
+
+            return $this;
         }
 
-        return $this->addAnd($p1, $value, $operator, $preferColumnCondition);
+        $this->addAnd($p1, $value, $operator, $preferColumnCondition);
+
+        return $this;
     }
 
     /**
@@ -2808,7 +2820,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
+     * @return \Propel\Runtime\Util\PropelConditionalProxy|static
      */
     public function _else()
     {
@@ -2825,7 +2837,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return $this
+     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
     public function _endif()
     {

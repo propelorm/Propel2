@@ -37,7 +37,7 @@ class QuickGeneratorConfigTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid data model builder type `bad_type`
      *
      * @return void

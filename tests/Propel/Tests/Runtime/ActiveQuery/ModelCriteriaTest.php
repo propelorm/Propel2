@@ -1880,7 +1880,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\PropelException
      *
      * @return void
      */

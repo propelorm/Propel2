@@ -64,6 +64,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
 
     /**
      * @param string $xml
+     * @param bool $changeRequired
      *
      * @throws \Propel\Generator\Exception\BuildException
      *

@@ -44,6 +44,8 @@ class PropelExceptionTest extends TestCase
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
      *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
      * @return void
      */
     public function testIsThrowable()

@@ -67,7 +67,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\JsonParseException
+     * @expectedException \Propel\Common\Config\Exception\JsonParseException
      *
      * @return void
      */
@@ -97,7 +97,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InputOutputException
+     * @expectedException \Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.json.
      *
      * @requires OS ^(?!Win.*)

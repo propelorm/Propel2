@@ -112,6 +112,11 @@ class InitCommandTest extends TestCaseFixtures
         $this->assertContains('Process aborted', $commandTester->getDisplay());
     }
 
+    /**
+     * @param string $lastAnswer
+     *
+     * @return array
+     */
     private function getInputsArray($lastAnswer = 'yes')
     {
         $dsn = $this->getConnectionDsn('bookstore', true);

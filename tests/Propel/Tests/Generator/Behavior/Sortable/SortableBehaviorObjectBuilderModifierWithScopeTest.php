@@ -480,7 +480,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\PropelException
      *
      * @return void
      */

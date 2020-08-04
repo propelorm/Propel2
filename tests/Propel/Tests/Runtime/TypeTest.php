@@ -14,9 +14,9 @@ use Propel\Tests\Bookstore\Map\TypeObjectTableMap;
 use Propel\Tests\Bookstore\TypeObject;
 use Propel\Tests\Bookstore\TypeObjectQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Runtime\TypeTests\DummyObjectClass;
 use Propel\Tests\Runtime\TypeTests\TypeObjectInterface;
 use ReflectionClass;
-use Propel\Tests\Runtime\TypeTests\DummyObjectClass;
 
 /**
  * @group database
@@ -97,7 +97,6 @@ class TypeTest extends BookstoreTestBase
 
         $typeObjectEntity->setDetails($clone);
         $this->assertTrue($typeObjectEntity->isModified('details'));
-
 
         TypeObjectTableMap::clearInstancePool();
         $typeObjectEntity = TypeObjectQuery::create()->findOne();

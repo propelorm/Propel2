@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Builder\Om;
+
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 

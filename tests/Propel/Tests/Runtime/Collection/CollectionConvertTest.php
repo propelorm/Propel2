@@ -19,7 +19,6 @@ use Propel\Tests\TestCaseFixtures;
  * Test class for Collection.
  *
  * @author Francois Zaninotto
- * @version $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class CollectionConvertTest extends TestCaseFixtures
 {

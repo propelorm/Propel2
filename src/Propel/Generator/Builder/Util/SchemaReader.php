@@ -96,20 +96,18 @@ class SchemaReader
     private $defaultPackage;
 
     /**
-     * @var bool
-     */
-    private $firstPass;
-
-    /**
+     * @deprecated Unused.
+     *
      * @var string
      */
     private $encoding;
 
     /**
-     * @var array
-     * two-dimensional array,
+     * Two-dimensional array,
      * first dimension is for schemas(key is the path to the schema file),
-     * second is for tags within the schema
+     * second is for tags within the schema.
+     *
+     * @var array
      */
     private $schemasTagsStack = [];
 
@@ -124,7 +122,6 @@ class SchemaReader
     {
         $this->schema = new Schema($defaultPlatform);
         $this->defaultPackage = $defaultPackage;
-        $this->firstPass = true;
         $this->encoding = $encoding;
     }
 

@@ -21,11 +21,13 @@ use Symfony\Component\Filesystem\Filesystem;
 class ConfigTestCase extends TestCase
 {
     /**
-     * @var null
-     * Symfony\Component\Filesystem\Filesystem instance
+     * @var \Symfony\Component\Filesystem\Filesystem|null
      */
     private $fileSystem;
 
+    /**
+     * @return \Symfony\Component\Filesystem\Filesystem
+     */
     public function getFilesystem()
     {
         if (null === $this->fileSystem) {

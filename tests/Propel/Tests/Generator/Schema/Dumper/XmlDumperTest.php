@@ -34,6 +34,11 @@ class XmlDumperTest extends TestCase
         $this->assertSame($this->getExpectedXml('blog-schema.xml'), $this->dumper->dumpSchema($schema, true));
     }
 
+    /**
+     * @param string $filename
+     *
+     * @return string
+     */
     protected function getExpectedXml($filename)
     {
         return trim(file_get_contents(realpath(__DIR__ . '/../../../Resources/' . $filename)));

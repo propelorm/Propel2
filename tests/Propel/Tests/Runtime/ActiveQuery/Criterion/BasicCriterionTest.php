@@ -135,7 +135,7 @@ class BasicCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
      *
      * @return void
      */

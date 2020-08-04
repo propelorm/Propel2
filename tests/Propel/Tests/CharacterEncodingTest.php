@@ -39,13 +39,6 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 class CharacterEncodingTest extends BookstoreTestBase
 {
     /**
-     * Database adapter.
-     *
-     * @var DBAdapter
-     */
-    private $adapter;
-
-    /**
      * @throws \Exception
      *
      * @return void

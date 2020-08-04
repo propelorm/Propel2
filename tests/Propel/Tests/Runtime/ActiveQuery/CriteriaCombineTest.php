@@ -35,7 +35,7 @@ class CriteriaCombineTest extends BaseTestCase
     /**
      * DB adapter saved for later.
      *
-     * @var AbstractAdapter
+     * @var \Propel\Runtime\Adapter\AdapterInterface
      */
     private $savedAdapter;
 

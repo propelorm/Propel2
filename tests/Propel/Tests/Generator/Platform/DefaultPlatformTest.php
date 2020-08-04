@@ -8,6 +8,8 @@
  * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Platform;
+
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
@@ -20,7 +22,7 @@ class DefaultPlatformTest extends TestCase
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {

@@ -16,12 +16,15 @@ use Propel\Generator\Platform\MysqlPlatform;
 
 class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
+    /**
+     * @var \Propel\Generator\Platform\PlatformInterface|null
+     */
     protected $platform;
 
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {

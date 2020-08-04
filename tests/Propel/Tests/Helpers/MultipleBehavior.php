@@ -14,6 +14,9 @@ use Propel\Generator\Model\Behavior;
 
 class MultipleBehavior extends Behavior
 {
+    /**
+     * @return bool
+     */
     public function allowMultiple()
     {
         return true;

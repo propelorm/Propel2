@@ -22,7 +22,7 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {

@@ -21,6 +21,9 @@ use Propel\Tests\TestCaseFixtures;
  */
 class MysqlAdapterTest extends TestCaseFixtures
 {
+    /**
+     * @return array
+     */
     public static function getConParams()
     {
         return [
@@ -38,12 +41,16 @@ class MysqlAdapterTest extends TestCaseFixtures
     /**
      * @dataProvider getConParams
      *
+     * @param array $conparams
+     *
      * @return void
      */
     public function testPrepareParamsThrowsException($conparams)
     {
         $db = new TestableMysqlAdapter();
-        $db->prepareParams($conparams);
+        $result = $db->prepareParams($conparams);
+
+        $this->assertIsArray($result);
     }
 
     /**
@@ -94,6 +101,11 @@ class MysqlAdapterTest extends TestCaseFixtures
 
 class TestableMysqlAdapter extends MysqlAdapter
 {
+    /**
+     * @param array $conparams
+     *
+     * @return array
+     */
     public function prepareParams($conparams)
     {
         return parent::prepareParams($conparams);

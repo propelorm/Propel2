@@ -8,7 +8,7 @@
  * @license    MIT License
  */
 
-namespace Propel\Tests\Generator\Model\Diff\DatabaseTableComparatorTest;
+namespace Propel\Tests\Generator\Model\Diff;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
@@ -23,7 +23,7 @@ use Propel\Tests\TestCase;
 /**
  * Tests for the Table method of the DatabaseComparator service class.
  */
-class PropelDatabaseTableComparatorTest extends TestCase
+class DatabaseTableComparatorTest extends TestCase
 {
     /**
      * @return void

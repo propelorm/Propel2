@@ -234,9 +234,14 @@ EOF;
 EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
-        $builder->getSQL();
+        $sql = $builder->getSQL();
+
+        $this->assertNotEmpty($sql);
     }
 
+    /**
+     * @return array
+     */
     public function tablePrefixDataProvider()
     {
         $schema = <<<XML

@@ -40,7 +40,7 @@ class BasicModelCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
+     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
      *
      * @return void
      */

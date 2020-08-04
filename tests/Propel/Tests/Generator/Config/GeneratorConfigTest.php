@@ -116,7 +116,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
      *
      * @return void
@@ -171,7 +171,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\BuildException
+     * @expectedException \Propel\Generator\Exception\BuildException
      * @expectedExceptionMessage Specified class (\Propel\Generator\Platform\MysqlPlatform) does not implement \Propel\Generator\Reverse\SchemaParserInterface interface.
      *
      * @return void
@@ -192,7 +192,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
      * @expectedExceptionMessage Reverse SchemaParser class for `\Propel\Generator\Reverse\BadSchemaParser` not found.
      *
      * @return void
@@ -224,7 +224,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
      *
      * @return void
      */
@@ -250,7 +250,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
      * @expectedExceptionMessage Class \Propel\Common\Pluralizer\WrongEnglishPluralizer not found.
      *
      * @return void
@@ -264,7 +264,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\BuildException
+     * @expectedException \Propel\Generator\Exception\BuildException
      * @expectedExceptionMessage Specified class (\Propel\Common\Config\PropelConfiguration) does not implement
      *
      * @return void
@@ -357,7 +357,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `wrongsource`.
      *
      * @return void
@@ -388,7 +388,7 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
      *
      * @return void

@@ -458,9 +458,9 @@ class StandardServiceContainerTest extends BaseTestCase
      */
     public function testGetProfilerUsesProfilerClass()
     {
-        $this->sc->setProfilerClass('\Propel\Tests\Runtime\ServiceContainer\myProfiler');
+        $this->sc->setProfilerClass('\Propel\Tests\Runtime\ServiceContainer\MyProfiler');
         $profiler = $this->sc->getProfiler();
-        $this->assertInstanceOf('\Propel\Tests\Runtime\ServiceContainer\myProfiler', $profiler);
+        $this->assertInstanceOf('\Propel\Tests\Runtime\ServiceContainer\MyProfiler', $profiler);
     }
 
     /**
@@ -596,7 +596,7 @@ class MyDatabaseMap extends DatabaseMap
 {
 }
 
-class myProfiler extends Profiler
+class MyProfiler extends Profiler
 {
 }
 

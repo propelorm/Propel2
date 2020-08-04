@@ -192,7 +192,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'baz' not found in configuration file.
      *
      * @return void
@@ -203,7 +203,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'foobar' not found in configuration file.
      *
      * @return void
@@ -214,7 +214,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
      *
      * @return void
@@ -225,7 +225,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
      *
      * @return void

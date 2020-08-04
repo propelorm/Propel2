@@ -7,18 +7,30 @@ use Propel\Tests\TestCase;
 
 class DummyObject
 {
+    /**
+     * @var mixed
+     */
     private $id;
 
+    /**
+     * @param mixed $id
+     */
     public function __construct($id)
     {
         $this->id = $id;
     }
 
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function hashCode()
     {
         return (string)$this->id;

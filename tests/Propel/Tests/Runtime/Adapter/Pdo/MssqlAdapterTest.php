@@ -25,16 +25,9 @@ use Propel\Tests\TestCase;
 class MssqlAdapterTest extends TestCase
 {
     /**
-     * The criteria to use in the test.
-     *
-     * @var \Propel\Runtime\ActiveQuery\Criteria
-     */
-    private $c;
-
-    /**
      * DB adapter saved for later.
      *
-     * @var AbstractAdapter
+     * @var \Propel\Runtime\Adapter\AdapterInterface
      */
     private $savedAdapter;
 
@@ -72,6 +65,9 @@ class MssqlAdapterTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'mssql';

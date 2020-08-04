@@ -156,7 +156,9 @@ class ModelJoin extends Join
      */
     public function setRelationAlias($relationAlias)
     {
-        return $this->setRightTableAlias($relationAlias);
+        $this->setRightTableAlias($relationAlias);
+
+        return $this;
     }
 
     /**
