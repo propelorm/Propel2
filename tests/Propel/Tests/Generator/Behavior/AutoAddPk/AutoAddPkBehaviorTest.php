@@ -10,14 +10,12 @@
 
 namespace Propel\Tests\Generator\Behavior\AutoAddPk;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table6;
 use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
-use Propel\Tests\Bookstore\Behavior\Table7;
 use Propel\Tests\Bookstore\Behavior\Map\Table7TableMap;
-use Propel\Tests\Bookstore\Behavior\Table8;
 use Propel\Tests\Bookstore\Behavior\Map\Table8TableMap;
+use Propel\Tests\Bookstore\Behavior\Table6;
+use Propel\Tests\Bookstore\Behavior\Table8;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests for AutoAddPkBehavior class
@@ -28,6 +26,9 @@ use Propel\Tests\Bookstore\Behavior\Map\Table8TableMap;
  */
 class AutoAddPkBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testDefault()
     {
         $table6 = Table6TableMap::getTableMap();
@@ -41,6 +42,9 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $this->assertTrue($table6->isUseIdGenerator(), 'auto_add_pk adds an autoIncrement column by default');
     }
 
+    /**
+     * @return void
+     */
     public function testNoTrigger()
     {
         $table7 = Table7TableMap::getTableMap();
@@ -51,6 +55,9 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $this->assertEquals($pk->getName(), 'foo', 'auto_add_pk does not change an existing primary key');
     }
 
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $table8 = Table8TableMap::getTableMap();
@@ -63,6 +70,9 @@ class AutoAddPkBehaviorTest extends BookstoreTestBase
         $this->assertFalse($table8->isUseIdGenerator(), 'auto_add_pk accepts customization of pk column autoIncrement');
     }
 
+    /**
+     * @return void
+     */
     public function testForeignKey()
     {
         $t6 = new Table6();

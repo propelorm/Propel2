@@ -10,11 +10,15 @@
 
 namespace Propel\Tests\Generator\Behavior\Delegate;
 
-use Propel\Generator\Behavior\Delegate\DelegateBehavior;
+use DelegateBasketballer;
+use DelegateDelegate;
+use DelegateFootballer;
+use DelegateMain;
+use Map\DelegateDelegateTableMap;
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
+use SecondDelegateDelegate;
+use TestTablePrefixSameDatabaseMain;
 
 /**
  * Tests for DelegateBehavior class
@@ -23,7 +27,9 @@ use Propel\Tests\TestCase;
  */
 class DelegateBehaviorTest extends TestCase
 {
-
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('DelegateDelegate')) {
@@ -105,18 +111,24 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableRelatesOneToOneDelegate()
     {
-        $delegateTable = \Map\DelegateDelegateTableMap::getTableMap();
+        $delegateTable = DelegateDelegateTableMap::getTableMap();
         $this->assertEquals(2, count($delegateTable->getColumns()));
         $this->assertEquals(1, count($delegateTable->getRelations()));
         $this->assertTrue(method_exists('DelegateMain', 'getDelegateDelegate'));
         $this->assertTrue(method_exists('DelegateDelegate', 'getDelegateMain'));
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegationCreatesANewDelegateIfNoneExists()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $delegate = $main->getDelegateDelegate();
         $this->assertInstanceOf('DelegateDelegate', $delegate);
@@ -125,9 +137,12 @@ EOF;
         $this->assertEquals('foo', $main->getSubtitle());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegationCreatesANewDelegateIfNoneExists()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('foo');
         $delegate = $main->getSecondDelegateDelegate();
         $this->assertInstanceOf('SecondDelegateDelegate', $delegate);
@@ -136,27 +151,36 @@ EOF;
         $this->assertEquals('foo', $main->getSummary());
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegationUsesExistingDelegateIfExists()
     {
-        $main = new \DelegateMain();
-        $delegate = new \DelegateDelegate();
+        $main = new DelegateMain();
+        $delegate = new DelegateDelegate();
         $delegate->setSubtitle('bar');
         $main->setDelegateDelegate($delegate);
         $this->assertEquals('bar', $main->getSubtitle());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegationUsesExistingDelegateIfExists()
     {
-        $main = new \DelegateMain();
-        $delegate = new \SecondDelegateDelegate();
+        $main = new DelegateMain();
+        $delegate = new SecondDelegateDelegate();
         $delegate->setSummary('bar');
         $main->setSecondDelegateDelegate($delegate);
         $this->assertEquals('bar', $main->getSummary());
     }
 
+    /**
+     * @return void
+     */
     public function testAModelCanHaveSeveralDelegates()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $main->setSummary('bar');
         $delegate = $main->getDelegateDelegate();
@@ -173,17 +197,22 @@ EOF;
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testAModelCannotHaveCascadingDelegates()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('bar');
         $main->setBody('baz');
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegatesCanBePersisted()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $main->save();
         $this->assertFalse($main->isNew());
@@ -191,9 +220,12 @@ EOF;
         $this->assertNull($main->getSecondDelegateDelegate());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegatesCanBePersisted()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('foo');
         $main->save();
         $this->assertFalse($main->isNew());
@@ -201,9 +233,12 @@ EOF;
         $this->assertNull($main->getDelegateDelegate());
     }
 
+    /**
+     * @return void
+     */
     public function testDelegateSimulatesClassTableInheritance()
     {
-        $basketballer = new \DelegateBasketballer();
+        $basketballer = new DelegateBasketballer();
         $basketballer->setPoints(101);
         $basketballer->setFieldGoals(47);
         $this->assertNull($basketballer->getDelegatePlayer());
@@ -215,9 +250,12 @@ EOF;
         $basketballer->save(); // should not throw exception
     }
 
+    /**
+     * @return void
+     */
     public function testDelegateSimulatesMultipleClassTableInheritance()
     {
-        $footballer = new \DelegateFootballer();
+        $footballer = new DelegateFootballer();
         $footballer->setGoalsScored(43);
         $footballer->setFoulsCommitted(4);
         $this->assertNull($footballer->getDelegatePlayer());
@@ -234,6 +272,9 @@ EOF;
         $footballer->save(); // should not throw exception
     }
 
+    /**
+     * @return void
+     */
     public function testTablePrefixSameDatabase()
     {
         $schema = <<<EOF
@@ -259,7 +300,7 @@ EOF;
 </database>
 EOF;
         QuickBuilder::buildSchema($schema);
-        $main = new \TestTablePrefixSameDatabaseMain();
+        $main = new TestTablePrefixSameDatabaseMain();
         $main->setSubtitle('bar');
         $delegate = $main->getTestTablePrefixSameDatabaseDelegate();
         $this->assertInstanceOf('TestTablePrefixSameDatabaseDelegate', $delegate);
@@ -267,5 +308,4 @@ EOF;
         $this->assertEquals('bar', $delegate->getSubtitle());
         $this->assertEquals('bar', $main->getSubtitle());
     }
-
 }

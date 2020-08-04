@@ -2,8 +2,8 @@
 
 namespace Propel\Tests\Issues;
 
-use Propel\Tests\TestCase;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Tests\TestCase;
 
 class DummyObject
 {
@@ -32,14 +32,15 @@ class DummyObject
  */
 class Issue1133Test extends TestCase
 {
-
+    /**
+     * @return void
+     */
     public function testIssue1133Append()
     {
-        $testCollection = new ObjectCollection;
+        $testCollection = new ObjectCollection();
         $testCollection->setModel(DummyObject::class);
 
-        for ($i = 0; $i < 3; $i++)
-        {
+        for ($i = 0; $i < 3; $i++) {
             $testCollection->append(new DummyObject($i));
         }
 
@@ -56,13 +57,15 @@ class Issue1133Test extends TestCase
         $this->assertNotContains($objectThatWillBeRemoved, $testCollection, 'ObjectCollection contains item that should be removed.');
     }
 
+    /**
+     * @return void
+     */
     public function testIssue1133OffsetSet()
     {
-        $testCollection = new ObjectCollection;
+        $testCollection = new ObjectCollection();
         $testCollection->setModel(DummyObject::class);
 
-        for ($i = 0; $i < 3; $i++)
-        {
+        for ($i = 0; $i < 3; $i++) {
             $testCollection->append(new DummyObject($i));
         }
 
@@ -79,6 +82,5 @@ class Issue1133Test extends TestCase
 
         $this->assertContains($objectThatShouldNotBeRemoved, $testCollection, 'ObjectCollection does not contain item that should be in collection.');
         $this->assertNotContains($objectThatWillBeRemoved, $testCollection, 'ObjectCollection contains item that should be removed.');
-
     }
 }

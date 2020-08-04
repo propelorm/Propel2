@@ -10,43 +10,42 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\Propel;
+use DateTime;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookSummary;
-use Propel\Tests\Bookstore\BookSummaryQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookClubListQuery;
+use Propel\Tests\Bookstore\BookListFavoriteQuery;
 use Propel\Tests\Bookstore\BookListRel;
 use Propel\Tests\Bookstore\BookListRelQuery;
-use Propel\Tests\Bookstore\BookListFavoriteQuery;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
 use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookSummary;
+use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\Contest;
 use Propel\Tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use \DateTime;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Tests relationships between generated Object classes.
  *
  * This test uses generated Bookstore classes to test the behavior of various
- * object operations.  The _idea_ here is to test every possible generated method
+ * object operations. The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
- * The database is reloaded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test. This
  * means that you can always rely on the contents of the databases being the same
- * for each test method in this class.  See the BookstoreDataPopulator::populate()
+ * for each test method in this class. See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
  * @author Hans Lellelid <hans@xmpl.org>
@@ -57,6 +56,8 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 {
     /**
      * Tests one side of a bi-directional setting of many-to-many relationships.
+     *
+     * @return void
      */
     public function testManyToMany_Dir1()
     {
@@ -65,7 +66,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         // No save ...
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
         // No save ...
 
@@ -86,11 +87,12 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertCount(1, $list->getBookListRels());
         $this->assertCount(1, $book->getBookListRels());
         $this->assertCount(1, BookListRelQuery::create()->find());
-
     }
 
     /**
      * Tests reverse setting of one of many-to-many relationship, with all saves cascaded.
+     *
+     * @return void
      */
     public function testManyToMany_Dir2_Unsaved()
     {
@@ -99,7 +101,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         // No save ...
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
         // No save (yet) ...
 
@@ -123,7 +125,10 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     /**
      * Tests reverse setting of relationships, saving one of the objects first.
-     * @link       http://propel.phpdb.org/trac/ticket/508
+     *
+     * @link http://propel.phpdb.org/trac/ticket/508
+     *
+     * @return void
      */
     public function testManyToMany_Dir2_Saved()
     {
@@ -132,7 +137,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $list->save();
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
         // No save (yet) ...
 
@@ -154,15 +159,20 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertCount(1, $list->getBookListRels());
         $this->assertCount(1, $book->getBookListRels());
         $this->assertCount(1, BookListRelQuery::create()->find());
-
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyGetterExists()
     {
         $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBooks'), 'Object generator correctly adds getter for the crossRefFk');
         $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'getBookClubLists'), 'Object generator correctly adds getter for the crossRefFk');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyGetterNewObject()
     {
         $blc1 = new BookClubList();
@@ -176,6 +186,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, count($books), 'getCrossRefFK() accepts a query as first parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyGetter()
     {
         BookstoreDataPopulator::populate();
@@ -190,12 +203,18 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, count($books), 'getCrossRefFK() accepts a query as first parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyCounterExists()
     {
         $this->assertTrue(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBooks'), 'Object generator correctly adds counter for the crossRefFk');
         $this->assertFalse(method_exists('Propel\Tests\Bookstore\BookClubList', 'countBookClubLists'), 'Object generator correctly adds counter for the crossRefFk');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyCounterNewObject()
     {
         $blc1 = new BookClubList();
@@ -207,10 +226,13 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyCounter()
     {
         BookstoreDataPopulator::populate();
-        /** @var $blc1 BookClubList */
+        /** @var \Propel\Tests\Bookstore\BookClubList $blc1 */
         $blc1 = BookClubListQuery::create()->findOneByGroupLeader('Crazyleggs');
         $nbBooks = $blc1->countBooks();
         $this->assertEquals(2, $nbBooks, 'countCrossRefFK() returns the correct list of objects');
@@ -235,13 +257,16 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, $nbBooks, 'countCrossRefFK() accepts a query as first parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManyAdd()
     {
         $list = new BookClubList();
         $list->setGroupLeader('Archimedes Q. Porter');
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
 
         $list->addBook($book);
@@ -263,18 +288,21 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     /**
      * Test behavior of columns that are implicated in multiple foreign keys.
-     * @link       http://propel.phpdb.org/trac/ticket/228
+     *
+     * @link http://propel.phpdb.org/trac/ticket/228
+     *
+     * @return void
      */
     public function testMultiFkImplication()
     {
         BookstoreDataPopulator::populate();
         // Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
         $b = new Bookstore();
-        $b->setStoreName("Foo!");
+        $b->setStoreName('Foo!');
         $b->save();
 
         $c = new Contest();
-        $c->setName("Bookathon Contest");
+        $c->setName('Bookathon Contest');
         $c->save();
 
         $bc = new BookstoreContest();
@@ -283,7 +311,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $bc->save();
 
         $c = new Customer();
-        $c->setName("Happy Customer");
+        $c->setName('Happy Customer');
         $c->save();
 
         $bce = new BookstoreContestEntry();
@@ -300,33 +328,39 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     /**
      * Test the clearing of related object collection.
-     * @link       http://www.propelorm.org/ticket/529
+     *
+     * @link http://www.propelorm.org/ticket/529
+     *
+     * @return void
      */
     public function testClearRefFk()
     {
         BookstoreDataPopulator::populate();
         $book = new Book();
-        $book->setISBN("Foo-bar-baz");
-        $book->setTitle("The book title");
+        $book->setISBN('Foo-bar-baz');
+        $book->setTitle('The book title');
 
         // No save ...
 
         $r = new Review();
         $r->setReviewedBy('Me');
-        $r->setReviewDate(new DateTime("now"));
+        $r->setReviewDate(new DateTime('now'));
 
         $book->addReview($r);
 
         // No save (yet) ...
 
-        $this->assertEquals(1, count($book->getReviews()) );
+        $this->assertEquals(1, count($book->getReviews()));
         $book->clearReviews();
         $this->assertEquals(0, count($book->getReviews()));
     }
 
     /**
      * Test the clearing of related object collection via a many-to-many association.
-     * @link       http://www.propelorm.org/ticket/1374
+     *
+     * @link http://www.propelorm.org/ticket/1374
+     *
+     * @return void
      */
     public function testClearCrossFk()
     {
@@ -340,34 +374,40 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
     /**
      * This tests to see whether modified objects are being silently overwritten by calls to fk accessor methods.
-     * @link       http://propel.phpdb.org/trac/ticket/509#comment:5
+     *
+     * @link http://propel.phpdb.org/trac/ticket/509#comment:5
+     *
+     * @return void
      */
     public function testModifiedObjectOverwrite()
     {
         BookstoreDataPopulator::populate();
         $author = new Author();
-        $author->setFirstName("John");
-        $author->setLastName("Public");
+        $author->setFirstName('John');
+        $author->setLastName('Public');
 
         $books = $author->getBooks(); // empty, of course
-        $this->assertEquals(0, count($books), "Expected empty collection.");
+        $this->assertEquals(0, count($books), 'Expected empty collection.');
 
         $book = new Book();
-        $book->setTitle("A sample book");
-        $book->setISBN("INITIAL ISBN");
+        $book->setTitle('A sample book');
+        $book->setISBN('INITIAL ISBN');
 
         $author->addBook($book);
 
         $author->save();
 
-        $book->setISBN("MODIFIED ISBN");
+        $book->setISBN('MODIFIED ISBN');
 
         $books = $author->getBooks();
-        $this->assertEquals(1, count($books), "Expected 1 book.");
-        $this->assertSame($book, $books[0], "Expected the same object to be returned by fk accessor.");
-        $this->assertEquals("MODIFIED ISBN", $books[0]->getISBN(), "Expected the modified value NOT to have been overwritten.");
+        $this->assertEquals(1, count($books), 'Expected 1 book.');
+        $this->assertSame($book, $books[0], 'Expected the same object to be returned by fk accessor.');
+        $this->assertEquals('MODIFIED ISBN', $books[0]->getISBN(), 'Expected the modified value NOT to have been overwritten.');
     }
 
+    /**
+     * @return void
+     */
     public function testFKGetterUseInstancePool()
     {
         BookstoreDataPopulator::populate();
@@ -382,6 +422,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
     }
 
+    /**
+     * @return void
+     */
     public function testRefFKGetJoin()
     {
         BookstoreDataPopulator::populate();
@@ -397,6 +440,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'refFK getter uses instance pool if possible');
     }
 
+    /**
+     * @return void
+     */
     public function testRefFKAddReturnsCurrentObject()
     {
         $author = new Author();
@@ -432,7 +478,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $bookClubList1->save();
 
         $this->assertEquals(10, $bookClubList1->getBooks()->count());
-        $this->assertEquals(1,  BookClubListQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(10, BookQuery::create()->count());
         $this->assertEquals(10, BookListRelQuery::create()->count());
 
@@ -460,7 +506,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $newBook->setIsbn(1234);
 
         // Kind of new collection
-        $books   = clone $books;
+        $books = clone $books;
         $books[] = $newBook;
 
         $bookClubList1->setBooks($books);
@@ -468,7 +514,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(10, $books->count());
         $this->assertEquals(10, $bookClubList1->getBooks()->count());
-        $this->assertEquals(1,  BookClubListQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(10, BookListRelQuery::create()->count());
         $this->assertEquals(11, BookQuery::create()->count());
 
@@ -494,7 +540,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(11, $books->count());
         $this->assertEquals(11, $bookClubList1->getBooks()->count());
-        $this->assertEquals(1,  BookClubListQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(11, BookListRelQuery::create()->count());
         $this->assertEquals(12, BookQuery::create()->count());
 
@@ -506,11 +552,14 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
 
         $this->assertEquals(11, $books->count());
         $this->assertEquals(11, $bookClubList1->getBooks()->count());
-        $this->assertEquals(1,  BookClubListQuery::create()->count());
+        $this->assertEquals(1, BookClubListQuery::create()->count());
         $this->assertEquals(11, BookListRelQuery::create()->count());
         $this->assertEquals(12, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithNoData()
     {
         // Ensure no data
@@ -533,6 +582,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, BookListRelQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionSavesForeignObjects()
     {
         // Ensure no data
@@ -571,6 +623,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertSame('My Title', $result);
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithNewObjects()
     {
         // Ensure no data
@@ -602,6 +657,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(3, BookListRelQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithExistingObjects()
     {
         // Ensure no data
@@ -635,6 +693,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithEmptyCollection()
     {
         // Ensure no data
@@ -654,6 +715,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, BookListRelQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionReplacesOldObjectsByNewObjects()
     {
         // Ensure no data
@@ -702,13 +766,11 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookListRelQuery::create()
             ->filterByBookClubList($bookClubList)
             ->filterByBook($books[0])
-            ->count()
-        );
+            ->count());
         $this->assertEquals(1, BookListRelQuery::create()
             ->filterByBookClubList($bookClubList)
             ->filterByBook($books[1])
-            ->count()
-        );
+            ->count());
 
         $this->assertEquals(4, BookQuery::create()->count());
     }
@@ -754,6 +816,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertCount(2, $bookClubList->getFavoriteBooks());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithManyToManyModifiedByReferenceWithANewObject()
     {
         // Ensure no data
@@ -782,6 +847,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookClubListQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterCollectionWithManyToManyModifiedByReferenceWithAnExistingObject()
     {
         // Ensure no data
@@ -811,6 +879,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookClubListQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveObjectFromCollection()
     {
         $list = new BookClubList();
@@ -821,7 +892,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         // No save ...
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
         // No save ...
         $this->assertCount(0, $book->getBookClubLists(), 'No BookClubList');
@@ -834,6 +905,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertCount(1, $book->getBookClubLists(), 'One BookClubList has been remove');
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveObjectStoredInDBFromCollection()
     {
         BookQuery::create()->deleteAll();
@@ -847,7 +921,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         // No save ...
 
         $book = new Book();
-        $book->setTitle( "Jungle Expedition Handbook" );
+        $book->setTitle('Jungle Expedition Handbook');
         $book->setISBN('TEST');
         $book->addBookClubList($list);
         $book->addBookClubList($list2);
@@ -865,6 +939,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookListRelQuery::create()->count(), 'One BookClubList has been remove');
     }
 
+    /**
+     * @return void
+     */
     public function testSymfonyFormManyToOne()
     {
         BookQuery::create()->deleteAll();
@@ -898,6 +975,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertCount(1, $books);
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveObjectOneToMany()
     {
         BookQuery::create()->deleteAll();
@@ -946,6 +1026,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, BookQuery::create()->count(), 'Two Book because FK is not required so book is not delete when removed from author\'s book collection');
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveObjectOneToManyWithFkRequired()
     {
         BookSummaryQuery::create()->deleteAll();
@@ -992,6 +1075,9 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, BookSummaryQuery::create()->count(), 'One Book summary because FK is required so book summary is deleted when book is saved');
     }
 
+    /**
+     * @return void
+     */
     public function testManyToManySetterIsNotLoosingAnyReference()
     {
         $list1 = new BookClubList();

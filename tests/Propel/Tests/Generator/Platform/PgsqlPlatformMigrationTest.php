@@ -13,16 +13,12 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PgsqlPlatform;
 
-/**
- *
- */
 class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
-
     /**
      * Get the Platform object for this class
      *
@@ -35,6 +31,8 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
+     *
+     * @return void
      */
     public function testGetModifyDatabaseDDL($databaseDiff)
     {
@@ -70,6 +68,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetRenameTableDDL
+     *
+     * @return void
      */
     public function testGetRenameTableDDL($fromName, $toName)
     {
@@ -81,6 +81,8 @@ ALTER TABLE "foo1" RENAME TO "foo2";
 
     /**
      * @dataProvider providerForTestGetModifyTableDDL
+     *
+     * @return void
      */
     public function testGetModifyTableDDL($tableDiff)
     {
@@ -116,6 +118,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyTableColumnsDDL($tableDiff)
     {
@@ -133,6 +137,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTablePrimaryKeysDDL($tableDiff)
     {
@@ -148,6 +154,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableIndicesDDL
+     *
+     * @return void
      */
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
@@ -171,6 +179,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
@@ -194,6 +204,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSqlDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
@@ -215,6 +227,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
     {
@@ -226,6 +240,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetRemoveColumnDDL
+     *
+     * @return void
      */
     public function testGetRemoveColumnDDL($column)
     {
@@ -237,6 +253,8 @@ ALTER TABLE "foo" DROP COLUMN "bar";
 
     /**
      * @dataProvider providerForTestGetRenameColumnDDL
+     *
+     * @return void
      */
     public function testGetRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -248,6 +266,8 @@ ALTER TABLE "foo" RENAME COLUMN "bar1" TO "bar2";
 
     /**
      * @dataProvider providerForTestGetModifyColumnDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnDDL($columnDiff)
     {
@@ -257,6 +277,9 @@ ALTER TABLE "foo" ALTER COLUMN "bar" TYPE DOUBLE PRECISION;
         $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
     }
 
+    /**
+     * @return void
+     */
     public function testGetModifyColumnDDLWithChangedTypeAndDefault()
     {
         $t1 = new Table('foo');
@@ -285,6 +308,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnsDDL($columnDiffs)
     {
@@ -300,6 +325,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetAddColumnDDL
+     *
+     * @return void
      */
     public function testGetAddColumnDDL($column)
     {
@@ -311,6 +338,8 @@ ALTER TABLE "foo" ADD "bar" INTEGER;
 
     /**
      * @dataProvider providerForTestGetAddColumnsDDL
+     *
+     * @return void
      */
     public function testGetAddColumnsDDL($columns)
     {
@@ -324,6 +353,9 @@ END;
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
     }
 
+    /**
+     * @return void
+     */
     public function testGetModifyColumnDDLWithVarcharWithoutSize()
     {
         $t1 = new Table('foo');
@@ -351,7 +383,10 @@ EOF;
         $this->assertSame($expected, $columnDiff);
     }
 
-public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
+    /**
+     * @return void
+     */
+    public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
     {
         $t1 = new Table('foo');
         $t1->setIdentifierQuoting(true);
@@ -383,6 +418,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyColumnRemoveDefaultValueDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnRemoveDefaultValueDDL($columnDiffs)
     {
@@ -396,6 +433,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql3DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql3DDL($databaseDiff)
     {
@@ -404,10 +443,11 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql4DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql4DDL($databaseDiff)
     {
         $this->assertFalse($databaseDiff);
     }
-
 }

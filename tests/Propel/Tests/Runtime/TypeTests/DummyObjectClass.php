@@ -2,8 +2,8 @@
 
 namespace Propel\Tests\Runtime\TypeTests;
 
-class DummyObjectClass {
-
+class DummyObjectClass
+{
     public $propPublic;
 
     protected $propProtected;
@@ -12,6 +12,8 @@ class DummyObjectClass {
 
     /**
      * @param mixed $propPrivate
+     *
+     * @return void
      */
     public function setPropPrivate($propPrivate)
     {
@@ -28,6 +30,8 @@ class DummyObjectClass {
 
     /**
      * @param mixed $propProtected
+     *
+     * @return void
      */
     public function setPropProtected($propProtected)
     {
@@ -44,6 +48,8 @@ class DummyObjectClass {
 
     /**
      * @param mixed $propPublic
+     *
+     * @return void
      */
     public function setPropPublic($propPublic)
     {
@@ -57,5 +63,4 @@ class DummyObjectClass {
     {
         return $this->propPublic;
     }
-
 }

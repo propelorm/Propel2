@@ -15,6 +15,9 @@ use Propel\Tests\TestCase;
 
 class ArrayToPhpConverterTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testConvertConvertsSimpleDatasourceSection()
     {
         $conf = [
@@ -25,10 +28,10 @@ class ArrayToPhpConverterTest extends TestCase
                   'dsn' => 'mysql:host=localhost;dbname=bookstore',
                   'user' => 'testuser',
                   'password' => 'password',
-                  'options' =>  ['ATTR_PERSISTENT' => false],
-                  'attributes' => ['ATTR_EMULATE_PREPARES' => true]
-                ]
-            ]
+                  'options' => ['ATTR_PERSISTENT' => false],
+                  'attributes' => ['ATTR_EMULATE_PREPARES' => true],
+                ],
+            ],
         ];
         $expected = <<<EOF
 \$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -56,6 +59,9 @@ EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
+    /**
+     * @return void
+     */
     public function testConvertConvertsMasterSlaveDatasourceSection()
     {
         $conf = [
@@ -65,10 +71,10 @@ EOF;
                     'dsn' => 'mysql:host=localhost;dbname=bookstore',
                     'slaves' => [
                         ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
-                        ['dsn' => 'mysql:host=slave-server2; dbname=bookstore']
-                    ]
-                ]
-            ]
+                        ['dsn' => 'mysql:host=slave-server2; dbname=bookstore'],
+                    ],
+                ],
+            ],
         ];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -95,15 +101,19 @@ EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
+    /**
+     * @return void
+     */
     public function testConvertConvertsProfilerSection()
     {
-        $conf = ['profiler' => [
+        $conf = [
+        'profiler' => [
             'classname' => '\Propel\Runtime\Util\Profiler',
             'slowTreshold' => 0.2,
             'time' => ['precision' => 3, 'pad' => '8'],
             'memory' => ['precision' => 3, 'pad' => '8'],
             'innerGlue' => ': ',
-            'outerGlue' => ' | '
+            'outerGlue' => ' | ',
         ]];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -128,9 +138,14 @@ EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
+    /**
+     * @return void
+     */
     public function testConvertConvertsLogSection()
     {
-        $conf = ['log' => ['defaultLogger' => [
+        $conf = [
+        'log' => [
+        'defaultLogger' => [
             'type' => 'stream',
             'level' => '300',
             'path' => '/var/log/propel.log',
@@ -147,18 +162,22 @@ EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
+    /**
+     * @return void
+     */
     public function testConvertConvertsLogSectionWithMultipleLoggers()
     {
-        $conf = ['log' => [
+        $conf = [
+        'log' => [
             'defaultLogger' => [
                 'type' => 'stream',
                 'path' => '/var/log/propel.log',
-                'level' => '300'
+                'level' => '300',
             ],
             'bookstoreLogger' => [
                 'type' => 'stream',
                 'path' => '/var/log/propel_bookstore.log',
-            ]
+            ],
         ]];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
@@ -176,10 +195,14 @@ EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
     }
 
+    /**
+     * @return void
+     */
     public function testConvertConvertsCompleteConfiguration()
     {
         $conf = [
-          'log' => ['defaultLogger' => [
+          'log' => [
+        'defaultLogger' => [
             'type' => 'stream',
             'level' => '300',
             'path' => '/var/log/propel.log',
@@ -210,7 +233,7 @@ EOF;
                 ],
               ],
             ],
-            'defaultConnection' => 'bookstore'
+            'defaultConnection' => 'bookstore',
         ];
         $expected = <<<'EOF'
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();

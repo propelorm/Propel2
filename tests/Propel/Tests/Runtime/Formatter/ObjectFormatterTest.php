@@ -10,19 +10,17 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Tests\Bookstore\AuthorCollection;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\ObjectFormatter;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\AuthorCollection;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for ObjectFormatter.
@@ -33,12 +31,18 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  */
 class ObjectFormatterTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoCriteria()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -49,10 +53,13 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
             $books = $formatter->format($stmt);
             $this->fail('ObjectFormatter::format() trows an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'ObjectFormatter::format() trows an exception when called with no valid criteria');
+            $this->assertTrue(true, 'ObjectFormatter::format() trows an exception when called with no valid criteria');
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatValidClass()
     {
         $stmt = $this->con->query('SELECT * FROM book');
@@ -63,6 +70,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals(4, $books->count());
     }
 
+    /**
+     * @return void
+     */
     public function testFormatValidClassCustomCollection()
     {
         $stmt = $this->con->query('SELECT * FROM author');
@@ -72,6 +82,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertTrue($authors instanceof AuthorCollection);
     }
 
+    /**
+     * @return void
+     */
     public function testFormatManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -88,6 +101,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -104,6 +120,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals('Quicksilver', $book->getTitle(), 'ObjectFormatter::format() returns the model objects matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -117,6 +136,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, count($books), 'ObjectFormatter::format() returns as many rows as the results in the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneNoCriteria()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -127,10 +149,13 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
             $book = $formatter->formatOne($stmt);
             $this->fail('ObjectFormatter::formatOne() throws an exception when called with no valid criteria');
         } catch (PropelException $e) {
-            $this->assertTrue(true,'ObjectFormatter::formatOne() throws an exception when called with no valid criteria');
+            $this->assertTrue(true, 'ObjectFormatter::formatOne() throws an exception when called with no valid criteria');
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -143,6 +168,9 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
         $this->assertTrue($book instanceof Book, 'ObjectFormatter::formatOne() returns a model object');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneNoResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -154,5 +182,4 @@ class ObjectFormatterTest extends BookstoreEmptyTestBase
 
         $this->assertNull($book, 'ObjectFormatter::formatOne() returns null when no result');
     }
-
 }

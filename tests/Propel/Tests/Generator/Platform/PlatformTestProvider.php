@@ -23,7 +23,6 @@ use Propel\Generator\Model\Unique;
  */
 abstract class PlatformTestProvider extends PlatformTestBase
 {
-
     public function providerForTestGetAddTablesDDL()
     {
         $schema = <<<EOF
@@ -200,7 +199,7 @@ EOF;
         $table->addUnique($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -223,7 +222,7 @@ EOF;
         $table->addIndex($index2);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -243,7 +242,7 @@ EOF;
         $table->addIndex($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -262,7 +261,7 @@ EOF;
         $table->addIndex($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -275,7 +274,7 @@ EOF;
         $table->addColumn($column);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -303,7 +302,7 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -314,7 +313,7 @@ EOF;
         $fk->setSkipSql(true);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -357,8 +356,7 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$table1]
+        [$table1],
         ];
     }
-
 }

@@ -7,7 +7,9 @@ namespace Propel\Tests\Generator\Migration;
  */
 class IndexTest extends MigrationTestCase
 {
-
+    /**
+     * @return void
+     */
     public function testAdd()
     {
         $originXml = '
@@ -33,6 +35,9 @@ class IndexTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testRemove()
     {
         $originXml = '
@@ -58,6 +63,9 @@ class IndexTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChange()
     {
         $originXml = '
@@ -86,6 +94,9 @@ class IndexTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChangeName()
     {
         $originXml = '
@@ -120,6 +131,8 @@ class IndexTest extends MigrationTestCase
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testChangeSize()
     {
@@ -149,6 +162,9 @@ class IndexTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testSameIndex()
     {
         $originXml = '
@@ -185,5 +201,4 @@ class IndexTest extends MigrationTestCase
 ';
         $this->migrateAndTest($originXml, $targetXml);
     }
-
 }

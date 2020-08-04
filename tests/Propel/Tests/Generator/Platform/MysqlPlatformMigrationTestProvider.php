@@ -13,9 +13,8 @@ namespace Propel\Tests\Generator\Platform;
 /**
  * provider for mysql platform migration unit tests
  */
-class MysqlPlatformMigrationTestProvider extends PlatformMigrationTestProvider {
-
-
+class MysqlPlatformMigrationTestProvider extends PlatformMigrationTestProvider
+{
     public function providerForTestGetAddColumnFirstDDL()
     {
         $schema = <<<EOF

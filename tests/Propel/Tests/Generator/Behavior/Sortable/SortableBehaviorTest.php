@@ -23,6 +23,9 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  */
 class SortableBehaviorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $table11 = SortableTable11TableMap::getTableMap();

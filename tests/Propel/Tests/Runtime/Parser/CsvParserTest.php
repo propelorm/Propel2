@@ -35,6 +35,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testFromArray($arrayData, $csvData, $type)
     {
@@ -44,6 +46,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testToCSV($arrayData, $csvData, $type)
     {
@@ -53,6 +57,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testToArray($arrayData, $csvData, $type)
     {
@@ -62,6 +68,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testFromCSV($arrayData, $csvData, $type)
     {
@@ -92,6 +100,8 @@ EOF;
 
     /**
      * @dataProvider listToCSVDataProvider
+     *
+     * @return void
      */
     public function testListToCSV($list, $heading, $csv)
     {
@@ -104,6 +114,8 @@ EOF;
 
     /**
      * @dataProvider listToCSVDataProvider
+     *
+     * @return void
      */
     public function testCSVToList($list, $heading, $csv)
     {

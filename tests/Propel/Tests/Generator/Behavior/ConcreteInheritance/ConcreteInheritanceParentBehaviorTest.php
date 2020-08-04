@@ -11,13 +11,12 @@
 
 namespace Propel\Tests\Generator\Behavior\ConcreteInheritance;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Tests\Bookstore\Behavior\ConcreteArticle;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
 use Propel\Tests\Bookstore\Behavior\ConcreteContentQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests for ConcreteInheritanceParentBehavior class
@@ -28,6 +27,9 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
  */
 class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testHasChildObject()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -43,6 +45,9 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $this->assertTrue($content->hasChildObject());
     }
 
+    /**
+     * @return void
+     */
     public function testGetChildObject()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -58,5 +63,4 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $content = $article->getConcreteContent();
         $this->assertEquals($article, $content->getChildObject());
     }
-
 }

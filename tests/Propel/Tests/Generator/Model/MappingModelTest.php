@@ -20,6 +20,8 @@ class MappingModelTest extends TestCase
 {
     /**
      * @dataProvider providerForGetDefaultValueForArray
+     *
+     * @return void
      */
     public function testGetDefaultValueForArray($value, $expected)
     {
@@ -49,10 +51,16 @@ class TestableMappingModel extends MappingModel
         return parent::getDefaultValueForArray($value);
     }
 
+    /**
+     * @return void
+     */
     public function appendXml(DOMNode $node)
     {
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
     }

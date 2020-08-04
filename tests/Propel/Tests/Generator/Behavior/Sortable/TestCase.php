@@ -11,17 +11,15 @@
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable13TableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable14TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\SortableTable12;
 use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 use Propel\Tests\Bookstore\Behavior\SortableTable13;
-use Propel\Tests\Bookstore\Behavior\SortableTable13Query;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable13TableMap;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable14;
 use Propel\Tests\TestCaseFixturesDatabase;
 
@@ -30,7 +28,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class TestCase extends TestCaseFixturesDatabase
 {
-
+    /**
+     * @return void
+     */
     protected function populateTable11()
     {
         SortableTable11TableMap::doDeleteAll();
@@ -56,6 +56,9 @@ class TestCase extends TestCaseFixturesDatabase
         $t4->save();
     }
 
+    /**
+     * @return void
+     */
     protected function populateTable12()
     {
         /* List used for tests
@@ -122,6 +125,9 @@ class TestCase extends TestCaseFixturesDatabase
         $t10->save();
     }
 
+    /**
+     * @return void
+     */
     protected function populateTable13()
     {
         SortableTable13TableMap::doDeleteAll();
@@ -147,6 +153,9 @@ class TestCase extends TestCaseFixturesDatabase
         $t4->save();
     }
 
+    /**
+     * @return void
+     */
     protected function populateTable14()
     {
         SortableTable14TableMap::doDeleteAll();
@@ -187,7 +196,7 @@ class TestCase extends TestCaseFixturesDatabase
     {
         $c = new Criteria();
         $c->add(SortableTable12TableMap::SCOPE_COL, $scope);
-        $ts  = SortableTable12Query::create(null, $c)->orderByPosition()->find();
+        $ts = SortableTable12Query::create(null, $c)->orderByPosition()->find();
         $ret = [];
 
         foreach ($ts as $t) {

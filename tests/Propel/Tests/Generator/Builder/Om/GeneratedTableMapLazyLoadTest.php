@@ -10,17 +10,19 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use LazyLoadActiveRecord2;
+use Map\LazyLoadActiveRecord2TableMap;
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
  * Tests the generated TableMap classes for lazy load columns.
- *
  */
 class GeneratedTableMapLazyLoadTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('\LazyLoadActiveRecord2')) {
@@ -38,17 +40,23 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testNumHydrateColumns()
     {
-        $this->assertEquals(3, \Map\LazyLoadActiveRecord2TableMap::NUM_HYDRATE_COLUMNS);
+        $this->assertEquals(3, LazyLoadActiveRecord2TableMap::NUM_HYDRATE_COLUMNS);
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateObjectNotInPool()
     {
-        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
+        LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = [123, 'fooValue', 'bazValue'];
         $col = 0;
-        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
+        [$obj, $col] = LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -56,18 +64,21 @@ EOF;
         $this->assertEquals('bazValue', $obj->getBaz());
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateObjectInPool()
     {
-        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
-        $ar = new \LazyLoadActiveRecord2();
+        LazyLoadActiveRecord2TableMap::clearInstancePool();
+        $ar = new LazyLoadActiveRecord2();
         $ar->setId(123);
         $ar->setFoo('fooValue');
         $ar->setBaz('bazValue');
         $ar->setNew(false);
-        \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
+        LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = [123, 'fooValue', 'bazValue'];
         $col = 0;
-        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
+        [$obj, $col] = LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(3, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -75,12 +86,15 @@ EOF;
         $this->assertEquals('bazValue', $obj->getBaz());
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateObjectNotInPoolStartColGreaterThanOne()
     {
-        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
+        LazyLoadActiveRecord2TableMap::clearInstancePool();
         $values = ['dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy'];
         $col = 2;
-        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
+        [$obj, $col] = LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
@@ -88,23 +102,25 @@ EOF;
         $this->assertEquals('bazValue', $obj->getBaz());
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateObjectInPoolStartColGreaterThanOne()
     {
-        \Map\LazyLoadActiveRecord2TableMap::clearInstancePool();
-        $ar = new \LazyLoadActiveRecord2();
+        LazyLoadActiveRecord2TableMap::clearInstancePool();
+        $ar = new LazyLoadActiveRecord2();
         $ar->setId(123);
         $ar->setFoo('fooValue');
         $ar->setBaz('bazValue');
         $ar->setNew(false);
-        \Map\LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
+        LazyLoadActiveRecord2TableMap::addInstanceToPool($ar, 123);
         $values = ['dummy', 'dummy', 123, 'fooValue', 'bazValue', 'dummy'];
         $col = 2;
-        list($obj, $col) = \Map\LazyLoadActiveRecord2TableMap::populateObject($values, $col);
+        [$obj, $col] = LazyLoadActiveRecord2TableMap::populateObject($values, $col);
         $this->assertEquals(5, $col);
         $this->assertEquals(123, $obj->getId());
         $this->assertEquals('fooValue', $obj->getFoo());
         $this->assertNull($obj->getBar());
         $this->assertEquals('bazValue', $obj->getBaz());
     }
-
 }

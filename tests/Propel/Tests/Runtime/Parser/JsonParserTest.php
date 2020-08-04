@@ -39,6 +39,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testFromArray($arrayData, $jsonData, $type)
     {
@@ -48,6 +50,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testToJSON($arrayData, $jsonData, $type)
     {
@@ -57,6 +61,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testToArray($arrayData, $jsonData, $type)
     {
@@ -66,6 +72,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testFromJSON($arrayData, $jsonData, $type)
     {
@@ -89,6 +97,8 @@ EOF;
 
     /**
      * @dataProvider listToJSONDataProvider
+     *
+     * @return void
      */
     public function testListToJSON($list, $json)
     {
@@ -98,6 +108,8 @@ EOF;
 
     /**
      * @dataProvider listToJSONDataProvider
+     *
+     * @return void
      */
     public function testJSONToList($list, $json)
     {

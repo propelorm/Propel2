@@ -10,12 +10,11 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for LikeModelCriterion.
@@ -24,6 +23,9 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
  */
 class LikeModelCriterionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesALikeConditionByDefault()
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
@@ -34,11 +36,14 @@ class LikeModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL LIKE :p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesANotLikeConditionIfSpecified()
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
@@ -49,13 +54,15 @@ class LikeModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT LIKE :p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%'],
         ];
         $this->assertEquals($expected, $params);
     }
 
     /**
      * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
+     *
+     * @return void
      */
     public function testAppendPsToWithACaseInsensitiveLikeConditionThrowsAnException()
     {
@@ -67,6 +74,9 @@ class LikeModelCriterionTest extends BaseTestCase
         $cton->appendPsTo($ps, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToCreatesACaseInsensitiveLikeConditionIfSpecifiedOnPgSQL()
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
@@ -78,11 +88,14 @@ class LikeModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL ILIKE :p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%'],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToWithCaseInsensitiveAndPostgreSQLUsesNOTILIKE()
     {
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL NOT LIKE ?', 'A.COL', 'foo%');
@@ -94,7 +107,7 @@ class LikeModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL NOT ILIKE :p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo%'],
         ];
         $this->assertEquals($expected, $params);
     }

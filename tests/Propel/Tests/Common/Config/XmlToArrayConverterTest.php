@@ -18,6 +18,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
 
     /**
      * @dataProvider providerForXmlToArrayConverter
+     *
+     * @return void
      */
     public function testConvertFromString($xml, $expected)
     {
@@ -28,6 +30,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
 
     /**
      * @dataProvider providerForXmlToArrayConverter
+     *
+     * @return void
      */
     public function testConvertFromFile($xml, $expected)
     {
@@ -39,6 +43,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
 
     /**
      * @dataProvider providerForXmlToArrayConverterXmlInclusions
+     *
+     * @return void
      */
     public function testConvertFromFileWithXmlInclusion($xmlLoad, $xmlInclude, $expected)
     {
@@ -51,6 +57,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
     /**
      * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml
+     *
+     * @return void
      */
     public function testInvalidFileNameThrowsException()
     {
@@ -60,6 +68,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
     /**
      * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid xml content
+     *
+     * @return void
      */
     public function testInexistentFileThrowsException()
     {
@@ -69,6 +79,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
     /**
      * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid xml content
+     *
+     * @return void
      */
     public function testInvalidXmlThrowsException()
     {
@@ -83,6 +95,8 @@ XML;
     /**
      * @expectedException \Propel\Common\Config\Exception\XmlParseException
      * @expectedExceptionMessage An error occurred while parsing XML configuration file:
+     *
+     * @return void
      */
     public function testErrorInXmlThrowsException()
     {
@@ -106,6 +120,8 @@ XML;
     - Fatal Error 76: Opening and ending tag mismatch: titles line 4 and title
     - Fatal Error 73: expected '>'
     - Fatal Error 5: Extra content at the end of the document
+     *
+     * @return void
      */
     public function testMultipleErrorsInXmlThrowsException()
     {
@@ -123,6 +139,9 @@ XML;
         XmlToArrayConverter::convert($xmlWithErrors);
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyFileReturnsEmptyArray()
     {
         $this->dumpTempFile('empty.xml', '');

@@ -10,30 +10,29 @@
 
 namespace Propel\Tests;
 
+use DateTime;
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
-
 use Propel\Runtime\Collection\Collection;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookClubList;
-use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRel;
-use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\PublisherQuery;
+use Propel\Tests\Bookstore\BookListRelQuery;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\BookClubListTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Bookstore\Media;
 use Propel\Tests\Bookstore\MediaQuery;
+use Propel\Tests\Bookstore\Publisher;
+use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-
-use \DateTime;
 
 /**
  * Tests a functional scenario using the Bookstore model
@@ -45,27 +44,30 @@ use \DateTime;
  */
 class BookstoreTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     public function testScenario()
     {
         // Add publisher records
         // ---------------------
 
         $scholastic = new Publisher();
-        $scholastic->setName("Scholastic");
+        $scholastic->setName('Scholastic');
         // do not save, will do later to test cascade
 
         $morrow = new Publisher();
-        $morrow->setName("William Morrow");
+        $morrow->setName('William Morrow');
         $morrow->save();
         $morrow_id = $morrow->getId();
 
         $penguin = new Publisher();
-        $penguin->setName("Penguin");
+        $penguin->setName('Penguin');
         $penguin->save();
         $penguin_id = $penguin->getId();
 
         $vintage = new Publisher();
-        $vintage->setName("Vintage");
+        $vintage->setName('Vintage');
         $vintage->save();
         $vintage_id = $vintage->getId();
         $this->assertTrue(true, 'Save Publisher records');
@@ -74,25 +76,25 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // ------------------
 
         $rowling = new Author();
-        $rowling->setFirstName("J.K.");
-        $rowling->setLastName("Rowling");
+        $rowling->setFirstName('J.K.');
+        $rowling->setLastName('Rowling');
         // do not save, will do later to test cascade
 
         $stephenson = new Author();
-        $stephenson->setFirstName("Neal");
-        $stephenson->setLastName("Stephenson");
+        $stephenson->setFirstName('Neal');
+        $stephenson->setLastName('Stephenson');
         $stephenson->save();
         $stephenson_id = $stephenson->getId();
 
         $byron = new Author();
-        $byron->setFirstName("George");
-        $byron->setLastName("Byron");
+        $byron->setFirstName('George');
+        $byron->setLastName('Byron');
         $byron->save();
         $byron_id = $byron->getId();
 
         $grass = new Author();
-        $grass->setFirstName("Gunter");
-        $grass->setLastName("Grass");
+        $grass->setFirstName('Gunter');
+        $grass->setLastName('Grass');
         $grass->save();
         $grass_id = $grass->getId();
         $this->assertTrue(true, 'Save Author records');
@@ -101,8 +103,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // ----------------
 
         $phoenix = new Book();
-        $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
-        $phoenix->setISBN("043935806X");
+        $phoenix->setTitle('Harry Potter and the Order of the Phoenix');
+        $phoenix->setISBN('043935806X');
         $phoenix->setAuthor($rowling);
         $phoenix->setPublisher($scholastic);
         $phoenix->save();
@@ -111,24 +113,24 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertFalse($scholastic->isNew(), 'saving book also saves related publisher');
 
         $qs = new Book();
-        $qs->setISBN("0380977427");
-        $qs->setTitle("Quicksilver");
+        $qs->setISBN('0380977427');
+        $qs->setTitle('Quicksilver');
         $qs->setAuthor($stephenson);
         $qs->setPublisher($morrow);
         $qs->save();
         $qs_id = $qs->getId();
 
         $dj = new Book();
-        $dj->setISBN("0140422161");
-        $dj->setTitle("Don Juan");
+        $dj->setISBN('0140422161');
+        $dj->setTitle('Don Juan');
         $dj->setAuthor($byron);
         $dj->setPublisher($penguin);
         $dj->save();
         $dj_id = $qs->getId();
 
         $td = new Book();
-        $td->setISBN("067972575X");
-        $td->setTitle("The Tin Drum");
+        $td->setISBN('067972575X');
+        $td->setTitle('The Tin Drum');
         $td->setAuthor($grass);
         $td->setPublisher($vintage);
         $td->save();
@@ -140,7 +142,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $r1 = new Review();
         $r1->setBook($phoenix);
-        $r1->setReviewedBy("Washington Post");
+        $r1->setReviewedBy('Washington Post');
         $r1->setRecommended(true);
         $r1->setReviewDate(time());
         $r1->save();
@@ -148,7 +150,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $r2 = new Review();
         $r2->setBook($phoenix);
-        $r2->setReviewedBy("New York Times");
+        $r2->setReviewedBy('New York Times');
         $r2->setRecommended(false);
         $r2->setReviewDate(time());
         $r2->save();
@@ -161,7 +163,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $results = BookQuery::create()->filterByTitle('Harry%', Criteria::LIKE)->find();
         $this->assertEquals(1, count($results));
 
-        $results = BookQuery::create()->filterByISBN(["0380977427", "0140422161"], Criteria::IN)->find();
+        $results = BookQuery::create()->filterByISBN(['0380977427', '0140422161'], Criteria::IN)->find();
         $this->assertEquals(2, count($results));
 
         // Perform a "limit" search
@@ -171,8 +173,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, count($results));
 
         // we ordered on book title, so we expect to get
-        $this->assertEquals("Harry Potter and the Order of the Phoenix", $results[0]->getTitle());
-        $this->assertEquals("Quicksilver", $results[1]->getTitle());
+        $this->assertEquals('Harry Potter and the Order of the Phoenix', $results[0]->getTitle());
+        $this->assertEquals('Quicksilver', $results[1]->getTitle());
 
         // Perform a lookup & update!
         // --------------------------
@@ -182,7 +184,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
-        $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
+        $new_title = 'Quicksilver (' . crc32(uniqid(rand())) . ')';
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
         $qs_lookup->save();
@@ -212,9 +214,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Handle BLOB/CLOB Columns
         // ------------------------
 
-        $blob_path  = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.gif';
+        $blob_path = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.gif';
         $blob2_path = __DIR__ . '/../../Fixtures/etc/lob/propel.gif';
-        $clob_path  = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.txt';
+        $clob_path = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.txt';
 
         $m1 = new Media();
         $m1->setBook($phoenix);
@@ -227,7 +229,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
-        $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
+        $this->assertEquals(file_get_contents($clob_path), (string)$m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
         // now update the BLOB column and save it & check the results
         $m1_lookup->setCoverImage(file_get_contents($blob2_path));
@@ -252,8 +254,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // init book club list 1 with 2 books
 
         $blc1 = new BookClubList();
-        $blc1->setGroupLeader("Crazyleggs");
-        $blc1->setTheme("Happiness");
+        $blc1->setGroupLeader('Crazyleggs');
+        $blc1->setTheme('Happiness');
 
         $brel1 = new BookListRel();
         $brel1->setBook($phoenix);
@@ -271,8 +273,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // init book club list 2 with 1 book
 
         $blc2 = new BookClubList();
-        $blc2->setGroupLeader("John Foo");
-        $blc2->setTheme("Default");
+        $blc2->setGroupLeader('John Foo');
+        $blc2->setTheme('Default');
 
         $brel3 = new BookListRel();
         $brel3->setBook($phoenix);
@@ -335,9 +337,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete books by complex criteria
         $c = new Criteria();
-        $cn = $c->getNewCriterion(BookTableMap::COL_ISBN, "043935806X");
-        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0380977427"));
-        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, "0140422161"));
+        $cn = $c->getNewCriterion(BookTableMap::COL_ISBN, '043935806X');
+        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, '0380977427'));
+        $cn->addOr($c->getNewCriterion(BookTableMap::COL_ISBN, '0140422161'));
         $c->add($cn);
         BookTableMap::doDelete($c);
 
@@ -370,6 +372,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 
+    /**
+     * @return void
+     */
     public function testScenarioUsingQuery()
     {
         // Add publisher records
@@ -377,25 +382,25 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         try {
             $scholastic = new Publisher();
-            $scholastic->setName("Scholastic");
+            $scholastic->setName('Scholastic');
             // do not save, will do later to test cascade
 
             $morrow = new Publisher();
-            $morrow->setName("William Morrow");
+            $morrow->setName('William Morrow');
             $morrow->save();
             $morrow_id = $morrow->getId();
 
             $penguin = new Publisher();
-            $penguin->setName("Penguin");
+            $penguin->setName('Penguin');
             $penguin->save();
             $penguin_id = $penguin->getId();
 
             $vintage = new Publisher();
-            $vintage->setName("Vintage");
+            $vintage->setName('Vintage');
             $vintage->save();
             $vintage_id = $vintage->getId();
             $this->assertTrue(true, 'Save Publisher records');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Save publisher records');
         }
 
@@ -404,29 +409,29 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         try {
             $rowling = new Author();
-            $rowling->setFirstName("J.K.");
-            $rowling->setLastName("Rowling");
+            $rowling->setFirstName('J.K.');
+            $rowling->setLastName('Rowling');
             // do not save, will do later to test cascade
 
             $stephenson = new Author();
-            $stephenson->setFirstName("Neal");
-            $stephenson->setLastName("Stephenson");
+            $stephenson->setFirstName('Neal');
+            $stephenson->setLastName('Stephenson');
             $stephenson->save();
             $stephenson_id = $stephenson->getId();
 
             $byron = new Author();
-            $byron->setFirstName("George");
-            $byron->setLastName("Byron");
+            $byron->setFirstName('George');
+            $byron->setLastName('Byron');
             $byron->save();
             $byron_id = $byron->getId();
 
             $grass = new Author();
-            $grass->setFirstName("Gunter");
-            $grass->setLastName("Grass");
+            $grass->setFirstName('Gunter');
+            $grass->setLastName('Grass');
             $grass->save();
             $grass_id = $grass->getId();
             $this->assertTrue(true, 'Save Author records');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Save Author records');
         }
 
@@ -435,8 +440,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         try {
             $phoenix = new Book();
-            $phoenix->setTitle("Harry Potter and the Order of the Phoenix");
-            $phoenix->setISBN("043935806X");
+            $phoenix->setTitle('Harry Potter and the Order of the Phoenix');
+            $phoenix->setISBN('043935806X');
             $phoenix->setAuthor($rowling);
             $phoenix->setPublisher($scholastic);
             $phoenix->save();
@@ -445,30 +450,30 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $this->assertFalse($scholastic->isNew(), 'saving book also saves related publisher');
 
             $qs = new Book();
-            $qs->setISBN("0380977427");
-            $qs->setTitle("Quicksilver");
+            $qs->setISBN('0380977427');
+            $qs->setTitle('Quicksilver');
             $qs->setAuthor($stephenson);
             $qs->setPublisher($morrow);
             $qs->save();
             $qs_id = $qs->getId();
 
             $dj = new Book();
-            $dj->setISBN("0140422161");
-            $dj->setTitle("Don Juan");
+            $dj->setISBN('0140422161');
+            $dj->setTitle('Don Juan');
             $dj->setAuthor($byron);
             $dj->setPublisher($penguin);
             $dj->save();
             $dj_id = $qs->getId();
 
             $td = new Book();
-            $td->setISBN("067972575X");
-            $td->setTitle("The Tin Drum");
+            $td->setISBN('067972575X');
+            $td->setTitle('The Tin Drum');
             $td->setAuthor($grass);
             $td->setPublisher($vintage);
             $td->save();
             $td_id = $td->getId();
             $this->assertTrue(true, 'Save Book records');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Save Author records');
         }
 
@@ -478,7 +483,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         try {
             $r1 = new Review();
             $r1->setBook($phoenix);
-            $r1->setReviewedBy("Washington Post");
+            $r1->setReviewedBy('Washington Post');
             $r1->setRecommended(true);
             $r1->setReviewDate(time());
             $r1->save();
@@ -486,13 +491,13 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
             $r2 = new Review();
             $r2->setBook($phoenix);
-            $r2->setReviewedBy("New York Times");
+            $r2->setReviewedBy('New York Times');
             $r2->setRecommended(false);
             $r2->setReviewDate(time());
             $r2->save();
             $r2_id = $r2->getId();
             $this->assertTrue(true, 'Save Review records');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('Save Review records');
         }
 
@@ -505,7 +510,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertEquals(1, count($results));
 
         $results = BookQuery::create()
-            ->where('Book.ISBN IN ?', ["0380977427", "0140422161"])
+            ->where('Book.ISBN IN ?', ['0380977427', '0140422161'])
             ->find();
         $this->assertEquals(2, count($results));
 
@@ -519,8 +524,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
             ->find();
         $this->assertEquals(2, count($results));
         // we ordered on book title, so we expect to get
-        $this->assertEquals("Harry Potter and the Order of the Phoenix", $results[0]->getTitle());
-        $this->assertEquals("Quicksilver", $results[1]->getTitle());
+        $this->assertEquals('Harry Potter and the Order of the Phoenix', $results[0]->getTitle());
+        $this->assertEquals('Quicksilver', $results[1]->getTitle());
 
         // Perform a lookup & update!
         // --------------------------
@@ -530,7 +535,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $qs_lookup = BookQuery::create()->findPk($qs_id);
         $this->assertNotNull($qs_lookup, 'just-created book can be found by pk');
 
-        $new_title = "Quicksilver (".crc32(uniqid(rand())).")";
+        $new_title = 'Quicksilver (' . crc32(uniqid(rand())) . ')';
         // Attempting to update found object
         $qs_lookup->setTitle($new_title);
         $qs_lookup->save();
@@ -559,9 +564,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // Handle BLOB/CLOB Columns
         // ------------------------
 
-        $blob_path  = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.gif';
+        $blob_path = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.gif';
         $blob2_path = __DIR__ . '/../../Fixtures/etc/lob/propel.gif';
-        $clob_path  = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.txt';
+        $clob_path = __DIR__ . '/../../Fixtures/etc/lob/tin_drum.txt';
 
         $m1 = new Media();
         $m1->setBook($phoenix);
@@ -574,7 +579,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         $this->assertNotNull($m1_lookup, 'Can find just-created media item');
         $this->assertEquals(md5(file_get_contents($blob_path)), md5(stream_get_contents($m1_lookup->getCoverImage())), 'BLOB was correctly updated');
-        $this->assertEquals(file_get_contents($clob_path), (string) $m1_lookup->getExcerpt(), 'CLOB was correctly updated');
+        $this->assertEquals(file_get_contents($clob_path), (string)$m1_lookup->getExcerpt(), 'CLOB was correctly updated');
 
         // now update the BLOB column and save it & check the results
         $m1_lookup->setCoverImage(file_get_contents($blob2_path));
@@ -598,8 +603,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // init book club list 1 with 2 books
 
         $blc1 = new BookClubList();
-        $blc1->setGroupLeader("Crazyleggs");
-        $blc1->setTheme("Happiness");
+        $blc1->setGroupLeader('Crazyleggs');
+        $blc1->setTheme('Happiness');
 
         $brel1 = new BookListRel();
         $brel1->setBook($phoenix);
@@ -617,8 +622,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         // init book club list 2 with 1 book
 
         $blc2 = new BookClubList();
-        $blc2->setGroupLeader("John Foo");
-        $blc2->setTheme("Default");
+        $blc2->setGroupLeader('John Foo');
+        $blc2->setTheme('Default');
 
         $brel3 = new BookListRel();
         $brel3->setBook($phoenix);
@@ -681,9 +686,9 @@ class BookstoreTest extends BookstoreEmptyTestBase
 
         // Attempting to delete books by complex criteria
         BookQuery::create()
-            ->filterByISBN("043935806X")
-            ->_or()->where('Book.ISBN = ?', "0380977427")
-            ->_or()->where('Book.ISBN = ?', "0140422161")
+            ->filterByISBN('043935806X')
+            ->_or()->where('Book.ISBN = ?', '0380977427')
+            ->_or()->where('Book.ISBN = ?', '0140422161')
             ->delete();
 
         // Attempting to delete book [id = $td_id]
@@ -715,16 +720,19 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
     }
 
+    /**
+     * @return void
+     */
     public function testIssue1493()
     {
         $review = new Review();
-        $review->setReviewedBy("Reviewer");
+        $review->setReviewedBy('Reviewer');
         $review->setRecommended(true);
         $review->setReviewDate(time());
         $review->save();
 
         $review = new Review();
-        $review->setReviewedBy("Reviewer");
+        $review->setReviewedBy('Reviewer');
         $review->setRecommended(true);
         $review->setReviewDate(time());
         $review->save();
@@ -732,8 +740,8 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(2, ReviewQuery::create()->find(), 'reviews were saved to database');
 
         $book = new Book();
-        $book->setISBN("0140422161");
-        $book->setTitle("Don Juan");
+        $book->setISBN('0140422161');
+        $book->setTitle('Don Juan');
 
         $book->getReviews();
         $book->setReviews(new Collection());

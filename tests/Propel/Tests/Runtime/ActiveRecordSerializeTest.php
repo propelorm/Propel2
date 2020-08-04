@@ -10,11 +10,11 @@
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for ActiveRecord serialization.
@@ -25,6 +25,9 @@ use Propel\Tests\Bookstore\Map\BookTableMap;
  */
 class ActiveRecordSerializeTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testSerializeEmptyObject()
     {
         $book = new Book();
@@ -32,6 +35,9 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $this->assertEquals($book, unserialize($sb));
     }
 
+    /**
+     * @return void
+     */
     public function testSerializePopulatedObject()
     {
         $book = new Book();
@@ -41,6 +47,9 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $this->assertEquals($book, unserialize($sb));
     }
 
+    /**
+     * @return void
+     */
     public function testSerializePersistedObject()
     {
         $book = new Book();
@@ -51,6 +60,9 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $this->assertEquals($book, unserialize($sb));
     }
 
+    /**
+     * @return void
+     */
     public function testSerializeHydratedObject()
     {
         $book = new Book();
@@ -64,6 +76,9 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $this->assertEquals($book, unserialize($sb));
     }
 
+    /**
+     * @return void
+     */
     public function testSerializeObjectWithRelations()
     {
         $author = new Author();
@@ -80,6 +95,9 @@ class ActiveRecordSerializeTest extends BookstoreTestBase
         $this->assertEquals($book, unserialize($sb));
     }
 
+    /**
+     * @return void
+     */
     public function testSerializeObjectWithCollections()
     {
         $book1 = new Book();

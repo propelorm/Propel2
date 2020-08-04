@@ -10,10 +10,9 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for CustomCriterion.
@@ -22,6 +21,9 @@ use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
  */
 class CustomCriterionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testAppendPsToConcatenatesTheValue()
     {
         $cton = new CustomCriterion(new Criteria(), 'date_part(\'YYYY\', A.COL) = \'2007\'');

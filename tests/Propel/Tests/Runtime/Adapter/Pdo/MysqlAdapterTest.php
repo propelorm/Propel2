@@ -10,16 +10,13 @@
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbMySQL adapter
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author William Durand
  */
 class MysqlAdapterTest extends TestCaseFixtures
@@ -31,15 +28,17 @@ class MysqlAdapterTest extends TestCaseFixtures
                 [
                     'dsn' => 'dsn=my_dsn',
                     'settings' => [
-                        'charset' => 'foobar'
-                    ]
-                ]
-            ]
+                        'charset' => 'foobar',
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testPrepareParamsThrowsException($conparams)
     {
@@ -49,6 +48,8 @@ class MysqlAdapterTest extends TestCaseFixtures
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testPrepareParams($conparams)
     {
@@ -62,6 +63,8 @@ class MysqlAdapterTest extends TestCaseFixtures
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testNoSetNameQueryExecuted($conparams)
     {

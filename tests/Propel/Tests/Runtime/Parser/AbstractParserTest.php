@@ -21,6 +21,9 @@ use Propel\Tests\TestCase;
  */
 class AbstractParserTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testGetParser()
     {
         $parser = AbstractParser::getParser('XML');
@@ -29,12 +32,17 @@ class AbstractParserTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\FileNotFoundException
+     *
+     * @return void
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {
         $parser = AbstractParser::getParser('Foo');
     }
 
+    /**
+     * @return void
+     */
     public function testLoad()
     {
         $fixtureFile = __DIR__ . '/fixtures/test_data.xml';
@@ -51,9 +59,12 @@ EOF;
         $this->assertEquals($expectedContent, $content, 'AbstractParser::load() executes PHP code in files');
     }
 
+    /**
+     * @return void
+     */
     public function testDump()
     {
-        $testContent = "Foo Content";
+        $testContent = 'Foo Content';
         $testFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel_test_' . microtime();
         $parser = AbstractParser::getParser('XML');
         $parser->dump($testContent, $testFile);
@@ -61,5 +72,4 @@ EOF;
         $this->assertEquals($testContent, $content);
         unlink($testFile);
     }
-
 }

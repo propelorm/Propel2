@@ -22,14 +22,20 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
 {
-  protected $databaseMap;
+    protected $databaseMap;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore-schemas');
     }
 
+    /**
+     * @return void
+     */
     public function testOneToMany()
     {
         // passes on its own, but not with the full tests suite
@@ -43,6 +49,9 @@ class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
         $this->assertEquals($contestToBookstore->getName(), $bookstoreToContest->getSymmetricalRelation()->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOne()
     {
         $accountTable = $this->databaseMap->getTableByPhpName('Propel\Tests\BookstoreSchemas\CustomerAccount');
@@ -55,6 +64,9 @@ class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
         $this->assertEquals($customerToAccount, $accountToCustomer->getSymmetricalRelation());
     }
 
+    /**
+     * @return void
+     */
     public function testSeveralRelationsOnSameTable()
     {
         $contestTable = $this->databaseMap->getTableByPhpName('Propel\Tests\BookstoreSchemas\BookstoreContest');
@@ -67,6 +79,9 @@ class RelatedMapSymmetricalWithSchemasTest extends TestCaseFixturesDatabase
         $this->assertEquals($customerToContest, $contestToCustomer->getSymmetricalRelation());
     }
 
+    /**
+     * @return void
+     */
     public function testCompositeForeignKey()
     {
         $entryTable = $this->databaseMap->getTableByPhpName('Propel\Tests\BookstoreSchemas\BookstoreContestEntry');

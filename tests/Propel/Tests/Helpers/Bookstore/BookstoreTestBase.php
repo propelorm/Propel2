@@ -20,7 +20,7 @@ use Propel\Tests\TestCaseFixturesDatabase;
 abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 {
     /**
-     * @var Boolean
+     * @var bool
      */
     protected static $isInitialized = false;
 
@@ -31,10 +31,12 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 
     /**
      * This is run before each unit test; it populates the database.
+     *
+     * @return void
      */
     protected function setUp(): void
     {
-	    parent::setUp();
+        parent::setUp();
         if (true !== self::$isInitialized) {
             $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
             if (!file_exists($file)) {
@@ -49,6 +51,8 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 
     /**
      * This is run after each unit test. It empties the database.
+     *
+     * @return void
      */
     protected function tearDown(): void
     {
@@ -65,6 +69,9 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
         }
     }
 
+    /**
+     * @return void
+     */
     public static function tearDownAfterClass(): void
     {
         Propel::getServiceContainer()->closeConnections();

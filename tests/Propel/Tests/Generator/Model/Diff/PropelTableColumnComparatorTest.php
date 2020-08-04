@@ -11,24 +11,29 @@
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\TableDiff;
-use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the Column methods of the TableComparator service class.
- *
  */
 class PropelTableColumnComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSameColumns()
     {
         $t1 = new Table();
@@ -51,6 +56,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNotSameColumns()
     {
         $t1 = new Table();
@@ -64,6 +72,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertTrue($diff instanceof TableDiff);
     }
 
+    /**
+     * @return void
+     */
     public function testCompareCaseInsensitive()
     {
         $t1 = new Table();
@@ -79,6 +90,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertFalse(TableComparator::computeDiff($t1, $t2, true));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareAddedColumn()
     {
         $t1 = new Table();
@@ -101,6 +115,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(['Foo' => $c2], $tableDiff->getAddedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRemovedColumn()
     {
         $t1 = new Table();
@@ -123,6 +140,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(['Bar' => $c1], $tableDiff->getRemovedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareModifiedColumn()
     {
         $t1 = new Table();
@@ -151,6 +171,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(['Foo' => $columnDiff], $tableDiff->getModifiedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRenamedColumn()
     {
         $t1 = new Table();
@@ -182,6 +205,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals([], $tableDiff->getRemovedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSeveralColumnDifferences()
     {
         $t1 = new Table();
@@ -230,6 +256,9 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals(['col1' => $columnDiff], $tableDiff->getModifiedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSeveralRenamedSameColumns()
     {
         $t1 = new Table();
@@ -272,5 +301,4 @@ class PropelTableColumnComparatorTest extends TestCase
         $this->assertEquals([], $tableDiff->getRemovedColumns());
         $this->assertEquals([], $tableDiff->getModifiedColumns());
     }
-
 }

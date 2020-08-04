@@ -10,7 +10,9 @@
 
 namespace Propel\Tests\Generator\Builder\Om\Fixtures;
 
-class ComplexColumnTypeEntityWithConstructor extends \MyNameSpace\Base\ComplexColumnTypeEntityWithConstructor
+use MyNameSpace\Base\ComplexColumnTypeEntityWithConstructor as MyNameSpaceComplexColumnTypeEntityWithConstructor;
+
+class ComplexColumnTypeEntityWithConstructor extends MyNameSpaceComplexColumnTypeEntityWithConstructor
 {
     public function __construct()
     {

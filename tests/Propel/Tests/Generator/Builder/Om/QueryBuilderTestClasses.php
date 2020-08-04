@@ -14,10 +14,9 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Tests\Bookstore\BookQuery;
 
-
 class myCustomBookQuery extends BookQuery
 {
-    public static function create($modelAlias = null, Criteria $criteria = null)
+    public static function create($modelAlias = null, ?Criteria $criteria = null)
     {
         if ($criteria instanceof myCustomBookQuery) {
             return $criteria;
@@ -32,7 +31,6 @@ class myCustomBookQuery extends BookQuery
 
         return $query;
     }
-
 }
 
 class mySecondBookQuery extends BookQuery
@@ -45,6 +43,9 @@ class mySecondBookQuery extends BookQuery
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
+    /**
+     * @return void
+     */
     public function preSelect(ConnectionInterface $con)
     {
         self::$preSelectWasCalled = true;

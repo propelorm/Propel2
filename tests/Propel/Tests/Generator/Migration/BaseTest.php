@@ -7,6 +7,9 @@ namespace Propel\Tests\Generator\Migration;
  */
 class BaseTest extends MigrationTestCase
 {
+    /**
+     * @return void
+     */
     public function testSimpleAdd()
     {
         $originXml = '
@@ -29,6 +32,9 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testSimpleSize()
     {
         $originXml = '
@@ -52,6 +58,9 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testCharToChar()
     {
         $originXml = '
@@ -76,6 +85,9 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testScale()
     {
         $originXml = '
@@ -112,6 +124,9 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($target2Xml);
     }
 
+    /**
+     * @return void
+     */
     public function testColumnRequireChange()
     {
         $originXml = '
@@ -135,6 +150,9 @@ class BaseTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testColumnTypeChangeSimple()
     {
         $originXml = '
@@ -159,6 +177,9 @@ class BaseTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testColumnTypeChangeComplex()
     {
         $originXml = '
@@ -194,6 +215,9 @@ class BaseTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testColumnTypeChangeMoreComplex()
     {
         $originXml = '
@@ -248,6 +272,9 @@ class BaseTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testColumnChangePrimaryKey()
     {
         $originXml = '
@@ -310,5 +337,4 @@ class BaseTest extends MigrationTestCase
         $this->applyXmlAndTest($target4Xml);
         $this->applyXmlAndTest($target5Xml);
     }
-
 }

@@ -11,11 +11,14 @@
 namespace Propel\Tests\Generator\Builder\Util;
 
 use Propel\Generator\Builder\Util\SchemaReader;
-use Propel\Tests\TestCase;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Tests\TestCase;
 
 class SchemaReaderJoinSchemaTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testJoinXmlSchemaWithMultipleDatabaseSchema()
     {
         $expectedSchema = <<<EOF

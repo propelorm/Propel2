@@ -10,24 +10,30 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Runtime\Propel;
-use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Formatter\SimpleArrayFormatter;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * @group database
  */
 class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();
     }
 
+    /**
+     * @return void
+     */
     public function testFormatWithOneRowAndValueIsNotZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -39,9 +45,12 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame(1, $books[0]+0);
+        $this->assertSame(1, $books[0] + 0);
     }
 
+    /**
+     * @return void
+     */
     public function testFormatWithOneRowAndValueEqualsZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -53,9 +62,12 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $books = $formatter->format($stmt);
         $this->assertInstanceOf('\Propel\Runtime\Collection\Collection', $books);
         $this->assertCount(4, $books);
-        $this->assertSame(0, $books[0]+0);
+        $this->assertSame(0, $books[0] + 0);
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneWithOneRowAndValueIsNotZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -69,9 +81,12 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame(1, $book+0);
+        $this->assertSame(1, $book + 0);
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneWithOneRowAndValueEqualsZero()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -85,6 +100,6 @@ class SimpleArrayFormatterTest extends BookstoreEmptyTestBase
         $formatter->init(new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book'));
 
         $book = $formatter->formatOne($stmt);
-        $this->assertSame(0, $book+0);
+        $this->assertSame(0, $book + 0);
     }
 }

@@ -11,9 +11,15 @@
 
 namespace Propel\Tests\Generator\Behavior\Archivable;
 
+use Map\ArchivableTest1ArchiveTableMap;
+use Map\ArchivableTest1TableMap;
+use Map\ArchivableTest2ArchiveTableMap;
+use Map\ArchivableTest2TableMap;
+use Map\ArchivableTest3TableMap;
+use Map\ArchivableTest4TableMap;
+use Map\ArchivableTest5TableMap;
+use Map\MyOldArchivableTest3TableMap;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\Archivable\ArchivableBehavior;
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -25,6 +31,9 @@ class ArchivableBehaviorTest extends TestCase
 {
     protected static $generatedSQL;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('\ArchivableTest1')) {
@@ -100,42 +109,60 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testCreatesArchiveTable()
     {
-        $table = \Map\ArchivableTest1TableMap::getTableMap();
+        $table = ArchivableTest1TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_1_archive'));
-        $this->assertSame("ArchivableTest1Archive", $table->getDatabaseMap()->getTable('archivable_test_1_archive')->getPhpName());
+        $this->assertSame('ArchivableTest1Archive', $table->getDatabaseMap()->getTable('archivable_test_1_archive')->getPhpName());
     }
 
+    /**
+     * @return void
+     */
     public function testDoesNotCreateCustomArchiveTableIfExists()
     {
-        $table = \Map\ArchivableTest2TableMap::getTableMap();
+        $table = ArchivableTest2TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_2_archive'));
     }
 
+    /**
+     * @return void
+     */
     public function testCanCreateCustomArchiveTableName()
     {
-        $table = \Map\ArchivableTest3TableMap::getTableMap();
+        $table = ArchivableTest3TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('my_old_archivable_test_3'));
-        $this->assertSame("MyOldArchivableTest3", $table->getDatabaseMap()->getTable('my_old_archivable_test_3')->getPhpName());
+        $this->assertSame('MyOldArchivableTest3', $table->getDatabaseMap()->getTable('my_old_archivable_test_3')->getPhpName());
     }
 
+    /**
+     * @return void
+     */
     public function testDoesNotCreateCustomArchiveTableIfArchiveClassIsSpecified()
     {
-        $table = \Map\ArchivableTest4TableMap::getTableMap();
+        $table = ArchivableTest4TableMap::getTableMap();
         $this->assertFalse($table->getDatabaseMap()->hasTable('archivable_test_4_archive'));
     }
 
+    /**
+     * @return void
+     */
     public function testCanCreateCustomArchiveTableNameAndPhpName()
     {
-        $table = \Map\ArchivableTest5TableMap::getTableMap();
+        $table = ArchivableTest5TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_5_backup'));
-        $this->assertSame("ArchivableTest5MyBackup", $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
+        $this->assertSame('ArchivableTest5MyBackup', $table->getDatabaseMap()->getTable('archivable_test_5_backup')->getPhpName());
     }
 
+    /**
+     * @return void
+     */
     public function testCopiesColumnsToArchiveTable()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
+        $table = ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertTrue($table->hasColumn('id'));
         $this->assertContains('id INTEGER NOT NULL,', self::$generatedSQL, 'copied columns are not autoincremented');
         $this->assertTrue($table->hasColumn('title'));
@@ -143,38 +170,56 @@ EOF;
         $this->assertTrue($table->hasColumn('foo_id'));
     }
 
+    /**
+     * @return void
+     */
     public function testDoesNotCopyForeignKeys()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
+        $table = ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertEquals([], $table->getRelations());
     }
 
+    /**
+     * @return void
+     */
     public function testCopiesIndices()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
-        $expected = "CREATE INDEX archivable_test_1_archive_i_6c947f ON archivable_test_1_archive (title,age);";
+        $table = ArchivableTest1ArchiveTableMap::getTableMap();
+        $expected = 'CREATE INDEX archivable_test_1_archive_i_6c947f ON archivable_test_1_archive (title,age);';
         $this->assertContains($expected, self::$generatedSQL);
     }
 
+    /**
+     * @return void
+     */
     public function testCopiesUniquesToIndices()
     {
-        $table = \Map\ArchivableTest2ArchiveTableMap::getTableMap();
-        $expected = "CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);";
+        $table = ArchivableTest2ArchiveTableMap::getTableMap();
+        $expected = 'CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);';
         $this->assertContains($expected, self::$generatedSQL);
     }
 
+    /**
+     * @return void
+     */
     public function testAddsArchivedAtColumnToArchiveTableByDefault()
     {
-        $table = \Map\ArchivableTest1ArchiveTableMap::getTableMap();
+        $table = ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertTrue($table->hasColumn('archived_at'));
     }
 
+    /**
+     * @return void
+     */
     public function testDoesNotAddArchivedAtColumnToArchiveTableIfSpecified()
     {
-        $table = \Map\MyOldArchivableTest3TableMap::getTableMap();
+        $table = MyOldArchivableTest3TableMap::getTableMap();
         $this->assertFalse($table->hasColumn('archived_at'));
     }
 
+    /**
+     * @return void
+     */
     public function testDatabaseLevelBehavior()
     {
         $schema = <<<EOF
@@ -241,6 +286,8 @@ SQL;
 
     /**
      * @dataProvider tablePrefixDataProvider
+     *
+     * @return void
      */
     public function testGeneratedSqlWithTablePrefix($schema, $expectSQL, $expectClasses)
     {
@@ -255,6 +302,8 @@ SQL;
 
     /**
      * @dataProvider tablePrefixDataProvider
+     *
+     * @return void
      */
     public function testGeneratedClassesWithTablePrefix($schema, $expectSQL, $expectClasses)
     {
@@ -263,8 +312,7 @@ SQL;
         $builder->setSchema($schema);
         $builder->buildClasses();
 
-        foreach ($expectClasses as $expectClass)
-        {
+        foreach ($expectClasses as $expectClass) {
             $this->assertTrue(class_exists($expectClass), sprintf('expect class "%s" is not exists', $expectClass));
         }
     }

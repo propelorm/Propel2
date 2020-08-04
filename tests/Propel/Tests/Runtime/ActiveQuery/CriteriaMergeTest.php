@@ -10,10 +10,10 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -24,6 +24,9 @@ use Propel\Tests\TestCaseFixtures;
  */
 class CriteriaMergeTest extends TestCaseFixtures
 {
+    /**
+     * @return void
+     */
     protected function assertCriteriaTranslation($criteria, $expectedSql, $message = '')
     {
         $params = [];
@@ -31,6 +34,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals($expectedSql, $result, $message);
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithLimit()
     {
         $c1 = new Criteria();
@@ -51,6 +57,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals(456, $c1->getLimit(), 'mergeWith() does not merge the limit in case of conflict');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithOffset()
     {
         $c1 = new Criteria();
@@ -71,6 +80,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals(456, $c1->getOffset(), 'mergeWith() does not merge the offset in case of conflict');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithSelectModifiers()
     {
         $c1 = new Criteria();
@@ -97,6 +109,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals([Criteria::ALL], $c1->getSelectModifiers(), 'mergeWith() does not merge the select modifiers in case of conflict');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithSelectColumns()
     {
         $c1 = new Criteria();
@@ -125,6 +140,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals([BookTableMap::COL_TITLE, BookTableMap::COL_TITLE], $c1->getSelectColumns(), 'mergeWith() merges the select columns to an existing select, even if duplicated');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithAsColumns()
     {
         $c1 = new Criteria();
@@ -149,6 +167,8 @@ class CriteriaMergeTest extends TestCaseFixtures
 
     /**
      * @expectedException \Propel\Runtime\Exception\LogicException
+     *
+     * @return void
      */
     public function testMergeWithAsColumnsThrowsException()
     {
@@ -159,6 +179,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $c1->mergeWith($c2);
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithOrderByColumns()
     {
         $c1 = new Criteria();
@@ -193,6 +216,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals([BookTableMap::COL_TITLE . ' ASC', BookTableMap::COL_TITLE . ' DESC'], $c1->getOrderByColumns(), 'mergeWith() merges duplicated orderby columns with inverse direction');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithGroupByColumns()
     {
         $c1 = new Criteria();
@@ -221,6 +247,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals([BookTableMap::COL_TITLE], $c1->getGroupByColumns(), 'mergeWith() does not merge duplicated groupby columns');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithWhereConditions()
     {
         $c1 = new Criteria();
@@ -259,6 +288,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeOrWithWhereConditions()
     {
         $c1 = new Criteria();
@@ -297,6 +329,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
 
+    /**
+     * @return void
+     */
     public function testMerge_OrWithWhereConditions()
     {
         $c1 = new Criteria();
@@ -340,6 +375,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() merges where condition to existing conditions on the different tables');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithHavingConditions()
     {
         $c1 = new Criteria();
@@ -367,6 +405,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertCriteriaTranslation($c1, $sql, 'mergeWith() combines having with AND');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithAliases()
     {
         $c1 = new Criteria();
@@ -389,6 +430,8 @@ class CriteriaMergeTest extends TestCaseFixtures
 
     /**
      * @expectedException \Propel\Runtime\Exception\LogicException
+     *
+     * @return void
      */
     public function testMergeWithAliasesThrowsException()
     {
@@ -399,6 +442,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $c1->mergeWith($c2);
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithJoins()
     {
         $c1 = new Criteria();
@@ -426,6 +472,9 @@ class CriteriaMergeTest extends TestCaseFixtures
         $this->assertEquals('INNER JOIN publisher ON (book.publisher_id=publisher.id)', $joins[1]->toString(), 'mergeWith() merge joins to an empty join');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithFurtherModified()
     {
         $c1 = new Criteria();
@@ -436,5 +485,4 @@ class CriteriaMergeTest extends TestCaseFixtures
         $c2->setLimit(456);
         $this->assertEquals(123, $c1->getLimit(), 'further modifying a merged criteria does not affect the merger');
     }
-
 }

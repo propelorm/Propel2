@@ -20,43 +20,45 @@ use Propel\Tests\TestCase;
  */
 class MssqlSchemaParserTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testCleanDelimitedIdentifiers()
     {
         $parser = new TestableMssqlSchemaParser(null);
 
         $expected = 'this is a tablename';
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected.'\'');
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected . '\'');
         $this->assertEquals($expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected);
-        $this->assertEquals('\''.$expected, $tested);
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected);
+        $this->assertEquals('\'' . $expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers($expected.'\'');
-        $this->assertEquals($expected.'\'', $tested);
+        $tested = $parser->cleanDelimitedIdentifiers($expected . '\'');
+        $this->assertEquals($expected . '\'', $tested);
 
         $expected = 'this is a tabl\'ename';
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected.'\'');
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected . '\'');
         $this->assertEquals($expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected);
-        $this->assertEquals('\''.$expected, $tested);
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected);
+        $this->assertEquals('\'' . $expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers($expected.'\'');
-        $this->assertEquals($expected.'\'', $tested);
+        $tested = $parser->cleanDelimitedIdentifiers($expected . '\'');
+        $this->assertEquals($expected . '\'', $tested);
 
         $expected = 'this is a\'tabl\'ename';
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected.'\'');
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected . '\'');
         $this->assertEquals($expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers('\''.$expected);
-        $this->assertEquals('\''.$expected, $tested);
+        $tested = $parser->cleanDelimitedIdentifiers('\'' . $expected);
+        $this->assertEquals('\'' . $expected, $tested);
 
-        $tested = $parser->cleanDelimitedIdentifiers($expected.'\'');
-        $this->assertEquals($expected.'\'', $tested);
-
+        $tested = $parser->cleanDelimitedIdentifiers($expected . '\'');
+        $this->assertEquals($expected . '\'', $tested);
     }
 }
 

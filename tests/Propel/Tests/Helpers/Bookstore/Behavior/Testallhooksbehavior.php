@@ -18,7 +18,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getTableModifier()
     {
-        if (is_null($this->tableModifier)) {
+        if ($this->tableModifier === null) {
             $this->tableModifier = new TestAllHooksTableModifier($this);
         }
 
@@ -27,7 +27,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getObjectBuilderModifier()
     {
-        if (is_null($this->objectBuilderModifier)) {
+        if ($this->objectBuilderModifier === null) {
             $this->objectBuilderModifier = new TestAllHooksObjectBuilderModifier($this);
         }
 
@@ -36,7 +36,7 @@ class TestAllHooksBehavior extends Behavior
 
     public function getQueryBuilderModifier()
     {
-        if (is_null($this->queryBuilderModifier)) {
+        if ($this->queryBuilderModifier === null) {
             $this->queryBuilderModifier = new TestAllHooksQueryBuilderModifier($this);
         }
 
@@ -54,11 +54,14 @@ class TestAllHooksTableModifier
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @return void
+     */
     public function modifyTable()
     {
         $this->table->addColumn([
             'name' => 'test',
-            'type' => 'TIMESTAMP'
+            'type' => 'TIMESTAMP',
         ]);
     }
 }
@@ -112,7 +115,7 @@ class TestAllHooksObjectBuilderModifier
 
     public function objectMethods($builder)
     {
-        return 'public function hello() { return "' . get_class($builder) .'"; }';
+        return 'public function hello() { return "' . get_class($builder) . '"; }';
     }
 
     public function objectCall($builder)
@@ -120,6 +123,9 @@ class TestAllHooksObjectBuilderModifier
         return 'if ($name == "foo") return "bar";';
     }
 
+    /**
+     * @return void
+     */
     public function objectFilter(&$string, $builder)
     {
         $string .= 'class testObjectFilter { const FOO = "' . get_class($builder) . '"; }';
@@ -128,7 +134,6 @@ class TestAllHooksObjectBuilderModifier
 
 class TestAllHooksQueryBuilderModifier
 {
-
     public function staticAttributes($builder)
     {
         return 'static public $customStaticAttribute = 1;public static $staticAttributeBuilder = "' . get_class($builder) . '";';
@@ -139,6 +144,9 @@ class TestAllHooksQueryBuilderModifier
         return 'static public function hello() { return "' . get_class($builder) . '"; }';
     }
 
+    /**
+     * @return void
+     */
     public function queryFilter(&$string, $builder)
     {
         $string .= 'class testQueryFilter { const FOO = "' . get_class($builder) . '"; }';

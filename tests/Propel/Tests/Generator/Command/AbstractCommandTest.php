@@ -24,11 +24,17 @@ class AbstractCommandTest extends TestCase
 {
     protected $command;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->command = new TestableAbstractCommand();
     }
 
+    /**
+     * @return void
+     */
     public function testParseConnection()
     {
         $password = 'H7{“Qj1n>\%28=;P';
@@ -42,6 +48,9 @@ class AbstractCommandTest extends TestCase
         $this->assertEquals($password, $result[2]['password']);
     }
 
+    /**
+     * @return void
+     */
     public function testRecursiveSearch()
     {
         $app = new Application();
@@ -52,8 +61,8 @@ class AbstractCommandTest extends TestCase
         $tester->execute(
             [
                 'command' => 'testable-command',
-                '--config-dir' =>  realpath(__DIR__ . '/../../../../Fixtures/recursive'),
-                '--recursive' => true
+                '--config-dir' => realpath(__DIR__ . '/../../../../Fixtures/recursive'),
+                '--recursive' => true,
             ]
         );
 
@@ -62,8 +71,8 @@ class AbstractCommandTest extends TestCase
         $tester->execute(
             [
                 'command' => 'testable-command',
-                '--config-dir' =>  realpath(__DIR__ . '/../../../../Fixtures/recursive'),
-                '--recursive' => false
+                '--config-dir' => realpath(__DIR__ . '/../../../../Fixtures/recursive'),
+                '--recursive' => false,
             ]
         );
 
@@ -73,6 +82,9 @@ class AbstractCommandTest extends TestCase
 
 class TestableAbstractCommand extends AbstractCommand
 {
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();

@@ -14,7 +14,6 @@ use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
-
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
 
@@ -27,7 +26,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class MysqlSchemaParserTest extends TestCaseFixturesDatabase
 {
-
+    /**
+     * @return void
+     */
     public function testParse()
     {
         $this->markTestSkipped('Skipped as we now use one database for the whole test suite');

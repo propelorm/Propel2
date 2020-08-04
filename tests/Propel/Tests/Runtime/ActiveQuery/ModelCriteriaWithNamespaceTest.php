@@ -10,9 +10,9 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
-
+use Foo\Bar\Map\NamespacedBookTableMap;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
 
 /**
  * Test class for ModelCriteria with namespaces.
@@ -39,13 +39,18 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 
     /**
      * @dataProvider conditionsForTestReplaceNamesWithNamespaces
+     *
+     * @return void
      */
     public function testReplaceNamesWithNamespaces($origClause, $columnPhpName, $modifiedClause)
     {
         $c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', 'Foo\\Bar\\NamespacedBook');
-        $this->doTestReplaceNames($c, \Foo\Bar\Map\NamespacedBookTableMap::getTableMap(),  $origClause, $columnPhpName, $modifiedClause);
+        $this->doTestReplaceNames($c, NamespacedBookTableMap::getTableMap(), $origClause, $columnPhpName, $modifiedClause);
     }
 
+    /**
+     * @return void
+     */
     public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
     {
         $c->replaceNames($origClause);
@@ -55,7 +60,6 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
         }
         $this->assertEquals($modifiedClause, $origClause);
     }
-
 }
 
 class TestableModelCriteriaWithNamespace extends ModelCriteria

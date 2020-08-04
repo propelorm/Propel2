@@ -10,9 +10,8 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for Criteria fluid operators.
@@ -23,6 +22,9 @@ use Propel\Runtime\ActiveQuery\Criteria;
  */
 class CriteriaFluidOperatorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testDefault()
     {
         $c = new Criteria();
@@ -35,6 +37,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultOperatorIsAnd()
     {
         $c = new Criteria();
@@ -48,6 +53,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testOrOverridesDefaultOperator()
     {
         $c = new Criteria();
@@ -62,6 +70,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testOrWithNoExistingCriterionIsAnd()
     {
         $c = new Criteria();
@@ -75,6 +86,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testOrWithNoExistingCriterionIsAnd2()
     {
         $c = new Criteria();
@@ -89,6 +103,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testOrCanBeCalledSeveralTimes()
     {
         $c = new Criteria();
@@ -105,6 +122,9 @@ class CriteriaFluidOperatorTest extends BookstoreTestBase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testaddUsingOperatorResetsDefaultOperator()
     {
         $c = new Criteria();

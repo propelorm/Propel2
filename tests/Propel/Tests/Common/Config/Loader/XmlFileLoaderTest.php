@@ -18,11 +18,17 @@ class XmlFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->loader = new XmlFileLoader(new FileLocator(sys_get_temp_dir()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.xml'), '->supports() returns true if the resource is loadable');
@@ -32,6 +38,9 @@ class XmlFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.bar.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testXmlFileCanBeLoaded()
     {
         $content = <<< XML
@@ -49,8 +58,10 @@ XML;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "inexistent.xml" does not exist (in:
+     *
+     * @return void
      */
     public function testXmlFileDoesNotExist()
     {
@@ -58,8 +69,10 @@ XML;
     }
 
     /**
-     * @expectedException        Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid xml content
+     *
+     * @return void
      */
     public function testXmlFileHasInvalidContent()
     {
@@ -73,6 +86,9 @@ EOF;
         @$this->loader->load('nonvalid.xml');
     }
 
+    /**
+     * @return void
+     */
     public function testXmlFileIsEmpty()
     {
         $content = '';
@@ -86,7 +102,10 @@ EOF;
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.xml.
+     *
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testXmlFileNotReadableThrowsException()
     {
@@ -104,6 +123,5 @@ XML;
         $actual = $this->loader->load('notreadable.xml');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }

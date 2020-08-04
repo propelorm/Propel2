@@ -10,10 +10,10 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for TableMapBuilder.
@@ -26,12 +26,18 @@ class TableMapBuilderTest extends BookstoreTestBase
 {
     protected $databaseMap;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
     }
 
+    /**
+     * @return void
+     */
     public function testColumnDefaultValue()
     {
         $table = $this->databaseMap->getTableByPhpName('\Propel\Tests\Bookstore\BookstoreEmployeeAccount');
@@ -60,6 +66,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationCount()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -70,6 +79,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testSimpleRelationName()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -83,6 +95,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testAliasRelationName()
     {
         $bookEmpTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployee');
@@ -96,6 +111,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testDuplicateRelationName()
     {
         $essayTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Essay');
@@ -109,6 +127,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationDirectionManyToOne()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -124,6 +145,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationDirectionOneToMany()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -159,6 +183,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationDirectionOneToOne()
     {
         $bookEmpTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployee');
@@ -169,6 +196,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationDirectionManyToMAny()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -179,6 +209,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationsColumns()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -204,7 +237,7 @@ class TableMapBuilderTest extends BookstoreTestBase
         $rfTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\ReaderFavorite');
         $expectedMapping = [
             'reader_favorite.book_id' => 'book_opinion.book_id',
-            'reader_favorite.reader_id' => 'book_opinion.reader_id'
+            'reader_favorite.reader_id' => 'book_opinion.reader_id',
         ];
         $this->assertEquals(
             $expectedMapping,
@@ -219,6 +252,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationOnDelete()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -229,6 +265,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testRelationOnUpdate()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -243,6 +282,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testBehaviors()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -265,8 +307,8 @@ class TableMapBuilderTest extends BookstoreTestBase
                 'create_column' => 'created_on',
                 'update_column' => 'updated_on',
                 'disable_created_at' => 'false',
-                'disable_updated_at' => 'false'
-            ]
+                'disable_updated_at' => 'false',
+            ],
         ];
         $this->assertEquals(
             $tmap->getBehaviors(),
@@ -275,6 +317,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testSingleTableInheritance()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -290,6 +335,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testPrimaryString()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -301,6 +349,9 @@ class TableMapBuilderTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testIsCrossRef()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');

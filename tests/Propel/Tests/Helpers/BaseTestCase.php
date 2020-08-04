@@ -9,10 +9,11 @@
  */
 
 namespace Propel\Tests\Helpers;
+
 use Propel\Tests\TestCase;
 
 /**
- * Base functionality to be extended by all Propel test cases.  Test
+ * Base functionality to be extended by all Propel test cases. Test
  * case implementations are used to automate unit testing via PHPUnit.
  *
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
@@ -24,5 +25,5 @@ abstract class BaseTestCase extends TestCase
     /**
      * Conditional compilation flag.
      */
-    const DEBUG = false;
+    public const DEBUG = false;
 }

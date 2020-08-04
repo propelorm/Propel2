@@ -10,19 +10,25 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
-use Propel\Common\Config\Loader\JsonFileLoader;
 use Propel\Common\Config\FileLocator;
+use Propel\Common\Config\Loader\JsonFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
 
 class JsonFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->loader = new JsonFileLoader(new FileLocator(sys_get_temp_dir()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.json'), '->supports() returns true if the resource is loadable');
@@ -31,6 +37,9 @@ class JsonFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.bar.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testJsonFileCanBeLoaded()
     {
         $content = <<<EOF
@@ -47,8 +56,10 @@ EOF;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "inexistent.json" does not exist (in:
+     *
+     * @return void
      */
     public function testJsonFileDoesNotExist()
     {
@@ -56,7 +67,9 @@ EOF;
     }
 
     /**
-     * @expectedException        Propel\Common\Config\Exception\JsonParseException
+     * @expectedException Propel\Common\Config\Exception\JsonParseException
+     *
+     * @return void
      */
     public function testJsonFileHasInvalidContent()
     {
@@ -70,6 +83,9 @@ EOF;
         $this->loader->load('nonvalid.json');
     }
 
+    /**
+     * @return void
+     */
     public function testJsonFileIsEmpty()
     {
         $content = '';
@@ -83,7 +99,10 @@ EOF;
     /**
      * @expectedException Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.json.
+     *
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testJsonFileNotReadableThrowsException()
     {
@@ -100,6 +119,5 @@ EOF;
         $actual = $this->loader->load('notreadable.json');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }

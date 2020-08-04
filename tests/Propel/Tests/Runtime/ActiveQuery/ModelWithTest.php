@@ -10,17 +10,13 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Bookstore\Author;
+use Propel\Runtime\ActiveQuery\ModelWith;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookReaderQuery;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\ReviewQuery;
-
-use Propel\Runtime\ActiveQuery\ModelWith;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -30,7 +26,9 @@ use Propel\Tests\TestCaseFixtures;
  */
 class ModelWithTest extends TestCaseFixtures
 {
-
+    /**
+     * @return void
+     */
     public function testModelNameManyToOne()
     {
         $q = BookQuery::create()
@@ -41,6 +39,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model name from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testModelNameOneToMany()
     {
         $q = AuthorQuery::create()
@@ -51,6 +52,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertEquals('Propel\Tests\Bookstore\Book', $with->getModelName(), 'A ModelWith computes the model name from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testModelNameAlias()
     {
         $q = BookQuery::create()
@@ -61,6 +65,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertEquals('Propel\Tests\Bookstore\Author', $with->getModelName(), 'A ModelWith computes the model name from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testRelationManyToOne()
     {
         $q = BookQuery::create()
@@ -73,6 +80,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertFalse($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testRelationOneToMany()
     {
         $q = AuthorQuery::create()
@@ -85,6 +95,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertTrue($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testRelationOneToOne()
     {
         $q = BookstoreEmployeeQuery::create()
@@ -97,6 +110,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertFalse($with->isAdd(), 'A ModelWith computes the relation cardinality from the join');
     }
 
+    /**
+     * @return void
+     */
     public function testIsPrimary()
     {
         $q = AuthorQuery::create()
@@ -123,6 +139,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertFalse($with->isPrimary(), 'A ModelWith initialized from a non-primary join is not primary');
     }
 
+    /**
+     * @return void
+     */
     public function testGetLeftPhpName()
     {
         $q = AuthorQuery::create()
@@ -196,6 +215,9 @@ class ModelWithTest extends TestCaseFixtures
         $this->assertEquals('SummarizedBook', $with->getLeftPhpName(), 'A ModelWith uses the previous join relation name as left phpName');
     }
 
+    /**
+     * @return void
+     */
     public function testGetRightPhpName()
     {
         $q = AuthorQuery::create()

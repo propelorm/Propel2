@@ -15,10 +15,12 @@ use Propel\Tests\TestCase;
 
 /**
  * Tests for PropelTemplate class
- *
  */
 class PropelTemplateTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testRenderStringNoParam()
     {
         $t = new PropelTemplate();
@@ -27,6 +29,9 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, 3', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderStringOneParam()
     {
         $t = new PropelTemplate();
@@ -35,6 +40,9 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, John', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderStringParams()
     {
         $time = time();
@@ -44,10 +52,13 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, John, it is ' . $time . ' to go!', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderFile()
     {
         $t = new PropelTemplate();
-        $t->setTemplateFile(dirname(__FILE__).'/template.php');
+        $t->setTemplateFile(dirname(__FILE__) . '/template.php');
         $res = $t->render(['name' => 'John']);
         $this->assertEquals('Hello, John', $res);
     }
