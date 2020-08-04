@@ -361,7 +361,6 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($emp, $retrieved, 'Expected same object (from instance pool)');
     }
 
-    
     /**
      * @return void
      */
@@ -505,7 +504,6 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertNotNull($b->getId());
     }
 
-    
     /**
      * @return void
      */
@@ -523,6 +521,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $super->addSubordinate($e2);
 
         $affected = $super->save();
+        $this->assertSame(3, $affected); // Why 3 and not 0?
     }
 
     /**

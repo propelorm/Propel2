@@ -126,7 +126,6 @@ class TableMapTest extends BookstoreTestBase
         $this->assertEquals('SortTest4', $rows[3]->getStoreName());
     }
 
-    
     /**
      * @return void
      */
