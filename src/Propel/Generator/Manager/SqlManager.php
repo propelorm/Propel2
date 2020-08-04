@@ -187,6 +187,7 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
+            
             if (isset($this->connections[$database]['settings']['queries']) &&
             count($this->connections[$database]['settings']['queries'])) {
                 $initQueries = $this->connections[$database]['settings']['queries'];
@@ -200,7 +201,7 @@ class SqlManager extends AbstractManager
                             throw new Exception($message, 0, $e);
                         }
                     }
-                }
+                });
             }
             
             $con->transaction(function () use ($con, $sqls) {
