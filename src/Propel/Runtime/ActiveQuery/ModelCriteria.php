@@ -884,7 +884,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Gets the primary criteria for this secondary Criteria
      *
-     * @return $this|null The primary criteria
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria|null The primary criteria
      */
     public function getPrimaryCriteria()
     {
