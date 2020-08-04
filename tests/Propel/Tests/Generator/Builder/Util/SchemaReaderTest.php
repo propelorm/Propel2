@@ -166,8 +166,13 @@ EOF;
         $this->reader = null;
     }
 
+    /**
+     * @param string $filename
+     *
+     * @return string
+     */
     protected function getSchemaFile($filename)
     {
-        return realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $filename);
+        return realpath(FIXTURES . 'generator' . DS . 'builder' . DS . $filename);
     }
 }

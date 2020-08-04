@@ -38,19 +38,24 @@ class SchemaReaderJoinSchemaTest extends TestCase
   </database>
 </app-data>
 EOF;
-        
+
         $fooReader = new SchemaReader(new PgsqlPlatform());
         $barReader = new SchemaReader(new PgsqlPlatform());
-        
+
         $fooSchema = $fooReader->parseFile($this->getSchemaFile('fooSchema.xml'));
         $barSchema = $barReader->parseFile($this->getSchemaFile('barSchema.xml'));
         $fooSchema->joinSchemas([$barSchema]);
-        
+
         $this->assertEquals($expectedSchema, $fooSchema->toString());
     }
-    
+
+    /**
+     * @param string $filename
+     *
+     * @return string
+     */
     protected function getSchemaFile($filename)
     {
-        return realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . $filename);
+        return realpath(FIXTURES . 'generator' . DS . 'builder' . DS . $filename);
     }
 }
