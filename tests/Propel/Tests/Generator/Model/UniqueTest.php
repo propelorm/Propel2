@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -21,6 +19,10 @@ class UniqueTest extends ModelTestCase
 {
     /**
      * @dataProvider provideTableSpecificAttributes
+     *
+     * @param string $tableName
+     * @param int $maxColumnNameLength
+     * @param string $indexName
      *
      * @return void
      */
@@ -45,6 +47,9 @@ class UniqueTest extends ModelTestCase
         $this->assertSame($indexName, $index->getName());
     }
 
+    /**
+     * @return array
+     */
     public function provideTableSpecificAttributes()
     {
         return [

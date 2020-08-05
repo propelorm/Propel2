@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder;
@@ -298,6 +296,12 @@ class NamespaceTest extends TestCaseFixturesDatabase
             ->joinWith('NamespacedBookListRel')
             ->joinWith('NamespacedBookListRel.NamespacedBookClub')
             ->find($con);
+
+        $array = $books->toArray();
+        $this->assertCount(2, $array);
+
+        $expected = 'Someone1';
+        $this->assertSame($expected, $array[0]['NamespacedBookListRels'][0]['NamespacedBookClub']['GroupLeader']);
     }
 
     /**

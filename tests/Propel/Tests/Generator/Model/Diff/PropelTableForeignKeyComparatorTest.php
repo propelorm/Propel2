@@ -1,13 +1,12 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Model\Diff;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;

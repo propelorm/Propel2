@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config;
@@ -114,6 +112,7 @@ EOF;
         $this->getFilesystem()->dumpFile('doctrine.yaml', $yamlConf);
 
         $manager = new TestableConfigurationManager();
+        $this->assertInstanceOf(ConfigurationManager::class, $manager);
     }
 
     /**
@@ -154,7 +153,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      *
      * @exceptionMessage Propel expects only one configuration file
      *
@@ -177,7 +176,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      *
      * @exceptionMessage Propel expects only one configuration file
      *
@@ -385,7 +384,7 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Unrecognized options "foo, bar" under "propel"
      *
      * @return void
@@ -439,7 +438,7 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage The child node "database" at path "propel" must be configured
      *
      * @return void
@@ -458,7 +457,7 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Dots are not allowed in connection names
      *
      * @return void
@@ -648,7 +647,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid configuration property name
      *
      * @return void

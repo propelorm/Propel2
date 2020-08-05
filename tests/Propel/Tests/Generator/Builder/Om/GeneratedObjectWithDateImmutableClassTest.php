@@ -1,13 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Builder\Om;
+
+use DateTime;
+use Foo\SomeTableA;
+use Foo\SomeTableB;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
@@ -62,11 +65,11 @@ EOF;
      */
     public function testDateTimeInterface()
     {
-        $ModelA = new \Foo\SomeTableA();
+        $ModelA = new SomeTableA();
         $ModelA->setCreatedAt('today');
         $this->assertInstanceOf('\DateTimeInterface', $ModelA->getCreatedAt());
 
-        $ModelB = new \Foo\SomeTableB();
+        $ModelB = new SomeTableB();
         $ModelB->setCreatedAt('today');
         $this->assertInstanceOf('\DateTimeInterface', $ModelB->getCreatedAt());
     }
@@ -76,11 +79,11 @@ EOF;
      */
     public function testFieldTypes()
     {
-        $ModelA = new \Foo\SomeTableA();
+        $ModelA = new SomeTableA();
         $ModelA->setCreatedAt('today');
         $this->assertInstanceOf('\DateTimeImmutable', $ModelA->getCreatedAt());
 
-        $ModelB = new \Foo\SomeTableB();
+        $ModelB = new SomeTableB();
         $ModelB->setCreatedAt('today');
         $this->assertInstanceOf('\DateTime', $ModelB->getCreatedAt());
     }
@@ -92,11 +95,11 @@ EOF;
     {
         $Date = new DateTime('now');
 
-        $ModelA = new \Foo\SomeTableA();
+        $ModelA = new SomeTableA();
         $ModelA->setCreatedAt(clone $Date);
         $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('c')], $ModelA->toArray());
 
-        $ModelB = new \Foo\SomeTableB();
+        $ModelB = new SomeTableB();
         $ModelB->setCreatedAt(clone $Date);
         $this->assertSame(['Id' => null, 'CreatedAt' => $Date->format('c')], $ModelB->toArray());
     }

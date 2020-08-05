@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
@@ -68,7 +66,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage The configuration file 'nonvalid.php' has invalid content.
      *
      * @return void
@@ -85,7 +83,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage The configuration file 'empty.php' has invalid content.
      *
      * @return void
@@ -99,7 +97,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InputOutputException
+     * @expectedException \Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.php.
      *
      * @requires OS ^(?!Win.*)

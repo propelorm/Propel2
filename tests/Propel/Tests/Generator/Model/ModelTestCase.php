@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -25,7 +23,7 @@ abstract class ModelTestCase extends TestCase
      * @param string $name The behavior name
      * @param array $options An array of options
      *
-     * @return Behavior
+     * @return \Propel\Generator\Model\Behavior
      */
     protected function getBehaviorMock($name, array $options = [])
     {
@@ -85,7 +83,7 @@ abstract class ModelTestCase extends TestCase
      * @param string|null $name The foreign key name
      * @param array $options An array of options
      *
-     * @return ForeignKey
+     * @return \Propel\Generator\Model\ForeignKey
      */
     protected function getForeignKeyMock($name = null, array $options = [])
     {
@@ -168,7 +166,7 @@ abstract class ModelTestCase extends TestCase
      * @param string|null $name The unique index name
      * @param array $options An array of options
      *
-     * @return Unique
+     * @return \Propel\Generator\Model\Unique
      */
     protected function getUniqueIndexMock($name = null, array $options = [])
     {
@@ -193,7 +191,7 @@ abstract class ModelTestCase extends TestCase
      * @param string|null $name The schema name
      * @param array $options An array of options
      *
-     * @return Schema
+     * @return \Propel\Generator\Model\Schema
      */
     protected function getSchemaMock($name = null, array $options = [])
     {
@@ -226,7 +224,7 @@ abstract class ModelTestCase extends TestCase
      * @param array $options An array of options
      * @param string $schemaDelimiter
      *
-     * @return PlatformInterface
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatformMock($supportsSchemas = true, array $options = [], $schemaDelimiter = '.')
     {
@@ -265,7 +263,7 @@ abstract class ModelTestCase extends TestCase
      * @param string|null $name
      * @param array $options An array of options
      *
-     * @return Domain
+     * @return \Propel\Generator\Model\Domain
      */
     protected function getDomainMock($name = null, array $options = [])
     {
@@ -292,7 +290,7 @@ abstract class ModelTestCase extends TestCase
      * @param string $name The table name
      * @param array $options An array of options
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     protected function getTableMock($name, array $options = [])
     {
@@ -368,7 +366,7 @@ abstract class ModelTestCase extends TestCase
      * @param string $name The database name
      * @param array $options An array of options
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     protected function getDatabaseMock($name, array $options = [])
     {
@@ -400,7 +398,7 @@ abstract class ModelTestCase extends TestCase
      * @param string $name The column name
      * @param array $options An array of options
      *
-     * @return Column
+     * @return \Propel\Generator\Model\Column
      */
     protected function getColumnMock($name, array $options = [])
     {

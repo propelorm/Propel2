@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Validate;
@@ -105,7 +103,7 @@ class ValidateBehaviorTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Please, define your rules for validation.
      *
      * @return void
@@ -125,7 +123,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Please, define the column to validate.
      *
      * @return void
@@ -148,7 +146,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Please, define the validator constraint.
      *
      * @return void
@@ -171,7 +169,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ConstraintNotFoundException
+     * @expectedException \Propel\Generator\Exception\ConstraintNotFoundException
      * @expectedExceptionMessage The constraint class MaximumLength does not exist.
      *
      * @return void
@@ -194,7 +192,7 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage The options value, in <parameter> tag must be an array
      *
      * @return void

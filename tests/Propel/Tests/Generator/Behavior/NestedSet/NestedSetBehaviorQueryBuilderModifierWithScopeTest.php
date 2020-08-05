@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
@@ -215,7 +213,17 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->ancestorsOf($t5)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection([$t1, $t3], 'ancestorsOf() filters by ancestors of the same scope');
+        $coll = $this->buildCollection([$t1, $t3]);
+        /*
+         * FIXME
+         * -    'model' => 'Table10'
+         * -    'fullyQualifiedModel' => '\Table10'
+         * -    'formatter' => null
+         * +    'model' => 'NestedSetTable10'
+         * +    'fullyQualifiedModel' => '\NestedSetTable10'
+         * +    'formatter' => Propel\Runtime\Formatter\ObjectFormatter Object (...)
+         */
+        //$this->assertEquals($coll, $objs, 'ancestorsOf() filters by ancestors of the same scope');
     }
 
     /**
@@ -244,7 +252,17 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
             ->rootsOf($t5)
             ->orderByBranch()
             ->find();
-        $coll = $this->buildCollection([$t1, $t3, $t5], 'rootsOf() filters by ancestors of the same scope');
+        $coll = $this->buildCollection([$t1, $t3, $t5]);
+        /*
+         * FIXME
+         * -    'model' => 'Table10'
+         * -    'fullyQualifiedModel' => '\Table10'
+         * -    'formatter' => null
+         * +    'model' => 'NestedSetTable10'
+         * +    'fullyQualifiedModel' => '\NestedSetTable10'
+         * +    'formatter' => Propel\Runtime\Formatter\ObjectFormatter Object (...)
+         */
+        //$this->assertEquals($coll, $objs, 'rootsOf() filters by ancestors of the same scope');
     }
 
     /**
@@ -325,6 +343,11 @@ class NestedSetBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals([$t8, $t9, $t10], iterator_to_array($tree), 'findTree() retrieves the tree of a scope, ordered by branch');
     }
 
+    /**
+     * @param array $arr
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection
+     */
     protected function buildCollection($arr)
     {
         $coll = new ObjectCollection();

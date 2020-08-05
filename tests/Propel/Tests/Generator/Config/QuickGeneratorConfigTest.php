@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Config;
@@ -37,7 +35,7 @@ class QuickGeneratorConfigTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid data model builder type `bad_type`
      *
      * @return void

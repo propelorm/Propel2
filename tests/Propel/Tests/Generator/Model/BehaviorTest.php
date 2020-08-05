@@ -1,16 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
+use Propel\Tests\Helpers\MultipleBehavior;
 use Propel\Tests\TestCase;
 
 /**
@@ -20,10 +21,6 @@ use Propel\Tests\TestCase;
  */
 class BehaviorTest extends TestCase
 {
-    private $schemaReader;
-
-    private $appData;
-
     /**
      * @return void
      */
@@ -39,7 +36,7 @@ class BehaviorTest extends TestCase
      */
     public function testSetupObjectWithMultipleBehaviorWithNoId()
     {
-        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b = new MultipleBehavior();
         $b->loadMapping(['name' => 'foo']);
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
@@ -51,7 +48,7 @@ class BehaviorTest extends TestCase
      */
     public function testSetupObjectWithMultipleBehaviorWithId()
     {
-        $b = new Propel\Tests\Helpers\MultipleBehavior();
+        $b = new MultipleBehavior();
         $b->loadMapping(['name' => 'foo', 'id' => 'bar']);
 
         $this->assertEquals($b->getName(), 'foo', 'setupObject() sets the Behavior name from XML attributes');
@@ -59,7 +56,7 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\LogicException
+     * @expectedException \Propel\Generator\Exception\LogicException
      *
      * @return void
      */
@@ -162,7 +159,7 @@ EOF;
   </table>
 </database>
 EOF;
-        $appData = $schemaReader->parseString($schema);
+        $schemaReader->parseString($schema);
     }
 
     /**

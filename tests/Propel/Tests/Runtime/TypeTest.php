@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime;
@@ -14,9 +12,9 @@ use Propel\Tests\Bookstore\Map\TypeObjectTableMap;
 use Propel\Tests\Bookstore\TypeObject;
 use Propel\Tests\Bookstore\TypeObjectQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Runtime\TypeTests\DummyObjectClass;
 use Propel\Tests\Runtime\TypeTests\TypeObjectInterface;
 use ReflectionClass;
-use Propel\Tests\Runtime\TypeTests\DummyObjectClass;
 
 /**
  * @group database
@@ -97,7 +95,6 @@ class TypeTest extends BookstoreTestBase
 
         $typeObjectEntity->setDetails($clone);
         $this->assertTrue($typeObjectEntity->isModified('details'));
-
 
         TypeObjectTableMap::clearInstancePool();
         $typeObjectEntity = TypeObjectQuery::create()->findOne();

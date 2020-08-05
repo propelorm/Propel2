@@ -1,11 +1,13 @@
 <?php
 
-require_once __DIR__.'/../autoload.php.dist';
+require_once __DIR__ . '/../autoload.php.dist';
 
 // check if user is root and
 if (function_exists("posix_getuid")) {
-    if (posix_getuid() == 0)
-        die("You must run tests suite with an unprivileged user.");
+    if (posix_getuid() === 0) {
+        echo('You must run tests suite with an unprivileged user.');
+        die(1);
+    }
 }
 
 define('DS', DIRECTORY_SEPARATOR);

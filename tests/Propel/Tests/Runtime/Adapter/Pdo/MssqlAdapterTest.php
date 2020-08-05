@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
@@ -25,16 +23,9 @@ use Propel\Tests\TestCase;
 class MssqlAdapterTest extends TestCase
 {
     /**
-     * The criteria to use in the test.
-     *
-     * @var \Propel\Runtime\ActiveQuery\Criteria
-     */
-    private $c;
-
-    /**
      * DB adapter saved for later.
      *
-     * @var AbstractAdapter
+     * @var \Propel\Runtime\Adapter\AdapterInterface
      */
     private $savedAdapter;
 
@@ -72,6 +63,9 @@ class MssqlAdapterTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'mssql';

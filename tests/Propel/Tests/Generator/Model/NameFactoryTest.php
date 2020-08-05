@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -68,7 +66,7 @@ class NameFactoryTest extends BaseTestCase
      *
      * @param int $len the number of characters to include in the string
      *
-     * @return a string of length <code>len</code> with every character an 'A'
+     * @return string A string of length <code>len</code> with every character an 'A'
      */
     private static function makeString($len)
     {
@@ -80,7 +78,6 @@ class NameFactoryTest extends BaseTestCase
         return $buf;
     }
 
-    
     /**
      * @return void
      */
@@ -116,7 +113,6 @@ class NameFactoryTest extends BaseTestCase
         $schema->addDatabase($this->database);
     }
 
-    
     /**
      * @return void
      */
@@ -140,16 +136,16 @@ class NameFactoryTest extends BaseTestCase
      * Creates the list of arguments to pass to the specified type of
      * <code>NameGeneratorInterface</code> implementation.
      *
-     * @param algo The class name of the <code>NameGeneratorInterface</code> to
+     * @param string $algo The class name of the <code>NameGeneratorInterface</code> to
      * create an argument list for.
-     * @param inputs The (possibly partial) list inputs from which to
+     * @param array $inputs The (possibly partial) list inputs from which to
      * generate the final list.
      *
-     * @return the list of arguments to pass to the <code>NameGeneratorInterface</code>
+     * @return array The list of arguments to pass to the <code>NameGeneratorInterface</code>
      */
-    private function makeInputs($algo, $inputs)
+    private function makeInputs($algo, array $inputs)
     {
-        if (NameFactory::CONSTRAINT_GENERATOR == $algo) {
+        if (NameFactory::CONSTRAINT_GENERATOR === $algo) {
             array_unshift($inputs, $this->database);
         }
 

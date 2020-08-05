@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -99,13 +97,13 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testCreateCustom()
     {
         // see the myBookQuery class definition at the end of this file
-        $query = myCustomBookQuery::create();
-        $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
+        $query = MyCustomBookQuery::create();
+        $this->assertTrue($query instanceof MyCustomBookQuery, 'create() returns an object of its class');
         $this->assertTrue($query instanceof BookQuery, 'create() returns an object of its class');
         $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
-        $query = myCustomBookQuery::create('foo');
-        $this->assertTrue($query instanceof myCustomBookQuery, 'create() returns an object of its class');
+        $query = MyCustomBookQuery::create('foo');
+        $this->assertTrue($query instanceof MyCustomBookQuery, 'create() returns an object of its class');
         $this->assertEquals('bookstore', $query->getDbName(), 'create() sets dabatase name');
         $this->assertEquals('Propel\Tests\Bookstore\Book', $query->getModelName(), 'create() sets model name');
         $this->assertEquals('foo', $query->getModelAlias(), 'create() can set the model alias');
@@ -339,7 +337,7 @@ class QueryBuilderTest extends BookstoreTestBase
      */
     public function testFindPkCallsPreSelect()
     {
-        $q = new mySecondBookQuery();
+        $q = new MySecondBookQuery();
         $this->assertFalse($q::$preSelectWasCalled);
         $q->findPk(123);
         $this->assertTrue($q::$preSelectWasCalled);

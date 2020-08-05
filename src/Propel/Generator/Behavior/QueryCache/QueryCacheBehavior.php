@@ -325,7 +325,6 @@ public function doCount(ConnectionInterface \$con = null)
             \$this->cacheStore(\$key, \$sql);
     }
 
-
     return \$con->getDataFetcher(\$stmt);
 }
 ";

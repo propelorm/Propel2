@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
@@ -192,7 +190,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'baz' not found in configuration file.
      *
      * @return void
@@ -203,7 +201,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'foobar' not found in configuration file.
      *
      * @return void
@@ -214,7 +212,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
      *
      * @return void
@@ -225,7 +223,7 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
      *
      * @return void

@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Exception;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\Media;
@@ -64,7 +63,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
      *
      * @param string|null $basename Basename of LOB filename to return (if left blank, will choose random file).
      *
-     * @throws Exception - if specified basename doesn't correspond to a registered LOB filename
+     * @throws \Exception - if specified basename doesn't correspond to a registered LOB filename
      *
      * @return string
      */
@@ -76,9 +75,9 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 
         if (isset($this->sampleLobFiles[$basename])) {
             return $this->sampleLobFiles[$basename];
-        } else {
-            throw new Exception("Invalid base LOB filename: $basename");
         }
+
+        throw new Exception("Invalid base LOB filename: $basename");
     }
 
     /**

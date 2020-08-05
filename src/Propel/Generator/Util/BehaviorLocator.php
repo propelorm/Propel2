@@ -35,6 +35,8 @@ class BehaviorLocator
     private $composerDir;
 
     /**
+     * @deprecated Unused.
+     *
      * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     private $generatorConfig;

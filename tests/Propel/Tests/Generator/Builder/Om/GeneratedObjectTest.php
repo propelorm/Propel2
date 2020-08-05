@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -361,7 +359,6 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertSame($emp, $retrieved, 'Expected same object (from instance pool)');
     }
 
-    
     /**
      * @return void
      */
@@ -505,7 +502,6 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertNotNull($b->getId());
     }
 
-    
     /**
      * @return void
      */
@@ -523,6 +519,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $super->addSubordinate($e2);
 
         $affected = $super->save();
+        $this->assertSame(3, $affected); // Why 3 and not 0?
     }
 
     /**

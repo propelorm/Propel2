@@ -471,11 +471,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:_endif\\(\\) should return \\$this\\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) but returns Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\|Propel\\\\Runtime\\\\Util\\\\PropelConditionalProxy\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
@@ -527,11 +522,6 @@ parameters:
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:getPrimaryCriteria\\(\\) should return \\$this\\(Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\)\\|null but returns Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\|null\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 

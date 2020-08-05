@@ -154,7 +154,9 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function filterBy($column, $value, $comparison = Criteria::EQUAL)
     {
-        return $this->add($this->getRealColumnName($column), $value, $comparison);
+        $this->add($this->getRealColumnName($column), $value, $comparison);
+
+        return $this;
     }
 
     /**
@@ -882,7 +884,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Gets the primary criteria for this secondary Criteria
      *
-     * @return $this|null The primary criteria
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria|null The primary criteria
      */
     public function getPrimaryCriteria()
     {
@@ -2240,7 +2242,9 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function addUsingAlias($column, $value = null, $operator = null)
     {
-        return $this->addUsingOperator($this->getAliasedColName($column), $value, $operator);
+        $this->addUsingOperator($this->getAliasedColName($column), $value, $operator);
+
+        return $this;
     }
 
     /**

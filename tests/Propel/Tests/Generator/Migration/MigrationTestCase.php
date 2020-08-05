@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Migration;
 
 use Exception;
@@ -64,6 +70,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
 
     /**
      * @param string $xml
+     * @param bool $changeRequired
      *
      * @throws \Propel\Generator\Exception\BuildException
      *

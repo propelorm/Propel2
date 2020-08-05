@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -16,12 +14,15 @@ use Propel\Generator\Platform\MysqlPlatform;
 
 class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
+    /**
+     * @var \Propel\Generator\Platform\PlatformInterface|null
+     */
     protected $platform;
 
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {

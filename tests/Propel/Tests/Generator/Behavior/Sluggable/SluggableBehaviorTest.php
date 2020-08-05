@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sluggable;
@@ -104,6 +102,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world/bar', $t->createRawSlug(), 'createRawSlug() returns a slug based on a pattern');
     }
 
+    /**
+     * @return string[][]
+     */
     public static function cleanupSlugProvider()
     {
         return [
@@ -122,6 +123,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
     /**
      * @dataProvider cleanupSlugProvider
      *
+     * @param string $in
+     * @param string $out
+     *
      * @return void
      */
     public function testObjectCleanupSlugPart($in, $out)
@@ -130,6 +134,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($out, $t->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
     }
 
+    /**
+     * @return array
+     */
     public static function limitSlugSizeProvider()
     {
         return [
