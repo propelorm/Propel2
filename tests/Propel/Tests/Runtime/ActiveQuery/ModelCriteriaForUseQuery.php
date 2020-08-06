@@ -13,11 +13,19 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 
 class ModelCriteriaForUseQuery extends ModelCriteria
 {
+    /**
+     * @param string $dbName
+     * @param string $modelName
+     * @param string|null $modelAlias
+     */
     public function __construct($dbName = 'bookstore', $modelName = 'Propel\Tests\Bookstore\Author', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
+    /**
+     * @return \Propel\Tests\Runtime\ActiveQuery\ModelCriteriaForUseQuery
+     */
     public function withNoName()
     {
         return $this

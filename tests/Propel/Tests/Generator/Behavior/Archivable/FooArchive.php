@@ -10,9 +10,24 @@ namespace Propel\Tests\Generator\Behavior\Archivable;
 
 class FooArchive
 {
-    public $id, $title, $age;
+    /**
+     * @var mixed
+     */
+    public $id;
 
     /**
+     * @var mixed
+     */
+    public $title;
+
+    /**
+     * @var mixed
+     */
+    public $age;
+
+    /**
+     * @param mixed $value
+     *
      * @return void
      */
     public function setId($value)
@@ -21,6 +36,8 @@ class FooArchive
     }
 
     /**
+     * @param mixed $value
+     *
      * @return void
      */
     public function setTitle($value)
@@ -29,6 +46,8 @@ class FooArchive
     }
 
     /**
+     * @param mixed $value
+     *
      * @return void
      */
     public function setAge($value)
@@ -36,6 +55,9 @@ class FooArchive
         $this->age = $value;
     }
 
+    /**
+     * @return $this
+     */
     public function save()
     {
         return $this;

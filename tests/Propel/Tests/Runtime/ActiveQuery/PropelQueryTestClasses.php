@@ -10,6 +10,6 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Tests\Bookstore\BookQuery;
 
-class myBookQuery extends BookQuery
+class MyBookQuery extends BookQuery
 {
 }

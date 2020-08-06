@@ -51,7 +51,7 @@ class PropelQueryTest extends BookstoreTestBase
         $this->assertEquals($expected, $q, 'from() sets the model alias if found after the blank');
 
         $q = PropelQuery::from('\Propel\Tests\Runtime\ActiveQuery\myBook');
-        $expected = new myBookQuery();
+        $expected = new MyBookQuery();
         $this->assertEquals($expected, $q, 'from() can find custom query classes');
 
         try {
