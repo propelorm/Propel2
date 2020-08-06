@@ -303,7 +303,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                  * to the query string directly.  If it goes through PDOStatement::bindValue quotes will cause
                  * an error with the insert or update.
                  */
-                if (is_resource($param['value']) && $column->isLob()) {
+                if ($param['value'] !== false && $column->isLob()) {
                     // we always need to make sure that the stream is rewound, otherwise nothing will
                     // get written to database.
                     rewind($param['value']);

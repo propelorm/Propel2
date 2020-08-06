@@ -1046,7 +1046,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (null == \$this->$cloUnserialized && is_resource(\$this->$clo)) {
+        if (null == \$this->$cloUnserialized && \$this->$clo !== false) {
             if (\$serialisedString = stream_get_contents(\$this->$clo)) {
                 \$this->$cloUnserialized = unserialize(\$serialisedString);
             }
@@ -1939,7 +1939,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         // Because BLOB columns are streams in PDO we have to assume that they are
         // always modified when a new value is passed in.  For example, the contents
         // of the stream itself may have changed externally.
-        if (!is_resource(\$v) && \$v !== null) {
+        if (\$v === false) {
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, \$v);
             rewind(\$this->$clo);
@@ -6289,7 +6289,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if ($col->isLobType()) {
                 $script .= "
                 // Rewind the $clo LOB column, since PDO does not rewind after inserting value.
-                if (\$this->$clo !== null && is_resource(\$this->$clo)) {
+                if (\$this->$clo !== null && \$this->$clo !== false) {
                     rewind(\$this->$clo);
                 }
 ";

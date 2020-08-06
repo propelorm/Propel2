@@ -619,7 +619,7 @@ abstract class PdoAdapter
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
-        } elseif (is_resource($value) && $cMap->isLob()) {
+        } elseif ($value !== false && $cMap->isLob()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.
             rewind($value);
