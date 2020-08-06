@@ -171,7 +171,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
-        } elseif ($value !== false && $cMap->isLob()) {
+        } elseif ($value !== null && $value !== false && $cMap->isLob()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
             // get written to database.
             rewind($value);

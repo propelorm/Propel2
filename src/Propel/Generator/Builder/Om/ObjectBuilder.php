@@ -1046,7 +1046,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (null == \$this->$cloUnserialized && \$this->$clo !== false) {
+        if (null == \$this->$cloUnserialized && \$this->$clo !== null && \$this->$clo !== false) {
             if (\$serialisedString = stream_get_contents(\$this->$clo)) {
                 \$this->$cloUnserialized = unserialize(\$serialisedString);
             }
