@@ -235,7 +235,12 @@ class Profiler
     public function getProfileBetween($startSnapshot, $endSnapshot)
     {
         $profile = '';
-
+        
+        // it may happen that $start/$endSnapshot might be undefined when getProfileBetween() is called 
+        // leading to an undefined index error two lines below, this is just a workaround. More investigation is needed
+        if (!isset($endSnapshot['microtime'], $startSnapshot['microtime']))
+            return $profile;
+        
         if ($this->slowTreshold) {
             if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowTreshold) {
                 $profile .= 'SLOW ';
