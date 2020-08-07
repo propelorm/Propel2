@@ -364,18 +364,18 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
         $schema1 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';
         $schema2 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_la1" type="INTEGER" />
-        <column name="bar_la2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_la1" type="INTEGER"/>
+        <column name="bar_la2" type="INTEGER"/>
     </table>
 </database>
 ';
@@ -410,28 +410,28 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
         $schema1 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
     <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';
         $schema2 = '
 <database name="test">
     <table name="foo_bla">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
     <table name="foo_bla2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';

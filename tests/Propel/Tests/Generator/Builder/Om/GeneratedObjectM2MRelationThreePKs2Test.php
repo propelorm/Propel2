@@ -56,13 +56,13 @@ class GeneratedObjectM2MRelationThreePKs2Test extends PlatformDatabaseBuildTimeB
 
         <table name="relationpk_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relationpk_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="type" type="varchar" size="64" primaryKey="true" default="standalone"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>

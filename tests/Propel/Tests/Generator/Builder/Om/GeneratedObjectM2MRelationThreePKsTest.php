@@ -80,17 +80,17 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation2_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation2_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation2_position">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
     </database>
         ';
@@ -667,18 +667,18 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation3_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation3_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation3_relation">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
     </database>
         ';
@@ -745,13 +745,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation4_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation4_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>
@@ -815,13 +815,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation5_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation5_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>
@@ -884,13 +884,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation6_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation6_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>

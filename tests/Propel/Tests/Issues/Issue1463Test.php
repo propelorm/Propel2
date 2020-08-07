@@ -35,8 +35,8 @@ class Issue1463Test extends TestCase
         $schema = <<<END
 <database name="issue_1463">
     <table name="issue_1463_item">
-        <column name="id" type="INTEGER" size="10" sqlType="INT(10) UNSIGNED" primaryKey="true" required="true" autoIncrement="true" />
-        <column name="name" type="VARCHAR" size="32" required="true" />
+        <column name="id" type="INTEGER" size="10" sqlType="INT(10) UNSIGNED" primaryKey="true" required="true" autoIncrement="true"/>
+        <column name="name" type="VARCHAR" size="32" required="true"/>
     </table>
 </database>
 END;

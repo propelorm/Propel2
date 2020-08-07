@@ -28,12 +28,12 @@ class GeneratedObjectBooleanColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_4">
     <table name="complex_column_type_entity_4">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="BOOLEAN" />
-        <column name="true_bar" type="BOOLEAN" defaultValue="true" />
-        <column name="false_bar" type="BOOLEAN" defaultValue="false" />
-        <column name="is_baz" type="BOOLEAN" />
-        <column name="has_xy" type="BOOLEAN" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="BOOLEAN"/>
+        <column name="true_bar" type="BOOLEAN" defaultValue="true"/>
+        <column name="false_bar" type="BOOLEAN" defaultValue="false"/>
+        <column name="is_baz" type="BOOLEAN"/>
+        <column name="has_xy" type="BOOLEAN"/>
     </table>
 </database>
 EOF;

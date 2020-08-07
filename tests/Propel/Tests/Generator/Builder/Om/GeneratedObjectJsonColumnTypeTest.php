@@ -31,7 +31,7 @@ class GeneratedObjectJsonColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_json">
     <table name="complex_column_type_json_entity">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <column name="bar" type="JSON" sqlType="json" default='{"defaultKey":"defaultValue"}'/>
     </table>
 </database>

@@ -274,10 +274,10 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <index>
-            <index-column name="bar" />
+            <index-column name="bar"/>
         </index>
     </table>
 </database>
@@ -303,14 +303,14 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -338,14 +338,14 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar" skipSql="true">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -370,7 +370,7 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -398,7 +398,7 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
             <parameter name="Charset" value="utf8"/>
@@ -881,9 +881,9 @@ CREATE TABLE `bar`
 <database name="test" identifierQuoting="true">
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER"/>
-        <column name="second_id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="third_id" primaryKey="true" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="255" />
+        <column name="second_id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="third_id" primaryKey="true" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="255"/>
     </table>
 </database>
 EOF;
@@ -911,23 +911,23 @@ CREATE TABLE `foo`
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER"/>
         <vendor type="mysql">
-            <parameter name="AutoIncrement" value="100" />
-            <parameter name="AvgRowLength" value="50" />
-            <parameter name="Charset" value="utf8" />
-            <parameter name="Checksum" value="1" />
-            <parameter name="Collate" value="utf8_unicode_ci" />
-            <parameter name="Connection" value="mysql://foo@bar.host:9306/federated/test_table" />
-            <parameter name="DataDirectory" value="/tmp/mysql-foo-table/" />
-            <parameter name="DelayKeyWrite" value="1" />
-            <parameter name="IndexDirectory" value="/tmp/mysql-foo-table-idx/" />
-            <parameter name="InsertMethod" value="LAST" />
-            <parameter name="KeyBlockSize" value="5" />
-            <parameter name="MaxRows" value="5000" />
-            <parameter name="MinRows" value="0" />
-            <parameter name="Pack_Keys" value="DEFAULT" />
-            <parameter name="PackKeys" value="1" />
-            <parameter name="RowFormat" value="COMPRESSED" />
-            <parameter name="Union" value="other_table" />
+            <parameter name="AutoIncrement" value="100"/>
+            <parameter name="AvgRowLength" value="50"/>
+            <parameter name="Charset" value="utf8"/>
+            <parameter name="Checksum" value="1"/>
+            <parameter name="Collate" value="utf8_unicode_ci"/>
+            <parameter name="Connection" value="mysql://foo@bar.host:9306/federated/test_table"/>
+            <parameter name="DataDirectory" value="/tmp/mysql-foo-table/"/>
+            <parameter name="DelayKeyWrite" value="1"/>
+            <parameter name="IndexDirectory" value="/tmp/mysql-foo-table-idx/"/>
+            <parameter name="InsertMethod" value="LAST"/>
+            <parameter name="KeyBlockSize" value="5"/>
+            <parameter name="MaxRows" value="5000"/>
+            <parameter name="MinRows" value="0"/>
+            <parameter name="Pack_Keys" value="DEFAULT"/>
+            <parameter name="PackKeys" value="1"/>
+            <parameter name="RowFormat" value="COMPRESSED"/>
+            <parameter name="Union" value="other_table"/>
         </vendor>
     </table>
 </database>

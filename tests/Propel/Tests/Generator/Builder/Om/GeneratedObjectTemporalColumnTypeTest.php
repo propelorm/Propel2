@@ -33,11 +33,11 @@ class GeneratedObjectTemporalColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_5">
     <table name="complex_column_type_entity_5">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="DATE" />
-        <column name="bar2" type="TIME"  />
-        <column name="bar3" type="TIMESTAMP" />
-        <column name="bar4" type="TIMESTAMP" default="2011-12-09" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="DATE"/>
+        <column name="bar2" type="TIME"/>
+        <column name="bar3" type="TIMESTAMP"/>
+        <column name="bar4" type="TIMESTAMP" default="2011-12-09"/>
     </table>
 </database>
 EOF;
@@ -198,10 +198,10 @@ EOF;
         $schema = <<<EOF
 <database name="generated_object_complex_type_test_6">
 <table name="complex_column_type_entity_6">
-    <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-    <column name="bar1" type="DATE" />
-    <column name="bar2" type="TIME"  />
-    <column name="bar3" type="TIMESTAMP" />
+    <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+    <column name="bar1" type="DATE"/>
+    <column name="bar2" type="TIME"/>
+    <column name="bar3" type="TIMESTAMP"/>
 </table>
 </database>
 EOF;

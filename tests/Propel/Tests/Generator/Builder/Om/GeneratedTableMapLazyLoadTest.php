@@ -27,10 +27,10 @@ class GeneratedTableMapLazyLoadTest extends TestCase
             $schema = <<<EOF
 <database name="lazy_load_active_record_2">
     <table name="lazy_load_active_record_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="VARCHAR" size="100" />
-        <column name="bar" type="VARCHAR" size="100" lazyLoad="true" />
-        <column name="baz" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="VARCHAR" size="100"/>
+        <column name="bar" type="VARCHAR" size="100" lazyLoad="true"/>
+        <column name="baz" type="VARCHAR" size="100"/>
     </table>
 </database>
 EOF;

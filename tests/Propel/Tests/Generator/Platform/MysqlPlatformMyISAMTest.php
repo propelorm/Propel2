@@ -265,10 +265,10 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <index>
-            <index-column name="bar" />
+            <index-column name="bar"/>
         </index>
     </table>
 </database>
@@ -294,14 +294,14 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -326,14 +326,14 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar" skipSql="true">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -358,7 +358,7 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -386,7 +386,7 @@ CREATE TABLE `foo`
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
             <parameter name="Charset" value="utf8"/>

@@ -31,8 +31,8 @@ class GeneratedPKLessQueryBuilderTest extends TestCase
         $schema = <<<SCHEMA
 <database name="primarykey_less_test">
     <table name="stuff">
-        <column name="key" type="VARCHAR" />
-        <column name="value" type="VARCHAR" />
+        <column name="key" type="VARCHAR"/>
+        <column name="value" type="VARCHAR"/>
     </table>
 </database>
 SCHEMA;

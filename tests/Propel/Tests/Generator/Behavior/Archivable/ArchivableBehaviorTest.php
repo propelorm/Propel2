@@ -47,62 +47,62 @@ class ArchivableBehaviorTest extends TestCase
 <database name="archivable_behavior_test_0">
 
     <table name="archivable_test_1">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
+        <column name="foo_id" type="INTEGER"/>
         <foreign-key foreignTable="archivable_test_2">
-            <reference local="foo_id" foreign="id" />
+            <reference local="foo_id" foreign="id"/>
         </foreign-key>
         <index>
-            <index-column name="title" />
-            <index-column name="age" />
+            <index-column name="title"/>
+            <index-column name="age"/>
         </index>
-        <behavior name="archivable" />
+        <behavior name="archivable"/>
     </table>
 
     <table name="archivable_test_2">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="archivable" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="archivable"/>
     </table>
 
     <table name="archivable_test_2_archive">
-        <column name="id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="archivable_test_3">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
+        <column name="foo_id" type="INTEGER"/>
         <unique>
-            <unique-column name="title" />
+            <unique-column name="title"/>
         </unique>
         <behavior name="archivable">
-            <parameter name="log_archived_at" value="false" />
-            <parameter name="archive_table" value="my_old_archivable_test_3" />
-            <parameter name="archive_on_insert" value="true" />
-            <parameter name="archive_on_update" value="true" />
-            <parameter name="archive_on_delete" value="false" />
+            <parameter name="log_archived_at" value="false"/>
+            <parameter name="archive_table" value="my_old_archivable_test_3"/>
+            <parameter name="archive_on_insert" value="true"/>
+            <parameter name="archive_on_update" value="true"/>
+            <parameter name="archive_on_delete" value="false"/>
         </behavior>
     </table>
 
     <table name="archivable_test_4">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
         <behavior name="archivable">
-            <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
+            <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive"/>
         </behavior>
     </table>
 
     <table name="archivable_test_5">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
         <behavior name="archivable">
-            <parameter name="archive_table" value="archivable_test_5_backup" />
-            <parameter name="archive_phpname" value="ArchivableTest5MyBackup" />
+            <parameter name="archive_table" value="archivable_test_5_backup"/>
+            <parameter name="archive_phpname" value="ArchivableTest5MyBackup"/>
         </behavior>
     </table>
 
@@ -230,11 +230,11 @@ EOF;
     {
         $schema = <<<EOF
 <database name="archivable_behavior_test_0">
-    <behavior name="archivable" />
+    <behavior name="archivable"/>
     <table name="archivable_test_01">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="archivable" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="archivable"/>
     </table>
 </database>
 EOF;
@@ -253,9 +253,9 @@ EOF;
         $schema = <<<XML
 <database name="archivable_behavior_test_0" tablePrefix="foo_">
     <table name="bar_prefix_test_1">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="archivable" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="archivable"/>
     </table>
 </database>
 XML;
