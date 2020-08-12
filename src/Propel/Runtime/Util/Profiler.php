@@ -236,6 +236,18 @@ class Profiler
     {
         $profile = '';
 
+        if(is_null($startSnapshot)){
+            $startSnapshot = [];
+        }
+
+        if(!isset($startSnapshot['memoryUsage'])){
+            $startSnapshot['memoryUsage'] = 0;
+        }
+
+        if(!isset($startSnapshot['microtime'])){
+            $startSnapshot['microtime'] = 0;
+        }
+
         if ($this->slowTreshold) {
             if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowTreshold) {
                 $profile .= 'SLOW ';
