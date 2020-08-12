@@ -80,7 +80,7 @@ class PropelTypes
     public const BOOLEAN_EMU_NATIVE_TYPE = 'boolean';
     public const OBJECT_NATIVE_TYPE = '';
     public const PHP_ARRAY_NATIVE_TYPE = 'array';
-    public const ENUM_NATIVE_TYPE = 'int';
+    public const ENUM_NATIVE_TYPE = 'string';
     public const SET_NATIVE_TYPE = 'int';
     public const GEOMETRY_NATIVE_TYPE = 'resource';
     public const JSON_TYPE = 'string';
