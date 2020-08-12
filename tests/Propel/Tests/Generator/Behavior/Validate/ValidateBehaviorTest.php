@@ -1,22 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Validate;
 
-use Propel\Generator\Behavior\Validate\ValidateBehavior;
+use Exception;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Bookstore\Behavior\ValidateAuthor;
 use Propel\Tests\Bookstore\Behavior\ValidateBook;
 use Propel\Tests\Bookstore\Behavior\ValidatePublisher;
 use Propel\Tests\Bookstore\Behavior\ValidateReader;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use ReflectionMethod;
+use ReflectionObject;
 
 /**
  * Tests for ValidateBehavior class
@@ -28,15 +28,20 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 class ValidateBehaviorTest extends BookstoreTestBase
 {
     /**
-     * @private  array   The names of ValidateAuthor, ValidateBook, ValidatePublisher, ValidateReader classes.
+     * @private array The names of ValidateAuthor, ValidateBook, ValidatePublisher, ValidateReader classes.
      *                 This classes are created by test:prepare command
      */
     private $classes;
 
-    public function assertPreConditions()
+    /**
+     * @throws \Exception
+     *
+     * @return void
+     */
+    public function assertPreConditions(): void
     {
         if (!class_exists('Propel\Tests\Bookstore\Behavior\ValidateAuthor')) {
-            throw new \Exception('Please, run \'bin/propel test:prepare\' command before starting to test this behavior');
+            throw new Exception('Please, run \'bin/propel test:prepare\' command before starting to test this behavior');
         }
 
         $this->classes[] = 'Propel\Tests\Bookstore\Behavior\ValidateAuthor';
@@ -46,6 +51,9 @@ class ValidateBehaviorTest extends BookstoreTestBase
         $this->classes[] = 'Propel\Tests\Bookstore\Behavior\ValidateReaderBook';
     }
 
+    /**
+     * @return void
+     */
     public function testHasValidateMethod()
     {
         foreach ($this->classes as $class) {
@@ -53,6 +61,9 @@ class ValidateBehaviorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testHasLoadValidatorMetadataMethod()
     {
         foreach ($this->classes as $class) {
@@ -60,6 +71,9 @@ class ValidateBehaviorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testHasAlreadyInValidationAttribute()
     {
         foreach ($this->classes as $class) {
@@ -67,6 +81,9 @@ class ValidateBehaviorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testHasValidationFailuresAttribute()
     {
         foreach ($this->classes as $class) {
@@ -74,17 +91,22 @@ class ValidateBehaviorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testLoadValidatorMetadataMethodIsStatic()
     {
         foreach ($this->classes as $class) {
-             $method = new \ReflectionMethod($class, 'loadValidatorMetadata');
+             $method = new ReflectionMethod($class, 'loadValidatorMetadata');
              $this->assertTrue($method->isStatic());
         }
     }
 
     /**
-     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  Please, define your rules for validation.
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Please, define your rules for validation.
+     *
+     * @return void
      */
     public function testParametersNotDefined()
     {
@@ -101,8 +123,10 @@ EOF;
     }
 
     /**
-     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  Please, define the column to validate.
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Please, define the column to validate.
+     *
+     * @return void
      */
     public function testColumnNameNotDefined()
     {
@@ -122,8 +146,10 @@ EOF;
     }
 
     /**
-     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  Please, define the validator constraint.
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Please, define the validator constraint.
+     *
+     * @return void
      */
     public function testValidatorNameNotDefined()
     {
@@ -143,8 +169,10 @@ EOF;
     }
 
     /**
-     * @expectedException  Propel\Generator\Exception\ConstraintNotFoundException
-     * @expectedExceptionMessage  The constraint class MaximumLength does not exist.
+     * @expectedException \Propel\Generator\Exception\ConstraintNotFoundException
+     * @expectedExceptionMessage The constraint class MaximumLength does not exist.
+     *
+     * @return void
      */
     public function testConstraintNameNotValid()
     {
@@ -164,8 +192,10 @@ EOF;
     }
 
     /**
-     * @expectedException  Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage  The options value, in <parameter> tag must be an array
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
+     * @expectedExceptionMessage The options value, in <parameter> tag must be an array
+     *
+     * @return void
      */
     public function testConstraintOptionsNotValid()
     {
@@ -184,6 +214,9 @@ EOF;
         QuickBuilder::buildSchema($schema);
     }
 
+    /**
+     * @return void
+     */
     public function testSimpleValidationSuccess()
     {
         $author = new ValidateAuthor();
@@ -197,6 +230,9 @@ EOF;
         $this->assertTrue($res, 'Expected validation is successful');
     }
 
+    /**
+     * @return void
+     */
     public function testComplexValidationSuccess()
     {
         $author = new ValidateAuthor();
@@ -233,55 +269,64 @@ EOF;
         $this->assertTrue($res, 'Expected validation is successful');
     }
 
+    /**
+     * @return void
+     */
     public function testSingleValidationFailure()
     {
-       $reader = new ValidateReader();
-       $reader->setId(14);
-       $reader->setFirstName('Felicity');
-       $reader->setLastName('Stamm');
-       $reader->setEmail('f.stamm@'); //failure
-       $reader->setBirthday('1989-07-24');
+        $reader = new ValidateReader();
+        $reader->setId(14);
+        $reader->setFirstName('Felicity');
+        $reader->setLastName('Stamm');
+        $reader->setEmail('f.stamm@'); //failure
+        $reader->setBirthday('1989-07-24');
 
-       $res = $reader->validate();
+        $res = $reader->validate();
 
-       $this->assertFalse($res, 'This validation expected to fail');
+        $this->assertFalse($res, 'This validation expected to fail');
 
-       $failures = $reader->getValidationFailures();
+        $failures = $reader->getValidationFailures();
 
-       $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-       $this->assertEquals(1, count($failures), 'Only one constraint violation object');
+        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
+        $this->assertEquals(1, count($failures), 'Only one constraint violation object');
 
-       $failure = $failures[0];
-       $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
-       $this->assertEquals('email', $failure->getPropertyPath(), 'email property expected to fail');
+        $failure = $failures[0];
+        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
+        $this->assertEquals('email', $failure->getPropertyPath(), 'email property expected to fail');
     }
 
+    /**
+     * @return void
+     */
     public function testMultipleValidationFailures()
     {
-       $reader = new ValidateReader();
-       $reader->setId(18);
-       $reader->setFirstName('Bo'); //failure: less than 4 chars
-       $reader->setLastName(null); //failure
-       $reader->setEmail('zora.null@'); //failure
-       $reader->setBirthday('1983-09-22');
+        $reader = new ValidateReader();
+        $reader->setId(18);
+        $reader->setFirstName('Bo'); //failure: less than 4 chars
+        $reader->setLastName(null); //failure
+        $reader->setEmail('zora.null@'); //failure
+        $reader->setBirthday('1983-09-22');
 
-       $failedProperties = ['last_name', 'first_name', 'email'];
+        $failedProperties = ['last_name', 'first_name', 'email'];
 
-       $res = $reader->validate();
+        $res = $reader->validate();
 
-       $this->assertFalse($res, 'This validation expected to fail');
+        $this->assertFalse($res, 'This validation expected to fail');
 
-       $failures = $reader->getValidationFailures();
+        $failures = $reader->getValidationFailures();
 
-       $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
-       $this->assertEquals(3, count($failures), 'Three constraint violation objects expected');
+        $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolationList', $failures);
+        $this->assertEquals(3, count($failures), 'Three constraint violation objects expected');
 
-       foreach ($failures as $failure) {
-           $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
-           $this->assertTrue(in_array($failure->getPropertyPath(), $failedProperties));
-       }
+        foreach ($failures as $failure) {
+            $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
+            $this->assertTrue(in_array($failure->getPropertyPath(), $failedProperties));
+        }
     }
 
+    /**
+     * @return void
+     */
     public function testComplexValidationSingleFailure()
     {
         $author = new ValidateAuthor();
@@ -324,6 +369,9 @@ EOF;
         $this->assertEquals('title', $failure->getPropertyPath(), 'title property expected to fail');
     }
 
+    /**
+     * @return void
+     */
     public function testComplexValidationRelatedObjectsSingleFailure()
     {
         $author = new ValidateAuthor();
@@ -364,21 +412,24 @@ EOF;
         $failure = $failures[0];
         $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
 
-        $failObject = new \ReflectionObject($failure->getRoot());
+        $failObject = new ReflectionObject($failure->getRoot());
 
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ValidatePublisher', $failObject->getName(), 'Instance of ValidatePublisher expected to fail');
         $this->assertEquals('website', $failure->getPropertyPath(), 'website property expected to fail');
     }
 
+    /**
+     * @return void
+     */
     public function testComplexValidationMultipleFailures()
     {
         //Array of expected failures. key: property failed, value: Class in wich the property has failed
         $failedProperties = [
             'first_name' => 'Propel\Tests\Bookstore\Behavior\ValidateAuthor',
-            'website'    => 'Propel\Tests\Bookstore\Behavior\ValidatePublisher',
-            'title'      => 'Propel\Tests\Bookstore\Behavior\ValidateBook',
-            'email'      => 'Propel\Tests\Bookstore\Behavior\ValidateReader',
-            'last_name'  => 'Propel\Tests\Bookstore\Behavior\ValidateReader'
+            'website' => 'Propel\Tests\Bookstore\Behavior\ValidatePublisher',
+            'title' => 'Propel\Tests\Bookstore\Behavior\ValidateBook',
+            'email' => 'Propel\Tests\Bookstore\Behavior\ValidateReader',
+            'last_name' => 'Propel\Tests\Bookstore\Behavior\ValidateReader',
         ];
 
         $author = new ValidateAuthor();
@@ -398,7 +449,7 @@ EOF;
         $book->setValidateAuthor($author);
         $book->setValidatePublisher($publisher);
         $book->setTitle(null); //failed
-        $book->setPrice(12,90);
+        $book->setPrice(12, 90);
 
         $reader1 = new ValidateReader();
         $reader1->setId(1);
@@ -428,11 +479,10 @@ EOF;
         foreach ($failures as $failure) {
             $this->assertInstanceOf('Symfony\Component\Validator\ConstraintViolation', $failure);
 
-            $failObject = new \ReflectionObject($failure->getRoot());
+            $failObject = new ReflectionObject($failure->getRoot());
 
             $this->assertTrue(in_array($failure->getPropertyPath(), array_keys($failedProperties)));
             $this->assertEquals($failedProperties[$failure->getPropertyPath()], $failObject->getName());
         }
     }
-
 }

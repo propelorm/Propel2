@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
@@ -36,6 +34,8 @@ EOF;
 
     /**
      * @dataProvider basicSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumn($schema)
     {
@@ -59,6 +59,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsVersionColumnCustomName()
     {
             $schema = <<<EOF
@@ -92,6 +95,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableDoesNotAddVersionColumnIfExists()
     {
             $schema = <<<EOF
@@ -150,6 +156,8 @@ EOF;
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
     {
@@ -199,6 +207,8 @@ EOF;
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
     {
@@ -246,6 +256,8 @@ EOF;
 
     /**
      * @dataProvider basicSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionTable($schema)
     {
@@ -272,6 +284,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsVersionTableCustomName()
     {
         $schema = <<<EOF
@@ -308,6 +323,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableDoesNotAddVersionTableIfExists()
     {
         $schema = <<<EOF
@@ -379,6 +397,8 @@ EOF;
 
     /**
      * @dataProvider logSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsLogColumns($schema)
     {
@@ -407,6 +427,8 @@ EOF;
 
     /**
      * @dataProvider logSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionTableLogColumns($schema)
     {
@@ -436,6 +458,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testDatabaseLevelBehavior()
     {
         $schema = <<<EOF
@@ -470,6 +495,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testIndicesParameter()
     {
         $schema = <<<EOF
@@ -505,6 +533,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testSkipSqlParameterOnParentTable()
     {
         $schema = <<<EOF
@@ -523,7 +554,8 @@ EOF;
         $this->assertEmpty($builder->getSQL());
     }
 
-    public function tablePrefixSchemaDataProvider() {
+    public function tablePrefixSchemaDataProvider()
+    {
         $schema = <<<XML
 <database name="versionable_behavior_test_0" tablePrefix="prefix_">
     <table name="versionable_behavior_test_0">
@@ -533,16 +565,17 @@ EOF;
     </table>
 </database>
 XML;
+
         return [[$schema]];
     }
 
-
     /**
      * @dataProvider tablePrefixSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnWithPrefix($schema)
     {
-
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
@@ -562,11 +595,14 @@ CREATE TABLE prefix_versionable_behavior_test_0
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
+
     /**
      * @dataProvider tablePrefixSchemaDataProvider
+     *
+     * @return void
      */
-    public function testModifyTableAddsVersionTableWithPrefix($schema) {
-
+    public function testModifyTableAddsVersionTableWithPrefix($schema)
+    {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
@@ -589,5 +625,4 @@ CREATE TABLE prefix_versionable_behavior_test_0_version
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
-
 }

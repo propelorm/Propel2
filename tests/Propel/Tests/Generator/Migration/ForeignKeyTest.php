@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Migration;
 
 /**
@@ -7,7 +13,9 @@ namespace Propel\Tests\Generator\Migration;
  */
 class ForeignKeyTest extends MigrationTestCase
 {
-
+    /**
+     * @return void
+     */
     public function testAdd()
     {
         $originXml = '
@@ -43,6 +51,9 @@ class ForeignKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testAddNotUnique()
     {
         $originXml = '
@@ -74,6 +85,9 @@ class ForeignKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testRemove()
     {
         $originXml = '
@@ -109,6 +123,9 @@ class ForeignKeyTest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChange()
     {
         $originXml = '
@@ -148,5 +165,4 @@ class ForeignKeyTest extends MigrationTestCase
 ';
         $this->migrateAndTest($originXml, $targetXml);
     }
-
 }

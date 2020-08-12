@@ -1,22 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
 namespace Propel\Tests\Generator\Builder\Om;
 
 use MyNameSpace\ComplexColumnTypeEntity2;
 use MyNameSpace\ComplexColumnTypeEntity2Query;
-use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
 use MyNameSpace\ComplexColumnTypeEntityWithConstructorQuery;
-
+use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Propel;
 use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
 use Propel\Tests\TestCase;
 
@@ -27,7 +25,10 @@ use Propel\Tests\TestCase;
  */
 class GeneratedObjectArrayColumnTypeTest extends TestCase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         if (!class_exists('MyNameSpace\\ComplexColumnTypeEntity2')) {
             $schema = <<<EOF
@@ -47,6 +48,9 @@ EOF;
         ComplexColumnTypeEntity2TableMap::doDeleteAll();
     }
 
+    /**
+     * @return void
+     */
     public function testActiveRecordMethods()
     {
         $this->assertTrue(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'getTags'));
@@ -62,24 +66,36 @@ EOF;
         $this->assertFalse(method_exists('MyNameSpace\ComplexColumnTypeEntity2', 'removeValueSet'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetterDefaultValue()
     {
         $e = new ComplexColumnTypeEntity2();
         $this->assertEquals([], $e->getTags(), 'array columns return an empty array by default');
     }
 
+    /**
+     * @return void
+     */
     public function testGetterDefaultValueWithData()
     {
         $e = new ComplexColumnTypeEntity2();
         $this->assertEquals(['FOO'], $e->getDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testGetterDefaultValueWithMultipleData()
     {
         $e = new ComplexColumnTypeEntity2();
         $this->assertEquals(['FOO', 'BAR', 'BAZ'], $e->getMultipleDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testAdderAddsNewValueToExistingData()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -88,6 +104,9 @@ EOF;
         $this->assertEquals(['FOO', 'bar'], $e->getDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testAdderAddsNewValueToMultipleExistingData()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -96,6 +115,9 @@ EOF;
         $this->assertEquals(['FOO', 'BAR', 'BAZ', 'bar'], $e->getMultipleDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultValuesAreWellPersisted()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -107,6 +129,9 @@ EOF;
         $this->assertEquals(['FOO'], $e->getDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testMultipleDefaultValuesAreWellPersisted()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -118,6 +143,9 @@ EOF;
         $this->assertEquals(['FOO', 'BAR', 'BAZ'], $e->getMultipleDefaults());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterArrayValue()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -126,6 +154,9 @@ EOF;
         $this->assertEquals($value, $e->getTags(), 'array columns can store arrays');
     }
 
+    /**
+     * @return void
+     */
     public function testGetterForArrayWithOnlyOneZeroValue()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -134,6 +165,9 @@ EOF;
         $this->assertEquals($value, $e->getTags());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterResetValue()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -143,6 +177,9 @@ EOF;
         $this->assertEquals([], $e->getTags(), 'object columns can be reset');
     }
 
+    /**
+     * @return void
+     */
     public function testTester()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -156,6 +193,9 @@ EOF;
         $this->assertFalse($e->hasTag(12));
     }
 
+    /**
+     * @return void
+     */
     public function testAdder()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -170,6 +210,9 @@ EOF;
         $this->assertEquals([12, 34, 'foo'], $e->getTags());
     }
 
+    /**
+     * @return void
+     */
     public function testRemover()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -187,6 +230,9 @@ EOF;
         $this->assertEquals([12, 34], $e->getTags());
     }
 
+    /**
+     * @return void
+     */
     public function testValueIsPersisted()
     {
         $e = new ComplexColumnTypeEntity2();
@@ -198,16 +244,19 @@ EOF;
         $this->assertEquals($value, $e->getTags(), 'array columns are persisted');
     }
 
+    /**
+     * @return void
+     */
     public function testGetterDoesNotKeepValueBetweenTwoHydrationsWhenUsingOnDemandFormatter()
     {
         ComplexColumnTypeEntity2Query::create()->deleteAll();
 
         $e = new ComplexColumnTypeEntity2();
-        $e->setTags([1,2]);
+        $e->setTags([1, 2]);
         $e->save();
 
         $e = new ComplexColumnTypeEntity2();
-        $e->setTags([3,4]);
+        $e->setTags([3, 4]);
         $e->save();
 
         $q = ComplexColumnTypeEntity2Query::create()
@@ -221,6 +270,9 @@ EOF;
         $this->assertNotEquals($tags[0], $tags[1]);
     }
 
+    /**
+     * @return void
+     */
     public function testHydrateOverwritePreviousValues()
     {
         $schema = <<<EOF

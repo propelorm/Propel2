@@ -1,18 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Tests\Bookstore\Behavior\SortableTable13Query;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable13TableMap;
-use Propel\Tests\Bookstore\Behavior\SortableTable13 as Table13;
 
 /**
  * Tests for SortableBehavior class
@@ -23,13 +19,19 @@ use Propel\Tests\Bookstore\Behavior\SortableTable13 as Table13;
  */
 class SortableBehaviorWithEnumScopeTest extends TestCase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->populateTable13();
     }
 
+    /**
+     * @return void
+     */
     public function testEnumRank()
     {
         $entries = SortableTable13Query::create()->find();

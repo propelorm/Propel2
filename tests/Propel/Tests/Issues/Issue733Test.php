@@ -1,20 +1,29 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
+use Issue733Test1;
+use Issue733Test2;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
-
 
 /**
  * This test proves the bug described in https://github.com/propelorm/Propel2/issues/733.
  *
  * @group database
- */ 
+ */
 class Issue733Test extends TestCase
 {
-
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         if (!class_exists('\Issue733Test1')) {
             $schema = <<<EOF
@@ -27,7 +36,7 @@ class Issue733Test extends TestCase
             <parameter name="i18n_columns" value="bar" />
             <parameter name="locale_column" value="language" />
         </behavior>
-    </table>   
+    </table>
     <table name="issue_733_test_2">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="foo" type="INTEGER" />
@@ -44,10 +53,12 @@ EOF;
         }
     }
 
-
+    /**
+     * @return void
+     */
     public function testGetColumnTranslation()
     {
-        $o = new \Issue733Test1();
+        $o = new Issue733Test1();
 
         // name of the column set in locale_column parameter
         $o->setLanguage('cs_CZ');
@@ -57,10 +68,12 @@ EOF;
         $this->assertEquals($o->getBar(), 'test');
     }
 
-
+    /**
+     * @return void
+     */
     public function testGetColumnTranslationWithAlias()
     {
-        $o = new \Issue733Test2();
+        $o = new Issue733Test2();
 
         // name of the column set in locale_alias
         // before the fix, this would throw an exception
@@ -71,7 +84,5 @@ EOF;
 
         // before the fix, this would throw an exception
         $this->assertEquals($o->getCulture(), $o->getLanguage());
-
     }
-
 }

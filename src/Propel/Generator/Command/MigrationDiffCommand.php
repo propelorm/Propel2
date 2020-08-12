@@ -1,26 +1,24 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
 use Propel\Common\Config\ConfigurationManager;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
 use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Schema;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\Output;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -28,34 +26,35 @@ use Propel\Generator\Model\Schema;
 class MigrationDiffCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->addOption('schema-dir',         null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
-            ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located')
-            ->addOption('migration-table',    null, InputOption::VALUE_REQUIRED,  'Migration table name', null)
-            ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', [])
-            ->addOption('table-renaming',     null, InputOption::VALUE_NONE,      'Detect table renaming', null)
-            ->addOption('editor',             null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
-            ->addOption('skip-removed-table', null, InputOption::VALUE_NONE,      'Option to skip removed table from the migration')
-            ->addOption('skip-tables',        null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'List of excluded tables', [])
+            ->addOption('schema-dir', null, InputOption::VALUE_REQUIRED, 'The directory where the schema files are placed')
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory where the migration files are located')
+            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name', null)
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', [])
+            ->addOption('table-renaming', null, InputOption::VALUE_NONE, 'Detect table renaming', null)
+            ->addOption('editor', null, InputOption::VALUE_OPTIONAL, 'The text editor to use to open diff files', null)
+            ->addOption('skip-removed-table', null, InputOption::VALUE_NONE, 'Option to skip removed table from the migration')
+            ->addOption('skip-tables', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'List of excluded tables', [])
             ->addOption('disable-identifier-quoting', null, InputOption::VALUE_NONE, 'Disable identifier quoting in SQL queries for reversed database tables.')
-            ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
-            ->addOption('suffix',             null, InputOption::VALUE_OPTIONAL,  'A suffix for the migration class', '')
+            ->addOption('comment', 'm', InputOption::VALUE_OPTIONAL, 'A comment for the migration', '')
+            ->addOption('suffix', null, InputOption::VALUE_OPTIONAL, 'A suffix for the migration class', '')
             ->setName('migration:diff')
             ->setAliases(['diff'])
-            ->setDescription('Generate diff classes')
-            ;
+            ->setDescription('Generate diff classes');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
+     *
+     * @throws \Propel\Generator\Exception\RuntimeException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configOptions = [];
 
@@ -91,7 +90,7 @@ class MigrationDiffCommand extends AbstractCommand
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
-                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                [$name, $dsn, $infos] = $this->parseConnection($connection);
                 $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
@@ -108,9 +107,9 @@ class MigrationDiffCommand extends AbstractCommand
         $reversedSchema = new Schema();
 
         foreach ($manager->getDatabases() as $appDatabase) {
-
             $name = $appDatabase->getName();
-            if (!$params = @$connections[$name]) {
+            $params = $connections[$name] ?? [];
+            if (!$params) {
                 $output->writeln(sprintf('<info>No connection configured for database "%s"</info>', $name));
             }
 
@@ -118,11 +117,12 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('Connecting to database "%s" using DSN "%s"', $name, $params['dsn']));
             }
 
-            $conn     = $manager->getAdapterConnection($name);
+            $conn = $manager->getAdapterConnection($name);
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
 
-            if (!$platform->supportsMigrations()) {
+            if ($platform && !$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
+
                 continue;
             }
 
@@ -142,7 +142,7 @@ class MigrationDiffCommand extends AbstractCommand
             $database->setSchema($appDatabase->getSchema());
             $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-            $parser   = $generatorConfig->getConfiguredSchemaParser($conn, $name);
+            $parser = $generatorConfig->getConfiguredSchemaParser($conn, $name);
             $nbTables = $parser->parse($database, $additionalTables);
 
             $reversedSchema->addDatabase($database);
@@ -163,13 +163,13 @@ class MigrationDiffCommand extends AbstractCommand
         $output->writeln('Comparing models...');
         $tableRenaming = $input->getOption('table-renaming');
 
-        $migrationsUp   = [];
+        $migrationsUp = [];
         $migrationsDown = [];
         $removeTable = !$input->getOption('skip-removed-table');
         $excludedTables = $input->getOption('skip-tables');
         $configManager = new ConfigurationManager($input->getOption('config-dir'));
-        $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
-        
+        $excludedTables = array_merge((array)$excludedTables, (array)$configManager->getSection('exclude_tables'));
+
         foreach ($reversedSchema->getDatabases() as $database) {
             $name = $database->getName();
 
@@ -179,6 +179,7 @@ class MigrationDiffCommand extends AbstractCommand
 
             if (!$appDataDatabase = $manager->getDatabase($name)) {
                 $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
+
                 continue;
             }
 
@@ -188,6 +189,7 @@ class MigrationDiffCommand extends AbstractCommand
                 if ($input->getOption('verbose')) {
                     $output->writeln(sprintf('Same XML and database structures for datasource "%s" - no diff to generate', $name));
                 }
+
                 continue;
             }
 
@@ -196,27 +198,29 @@ class MigrationDiffCommand extends AbstractCommand
             foreach ($databaseDiff->getPossibleRenamedTables() as $fromTableName => $toTableName) {
                 $output->writeln(sprintf(
                     '<info>Possible table renaming detected: "%s" to "%s". It will be deleted and recreated. Use --table-renaming to only rename it.</info>',
-                        $fromTableName, $toTableName
+                    $fromTableName,
+                    $toTableName
                 ));
             }
 
-            $conn     = $manager->getAdapterConnection($name);
+            $conn = $manager->getAdapterConnection($name);
+            /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
             if ($input->getOption('disable-identifier-quoting')) {
                 $platform->setIdentifierQuoting(false);
             }
-            $migrationsUp[$name]    = $platform->getModifyDatabaseDDL($databaseDiff);
-            $migrationsDown[$name]  = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
+            $migrationsUp[$name] = $platform->getModifyDatabaseDDL($databaseDiff);
+            $migrationsDown[$name] = $platform->getModifyDatabaseDDL($databaseDiff->getReverseDiff());
         }
 
         if (!$migrationsUp) {
             $output->writeln('Same XML and database structures for all datasource - no diff to generate');
 
-            return;
+            return static::CODE_SUCCESS;
         }
 
         $timestamp = time();
-        $migrationFileName  = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
+        $migrationFileName = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
         $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'), $input->getOption('suffix'));
 
         $file = $generatorConfig->getSection('paths')['migrationDir'] . DIRECTORY_SEPARATOR . $migrationFileName;
@@ -231,6 +235,7 @@ class MigrationDiffCommand extends AbstractCommand
             $output->writeln('Please review the generated SQL statements, and add data migration code if necessary.');
             $output->writeln('Once the migration class is valid, call the "migrate" task to execute it.');
         }
-    }
 
+        return static::CODE_SUCCESS;
+    }
 }

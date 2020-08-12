@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Runtime\DataFetcher;
 
 use Propel\Runtime\Map\TableMap;
@@ -17,25 +23,25 @@ class ArrayDataFetcher extends AbstractDataFetcher
     protected $indexType = TableMap::TYPE_PHPNAME;
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
     public function next()
     {
-        if (null !== $this->dataObject) {
+        if ($this->dataObject !== null) {
             next($this->dataObject);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function current()
     {
-        return null === $this->dataObject ? null : current($this->dataObject);
+        return $this->dataObject === null ? null : current($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetch()
     {
@@ -46,31 +52,35 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function key()
     {
-        return null === $this->dataObject ? null : key($this->dataObject);
+        return $this->dataObject === null ? null : key($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function valid()
     {
-        return (null !== $this->dataObject && null !== key($this->dataObject));
+        return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
     public function rewind()
     {
-        return null === $this->dataObject ? null : reset($this->dataObject);
+        if ($this->dataObject === null) {
+            return;
+        }
+
+        reset($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getIndexType()
     {
@@ -78,17 +88,19 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function count()
     {
-        return null === $this->dataObject ? null : count($this->dataObject);
+        return $this->dataObject === null ? null : count($this->dataObject);
     }
 
     /**
      * Sets the current index type.
      *
      * @param string $indexType one of TableMap::TYPE_*
+     *
+     * @return void
      */
     public function setIndexType($indexType)
     {
@@ -96,7 +108,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
     public function close()
     {

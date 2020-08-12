@@ -1,34 +1,36 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixtures;
 
 /**
- * Test class for PHP5TableMapBuilder.
- *
  * @author François Zaninotto
  */
 class GeneratedRelationMapTest extends TestCaseFixtures
 {
     protected $databaseMap;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
     }
 
+    /**
+     * @return void
+     */
     public function testGetRightTable()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -41,6 +43,9 @@ class GeneratedRelationMapTest extends TestCaseFixtures
         $this->assertEquals($bookEmpTable, $bookEmpAccTable->getRelation('BookstoreEmployee')->getRightTable(), 'getRightTable() returns correct table when called on a one to one relationship');
     }
 
+    /**
+     * @return void
+     */
     public function testColumnMappings()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -56,6 +61,9 @@ class GeneratedRelationMapTest extends TestCaseFixtures
         $this->assertEquals(['bookstore_employee.id' => 'bookstore_employee_account.employee_id'], $bookEmpTable->getRelation('BookstoreEmployeeAccount')->getColumnMappings(RelationMap::LEFT_TO_RIGHT), 'getColumnMappings returns foreign to local when asked left to right for a one to one relationship');
     }
 
+    /**
+     * @return void
+     */
     public function testCountColumnMappings()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -65,6 +73,9 @@ class GeneratedRelationMapTest extends TestCaseFixtures
         $this->assertEquals(2, $rfTable->getRelation('BookOpinion')->countColumnMappings());
     }
 
+    /**
+     * @return void
+     */
     public function testIsComposite()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -73,5 +84,4 @@ class GeneratedRelationMapTest extends TestCaseFixtures
         $rfTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\ReaderFavorite');
         $this->assertTrue($rfTable->getRelation('BookOpinion')->isComposite());
     }
-
 }

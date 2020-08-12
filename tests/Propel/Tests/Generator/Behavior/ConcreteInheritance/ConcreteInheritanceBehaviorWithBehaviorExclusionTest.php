@@ -1,17 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior;
 
 use ConcreteInheritanceBehaviorWithBehaviorExclusionTest\Map\ConcreteInheritanceChildTableMap;
-
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 
@@ -22,7 +19,10 @@ use Propel\Tests\TestCase;
  */
 class ConcreteInheritanceBehaviorWithBehaviorExclusionTest extends TestCase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -56,11 +56,13 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testParentBehaviorExclusion()
     {
         $behaviors = ConcreteInheritanceChildTableMap::getTableMap()->getBehaviors();
         $this->assertFalse(array_key_exists('sluggable', $behaviors), '');
         $this->assertTrue(array_key_exists('timestampable', $behaviors), '');
     }
-
 }

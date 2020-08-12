@@ -156,7 +156,7 @@
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|<?php echo $className ?> The current object, for fluid interface
+     * @return $this The current object, for fluid interface
      */
     public function setVirtualColumn(string $name, $value)
     {
@@ -170,11 +170,11 @@
      *
      * @param  string  $msg
      * @param  int     $priority One of the Propel::LOG_* logging levels
-     * @return boolean
+     * @return void
      */
     protected function log(string $msg, int $priority = Propel::LOG_INFO): bool
     {
-        return Propel::log(get_class($this) . ': ' . $msg, $priority);
+        Propel::log(get_class($this) . ': ' . $msg, $priority);
     }
 
     /**
@@ -209,10 +209,10 @@
         $cls = new \ReflectionClass($this);
         $propertyNames = [];
         $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
-        
+
         foreach($serializableProperties as $property) {
             $propertyNames[] = $property->getName();
         }
-        
+
         return $propertyNames;
     }

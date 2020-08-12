@@ -1,19 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use ComplexColumnTypeEntity3;
+use ComplexColumnTypeEntity3Query;
+use Map\ComplexColumnTypeEntity3TableMap;
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
+use PublicComplexColumnTypeEntity3;
 
 /**
  * Tests the generated objects for enum column types accessor & mutator
@@ -22,7 +22,10 @@ use Propel\Tests\TestCase;
  */
 class GeneratedObjectEnumColumnTypeTest extends TestCase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity3')) {
             $schema = <<<EOF
@@ -46,12 +49,15 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetter()
     {
         $this->assertTrue(method_exists('ComplexColumnTypeEntity3', 'getBar'));
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new ComplexColumnTypeEntity3();
         $this->assertNull($e->getBar());
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new PublicComplexColumnTypeEntity3();
         $e->bar = 0;
         $this->assertEquals('foo', $e->getBar());
         $e->bar = 3;
@@ -62,24 +68,32 @@ EOF;
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new PublicComplexColumnTypeEntity3();
         $e->bar = 156;
         $e->getBar();
     }
 
+    /**
+     * @return void
+     */
     public function testGetterDefaultValue()
     {
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new PublicComplexColumnTypeEntity3();
         $this->assertEquals('bar', $e->getBar2());
     }
 
+    /**
+     * @return void
+     */
     public function testSetter()
     {
         $this->assertTrue(method_exists('\ComplexColumnTypeEntity3', 'setBar'));
-        $e = new \PublicComplexColumnTypeEntity3();
+        $e = new PublicComplexColumnTypeEntity3();
         $e->setBar('foo');
         $this->assertEquals(0, $e->bar);
         $e->setBar(1);
@@ -92,38 +106,48 @@ EOF;
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new ComplexColumnTypeEntity3();
         $e->setBar('bazz');
     }
 
+    /**
+     * @return void
+     */
     public function testValueIsPersisted()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new ComplexColumnTypeEntity3();
         $e->setBar('baz');
         $e->save();
-        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
-        $e = \ComplexColumnTypeEntity3Query::create()->findOne();
+        ComplexColumnTypeEntity3TableMap::clearInstancePool();
+        $e = ComplexColumnTypeEntity3Query::create()->findOne();
         $this->assertEquals('baz', $e->getBar());
     }
 
+    /**
+     * @return void
+     */
     public function testValueIsCopied()
     {
-        $e1 = new \ComplexColumnTypeEntity3();
+        $e1 = new ComplexColumnTypeEntity3();
         $e1->setBar('baz');
-        $e2 = new \ComplexColumnTypeEntity3();
+        $e2 = new ComplexColumnTypeEntity3();
         $e1->copyInto($e2);
         $this->assertEquals('baz', $e2->getBar());
     }
 
     /**
      * @see https://github.com/propelorm/Propel/issues/139
+     *
+     * @return void
      */
     public function testSetterWithSameValueDoesNotUpdateObject()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new ComplexColumnTypeEntity3();
         $e->setBar('baz');
         $e->resetModified();
         $e->setBar('baz');
@@ -132,15 +156,17 @@ EOF;
 
     /**
      * @see https://github.com/propelorm/Propel/issues/139
+     *
+     * @return void
      */
     public function testSetterWithSameValueDoesNotUpdateHydratedObject()
     {
-        $e = new \ComplexColumnTypeEntity3();
+        $e = new ComplexColumnTypeEntity3();
         $e->setBar('baz');
         $e->save();
         // force hydration
-        \Map\ComplexColumnTypeEntity3TableMap::clearInstancePool();
-        $e = \ComplexColumnTypeEntity3Query::create()->findPk($e->getPrimaryKey());
+        ComplexColumnTypeEntity3TableMap::clearInstancePool();
+        $e = ComplexColumnTypeEntity3Query::create()->findPk($e->getPrimaryKey());
         $e->setBar('baz');
         $this->assertFalse($e->isModified());
     }

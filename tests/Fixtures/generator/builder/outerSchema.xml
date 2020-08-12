@@ -3,5 +3,5 @@
     <table name="bar1">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
-    <external-schema filename="./innerSchema.xml" />
+    <external-schema filename="./innerSchema.xml"/>
 </database>

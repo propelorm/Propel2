@@ -1,26 +1,23 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
+use Propel\Runtime\Propel;
 use Propel\Tests\BookstoreSchemas\Bookstore;
 use Propel\Tests\BookstoreSchemas\BookstoreContest;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntry;
 use Propel\Tests\BookstoreSchemas\BookstoreContestEntryQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreContestQuery;
 use Propel\Tests\BookstoreSchemas\BookstoreQuery;
-use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\BookstoreSchemas\Customer;
 use Propel\Tests\BookstoreSchemas\CustomerQuery;
-
-use Propel\Runtime\Propel;
+use Propel\Tests\BookstoreSchemas\Map\BookstoreTableMap;
 use Propel\Tests\TestCaseFixturesDatabase;
 
 /**
@@ -32,6 +29,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
 {
+    /**
+     * @return void
+     */
     public function testParametersWithSchema()
     {
         $storeTable = BookstoreTableMap::getTableMap();
@@ -39,6 +39,9 @@ class AggregateColumnBehaviorWithSchemaTest extends TestCaseFixturesDatabase
         $this->assertTrue(method_exists('Propel\Tests\BookstoreSchemas\Bookstore', 'getTotalContestEntries'));
     }
 
+    /**
+     * @return void
+     */
     public function testComputeWithSchema()
     {
         $con = Propel::getServiceContainer()->getConnection(BookstoreTableMap::DATABASE_NAME);

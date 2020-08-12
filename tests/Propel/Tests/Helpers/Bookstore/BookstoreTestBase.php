@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Helpers\Bookstore;
@@ -20,20 +18,23 @@ use Propel\Tests\TestCaseFixturesDatabase;
 abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 {
     /**
-     * @var Boolean
+     * @var bool
      */
     protected static $isInitialized = false;
+
     /**
-     * @var \PDO
+     * @var \PDO|\Propel\Runtime\Connection\ConnectionWrapper
      */
     protected $con;
 
     /**
      * This is run before each unit test; it populates the database.
+     *
+     * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-	    parent::setUp();
+        parent::setUp();
         if (true !== self::$isInitialized) {
             $file = __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
             if (!file_exists($file)) {
@@ -48,8 +49,10 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
 
     /**
      * This is run after each unit test. It empties the database.
+     *
+     * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // Only commit if the transaction hasn't failed.
         // This is because tearDown() is also executed on a failed tests,
@@ -64,7 +67,10 @@ abstract class BookstoreTestBase extends TestCaseFixturesDatabase
         }
     }
 
-    public static function tearDownAfterClass()
+    /**
+     * @return void
+     */
+    public static function tearDownAfterClass(): void
     {
         Propel::getServiceContainer()->closeConnections();
     }

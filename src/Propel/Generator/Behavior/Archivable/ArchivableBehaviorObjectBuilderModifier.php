@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Archivable;
@@ -17,22 +15,43 @@ namespace Propel\Generator\Behavior\Archivable;
  */
 class ArchivableBehaviorObjectBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Archivable\ArchivableBehavior
+     */
     protected $behavior;
+
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
+
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
 
+    /**
+     * @param \Propel\Generator\Behavior\Archivable\ArchivableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function objectAttributes($builder)
@@ -55,7 +74,9 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function postInsert($builder)
     {
@@ -66,10 +87,14 @@ class ArchivableBehaviorObjectBuilderModifier
     \$this->archiveOnInsert = true;
 }";
         }
+
+        return null;
     }
 
     /**
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function postUpdate($builder)
     {
@@ -80,6 +105,8 @@ class ArchivableBehaviorObjectBuilderModifier
     \$this->archiveOnUpdate = true;
 }";
         }
+
+        return null;
     }
 
     /**
@@ -89,19 +116,25 @@ class ArchivableBehaviorObjectBuilderModifier
      * The actual deletion is made by the query object, so the AR class must tell
      * the query class to enable or disable archiveOnDelete.
      *
-     * @return string the PHP code to be added to the builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string|null the PHP code to be added to the builder
      */
     public function preDelete($builder)
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return $this->behavior->renderTemplate('objectPreDelete', [
                 'queryClassName' => $builder->getQueryClassName(),
-                'isAddHooks'     => $builder->getGeneratorConfig()->get()['generator']['objectModel']['addHooks'],
+                'isAddHooks' => $builder->getGeneratorConfig()->get()['generator']['objectModel']['addHooks'],
             ]);
         }
+
+        return null;
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function objectMethods($builder)
@@ -123,30 +156,35 @@ class ArchivableBehaviorObjectBuilderModifier
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addGetArchive($builder)
     {
         return $this->behavior->renderTemplate('objectGetArchive', [
-            'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
+            'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
         ]);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addArchive($builder)
     {
         return $this->behavior->renderTemplate('objectArchive', [
-            'archiveTablePhpName'   => $this->behavior->getArchiveTablePhpName($builder),
+            'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
             'archiveTableQueryName' => $this->behavior->getArchiveTableQueryName($builder),
-            'archivedAtColumn'      => $this->behavior->getArchivedAtColumn(),
-            'hasArchiveClass'       => $this->behavior->hasArchiveClass()
+            'archivedAtColumn' => $this->behavior->getArchivedAtColumn(),
+            'hasArchiveClass' => $this->behavior->hasArchiveClass(),
         ]);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string the PHP code to be added to the builder
      */
@@ -162,31 +200,37 @@ class ArchivableBehaviorObjectBuilderModifier
      * This method is necessary because the archive's copyInto() may include the archived_at column
      * and therefore cannot be used. Besides, the way autoincremented PKs are handled should be explicit.
      *
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addPopulateFromArchive($builder)
     {
         return $this->behavior->renderTemplate('objectPopulateFromArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
-            'usesAutoIncrement'   => $this->table->hasAutoIncrementPrimaryKey(),
-            'objectClassName'     => $this->builder->getObjectClassName(),
-            'columns'             => $this->table->getColumns(),
+            'usesAutoIncrement' => $this->table->hasAutoIncrementPrimaryKey(),
+            'objectClassName' => $this->builder->getObjectClassName(),
+            'columns' => $this->table->getColumns(),
         ]);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addSaveWithoutArchive($builder)
     {
         return $this->behavior->renderTemplate('objectSaveWithoutArchive', [
-            'objectClassName'   => $this->builder->getObjectClassName(),
+            'objectClassName' => $this->builder->getObjectClassName(),
             'isArchiveOnInsert' => $this->behavior->isArchiveOnInsert(),
             'isArchiveOnUpdate' => $this->behavior->isArchiveOnUpdate(),
         ]);
     }
 
     /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string the PHP code to be added to the builder
      */
     public function addDeleteWithoutArchive($builder)

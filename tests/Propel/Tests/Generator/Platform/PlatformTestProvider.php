@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -23,7 +21,9 @@ use Propel\Generator\Model\Unique;
  */
 abstract class PlatformTestProvider extends PlatformTestBase
 {
-
+    /**
+     * @return string[][]
+     */
     public function providerForTestGetAddTablesDDL()
     {
         $schema = <<<EOF
@@ -200,7 +200,7 @@ EOF;
         $table->addUnique($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -223,7 +223,7 @@ EOF;
         $table->addIndex($index2);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -243,7 +243,26 @@ EOF;
         $table->addIndex($index);
 
         return [
-            [$index]
+        [$index],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function providerForTestGetUniqueIndexDDL(): array
+    {
+        $table = new Table('foo');
+        $table->setIdentifierQuoting(true);
+        $column1 = new Column('bar1');
+        $column1->getDomain()->copy(new Domain('FOOTYPE'));
+        $table->addColumn($column1);
+        $index = new Unique('babar');
+        $index->addColumn($column1);
+        $table->addIndex($index);
+
+        return [
+        [$index],
         ];
     }
 
@@ -256,7 +275,7 @@ EOF;
         $table->addColumn($column);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -284,7 +303,7 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -295,7 +314,7 @@ EOF;
         $fk->setSkipSql(true);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -338,8 +357,7 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$table1]
+        [$table1],
         ];
     }
-
 }

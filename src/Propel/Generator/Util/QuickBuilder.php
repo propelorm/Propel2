@@ -1,15 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Util;
 
+use Exception;
+use PDO;
+use PDOStatement;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -17,13 +18,11 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
-use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
-use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
@@ -43,22 +42,22 @@ class QuickBuilder
     protected $schemaName;
 
     /**
-     * @var PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface
      */
     protected $platform;
 
     /**
-     * @var GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     protected $config;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $database;
 
     /**
-     * @var SchemaParserInterface
+     * @var \Propel\Generator\Reverse\SchemaParserInterface
      */
     protected $parser;
 
@@ -76,6 +75,8 @@ class QuickBuilder
 
     /**
      * @param string $schema
+     *
+     * @return void
      */
     public function setSchema($schema)
     {
@@ -92,6 +93,8 @@ class QuickBuilder
 
     /**
      * @param string $schemaName
+     *
+     * @return void
      */
     public function setSchemaName($schemaName)
     {
@@ -108,6 +111,8 @@ class QuickBuilder
 
     /**
      * @param \Propel\Generator\Reverse\SchemaParserInterface $parser
+     *
+     * @return void
      */
     public function setParser($parser)
     {
@@ -125,7 +130,9 @@ class QuickBuilder
     /**
      * Setter for the platform property
      *
-     * @param PlatformInterface $platform
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
      */
     public function setPlatform($platform)
     {
@@ -135,11 +142,11 @@ class QuickBuilder
     /**
      * Getter for the platform property
      *
-     * @return PlatformInterface
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     public function getPlatform()
     {
-        if (null === $this->platform) {
+        if ($this->platform === null) {
             $this->platform = new SqlitePlatform();
         }
 
@@ -151,7 +158,9 @@ class QuickBuilder
     /**
      * Setter for the config property
      *
-     * @param GeneratorConfigInterface $config
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $config
+     *
+     * @return void
      */
     public function setConfig(GeneratorConfigInterface $config)
     {
@@ -161,39 +170,58 @@ class QuickBuilder
     /**
      * Getter for the config property
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     public function getConfig()
     {
-        if (null === $this->config) {
+        if ($this->config === null) {
             $this->config = new QuickGeneratorConfig();
         }
 
         return $this->config;
     }
 
+    /**
+     * @param string $schema
+     * @param string|null $dsn
+     * @param string|null $user
+     * @param string|null $pass
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     *
+     * @return \Propel\Runtime\Connection\ConnectionWrapper
+     */
     public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
     {
-        $builder = new self;
+        $builder = new self();
         $builder->setSchema($schema);
 
         return $builder->build($dsn, $user, $pass, $adapter);
     }
 
-    public function build($dsn = null, $user = null, $pass = null, $adapter = null, array $classTargets = null)
+    /**
+     * @param string|null $dsn
+     * @param string|null $user
+     * @param string|null $pass
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     * @param array|null $classTargets
+     *
+     * @return \Propel\Runtime\Connection\ConnectionWrapper
+     */
+    public function build($dsn = null, $user = null, $pass = null, $adapter = null, ?array $classTargets = null)
     {
-        if (null === $dsn) {
+        if ($dsn === null) {
             $dsn = 'sqlite::memory:';
         }
-        if (null === $adapter) {
+        if ($adapter === null) {
             $adapter = new SqliteAdapter();
         }
-        if (null === $classTargets) {
+        if ($classTargets === null) {
             $classTargets = $this->classTargets;
         }
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
-        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        /** @var \Propel\Runtime\Adapter\Pdo\SqliteAdapter $adapter */
         $adapter->initConnection($con, []);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
@@ -204,9 +232,12 @@ class QuickBuilder
         return $con;
     }
 
+    /**
+     * @return \Propel\Generator\Model\Database|null
+     */
     public function getDatabase()
     {
-        if (null === $this->database) {
+        if ($this->database === null) {
             $xtad = new SchemaReader($this->getPlatform());
             $xtad->setGeneratorConfig($this->getConfig());
             $appData = $xtad->parseString($this->schema);
@@ -216,6 +247,13 @@ class QuickBuilder
         return $this->database;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @throws \Exception
+     *
+     * @return int
+     */
     public function buildSQL(ConnectionInterface $con)
     {
         $sql = $this->getSQL();
@@ -227,36 +265,46 @@ class QuickBuilder
             }
             try {
                 $stmt = $con->prepare($statement);
-                if ($stmt instanceof \PDOStatement) {
+                if ($stmt instanceof PDOStatement) {
                     // only execute if has no error
                     $stmt->execute();
                 }
-            } catch (\Exception $e) {
-                throw new \Exception('SQL failed: ' . $statement, 0, $e);
+            } catch (Exception $e) {
+                throw new Exception('SQL failed: ' . $statement, 0, $e);
             }
         }
 
         return count($statements);
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Database|null
+     */
     public function updateDB(ConnectionInterface $con)
     {
         $database = $this->readConnectedDatabase();
         $diff = DatabaseComparator::computeDiff($database, $this->database);
 
-        if (false === $diff) {
+        if ($diff === false) {
             return null;
         }
-        $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $platform = $this->database->getPlatform();
+        $sql = $platform->getModifyDatabaseDDL($diff);
 
         $statements = SqlParser::parseString($sql);
         foreach ($statements as $statement) {
             try {
                 $stmt = $con->prepare($statement);
                 $stmt->execute();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 //echo $sql; //uncomment for better debugging
-                throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                throw new BuildException(sprintf(
+                    "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
                     $statement,
                     $this->database,
                     $database,
@@ -269,7 +317,7 @@ class QuickBuilder
     }
 
     /**
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     public function readConnectedDatabase()
     {
@@ -283,16 +331,29 @@ class QuickBuilder
         return $database;
     }
 
+    /**
+     * @return string
+     */
     public function getSQL()
     {
-        return $this->getPlatform()->getAddTablesDDL($this->getDatabase());
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $platform = $this->getPlatform();
+
+        return $platform->getAddTablesDDL($this->getDatabase());
     }
 
+    /**
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
     public function getBuildName($classTargets = null)
     {
         $tables = [];
         foreach ($this->getDatabase()->getTables() as $table) {
-            if (count($tables) > 3) break;
+            if (count($tables) > 3) {
+                break;
+            }
             $tables[] = $table->getName();
         }
         $name = implode('_', $tables);
@@ -306,15 +367,17 @@ class QuickBuilder
     }
 
     /**
-     * @param array $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
-     * @param bool  $separate     pass true to get for each class a own file. better for debugging.
+     * @param string[]|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
+     * @param bool $separate pass true to get for each class a own file. better for debugging.
+     *
+     * @return void
      */
-    public function buildClasses(array $classTargets = null, $separate = false)
+    public function buildClasses(?array $classTargets = null, $separate = false)
     {
         $classes = $classTargets === null ? ['tablemap', 'object', 'query', 'objectstub', 'querystub'] : $classTargets;
 
         $dirHash = substr(sha1(getcwd()), 0, 10);
-        $dir = sys_get_temp_dir() . "/propelQuickBuild-" . Propel::VERSION .  "-$dirHash/";
+        $dir = sys_get_temp_dir() . '/propelQuickBuild-' . Propel::VERSION . "-$dirHash/";
 
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -348,13 +411,18 @@ class QuickBuilder
                 include($tempFile);
             }
         } else {
-            $tempFile = $dir . join('_', $allCodeName).'.php';
+            $tempFile = $dir . implode('_', $allCodeName) . '.php';
             file_put_contents($tempFile, "<?php\n" . $allCode);
             include($tempFile);
         }
     }
 
-    public function getClasses(array $classTargets = null)
+    /**
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
+    public function getClasses(?array $classTargets = null)
     {
         $script = '';
         foreach ($this->getDatabase()->getTables() as $table) {
@@ -364,16 +432,24 @@ class QuickBuilder
         return $script;
     }
 
-    public function getClassesForTable(Table $table, array $classTargets = null)
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     * @param string[]|null $classTargets
+     *
+     * @return string
+     */
+    public function getClassesForTable(Table $table, ?array $classTargets = null)
     {
-        if (null === $classTargets) {
+        if ($classTargets === null) {
             $classTargets = $this->classTargets;
         }
 
         $script = '';
 
         foreach ($classTargets as $target) {
-            $class = $this->getConfig()->getConfiguredBuilder($table, $target)->build();
+            /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $abstractBuilder */
+            $abstractBuilder = $this->getConfig()->getConfiguredBuilder($table, $target);
+            $class = $abstractBuilder->build();
             $script .= $this->fixNamespaceDeclarations($class);
         }
 
@@ -381,12 +457,14 @@ class QuickBuilder
             if ($col->isEnumeratedClasses()) {
                 foreach ($col->getChildren() as $child) {
                     if ($child->getAncestor()) {
+                        /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                         $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
                         $builder->setChild($child);
                         $class = $builder->build();
                         $script .= $this->fixNamespaceDeclarations($class);
 
                         foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
+                            /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                             $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
                             $builder->setChild($child);
                             $class = $builder->build();
@@ -415,9 +493,15 @@ class QuickBuilder
         return $script;
     }
 
+    /**
+     * @param string $schema
+     * @param string $tableName
+     *
+     * @return void
+     */
     public static function debugClassesForTable($schema, $tableName)
     {
-        $builder = new self;
+        $builder = new self();
         $builder->setSchema($schema);
         foreach ($builder->getDatabase()->getTables() as $table) {
             if ($table->getName() == $tableName) {
@@ -428,6 +512,10 @@ class QuickBuilder
 
     /**
      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
+     *
+     * @param string $source
+     *
+     * @return string
      */
     public function fixNamespaceDeclarations($source)
     {
@@ -448,7 +536,7 @@ class QuickBuilder
             } elseif (in_array($token[0], [T_COMMENT, T_DOC_COMMENT])) {
                 // strip comments
                 $output .= $token[1];
-            } elseif (T_NAMESPACE === $token[0]) {
+            } elseif ($token[0] === T_NAMESPACE) {
                 if ($inNamespace) {
                     $output .= "}\n";
                 }
@@ -458,7 +546,7 @@ class QuickBuilder
                 while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
                     $output .= $t[1];
                 }
-                if (is_string($t) && '{' === $t) {
+                if (is_string($t) && $t === '{') {
                     $inNamespace = false;
                     --$i;
                 } else {
@@ -480,18 +568,19 @@ class QuickBuilder
     /**
      * Prevent generated class without namespace to fail.
      *
-     * @param  string $code
+     * @param string $code
+     *
      * @return string
      */
     protected function forceNamespace($code)
     {
-        if (0 === preg_match('/\nnamespace/', $code)) {
-
-            $use = array_filter(explode(PHP_EOL, $code), function($string) {
+        if (preg_match('/\nnamespace/', $code) === 0) {
+            $use = array_filter(explode(PHP_EOL, $code), function ($string) {
                 return substr($string, 0, 5) === 'use \\';
             });
 
             $code = str_replace($use, '', $code);
+
             return "\nnamespace\n{\n" . $code . "\n}\n";
         }
 
@@ -499,7 +588,7 @@ class QuickBuilder
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isIdentifierQuotingEnabled()
     {
@@ -507,11 +596,12 @@ class QuickBuilder
     }
 
     /**
-     * @param boolean $identifierQuoting
+     * @param bool $identifierQuoting
+     *
+     * @return void
      */
     public function setIdentifierQuoting($identifierQuoting)
     {
         $this->identifierQuoting = $identifierQuoting;
     }
-
 }
