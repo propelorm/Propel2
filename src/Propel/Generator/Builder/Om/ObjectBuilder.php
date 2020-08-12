@@ -1798,6 +1798,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $null = '';
         $typeHint = $column->getPhpType() ?: 'mixed';
 
+        if($column->isPhpPrimitiveType()){
+            $typeHintParts = explode("\\",$typeHint);
+            if(count($typeHintParts) > 0){
+                $typeHint = $typeHintParts[count($typeHintParts)-1];
+            }
+        }
+
         if ($column->isDateType()) {
             $typeHint = '';
         } elseif ($column->isBooleanType()) {
@@ -1818,6 +1825,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
             $typeHint = '?' . $typeHint;
         }
+
+
 
         $script .= "
     " . $visibility . " function set$cfc($typeHint\$v$null)

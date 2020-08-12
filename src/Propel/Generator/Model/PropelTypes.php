@@ -65,7 +65,7 @@ class PropelTypes
     public const INTEGER_NATIVE_TYPE = 'int';
     public const BIGINT_NATIVE_TYPE = 'string';
     public const REAL_NATIVE_TYPE = 'double';
-    public const FLOAT_NATIVE_TYPE = 'double';
+    public const FLOAT_NATIVE_TYPE = 'float';
     public const DOUBLE_NATIVE_TYPE = 'double';
     public const BINARY_NATIVE_TYPE = 'string';
     public const VARBINARY_NATIVE_TYPE = 'string';
