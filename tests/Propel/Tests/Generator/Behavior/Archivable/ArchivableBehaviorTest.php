@@ -35,6 +35,9 @@ use Propel\Tests\TestCase;
  */
 class ArchivableBehaviorTest extends TestCase
 {
+    /**
+     * @var string
+     */
     protected static $generatedSQL;
 
     /**
@@ -324,7 +327,7 @@ SQL;
         $builder->buildClasses();
 
         foreach ($expectClasses as $expectClass) {
-            $this->assertTrue(class_exists($expectClass), sprintf('expect class "%s" is not exists', $expectClass));
+            $this->assertTrue(class_exists($expectClass), sprintf('expected class "%s" not exists', $expectClass));
         }
     }
 }

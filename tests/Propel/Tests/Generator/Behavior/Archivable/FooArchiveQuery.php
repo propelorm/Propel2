@@ -10,13 +10,24 @@ namespace Propel\Tests\Generator\Behavior\Archivable;
 
 class FooArchiveQuery
 {
+    /**
+     * @var mixed
+     */
     protected $pk;
 
+    /**
+     * @return \Propel\Tests\Generator\Behavior\Archivable\FooArchiveQuery
+     */
     public static function create()
     {
         return new self();
     }
 
+    /**
+     * @param mixed $pk
+     *
+     * @return $this
+     */
     public function filterByPrimaryKey($pk)
     {
         $this->pk = $pk;
@@ -24,6 +35,9 @@ class FooArchiveQuery
         return $this;
     }
 
+    /**
+     * @return \Propel\Tests\Generator\Behavior\Archivable\FooArchive
+     */
     public function findOne()
     {
         $archive = FooArchiveCollection::getArchiveSingleton();

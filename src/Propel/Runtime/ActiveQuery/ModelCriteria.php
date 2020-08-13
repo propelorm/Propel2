@@ -713,10 +713,12 @@ class ModelCriteria extends BaseModelCriteria
             throw new UnknownRelationException('Unknown relation name or alias ' . $relation);
         }
 
+        /** @var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         $join = $this->joins[$relation];
         if ($join->getRelationMap()->getType() === RelationMap::MANY_TO_MANY) {
             throw new PropelException(__METHOD__ . ' does not allow hydration for many-to-many relationships');
-        } elseif ($join->getRelationMap()->getType() === RelationMap::ONE_TO_MANY) {
+        }
+        if ($join->getRelationMap()->getType() === RelationMap::ONE_TO_MANY) {
             // For performance reasons, the formatters will use a special routine in this case
             $this->isWithOneToMany = true;
         }
@@ -789,7 +791,9 @@ class ModelCriteria extends BaseModelCriteria
             throw new PropelException('Unknown class or alias ' . $relationName);
         }
 
-        $className = $this->joins[$relationName]->getTableMap()->getClassName();
+        /** @var \Propel\Runtime\ActiveQuery\ModelJoin $modelJoin */
+        $modelJoin = $this->joins[$relationName];
+        $className = $modelJoin->getTableMap()->getClassName();
         /** @var self $secondaryCriteriaClass */
         if ($secondaryCriteriaClass === null) {
             $secondaryCriteria = PropelQuery::from($className);
@@ -953,6 +957,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function addRelationSelectColumns($relation)
     {
+        /** @var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         $join = $this->joins[$relation];
         $join->getTableMap()->addSelectColumns($this, $join->getRelationAlias());
 
