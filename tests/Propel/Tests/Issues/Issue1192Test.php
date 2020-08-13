@@ -36,7 +36,7 @@ class Issue1192Test extends TestCase
         $schema = <<<END
 <database name="issue_1192">
     <table name="issue_1192_item">
-        <column name="target" type="INTEGER" required="true" />
+        <column name="target" type="INTEGER" required="true"/>
     </table>
 </database>
 END;

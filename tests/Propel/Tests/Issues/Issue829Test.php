@@ -31,8 +31,8 @@ class Issue829Test extends TestCase
             $schema = '
             <database name="issue_829" defaultIdMethod="native">
                 <table name="table829">
-                    <column name="id" primaryKey="true" type="INTEGER" />
-                    <column name="date" primaryKey="true" type="DATE" />
+                    <column name="id" primaryKey="true" type="INTEGER"/>
+                    <column name="date" primaryKey="true" type="DATE"/>
                 </table>
             </database>
             ';

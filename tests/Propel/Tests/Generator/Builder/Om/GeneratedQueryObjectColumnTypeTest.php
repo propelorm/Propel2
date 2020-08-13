@@ -38,8 +38,8 @@ class GeneratedQueryObjectColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_query_complex_type_test_10">
     <table name="complex_column_type_entity_10">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="OBJECT" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="OBJECT"/>
     </table>
 </database>
 EOF;

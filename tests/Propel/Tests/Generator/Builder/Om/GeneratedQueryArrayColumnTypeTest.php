@@ -30,9 +30,9 @@ class GeneratedQueryArrayColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_11">
     <table name="complex_column_type_entity_11">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="tags" type="ARRAY" />
-        <column name="value_set" type="ARRAY" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="tags" type="ARRAY"/>
+        <column name="value_set" type="ARRAY"/>
     </table>
 </database>
 EOF;

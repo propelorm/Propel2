@@ -33,20 +33,20 @@ class Issue675Test extends TestCaseFixtures
 <?xml version="1.0" encoding="utf-8"?>
 <database name="test" defaultIdMethod="native">
     <table name="event">
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-        <column name="name" type="varchar" size="50" required="true" />
-        <column name="organiser_id" type="integer" required="true" />
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="50" required="true"/>
+        <column name="organiser_id" type="integer" required="true"/>
         <!-- This FK is incomplete -->
         <foreign-key foreignTable="organiser">
-            <reference local="organiser_id" foreign="id" />
+            <reference local="organiser_id" foreign="id"/>
         </foreign-key>
     </table>
 
     <table name="organiser">
         <!-- Has composite PK -->
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-        <column name="secondary" type="integer" required="true" primaryKey="true" />
-        <column name="name" type="varchar" size="50" required="true" />
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="secondary" type="integer" required="true" primaryKey="true"/>
+        <column name="name" type="varchar" size="50" required="true"/>
     </table>
 </database>
 EOF;

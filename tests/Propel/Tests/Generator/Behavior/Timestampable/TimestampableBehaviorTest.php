@@ -297,11 +297,11 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $schema = <<<EOF
 <database name="timestampable_database">
     <table name="table_without_updated_at">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="name" type="varchar" />
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar"/>
 
         <behavior name="timestampable">
-            <parameter name="disable_updated_at" value="true" />
+            <parameter name="disable_updated_at" value="true"/>
         </behavior>
     </table>
 </database>
@@ -331,11 +331,11 @@ EOF;
         $schema = <<<EOF
 <database name="timestampable_database">
     <table name="table_without_created_at">
-        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true" />
-        <column name="name" type="varchar" />
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar"/>
 
         <behavior name="timestampable">
-            <parameter name="disable_created_at" value="true" />
+            <parameter name="disable_created_at" value="true"/>
         </behavior>
     </table>
 </database>

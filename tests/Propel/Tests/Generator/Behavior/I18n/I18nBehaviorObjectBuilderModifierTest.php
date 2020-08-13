@@ -40,57 +40,57 @@ class I18nBehaviorObjectBuilderModifierTest extends TestCase
             $schema = <<<EOF
 <database name="i18n_behavior_test_1">
     <table name="i18n_behavior_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_columns" value="bar"/>
         </behavior>
     </table>
     <table name="i18n_behavior_test_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar1" type="VARCHAR" size="100" />
-        <column name="bar2" type="LONGVARCHAR" lazyLoad="true" />
-        <column name="bar3" type="TIMESTAMP" />
-        <column name="bar4" type="LONGVARCHAR" description="This is the Bar4 column" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar1" type="VARCHAR" size="100"/>
+        <column name="bar2" type="LONGVARCHAR" lazyLoad="true"/>
+        <column name="bar3" type="TIMESTAMP"/>
+        <column name="bar4" type="LONGVARCHAR" description="This is the Bar4 column"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar1,bar2,bar3,bar4" />
-            <parameter name="default_locale" value="fr_FR" />
-            <parameter name="locale_alias" value="culture" />
+            <parameter name="i18n_columns" value="bar1,bar2,bar3,bar4"/>
+            <parameter name="default_locale" value="fr_FR"/>
+            <parameter name="locale_alias" value="culture"/>
         </behavior>
     </table>
 
     <table name="movie">
-        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
-        <column name="director" type="varchar" size="255" />
-        <column name="title" type="varchar" primaryString="true" />
+        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true"/>
+        <column name="director" type="varchar" size="255"/>
+        <column name="title" type="varchar" primaryString="true"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="title" />
-            <parameter name="locale_alias" value="culture" />
+            <parameter name="i18n_columns" value="title"/>
+            <parameter name="locale_alias" value="culture"/>
         </behavior>
     </table>
     <table name="toy">
-        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true" />
-        <column name="ref" type="varchar" size="255" />
-        <column name="name" type="varchar" size="255" />
+        <column name="id" type="integer" required="true" primaryKey="true" autoincrement="true"/>
+        <column name="ref" type="varchar" size="255"/>
+        <column name="name" type="varchar" size="255"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="name" />
-            <parameter name="locale_alias" value="culture" />
+            <parameter name="i18n_columns" value="name"/>
+            <parameter name="locale_alias" value="culture"/>
         </behavior>
-        <column name="movie_id" type="integer" />
+        <column name="movie_id" type="integer"/>
         <foreign-key foreignTable="movie" onDelete="cascade">
-            <reference local="movie_id" foreign="id" />
+            <reference local="movie_id" foreign="id"/>
         </foreign-key>
     </table>
 
     <table name="i18n_behavior_test_local_column">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="locale_column" value="my_lang" />
+            <parameter name="i18n_columns" value="bar"/>
+            <parameter name="locale_column" value="my_lang"/>
         </behavior>
     </table>
 </database>

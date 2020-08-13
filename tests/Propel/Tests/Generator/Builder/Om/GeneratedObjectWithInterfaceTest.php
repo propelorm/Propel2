@@ -23,8 +23,8 @@ class GeneratedObjectWithInterfaceTest extends TestCase
               $schema = <<<EOF
 <database name="a-database" namespace="Foo">
     <table name="my_class_with_interface" interface="MyInterface">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name" type="VARCHAR"/>
     </table>
 </database>
 EOF;

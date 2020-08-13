@@ -37,8 +37,8 @@ class QuickBuilderTest extends TestCase
         $xmlSchema = <<<EOF
 <database name="test_quick_build_2" namespace="MyNameSpace">
     <table name="quick_build_foo_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -136,8 +136,8 @@ EOF;
         $xmlSchema = <<<EOF
 <database name="test_quick_build_2" namespace="MyNameSpace2">
     <table name="quick_build_foo_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
     </table>
 </database>
 EOF;

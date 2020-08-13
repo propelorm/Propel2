@@ -37,15 +37,15 @@ class Issue646Test extends TestCaseFixtures
             $schema = '
             <database name="test" defaultIdMethod="native" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                 <table name="pk_date">
-                    <column name="created_at" type="DATE" primaryKey="true" />
+                    <column name="created_at" type="DATE" primaryKey="true"/>
                     <column name="name" type="VARCHAR"/>
                 </table>
                 <table name="pk_time">
-                    <column name="created_at" type="TIME" primaryKey="true" />
+                    <column name="created_at" type="TIME" primaryKey="true"/>
                     <column name="name" type="VARCHAR"/>
                 </table>
                 <table name="pk_timestamp">
-                    <column name="created_at" type="TIMESTAMP" primaryKey="true" />
+                    <column name="created_at" type="TIMESTAMP" primaryKey="true"/>
                     <column name="name" type="VARCHAR"/>
                 </table>
             </database>';
