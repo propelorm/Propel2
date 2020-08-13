@@ -29,7 +29,6 @@ use JsonSerializable;
  */
 class ObjectCollection extends Collection implements JsonSerializable
 {
-
     protected $index;
     protected $indexSplHash;
 
@@ -349,21 +348,19 @@ class ObjectCollection extends Collection implements JsonSerializable
         $pivotRelationMap = null;
         $symPivotRelationMap = null;
         //  Load pivot tables if this is a many to many relationship.
-        if(RelationMap::MANY_TO_MANY === $relationMap->getType()) {
-
-            foreach($relationMap->getLocalTable()->getRelations() as $tempRelation) {
-                if($tempRelation->getLocalTable()->isCrossRef()) {
+        if (RelationMap::MANY_TO_MANY === $relationMap->getType()) {
+            foreach ($relationMap->getLocalTable()->getRelations() as $tempRelation) {
+                if ($tempRelation->getLocalTable()->isCrossRef()) {
                     $pivotRelationMap = $tempRelation;
                     $query->with($pivotRelationMap->getName());
                 }
             }
 
-            foreach($relationMap->getForeignTable()->getRelations() as $tempRelation) {
-                if($tempRelation->getLocalTable()->isCrossRef()) {
+            foreach ($relationMap->getForeignTable()->getRelations() as $tempRelation) {
+                if ($tempRelation->getLocalTable()->isCrossRef()) {
                     $symPivotRelationMap = $tempRelation;
                 }
             }
-
         }
 
         $relatedObjects = $query->find($con);
@@ -385,12 +382,11 @@ class ObjectCollection extends Collection implements JsonSerializable
 
             $buckets = [];
 
-            //  Group related objects up into buckets 
+            //  Group related objects up into buckets
             //  based on the pivot table's foreign key.
             foreach ($relatedObjects as $object) {
-
                 $pivotObjs = $object->$getPivotMethod();
-                foreach($pivotObjs as $pivotObj) {
+                foreach ($pivotObjs as $pivotObj) {
                     $getter = "get{$symPivotRelationMap->getRightColumns()[0]->getPhpName()}";
                     $key = $pivotObj->$getter();
                     $buckets[$key][] = $object;
@@ -399,19 +395,18 @@ class ObjectCollection extends Collection implements JsonSerializable
 
             //  Using the buckets, add related objects to
             //  main objects and back relate them as well.
-            foreach($this as $mainObj) {
+            foreach ($this as $mainObj) {
                 $getter = "get{$symPivotRelationMap->getLeftColumns()[0]->getPhpName()}";
                 $key = $mainObj->$getter();
 
-                if(isset($buckets[$key])) {
-                    foreach($buckets[$key] as $object) {
+                if (isset($buckets[$key])) {
+                    foreach ($buckets[$key] as $object) {
                         $mainObj->$addLocalMethod($object);
                         $object->$addForeignMethod($mainObj);
                     }
                 }
             }
-
-        } else if (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
+        } elseif (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
             // initialize the embedded collections of the main objects
             $relationName = $relationMap->getName();
             foreach ($this as $mainObj) {
@@ -422,16 +417,17 @@ class ObjectCollection extends Collection implements JsonSerializable
             $addMethod = 'add' . $relationName;
             foreach ($relatedObjects as $object) {
                 $mainObj = $object->$getMethod();  // instance pool is used here to avoid a query
-                $mainObj->$addMethod($object);
+                if ($mainObj != null) {
+                    $mainObj->$addMethod($object);
+                }
             }
         } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType() || RelationMap::ONE_TO_ONE === $relationMap->getType()) {
             
             //  Use instance pool to hydrate the related object on the main object.
             $getMethod = 'get' . $relationMap->getName();
-            foreach($this as $mainObj) {
+            foreach ($this as $mainObj) {
                 $mainObj->$getMethod();
             }
-
         } else {
             throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
         }
@@ -442,29 +438,29 @@ class ObjectCollection extends Collection implements JsonSerializable
     /**
      * Eager load relations.
      * @param string|array $relations Relation or array of relations to load. Can be nested. i.e. Book, Book.Author
-     * 
+     *
      */
     public function load($relations)
     {
         
         //  Ensure relations is an array.
-        if(!is_array($relations)) {
+        if (!is_array($relations)) {
             $relations = [$relations];
         }
 
-        foreach($relations as $relation) {
+        foreach ($relations as $relation) {
 
             //  Set initial collection.
             $collection = $this;
 
             $relationsToLoad = explode(".", $relation);
-            foreach($relationsToLoad as $relationToLoad) {
+            foreach ($relationsToLoad as $relationToLoad) {
                 
                 //  Load relation and set collection for the next nested relation.
                 $collection = $collection->populateRelation($relationToLoad);
 
                 //  No need to go any further if the collection is empty.
-                if($collection->isEmpty()) {
+                if ($collection->isEmpty()) {
                     break;
                 }
             }
@@ -501,7 +497,7 @@ class ObjectCollection extends Collection implements JsonSerializable
     {
         $this->index = [];
         $this->indexSplHash = [];
-        foreach ($this->data as $idx => $value){
+        foreach ($this->data as $idx => $value) {
             $hashCode = $this->getHashCode($value);
             $this->index[$hashCode] = $idx;
             $this->indexSplHash[spl_object_hash($value)] = $hashCode;
