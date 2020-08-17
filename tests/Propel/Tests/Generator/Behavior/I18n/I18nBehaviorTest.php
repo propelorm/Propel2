@@ -26,11 +26,11 @@ class I18nBehaviorTest extends TestCase
         $schema = <<<EOF
 <database name="i18n_behavior_test_0" tablePrefix="i18n_">
     <behavior name="i18n">
-        <parameter name="default_locale" value="fr_FR" />
+        <parameter name="default_locale" value="fr_FR"/>
     </behavior>
     <table name="behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <behavior name="i18n" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <behavior name="i18n"/>
     </table>
 </database>
 EOF;
@@ -64,12 +64,12 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <behavior name="i18n">
-        <parameter name="default_locale" value="fr_FR" />
+        <parameter name="default_locale" value="fr_FR"/>
     </behavior>
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <behavior name="i18n">
-            <parameter name="default_locale" value="pt_PT" />
+            <parameter name="default_locale" value="pt_PT"/>
         </behavior>
     </table>
 </database>
@@ -104,11 +104,11 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_columns" value="bar"/>
         </behavior>
     </table>
 </database>
@@ -124,11 +124,11 @@ EOF;
         $schema1 = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
+            <parameter name="i18n_columns" value="bar"/>
         </behavior>
     </table>
 </database>
@@ -136,16 +136,16 @@ EOF;
         $schema2 = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <behavior name="i18n" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <behavior name="i18n"/>
     </table>
     <table name="i18n_behavior_test_0_i18n">
-        <column name="id" primaryKey="true" type="INTEGER" />
-        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER"/>
+        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <foreign-key foreignTable="i18n_behavior_test_0">
-            <reference local="id" foreign="id" />
+            <reference local="id" foreign="id"/>
         </foreign-key>
     </table>
 </database>
@@ -258,9 +258,9 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <behavior name="i18n">
-            <parameter name="i18n_table" value="foo_table" />
+            <parameter name="i18n_table" value="foo_table"/>
         </behavior>
     </table>
 </database>
@@ -295,9 +295,9 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <behavior name="i18n">
-            <parameter name="locale_column" value="culture" />
+            <parameter name="locale_column" value="culture"/>
         </behavior>
     </table>
 </database>
@@ -332,9 +332,9 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <behavior name="i18n">
-            <parameter name="default_locale" value="fr_FR" />
+            <parameter name="default_locale" value="fr_FR"/>
         </behavior>
     </table>
 </database>
@@ -369,9 +369,9 @@ EOF;
         $schema = <<<EOF
 <database name="i18n_behavior_test_0">
     <table name="i18n_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <behavior name="i18n">
-            <parameter name="locale_length" value="6" />
+            <parameter name="locale_length" value="6"/>
         </behavior>
     </table>
 </database>
@@ -403,12 +403,12 @@ EOF;
         $schema1 = <<<EOF
 <database name="i18n_behavior_test_custom_pk_0">
     <table name="i18n_behavior_test_custom_pk_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="bar" />
-            <parameter name="i18n_pk_column" value="custom_id" />
+            <parameter name="i18n_columns" value="bar"/>
+            <parameter name="i18n_pk_column" value="custom_id"/>
         </behavior>
     </table>
 </database>
@@ -416,16 +416,16 @@ EOF;
         $schema2 = <<<EOF
 <database name="i18n_behavior_test_custom_pk_0">
     <table name="i18n_behavior_test_custom_pk_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="INTEGER" />
-        <behavior name="i18n" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="INTEGER"/>
+        <behavior name="i18n"/>
     </table>
     <table name="i18n_behavior_test_custom_pk_0_i18n">
-        <column name="custom_id" primaryKey="true" type="INTEGER" />
-        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US" />
-        <column name="bar" type="VARCHAR" size="100" />
+        <column name="custom_id" primaryKey="true" type="INTEGER"/>
+        <column name="locale" primaryKey="true" type="VARCHAR" size="5" default="en_US"/>
+        <column name="bar" type="VARCHAR" size="100"/>
         <foreign-key foreignTable="i18n_behavior_test_custom_pk_0">
-            <reference local="custom_id" foreign="id" />
+            <reference local="custom_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>

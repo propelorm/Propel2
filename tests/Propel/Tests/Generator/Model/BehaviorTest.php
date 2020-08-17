@@ -119,13 +119,13 @@ class BehaviorTest extends TestCase
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    <column name="created_on" type="TIMESTAMP" />
-    <column name="updated_on" type="TIMESTAMP" />
+    <column name="id" type="INTEGER" primaryKey="true"/>
+    <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+    <column name="created_on" type="TIMESTAMP"/>
+    <column name="updated_on" type="TIMESTAMP"/>
     <behavior name="timestampable">
-      <parameter name="create_column" value="created_on" />
-      <parameter name="update_column" value="updated_on" />
+      <parameter name="create_column" value="created_on"/>
+      <parameter name="update_column" value="updated_on"/>
     </behavior>
   </table>
 </database>
@@ -154,8 +154,8 @@ EOF;
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <behavior name="foo" />
+    <column name="id" type="INTEGER" primaryKey="true"/>
+    <behavior name="foo"/>
   </table>
 </database>
 EOF;
@@ -171,9 +171,9 @@ EOF;
         $schema = <<<EOF
 <database name="test1">
   <table name="table2">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    <behavior name="timestampable" />
+    <column name="id" type="INTEGER" primaryKey="true"/>
+    <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+    <behavior name="timestampable"/>
   </table>
 </database>
 EOF;
@@ -190,9 +190,9 @@ EOF;
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">
-  <behavior name="timestampable" />
+  <behavior name="timestampable"/>
   <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
+    <column name="id" type="INTEGER" primaryKey="true"/>
   </table>
 </database>
 EOF;
@@ -210,13 +210,13 @@ EOF;
         $schema = <<<EOF
 <database name="test1">
   <table name="table1">
-    <column name="id" type="INTEGER" primaryKey="true" />
-    <column name="title" type="VARCHAR" size="100" primaryString="true" />
-    <column name="created_on" type="TIMESTAMP" />
-    <column name="updated_on" type="TIMESTAMP" />
+    <column name="id" type="INTEGER" primaryKey="true"/>
+    <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+    <column name="created_on" type="TIMESTAMP"/>
+    <column name="updated_on" type="TIMESTAMP"/>
     <behavior name="timestampable">
-      <parameter name="create_column" value="created_on" />
-      <parameter name="update_column" value="updated_on" />
+      <parameter name="create_column" value="created_on"/>
+      <parameter name="update_column" value="updated_on"/>
     </behavior>
   </table>
 </database>

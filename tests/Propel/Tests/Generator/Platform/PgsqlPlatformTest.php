@@ -136,16 +136,16 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="table1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="pgsql">
             <parameter name="schema" value="Woopah"/>
         </vendor>
     </table>
     <table name="table2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
     <table name="table3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="pgsql">
             <parameter name="schema" value="Yipee"/>
         </vendor>
@@ -365,7 +365,7 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="pgsql">
             <parameter name="schema" value="Woopah"/>
         </vendor>
@@ -418,7 +418,7 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <id-method-parameter value="my_custom_sequence_name"/>
     </table>
 </database>
@@ -489,7 +489,7 @@ DROP TABLE IF EXISTS "foo" CASCADE;
         $schema = <<<EOF
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="pgsql">
             <parameter name="schema" value="Woopah"/>
         </vendor>

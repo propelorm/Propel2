@@ -44,51 +44,51 @@ class ArchivableBehaviorObjectBuilderModifierTest extends TestCase
 <database name="archivable_behavior_test_10">
 
     <table name="archivable_test_10">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
+        <column name="foo_id" type="INTEGER"/>
         <foreign-key foreignTable="archivable_test_20">
-            <reference local="foo_id" foreign="id" />
+            <reference local="foo_id" foreign="id"/>
         </foreign-key>
         <index>
-            <index-column name="title" />
-            <index-column name="age" />
+            <index-column name="title"/>
+            <index-column name="age"/>
         </index>
-        <behavior name="archivable" />
+        <behavior name="archivable"/>
     </table>
 
     <table name="archivable_test_20">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="archivable" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="archivable"/>
     </table>
 
     <table name="archivable_test_20_archive">
-        <column name="id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="archivable_test_30">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
+        <column name="foo_id" type="INTEGER"/>
         <behavior name="archivable">
-            <parameter name="log_archived_at" value="false" />
-            <parameter name="archive_table" value="my_old_archivable_test_30" />
-            <parameter name="archive_on_insert" value="true" />
-            <parameter name="archive_on_update" value="true" />
-            <parameter name="archive_on_delete" value="false" />
+            <parameter name="log_archived_at" value="false"/>
+            <parameter name="archive_table" value="my_old_archivable_test_30"/>
+            <parameter name="archive_on_insert" value="true"/>
+            <parameter name="archive_on_update" value="true"/>
+            <parameter name="archive_on_delete" value="false"/>
         </behavior>
     </table>
 
     <table name="archivable_test_40">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="age" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="age" type="INTEGER"/>
         <behavior name="archivable">
-            <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive" />
+            <parameter name="archive_class" value="\Propel\Tests\Generator\Behavior\Archivable\FooArchive"/>
         </behavior>
     </table>
 

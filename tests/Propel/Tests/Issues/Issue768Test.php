@@ -30,10 +30,10 @@ class Issue768Test extends TestCase
             $schema = '
             <database name="issue_768" defaultIdMethod="native">
                 <table name="timing">
-                    <column name="id" primaryKey="true" type="INTEGER" />
-                    <column name="date" type="DATE" />
-                    <column name="time" type="TIME" />
-                    <column name="date_time" type="TIMESTAMP" />
+                    <column name="id" primaryKey="true" type="INTEGER"/>
+                    <column name="date" type="DATE"/>
+                    <column name="time" type="TIME"/>
+                    <column name="date_time" type="TIMESTAMP"/>
                 </table>
             </database>
             ';

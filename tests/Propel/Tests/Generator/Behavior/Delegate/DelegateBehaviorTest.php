@@ -35,71 +35,71 @@ class DelegateBehaviorTest extends TestCase
 <database name="delegate_behavior_test_1">
 
     <table name="delegate_main">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="delegate_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="delegate_id" type="INTEGER"/>
         <foreign-key foreignTable="second_delegate_delegate">
-            <reference local="delegate_id" foreign="id" />
+            <reference local="delegate_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_delegate, second_delegate_delegate" />
+            <parameter name="to" value="delegate_delegate, second_delegate_delegate"/>
         </behavior>
     </table>
 
     <table name="delegate_delegate">
-        <column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+        <column name="subtitle" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="second_delegate_delegate">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="summary" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="summary" type="VARCHAR" size="100" primaryString="true"/>
         <behavior name="delegate">
-            <parameter name="to" value="third_delegate_delegate" />
+            <parameter name="to" value="third_delegate_delegate"/>
         </behavior>
     </table>
 
     <table name="third_delegate_delegate">
-        <column name="body" type="VARCHAR" size="100" primaryString="true" />
+        <column name="body" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_player">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="first_name" type="VARCHAR" size="100" primaryString="true" />
-        <column name="last_name" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="first_name" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="last_name" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_basketballer">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="points" type="INTEGER" />
-        <column name="field_goals" type="INTEGER" />
-        <column name="player_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="points" type="INTEGER"/>
+        <column name="field_goals" type="INTEGER"/>
+        <column name="player_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_player">
-            <reference local="player_id" foreign="id" />
+            <reference local="player_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player" />
+            <parameter name="to" value="delegate_player"/>
         </behavior>
     </table>
 
     <table name="delegate_team">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_footballer">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="goals_scored" type="INTEGER" />
-        <column name="fouls_committed" type="INTEGER" />
-        <column name="player_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="goals_scored" type="INTEGER"/>
+        <column name="fouls_committed" type="INTEGER"/>
+        <column name="player_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_player">
-            <reference local="player_id" foreign="id" />
+            <reference local="player_id" foreign="id"/>
         </foreign-key>
-        <column name="team_id" type="INTEGER" />
+        <column name="team_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_team">
-            <reference local="team_id" foreign="id" />
+            <reference local="team_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player, delegate_team" />
+            <parameter name="to" value="delegate_player, delegate_team"/>
         </behavior>
     </table>
 
@@ -279,20 +279,20 @@ EOF;
 <database name="testTablePrefixSameDatabase_database" tablePrefix="foo">
 
     <table name="testTablePrefixSameDatabase_main">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="delegate_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="delegate_id" type="INTEGER"/>
         <foreign-key foreignTable="testTablePrefixSameDatabase_delegate">
-            <reference local="delegate_id" foreign="id" />
+            <reference local="delegate_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="testTablePrefixSameDatabase_delegate" />
+            <parameter name="to" value="testTablePrefixSameDatabase_delegate"/>
         </behavior>
     </table>
 
     <table name="testTablePrefixSameDatabase_delegate">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="subtitle" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
 </database>

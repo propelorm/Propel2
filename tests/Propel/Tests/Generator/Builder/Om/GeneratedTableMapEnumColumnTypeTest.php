@@ -28,8 +28,8 @@ class GeneratedTableMapEnumColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_103">
     <table name="complex_column_type_entity_103">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar "/>
     </table>
 </database>
 EOF;

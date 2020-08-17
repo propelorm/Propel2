@@ -31,8 +31,8 @@ class GeneratedObjectObjectColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_1">
     <table name="complex_column_type_entity_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="OBJECT" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="OBJECT"/>
     </table>
 </database>
 EOF;

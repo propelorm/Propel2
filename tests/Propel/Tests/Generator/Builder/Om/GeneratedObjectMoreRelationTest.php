@@ -42,33 +42,33 @@ class GeneratedObjectMoreRelationTest extends TestCase
 <database name="more_relation_test" namespace="MoreRelationTest">
 
     <table name="more_relation_test_page" phpName="Page">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="more_relation_test_content" phpName="Content">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" />
-        <column name="content" type="LONGVARCHAR" required="false" />
-        <column name="page_id" type="INTEGER" required="false" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100"/>
+        <column name="content" type="LONGVARCHAR" required="false"/>
+        <column name="page_id" type="INTEGER" required="false"/>
         <foreign-key foreignTable="more_relation_test_page" onDelete="cascade">
           <reference local="page_id" foreign="id"/>
         </foreign-key>
     </table>
 
     <table name="more_relation_test_comment" phpName="Comment">
-        <column name="user_id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="page_id" required="true" primaryKey="true" type="INTEGER" />
-        <column name="comment" type="VARCHAR" size="100" />
+        <column name="user_id" required="true" primaryKey="true" type="INTEGER"/>
+        <column name="page_id" required="true" primaryKey="true" type="INTEGER"/>
+        <column name="comment" type="VARCHAR" size="100"/>
         <foreign-key foreignTable="more_relation_test_page" onDelete="cascade">
           <reference local="page_id" foreign="id"/>
         </foreign-key>
     </table>
 
     <table name="more_relation_test_content_comment" phpName="ContentComment">
-        <column name="id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER" />
-        <column name="content_id" type="INTEGER" />
-        <column name="comment" type="VARCHAR" size="100" />
+        <column name="id" required="true" autoIncrement="true" primaryKey="true" type="INTEGER"/>
+        <column name="content_id" type="INTEGER"/>
+        <column name="comment" type="VARCHAR" size="100"/>
         <foreign-key foreignTable="more_relation_test_content" onDelete="setnull">
           <reference local="content_id" foreign="id"/>
         </foreign-key>

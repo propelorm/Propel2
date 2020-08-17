@@ -492,10 +492,10 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         $schema = <<<EOF
 <database name="test" schema="x">
     <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="title" type="VARCHAR" size="255" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
             <vendor type="oracle">
                 <parameter name="PCTFree" value="20"/>
                 <parameter name="InitTrans" value="4"/>
@@ -507,7 +507,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         </index>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="author" foreignSchema="y">
-            <reference local="author_id" foreign="id" />
+            <reference local="author_id" foreign="id"/>
         </foreign-key>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
@@ -525,9 +525,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         </vendor>
     </table>
     <table name="author" schema="y">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="first_name" type="VARCHAR" size="100"/>
+        <column name="last_name" type="VARCHAR" size="100"/>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
             <parameter name="InitTrans" value="4"/>

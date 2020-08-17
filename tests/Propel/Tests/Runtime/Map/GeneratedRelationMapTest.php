@@ -17,6 +17,9 @@ use Propel\Tests\TestCaseFixtures;
  */
 class GeneratedRelationMapTest extends TestCaseFixtures
 {
+    /**
+     * @var \Propel\Runtime\Map\DatabaseMap
+     */
     protected $databaseMap;
 
     /**

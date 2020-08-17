@@ -4,7 +4,7 @@
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <column name="table1_id" type="INTEGER"/>
         <foreign-key foreignTable="table1" foreignSchema="foo">
-            <reference local="table1_id" foreign="id" />
+            <reference local="table1_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>

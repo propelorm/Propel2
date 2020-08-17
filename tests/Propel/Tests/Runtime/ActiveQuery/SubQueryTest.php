@@ -33,6 +33,11 @@ class SubQueryTest extends BookstoreTestBase
     }
 
     /**
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param mixed $expectedSql
+     * @param mixed $expectedParams
+     * @param string $message
+     *
      * @return void
      */
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')

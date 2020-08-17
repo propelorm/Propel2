@@ -76,13 +76,13 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="full_name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="full_name" type="VARCHAR" size="50" required="true"/>
 
   <!-- this column (and FK) will be removed from schema, but not from DB on migrate -->
-  <column name="group_id" type="INTEGER" />
+  <column name="group_id" type="INTEGER"/>
   <foreign-key foreignTable="issue617_group" onDelete="setnull">
-    <reference local="group_id" foreign="id" />
+    <reference local="group_id" foreign="id"/>
   </foreign-key>
 </table>
 
@@ -91,8 +91,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="50" required="true"/>
 </table>
 </database>
 ';
@@ -147,8 +147,8 @@ CREATE TABLE `issue617_group`
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="full_name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="full_name" type="VARCHAR" size="50" required="true"/>
 </table>
 
 <table name="issue617_group">
@@ -156,8 +156,8 @@ CREATE TABLE `issue617_group`
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="50" required="true"/>
 </table>
 </database>
 ';

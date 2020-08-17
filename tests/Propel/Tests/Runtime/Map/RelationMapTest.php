@@ -21,7 +21,20 @@ use Propel\Tests\TestCase;
  */
 class RelationMapTest extends TestCase
 {
-    protected $databaseMap, $relationName, $rmap;
+    /**
+     * @var \Propel\Runtime\Map\DatabaseMap
+     */
+    protected $databaseMap;
+
+    /**
+     * @var string
+     */
+    protected $relationName;
+
+    /**
+     * @var \Propel\Runtime\Map\RelationMap
+     */
+    protected $rmap;
 
     /**
      * @return void

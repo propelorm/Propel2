@@ -21,8 +21,8 @@ class MysqlPlatformMigrationTestProvider extends PlatformMigrationTestProvider
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="bar" type="INTEGER" />
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="bar" type="INTEGER"/>
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;

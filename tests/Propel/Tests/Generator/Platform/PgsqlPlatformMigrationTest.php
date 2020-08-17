@@ -368,8 +368,8 @@ END;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="VARCHAR" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="VARCHAR"/>
     </table>
 </database>
 EOF;
@@ -398,7 +398,7 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <column name="bar"/>
     </table>
 </database>

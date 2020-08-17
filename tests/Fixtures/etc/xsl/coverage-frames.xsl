@@ -3,7 +3,7 @@
     xmlns:date="http://exslt.org/dates-and-times"
     extension-element-prefixes="exsl date">
     <xsl:output method="html" indent="yes"/>
-    <xsl:decimal-format decimal-separator="." grouping-separator="," />
+    <xsl:decimal-format decimal-separator="." grouping-separator=","/>
     <!--
     Copyright  2001-2004 The Apache Software Foundation
 

@@ -2,13 +2,13 @@
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.alternative_coding_standards" namespace="Propel\Tests\Bookstore\Behavior">
 
     <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\DonothingBehavior">
-        <parameter name="foo" value="bar" />
+        <parameter name="foo" value="bar"/>
     </behavior>
 
     <table name="table3">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\Testallhooksbehavior"/>
     </table>
 
 </database>

@@ -33,27 +33,27 @@ class TestCase extends BaseTestCase
             $schema = <<<XML
 <database name="bookstore-behavior" defaultIdMethod="native">
     <table name="nested_set_table9">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
 
-        <behavior name="nested_set" />
+        <behavior name="nested_set"/>
     </table>
 
     <table name="nested_set_table10">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
         <column name="my_left_column" type="INTEGER" required="false"/>
         <column name="my_right_column" type="INTEGER" required="false"/>
         <column name="my_level_column" type="INTEGER" required="false"/>
         <column name="my_scope_column" type="INTEGER" required="false"/>
 
         <behavior name="nested_set">
-            <parameter name="left_column" value="my_left_column" />
-            <parameter name="right_column" value="my_right_column" />
-            <parameter name="level_column" value="my_level_column" />
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="my_scope_column" />
-            <parameter name="method_proxies" value="true" />
+            <parameter name="left_column" value="my_left_column"/>
+            <parameter name="right_column" value="my_right_column"/>
+            <parameter name="level_column" value="my_level_column"/>
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="my_scope_column"/>
+            <parameter name="method_proxies" value="true"/>
         </behavior>
     </table>
 </database>

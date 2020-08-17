@@ -10,8 +10,14 @@ namespace Propel\Tests\Generator\Behavior\Archivable;
 
 class FooArchiveCollection
 {
+    /**
+     * @var \Propel\Tests\Generator\Behavior\Archivable\FooArchive
+     */
     protected static $instance;
 
+    /**
+     * @return \Propel\Tests\Generator\Behavior\Archivable\FooArchive
+     */
     public static function getArchiveSingleton()
     {
         if (null === self::$instance) {

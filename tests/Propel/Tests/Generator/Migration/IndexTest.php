@@ -21,8 +21,8 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
     </table>
 </database>
 ';
@@ -30,10 +30,10 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
     </table>
 </database>
@@ -49,10 +49,10 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
     </table>
 </database>
@@ -61,8 +61,8 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
     </table>
 </database>
 ';
@@ -77,12 +77,12 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
-        <column name="uri" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
+        <column name="uri" required="true"/>
         <index>
-            <index-column name="title" />
-            <index-column name="uri" />
+            <index-column name="title"/>
+            <index-column name="uri"/>
         </index>
     </table>
 </database>
@@ -91,9 +91,9 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
-        <column name="uri" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
+        <column name="uri" required="true"/>
     </table>
 </database>
 ';
@@ -108,12 +108,12 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
-        <column name="uri" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
+        <column name="uri" required="true"/>
         <index name="testIndex">
-            <index-column name="title" />
-            <index-column name="uri" />
+            <index-column name="title"/>
+            <index-column name="uri"/>
         </index>
     </table>
 </database>
@@ -122,12 +122,12 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
-        <column name="uri" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
+        <column name="uri" required="true"/>
         <index name="NewIndexName">
-            <index-column name="title" />
-            <index-column name="uri" />
+            <index-column name="title"/>
+            <index-column name="uri"/>
         </index>
     </table>
 </database>
@@ -145,10 +145,10 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index name="testIndex">
-            <index-column name="title" size="50" />
+            <index-column name="title" size="50"/>
         </index>
     </table>
 </database>
@@ -157,10 +157,10 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index name="testIndex">
-            <index-column name="title" size="100" />
+            <index-column name="title" size="100"/>
         </index>
     </table>
 </database>
@@ -176,13 +176,13 @@ class IndexTest extends MigrationTestCase
         $originXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index name="testIndex">
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <index name="testIndex2">
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
     </table>
 </database>
@@ -191,16 +191,16 @@ class IndexTest extends MigrationTestCase
         $targetXml = '
 <database>
     <table name="migration_test_8">
-        <column name="id" type="integer" primaryKey="true" autoIncrement="true" />
-        <column name="title" required="true" />
+        <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
+        <column name="title" required="true"/>
         <index name="testIndex">
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <index name="testIndex2">
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <index name="testIndex3">
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
     </table>
 </database>
