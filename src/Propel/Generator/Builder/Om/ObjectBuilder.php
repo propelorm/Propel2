@@ -885,7 +885,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * {$column->getDescription()}
      *
      * @param      string|null \$format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw $dateTimeClass object will be returned.
+     *   If format is NULL, then the raw $dateTimeClass object will be returned.
      *
      * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
      *
@@ -921,8 +921,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $defaultfmt = null;
         }
 
+        $format = var_export($defaultfmt, true);
+        if ($format === 'NULL') {
+            $format = 'null';
+        }
+
         $script .= "
-    " . $visibility . " function get$cfc(\$format = " . var_export($defaultfmt, true) . '';
+    " . $visibility . " function get$cfc(\$format = " . $format . '';
         if ($column->isLazyLoad()) {
             $script .= ', $con = null';
         }
