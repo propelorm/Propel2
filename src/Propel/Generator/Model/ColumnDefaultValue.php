@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -18,11 +16,11 @@ namespace Propel\Generator\Model;
  */
 class ColumnDefaultValue
 {
-    const TYPE_VALUE = 'value';
-    const TYPE_EXPR  = 'expr';
+    public const TYPE_VALUE = 'value';
+    public const TYPE_EXPR = 'expr';
 
     /**
-     * @var string The default value, as specified in the schema.
+     * @var string|null The default value, as specified in the schema.
      */
     private $value;
 
@@ -34,14 +32,14 @@ class ColumnDefaultValue
     /**
      * Creates a new DefaultValue object.
      *
-     * @param string $value The default value, as specified in the schema.
-     * @param string $type  The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     * @param string|null $value The default value, as specified in the schema.
+     * @param string|null $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
     public function __construct($value, $type = null)
     {
         $this->setValue($value);
 
-        if (null !== $type) {
+        if ($type !== null) {
             $this->setType($type);
         }
     }
@@ -56,6 +54,8 @@ class ColumnDefaultValue
 
     /**
      * @param string $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
+     *
+     * @return void
      */
     public function setType($type)
     {
@@ -65,15 +65,15 @@ class ColumnDefaultValue
     /**
      * Convenience method to indicate whether the value in this object is an expression (as opposed to simple value).
      *
-     * @return boolean Whether value this object holds is an expression.
+     * @return bool Whether value this object holds is an expression.
      */
     public function isExpression()
     {
-        return self::TYPE_EXPR === $this->type;
+        return $this->type === self::TYPE_EXPR;
     }
 
     /**
-     * @return string The value, as specified in the schema.
+     * @return string|null The value, as specified in the schema.
      */
     public function getValue()
     {
@@ -81,7 +81,9 @@ class ColumnDefaultValue
     }
 
     /**
-     * @param string $value The value, as specified in the schema.
+     * @param string|null $value The value, as specified in the schema.
+     *
+     * @return void
      */
     public function setValue($value)
     {
@@ -91,9 +93,11 @@ class ColumnDefaultValue
     /**
      * A method to compare if two Default values match
      *
-     * @param  ColumnDefaultValue $other The value to compare to
-     * @return boolean            Whether this object represents same default value as $other
-     * @author     Niklas Närhinen <niklas@narhinen.net>
+     * @author Niklas Närhinen <niklas@narhinen.net>
+     *
+     * @param \Propel\Generator\Model\ColumnDefaultValue $other The value to compare to
+     *
+     * @return bool Whether this object represents same default value as $other
      */
     public function equals(ColumnDefaultValue $other)
     {

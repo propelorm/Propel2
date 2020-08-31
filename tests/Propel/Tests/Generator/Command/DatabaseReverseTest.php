@@ -1,11 +1,20 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Command;
 
+use Propel\Generator\Command\AbstractCommand;
 use Propel\Generator\Command\DatabaseReverseCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * @group database
@@ -15,6 +24,9 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
     protected $configDir;
     protected $outputDir;
 
+    /**
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
@@ -22,6 +34,9 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $this->outputDir = __DIR__ . '/../../../../reversecommand';
     }
 
+    /**
+     * @return void
+     */
     public function testCommandWithoutNamespace()
     {
         $app = new Application('Propel', Propel::VERSION);
@@ -32,31 +47,31 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
 
         chdir(__DIR__ . '/../../../../Fixtures/bookstore');
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
+        $input = new ArrayInput([
             'command' => 'database:reverse',
             '--database-name' => 'reverse-test',
             '--output-dir' => $this->outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            'connection' => $this->getConnectionDsn('bookstore-schemas', true)
+            'connection' => $this->getConnectionDsn('bookstore-schemas', true),
         ]);
 
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $output = new StreamOutput(fopen('php://temp', 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
         chdir($currentDir);
 
-        if (0 !== $result) {
+        if (AbstractCommand::CODE_SUCCESS !== $result) {
             rewind($output->getStream());
             echo stream_get_contents($output->getStream());
         }
-        $this->assertEquals(0, $result, 'database:reverse tests exited successfully');
+        $this->assertSame(AbstractCommand::CODE_SUCCESS, $result, 'database:reverse tests exited successfully');
 
         $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
         $this->assertEquals('reverse-test', $databaseXml['name']);
 
-        $this->assertGreaterThan(20, $databaseXml->xpath("table"));
+        $this->assertGreaterThan(20, $databaseXml->xpath('table'));
 
         $table = $databaseXml->xpath("table[@name='acct_access_role']");
         $this->assertCount(1, $table);
@@ -66,6 +81,9 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $this->assertCount(2, $table->xpath('column'));
     }
 
+    /**
+     * @return void
+     */
     public function testCommandWithNamespace()
     {
         $app = new Application('Propel', Propel::VERSION);
@@ -77,17 +95,17 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
 
         chdir(__DIR__ . '/../../../../Fixtures/bookstore');
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
+        $input = new ArrayInput([
             'command' => 'database:reverse',
             '--database-name' => 'reverse-test',
             '--output-dir' => $this->outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--namespace' => $testNamespace,
-            'connection' => $this->getConnectionDsn('bookstore-schemas', true)
+            'connection' => $this->getConnectionDsn('bookstore-schemas', true),
         ]);
 
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $output = new StreamOutput(fopen('php://temp', 'r+'));
         $app->setAutoExit(false);
         $result = $app->run($input, $output);
 
@@ -174,5 +192,4 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
         $this->assertEquals($testNamespace, $databaseXml['namespace']);
     }
-
 }

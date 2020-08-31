@@ -1,15 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
 
+use DateTime;
+use Exception;
 use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
@@ -26,7 +26,7 @@ use Propel\Generator\Platform\SqlsrvPlatform;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Generates a PHP5 base Object class for user object model (OM).
+ * Generates a base Object class for user object model (OM).
  *
  * This class produces the base object class (e.g. BaseMyTable) which contains
  * all the custom-built accessor and setter methods.
@@ -35,7 +35,6 @@ use Propel\Runtime\Exception\PropelException;
  */
 class ObjectBuilder extends AbstractObjectBuilder
 {
-
     /**
      * Returns the package for the base object classes.
      *
@@ -43,14 +42,15 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     public function getPackage()
     {
-        return parent::getPackage() . ".Base";
+        return parent::getPackage() . '.Base';
     }
 
     /**
      * Returns the namespace for the base class.
      *
-     * @return string
      * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
+     *
+     * @return string
      */
     public function getNamespace()
     {
@@ -72,7 +72,7 @@ class ObjectBuilder extends AbstractObjectBuilder
     {
         $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ? $this->getBuildProperty('generator.objectModel.defaultKeyType') : 'phpName';
 
-        return "TYPE_".strtoupper($defaultKeyType);
+        return 'TYPE_' . strtoupper($defaultKeyType);
     }
 
     /**
@@ -92,6 +92,10 @@ class ObjectBuilder extends AbstractObjectBuilder
      * This method may emit warnings for code which may cause problems
      * and will throw exceptions for errors that will definitely cause
      * problems.
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return void
      */
     protected function validateModel()
     {
@@ -115,7 +119,7 @@ class ObjectBuilder extends AbstractObjectBuilder
 
         $intersect = array_intersect($colPhpNames, $fkPhpNames);
         if (!empty($intersect)) {
-            throw new EngineException("One or more of your column names for [" . $table->getName() . "] table conflict with foreign key names (" . implode(", ", $intersect) . ")");
+            throw new EngineException('One or more of your column names for [' . $table->getName() . '] table conflict with foreign key names (' . implode(', ', $intersect) . ')');
         }
 
         // Check foreign keys to see if there are any foreign keys that
@@ -133,7 +137,8 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the appropriate formatter (from platform) for a date/time column.
      *
-     * @param  Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
      * @return string
      */
     protected function getTemporalFormatter(Column $column)
@@ -154,31 +159,36 @@ class ObjectBuilder extends AbstractObjectBuilder
      * Returns the type-casted and stringified default value for the specified
      * Column. This only works for scalar default values currently.
      *
-     * @param  Column          $column
-     * @throws EngineException
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
      * @return string
      */
     protected function getDefaultValueString(Column $column)
     {
         $defaultValue = var_export(null, true);
         $val = $column->getPhpDefaultValue();
-        if (null === $val) {
+        if ($val === null) {
             return $defaultValue;
         }
 
         if ($column->isTemporalType()) {
             $fmt = $this->getTemporalFormatter($column);
             try {
-                if (!($this->getPlatform() instanceof MysqlPlatform &&
-                    ($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))) {
+                if (
+                    !($this->getPlatform() instanceof MysqlPlatform &&
+                    ($val === '0000-00-00 00:00:00' || $val === '0000-00-00'))
+                ) {
                     // while technically this is not a default value of NULL,
                     // this seems to be closest in meaning.
-                    $defDt = new \DateTime($val);
+                    $defDt = new DateTime($val);
                     $defaultValue = var_export($defDt->format($fmt), true);
                 }
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 // prevent endless loop when timezone is undefined
                 date_default_timezone_set('America/Los_Angeles');
+
                 throw new EngineException(sprintf('Unable to parse default temporal value "%s" for column "%s"', $column->getDefaultValueString(), $column->getFullyQualifiedName()), 0, $exception);
             }
         } elseif ($column->isEnumType()) {
@@ -186,18 +196,18 @@ class ObjectBuilder extends AbstractObjectBuilder
             if (!in_array($val, $valueSet)) {
                 throw new EngineException(sprintf('Default Value "%s" is not among the enumerated values', $val));
             }
-            $defaultValue = array_search($val, $valueSet);
+            $defaultValue = (string)array_search($val, $valueSet);
         } elseif ($column->isSetType()) {
-            $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
+            $defaultValue = (string)SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
         } elseif ($column->isPhpObjectType()) {
-            $defaultValue = 'new '.$column->getPhpType().'(' . var_export($val, true) . ')';
+            $defaultValue = 'new ' . $column->getPhpType() . '(' . var_export($val, true) . ')';
         } elseif ($column->isPhpArrayType()) {
             $defaultValue = var_export($val, true);
         } else {
-            throw new EngineException("Cannot get default value string for " . $column->getFullyQualifiedName());
+            throw new EngineException('Cannot get default value string for ' . $column->getFullyQualifiedName());
         }
 
         return $defaultValue;
@@ -206,7 +216,9 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassOpen(&$script)
     {
@@ -214,9 +226,11 @@ class ObjectBuilder extends AbstractObjectBuilder
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
 
-        if (null !== ($parentClass = $this->getBehaviorContent('parentClass')) ||
-            null !== ($parentClass = ClassTools::classname($this->getBaseClass()))) {
-            $parentClass = ' extends '.$parentClass;
+        if (
+            ($parentClass = $this->getBehaviorContent('parentClass')) !== null ||
+            ($parentClass = ClassTools::classname($this->getBaseClass())) !== null
+        ) {
+            $parentClass = ' extends ' . $parentClass;
         }
 
         if ($this->getBuildProperty('generator.objectModel.addClassLevelComment')) {
@@ -235,15 +249,15 @@ class ObjectBuilder extends AbstractObjectBuilder
  *";
             }
             $script .= "
- * @package    propel.generator.".$this->getPackage()."
+ * @package    propel.generator." . $this->getPackage() . "
  */";
         }
 
         $script .= "
-abstract class ".$this->getUnqualifiedClassName().$parentClass." implements ActiveRecordInterface ";
+abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implements ActiveRecordInterface ';
 
         if ($interface = $this->getInterface()) {
-            $script .= ", Child" . ClassTools::classname($interface);
+            $script .= ', Child' . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
                 $this->declareClass($interface);
             } else {
@@ -259,8 +273,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Specifies the methods that are added as part of the basic OM class.
      * This can be overridden by subclasses that wish to add more methods.
      *
-     * @param string &$script
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
     protected function addClassBody(&$script)
     {
@@ -298,7 +315,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if ($table->hasCrossForeignKeys()) {
-            /* @var $refFK ForeignKey */
             foreach ($table->getCrossFks() as $crossFKs) {
                 $this->addCrossScheduledForDeletionAttribute($script, $crossFKs);
             }
@@ -360,7 +376,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addPrimaryString($script);
 
         // apply behaviors
-        $this->applyBehaviorModifier('objectMethods', $script, "    ");
+        $this->applyBehaviorModifier('objectMethods', $script, '    ');
 
         if ($this->getBuildProperty('generator.objectModel.addHooks')) {
             $this->addHookMethods($script);
@@ -372,20 +388,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClassClose(&$script)
     {
         $script .= "
 }
 ";
-        $this->applyBehaviorModifier('objectFilter', $script, "");
+        $this->applyBehaviorModifier('objectFilter', $script, '');
     }
 
     /**
      * Adds any constants to the class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addConstants(&$script)
     {
@@ -400,7 +420,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds class attributes.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addAttributes(&$script)
     {
@@ -431,23 +453,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $this->addAlreadyInSaveAttribute($script);
 
         // apply behaviors
-        $this->applyBehaviorModifier('objectAttributes', $script, "    ");
+        $this->applyBehaviorModifier('objectAttributes', $script, '    ');
     }
 
     /**
      * Adds variables that store column values.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addColumnAttributes(&$script)
     {
-
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
             $this->addColumnAttributeComment($script, $col);
             $this->addColumnAttributeDeclaration($script, $col);
-            if ($col->isLazyLoad() ) {
+            if ($col->isLazyLoad()) {
                 $this->addColumnAttributeLoaderComment($script, $col);
                 $this->addColumnAttributeLoaderDeclaration($script, $col);
             }
@@ -464,8 +487,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds comment about the attribute (variable) that stores column values.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeComment(&$script, Column $column)
     {
@@ -479,14 +504,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * The value for the $clo field.
-     * ".$column->getDescription();
+     * " . $column->getDescription();
         if ($column->getDefaultValue()) {
             if ($column->getDefaultValue()->isExpression()) {
                 $script .= "
-     * Note: this column has a database default value of: (expression) ".$column->getDefaultValue()->getValue();
+     * Note: this column has a database default value of: (expression) " . $column->getDefaultValue()->getValue();
             } else {
                 $script .= "
-     * Note: this column has a database default value of: ". $this->getDefaultValueString($column);
+     * Note: this column has a database default value of: " . $this->getDefaultValueString($column);
             }
         }
         $script .= "
@@ -497,8 +522,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the declaration of a column value storage attribute.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeDeclaration(&$script, Column $column)
     {
@@ -512,8 +539,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the comment about the attribute keeping track if an attribute value
      * has been loaded.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeLoaderComment(&$script, Column $column)
     {
@@ -530,22 +559,26 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Adds the declaration of the attribute keeping track of an attribute
      * loaded state.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeLoaderDeclaration(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
         $script .= "
-    protected \$".$clo."_isLoaded = false;
+    protected \$" . $clo . "_isLoaded = false;
 ";
     }
 
     /**
      * Adds the comment about the serialized attribute.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeUnserializedComment(&$script, Column $column)
     {
@@ -561,24 +594,28 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the declaration of the serialized attribute.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeUnserializedDeclaration(&$script, Column $column)
     {
-        $clo = $column->getLowercasedName() . "_unserialized";
+        $clo = $column->getLowercasedName() . '_unserialized';
         $script .= "
     protected \$" . $clo . ";
 ";
     }
 
     /**
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addColumnAttributeConvertedDeclaration(&$script, Column $column)
     {
-        $clo = $column->getLowercasedName() . "_converted";
+        $clo = $column->getLowercasedName() . '_converted';
         $script .= "
     protected \$" . $clo . ";
 ";
@@ -587,7 +624,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the constructor for this object.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addConstructor(&$script)
     {
@@ -602,13 +641,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the constructor
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addConstructorComment(&$script)
     {
         $script .= "
     /**
-     * Initializes internal state of ".$this->getQualifiedClassName()." object.";
+     * Initializes internal state of " . $this->getQualifiedClassName() . ' object.';
         if ($this->hasDefaultValues()) {
             $script .= "
      * @see applyDefaults()";
@@ -620,7 +661,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the constructor.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
     protected function addConstructorOpen(&$script)
     {
@@ -632,7 +675,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for the constructor.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
     protected function addConstructorBody(&$script)
     {
@@ -643,7 +688,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the constructor.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
     protected function addConstructorClose(&$script)
     {
@@ -655,7 +702,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the base object functions.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
     protected function addBaseObjectMethods(&$script)
     {
@@ -665,23 +714,37 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the base object hook functions.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
     protected function addHookMethods(&$script)
     {
         $hooks = [];
         foreach (['pre', 'post'] as $hook) {
             foreach (['Insert', 'Update', 'Save', 'Delete'] as $action) {
-                $hooks[$hook.$action] = false === strpos($script, "function $hook.$action(");
+                $hooks[$hook . $action] = strpos($script, "function $hook.$action(") === false;
             }
         }
+
+        if (
+            $this->getBehaviorContent('parentClass') !== null ||
+            ClassTools::classname($this->getBaseClass()) !== null
+        ) {
+            $hooks['hasBaseClass'] = true;
+        } else {
+            $hooks['hasBaseClass'] = false;
+        }
+
         $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
     }
 
     /**
      * Adds the applyDefaults() method, which is called from the constructor.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addApplyDefaultValues(&$script)
     {
@@ -694,7 +757,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addApplyDefaultValuesComment(&$script)
     {
@@ -710,7 +775,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addApplyDefaultValuesOpen(&$script)
     {
@@ -722,7 +789,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body of the applyDefault method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addApplyDefaultValuesBody(&$script)
     {
@@ -739,16 +808,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($colsWithDefaults as $column) {
-            /** @var Column $column */
+            /** @var \Propel\Generator\Model\Column $column */
             $clo = $column->getLowercasedName();
             $defaultValue = $this->getDefaultValueString($column);
             if ($column->isTemporalType()) {
                 $dateTimeClass = $this->getDateTimeClass($column);
                 $script .= "
-        \$this->".$clo." = PropelDateTime::newInstance($defaultValue, null, '$dateTimeClass');";
+        \$this->" . $clo . " = PropelDateTime::newInstance($defaultValue, null, '$dateTimeClass');";
             } else {
                 $script .= "
-        \$this->".$clo." = $defaultValue;";
+        \$this->" . $clo . " = $defaultValue;";
             }
         }
     }
@@ -756,7 +825,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the applyDefaults method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addApplyDefaultValuesClose(&$script)
     {
@@ -768,8 +839,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a date/time/timestamp getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addTemporalAccessor(&$script, Column $column)
     {
@@ -782,8 +855,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a temporal accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addTemporalAccessorComment(&$script, Column $column)
     {
@@ -792,6 +867,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $dateTimeClass = $this->getDateTimeClass($column);
 
         $handleMysqlDate = false;
+        $mysqlInvalidDateString = '';
         if ($this->getPlatform() instanceof MysqlPlatform) {
             if ($column->getType() === PropelTypes::TIMESTAMP) {
                 $handleMysqlDate = true;
@@ -808,10 +884,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Get the [optionally formatted] temporal [$clo] column value.
      * {$column->getDescription()}
      *
-     * @param      string|null \$format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw $dateTimeClass object will be returned.
+     * @param string|null \$format The date/time format string (either date()-style or strftime()-style).
+     *   If format is NULL, then the raw $dateTimeClass object will be returned.
      *
-     * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" .($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '')."
+     * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */";
@@ -820,8 +896,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a temporal accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addTemporalAccessorOpen(&$script, Column $column)
     {
@@ -843,10 +921,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $defaultfmt = null;
         }
 
+        $format = var_export($defaultfmt, true);
+        if ($format === 'NULL') {
+            $format = 'null';
+        }
+
         $script .= "
-    ".$visibility." function get$cfc(\$format = ".var_export($defaultfmt, true)."";
+    " . $visibility . " function get$cfc(\$format = " . $format . '';
         if ($column->isLazyLoad()) {
-            $script .= ", \$con = null";
+            $script .= ', $con = null';
         }
         $script .= ")
     {";
@@ -855,7 +938,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Gets accessor lazy loaded snippets.
      *
-     * @param  Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
      * @return string
      */
     protected function getAccessorLazyLoadSnippet(Column $column)
@@ -881,8 +965,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the temporal accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addTemporalAccessorBody(&$script, Column $column)
     {
@@ -921,7 +1007,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the temporal accessor.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addTemporalAccessorClose(&$script)
     {
@@ -933,8 +1021,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds an object getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addObjectAccessor(&$script, Column $column)
     {
@@ -947,13 +1037,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an object accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addObjectAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
+        $cloUnserialized = $clo . '_unserialized';
         if ($column->isLazyLoad()) {
             $script .= $this->getAccessorLazyLoadSnippet($column);
         }
@@ -968,6 +1060,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->$cloUnserialized;";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
+     */
     protected function addJsonAccessor(&$script, Column $column)
     {
         $this->addJsonAccessorComment($script, $column);
@@ -979,17 +1077,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a json accessor method (a getter).
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addJsonAccessorComment(&$script, Column $column)
     {
-        $clo=$column->getLowercasedName();
+        $clo = $column->getLowercasedName();
 
         $script .= "
     /**
      * Get the [$clo] column value.
-     * ".$column->getDescription() ."
+     * " . $column->getDescription() . "
      * @param bool \$asArray Returns the JSON data as array instead of object
      ";
         if ($column->isLazyLoad()) {
@@ -1004,8 +1104,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for a JSON accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addJsonAccessorOpen(&$script, Column $column)
     {
@@ -1013,15 +1115,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    ".$visibility." function get$cfc(\$asArray = true";
+    " . $visibility . " function get$cfc(\$asArray = true";
         if ($column->isLazyLoad()) {
-            $script .= ", ConnectionInterface \$con = null";
+            $script .= ', ConnectionInterface $con = null';
         }
 
         $script .= ")
     {";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
+     */
     protected function addJsonAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
@@ -1032,8 +1140,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds an array getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addArrayAccessor(&$script, Column $column)
     {
@@ -1046,13 +1156,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an array accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addArrayAccessorBody(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
+        $cloUnserialized = $clo . '_unserialized';
         if ($column->isLazyLoad()) {
             $script .= $this->getAccessorLazyLoadSnippet($column);
         }
@@ -1072,8 +1184,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a boolean isser method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addBooleanAccessor(&$script, Column $column)
     {
@@ -1091,7 +1205,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Returns the name to be used as boolean accessor name
      *
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
      * @return string
      */
     protected static function getBooleanAccessorName(Column $column)
@@ -1100,14 +1215,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (!preg_match('/^(?:is|has)(?=[A-Z])/', $name)) {
             $name = 'is' . ucfirst($name);
         }
+
         return $name;
     }
 
     /**
      * Adds the function declaration for a boolean accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addBooleanAccessorOpen(&$script, Column $column)
     {
@@ -1115,9 +1233,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    ".$visibility." function $name(";
+    " . $visibility . " function $name(";
         if ($column->isLazyLoad()) {
-            $script .= "ConnectionInterface \$con = null";
+            $script .= 'ConnectionInterface $con = null';
         }
 
         $script .= ")
@@ -1127,8 +1245,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a boolean accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addBooleanAccessorBody(&$script, Column $column)
     {
@@ -1141,14 +1261,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= '$con';
         }
 
-        $script .= ");";
+        $script .= ');';
     }
 
     /**
      * Adds an enum getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addEnumAccessor(&$script, Column $column)
     {
@@ -1161,17 +1283,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for an enum accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addEnumAccessorComment(&$script, Column $column)
     {
-        $clo=$column->getLowercasedName();
+        $clo = $column->getLowercasedName();
 
         $script .= "
     /**
      * Get the [$clo] column value.
-     * ".$column->getDescription();
+     * " . $column->getDescription();
         if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
@@ -1185,8 +1309,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for an enum accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addEnumAccessorBody(&$script, Column $column)
     {
@@ -1199,7 +1325,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (null === \$this->$clo) {
             return null;
         }
-        \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+        \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
         if (!isset(\$valueSet[\$this->$clo])) {
             throw new PropelException('Unknown stored enum key: ' . \$this->$clo);
         }
@@ -1210,8 +1336,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a SET column getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addSetAccessor(&$script, Column $column)
     {
@@ -1224,8 +1352,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a SET column accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addSetAccessorComment(&$script, Column $column)
     {
@@ -1248,8 +1378,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a SET column accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addSetAccessorBody(&$script, Column $column)
     {
@@ -1268,23 +1400,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->$cloConverted = array();
         }
         if (!\$this->$cloConverted && null !== \$this->$clo) {
-            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($column) . ");
+            \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
             try {
                 \$this->$cloConverted = SetColumnConverter::convertIntToArray(\$this->$clo, \$valueSet);
             } catch (SetColumnConverterException \$e) {
                 throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
             }
         }
-        
+
         return \$this->$cloConverted;";
     }
-
 
     /**
      * Adds a tester method for an array column.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addHasArrayElement(&$script, Column $column)
     {
@@ -1297,7 +1430,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Test the presence of a value in the [$clo] $columnType column value.
      * @param      mixed \$value
-     * ".$column->getDescription();
+     * " . $column->getDescription();
         if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
@@ -1307,14 +1440,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     $visibility function has$singularPhpName(\$value";
         if ($column->isLazyLoad()) {
-            $script .= ", ConnectionInterface \$con = null";
+            $script .= ', ConnectionInterface $con = null';
         }
 
         $script .= ")
     {
         return in_array(\$value, \$this->get$cfc(";
         if ($column->isLazyLoad()) {
-            $script .= "\$con";
+            $script .= '$con';
         }
 
         $script .= "));
@@ -1325,8 +1458,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a normal (non-temporal) getter method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addDefaultAccessor(&$script, Column $column)
     {
@@ -1339,31 +1474,35 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Add the comment for a default accessor method (a getter).
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addDefaultAccessorComment(&$script, Column $column)
     {
-        $clo=$column->getLowercasedName();
+        $clo = $column->getLowercasedName();
 
         $script .= "
     /**
      * Get the [$clo] column value.
-     * ".$column->getDescription();
+     * " . $column->getDescription();
         if ($column->isLazyLoad()) {
             $script .= "
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return ".($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed'))."
+     * @return " . ($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed')) . "
      */";
     }
 
     /**
      * Adds the function declaration for a default accessor.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addDefaultAccessorOpen(&$script, Column $column)
     {
@@ -1371,9 +1510,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    ".$visibility." function get$cfc(";
+    " . $visibility . " function get$cfc(";
         if ($column->isLazyLoad()) {
-            $script .= "ConnectionInterface \$con = null";
+            $script .= 'ConnectionInterface $con = null';
         }
 
         $script .= ")
@@ -1383,8 +1522,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for a default accessor method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addDefaultAccessorBody(&$script, Column $column)
     {
@@ -1400,7 +1541,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for a default accessor method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addDefaultAccessorClose(&$script)
     {
@@ -1412,8 +1555,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the lazy loader method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addLazyLoader(&$script, Column $column)
     {
@@ -1426,8 +1571,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for the lazy loader method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addLazyLoaderComment(&$script, Column $column)
     {
@@ -1450,8 +1597,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function declaration for the lazy loader method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addLazyLoaderOpen(&$script, Column $column)
     {
@@ -1464,8 +1613,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function body for the lazy loader method.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addLazyLoaderBody(&$script, Column $column)
     {
@@ -1476,10 +1627,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($column->getType() === PropelTypes::BLOB && $platform instanceof SqlsrvPlatform) {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(".$this->getColumnConstant($column).");
+        \$c->addSelectColumn(" . $this->getColumnConstant($column) . ");
         try {
             \$row = array(0 => null);
-            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             if (\$dataFetcher instanceof PDODataFetcher) {
                 \$dataFetcher->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
             }
@@ -1488,9 +1639,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(".$this->getColumnConstant($column).");
+        \$c->addSelectColumn(" . $this->getColumnConstant($column) . ");
         try {
-            \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
             \$row = \$dataFetcher->fetch();
             \$dataFetcher->close();";
         }
@@ -1517,17 +1668,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }";
         } elseif ($column->isPhpPrimitiveType()) {
             $script .= "
-            \$this->$clo = (\$firstColumn !== null) ? (".$column->getPhpType().") \$firstColumn : null;";
+            \$this->$clo = (\$firstColumn !== null) ? (" . $column->getPhpType() . ') $firstColumn : null;';
         } elseif ($column->isPhpObjectType()) {
             $script .= "
-            \$this->$clo = (\$firstColumn !== null) ? new ".$column->getPhpType()."(\$firstColumn) : null;";
+            \$this->$clo = (\$firstColumn !== null) ? new " . $column->getPhpType() . '($firstColumn) : null;';
         } else {
             $script .= "
             \$this->$clo = \$firstColumn;";
         }
 
         $script .= "
-            \$this->".$clo."_isLoaded = true;
+            \$this->" . $clo . "_isLoaded = true;
         } catch (Exception \$e) {
             throw new PropelException(\"Error loading value for [$clo] column on demand.\", 0, \$e);
         }";
@@ -1536,7 +1687,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the function close for the lazy loader.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addLazyLoaderClose(&$script)
     {
@@ -1547,8 +1700,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the open of the mutator (setter) method for a column.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addMutatorOpen(&$script, Column $column)
     {
@@ -1560,8 +1715,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the open of the mutator (setter) method for a JSON column.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addJsonMutatorOpen(&$script, Column $column)
     {
@@ -1573,8 +1730,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a mutator.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addJsonMutatorComment(&$script, Column $column)
     {
@@ -1582,35 +1741,44 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Set the value of [$clo] column.
-     * ".$column->getDescription()."
+     * " . $column->getDescription() . "
      * @param string|array|object \$v new value
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
 
     /**
      * Adds the comment for a mutator.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+        $type = $column->getPhpType();
+        if ($type && !$column->isNotNull()) {
+            $type .= '|null';
+        }
+
         $script .= "
     /**
      * Set the value of [$clo] column.
-     * ".$column->getDescription()."
-     * @param ".($column->getPhpType() ?: 'mixed')." \$v new value
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * " . $column->getDescription() . "
+     * @param " . $type . " \$v New value
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
 
     /**
      * Adds the mutator function declaration.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addMutatorOpenOpen(&$script, Column $column)
     {
@@ -1622,7 +1790,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if ($column->getTypeHint()) {
             $typeHint = $column->getTypeHint();
-            if ('array' !== $typeHint) {
+            if ($typeHint !== 'array') {
                 $typeHint = $this->declareClass($typeHint);
             }
 
@@ -1634,15 +1802,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-    ".$visibility." function set$cfc($typeHint\$v$null)
+    " . $visibility . " function set$cfc($typeHint\$v$null)
     {";
     }
 
     /**
      * Adds the mutator open body part.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addMutatorOpenBody(&$script, Column $column)
     {
@@ -1654,7 +1824,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // it doesn't matter if the value is actually set or not (logic below) as
         // any attempt to set the value means that no db lookup should be performed
         // when the get$cfc() method is called.
-        \$this->".$clo."_isLoaded = true;
+        \$this->" . $clo . "_isLoaded = true;
 ";
         }
     }
@@ -1662,8 +1832,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the close of the mutator (setter) method for a column.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addMutatorClose(&$script, Column $column)
     {
@@ -1674,18 +1846,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the body of the close part of a mutator.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     protected function addMutatorCloseBody(&$script, Column $column)
     {
         $table = $this->getTable();
 
         if ($column->isForeignKey()) {
-
             foreach ($column->getForeignKeys() as $fk) {
-
-                $tblFK =  $table->getDatabase()->getTable($fk->getForeignTableName());
+                $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                 $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                 if (!$colFK) {
@@ -1695,55 +1867,56 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $varName = $this->getFKVarName($fk);
 
                 $script .= "
-        if (\$this->$varName !== null && \$this->".$varName."->get".$colFK->getPhpName()."() !== \$v) {
+        if (\$this->$varName !== null && \$this->" . $varName . '->get' . $colFK->getPhpName() . "() !== \$v) {
             \$this->$varName = null;
         }
 ";
-            } // foreach fk
-        } /* if col is foreign key */
+            }
+        }
 
         foreach ($column->getReferrers() as $refFK) {
-
             $tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
 
-            if ( $tblFK->getName() != $table->getName() ) {
-
+            if ($tblFK->getName() != $table->getName()) {
                 foreach ($column->getForeignKeys() as $fk) {
-
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                     if ($refFK->isLocalPrimaryKey()) {
                         $varName = $this->getPKRefFKVarName($refFK);
                         $script .= "
-        // update associated ".$tblFK->getPhpName()."
+        // update associated " . $tblFK->getPhpName() . "
         if (\$this->$varName !== null) {
-            \$this->{$varName}->set".$colFK->getPhpName()."(\$v);
+            \$this->{$varName}->set" . $colFK->getPhpName() . "(\$v);
         }
 ";
                     } else {
                         $collName = $this->getRefFKCollVarName($refFK);
                         $script .= "
 
-        // update associated ".$tblFK->getPhpName()."
+        // update associated " . $tblFK->getPhpName() . "
         if (\$this->$collName !== null) {
             foreach (\$this->$collName as \$referrerObject) {
-                    \$referrerObject->set".$colFK->getPhpName()."(\$v);
+                    \$referrerObject->set" . $colFK->getPhpName() . "(\$v);
                 }
             }
 ";
-                    } // if (isLocalPrimaryKey
-                } // foreach col->getPrimaryKeys()
-            } // if tablFk != table
-        } // foreach
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Adds the close for the mutator close
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see addMutatorClose()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
+     */
     protected function addMutatorCloseClose(&$script, Column $col)
     {
         $cfc = $col->getPhpName();
@@ -1755,9 +1928,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for BLOB columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addLobMutator(&$script, Column $col)
     {
@@ -1774,16 +1951,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } else { // it's already a stream
             \$this->$clo = \$v;
         }
-        \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+        \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
 ";
         $this->addMutatorClose($script, $col);
-    } // addLobMutatorSnippet
+    }
 
     /**
      * Adds a setter method for date/time/timestamp columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addTemporalMutator(&$script, Column $col)
     {
@@ -1813,9 +1994,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             switch ($col->getType()) {
                 case 'DATE':
                     $format = 'Y-m-d';
+
                     break;
                 case 'TIME':
                     $format = 'H:i:s.u';
+
                     break;
                 default:
                     $format = 'Y-m-d H:i:s.u';
@@ -1826,13 +2009,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
                 \$this->$clo = \$dt === null ? null : clone \$dt;
-                \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+                \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
             }
         } // if either are not null
 ";
         $this->addMutatorClose($script, $col);
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return void
+     */
     public function addTemporalMutatorComment(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
@@ -1840,23 +2029,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
-     * ".$col->getDescription()."
+     * " . $col->getDescription() . "
      * @param  mixed \$v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
 
     /**
      * Adds a setter for Object columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addObjectMutator(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
+        $cloUnserialized = $clo . '_unserialized';
         $this->addMutatorOpen($script, $col);
 
         $script .= "
@@ -1864,7 +2057,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->$cloUnserialized = \$v;
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, serialize(\$v));
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
         rewind(\$this->$clo);
 ";
@@ -1873,9 +2066,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Json columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addJsonMutator(&$script, Column $col)
     {
@@ -1891,7 +2088,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$encodedValue = json_encode(\$v);
         if (\$encodedValue !== \$this->$clo) {
             \$this->$clo = \$encodedValue;
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1899,21 +2096,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Array columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addArrayMutator(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
-        $cloUnserialized = $clo.'_unserialized';
+        $cloUnserialized = $clo . '_unserialized';
         $this->addMutatorOpen($script, $col);
 
         $script .= "
         if (\$this->$cloUnserialized !== \$v) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = '| ' . implode(' | ', \$v) . ' |';
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -1921,8 +2122,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a push method for an array column.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addAddArrayElement(&$script, Column $col)
     {
@@ -1935,24 +2139,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a value to the [$clo] $columnType column value.
      * @param  mixed \$value
-     * ".$col->getDescription();
+     * " . $col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
      * @param  ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */
     $visibility function add$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
-            $script .= ", ConnectionInterface \$con = null";
+            $script .= ', ConnectionInterface $con = null';
         }
 
         $script .= ")
     {
         \$currentArray = \$this->get$cfc(";
         if ($col->isLazyLoad()) {
-            $script .= "\$con";
+            $script .= '$con';
         }
 
         $script .= ");
@@ -1966,8 +2170,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a remove method for an array column.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addRemoveArrayElement(&$script, Column $col)
     {
@@ -1980,17 +2187,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Removes a value from the [$clo] $columnType column value.
      * @param  mixed \$value
-     * ".$col->getDescription();
+     * " . $col->getDescription();
         if ($col->isLazyLoad()) {
             $script .= "
      * @param  ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */
     $visibility function remove$singularPhpName(\$value";
         if ($col->isLazyLoad()) {
-            $script .= ", ConnectionInterface \$con = null";
+            $script .= ', ConnectionInterface $con = null';
         }
         // we want to reindex the array, so array_ functions are not the best choice
         $script .= ")
@@ -1998,7 +2205,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$targetArray = array();
         foreach (\$this->get$cfc(";
         if ($col->isLazyLoad()) {
-            $script .= "\$con";
+            $script .= '$con';
         }
         $script .= ") as \$element) {
             if (\$element != \$value) {
@@ -2014,9 +2221,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a setter for Enum columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addEnumMutator(&$script, Column $col)
     {
@@ -2027,7 +2238,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$v !== null) {
-            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+            \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
             if (!in_array(\$v, \$valueSet)) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$v));
             }
@@ -2036,7 +2247,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -2045,8 +2256,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for an enum mutator.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addEnumMutatorComment(&$script, Column $column)
     {
@@ -2054,9 +2267,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Set the value of [$clo] column.
-     * ".$column->getDescription()."
+     * " . $column->getDescription() . "
      * @param  string \$v new value
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
@@ -2064,9 +2277,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a setter for SET column mutator.
      *
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addSetMutator(&$script, Column $col)
     {
@@ -2083,7 +2299,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
         if (\$this->$cloConverted === null || count(array_diff(\$this->$cloConverted, \$v)) > 0 || count(array_diff(\$v, \$this->$cloConverted)) > 0) {
-            \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+            \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
             try {
                 \$v = SetColumnConverter::convertToInt(\$v, \$valueSet);
             } catch (SetColumnConverterException \$e) {
@@ -2092,7 +2308,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if (\$this->$clo !== \$v) {
                 \$this->$cloConverted = null;
                 \$this->$clo = \$v;
-                \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+                \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
             }
         }
 ";
@@ -2102,8 +2318,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the comment for a SET column mutator.
      *
-     * @param string &$script
-     * @param Column $column
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function addSetMutatorComment(&$script, Column $column)
     {
@@ -2111,18 +2329,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
     /**
      * Set the value of [$clo] column.
-     * ".$column->getDescription()."
+     * " . $column->getDescription() . "
      * @param  array \$v new value
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
 
     /**
      * Adds setter method for boolean columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addBooleanMutator(&$script, Column $col)
     {
@@ -2143,12 +2365,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\Column $col
+     *
+     * @return void
+     */
     public function addBooleanMutatorComment(&$script, Column $col)
     {
         $clo = $col->getLowercasedName();
@@ -2160,17 +2388,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * ".$col->getDescription()."
+     * " . $col->getDescription() . "
      * @param  boolean|integer|string \$v The new value
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
 
     /**
      * Adds setter method for "normal" columns.
-     * @param string &$script The script will be modified in this method.
-     * @param Column $col     The current column.
+     *
      * @see parent::addColumnMutators()
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Column $col The current column.
+     *
+     * @return void
      */
     protected function addDefaultMutator(&$script, Column $col)
     {
@@ -2183,7 +2415,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if ($col->isPhpPrimitiveType()) {
             $script .= "
         if (\$v !== null) {
-            \$v = (".$col->getPhpType().") \$v;
+            \$v = (" . $col->getPhpType() . ") \$v;
         }
 ";
         }
@@ -2191,7 +2423,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= "
         if (\$this->$clo !== \$v) {
             \$this->$clo = \$v;
-            \$this->modifiedColumns[".$this->getColumnConstant($col)."] = true;
+            \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
         $this->addMutatorClose($script, $col);
@@ -2199,7 +2431,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hasOnlyDefaultValues() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHasOnlyDefaultValues(&$script)
     {
@@ -2211,9 +2446,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHasOnlyDefaultValues
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addHasOnlyDefaultValuesComment(&$script)
     {
         $script .= "
@@ -2229,9 +2468,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHasOnlyDefaultValues
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addHasOnlyDefaultValuesOpen(&$script)
     {
         $script .= "
@@ -2241,9 +2484,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHasOnlyDefaultValues
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addHasOnlyDefaultValuesBody(&$script)
     {
         $table = $this->getTable();
@@ -2256,7 +2503,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         foreach ($colsWithDefaults as $col) {
-            /** @var Column $col */
+            /** @var \Propel\Generator\Model\Column $col */
             $clo = $col->getLowercasedName();
             $accessor = "\$this->$clo";
             if ($col->isTemporalType()) {
@@ -2264,7 +2511,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
             }
             $script .= "
-            if ($accessor !== " . $this->getDefaultValueString($col).") {
+            if ($accessor !== " . $this->getDefaultValueString($col) . ") {
                 return false;
             }
 ";
@@ -2273,9 +2520,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the hasOnlyDefaultValues method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHasOnlyDefaultValues
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addHasOnlyDefaultValuesClose(&$script)
     {
         $script .= "
@@ -2288,7 +2539,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the hydrate() method, which sets attributes of the object based on a ResultSet.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHydrate(&$script)
     {
@@ -2300,8 +2554,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHydrate()
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHydrateComment(&$script)
     {
@@ -2328,8 +2586,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHydrate()
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHydrateOpen(&$script)
     {
@@ -2340,8 +2602,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHydrate()
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHydrateBody(&$script)
     {
@@ -2397,7 +2663,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (null !== \$col) ? (".$col->getPhpType().") \$col : null;";
+            \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
             \$this->$clo = \$col;";
@@ -2413,16 +2679,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->$cloConverted = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
-            \$this->$clo = (null !== \$col) ? new ".$col->getPhpType()."(\$col) : null;";
+            \$this->$clo = (null !== \$col) ? new " . $col->getPhpType() . '($col) : null;';
                 } else {
                     $script .= "
             \$this->$clo = \$col;";
                 }
                 $n++;
-            } // if col->isLazyLoad()
-        } /* foreach */
+            }
+        }
 
-        if ($this->getBuildProperty("generator.objectModel.addSaveMethod")) {
+        if ($this->getBuildProperty('generator.objectModel.addSaveMethod')) {
             $script .= "
             \$this->resetModified();
 ";
@@ -2436,20 +2702,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
 ";
 
-        $this->applyBehaviorModifier('postHydrate', $script, "            ");
+        $this->applyBehaviorModifier('postHydrate', $script, '            ');
 
         $script .= "
-            return \$startcol + $n; // $n = ".$this->getTableMapClass()."::NUM_HYDRATE_COLUMNS.
+            return \$startcol + $n; // $n = " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception \$e) {
-            throw new PropelException(sprintf('Error populating %s object', ".var_export($this->getStubObjectBuilder()->getClassName(), true)."), 0, \$e);
+            throw new PropelException(sprintf('Error populating %s object', " . var_export($this->getStubObjectBuilder()->getClassName(), true) . "), 0, \$e);
         }";
     }
 
     /**
      * Adds the function close for the hydrate method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addHydrate()
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addHydrateClose(&$script)
     {
@@ -2460,8 +2730,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildPkeyCriteria(&$script)
     {
         $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
@@ -2474,9 +2747,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildPkeyCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildPkeyCriteriaComment(&$script)
     {
         $script .= "
@@ -2494,9 +2771,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildPkeyCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildPkeyCriteriaOpen(&$script)
     {
         $script .= "
@@ -2506,9 +2787,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildPkeyCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildPkeyCriteriaBody(&$script)
     {
         if (!$this->getTable()->getPrimaryKey()) {
@@ -2519,19 +2804,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        \$criteria = ".$this->getQueryClassName()."::create();";
+        \$criteria = " . $this->getQueryClassName() . '::create();';
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
-        \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);";
+        \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);";
         }
     }
 
     /**
      * Adds the function close for the buildPkeyCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildPkeyCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildPkeyCriteriaClose(&$script)
     {
         $script .= "
@@ -2543,8 +2832,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the buildCriteria method
-     * @param string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildCriteria(&$script)
     {
         $this->addBuildCriteriaComment($script);
@@ -2555,9 +2847,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildCriteriaComment(&$script)
     {
         $script .= "
@@ -2570,9 +2866,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildCriteriaOpen(&$script)
     {
         $script .= "
@@ -2582,28 +2882,36 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildCriteriaBody(&$script)
     {
         $script .= "
-        \$criteria = new Criteria(".$this->getTableMapClass()."::DATABASE_NAME);
+        \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
-        if (\$this->isColumnModified(".$this->getColumnConstant($col).")) {
-            \$criteria->add(".$this->getColumnConstant($col).", \$this->$clo);
+        if (\$this->isColumnModified(" . $this->getColumnConstant($col) . ")) {
+            \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);
         }";
         }
     }
 
     /**
      * Adds the function close of the buildCriteria method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addBuildCriteria()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addBuildCriteriaClose(&$script)
     {
         $script .= "
@@ -2615,8 +2923,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the toArray method
-     * @param string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addToArray(&$script)
     {
         $fks = $this->getTable()->getForeignKeys();
@@ -2645,22 +2956,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ", \$includeForeignObjects = false" : '') . ")
+    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ', $includeForeignObjects = false' : '') . ")
     {
 
         if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
             return '*RECURSION*';
         }
         \$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()] = true;
-        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
+        \$keys = " . $this->getTableMapClassName() . "::getFieldNames(\$keyType);
         \$result = array(";
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isLazyLoad()) {
                 $script .= "
-            \$keys[$num] => (\$includeLazyLoadColumns) ? \$this->get".$col->getPhpName()."() : null,";
+            \$keys[$num] => (\$includeLazyLoadColumns) ? \$this->get" . $col->getPhpName() . '() : null,';
             } else {
                 $script .= "
-            \$keys[$num] => \$this->get".$col->getPhpName()."(),";
+            \$keys[$num] => \$this->get" . $col->getPhpName() . '(),';
             }
         }
         $script .= "
@@ -2714,15 +3025,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$result;
     }
 ";
-    } // addToArray()
+    }
+
+ // addToArray()
 
     /**
      * Adds the switch-statement for looking up the array-key name for toArray
+     *
      * @see toArray
+     *
+     * @param string $phpName
+     * @param \Propel\Generator\Model\Table $table
+     * @param bool $plural
+     *
+     * @return string
      */
     protected function addToArrayKeyLookUp($phpName, Table $table, $plural)
     {
-        if($phpName == "") {
+        if ($phpName == '') {
             $phpName = $table->getPhpName();
         }
 
@@ -2751,8 +3071,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByName method
-     * @param string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByName(&$script)
     {
         $this->addGetByNameComment($script);
@@ -2763,9 +3086,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the getByName method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByName
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByNameComment(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -2784,9 +3111,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the getByName method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByName
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByNameOpen(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -2797,21 +3128,29 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the getByName method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByName
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByNameBody(&$script)
     {
         $script .= "
-        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
+        \$pos = " . $this->getTableMapClassName() . "::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
         \$field = \$this->getByPosition(\$pos);";
     }
 
     /**
      * Adds the function close for the getByName method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByName
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByNameClose(&$script)
     {
         $script .= "
@@ -2823,8 +3162,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getByPosition method
-     * @param string &$script The script will be modified in this method.
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByPosition(&$script)
     {
         $this->addGetByPositionComment($script);
@@ -2835,9 +3177,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds comment for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByPosition
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByPositionComment(&$script)
     {
         $script .= "
@@ -2852,9 +3198,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByPosition
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByPositionOpen(&$script)
     {
         $script .= "
@@ -2864,9 +3214,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByPosition
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByPositionBody(&$script)
     {
         $table = $this->getTable();
@@ -2890,9 +3244,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the getByPosition method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addGetByPosition
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addGetByPositionClose(&$script)
     {
         $script .= "
@@ -2900,6 +3258,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetByName(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -2913,17 +3276,22 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::$defaultKeyType.
-     * @return \$this|".$this->getObjectClassName(true)."
+     * @return \$this|" . $this->getObjectClassName(true) . "
      */
     public function setByName(\$name, \$value, \$type = TableMap::$defaultKeyType)
     {
-        \$pos = ".$this->getTableMapClassName()."::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
+        \$pos = " . $this->getTableMapClassName() . "::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
         return \$this->setByPosition(\$pos, \$value);
     }
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addSetByPosition(&$script)
     {
         $table = $this->getTable();
@@ -2934,7 +3302,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param  int \$pos position in xml schema
      * @param  mixed \$value field value
-     * @return \$this|".$this->getObjectClassName(true)."
+     * @return \$this|" . $this->getObjectClassName(true) . "
      */
     public function setByPosition(\$pos, \$value)
     {
@@ -2946,9 +3314,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
             case $i:";
 
-            if (PropelTypes::ENUM === $col->getType()) {
+            if ($col->getType() === PropelTypes::ENUM) {
                 $script .= "
-                \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+                \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
                 if (isset(\$valueSet[\$value])) {
                     \$value = \$valueSet[\$value];
                 }";
@@ -2958,14 +3326,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     'Propel\Common\Exception\SetColumnConverterException'
                 );
                 $script .= "
-                \$valueSet = " . $this->getTableMapClassName() . "::getValueSet(" . $this->getColumnConstant($col) . ");
+                \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
                 try {
                     \$value = SetColumnConverter::convertIntToArray(\$value, \$valueSet);
                 } catch (SetColumnConverterException \$e) {
                     throw new PropelException('Unknown stored set key: ' . \$e->getValue(), \$e->getCode(), \$e);
                 }
                 ";
-            } elseif (PropelTypes::PHP_ARRAY === $col->getType()) {
+            } elseif ($col->getType() === PropelTypes::PHP_ARRAY) {
                 $script .= "
                 if (!is_array(\$value)) {
                     \$v = trim(substr(\$value, 2, -2));
@@ -2986,6 +3354,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFromArray(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -3010,7 +3383,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
     {
-        \$keys = ".$this->getTableMapClassName()."::getFieldNames(\$keyType);
+        \$keys = " . $this->getTableMapClassName() . "::getFieldNames(\$keyType);
 ";
         foreach ($table->getColumns() as $num => $col) {
             $cfc = $col->getPhpName();
@@ -3024,6 +3397,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addImportFrom(&$script)
     {
         $defaultKeyType = $this->getDefaultKeyType();
@@ -3045,7 +3423,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @param string \$data The source data to import from
      * @param string \$keyType The type of keys the array uses.
      *
-     * @return \$this|".$this->getObjectClassName(true)." The current object, for fluid interface
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object, for fluid interface
      */
     public function importFrom(\$parser, \$data, \$keyType = TableMap::$defaultKeyType)
     {
@@ -3062,7 +3440,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a delete() method to remove the object form the datastore.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addDelete(&$script)
     {
@@ -3074,9 +3455,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the delete function
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addDelete()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addDeleteComment(&$script)
     {
         $className = $this->getUnqualifiedClassName();
@@ -3094,9 +3479,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the delete function
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addDelete()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addDeleteOpen(&$script)
     {
         $script .= "
@@ -3106,9 +3495,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function body for the delete function
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addDelete()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addDeleteBody(&$script)
     {
         $script .= "
@@ -3117,33 +3510,33 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         \$con->transaction(function () use (\$con) {
-            \$deleteQuery = ".$this->getQueryClassName()."::create()
+            \$deleteQuery = " . $this->getQueryClassName() . "::create()
                 ->filterByPrimaryKey(\$this->getPrimaryKey());";
         if ($this->getBuildProperty('generator.objectModel.addHooks')) {
             $script .= "
             \$ret = \$this->preDelete(\$con);";
             // apply behaviors
-            $this->applyBehaviorModifier('preDelete', $script, "            ");
+            $this->applyBehaviorModifier('preDelete', $script, '            ');
             $script .= "
             if (\$ret) {
                 \$deleteQuery->delete(\$con);
                 \$this->postDelete(\$con);";
             // apply behaviors
-            $this->applyBehaviorModifier('postDelete', $script, "                ");
+            $this->applyBehaviorModifier('postDelete', $script, '                ');
             $script .= "
                 \$this->setDeleted(true);
             }";
         } else {
             // apply behaviors
-            $this->applyBehaviorModifier('preDelete', $script, "            ");
+            $this->applyBehaviorModifier('preDelete', $script, '            ');
             $script .= "
             \$deleteQuery->delete(\$con);";
             // apply behaviors
-            $this->applyBehaviorModifier('postDelete', $script, "            ");
+            $this->applyBehaviorModifier('postDelete', $script, '            ');
             $script .= "
             \$this->setDeleted(true);";
         }
@@ -3154,19 +3547,26 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the delete function
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addDelete()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addDeleteClose(&$script)
     {
         $script .= "
     }
 ";
-    } // addDelete()
+    }
 
     /**
      * Adds a reload() method to re-fetch the data for this object from the database.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addReload(&$script)
     {
@@ -3193,13 +3593,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(".$this->getTableMapClass()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$dataFetcher = ".$this->getQueryClassName()."::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+        \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
         \$row = \$dataFetcher->fetch();
         \$dataFetcher->close();
         if (!\$row) {
@@ -3215,7 +3615,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $script .= "
         // Reset the $clo lazy-load column
         \$this->" . $clo . " = null;
-        \$this->".$clo."_isLoaded = false;
+        \$this->" . $clo . "_isLoaded = false;
 ";
             }
         }
@@ -3227,35 +3627,40 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         foreach ($table->getForeignKeys() as $fk) {
             $varName = $this->getFKVarName($fk);
             $script .= "
-            \$this->".$varName." = null;";
+            \$this->" . $varName . ' = null;';
         }
 
         foreach ($table->getReferrers() as $refFK) {
             if ($refFK->isLocalPrimaryKey()) {
                 $script .= "
-            \$this->".$this->getPKRefFKVarName($refFK)." = null;
+            \$this->" . $this->getPKRefFKVarName($refFK) . " = null;
 ";
             } else {
                 $script .= "
-            \$this->".$this->getRefFKCollVarName($refFK)." = null;
+            \$this->" . $this->getRefFKCollVarName($refFK) . " = null;
 ";
             }
         }
 
         foreach ($table->getCrossFks() as $crossFKs) {
             $script .= "
-            \$this->" . $this->getCrossFKsVarName($crossFKs). " = null;";
+            \$this->" . $this->getCrossFKsVarName($crossFKs) . ' = null;';
         }
 
         $script .= "
         } // if (deep)
     }
 ";
-    } // addReload()
+    }
+
+ // addReload()
 
     /**
      * Adds the methods related to refreshing, saving and deleting the object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addManipulationMethods(&$script)
     {
@@ -3267,6 +3672,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $this->addDoUpdate();
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addHashCode(&$script)
     {
         $script .= "
@@ -3289,7 +3699,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= ";\n";
 
-        /** @var $primaryKeyFKs ForeignKey[] */
+        /** @var \Propel\Generator\Model\ForeignKey[] $primaryKeyFKs */
         $primaryKeyFKs = [];
         $foreignKeyPKCount = 0;
         foreach ($this->getTable()->getForeignKeys() as $foreignKey) {
@@ -3332,7 +3742,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct getPrimaryKey() method for this object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addGetPrimaryKey(&$script)
     {
@@ -3349,7 +3762,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the getPrimaryKey() method for tables that contain a single-column primary key.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addGetPrimaryKey_SinglePK(&$script)
     {
@@ -3364,18 +3780,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function getPrimaryKey()
     {
-        return \$this->get".$pkeys[0]->getPhpName()."();
+        return \$this->get" . $pkeys[0]->getPhpName() . "();
     }
 ";
-    } // addetPrimaryKey_SingleFK
+    }
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addGetPrimaryKey_MultiPK(&$script)
     {
-
         $script .= "
     /**
      * Returns the composite primary key for this object.
@@ -3388,7 +3806,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
             $script .= "
-        \$pks[$i] = \$this->get".$pk->getPhpName()."();";
+        \$pks[$i] = \$this->get" . $pk->getPhpName() . '();';
             $i++;
         } /* foreach */
         $script .= "
@@ -3396,15 +3814,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$pks;
     }
 ";
-    } // addGetPrimaryKey_MultiFK()
+    }
 
     /**
      * Adds the getPrimaryKey() method for objects that have no primary key.
      * This "feature" is deprecated, since the getPrimaryKey() method is not required
-     * by the Persistent interface (or used by the templates).  Hence, this method is also
+     * by the Persistent interface (or used by the templates). Hence, this method is also
      * deprecated.
-     * @param string &$script The script will be modified in this method.
+     *
      * @deprecated
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addGetPrimaryKey_NoPK(&$script)
     {
@@ -3423,7 +3845,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the correct setPrimaryKey() method for this object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addSetPrimaryKey(&$script)
     {
@@ -3440,14 +3865,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a single-column primary key.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addSetPrimaryKey_SinglePK(&$script)
     {
-
         $pkeys = $this->getTable()->getPrimaryKey();
         $col = $pkeys[0];
-        $clo=$col->getLowercasedName();
+        $clo = $col->getLowercasedName();
         $ctype = $col->getPhpType();
 
         $script .= "
@@ -3459,19 +3886,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function setPrimaryKey(\$key)
     {
-        \$this->set".$col->getPhpName()."(\$key);
+        \$this->set" . $col->getPhpName() . "(\$key);
     }
 ";
-    } // addSetPrimaryKey_SinglePK
+    }
 
     /**
      * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addSetPrimaryKey_MultiPK(&$script)
     {
-
-        $script .="
+        $script .= "
     /**
      * Set the [composite] primary key.
      *
@@ -3483,7 +3912,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
             $script .= "
-        \$this->set".$pk->getPhpName()."(\$keys[$i]);";
+        \$this->set" . $pk->getPhpName() . "(\$keys[$i]);";
             $i++;
         }
         $script .= "
@@ -3494,14 +3923,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the setPrimaryKey() method for objects that have no primary key.
      * This "feature" is deprecated, since the setPrimaryKey() method is not required
-     * by the Persistent interface (or used by the templates).  Hence, this method is also
+     * by the Persistent interface (or used by the templates). Hence, this method is also
      * deprecated.
-     * @param string &$script The script will be modified in this method.
+     *
      * @deprecated
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addSetPrimaryKey_NoPK(&$script)
     {
-        $script .="
+        $script .= "
     /**
      * Dummy primary key setter.
      *
@@ -3520,7 +3953,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the isPrimaryKeyNull() method
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addIsPrimaryKeyNull(&$script)
     {
@@ -3536,14 +3972,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     {";
         if (count($pkeys) == 1) {
             $script .= "
-        return null === \$this->get" . $pkeys[0]->getPhpName() . "();";
+        return null === \$this->get" . $pkeys[0]->getPhpName() . '();';
         } else {
             $tests = [];
             foreach ($pkeys as $pkey) {
-                $tests[]= "(null === \$this->get" . $pkey->getPhpName() . "())";
+                $tests[] = '(null === $this->get' . $pkey->getPhpName() . '())';
             }
             $script .= "
-        return " . join(' && ', $tests) . ";";
+        return " . implode(' && ', $tests) . ';';
         }
         $script .= "
     }
@@ -3552,7 +3988,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Constructs variable name for fkey-related objects.
-     * @param  ForeignKey $fk
+     *
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @return string
      */
     public function getFKVarName(ForeignKey $fk)
@@ -3562,7 +4000,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Constructs variable name for objects which referencing current table by specified foreign key.
-     * @param  ForeignKey $fk
+     *
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @return string
      */
     public function getRefFKCollVarName(ForeignKey $fk)
@@ -3573,7 +4013,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Constructs variable name for single object which references current table by specified foreign key
      * which is ALSO a primary key (hence one-to-one relationship).
-     * @param  ForeignKey $fk
+     *
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @return string
      */
     public function getPKRefFKVarName(ForeignKey $fk)
@@ -3583,7 +4025,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods that get & set objects related by foreign key to the current object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addFKMethods(&$script)
     {
@@ -3592,13 +4037,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($fk->getForeignTable()));
             $this->addFKMutator($script, $fk);
             $this->addFKAccessor($script, $fk);
-        } // foreach fk
+        }
     }
 
     /**
      * Adds the class attributes that are needed to store fkey related objects.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $fk
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return void
      */
     protected function addFKAttributes(&$script, ForeignKey $fk)
     {
@@ -3609,14 +4057,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * @var        $className
      */
-    protected $".$varName.";
+    protected $" . $varName . ";
 ";
     }
 
     /**
      * Adds the mutator (setter) method for setting an fkey related object.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $fk
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return void
      */
     protected function addFKMutator(&$script, ForeignKey $fk)
     {
@@ -3636,21 +4087,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Declares an association between this object and a $className object.
      *
      * @param  $className \$v
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws PropelException
      */
-    public function set".$this->getFKPhpNameAffix($fk, false)."($className \$v = null)
+    public function set" . $this->getFKPhpNameAffix($fk, false) . "($className \$v = null)
     {";
 
         foreach ($fk->getMapping() as $map) {
-            list($column, $rightValueOrColumn) = $map;
+            [$column, $rightValueOrColumn] = $map;
 
             if ($rightValueOrColumn instanceof Column) {
                 $script .= "
         if (\$v === null) {
-            \$this->set" . $column->getPhpName() . "(" . $this->getDefaultValueString($column) . ");
+            \$this->set" . $column->getPhpName() . '(' . $this->getDefaultValueString($column) . ");
         } else {
-            \$this->set" . $column->getPhpName() . "(\$v->get" . $rightValueOrColumn->getPhpName() . "());
+            \$this->set" . $column->getPhpName() . '($v->get' . $rightValueOrColumn->getPhpName() . "());
         }
 ";
             } else {
@@ -3663,7 +4114,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
                 ";
             }
-
         } /* foreach local col */
 
         $script .= "
@@ -3677,7 +4127,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
         // Add binding for other direction of this 1:1 relationship.
         if (\$v !== null) {
-            \$v->set".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
+            \$v->set" . $this->getRefFKPhpNameAffix($fk, false) . "(\$this);
         }
 ";
         } else {
@@ -3685,10 +4135,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the $className object, it will not be re-added.
         if (\$v !== null) {
-            \$v->add".$this->getRefFKPhpNameAffix($fk, false)."(\$this);
+            \$v->add" . $this->getRefFKPhpNameAffix($fk, false) . "(\$this);
         }
 ";
-
         }
 
         $script .= "
@@ -3700,8 +4149,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the accessor (getter) method for getting an fkey related object.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $fk
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return void
      */
     protected function addFKAccessor(&$script, ForeignKey $fk)
     {
@@ -3729,7 +4181,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $findPk = $fk->isForeignPrimaryKey();
 
         foreach ($fk->getMapping() as $mapping) {
-            list($column, $rightValueOrColumn) = $mapping;
+            [$column, $rightValueOrColumn] = $mapping;
 
             $cptype = $column->getPhpType();
             $clo = $column->getLowercasedName();
@@ -3737,25 +4189,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if ($rightValueOrColumn instanceof Column) {
                 $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
 
-                if ($cptype == "int" || $cptype == "float" || $cptype == "double") {
-                    $conditional .= $and . "\$this->". $clo ." != 0";
-                } elseif ($cptype == "string") {
-                    $conditional .= $and . "(\$this->" . $clo ." !== \"\" && \$this->".$clo." !== null)";
+                if ($cptype === 'int' || $cptype === 'float' || $cptype === 'double') {
+                    $conditional .= $and . '$this->' . $clo . ' != 0';
+                } elseif ($cptype === 'string') {
+                    $conditional .= $and . '($this->' . $clo . ' !== "" && $this->' . $clo . ' !== null)';
                 } else {
-                    $conditional .= $and . "\$this->" . $clo ." !== null";
+                    $conditional .= $and . '$this->' . $clo . ' !== null';
                 }
             } else {
                 $val = var_export($rightValueOrColumn, true);
-                $conditional .= $and . "\$this->" . $clo ." === " . $val;
+                $conditional .= $and . '$this->' . $clo . ' === ' . $val;
             }
 
-
-            $and = " && ";
+            $and = ' && ';
         }
 
         ksort($localColumns); // restoring the order of the foreign PK
         $localColumns = count($localColumns) > 1 ?
-            ('array('.implode(', ', $localColumns).')') : reset($localColumns);
+            ('array(' . implode(', ', $localColumns) . ')') : reset($localColumns);
 
         $script .= "
 
@@ -3766,23 +4217,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @return $className $returnDesc
      * @throws PropelException
      */
-    public function get".$this->getFKPhpNameAffix($fk, false)."(ConnectionInterface \$con = null)
+    public function get" . $this->getFKPhpNameAffix($fk, false) . "(ConnectionInterface \$con = null)
     {";
         $script .= "
         if (\$this->$varName === null && ($conditional)) {";
         if ($findPk) {
             $script .= "
-            \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()->findPk($localColumns, \$con);";
+            \$this->$varName = " . $this->getClassNameFromBuilder($fkQueryBuilder) . "::create()->findPk($localColumns, \$con);";
         } else {
             $script .= "
-            \$this->$varName = ".$this->getClassNameFromBuilder($fkQueryBuilder)."::create()
-                ->filterBy" . $this->getRefFKPhpNameAffix($fk, $plural = false) . "(\$this) // here
+            \$this->$varName = " . $this->getClassNameFromBuilder($fkQueryBuilder) . "::create()
+                ->filterBy" . $this->getRefFKPhpNameAffix($fk, false) . "(\$this) // here
                 ->findOne(\$con);";
         }
         if ($fk->isLocalPrimaryKey()) {
             $script .= "
             // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            \$this->{$varName}->set".$this->getRefFKPhpNameAffix($fk, false)."(\$this);";
+            \$this->{$varName}->set" . $this->getRefFKPhpNameAffix($fk, false) . '($this);';
         } else {
             $script .= "
             /* The following can be used additionally to
@@ -3790,7 +4241,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                \$this->{$varName}->add".$this->getRefFKPhpNameAffix($fk, true)."(\$this);
+                \$this->{$varName}->add" . $this->getRefFKPhpNameAffix($fk, true) . "(\$this);
              */";
         }
 
@@ -3800,13 +4251,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->$varName;
     }
 ";
-
-    } // addFKAccessor
+    }
 
     /**
      * Adds the method that fetches fkey-related (referencing) objects but also joins in data from another table.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKGetJoinMethods(&$script, ForeignKey $refFK)
     {
@@ -3820,7 +4273,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $className = $this->getClassNameFromTable($tblFK);
 
         foreach ($tblFK->getForeignKeys() as $fk2) {
-
             $tblFK2 = $fk2->getForeignTable();
             $doJoinGet = !$tblFK2->isForReferenceOnly();
 
@@ -3832,8 +4284,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $relCol2 = $this->getFKPhpNameAffix($fk2, false);
 
-            if ( $this->getRelatedBySuffix($refFK) != "" &&
-                ($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))) {
+            if (
+                $this->getRelatedBySuffix($refFK) != '' &&
+                ($this->getRelatedBySuffix($refFK) == $this->getRelatedBySuffix($fk2))
+            ) {
                 $doJoinGet = false;
             }
 
@@ -3843,40 +4297,41 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this ".$table->getPhpName()." is new, it will return
-     * an empty collection; or if this ".$table->getPhpName()." has previously
+     * Otherwise if this " . $table->getPhpName() . " is new, it will return
+     * an empty collection; or if this " . $table->getPhpName() . " has previously
      * been saved, it will retrieve related $relCol from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in ".$table->getPhpName().".
+     * actually need in " . $table->getPhpName() . ".
      *
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
      * @return ObjectCollection|{$className}[] List of $className objects
      */
-    public function get".$relCol."Join".$relCol2."(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
+    public function get" . $relCol . 'Join' . $relCol2 . "(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {";
                 $script .= "
         \$query = $fkQueryClassName::create(null, \$criteria);
         \$query->joinWith('" . $this->getFKPhpNameAffix($fk2, false) . "', \$joinBehavior);
 
-        return \$this->get". $relCol . "(\$query, \$con);
+        return \$this->get" . $relCol . "(\$query, \$con);
     }
 ";
             } /* end if ($doJoinGet) */
-
         } /* end foreach ($tblFK->getForeignKeys() as $fk2) { */
-
-    } // function
+    }
 
     /**
      * Adds the attributes used to store objects that have referrer fkey relationships to this object.
      * <code>protected collVarName;</code>
      * <code>private lastVarNameCriteria = null;</code>
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKAttributes(&$script, ForeignKey $refFK)
     {
@@ -3887,7 +4342,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * @var        $className one-to-one related $className object
      */
-    protected $".$this->getPKRefFKVarName($refFK).";
+    protected $" . $this->getPKRefFKVarName($refFK) . ";
 ";
         } else {
             $script .= "
@@ -3902,7 +4357,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the methods for retrieving, initializing, adding objects that are related to this one by foreign keys.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addRefFKMethods(&$script)
     {
@@ -3932,8 +4390,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string       &$script
-     * @param ForeignKey[] $referrers
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey[] $referrers
+     *
+     * @return void
      */
     protected function addInitRelations(&$script, $referrers)
     {
@@ -3954,7 +4414,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $relationName = $this->getRefFKPhpNameAffix($refFK);
                 $relCol = $this->getRefFKPhpNameAffix($refFK, true);
                 $script .= "
-        if ('$relationName' == \$relationName) {
+        if ('$relationName' === \$relationName) {
             \$this->init$relCol();
             return;
         }";
@@ -3967,8 +4427,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKClear(&$script, ForeignKey $refFK)
     {
@@ -3990,12 +4453,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
     }
 ";
-    } // addRefererClear()
+    }
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKInit(&$script, ForeignKey $refFK)
     {
@@ -4021,18 +4487,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             return;
         }
 
-        \$collectionClassName = ".$this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable()))."::getTableMap()->getCollectionClassName();
+        \$collectionClassName = " . $this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable())) . "::getTableMap()->getCollectionClassName();
 
         \$this->{$collName} = new \$collectionClassName;
         \$this->{$collName}->setModel('" . $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), true) . "');
     }
 ";
-    } // addRefererInit()
+    }
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKAdd(&$script, ForeignKey $refFK)
     {
@@ -4046,7 +4515,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = true)) . "ScheduledForDeletion";
+        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = true)) . 'ScheduledForDeletion';
 
         $script .= "
     /**
@@ -4054,9 +4523,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * through the $className foreign key attribute.
      *
      * @param  $className \$l $className
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */
-    public function add".$this->getRefFKPhpNameAffix($refFK, false)."($className \$l)
+    public function add" . $this->getRefFKPhpNameAffix($refFK, false) . "($className \$l)
     {
         if (\$this->$collName === null) {
             \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
@@ -4064,7 +4533,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (!\$this->{$collName}->contains(\$l)) {
-            \$this->doAdd" . $this->getRefFKPhpNameAffix($refFK, $plural = false) . "(\$l);
+            \$this->doAdd" . $this->getRefFKPhpNameAffix($refFK, false) . "(\$l);
 
             if (\$this->{$scheduledForDeletion} and \$this->{$scheduledForDeletion}->contains(\$l)) {
                 \$this->{$scheduledForDeletion}->remove(\$this->{$scheduledForDeletion}->search(\$l));
@@ -4074,12 +4543,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this;
     }
 ";
-    } // addRefererAdd
+    }
 
     /**
      * Adds the method that returns the size of the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKCount(&$script, ForeignKey $refFK)
     {
@@ -4129,8 +4601,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that returns the referrer fkey collection.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKGet(&$script, ForeignKey $refFK)
     {
@@ -4147,7 +4622,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If the \$criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without \$criteria, the cached collection is returned.
-     * If this ".$this->getObjectClassName()." is new, it will return
+     * If this " . $this->getObjectClassName() . " is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria \$criteria optional Criteria object to narrow the query
@@ -4158,10 +4633,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria  || \$partial) {
-            if (\$this->isNew() && null === \$this->$collName) {
+        if (null === \$this->$collName || null !== \$criteria || \$partial) {
+            if (\$this->isNew()) {
                 // return empty collection
-                \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                if (null === \$this->$collName) {
+                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                } else {
+                    \$collectionClassName = " . $this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable())) . "::getTableMap()->getCollectionClassName();
+
+                    \$$collName = new \$collectionClassName;
+                    \${$collName}->setModel('" . $this->getClassNameFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), true) . "');
+
+                    return \$$collName;
+                }
             } else {
                 \$$collName = $fkQueryClassName::create(null, \$criteria)
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
@@ -4199,8 +4683,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->$collName;
     }
 ";
-    } // addRefererGet()
+    }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
+     */
     protected function addRefFKSet(&$script, ForeignKey $refFK)
     {
         $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
@@ -4212,7 +4702,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $inputCollectionEntry = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
 
         $collName = $this->getRefFKCollVarName($refFK);
-        $relCol   = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $relCol = $this->getFKPhpNameAffix($refFK, false);
 
         $script .= "
     /**
@@ -4223,7 +4713,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      *
      * @param      Collection \${$inputCollection} A Propel collection.
      * @param      ConnectionInterface \$con Optional connection object
-     * @return \$this|".$this->getObjectClassname()." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function set{$relatedName}(Collection \${$inputCollection}, ConnectionInterface \$con = null)
     {
@@ -4264,8 +4754,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKDoAdd(&$script, ForeignKey $refFK)
     {
@@ -4288,14 +4780,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function doAdd{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
     {
         \$this->{$collName}[]= \${$lowerRelatedObjectClassName};
-        \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
+        \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
     }
 ";
     }
 
     /**
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKRemove(&$script, ForeignKey $refFK)
     {
@@ -4307,19 +4801,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $className = $this->getClassNameFromTable($refFK->getTable(), true);
         }
 
-        $relatedName                 = $this->getRefFKPhpNameAffix($refFK, $plural = true);
-        $relatedObjectClassName      = $this->getRefFKPhpNameAffix($refFK, $plural = false);
-        $inputCollection             = lcfirst($relatedName . 'ScheduledForDeletion');
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
+        $inputCollection = lcfirst($relatedName . 'ScheduledForDeletion');
         $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
-        $collName    = $this->getRefFKCollVarName($refFK);
-        $relCol      = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $collName = $this->getRefFKCollVarName($refFK);
+        $relCol = $this->getFKPhpNameAffix($refFK, false);
         $localColumn = $refFK->getLocalColumn();
 
         $script .= "
     /**
      * @param  {$className} \${$lowerRelatedObjectClassName} The $className object to remove.
-     * @return \$this|". $this->getObjectClassname() ." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassname() . " The current object (for fluent API support)
      */
     public function remove{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
     {
@@ -4351,8 +4845,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that gets a one-to-one related referrer fkey.
      * This is for one-to-one relationship special case.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addPKRefFKGet(&$script, ForeignKey $refFK)
     {
@@ -4370,7 +4867,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @return $className
      * @throws PropelException
      */
-    public function get".$this->getRefFKPhpNameAffix($refFK, false)."(ConnectionInterface \$con = null)
+    public function get" . $this->getRefFKPhpNameAffix($refFK, false) . "(ConnectionInterface \$con = null)
     {
 ";
         $script .= "
@@ -4386,8 +4883,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the method that sets a one-to-one related referrer fkey.
      * This is for one-to-one relationships special case.
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK   The referencing foreign key.
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK The referencing foreign key.
+     *
+     * @return void
      */
     protected function addPKRefFKSet(&$script, ForeignKey $refFK)
     {
@@ -4400,16 +4900,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * Sets a single $className object as related to this object by a one-to-one relationship.
      *
      * @param  $className \$v $className
-     * @return \$this|".$this->getObjectClassName(true)." The current object (for fluent API support)
+     * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws PropelException
      */
-    public function set".$this->getRefFKPhpNameAffix($refFK, false)."($className \$v = null)
+    public function set" . $this->getRefFKPhpNameAffix($refFK, false) . "($className \$v = null)
     {
         \$this->$varName = \$v;
 
         // Make sure that that the passed-in $className isn't already associated with this object
-        if (\$v !== null && \$v->get" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(null, false) === null) {
-            \$v->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
+        if (\$v !== null && \$v->get" . $this->getFKPhpNameAffix($refFK, false) . "(null, false) === null) {
+            \$v->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
         }
 
         return \$this;
@@ -4417,10 +4917,16 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossFKAttributes(&$script, CrossForeignKeys $crossFKs)
     {
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
-            list($names) = $this->getCrossFKInformation($crossFKs);
+            [$names] = $this->getCrossFKInformation($crossFKs);
             $script .= "
     /**
      * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of $names combinations.
@@ -4448,15 +4954,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     protected \$coll" . $this->getFKPhpNameAffix($fk, true) . "Partial;
 ";
-
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossScheduledForDeletionAttribute(&$script, CrossForeignKeys $crossFKs)
     {
         $name = $this->getCrossScheduledForDeletionVarName($crossFKs);
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
-            list($names) = $this->getCrossFKInformation($crossFKs);
+            [$names] = $this->getCrossFKInformation($crossFKs);
             $script .= "
     /**
      * @var ObjectCombinationCollection Cross CombinationCollection to store aggregation of $names combinations.
@@ -4479,10 +4990,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return string
+     */
     protected function getCrossScheduledForDeletionVarName(CrossForeignKeys $crossFKs)
     {
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
-            return 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)) . "ScheduledForDeletion";
+            return 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)) . 'ScheduledForDeletion';
         } else {
             $fkName = lcfirst($this->getFKPhpNameAffix($crossFKs->getCrossForeignKeys()[0], true));
 
@@ -4490,6 +5006,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $crossFK
+     *
+     * @return void
+     */
     protected function addCrossFkScheduledForDeletionAttribute(&$script, ForeignKey $crossFK)
     {
         $className = $this->getClassNameFromTable($crossFK->getForeignTable());
@@ -4504,6 +5026,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
+     */
     protected function addRefFkScheduledForDeletionAttribute(&$script, ForeignKey $refFK)
     {
         $className = $this->getClassNameFromTable($refFK->getTable());
@@ -4519,12 +5047,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param $script
-     * @param CrossForeignKeys $crossFKs
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFkScheduledForDeletion(&$script, CrossForeignKeys $crossFKs)
     {
-        $multipleFks = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multipleFks = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
         $scheduledForDeletionVarName = $this->getCrossScheduledForDeletionVarName($crossFKs);
         $queryClassName = $this->getNewStubQueryBuilder($crossFKs->getMiddleTable())->getClassname();
 
@@ -4540,7 +5070,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                         \$entryPk = [];
 ";
             foreach ($crossFKs->getIncomingForeignKey()->getColumnObjectsMapping() as $reference) {
-                $local   = $reference['local'];
+                $local = $reference['local'];
                 $foreign = $reference['foreign'];
 
                 $idx = array_search($local, $crossPks, true);
@@ -4551,7 +5081,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $combinationIdx = 0;
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 foreach ($crossFK->getColumnObjectsMapping() as $reference) {
-                    $local   = $reference['local'];
+                    $local = $reference['local'];
                     $foreign = $reference['foreign'];
 
                     $idx = array_search($local, $crossPks, true);
@@ -4581,14 +5111,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                         ->delete(\$con);
 ";
         } else {
-
             $script .= "
                     foreach (\$this->{$scheduledForDeletionVarName} as \$entry) {
                         \$entryPk = [];
 ";
 
             foreach ($crossFKs->getIncomingForeignKey()->getColumnObjectsMapping() as $reference) {
-                $local   = $reference['local'];
+                $local = $reference['local'];
                 $foreign = $reference['foreign'];
 
                 $idx = array_search($local, $crossPks, true);
@@ -4598,7 +5127,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
             $crossFK = $crossFKs->getCrossForeignKeys()[0];
             foreach ($crossFK->getColumnObjectsMapping() as $reference) {
-                $local   = $reference['local'];
+                $local = $reference['local'];
                 $foreign = $reference['foreign'];
 
                 $idx = array_search($local, $crossPks, true);
@@ -4655,9 +5184,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
 ";
         } else {
-
             foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                $relatedName            = $this->getFKPhpNameAffix($fk, true);
+                $relatedName = $this->getFKPhpNameAffix($fk, true);
                 $lowerSingleRelatedName = lcfirst($this->getFKPhpNameAffix($fk, false));
 
                 $script .= "
@@ -4674,21 +5202,26 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $script .= "
 ";
-
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
+     */
     protected function addRefFkScheduledForDeletion(&$script, ForeignKey $refFK)
     {
-        $relatedName            = $this->getRefFKPhpNameAffix($refFK, $plural = true);
-        $lowerRelatedName       = lcfirst($relatedName);
-        $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = false));
-        $queryClassName         = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $lowerRelatedName = lcfirst($relatedName);
+        $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
+        $queryClassName = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
 
         $script .= "
             if (\$this->{$lowerRelatedName}ScheduledForDeletion !== null) {
                 if (!\$this->{$lowerRelatedName}ScheduledForDeletion->isEmpty()) {";
 
-        if ($refFK->isLocalColumnsRequired() || ForeignKey::CASCADE === $refFK->getOnDelete()) {
+        if ($refFK->isLocalColumnsRequired() || $refFK->getOnDelete() === ForeignKey::CASCADE) {
             $script .= "
                     $queryClassName::create()
                         ->filterByPrimaryKeys(\$this->{$lowerRelatedName}ScheduledForDeletion->getPrimaryKeys(false))
@@ -4708,6 +5241,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addCrossFKMethods(&$script)
     {
         foreach ($this->getTable()->getCrossFks() as $crossFKs) {
@@ -4732,12 +5270,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that clears the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKClear(&$script, CrossForeignKeys $crossFKs)
     {
-        $relCol   = $this->getCrossFKsPhpNameAffix($crossFKs);
+        $relCol = $this->getCrossFKsPhpNameAffix($crossFKs);
         $collName = $this->getCrossFKsVarName($crossFKs);
 
         $script .= "
@@ -4755,17 +5296,19 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
     }
 ";
-    } // addRefererClear()
+    }
 
     /**
      * Adds the method that clears the referrer fkey collection.
      *
-     * @param string     &$script The script will be modified in this method.
-     * @param ForeignKey $refFK
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\ForeignKey $refFK
+     *
+     * @return void
      */
     protected function addRefFKPartial(&$script, ForeignKey $refFK)
     {
-        $relCol   = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $script .= "
@@ -4777,12 +5320,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         \$this->{$collName}Partial = \$v;
     }
 ";
-    } // addRefFKPartial()
+    }
 
     /**
      * Adds the method that initializes the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKInit(&$script, CrossForeignKeys $crossFKs)
     {
@@ -4790,7 +5336,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             $inits[] = [
-                'relCol'   => $this->getCrossFKsPhpNameAffix($crossFKs, true),
+                'relCol' => $this->getCrossFKsPhpNameAffix($crossFKs, true),
                 'collName' => 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)),
                 'collectionClass' => 'ObjectCombinationCollection',
                 'relatedObjectClassName' => false,
@@ -4836,12 +5382,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      */
     public function init$relCol()
     {";
-            if($collectionClass) {
+            if ($collectionClass) {
                 $script .= "
         \$this->$collName = new $collectionClass;";
             } else {
                 $script .= "
-        \$collectionClassName = ".$foreignTableMapName."::getTableMap()->getCollectionClassName();
+        \$collectionClassName = " . $foreignTableMapName . "::getTableMap()->getCollectionClassName();
 
         \$this->$collName = new \$collectionClassName;";
             }
@@ -4856,13 +5402,15 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
         }
-
     }
 
     /**
      * Adds the method that check if the referrer fkey collection is initialized.
-     * @param string           &$script  The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKIsLoaded(&$script, CrossForeignKeys $crossFKs)
     {
@@ -4870,11 +5418,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             $inits[] = [
-                'relCol'   => $this->getCrossFKsPhpNameAffix($crossFKs, true),
+                'relCol' => $this->getCrossFKsPhpNameAffix($crossFKs, true),
                 'collName' => 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs)),
             ];
         } else {
-
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 $relCol = $this->getFKPhpNameAffix($crossFK, true);
                 $collName = $this->getCrossFKVarName($crossFK);
@@ -4904,6 +5451,12 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
     }
 
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
+     */
     protected function addCrossFKCreateQuery(&$script, CrossForeignKeys $crossFKs)
     {
         if (1 <= count($crossFKs->getCrossForeignKeys()) && !$crossFKs->getUnclassifiedPrimaryKeys()) {
@@ -4911,7 +5464,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $refFK = $crossFKs->getIncomingForeignKey();
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
         $firstFK = $crossFKs->getCrossForeignKeys()[0];
         $firstFkName = $this->getFKPhpNameAffix($firstFK, true);
 
@@ -4919,7 +5472,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
         $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
-        $signature = array_map(function($item) {
+        $signature = array_map(function ($item) {
             return $item . ' = null';
         }, $signature);
         $signature = implode(', ', $signature);
@@ -4976,17 +5529,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$criteria;
     }
 ";
-
     }
 
     /**
-     * @param string           $script
-     * @param CrossForeignKeys $crossFKs
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKGet(&$script, CrossForeignKeys $crossFKs)
     {
         $refFK = $crossFKs->getIncomingForeignKey();
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
@@ -5008,7 +5562,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If the \$criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without \$criteria, the cached collection is returned.
-     * If this ".$this->getObjectClassName()." is new, it will return
+     * If this " . $this->getObjectClassName() . " is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria \$criteria Optional query object to filter the query
@@ -5030,7 +5584,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 \$query = $relatedQueryClassName::create(null, \$criteria)
                     ->filterBy{$selfRelationName}(\$this)";
             foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                $varName = $this->getFKPhpNameAffix($fk, $plural = false);
+                $varName = $this->getFKPhpNameAffix($fk, false);
                 $script .= "
                     ->join{$varName}()";
             }
@@ -5045,7 +5599,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
 
             foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                $varName = $this->getFKPhpNameAffix($fk, $plural = false);
+                $varName = $this->getFKPhpNameAffix($fk, false);
                 $script .= "
                     \$combination[] = \$item->get{$varName}();";
             }
@@ -5090,7 +5644,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
             $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
-            $signature = array_map(function($item) {
+            $signature = array_map(function ($item) {
                 return $item . ' = null';
             }, $signature);
             $signature = implode(', ', $signature);
@@ -5113,6 +5667,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$this->create{$firstFkName}Query($shortSignature, \$criteria)->find(\$con);
     }
 ";
+
             return;
         }
 
@@ -5131,7 +5686,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If the \$criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without \$criteria, the cached collection is returned.
-     * If this ".$this->getObjectClassName()." is new, it will return
+     * If this " . $this->getObjectClassName() . " is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria \$criteria Optional query object to filter the query
@@ -5178,23 +5733,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string           $script
-     * @param CrossForeignKeys $crossFKs
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKSet(&$script, CrossForeignKeys $crossFKs)
     {
         $scheduledForDeletionVarName = $this->getCrossScheduledForDeletionVarName($crossFKs);
 
-        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
 
         $relatedNamePlural = $this->getCrossFKsPhpNameAffix($crossFKs, true);
-        $relatedName       = $this->getCrossFKsPhpNameAffix($crossFKs, false);
-        $inputCollection   = lcfirst($relatedNamePlural);
-        $foreachItem       = lcfirst($relatedName);
+        $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
+        $inputCollection = lcfirst($relatedNamePlural);
+        $foreachItem = lcfirst($relatedName);
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();
 
         if ($multi) {
-            list($relatedObjectClassName) = $this->getCrossFKInformation($crossFKs);
+            [$relatedObjectClassName] = $this->getCrossFKInformation($crossFKs);
             $collName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
         } else {
             $crossFK = $crossFKs->getCrossForeignKeys()[0];
@@ -5255,21 +5812,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string           $script
-     * @param CrossForeignKeys $crossFks
+     * @param string $script
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKCount(&$script, CrossForeignKeys $crossFKs)
     {
         $refFK = $crossFKs->getIncomingForeignKey();
-        $selfRelationName = $this->getFKPhpNameAffix($refFK, $plural = false);
+        $selfRelationName = $this->getFKPhpNameAffix($refFK, false);
 
-        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || !!$crossFKs->getUnclassifiedPrimaryKeys();
+        $multi = 1 < count($crossFKs->getCrossForeignKeys()) || (bool)$crossFKs->getUnclassifiedPrimaryKeys();
 
-        $relatedName       = $this->getCrossFKsPhpNameAffix($crossFKs, true);
+        $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
         $crossRefTableName = $crossFKs->getMiddleTable()->getName();
 
         if ($multi) {
-            list($relatedObjectClassName) = $this->getCrossFKInformation($crossFKs);
+            [$relatedObjectClassName] = $this->getCrossFKInformation($crossFKs);
             $collName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
             $relatedQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($crossFKs->getMiddleTable()));
         } else {
@@ -5317,7 +5876,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
 
-
         if ($multi) {
             $relatedName = $this->getCrossFKsPhpNameAffix($crossFKs, true);
             $firstFK = $crossFKs->getCrossForeignKeys()[0];
@@ -5327,7 +5885,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
             $this->extractCrossInformation($crossFKs, [$firstFK], $signature, $shortSignature, $normalizedShortSignature, $phpDoc);
 
-            $signature = array_map(function($item) {
+            $signature = array_map(function ($item) {
                 return $item . ' = null';
             }, $signature);
             $signature = implode(', ', $signature);
@@ -5351,26 +5909,27 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 ";
         }
-
     }
-
 
     /**
      * Adds the method that adds an object into the referrer fkey collection.
-     * @param string           &$script  The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKAdd(&$script, CrossForeignKeys $crossFKs)
     {
         $refFK = $crossFKs->getIncomingForeignKey();
 
         foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-            $relSingleNamePlural = $this->getFKPhpNameAffix($crossFK, $plural = true);
-            $relSingleName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relSingleNamePlural = $this->getFKPhpNameAffix($crossFK, true);
+            $relSingleName = $this->getFKPhpNameAffix($crossFK, false);
             $collSingleName = $this->getCrossFKVarName($crossFK);
 
-            $relCombineNamePlural = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = true);
-            $relCombineName = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
+            $relCombineNamePlural = $this->getCrossFKsPhpNameAffix($crossFKs, true);
+            $relCombineName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
             $collCombinationVarName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
 
             $collName = 1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys() ? $collCombinationVarName : $collSingleName;
@@ -5380,7 +5939,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $tblFK = $refFK->getTable();
             $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
-            list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs, $crossFK);
+            [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs, $crossFK);
 
             $script .= "
     /**
@@ -5395,9 +5954,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             \$this->init" . $relNamePlural . "();
         }
 
-        if (!\$this->get" . $relNamePlural . "()->contains(" . $normalizedShortSignature . ")) {
+        if (!\$this->get" . $relNamePlural . '()->contains(' . $normalizedShortSignature . ")) {
             // only add it if the **same** object is not already associated
-            \$this->" . $collName . "->push(" . $normalizedShortSignature . ");
+            \$this->" . $collName . '->push(' . $normalizedShortSignature . ");
             \$this->doAdd{$relName}($normalizedShortSignature);
         }
 
@@ -5410,16 +5969,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Returns a function signature comma separated.
      *
-     * @param  CrossForeignKeys $crossFKs
-     * @param  string           $excludeSignatureItem Which variable to exclude.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     * @param string $excludeSignatureItem Which variable to exclude.
+     *
      * @return string
      */
     protected function getCrossFKGetterSignature(CrossForeignKeys $crossFKs, $excludeSignatureItem)
     {
-        list (, $getSignature) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [, $getSignature] = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
-        if (false !== ($pos = array_search($excludeSignatureItem, $getSignature))) {
+        if (($pos = array_search($excludeSignatureItem, $getSignature)) !== false) {
             unset($getSignature[$pos]);
         }
 
@@ -5427,21 +5987,23 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param string           &$script  The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKDoAdd(&$script, CrossForeignKeys $crossFKs)
     {
-        $selfRelationName      = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
-        $selfRelationNamePlural      = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = true);
-        $relatedObjectClassName      = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
-        $className                   = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
+        $selfRelationName = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
+        $selfRelationNamePlural = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), true);
+        $relatedObjectClassName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
+        $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
 
-        $refKObjectClassName         = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
-        $tblFK                       = $crossFKs->getIncomingForeignKey()->getTable();
-        $foreignObjectName           = '$' . $tblFK->getCamelCaseName();
+        $refKObjectClassName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
+        $tblFK = $crossFKs->getIncomingForeignKey()->getTable();
+        $foreignObjectName = '$' . $tblFK->getCamelCaseName();
 
-        list ($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs);
 
         $script .= "
     /**
@@ -5453,7 +6015,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-                $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+                $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
                 $script .= "
         {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
@@ -5467,7 +6029,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
         } else {
             $crossFK = $crossFKs->getCrossForeignKeys()[0];
-            $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
             $script .= "
         {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
@@ -5476,13 +6038,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $refFK = $crossFKs->getIncomingForeignKey();
         $script .= "
 
-        {$foreignObjectName}->set" . $this->getFKPhpNameAffix($refFK, $plural = false) . "(\$this);
+        {$foreignObjectName}->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
 
         \$this->add{$refKObjectClassName}({$foreignObjectName});\n";
 
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-                $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+                $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
                 $getterName = $this->getCrossRefFKGetterName($crossFKs, $crossFK);
@@ -5497,11 +6059,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif (!\${$lowerRelatedObjectClassName}->get{$getterName}()->contains($getterRemoveObjectName)) {
             \${$lowerRelatedObjectClassName}->get{$getterName}()->push($getterRemoveObjectName);
         }\n";
-
             }
-
         } else {
-            $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
             $getterSignature = $this->getCrossFKGetterSignature($crossFKs, '$' . $lowerRelatedObjectClassName);
             $script .= "
@@ -5513,7 +6073,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } elseif (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
             \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
         }\n";
-
         }
 
         $script .= "
@@ -5522,8 +6081,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     }
 
     /**
-     * @param  CrossForeignKeys $crossFKs
-     * @param  ForeignKey       $excludeFK
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     * @param \Propel\Generator\Model\ForeignKey $excludeFK
+     *
      * @return string
      */
     protected function getCrossRefFKRemoveObjectNames(CrossForeignKeys $crossFKs, ForeignKey $excludeFK)
@@ -5551,28 +6111,31 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the method that remove an object from the referrer fkey collection.
-     * @param string           $script   The script will be modified in this method.
-     * @param CrossForeignKeys $crossFKs
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     *
+     * @return void
      */
     protected function addCrossFKRemove(&$script, CrossForeignKeys $crossFKs)
     {
-        $relCol   = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = true);
+        $relCol = $this->getCrossFKsPhpNameAffix($crossFKs, true);
         if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
             $collName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
         } else {
             $collName = $this->getCrossFKsVarName($crossFKs);
         }
 
-        $tblFK    = $crossFKs->getIncomingForeignKey()->getTable();
+        $tblFK = $crossFKs->getIncomingForeignKey()->getTable();
 
-        $M2MScheduledForDeletion  = $this->getCrossScheduledForDeletionVarName($crossFKs);
-        $relatedObjectClassName   = $this->getCrossFKsPhpNameAffix($crossFKs, $plural = false);
+        $M2MScheduledForDeletion = $this->getCrossScheduledForDeletionVarName($crossFKs);
+        $relatedObjectClassName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
 
-        list($signature, $shortSignature, $normalizedShortSignature, $phpDoc) = $this->getCrossFKAddMethodInformation($crossFKs);
+        [$signature, $shortSignature, $normalizedShortSignature, $phpDoc] = $this->getCrossFKAddMethodInformation($crossFKs);
         $names = str_replace('$', '', $normalizedShortSignature);
 
         $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
-        $refKObjectClassName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), $plural = false);
+        $refKObjectClassName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
         $foreignObjectName = '$' . $tblFK->getCamelCaseName();
 
         $script .= "
@@ -5587,10 +6150,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->get{$relCol}()->contains({$shortSignature})) {
             {$foreignObjectName} = new {$className}();";
         foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
 
-            $relatedObjectClassName      = $this->getFKPhpNameAffix($crossFK, $plural = false);
+            $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
             $script .= "
             {$foreignObjectName}->set{$relatedObjectClassName}(\${$lowerRelatedObjectClassName});";
 
@@ -5604,7 +6167,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 //remove the back reference if available
                 \${$lowerRelatedObjectClassName}->get$getterName()->removeObject($getterRemoveObjectName);
             }\n";
-
         }
 
         foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $primaryKey) {
@@ -5640,7 +6202,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the workhourse doSave() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addDoSave(&$script)
     {
@@ -5666,7 +6231,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * @throws PropelException
      * @see save()
      */
-    protected function doSave(ConnectionInterface \$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
+    protected function doSave(ConnectionInterface \$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . ")
     {
         \$affectedRows = 0; // initialize var to track total num of affected rows
         if (!\$this->alreadyInSave) {
@@ -5679,7 +6244,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         if (count($table->getForeignKeys())) {
-
             $script .= "
             // We call the save method on the following object(s) if they
             // were passed to this object by their corresponding set
@@ -5691,14 +6255,14 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 $aVarName = $this->getFKVarName($fk);
                 $script .= "
             if (\$this->$aVarName !== null) {
-                if (\$this->" . $aVarName . "->isModified() || \$this->" . $aVarName . "->isNew()) {
+                if (\$this->" . $aVarName . '->isModified() || $this->' . $aVarName . "->isNew()) {
                     \$affectedRows += \$this->" . $aVarName . "->save(\$con);
                 }
-                \$this->set".$this->getFKPhpNameAffix($fk, false)."(\$this->$aVarName);
+                \$this->set" . $this->getFKPhpNameAffix($fk, false) . "(\$this->$aVarName);
             }
 ";
-            } // foreach foreign k
-        } // if (count(foreign keys))
+            }
+        }
 
         $script .= "
             if (\$this->isNew() || \$this->isModified()) {
@@ -5771,8 +6335,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 }
             }
 ";
-            } // if refFK->isLocalPrimaryKey()
-        } /* foreach getReferrers() */
+            }
+        }
 
         $script .= "
             \$this->alreadyInSave = false;
@@ -5790,7 +6354,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return \$affectedRows;
     } // doSave()
 ";
-
     }
 
     /**
@@ -5813,9 +6376,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     protected function doInsert(ConnectionInterface \$con)
     {";
         if ($this->getPlatform() instanceof MssqlPlatform) {
-            if ($table->hasAutoIncrementPrimaryKey() ) {
+            if ($table->hasAutoIncrementPrimaryKey()) {
                 $script .= "
-        \$this->modifiedColumns[" . $this->getColumnConstant($table->getAutoIncrementPrimaryKey()).'] = true;';
+        \$this->modifiedColumns[" . $this->getColumnConstant($table->getAutoIncrementPrimaryKey()) . '] = true;';
             }
             $script .= "
         \$criteria = \$this->buildCriteria();";
@@ -5835,12 +6398,18 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         return $script;
     }
 
+    /**
+     * @return string
+     */
     protected function addDoInsertBodyStandard()
     {
         return "
         \$pk = \$criteria->doInsert(\$con);";
     }
 
+    /**
+     * @return string
+     */
     protected function addDoInsertBodyWithIdMethod()
     {
         $table = $this->getTable();
@@ -5878,11 +6447,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             if ($table->isAllowPkInsert()) {
                 $script .= "
         if (\$pk !== null) {
-            \$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key
+            \$this->set" . $col->getPhpName() . "(\$pk);  //[IMV] update autoincrement primary key
         }";
             } else {
                 $script .= "
-        \$this->set".$col->getPhpName()."(\$pk);  //[IMV] update autoincrement primary key";
+        \$this->set" . $col->getPhpName() . '($pk);  //[IMV] update autoincrement primary key';
             }
         }
 
@@ -5891,6 +6460,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Boosts ActiveRecord::doInsert() by doing more calculations at buildtime.
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return string
      */
     protected function addDoInsertBodyRaw()
     {
@@ -5899,6 +6472,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             '\PDO'
         );
         $table = $this->getTable();
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform();
         $primaryKeyMethodInfo = '';
         if ($table->getIdMethodParameters()) {
@@ -5939,7 +6513,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         // if non auto-increment but using sequence, get the id first
-        if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+        if (!$platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() === 'native') {
             $column = $table->getFirstPrimaryKeyColumn();
             if (!$column) {
                 throw new PropelException('Cannot find primary key column in table `' . $table->getName() . '`.');
@@ -5948,7 +6522,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $script .= "
         if (null === \$this->{$columnProperty}) {
             try {";
-            $script .= $platform->getIdentifierPhp('$this->'. $columnProperty, '$con', $primaryKeyMethodInfo, '                ', $column->getPhpType());
+            $script .= $platform->getIdentifierPhp('$this->' . $columnProperty, '$con', $primaryKeyMethodInfo, '                ', $column->getPhpType());
             $script .= "
             } catch (Exception \$e) {
                 throw new PropelException('Unable to get sequence id.', 0, \$e);
@@ -5985,7 +6559,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
             $script .= "
                     case $columnNameCase:";
-            $script .= $platform->getColumnBindingPHP($column, "\$identifier", '$this->' . $column->getLowercasedName(), '                        ');
+            $script .= $platform->getColumnBindingPHP($column, '$identifier', '$this->' . $column->getLowercasedName(), '                        ');
             $script .= "
                         break;";
         }
@@ -6000,7 +6574,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
 
         // if auto-increment, get the id after
-        if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() == "native") {
+        if ($platform->isNativeIdMethodAutoIncrement() && $table->getIdMethod() === 'native') {
             $script .= "
         try {";
             $script .= $platform->getIdentifierPhp('$pk', '$con', $primaryKeyMethodInfo);
@@ -6013,11 +6587,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 if ($table->isAllowPkInsert()) {
                     $script .= "
         if (\$pk !== null) {
-            \$this->set".$column->getPhpName()."(\$pk);
+            \$this->set" . $column->getPhpName() . "(\$pk);
         }";
                 } else {
                     $script .= "
-        \$this->set".$column->getPhpName()."(\$pk);";
+        \$this->set" . $column->getPhpName() . '($pk);';
                 }
             }
             $script .= "
@@ -6055,7 +6629,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the $alreadyInSave attribute, which prevents attempting to re-save the same object.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addAlreadyInSaveAttribute(&$script)
     {
@@ -6072,7 +6649,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the save() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addSave(&$script)
     {
@@ -6084,9 +6664,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the comment for the save method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addSave()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addSaveComment(&$script)
     {
         $table = $this->getTable();
@@ -6131,24 +6715,32 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function declaration for the save method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addSave()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addSaveOpen(&$script)
     {
         $table = $this->getTable();
         $reloadOnUpdate = $table->isReloadOnUpdate();
         $reloadOnInsert = $table->isReloadOnInsert();
         $script .= "
-    public function save(ConnectionInterface \$con = null".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload = false" : "").")
+    public function save(ConnectionInterface \$con = null" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . ")
     {";
     }
 
     /**
      * Adds the function body for the save method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addSave()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addSaveBody(&$script)
     {
         $table = $this->getTable();
@@ -6163,44 +6755,44 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         if (\$this->alreadyInSave) {
             return 0;
         }
- 
+
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(".$this->getTableMapClass()."::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
         }
 
-        return \$con->transaction(function () use (\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").") {";
+        return \$con->transaction(function () use (\$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload' : '') . ') {';
 
         if ($this->getBuildProperty('generator.objectModel.addHooks')) {
             // save with runtime hooks
             $script .= "
             \$ret = \$this->preSave(\$con);
             \$isInsert = \$this->isNew();";
-            $this->applyBehaviorModifier('preSave', $script, "            ");
+            $this->applyBehaviorModifier('preSave', $script, '            ');
             $script .= "
             if (\$isInsert) {
                 \$ret = \$ret && \$this->preInsert(\$con);";
-            $this->applyBehaviorModifier('preInsert', $script, "                ");
+            $this->applyBehaviorModifier('preInsert', $script, '                ');
             $script .= "
             } else {
                 \$ret = \$ret && \$this->preUpdate(\$con);";
-            $this->applyBehaviorModifier('preUpdate', $script, "                ");
+            $this->applyBehaviorModifier('preUpdate', $script, '                ');
             $script .= "
             }
             if (\$ret) {
-                \$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");
+                \$affectedRows = \$this->doSave(\$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload' : '') . ");
                 if (\$isInsert) {
                     \$this->postInsert(\$con);";
-            $this->applyBehaviorModifier('postInsert', $script, "                    ");
+            $this->applyBehaviorModifier('postInsert', $script, '                    ');
             $script .= "
                 } else {
                     \$this->postUpdate(\$con);";
-            $this->applyBehaviorModifier('postUpdate', $script, "                    ");
+            $this->applyBehaviorModifier('postUpdate', $script, '                    ');
             $script .= "
                 }
                 \$this->postSave(\$con);";
-            $this->applyBehaviorModifier('postSave', $script, "                ");
+            $this->applyBehaviorModifier('postSave', $script, '                ');
             $script .= "
-                ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
+                " . $this->getTableMapClassName() . "::addInstanceToPool(\$this);
             } else {
                 \$affectedRows = 0;
             }
@@ -6210,40 +6802,40 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             // save without runtime hooks
             $script .= "
             \$isInsert = \$this->isNew();";
-            $this->applyBehaviorModifier('preSave', $script, "            ");
+            $this->applyBehaviorModifier('preSave', $script, '            ');
             if ($this->hasBehaviorModifier('preUpdate')) {
                 $script .= "
             if (!\$isInsert) {";
-                $this->applyBehaviorModifier('preUpdate', $script, "                ");
+                $this->applyBehaviorModifier('preUpdate', $script, '                ');
                 $script .= "
             }";
             }
             if ($this->hasBehaviorModifier('preInsert')) {
                 $script .= "
             if (\$isInsert) {";
-                $this->applyBehaviorModifier('preInsert', $script, "                ");
+                $this->applyBehaviorModifier('preInsert', $script, '                ');
                 $script .= "
             }";
             }
             $script .= "
-            \$affectedRows = \$this->doSave(\$con".($reloadOnUpdate || $reloadOnInsert ? ", \$skipReload" : "").");";
-            $this->applyBehaviorModifier('postSave', $script, "            ");
+            \$affectedRows = \$this->doSave(\$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload' : '') . ');';
+            $this->applyBehaviorModifier('postSave', $script, '            ');
             if ($this->hasBehaviorModifier('postUpdate')) {
                 $script .= "
             if (!\$isInsert) {";
-                $this->applyBehaviorModifier('postUpdate', $script, "                ");
+                $this->applyBehaviorModifier('postUpdate', $script, '                ');
                 $script .= "
             }";
             }
             if ($this->hasBehaviorModifier('postInsert')) {
                 $script .= "
             if (\$isInsert) {";
-                $this->applyBehaviorModifier('postInsert', $script, "                ");
+                $this->applyBehaviorModifier('postInsert', $script, '                ');
                 $script .= "
             }";
             }
             $script .= "
-            ".$this->getTableMapClassName()."::addInstanceToPool(\$this);
+            " . $this->getTableMapClassName() . "::addInstanceToPool(\$this);
 
             return \$affectedRows;";
         }
@@ -6254,9 +6846,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the function close for the save method
-     * @param string &$script The script will be modified in this method.
+     *
      * @see addSave()
-     **/
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
     protected function addSaveClose(&$script)
     {
         $script .= "
@@ -6266,7 +6862,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds the ensureConsistency() method to ensure that internal state is correct.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addEnsureConsistency(&$script)
     {
@@ -6289,12 +6888,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     public function ensureConsistency()
     {";
         foreach ($table->getColumns() as $col) {
-
-            $clo=$col->getLowercasedName();
+            $clo = $col->getLowercasedName();
 
             if ($col->isForeignKey()) {
                 foreach ($col->getForeignKeys() as $fk) {
-
                     $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
                     $varName = $this->getFKVarName($fk);
@@ -6304,22 +6901,24 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                     }
 
                     $script .= "
-        if (\$this->".$varName." !== null && \$this->$clo !== \$this->".$varName."->get".$colFK->getPhpName()."()) {
+        if (\$this->" . $varName . " !== null && \$this->$clo !== \$this->" . $varName . '->get' . $colFK->getPhpName() . "()) {
             \$this->$varName = null;
         }";
-                } // foreach
-            } /* if col is foreign key */
-
-        } // foreach
+                }
+            }
+        }
 
         $script .= "
     } // ensureConsistency
 ";
-    } // addCheckRelConsistency
+    }
 
     /**
      * Adds the copy() method, which (in complex OM) includes the $deepCopy param for making copies of related objects.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addCopy(&$script)
     {
@@ -6335,7 +6934,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * objects.
      *
      * @param  boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return ".$this->getObjectClassName(true)." Clone of current object.
+     * @return " . $this->getObjectClassName(true) . " Clone of current object.
      * @throws PropelException
      */
     public function copy(\$deepCopy = false)
@@ -6353,7 +6952,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds the copyInto() method, which takes an object and sets contents to match current object.
      * In complex OM this method includes the $deepCopy param for making copies of related objects.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addCopyInto(&$script)
     {
@@ -6366,7 +6968,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object \$copyObj An object of ".$this->getObjectClassName(true)." (or compatible) type.
+     * @param      object \$copyObj An object of " . $this->getObjectClassName(true) . " (or compatible) type.
      * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean \$makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -6376,7 +6978,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
         $autoIncCols = [];
         foreach ($table->getColumns() as $col) {
-            /* @var        $col Column */
+            /** @var \Propel\Generator\Model\Column $col */
             if ($col->isAutoIncrement()) {
                 $autoIncCols[] = $col;
             }
@@ -6385,9 +6987,9 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         foreach ($table->getColumns() as $col) {
             if (!in_array($col, $autoIncCols, true)) {
                 $script .= "
-        \$copyObj->set".$col->getPhpName()."(\$this->get".$col->getPhpName()."());";
+        \$copyObj->set" . $col->getPhpName() . '($this->get' . $col->getPhpName() . '());';
             }
-        } // foreach
+        }
 
         // Avoid useless code by checking to see if there are any referrers
         // to this table:
@@ -6405,7 +7007,6 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
                 //if ( $fk->getTable()->getName() != $table->getName() ) {
 
                 if ($fk->isLocalPrimaryKey()) {
-
                     $afx = $this->getRefFKPhpNameAffix($fk, false);
                     $script .= "
             \$relObj = \$this->get$afx();
@@ -6414,18 +7015,17 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             }
 ";
                 } else {
-
                     $script .= "
-            foreach (\$this->get".$this->getRefFKPhpNameAffix($fk, true)."() as \$relObj) {
+            foreach (\$this->get" . $this->getRefFKPhpNameAffix($fk, true) . "() as \$relObj) {
                 if (\$relObj !== \$this) {  // ensure that we don't try to copy a reference to ourselves
-                    \$copyObj->add".$this->getRefFKPhpNameAffix($fk)."(\$relObj->copy(\$deepCopy));
+                    \$copyObj->add" . $this->getRefFKPhpNameAffix($fk) . "(\$relObj->copy(\$deepCopy));
                 }
             }
 ";
                 }
                 // HL: commenting out close of self-referential check
                 // } /* if tblFK != table */
-            } /* foreach */
+            }
             $script .= "
         } // if (\$deepCopy)
 ";
@@ -6441,17 +7041,20 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
             $coldefval = $col->getPhpDefaultValue();
             $coldefval = var_export($coldefval, true);
             $script .= "
-            \$copyObj->set".$col->getPhpName() ."($coldefval); // this is a auto-increment column, so set to default value";
-        } // foreach
+            \$copyObj->set" . $col->getPhpName() . "($coldefval); // this is a auto-increment column, so set to default value";
+        }
         $script .= "
         }
     }
 ";
-    } // addCopyInto()
+    }
 
     /**
      * Adds clear method
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClear(&$script)
     {
@@ -6478,21 +7081,21 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         foreach ($table->getColumns() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
-        \$this->".$clo." = null;";
+        \$this->" . $clo . ' = null;';
             if ($col->isLazyLoad()) {
                 $script .= "
-        \$this->".$clo."_isLoaded = false;";
+        \$this->" . $clo . '_isLoaded = false;';
             }
             if ($col->getType() == PropelTypes::OBJECT || $col->getType() == PropelTypes::PHP_ARRAY) {
-                $cloUnserialized = $clo.'_unserialized';
+                $cloUnserialized = $clo . '_unserialized';
 
-                $script .="
+                $script .= "
         \$this->$cloUnserialized = null;";
             }
             if ($col->isSetType()) {
                 $cloConverted = $clo . '_converted';
 
-                $script .="
+                $script .= "
         \$this->$cloConverted = null;";
             }
         }
@@ -6514,11 +7117,13 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 ";
     }
 
-
     /**
      * Adds clearAllReferences() method which resets all the collections of referencing
      * fk objects.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addClearAllReferences(&$script)
     {
@@ -6572,7 +7177,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         } // if (\$deep)
 ";
 
-        $this->applyBehaviorModifier('objectClearReferences', $script, "        ");
+        $this->applyBehaviorModifier('objectClearReferences', $script, '        ');
 
         foreach ($vars as $varName) {
             $script .= "
@@ -6592,7 +7197,10 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
 
     /**
      * Adds a magic __toString() method if a string column was defined as primary string
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addPrimaryString(&$script)
     {
@@ -6630,18 +7238,25 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
     /**
      * Adds a magic __call() method.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
     protected function addMagicCall(&$script)
     {
         $behaviorCallScript = '';
-        $this->applyBehaviorModifier('objectCall', $behaviorCallScript, "    ");
+        $this->applyBehaviorModifier('objectCall', $behaviorCallScript, '    ');
 
         $script .= $this->renderTemplate('baseObjectMethodMagicCall', [
-            'behaviorCallScript' => $behaviorCallScript
+            'behaviorCallScript' => $behaviorCallScript,
         ]);
     }
 
+    /**
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
     protected function getDateTimeClass(Column $column)
     {
         if (PropelTypes::isPhpObjectType($column->getPhpType())) {

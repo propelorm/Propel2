@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Reverse;
 
+use PDO;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
@@ -27,7 +26,10 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         Propel::init(__DIR__ . '/../../../../Fixtures/reverse/pgsql/build/conf/reverse-bookstore-conf.php');
@@ -35,12 +37,15 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         $this->con = Propel::getConnection('reverse-bookstore');
         $this->con->beginTransaction();
 
-        if ('pgsql' !== $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+        if ('pgsql' !== $this->con->getAttribute(PDO::ATTR_DRIVER_NAME)) {
             $this->markTestSkipped('This test is designed for PostgreSQL');
         }
     }
 
-    protected function tearDown()
+    /**
+     * @return void
+     */
+    protected function tearDown(): void
     {
         if ($this->con) {
             $this->con->rollback();
@@ -54,15 +59,17 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
     {
         return [
             // columnDDL, expectedColumnPhpName, expectedColumnDefaultType, expectedColumnDefaultValue, expectedSize, expectedScale
-            ["my_column varchar(20) default null", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "NULL", 20, null],
-            ["my_column varchar(20) default ''", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "", 20, null],
-            ["my_column numeric(11,0) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 11, 0],
-            ["my_column numeric(55,8) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 55, 8],
+            ['my_column varchar(20) default null', 'MyColumn', ColumnDefaultValue::TYPE_VALUE, 'NULL', 20, null],
+            ["my_column varchar(20) default ''", 'MyColumn', ColumnDefaultValue::TYPE_VALUE, '', 20, null],
+            ['my_column numeric(11,0) default 0', 'MyColumn', ColumnDefaultValue::TYPE_VALUE, 0, 11, 0],
+            ['my_column numeric(55,8) default 0', 'MyColumn', ColumnDefaultValue::TYPE_VALUE, 0, 55, 8],
         ];
     }
 
     /**
      * @dataProvider parseDataProvider
+     *
+     * @return void
      */
     public function testParse($columnDDL, $expectedColumnPhpName, $expectedColumnDefaultType, $expectedColumnDefaultValue, $expectedSize, $expectedScale)
     {

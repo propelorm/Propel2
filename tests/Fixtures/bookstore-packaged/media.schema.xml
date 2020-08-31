@@ -5,7 +5,7 @@
 
   <!-- This table exists to explore/test the handling of BLOB/CLOB objects. -->
   <table name="media">
-   <behavior name="auto_add_pk" />
+   <behavior name="auto_add_pk"/>
     <column
       name="cover_image"
       type="BLOB"

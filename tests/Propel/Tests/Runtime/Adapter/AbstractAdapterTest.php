@@ -1,28 +1,29 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbOracle adapter
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author Francois EZaninotto
  */
 class AbstractAdapterTest extends TestCaseFixtures
 {
+    /**
+     * @return void
+     */
     public function testTurnSelectColumnsToAliases()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -35,6 +36,9 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertTrue($c1->equals($c2));
     }
 
+    /**
+     * @return void
+     */
     public function testTurnSelectColumnsToAliasesPreservesAliases()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -49,6 +53,9 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertTrue($c1->equals($c2));
     }
 
+    /**
+     * @return void
+     */
     public function testTurnSelectColumnsToAliasesExisting()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -63,6 +70,9 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertTrue($c1->equals($c2));
     }
 
+    /**
+     * @return void
+     */
     public function testTurnSelectColumnsToAliasesDuplicate()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -77,6 +87,9 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertTrue($c1->equals($c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCreateSelectSqlPart()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -89,18 +102,24 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertEquals(['book'], $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
+    /**
+     * @return void
+     */
     public function testCreateSelectSqlPartWithFnc()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addAsColumn('book_id', 'IF(1, '.BookTableMap::COL_ID.', '.BookTableMap::COL_TITLE.')');
+        $c->addAsColumn('book_id', 'IF(1, ' . BookTableMap::COL_ID . ', ' . BookTableMap::COL_TITLE . ')');
         $fromClause = [];
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.id, IF(1, book.id, book.title) AS book_id', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
         $this->assertEquals(['book'], $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
+    /**
+     * @return void
+     */
     public function testCreateSelectSqlPartSelectModifier()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -114,6 +133,9 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertEquals(['book'], $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
+    /**
+     * @return void
+     */
     public function testCreateSelectSqlPartAliasAll()
     {
         $db = Propel::getServiceContainer()->getAdapter(BookTableMap::DATABASE_NAME);
@@ -125,5 +147,4 @@ class AbstractAdapterTest extends TestCaseFixtures
         $this->assertEquals('SELECT book.id AS book_id_1, book.id AS book_id', $selectSql, 'createSelectSqlPart() aliases all columns if passed true as last parameter');
         $this->assertEquals([], $fromClause, 'createSelectSqlPart() does not add the tables from an all-aliased list of select columns');
     }
-
 }

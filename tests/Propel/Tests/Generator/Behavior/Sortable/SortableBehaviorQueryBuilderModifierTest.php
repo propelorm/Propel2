@@ -1,21 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
-
-use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
+use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 
 /**
  * Tests for SortableBehavior class query modifier
@@ -26,13 +23,19 @@ use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
  */
 class SortableBehaviorQueryBuilderModifierTest extends TestCase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->populateTable11();
     }
 
+    /**
+     * @return void
+     */
     public function testFilterByRank()
     {
         $this->assertTrue(SortableTable11Query::create()->filterByRank(1) instanceof SortableTable11Query, 'filterByRank() returns the current query object');
@@ -41,6 +44,9 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertNull(SortableTable11Query::create()->filterByRank(5)->findOne(), 'filterByRank() filters on the rank, which makes the query return no result on a non-existent rank');
     }
 
+    /**
+     * @return void
+     */
     public function testOrderByRank()
     {
         $this->assertTrue(SortableTable11Query::create()->orderByRank() instanceof SortableTable11Query, 'orderByRank() returns the current query object');
@@ -60,12 +66,17 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testOrderByRankIncorrectDirection()
     {
         SortableTable11Query::create()->orderByRank('foo');
     }
 
+    /**
+     * @return void
+     */
     public function testFindList()
     {
         $ts = SortableTable11Query::create()->findList();
@@ -77,6 +88,9 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals('row4', $ts[3]->getTitle(), 'findList() returns an ordered list');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneByRank()
     {
         $this->assertTrue(SortableTable11Query::create()->findOneByRank(1) instanceof Table11, 'findOneByRank() returns an instance of the model object');
@@ -85,6 +99,9 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertNull(SortableTable11Query::create()->findOneByRank(5), 'findOneByRank() returns no result on a non-existent rank');
     }
 
+    /**
+     * @return void
+     */
     public function testGetMaxRank()
     {
         $this->assertEquals(4, SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');
@@ -105,12 +122,15 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
         $this->assertEquals(1, SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');
     }
 
+    /**
+     * @return void
+     */
     public function testReorder()
     {
         $objects = SortableTable11Query::create()->find();
         $ids = [];
         foreach ($objects as $object) {
-            $ids[]= $object->getPrimaryKey();
+            $ids[] = $object->getPrimaryKey();
         }
         $ranks = [4, 3, 2, 1];
         $order = array_combine($ids, $ranks);

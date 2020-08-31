@@ -1,19 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model;
+
 use Propel\Generator\Model\ColumnDefaultValue;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for ColumnDefaultValue class.
- *
  */
 class ColumnDefaultValueTest extends TestCase
 {
@@ -30,6 +29,8 @@ class ColumnDefaultValueTest extends TestCase
 
     /**
      * @dataProvider equalsProvider
+     *
+     * @return void
      */
     public function testEquals($def1, $def2, $test)
     {

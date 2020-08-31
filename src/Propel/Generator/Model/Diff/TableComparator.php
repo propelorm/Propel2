@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -22,24 +20,24 @@ class TableComparator
     /**
      * The table difference.
      *
-     * @var TableDiff
+     * @var \Propel\Generator\Model\Diff\TableDiff
      */
     protected $tableDiff;
 
     /**
      * Constructor.
      *
-     * @param TableDiff $tableDiff
+     * @param \Propel\Generator\Model\Diff\TableDiff|null $tableDiff
      */
-    public function __construct(TableDiff $tableDiff = null)
+    public function __construct(?TableDiff $tableDiff = null)
     {
-        $this->tableDiff = (null === $tableDiff) ? new TableDiff() : $tableDiff;
+        $this->tableDiff = ($tableDiff === null) ? new TableDiff() : $tableDiff;
     }
 
     /**
      * Returns the table difference.
      *
-     * @return TableDiff
+     * @return \Propel\Generator\Model\Diff\TableDiff
      */
     public function getTableDiff()
     {
@@ -49,7 +47,9 @@ class TableComparator
     /**
      * Sets the table the comparator starts from.
      *
-     * @param Table $fromTable
+     * @param \Propel\Generator\Model\Table $fromTable
+     *
+     * @return void
      */
     public function setFromTable(Table $fromTable)
     {
@@ -59,7 +59,7 @@ class TableComparator
     /**
      * Returns the table the comparator starts from.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getFromTable()
     {
@@ -69,7 +69,9 @@ class TableComparator
     /**
      * Sets the table the comparator goes to.
      *
-     * @param Table $toTable
+     * @param \Propel\Generator\Model\Table $toTable
+     *
+     * @return void
      */
     public function setToTable(Table $toTable)
     {
@@ -79,7 +81,7 @@ class TableComparator
     /**
      * Returns the table the comparator goes to.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getToTable()
     {
@@ -89,10 +91,11 @@ class TableComparator
     /**
      * Returns the computed difference between two table objects.
      *
-     * @param  Table             $fromTable
-     * @param  Table             $toTable
-     * @param  boolean           $caseInsensitive
-     * @return TableDiff|Boolean
+     * @param \Propel\Generator\Model\Table $fromTable
+     * @param \Propel\Generator\Model\Table $toTable
+     * @param bool $caseInsensitive
+     *
+     * @return \Propel\Generator\Model\Diff\TableDiff|bool
      */
     public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {
@@ -116,8 +119,9 @@ class TableComparator
      * Compares the columns of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
     public function compareColumns($caseInsensitive = false)
     {
@@ -145,7 +149,7 @@ class TableComparator
         foreach ($fromTableColumns as $fromColumn) {
             if ($this->getToTable()->hasColumn($fromColumn->getName(), $caseInsensitive)) {
                 $toColumn = $this->getToTable()->getColumn($fromColumn->getName(), $caseInsensitive);
-                $columnDiff = ColumnComparator::computeDiff($fromColumn, $toColumn, $caseInsensitive);
+                $columnDiff = ColumnComparator::computeDiff($fromColumn, $toColumn);
                 if ($columnDiff) {
                     $this->tableDiff->addModifiedColumn($fromColumn->getName(), $columnDiff);
                     $columnDifferences++;
@@ -156,12 +160,13 @@ class TableComparator
         // check for column renamings
         foreach ($this->tableDiff->getAddedColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedColumns() as $removedColumnName => $removedColumn) {
-                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn)) {
                     // no difference except the name, that's probably a renaming
                     $this->tableDiff->addRenamedColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedColumn($addedColumnName);
                     $this->tableDiff->removeRemovedColumn($removedColumnName);
                     $columnDifferences--;
+
                     // skip to the next added column
                     break;
                 }
@@ -177,8 +182,9 @@ class TableComparator
      * Compares the primary keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
     public function comparePrimaryKeys($caseInsensitive = false)
     {
@@ -188,8 +194,10 @@ class TableComparator
 
         // check for new pk columns in $toTable
         foreach ($toTablePk as $column) {
-            if (!$this->getFromTable()->hasColumn($column->getName(), $caseInsensitive) ||
-                !$this->getFromTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()) {
+            if (
+                !$this->getFromTable()->hasColumn($column->getName(), $caseInsensitive) ||
+                !$this->getFromTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()
+            ) {
                     $this->tableDiff->addAddedPkColumn($column->getName(), $column);
                     $pkDifferences++;
             }
@@ -197,8 +205,10 @@ class TableComparator
 
         // check for removed pk columns in $toTable
         foreach ($fromTablePk as $column) {
-            if (!$this->getToTable()->hasColumn($column->getName(), $caseInsensitive) ||
-                !$this->getToTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()) {
+            if (
+                !$this->getToTable()->hasColumn($column->getName(), $caseInsensitive) ||
+                !$this->getToTable()->getColumn($column->getName(), $caseInsensitive)->isPrimaryKey()
+            ) {
                     $this->tableDiff->addRemovedPkColumn($column->getName(), $column);
                     $pkDifferences++;
             }
@@ -207,12 +217,13 @@ class TableComparator
         // check for column renamings
         foreach ($this->tableDiff->getAddedPkColumns() as $addedColumnName => $addedColumn) {
             foreach ($this->tableDiff->getRemovedPkColumns() as $removedColumnName => $removedColumn) {
-                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn, $caseInsensitive)) {
+                if (!ColumnComparator::computeDiff($addedColumn, $removedColumn)) {
                     // no difference except the name, that's probably a renaming
                     $this->tableDiff->addRenamedPkColumn($removedColumn, $addedColumn);
                     $this->tableDiff->removeAddedPkColumn($addedColumnName);
                     $this->tableDiff->removeRemovedPkColumn($removedColumnName);
                     $pkDifferences--;
+
                     // skip to the next added column
                     break;
                 }
@@ -228,8 +239,9 @@ class TableComparator
      * Compare the indices and unique indices of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
     public function compareIndices($caseInsensitive = false)
     {
@@ -243,7 +255,7 @@ class TableComparator
                     strtolower($fromTableIndex->getName()) == strtolower($toTableIndex->getName()) :
                     $fromTableIndex->getName() == $toTableIndex->getName();
                 if ($sameName) {
-                    if (false === IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive)) {
+                    if (IndexComparator::computeDiff($fromTableIndex, $toTableIndex, $caseInsensitive) === false) {
                         //no changes
                         unset($fromTableIndices[$fromTableIndexPos]);
                         unset($toTableIndices[$toTableIndexPos]);
@@ -277,8 +289,9 @@ class TableComparator
      * Compare the foreign keys of the fromTable and the toTable,
      * and modifies the inner tableDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
     public function compareForeignKeys($caseInsensitive = false)
     {
@@ -292,7 +305,7 @@ class TableComparator
                     strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
                     $fromTableFk->getName() == $toTableFk->getName();
                 if ($sameName && !$toTableFk->isPolymorphic()) {
-                    if (false === ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive)) {
+                    if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
                         unset($fromTableFks[$fromTableFkPos]);
                         unset($toTableFks[$toTableFkPos]);
                     } else {

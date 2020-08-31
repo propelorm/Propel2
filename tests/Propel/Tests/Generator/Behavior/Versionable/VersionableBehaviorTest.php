@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
@@ -24,9 +22,9 @@ class VersionableBehaviorTest extends TestCase
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -36,6 +34,8 @@ EOF;
 
     /**
      * @dataProvider basicSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumn($schema)
     {
@@ -59,15 +59,18 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsVersionColumnCustomName()
     {
             $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-            <parameter name="version_column" value="foo_ver" />
+            <parameter name="version_column" value="foo_ver"/>
         </behavior>
     </table>
 </database>
@@ -92,15 +95,18 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableDoesNotAddVersionColumnIfExists()
     {
             $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="version" type="BIGINT" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <column name="version" type="BIGINT"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -129,18 +135,18 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="foreign_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <column name="foreign_id" type="INTEGER"/>
         <foreign-key foreignTable="versionable_behavior_test_1">
-            <reference local="foreign_id" foreign="id" />
+            <reference local="foreign_id" foreign="id"/>
         </foreign-key>
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
     <table name="versionable_behavior_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -150,6 +156,8 @@ EOF;
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnForForeignKeysIfForeignTableIsVersioned($schema)
     {
@@ -199,6 +207,8 @@ EOF;
 
     /**
      * @dataProvider foreignTableSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnForReferrersIfForeignTableIsVersioned($schema)
     {
@@ -246,6 +256,8 @@ EOF;
 
     /**
      * @dataProvider basicSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionTable($schema)
     {
@@ -272,15 +284,18 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsVersionTableCustomName()
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-          <parameter name="version_table" value="foo_ver" />
+          <parameter name="version_table" value="foo_ver"/>
         </behavior>
     </table>
 </database>
@@ -308,18 +323,21 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableDoesNotAddVersionTableIfExists()
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
     <table name="versionable_behavior_test_0_version">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="baz" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="baz" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -363,12 +381,12 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-          <parameter name="log_created_at" value="true" />
-          <parameter name="log_created_by" value="true" />
-          <parameter name="log_comment" value="true" />
+          <parameter name="log_created_at" value="true"/>
+          <parameter name="log_created_by" value="true"/>
+          <parameter name="log_comment" value="true"/>
         </behavior>
     </table>
 </database>
@@ -379,6 +397,8 @@ EOF;
 
     /**
      * @dataProvider logSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsLogColumns($schema)
     {
@@ -407,6 +427,8 @@ EOF;
 
     /**
      * @dataProvider logSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionTableLogColumns($schema)
     {
@@ -436,14 +458,17 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testDatabaseLevelBehavior()
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-    <behavior name="versionable" />
+    <behavior name="versionable"/>
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -470,18 +495,21 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testIndicesParameter()
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <index>
             <index-column name="bar"/>
         </index>
         <behavior name="versionable">
-            <parameter name="indices" value="true" />
+            <parameter name="indices" value="true"/>
         </behavior>
     </table>
 </database>
@@ -505,14 +533,17 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testSkipSqlParameterOnParentTable()
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -523,26 +554,28 @@ EOF;
         $this->assertEmpty($builder->getSQL());
     }
 
-    public function tablePrefixSchemaDataProvider() {
+    public function tablePrefixSchemaDataProvider()
+    {
         $schema = <<<XML
 <database name="versionable_behavior_test_0" tablePrefix="prefix_">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 XML;
+
         return [[$schema]];
     }
 
-
     /**
      * @dataProvider tablePrefixSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsVersionColumnWithPrefix($schema)
     {
-
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
@@ -562,11 +595,14 @@ CREATE TABLE prefix_versionable_behavior_test_0
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
+
     /**
      * @dataProvider tablePrefixSchemaDataProvider
+     *
+     * @return void
      */
-    public function testModifyTableAddsVersionTableWithPrefix($schema) {
-
+    public function testModifyTableAddsVersionTableWithPrefix($schema)
+    {
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
         $expected = <<<SQL
@@ -589,5 +625,4 @@ CREATE TABLE prefix_versionable_behavior_test_0_version
 SQL;
         $this->assertContains($expected, $builder->getSQL());
     }
-
 }

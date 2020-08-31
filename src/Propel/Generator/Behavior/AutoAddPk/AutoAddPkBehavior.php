@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AutoAddPk;
@@ -19,16 +17,22 @@ use Propel\Generator\Model\Behavior;
  */
 class AutoAddPkBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'name'          => 'id',
+        'name' => 'id',
         'autoIncrement' => 'true',
-        'type'          => 'INTEGER'
+        'type' => 'INTEGER',
     ];
 
     /**
      * Copy the behavior to the database tables
      * Only for tables that have no Pk
+     *
+     * @return void
      */
     public function modifyDatabase()
     {
@@ -42,6 +46,8 @@ class AutoAddPkBehavior extends Behavior
 
     /**
      * Add the primary key to the current table
+     *
+     * @return void
      */
     public function modifyTable()
     {

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Versionable;
@@ -17,20 +15,43 @@ namespace Propel\Generator\Behavior\Versionable;
  */
 class VersionableBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
+     */
     protected $behavior;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
 
+    /**
+     * @var string
+     */
     protected $objectClassName;
 
+    /**
+     * @var string
+     */
+    protected $queryClassName;
+
+    /**
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
+     */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table = $behavior->getTable();
     }
 
+    /**
+     * @return string
+     */
     public function queryAttributes()
     {
         return "
@@ -41,26 +62,49 @@ static \$isVersioningEnabled = true;
 ";
     }
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     protected function getParameter($key)
     {
         return $this->behavior->getParameter($key);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnAttribute($name = 'version_column')
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
     protected function getColumnPhpName($name = 'version_column')
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
+    /**
+     * @return string
+     */
     protected function getVersionQueryClassName()
     {
         return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
     protected function setBuilder($builder)
     {
         $this->builder = $builder;
@@ -70,6 +114,8 @@ static \$isVersioningEnabled = true;
 
     /**
      * Get the getter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related getter, e.g. 'getVersion'
      */
@@ -81,6 +127,8 @@ static \$isVersioningEnabled = true;
     /**
      * Get the setter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related setter, e.g. 'setVersion'
      */
     protected function getColumnSetter($name = 'version_column')
@@ -88,11 +136,16 @@ static \$isVersioningEnabled = true;
         return 'set' . $this->getColumnPhpName($name);
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function queryMethods($builder)
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }
@@ -104,6 +157,11 @@ static \$isVersioningEnabled = true;
         return $script;
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addFilterByVersion(&$script)
     {
         $script .= "
@@ -121,6 +179,11 @@ public function filterByVersion(\$version = null, \$comparison = null)
 ";
     }
 
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
     protected function addOrderByVersion(&$script)
     {
         $script .= "
@@ -137,6 +200,9 @@ public function orderByVersion(\$order = Criteria::ASC)
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addIsVersioningEnabled()
     {
         return "
@@ -152,6 +218,9 @@ static public function isVersioningEnabled()
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addEnableVersioning()
     {
         return "
@@ -165,6 +234,9 @@ static public function enableVersioning()
 ";
     }
 
+    /**
+     * @return string
+     */
     protected function addDisableVersioning()
     {
         return "

@@ -1,26 +1,24 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Runtime\Exception\PropelException;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\BookQuery;
-
-use Propel\Runtime\Propel;
+use PDO;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
-use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for Criteria.
@@ -32,10 +30,10 @@ use Propel\Runtime\ActiveQuery\Join;
  */
 class CriteriaTest extends BookstoreTestBase
 {
-
     /**
      * The criteria to use in the test.
-     * @var Criteria
+     *
+     * @var \Propel\Runtime\ActiveQuery\Criteria
      */
     private $c;
 
@@ -46,7 +44,10 @@ class CriteriaTest extends BookstoreTestBase
 //     */
 //    private $savedAdapter;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         $this->c = new ModelCriteria();
@@ -54,12 +55,14 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Test basic adding of strings.
+     *
+     * @return void
      */
     public function testAddString()
     {
-        $table = "myTable";
-        $column = "myColumn";
-        $value = "myValue";
+        $table = 'myTable';
+        $column = 'myColumn';
+        $value = 'myValue';
 
         // Add the string
         $this->c->add($table . '.' . $column, $value);
@@ -73,12 +76,14 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Test basic adding of strings for table with explicit schema.
+     *
+     * @return void
      */
     public function testAddStringWithSchemas()
     {
-        $table = "mySchema.myTable";
-        $column = "myColumn";
-        $value = "myValue";
+        $table = 'mySchema.myTable';
+        $column = 'myColumn';
+        $value = 'myValue';
 
         // Add the string
         $this->c->add($table . '.' . $column, $value);
@@ -90,22 +95,25 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertTrue($this->c->getValue($table . '.' . $column) === $value);
     }
 
+    /**
+     * @return void
+     */
     public function testAddAndSameColumns()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
-        $table2 = "myTable1";
-        $column2 = "myColumn1";
-        $value2 = "myValue2";
+        $table2 = 'myTable1';
+        $column2 = 'myColumn1';
+        $value2 = 'myValue2';
         $key2 = "$table2.$column2";
 
         $this->c->add($key1, $value1, Criteria::EQUAL);
         $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2)");
+        $expect = $this->getSql('SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2)');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -119,28 +127,31 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
     }
 
+    /**
+     * @return void
+     */
     public function testAddAndSameColumnsPropel14Compatibility()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
-        $table2 = "myTable1";
-        $column2 = "myColumn1";
-        $value2 = "myValue2";
+        $table2 = 'myTable1';
+        $column2 = 'myColumn1';
+        $value2 = 'myValue2';
         $key2 = "$table2.$column2";
 
-        $table3 = "myTable3";
-        $column3 = "myColumn3";
-        $value3 = "myValue3";
+        $table3 = 'myTable3';
+        $column3 = 'myColumn3';
+        $value3 = 'myValue3';
         $key3 = "$table3.$column3";
 
         $this->c->add($key1, $value1, Criteria::EQUAL);
         $this->c->add($key3, $value3, Criteria::EQUAL);
         $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3");
+        $expect = $this->getSql('SELECT  FROM myTable1, myTable3 WHERE (myTable1.myColumn1=:p1 AND myTable1.myColumn1=:p2) AND myTable3.myColumn3=:p3');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -155,22 +166,25 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addAnd() called on an existing column creates a combined criterion');
     }
 
+    /**
+     * @return void
+     */
     public function testAddAndDistinctColumns()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
-        $table2 = "myTable2";
-        $column2 = "myColumn2";
-        $value2 = "myValue2";
+        $table2 = 'myTable2';
+        $column2 = 'myColumn2';
+        $value2 = 'myValue2';
         $key2 = "$table2.$column2";
 
         $this->c->add($key1, $value1, Criteria::EQUAL);
         $this->c->addAnd($key2, $value2, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1, myTable2 WHERE myTable1.myColumn1=:p1 AND myTable2.myColumn2=:p2");
+        $expect = $this->getSql('SELECT  FROM myTable1, myTable2 WHERE myTable1.myColumn1=:p1 AND myTable2.myColumn2=:p2');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -184,22 +198,25 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addAnd() called on a distinct column adds a criterion to the criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testAddOrSameColumns()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
-        $table2 = "myTable1";
-        $column2 = "myColumn1";
-        $value2 = "myValue2";
+        $table2 = 'myTable1';
+        $column2 = 'myColumn1';
+        $value2 = 'myValue2';
         $key2 = "$table2.$column2";
 
         $this->c->add($key1, $value1, Criteria::EQUAL);
         $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2)");
+        $expect = $this->getSql('SELECT  FROM myTable1 WHERE (myTable1.myColumn1=:p1 OR myTable1.myColumn1=:p2)');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -213,22 +230,25 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
     }
 
+    /**
+     * @return void
+     */
     public function testAddOrDistinctColumns()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
-        $table2 = "myTable2";
-        $column2 = "myColumn2";
-        $value2 = "myValue2";
+        $table2 = 'myTable2';
+        $column2 = 'myColumn2';
+        $value2 = 'myValue2';
         $key2 = "$table2.$column2";
 
         $this->c->add($key1, $value1, Criteria::EQUAL);
         $this->c->addOr($key2, $value2, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1, myTable2 WHERE (myTable1.myColumn1=:p1 OR myTable2.myColumn2=:p2)");
+        $expect = $this->getSql('SELECT  FROM myTable1, myTable2 WHERE (myTable1.myColumn1=:p1 OR myTable2.myColumn2=:p2)');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -242,16 +262,19 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expect_params, $params, 'addOr() called on a distinct column adds a criterion to the latest criterion');
     }
 
+    /**
+     * @return void
+     */
     public function testAddOrEmptyCriteria()
     {
-        $table1 = "myTable1";
-        $column1 = "myColumn1";
-        $value1 = "myValue1";
+        $table1 = 'myTable1';
+        $column1 = 'myColumn1';
+        $value1 = 'myValue1';
         $key1 = "$table1.$column1";
 
         $this->c->addOr($key1, $value1, Criteria::EQUAL);
 
-        $expect = $this->getSql("SELECT  FROM myTable1 WHERE myTable1.myColumn1=:p1");
+        $expect = $this->getSql('SELECT  FROM myTable1 WHERE myTable1.myColumn1=:p1');
 
         $params = [];
         $result = $this->c->createSelectSql($params);
@@ -268,32 +291,36 @@ class CriteriaTest extends BookstoreTestBase
      * Test Criterion.setIgnoreCase().
      * As the output is db specific the test just prints the result to
      * System.out
+     *
+     * @return void
      */
     public function testCriterionIgnoreCase()
     {
         $originalDB = Propel::getServiceContainer()->getAdapter();
         $adapters = [new MysqlAdapter(), new PgsqlAdapter()];
-        $expectedIgnore = ["UPPER(TABLE.COLUMN) LIKE UPPER(:p1)", "TABLE.COLUMN ILIKE :p1"];
+        $expectedIgnore = ['UPPER(TABLE.COLUMN) LIKE UPPER(:p1)', 'TABLE.COLUMN ILIKE :p1'];
 
-        $i =0;
+        $i = 0;
         foreach ($adapters as $adapter) {
-
             Propel::getServiceContainer()->setAdapter(Propel::getServiceContainer()->getDefaultDatasource(), $adapter);
             $myCriteria = new Criteria();
 
             $myCriterion = $myCriteria->getNewCriterion(
-                "TABLE.COLUMN", "FoObAr", Criteria::LIKE);
-            $sb = "";
-            $params=[];
+                'TABLE.COLUMN',
+                'FoObAr',
+                Criteria::LIKE
+            );
+            $sb = '';
+            $params = [];
             $myCriterion->appendPsTo($sb, $params);
-            $expected = "TABLE.COLUMN LIKE :p1";
+            $expected = 'TABLE.COLUMN LIKE :p1';
 
             $this->assertEquals($expected, $sb);
 
             $ignoreCriterion = $myCriterion->setIgnoreCase(true);
 
-            $sb = "";
-            $params=[];
+            $sb = '';
+            $params = [];
             $ignoreCriterion->appendPsTo($sb, $params);
             // $expected = "UPPER(TABLE.COLUMN) LIKE UPPER(?)";
             $this->assertEquals($expectedIgnore[$i], $sb);
@@ -302,6 +329,9 @@ class CriteriaTest extends BookstoreTestBase
         Propel::getServiceContainer()->setAdapter(Propel::getServiceContainer()->getDefaultDatasource(), $originalDB);
     }
 
+    /**
+     * @return void
+     */
     public function testOrderByIgnoreCase()
     {
         $originalDB = Propel::getServiceContainer()->getAdapter();
@@ -322,34 +352,41 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Test that true is evaluated correctly.
+     *
+     * @return void
      */
     public function testBoolean()
     {
         $this->c = new Criteria();
-        $this->c->add("TABLE.COLUMN", true);
+        $this->c->add('TABLE.COLUMN', true);
 
-        $expect = $this->getSql("SELECT  FROM TABLE WHERE TABLE.COLUMN=:p1");
-        $expect_params = [ ['table' => 'TABLE', 'column' => 'COLUMN', 'value' => true],
+        $expect = $this->getSql('SELECT  FROM TABLE WHERE TABLE.COLUMN=:p1');
+        $expect_params = [ [
+        'table' => 'TABLE',
+        'column' => 'COLUMN',
+        'value' => true],
         ];
         try {
             $params = [];
             $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
 
-        $this->assertEquals($expect, $result, "Boolean test failed.");
+        $this->assertEquals($expect, $result, 'Boolean test failed.');
         $this->assertEquals($expect_params, $params);
-
     }
 
+    /**
+     * @return void
+     */
     public function testCurrentDate()
     {
         $this->c = new Criteria();
-        $this->c->add("TABLE.TIME_COLUMN", Criteria::CURRENT_TIME);
-        $this->c->add("TABLE.DATE_COLUMN", Criteria::CURRENT_DATE);
+        $this->c->add('TABLE.TIME_COLUMN', Criteria::CURRENT_TIME);
+        $this->c->add('TABLE.DATE_COLUMN', Criteria::CURRENT_DATE);
 
-        $expect = $this->getSql("SELECT  FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE");
+        $expect = $this->getSql('SELECT  FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE');
 
         $result = null;
         try {
@@ -357,21 +394,23 @@ class CriteriaTest extends BookstoreTestBase
             $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
 
-        $this->assertEquals($expect, $result, "Current date test failed!");
-
+        $this->assertEquals($expect, $result, 'Current date test failed!');
     }
 
+    /**
+     * @return void
+     */
     public function testCountAster()
     {
         $this->c = new Criteria();
-        $this->c->addSelectColumn("COUNT(*)");
-        $this->c->add("TABLE.TIME_COLUMN", Criteria::CURRENT_TIME);
-        $this->c->add("TABLE.DATE_COLUMN", Criteria::CURRENT_DATE);
+        $this->c->addSelectColumn('COUNT(*)');
+        $this->c->add('TABLE.TIME_COLUMN', Criteria::CURRENT_TIME);
+        $this->c->add('TABLE.DATE_COLUMN', Criteria::CURRENT_DATE);
 
-        $expect = $this->getSql("SELECT COUNT(*) FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE");
+        $expect = $this->getSql('SELECT COUNT(*) FROM TABLE WHERE TABLE.TIME_COLUMN=CURRENT_TIME AND TABLE.DATE_COLUMN=CURRENT_DATE');
 
         $result = null;
         try {
@@ -379,91 +418,103 @@ class CriteriaTest extends BookstoreTestBase
             $result = $this->c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
 
         $this->assertEquals($expect, $result);
-
     }
 
+    /**
+     * @return void
+     */
     public function testInOperator()
     {
         $c = new Criteria();
-        $c->addSelectColumn("*");
-        $c->add("TABLE.SOME_COLUMN", [], Criteria::IN);
-        $c->add("TABLE.OTHER_COLUMN", [1, 2, 3], Criteria::IN);
+        $c->addSelectColumn('*');
+        $c->add('TABLE.SOME_COLUMN', [], Criteria::IN);
+        $c->add('TABLE.OTHER_COLUMN', [1, 2, 3], Criteria::IN);
 
-        $expect = $this->getSql("SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (:p1,:p2,:p3)");
+        $expect = $this->getSql('SELECT * FROM TABLE WHERE 1<>1 AND TABLE.OTHER_COLUMN IN (:p1,:p2,:p3)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testInOperatorEmptyAfterFull()
     {
         $c = new Criteria();
-        $c->addSelectColumn("*");
-        $c->add("TABLE.OTHER_COLUMN", [1, 2, 3], Criteria::IN);
-        $c->add("TABLE.SOME_COLUMN", [], Criteria::IN);
+        $c->addSelectColumn('*');
+        $c->add('TABLE.OTHER_COLUMN', [1, 2, 3], Criteria::IN);
+        $c->add('TABLE.SOME_COLUMN', [], Criteria::IN);
 
-        $expect = $this->getSql("SELECT * FROM TABLE WHERE TABLE.OTHER_COLUMN IN (:p1,:p2,:p3) AND 1<>1");
+        $expect = $this->getSql('SELECT * FROM TABLE WHERE TABLE.OTHER_COLUMN IN (:p1,:p2,:p3) AND 1<>1');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testInOperatorNested()
     {
         // now do a nested logic test, just for sanity (not that this should be any surprise)
 
         $c = new Criteria();
-        $c->addSelectColumn("*");
-        $myCriterion = $c->getNewCriterion("TABLE.COLUMN", [], Criteria::IN);
-        $myCriterion->addOr($c->getNewCriterion("TABLE.COLUMN2", [1,2], Criteria::IN));
+        $c->addSelectColumn('*');
+        $myCriterion = $c->getNewCriterion('TABLE.COLUMN', [], Criteria::IN);
+        $myCriterion->addOr($c->getNewCriterion('TABLE.COLUMN2', [1, 2], Criteria::IN));
         $c->add($myCriterion);
 
-        $expect = $this->getSql("SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (:p1,:p2))");
+        $expect = $this->getSql('SELECT * FROM TABLE WHERE (1<>1 OR TABLE.COLUMN2 IN (:p1,:p2))');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
-
     }
 
     /**
      * Test the Criteria::RAW behavior.
+     *
+     * @return void
      */
     public function testRaw()
     {
         $c = new Criteria();
         $c->addSelectColumn('A.COL');
         $c->addAsColumn('foo', 'B.COL');
-        $c->add('foo = ?', 123, \PDO::PARAM_STR);
+        $c->add('foo = ?', 123, PDO::PARAM_STR);
 
         $params = [];
         $result = $c->createSelectSql($params);
-        $expected = $this->getSql("SELECT A.COL, B.COL AS foo FROM A WHERE foo = :p1");
+        $expected = $this->getSql('SELECT A.COL, B.COL AS foo FROM A WHERE foo = :p1');
         $this->assertEquals($expected, $result);
         $expected = [
-            ['table' => null, 'type' => \PDO::PARAM_STR, 'value' => 123]
+            ['table' => null, 'type' => PDO::PARAM_STR, 'value' => 123],
         ];
         $this->assertEquals($expected, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testJoinObject()
     {
         $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_2');
@@ -497,27 +548,33 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals('TABLE_B.COL_2', $j->getRightColumn(1));
     }
 
-    public function testAddStraightJoin ()
+    /**
+     * @return void
+     */
+    public function testAddStraightJoin()
     {
         $c = new Criteria();
-        $c->addSelectColumn("*");
+        $c->addSelectColumn('*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1'); // straight join
 
-        $expect = $this->getSql("SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)");
+        $expect = $this->getSql('SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
-    public function testAddSeveralJoins ()
+    /**
+     * @return void
+     */
+    public function testAddSeveralJoins()
     {
         $c = new Criteria();
-        $c->addSelectColumn("*");
+        $c->addSelectColumn('*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1');
         $c->addJoin('TABLE_B.COL_X', 'TABLE_D.COL_X');
 
@@ -528,30 +585,36 @@ class CriteriaTest extends BookstoreTestBase
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
-    public function testAddLeftJoin ()
+    /**
+     * @return void
+     */
+    public function testAddLeftJoin()
     {
         $c = new Criteria();
-        $c->addSelectColumn("TABLE_A.*");
-        $c->addSelectColumn("TABLE_B.*");
+        $c->addSelectColumn('TABLE_A.*');
+        $c->addSelectColumn('TABLE_B.*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_2', Criteria::LEFT_JOIN);
 
-        $expect = $this->getSql("SELECT TABLE_A.*, TABLE_B.* FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)");
+        $expect = $this->getSql('SELECT TABLE_A.*, TABLE_B.* FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
-    public function testAddSeveralLeftJoins ()
+    /**
+     * @return void
+     */
+    public function testAddSeveralLeftJoins()
     {
         // Fails.. Suspect answer in the chunk starting at BaseTableMap:605
         $c = new Criteria();
@@ -560,36 +623,42 @@ class CriteriaTest extends BookstoreTestBase
         $c->addJoin('TABLE_A.COL_2', 'TABLE_C.COL_2', Criteria::LEFT_JOIN);
 
         $expect = $this->getSql('SELECT * FROM TABLE_A '
-            .'LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
-            .'LEFT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)');
+            . 'LEFT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+            . 'LEFT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
-    public function testAddRightJoin ()
+    /**
+     * @return void
+     */
+    public function testAddRightJoin()
     {
         $c = new Criteria();
-        $c->addSelectColumn("*");
+        $c->addSelectColumn('*');
         $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_2', Criteria::RIGHT_JOIN);
 
-        $expect = $this->getSql("SELECT * FROM TABLE_A RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)");
+        $expect = $this->getSql('SELECT * FROM TABLE_A RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_2)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
-    public function testAddSeveralRightJoins ()
+    /**
+     * @return void
+     */
+    public function testAddSeveralRightJoins()
     {
         // Fails.. Suspect answer in the chunk starting at BaseTableMap:605
         $c = new Criteria();
@@ -598,66 +667,74 @@ class CriteriaTest extends BookstoreTestBase
         $c->addJoin('TABLE_A.COL_2', 'TABLE_C.COL_2', Criteria::RIGHT_JOIN);
 
         $expect = $this->getSql('SELECT * FROM TABLE_A '
-            .'RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
-            .'RIGHT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)');
+            . 'RIGHT JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+            . 'RIGHT JOIN TABLE_C ON (TABLE_A.COL_2=TABLE_C.COL_2)');
         try {
             $params = [];
             $result = $c->createSelectSql($params);
         } catch (PropelException $e) {
             print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
-        }
-        $this->assertEquals($expect, $result);
-    }
-
-    public function testAddInnerJoin ()
-    {
-        $c = new Criteria();
-        $c->addSelectColumn("*");
-        $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
-
-        $expect = $this->getSql("SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)");
-        try {
-            $params = [];
-            $result = $c->createSelectSql($params);
-        } catch (PropelException $e) {
-            print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
-        }
-        $this->assertEquals($expect, $result);
-    }
-
-    public function testAddSeveralInnerJoin ()
-    {
-        $c = new Criteria();
-        $c->addSelectColumn("*");
-        $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
-        $c->addJoin('TABLE_B.COL_1', 'TABLE_C.COL_1', Criteria::INNER_JOIN);
-
-        $expect = $this->getSql('SELECT * FROM TABLE_A '
-            .'INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
-            .'INNER JOIN TABLE_C ON (TABLE_B.COL_1=TABLE_C.COL_1)');
-        try {
-            $params = [];
-            $result = $c->createSelectSql($params);
-        } catch (PropelException $e) {
-            print $e->getTraceAsString();
-            $this->fail("PropelException thrown in Criteria->createSelectSql(): ". $e->getMessage());
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
         }
         $this->assertEquals($expect, $result);
     }
 
     /**
-     * @link       http://www.propelorm.org/ticket/451
-     * @link       http://www.propelorm.org/ticket/283#comment:8
+     * @return void
+     */
+    public function testAddInnerJoin()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn('*');
+        $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
+
+        $expect = $this->getSql('SELECT * FROM TABLE_A INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1)');
+        try {
+            $params = [];
+            $result = $c->createSelectSql($params);
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
+        }
+        $this->assertEquals($expect, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddSeveralInnerJoin()
+    {
+        $c = new Criteria();
+        $c->addSelectColumn('*');
+        $c->addJoin('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
+        $c->addJoin('TABLE_B.COL_1', 'TABLE_C.COL_1', Criteria::INNER_JOIN);
+
+        $expect = $this->getSql('SELECT * FROM TABLE_A '
+            . 'INNER JOIN TABLE_B ON (TABLE_A.COL_1=TABLE_B.COL_1) '
+            . 'INNER JOIN TABLE_C ON (TABLE_B.COL_1=TABLE_C.COL_1)');
+        try {
+            $params = [];
+            $result = $c->createSelectSql($params);
+        } catch (PropelException $e) {
+            print $e->getTraceAsString();
+            $this->fail('PropelException thrown in Criteria->createSelectSql(): ' . $e->getMessage());
+        }
+        $this->assertEquals($expect, $result);
+    }
+
+    /**
+     * @link http://www.propelorm.org/ticket/451
+     * @link http://www.propelorm.org/ticket/283#comment:8
+     *
+     * @return void
      */
     public function testSeveralMixedJoinOrders()
     {
         $c = new Criteria();
         $c->clearSelectColumns()->
-            addJoin("TABLE_A.FOO_ID", "TABLE_B.id", Criteria::LEFT_JOIN)->
-            addJoin("TABLE_A.BAR_ID", "TABLE_C.id")->
-            addSelectColumn("TABLE_A.id");
+            addJoin('TABLE_A.FOO_ID', 'TABLE_B.id', Criteria::LEFT_JOIN)->
+            addJoin('TABLE_A.BAR_ID', 'TABLE_C.id')->
+            addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.id) INNER JOIN TABLE_C ON (TABLE_A.BAR_ID=TABLE_C.id)');
         $params = [];
@@ -666,14 +743,16 @@ class CriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinArray()
     {
         $c = new Criteria();
         $c->clearSelectColumns()->
             addJoin(['TABLE_A.FOO_ID'], ['TABLE_B.id'], Criteria::LEFT_JOIN)->
-            addSelectColumn("TABLE_A.id");
+            addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A LEFT JOIN TABLE_B ON TABLE_A.FOO_ID=TABLE_B.id');
         $params = [];
@@ -682,7 +761,9 @@ class CriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinArrayMultiple()
     {
@@ -691,8 +772,9 @@ class CriteriaTest extends BookstoreTestBase
             addJoin(
                 ['TABLE_A.FOO_ID', 'TABLE_A.BAR'],
                 ['TABLE_B.id', 'TABLE_B.BAZ'],
-                Criteria::LEFT_JOIN)->
-                addSelectColumn("TABLE_A.id");
+                Criteria::LEFT_JOIN
+            )->
+                addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.id AND TABLE_A.BAR=TABLE_B.BAZ)');
         $params = [];
@@ -703,7 +785,9 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * Test the Criteria::addJoinMultiple() method with an implicit join
      *
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinMultiple()
     {
@@ -713,7 +797,7 @@ class CriteriaTest extends BookstoreTestBase
             addMultipleJoin([
                 ['TABLE_A.FOO_ID', 'TABLE_B.id'],
                 ['TABLE_A.BAR', 'TABLE_B.BAZ']])->
-                addSelectColumn("TABLE_A.id");
+                addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.id AND TABLE_A.BAR=TABLE_B.BAZ)');
@@ -725,7 +809,9 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * Test the Criteria::addJoinMultiple() method with a value as second argument
      *
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinMultipleValue()
     {
@@ -735,7 +821,7 @@ class CriteriaTest extends BookstoreTestBase
             addMultipleJoin([
                 ['TABLE_A.FOO_ID', 'TABLE_B.id'],
                 ['TABLE_A.BAR', 3]])->
-                addSelectColumn("TABLE_A.id");
+                addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID=TABLE_B.id AND TABLE_A.BAR=3)');
@@ -747,18 +833,22 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * Test the Criteria::addJoinMultiple() method with a joinType
      *
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinMultipleWithJoinType()
     {
         $c = new Criteria();
         $c->
             clearSelectColumns()->
-            addMultipleJoin([
+            addMultipleJoin(
+                [
                 ['TABLE_A.FOO_ID', 'TABLE_B.id'],
                 ['TABLE_A.BAR', 'TABLE_B.BAZ']],
-            Criteria::LEFT_JOIN)->
-            addSelectColumn("TABLE_A.id");
+                Criteria::LEFT_JOIN
+            )->
+            addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID=TABLE_B.id AND TABLE_A.BAR=TABLE_B.BAZ)');
@@ -770,7 +860,9 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * Test the Criteria::addJoinMultiple() method with operator
      *
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinMultipleWithOperator()
     {
@@ -780,7 +872,7 @@ class CriteriaTest extends BookstoreTestBase
             addMultipleJoin([
                 ['TABLE_A.FOO_ID', 'TABLE_B.id', Criteria::GREATER_EQUAL],
                 ['TABLE_A.BAR', 'TABLE_B.BAZ', Criteria::LESS_THAN]])->
-                addSelectColumn("TABLE_A.id");
+                addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A INNER JOIN TABLE_B '
             . 'ON (TABLE_A.FOO_ID>=TABLE_B.id AND TABLE_A.BAR<TABLE_B.BAZ)');
@@ -792,18 +884,22 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * Test the Criteria::addJoinMultiple() method with join type and operator
      *
-     * @link       http://propel.phpdb.org/trac/ticket/606
+     * @link http://propel.phpdb.org/trac/ticket/606
+     *
+     * @return void
      */
     public function testAddJoinMultipleWithJoinTypeAndOperator()
     {
         $c = new Criteria();
         $c->
             clearSelectColumns()->
-            addMultipleJoin([
+            addMultipleJoin(
+                [
                 ['TABLE_A.FOO_ID', 'TABLE_B.id', Criteria::GREATER_EQUAL],
                 ['TABLE_A.BAR', 'TABLE_B.BAZ', Criteria::LESS_THAN]],
-            Criteria::LEFT_JOIN)->
-            addSelectColumn("TABLE_A.id");
+                Criteria::LEFT_JOIN
+            )->
+            addSelectColumn('TABLE_A.id');
 
         $expect = $this->getSql('SELECT TABLE_A.id FROM TABLE_A '
             . 'LEFT JOIN TABLE_B ON (TABLE_A.FOO_ID>=TABLE_B.id AND TABLE_A.BAR<TABLE_B.BAZ)');
@@ -814,6 +910,8 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Test the Criteria::CUSTOM behavior.
+     *
+     * @return void
      */
     public function testCustomOperator()
     {
@@ -829,60 +927,69 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Tests adding duplicate joins.
-     * @link       http://propel.phpdb.org/trac/ticket/613
+     *
+     * @link http://propel.phpdb.org/trac/ticket/613
+     *
+     * @return void
      */
     public function testAddJoin_Duplicate()
     {
         $c = new Criteria();
 
-        $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
-        $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::LEFT_JOIN);
-        $this->assertEquals(1, count($c->getJoins()), "Expected not to have duplicate LJOIN added.");
+        $c->addJoin('tbl.COL1', 'tbl.COL2', Criteria::LEFT_JOIN);
+        $c->addJoin('tbl.COL1', 'tbl.COL2', Criteria::LEFT_JOIN);
+        $this->assertEquals(1, count($c->getJoins()), 'Expected not to have duplicate LJOIN added.');
 
-        $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);
-        $c->addJoin("tbl.COL1", "tbl.COL2", Criteria::RIGHT_JOIN);
-        $this->assertEquals(2, count($c->getJoins()), "Expected 1 new right join to be added.");
+        $c->addJoin('tbl.COL1', 'tbl.COL2', Criteria::RIGHT_JOIN);
+        $c->addJoin('tbl.COL1', 'tbl.COL2', Criteria::RIGHT_JOIN);
+        $this->assertEquals(2, count($c->getJoins()), 'Expected 1 new right join to be added.');
 
-        $c->addJoin("tbl.COL1", "tbl.COL2");
-        $c->addJoin("tbl.COL1", "tbl.COL2");
-        $this->assertEquals(3, count($c->getJoins()), "Expected 1 new implicit join to be added.");
+        $c->addJoin('tbl.COL1', 'tbl.COL2');
+        $c->addJoin('tbl.COL1', 'tbl.COL2');
+        $this->assertEquals(3, count($c->getJoins()), 'Expected 1 new implicit join to be added.');
 
-        $c->addJoin("tbl.COL3", "tbl.COL4");
-        $this->assertEquals(4, count($c->getJoins()), "Expected new col join to be added.");
-
+        $c->addJoin('tbl.COL3', 'tbl.COL4');
+        $this->assertEquals(4, count($c->getJoins()), 'Expected new col join to be added.');
     }
 
     /**
-     * @link       http://propel.phpdb.org/trac/ticket/634
+     * @link http://propel.phpdb.org/trac/ticket/634
+     *
+     * @return void
      */
     public function testHasSelectClause()
     {
         $c = new Criteria();
-        $c->addSelectColumn("foo");
+        $c->addSelectColumn('foo');
 
         $this->assertTrue($c->hasSelectClause());
 
         $c = new Criteria();
-        $c->addAsColumn("foo", "bar");
+        $c->addAsColumn('foo', 'bar');
 
         $this->assertTrue($c->hasSelectClause());
     }
 
     /**
      * Tests including aliases in criterion objects.
-     * @link       http://propel.phpdb.org/trac/ticket/636
+     *
+     * @link http://propel.phpdb.org/trac/ticket/636
+     *
+     * @return void
      */
     public function testAliasInCriterion()
     {
         $c = new Criteria();
-        $c->addAsColumn("column_alias", "tbl.COL1");
-        $crit = $c->getNewCriterion("column_alias", "FOO");
+        $c->addAsColumn('column_alias', 'tbl.COL1');
+        $crit = $c->getNewCriterion('column_alias', 'FOO');
         $this->assertNull($crit->getTable());
-        $this->assertEquals("column_alias", $crit->getColumn());
+        $this->assertEquals('column_alias', $crit->getColumn());
     }
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testHavingAlias()
     {
@@ -900,6 +1007,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
+    /**
+     * @return void
+     */
     public function testHaving()
     {
         $c = new Criteria();
@@ -920,13 +1030,15 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testHavingAliasRaw()
     {
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::COL_TITLE);
-        $c->addAsColumn("isb_n", BookTableMap::COL_ISBN);
-        $c->addHaving('isb_n = ?', '1234567890123', \PDO::PARAM_STR);
+        $c->addAsColumn('isb_n', BookTableMap::COL_ISBN);
+        $c->addHaving('isb_n = ?', '1234567890123', PDO::PARAM_STR);
         $expected = $this->getSql('SELECT book.title, book.isbn AS isb_n FROM book HAVING isb_n = :p1');
         $params = [];
         $result = $c->createSelectSql($params);
@@ -938,7 +1050,10 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * Test whether GROUP BY is being respected in equals() check.
-     * @link       http://propel.phpdb.org/trac/ticket/674
+     *
+     * @link http://propel.phpdb.org/trac/ticket/674
+     *
+     * @return void
      */
     public function testEqualsGroupBy()
     {
@@ -948,18 +1063,21 @@ class CriteriaTest extends BookstoreTestBase
         $c2 = new Criteria();
         $c2->addGroupByColumn('GBY2');
 
-        $this->assertFalse($c2->equals($c1), "Expected Criteria NOT to be the same with different GROUP BY columns");
+        $this->assertFalse($c2->equals($c1), 'Expected Criteria NOT to be the same with different GROUP BY columns');
 
         $c3 = new Criteria();
         $c3->addGroupByColumn('GBY1');
         $c4 = new Criteria();
         $c4->addGroupByColumn('GBY1');
-        $this->assertTrue($c4->equals($c3), "Expected Criteria objects to match.");
+        $this->assertTrue($c4->equals($c3), 'Expected Criteria objects to match.');
     }
 
     /**
      * Test whether calling setDistinct twice puts in two distinct keywords or not.
-     * @link       http://propel.phpdb.org/trac/ticket/716
+     *
+     * @link http://propel.phpdb.org/trac/ticket/716
+     *
+     * @return void
      */
     public function testDoubleSelectModifiers()
     {
@@ -980,6 +1098,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals([Criteria::ALL], $c2->getSelectModifiers(), 'Initial setAll works');
     }
 
+    /**
+     * @return void
+     */
     public function testAddSelectModifier()
     {
         $c = new Criteria();
@@ -993,6 +1114,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals('SELECT DISTINCT SQL_CALC_FOUND_ROWS  FROM ', $result, 'addSelectModifier() adds a modifier to the final query');
     }
 
+    /**
+     * @return void
+     */
     public function testClone()
     {
         $c1 = new Criteria();
@@ -1008,6 +1132,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, $nbCrit, 'cloning a Criteria clones its Criterions');
     }
 
+    /**
+     * @return void
+     */
     public function testComment()
     {
         $c = new Criteria();
@@ -1019,6 +1146,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertNull($c->getComment(), 'Comment is reset by setComment(null)');
     }
 
+    /**
+     * @return void
+     */
     public function testClear()
     {
         $c = new CriteriaForClearTest();
@@ -1064,6 +1194,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultLimit()
     {
         $c = new Criteria();
@@ -1072,6 +1205,8 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider dataLimit
+     *
+     * @return void
      */
     public function testLimit($limit, $expected)
     {
@@ -1084,63 +1219,66 @@ class CriteriaTest extends BookstoreTestBase
 
     public function dataLimit()
     {
-        return array(
-            'Negative value' => array(
-                'limit'    => -1,
-                'expected' => -1
-            ),
-            'Zero' => array(
-                'limit'    => 0,
-                'expected' => 0
-            ),
+        return [
+            'Negative value' => [
+                'limit' => -1,
+                'expected' => -1,
+            ],
+            'Zero' => [
+                'limit' => 0,
+                'expected' => 0,
+            ],
 
-            'Small integer' => array(
-                'limit'    => 38427,
-                'expected' => 38427
-            ),
-            'Small integer as a string' => array(
-                'limit'    => '38427',
-                'expected' => 38427
-            ),
+            'Small integer' => [
+                'limit' => 38427,
+                'expected' => 38427,
+            ],
+            'Small integer as a string' => [
+                'limit' => '38427',
+                'expected' => 38427,
+            ],
 
-            'Largest 32-bit integer' => array(
-                'limit'    => 2147483647,
-                'expected' => 2147483647
-            ),
-            'Largest 32-bit integer as a string' => array(
-                'limit'    => '2147483647',
-                'expected' => 2147483647
-            ),
+            'Largest 32-bit integer' => [
+                'limit' => 2147483647,
+                'expected' => 2147483647,
+            ],
+            'Largest 32-bit integer as a string' => [
+                'limit' => '2147483647',
+                'expected' => 2147483647,
+            ],
 
-            'Largest 64-bit integer' => array(
-                'limit'    => 9223372036854775807,
-                'expected' => 9223372036854775807
-            ),
-            'Largest 64-bit integer as a string' => array(
-                'limit'    => '9223372036854775807',
-                'expected' => 9223372036854775807
-            ),
+            'Largest 64-bit integer' => [
+                'limit' => 9223372036854775807,
+                'expected' => 9223372036854775807,
+            ],
+            'Largest 64-bit integer as a string' => [
+                'limit' => '9223372036854775807',
+                'expected' => 9223372036854775807,
+            ],
 
-            'Decimal value' => array(
-                'limit'    => 123.9,
-                'expected' => 123
-            ),
-            'Decimal value as a string' => array(
-                'limit'    => '123.9',
-                'expected' => 123
-            ),
+            'Decimal value' => [
+                'limit' => 123.9,
+                'expected' => 123,
+            ],
+            'Decimal value as a string' => [
+                'limit' => '123.9',
+                'expected' => 123,
+            ],
 
-            'Non-numeric string' => array(
-                'limit'    => 'foo',
-                'expected' => 0
-            ),
-            'Injected SQL' => array(
-                'limit'    => '3;DROP TABLE abc',
-                'expected' => 3
-            ),
-        );
+            'Non-numeric string' => [
+                'limit' => 'foo',
+                'expected' => 0,
+            ],
+            'Injected SQL' => [
+                'limit' => '3;DROP TABLE abc',
+                'expected' => 3,
+            ],
+        ];
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultOffset()
     {
         $c = new Criteria();
@@ -1149,6 +1287,8 @@ class CriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider dataOffset
+     *
+     * @return void
      */
     public function testOffset($offset, $expected)
     {
@@ -1161,67 +1301,70 @@ class CriteriaTest extends BookstoreTestBase
 
     public function dataOffset()
     {
-        return array(
-            'Negative value' => array(
-                'offset'   => -1,
-                'expected' => -1
-            ),
-            'Zero' => array(
-                'offset'   => 0,
-                'expected' => 0
-            ),
+        return [
+            'Negative value' => [
+                'offset' => -1,
+                'expected' => -1,
+            ],
+            'Zero' => [
+                'offset' => 0,
+                'expected' => 0,
+            ],
 
-            'Small integer' => array(
-                'offset'   => 38427,
-                'expected' => 38427
-            ),
-            'Small integer as a string' => array(
-                'offset'   => '38427',
-                'expected' => 38427
-            ),
+            'Small integer' => [
+                'offset' => 38427,
+                'expected' => 38427,
+            ],
+            'Small integer as a string' => [
+                'offset' => '38427',
+                'expected' => 38427,
+            ],
 
-            'Largest 32-bit integer' => array(
-                'offset'   => 2147483647,
-                'expected' => 2147483647
-            ),
-            'Largest 32-bit integer as a string' => array(
-                'offset'   => '2147483647',
-                'expected' => 2147483647
-            ),
+            'Largest 32-bit integer' => [
+                'offset' => 2147483647,
+                'expected' => 2147483647,
+            ],
+            'Largest 32-bit integer as a string' => [
+                'offset' => '2147483647',
+                'expected' => 2147483647,
+            ],
 
-            'Largest 64-bit integer' => array(
-                'offset'   => 9223372036854775807,
-                'expected' => 9223372036854775807
-            ),
-            'Largest 64-bit integer as a string' => array(
-                'offset'   => '9223372036854775807',
-                'expected' => 9223372036854775807
-            ),
+            'Largest 64-bit integer' => [
+                'offset' => 9223372036854775807,
+                'expected' => 9223372036854775807,
+            ],
+            'Largest 64-bit integer as a string' => [
+                'offset' => '9223372036854775807',
+                'expected' => 9223372036854775807,
+            ],
 
-            'Decimal value' => array(
-                'offset'   => 123.9,
-                'expected' => 123
-            ),
-            'Decimal value as a string' => array(
-                'offset'   => '123.9',
-                'expected' => 123
-            ),
+            'Decimal value' => [
+                'offset' => 123.9,
+                'expected' => 123,
+            ],
+            'Decimal value as a string' => [
+                'offset' => '123.9',
+                'expected' => 123,
+            ],
 
-            'Non-numeric string' => array(
-                'offset'   => 'foo',
-                'expected' => 0
-            ),
-            'Injected SQL' => array(
-                'offset'   => '3;DROP TABLE abc',
-                'expected' => 3
-            ),
-        );
+            'Non-numeric string' => [
+                'offset' => 'foo',
+                'expected' => 0,
+            ],
+            'Injected SQL' => [
+                'offset' => '3;DROP TABLE abc',
+                'expected' => 3,
+            ],
+        ];
     }
 
+    /**
+     * @return void
+     */
     public function testCombineAndFilterBy()
     {
         $params = [];
-        $sql = $this->getSql("SELECT  FROM book WHERE ((book.title LIKE :p1 OR book.isbn LIKE :p2) AND book.title LIKE :p3)");
+        $sql = $this->getSql('SELECT  FROM book WHERE ((book.title LIKE :p1 OR book.isbn LIKE :p2) AND book.title LIKE :p3)');
         $c = BookQuery::create()
             ->condition('u1', 'book.title LIKE ?', '%test1%')
             ->condition('u2', 'book.isbn LIKE ?', '%test2%')
@@ -1231,7 +1374,7 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($sql, $result);
 
         $params = [];
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.title LIKE :p1 AND (book.title LIKE :p2 OR book.isbn LIKE :p3))");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.title LIKE :p1 AND (book.title LIKE :p2 OR book.isbn LIKE :p3))');
         $c = BookQuery::create()
             ->filterByTitle('%test3%', Criteria::LIKE)
             ->condition('u1', 'book.title LIKE ?', '%test1%')
@@ -1241,6 +1384,9 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals($sql, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testGroupBy()
     {
         $params = [];
@@ -1251,7 +1397,7 @@ class CriteriaTest extends BookstoreTestBase
 
         $result = $c->createSelectSql($params);
 
-        if ($this->runningOnPostgreSQL()){
+        if ($this->runningOnPostgreSQL()) {
             $sql = 'SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, COUNT(review.id) AS Count FROM book LEFT JOIN review ON (book.id=review.book_id) GROUP BY book.id,book.title,book.isbn,book.price,book.publisher_id,book.author_id';
         } else {
             $sql = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, COUNT(review.id) AS Count FROM book LEFT JOIN review ON (book.id=review.book_id) GROUP BY book.id');

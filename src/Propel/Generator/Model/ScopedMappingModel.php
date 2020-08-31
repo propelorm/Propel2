@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -19,26 +17,37 @@ namespace Propel\Generator\Model;
  */
 abstract class ScopedMappingModel extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     protected $package;
-    protected $packageOverridden;
+
+    /**
+     * @var bool
+     */
+    protected $packageOverridden = false;
+
+    /**
+     * @var string|null
+     */
     protected $namespace;
+
+    /**
+     * @var string|null
+     */
     protected $schema;
 
     /**
      * Constructs a new scoped model object.
-     *
      */
     public function __construct()
     {
-        parent::__construct();
-
-        $this->packageOverridden = false;
     }
 
     /**
      * Returns whether or not the package has been overriden.
      *
-     * @return boolean
+     * @return bool
      */
     public function isPackageOverriden()
     {
@@ -49,9 +58,14 @@ abstract class ScopedMappingModel extends MappingModel
      * Returns a build property by its name.
      *
      * @param string $name
+     *
+     * @return string
      */
     abstract protected function getBuildProperty($name);
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->setPackage($this->getAttribute('package', $this->package));
@@ -73,6 +87,8 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the namespace.
      *
      * @param string $namespace
+     *
+     * @return void
      */
     public function setNamespace($namespace)
     {
@@ -94,12 +110,13 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * A namespace is absolute if it starts with a "\".
      *
-     * @param  string  $namespace
-     * @return boolean
+     * @param string $namespace
+     *
+     * @return bool
      */
     public function isAbsoluteNamespace($namespace)
     {
-        return 0 === strpos($namespace, '\\');
+        return strpos($namespace, '\\') === 0;
     }
 
     /**
@@ -116,6 +133,8 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the package name.
      *
      * @param string $package
+     *
+     * @return void
      */
     public function setPackage($package)
     {
@@ -141,6 +160,8 @@ abstract class ScopedMappingModel extends MappingModel
      * Sets the schema name.
      *
      * @param string $schema
+     *
+     * @return void
      */
     public function setSchema($schema)
     {

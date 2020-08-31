@@ -1,17 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -32,7 +29,10 @@ use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
  */
 class BookstoreLoggingTest extends BookstoreEmptyTestBase
 {
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
         PolymorphicRelationLogQuery::create()->deleteAll();
@@ -40,6 +40,9 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         AuthorQuery::create()->deleteAll();
     }
 
+    /**
+     * @return void
+     */
     public function testSetterAndGetter()
     {
         $book = new Book();
@@ -69,6 +72,9 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
         $log->save();
     }
 
+    /**
+     * @return void
+     */
     public function testQueryFilter()
     {
         $book = new Book();
@@ -132,9 +138,10 @@ class BookstoreLoggingTest extends BookstoreEmptyTestBase
     }
 
     /**
-     *
      * @group mysql
      * @group pgsql
+     *
+     * @return void
      */
     public function testQueryJoins()
     {
