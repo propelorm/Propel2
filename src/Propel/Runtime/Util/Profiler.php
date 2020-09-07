@@ -237,7 +237,10 @@ class Profiler
         $profile = '';
 
         if(is_null($startSnapshot)){
-            $startSnapshot = [];
+            $startSnapshot = [
+                'microtime' => 0,
+                'memoryUsage' => 0,
+            ];
         }
 
         if(!isset($startSnapshot['memoryUsage'])){
