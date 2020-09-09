@@ -688,7 +688,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                     $names[] = $this->getFKPhpNameAffix($fk, $needPlural);
                 }
 
-                return implode($names);
+                return implode('', $names);
             }
         } else {
             // no plural, so $plural=false
@@ -701,7 +701,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $names[] = $pk->getPhpName();
         }
 
-        $name = implode($names);
+        $name = implode('', $names);
 
         return ($plural === true ? $this->getPluralizer()->getPluralForm($name) : $name);
     }
@@ -728,7 +728,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $names[] = $pk->getPhpName();
         }
 
-        $name = implode($names);
+        $name = implode('', $names);
 
         return $this->getPluralizer()->getPluralForm($name);
     }
@@ -757,7 +757,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         }
 
         $names = implode(', ', $names) . (1 < count($names) ? ' combination' : '');
-        $phpDoc = implode($phpDoc);
+        $phpDoc = implode('', $phpDoc);
         $signatures = implode(', ', $signatures);
         $shortSignature = implode(', ', $shortSignature);
 
