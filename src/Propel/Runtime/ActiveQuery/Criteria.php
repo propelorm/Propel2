@@ -1364,6 +1364,22 @@ class Criteria
     }
 
     /**
+     * Remove select column.
+     *
+     * @param string $name Name of the select column.
+     *
+     * @return $this Modified Criteria object (for fluent API)
+     */
+    public function removeSelectColumn($name)
+    {
+        while (false !== ($key = array_search($name, $this->selectColumns, true))) {
+            unset($this->selectColumns[$key]);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the query comment, that appears after the first verb in the SQL query
      *
      * @param string|null $comment The comment to add to the query, without comment sign

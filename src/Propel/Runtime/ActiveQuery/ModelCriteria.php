@@ -843,6 +843,18 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function mergeWith(Criteria $criteria, $operator = null)
     {
+        if (
+            $criteria instanceof ModelCriteria
+            && !$criteria->getPrimaryCriteria()
+            && $criteria->isSelfColumnsSelected()
+            && $criteria->getWith()
+        ) {
+            if (!$this->isSelfColumnsSelected()) {
+                $this->addSelfSelectColumns();
+            }
+            $criteria->removeSelfSelectColumns();
+        }
+
         parent::mergeWith($criteria, $operator);
 
         // merge with
@@ -946,6 +958,36 @@ class ModelCriteria extends BaseModelCriteria
         $this->isSelfSelected = true;
 
         return $this;
+    }
+
+    /**
+     * Removes the select columns for the current table
+     *
+     * @param bool $force To enforce removing columns for changed alias, set it to true (f.e. with sub selects)
+     *
+     * @return $this The current object, for fluid interface
+     */
+    public function removeSelfSelectColumns($force = false)
+    {
+        if (!$this->isSelfSelected && !$force) {
+            return $this;
+        }
+
+        $tableMap = $this->modelTableMapName;
+        $tableMap::removeSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        $this->isSelfSelected = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether select columns for the current table are included
+     *
+     * @return bool
+     */
+    public function isSelfColumnsSelected()
+    {
+        return $this->isSelfSelected;
     }
 
     /**

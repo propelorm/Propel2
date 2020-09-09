@@ -190,6 +190,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addSelectMethods(&$script)
     {
         $this->addAddSelectColumns($script);
+        $this->addRemoveSelectColumns($script);
     }
 
     /**
@@ -1270,6 +1271,53 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     }
 
  // addAddSelectColumns()
+
+    /**
+     * Adds the removeSelectColumns() method.
+     *
+     * @param string &$script The script will be modified in this method.
+     *
+     * @return void
+     */
+    protected function addRemoveSelectColumns(&$script)
+    {
+        $script .= "
+    /**
+     * Remove all the columns needed to create a new object.
+     *
+     * Note: any columns that were marked with lazyLoad=\"true\" in the
+     * XML schema will not be removed as they are only loaded on demand.
+     *
+     * @param Criteria \$criteria object containing the columns to remove.
+     * @param string   \$alias    optional table alias
+     * @throws PropelException Any exceptions caught during processing will be
+     *                         rethrown wrapped into a PropelException.
+     */
+    public static function removeSelectColumns(Criteria \$criteria, \$alias = null)
+    {
+        if (null === \$alias) {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->removeSelectColumn({$col->getFQConstantName()});";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        } else {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->removeSelectColumn(\$alias . '." . $col->getName() . "');";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        }";
+        $script .= "
+    }
+";
+    }
+
+ // addRemoveSelectColumns()
 
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
