@@ -10,6 +10,11 @@
 
     <exclude-pattern>*/templates/*</exclude-pattern>
 
+    <!-- exclude until PHP8 -->
+    <rule ref="Spryker.PHP.DisallowFunctions">
+        <severity>0</severity>
+    </rule>
+
     <!-- exclude for now -->
     <rule ref="Spryker.ControlStructures.NoInlineAssignment">
         <severity>0</severity>
