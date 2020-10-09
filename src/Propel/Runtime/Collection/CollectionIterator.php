@@ -12,11 +12,15 @@ use ArrayIterator;
 
 /**
  * Iterator class for iterating over Collection data
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends ArrayIterator<T>
  */
 class CollectionIterator extends ArrayIterator
 {
     /**
      * @var \Propel\Runtime\Collection\Collection
+     * @phpstan-var \Propel\Runtime\Collection\Collection<T>
      */
     protected $collection;
 
@@ -27,6 +31,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * Constructor
+     *
+     * @phpstan-param \Propel\Runtime\Collection\Collection<T> $collection
      *
      * @param \Propel\Runtime\Collection\Collection $collection
      */
@@ -40,6 +46,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * Returns the collection instance
+     *
+     * @phpstan-return \Propel\Runtime\Collection\Collection<T>
      *
      * @return \Propel\Runtime\Collection\Collection
      */
@@ -77,6 +85,8 @@ class CollectionIterator extends ArrayIterator
      * Move the internal pointer to the beginning of the list
      * And get the first element in the collection
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     public function getFirst()
@@ -103,6 +113,8 @@ class CollectionIterator extends ArrayIterator
      * Move the internal pointer backward
      * And get the previous element in the collection
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     public function getPrevious()
@@ -119,6 +131,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Get the current element in the collection
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     public function getCurrent()
@@ -129,6 +143,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Move the internal pointer forward
      * And get the next element in the collection
+     *
+     * @phpstan-return T|null
      *
      * @return mixed
      */
@@ -142,6 +158,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Move the internal pointer to the end of the list
      * And get the last element in the collection
+     *
+     * @phpstan-return T|null
      *
      * @return mixed
      */

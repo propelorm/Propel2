@@ -18,11 +18,15 @@ use Propel\Runtime\Propel;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-implements Iterator<T>
  */
 class OnDemandIterator implements Iterator
 {
     /**
      * @var \Propel\Runtime\Formatter\ObjectFormatter
+     * @phpstan-var \Propel\Runtime\Formatter\ObjectFormatter<T>
      */
     protected $formatter;
 
@@ -52,6 +56,8 @@ class OnDemandIterator implements Iterator
     protected $enableInstancePoolingOnFinish;
 
     /**
+     * @phpstan-param \Propel\Runtime\Formatter\ObjectFormatter<T> $formatter
+     *
      * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
      */
@@ -90,6 +96,8 @@ class OnDemandIterator implements Iterator
     /**
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
+     *
+     * @phpstan-return T
      *
      * @see ObjectFormatter::getAllObjectsFromRow()
      *

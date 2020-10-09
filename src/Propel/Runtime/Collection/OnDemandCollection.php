@@ -18,15 +18,22 @@ use Propel\Runtime\Map\TableMap;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends Collection<T>
  */
 class OnDemandCollection extends Collection
 {
     /**
-     * @var \Iterator
+     * @phpstan-var \Propel\Runtime\Collection\OnDemandIterator<T>
+     *
+     * @var \Propel\Runtime\Collection\OnDemandIterator
      */
     private $lastIterator;
 
     /**
+     * @phpstan-param \Propel\Runtime\Formatter\ObjectFormatter<T> $formatter
+     *
      * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
      *
@@ -110,6 +117,8 @@ class OnDemandCollection extends Collection
     // IteratorAggregate Interface
 
     /**
+     * @phpstan-return \Propel\Runtime\Collection\OnDemandIterator<T>
+     *
      * @return \Propel\Runtime\Collection\OnDemandIterator
      */
     public function getIterator()

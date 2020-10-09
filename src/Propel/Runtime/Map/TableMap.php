@@ -20,6 +20,8 @@ use Propel\Runtime\Propel;
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author William Durand <william.durand1@gmail.com>
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  */
 class TableMap
 {
@@ -92,6 +94,7 @@ class TableMap
      * The ClassName for this table
      *
      * @var string
+     * @phpstan-var class-string<T>
      */
     protected $classname;
 
@@ -260,6 +263,8 @@ class TableMap
      * Set the ClassName of the Table. Could be useful for calling
      * tableMap and Object methods dynamically.
      *
+     * @phpstan-param class-string<T> $classname
+     *
      * @param string $classname The ClassName
      *
      * @return void
@@ -281,6 +286,8 @@ class TableMap
 
     /**
      * Get the Collection ClassName to this table.
+     *
+     * @phpstan-return class-string<\Propel\Runtime\Collection\ObjectCollection<T>>
      *
      * @return string
      */

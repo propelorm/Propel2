@@ -16,15 +16,21 @@ use Propel\Runtime\Exception\LogicException;
  * format() returns a ObjectCollection of Propel model objects
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends AbstractFormatter<T>
  */
 class ObjectFormatter extends AbstractFormatter
 {
     /**
      * @var array
+     * @phpstan-var array<T>
      */
     protected $objects = [];
 
     /**
+     * @phpstan-return array<T>|\Propel\Runtime\Collection\Collection<T>
+     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -68,6 +74,8 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
+     * @phpstan-return null|class-string<\Propel\Runtime\Collection\Collection<T>>
+     *
      * @return string|null
      */
     public function getCollectionClassName()
@@ -76,6 +84,8 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
+     * @phpstan-return T|null
+     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -117,6 +127,8 @@ class ObjectFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
+     * @phpstan-return T
+     *
      * @param array $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()
      *
@@ -126,6 +138,7 @@ class ObjectFormatter extends AbstractFormatter
     {
         // main object
         [$obj, $col] = $this->getTableMap()->populateObject($row, 0, $this->getDataFetcher()->getIndexType());
+        /** @phpstan-var T $obj */
 
         $pk = $obj->getPrimaryKey();
         $serializedPk = serialize($pk);

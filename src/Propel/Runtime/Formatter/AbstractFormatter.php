@@ -18,6 +18,8 @@ use Propel\Runtime\Propel;
  * Abstract class for query formatter
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of ActiveRecordInterface
  */
 abstract class AbstractFormatter
 {
@@ -27,12 +29,14 @@ abstract class AbstractFormatter
     protected $dbName;
 
     /**
-     * @var string|null
+     * @var string
+     * @phpstan-var class-string<T>
      */
     protected $class;
 
     /**
      * @var \Propel\Runtime\Map\TableMap|null
+     * @phpstan-var \Propel\Runtime\Map\TableMap<T>|null
      */
     protected $tableMap;
 
@@ -62,6 +66,8 @@ abstract class AbstractFormatter
     protected $dataFetcher;
 
     /**
+     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T> $criteria
+     *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      */
@@ -97,6 +103,10 @@ abstract class AbstractFormatter
     /**
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
+     *
+     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T> $criteria
+     *
+     * @phpstan-return self<T>
      *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
@@ -138,6 +148,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-param class-string<T> $class
+     *
      * @param string $class
      *
      * @return void
@@ -149,7 +161,9 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @return string|null
+     * @phpstan-return class-string<T>|null
+     *
+     * @return string
      */
     public function getClass()
     {
@@ -213,6 +227,8 @@ abstract class AbstractFormatter
     /**
      * Returns a Collection object or a simple array.
      *
+     * @phpstan-return \Propel\Runtime\Collection\Collection<T>|array<T>
+     *
      * @return \Propel\Runtime\Collection\Collection|array
      */
     protected function getCollection()
@@ -231,6 +247,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-return null|class-string<\Propel\Runtime\Collection\Collection<T>>
+     *
      * @return string|null
      */
     public function getCollectionClassName()
@@ -240,6 +258,10 @@ abstract class AbstractFormatter
 
     /**
      * Formats an ActiveRecord object
+     *
+     * @phpstan-param T|null $record
+     *
+     * @phpstan-return T|null|array
      *
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
@@ -282,6 +304,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-return \Propel\Runtime\Map\TableMap<T>
+     *
      * @return \Propel\Runtime\Map\TableMap
      */
     public function getTableMap()

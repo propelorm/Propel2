@@ -16,15 +16,20 @@ use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Propel;
 use Traversable;
 
+/**
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ */
 class BaseModelCriteria extends Criteria implements IteratorAggregate
 {
     /**
      * @var string|null
+     * @phpstan-var class-string<T>
      */
     protected $modelName;
 
     /**
      * @var string|null
+     * @phpstan-var class-string<\Propel\Runtime\Map\TableMap<T>>
      */
     protected $modelTableMapName;
 
@@ -58,6 +63,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
+     *
+     * @phpstan-param null|class-string<T> $modelName
      *
      * @param string|null $dbName The dabase name
      * @param string|null $modelName The phpName of a model, e.g. 'Book'
@@ -147,6 +154,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the name of the class for this model criteria
      *
+     * @phpstan-return class-string<T>
+     *
      * @return string
      */
     public function getModelName()
@@ -157,6 +166,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Sets the model name.
      * This also sets `this->modelTableMapName` and `this->tableMap`.
+     *
+     * @phpstan-param class-string<T> $modelName
      *
      * @param string $modelName
      *
@@ -180,6 +191,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     }
 
     /**
+     * @phpstan-return class-string<T>
+     *
      * @return string
      */
     public function getFullyQualifiedModelName()
@@ -240,6 +253,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the TableMap object for this Criteria
      *
+     * @phpstan-return \Propel\Runtime\Map\TableMap<T>
+     *
      * @return \Propel\Runtime\Map\TableMap
      */
     public function getTableMap()
@@ -253,6 +268,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * The return value depends on the query formatter. By default, this returns an ArrayIterator
      * constructed on a Propel\Runtime\Collection\PropelCollection.
      * Compulsory for implementation of \IteratorAggregate.
+     *
+     * @phpstan-return \Traversable<T>
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *

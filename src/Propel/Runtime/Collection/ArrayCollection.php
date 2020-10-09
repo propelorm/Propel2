@@ -15,11 +15,15 @@ use Propel\Runtime\Exception\PropelException;
  * Class for iterating over a list of Propel objects stored as arrays
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends Collection<T>
  */
 class ArrayCollection extends Collection
 {
     /**
      * @var object
+     * @phpstan-var T
      */
     protected $workerObject;
 
@@ -148,6 +152,7 @@ class ArrayCollection extends Collection
     public function toArray($keyColumn = null, $usePrefix = false)
     {
         $ret = [];
+        /** @var array $element */
         foreach ($this as $key => $element) {
             $key = $keyColumn === null ? $key : $element[$keyColumn];
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
@@ -190,6 +195,7 @@ class ArrayCollection extends Collection
     public function toKeyValue($keyColumn, $valueColumn)
     {
         $ret = [];
+        /** @var array $obj */
         foreach ($this as $obj) {
             $ret[$obj[$keyColumn]] = $obj[$valueColumn];
         }
@@ -198,6 +204,8 @@ class ArrayCollection extends Collection
     }
 
     /**
+     * @phpstan-return T
+     *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface

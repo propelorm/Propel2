@@ -49,6 +49,8 @@ use Propel\Runtime\Util\PropelModelPager;
  * @method \Propel\Runtime\ActiveQuery\ModelCriteria innerJoin($relation) Adds a INNER JOIN clause to the query
  *
  * @author François Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  */
 class ModelCriteria extends BaseModelCriteria
 {
@@ -1063,6 +1065,8 @@ class ModelCriteria extends BaseModelCriteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
      *
+     * @phpstan-return \Propel\Runtime\Collection\ObjectCollection<T>|T[]|mixed
+     *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
      * @return \Propel\Runtime\Collection\ObjectCollection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
@@ -1088,6 +1092,8 @@ class ModelCriteria extends BaseModelCriteria
      * By default, returns a model object.
      *
      * Does not work with ->with()s containing one-to-many relations.
+     *
+     * @phpstan-return T|mixed
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *

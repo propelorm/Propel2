@@ -36,11 +36,16 @@ use Serializable;
  * @method string toCSV(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-implements \ArrayAccess<string|int, T|array>
+ * @phpstan-implements \IteratorAggregate<T|array>
  */
 class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {
     /**
      * @var string
+     * @phpstan-var class-string<T>
      */
     protected $model = '';
 
@@ -48,11 +53,13 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * The fully qualified classname of the model
      *
      * @var string
+     * @phpstan-var class-string<T>
      */
     protected $fullyQualifiedModel = '';
 
     /**
      * @var \Propel\Runtime\Formatter\AbstractFormatter
+     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<T>
      */
     protected $formatter;
 
@@ -172,7 +179,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @return \Propel\Runtime\Collection\CollectionIterator
+     * @phpstan-return \Iterator<T|array>
+     *
+     * @return \Iterator
      */
     public function getIterator()
     {
@@ -436,6 +445,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Set the model of the elements in the collection
      *
+     * @phpstan-param class-string<T> $model
+     *
      * @param string $model Name of the Propel object classes stored in the collection
      *
      * @return void
@@ -453,6 +464,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
+     * @phpstan-return class-string<T>
+     *
      * @return string Name of the Propel object class stored in the collection
      */
     public function getModel()
@@ -463,6 +476,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
+     * @phpstan-return class-string<T>
+     *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
     public function getFullyQualifiedModel()
@@ -471,6 +486,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-return class-string<\Propel\Runtime\Map\TableMap<T>>
+     *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
      * @return string
@@ -487,6 +504,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<T> $formatter
+     *
      * @param \Propel\Runtime\Formatter\AbstractFormatter $formatter
      *
      * @return void
@@ -497,6 +516,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<T>
+     *
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */
     public function getFormatter()
