@@ -3274,7 +3274,7 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
      * If the primary key is not null, return the hashcode of the
      * primary key. Otherwise, return the hash code of the object.
      *
-     * @return int Hashcode
+     * @return string Hashcode
      */
     public function hashCode()
     {
@@ -3288,6 +3288,11 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         $script .= $pkCheck ? implode(" &&\n            ", $pkCheck) : 'false';
 
         $script .= ";\n";
+        $script .= "
+        if (\$validPk) {
+            return md5(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        }
+        ";
 
         /** @var $primaryKeyFKs ForeignKey[] */
         $primaryKeyFKs = [];
@@ -3319,10 +3324,8 @@ abstract class ".$this->getUnqualifiedClassName().$parentClass." implements Acti
         }
 
         $script .= "
-        if (\$validPk) {
-            return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
-        } elseif (\$validPrimaryKeyFKs) {
-            return crc32(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        if (\$validPrimaryKeyFKs) {
+            return md5(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
         }
 
         return spl_object_hash(\$this);
