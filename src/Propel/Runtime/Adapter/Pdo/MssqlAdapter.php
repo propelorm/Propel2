@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
@@ -327,5 +328,17 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                 $sql = str_replace($match, ':p' . ($key + 1), $sql);
             }
         }
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
     }
 }

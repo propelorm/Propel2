@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
@@ -200,5 +201,24 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         return parent::prepareParams($params);
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' LOCK IN SHARE MODE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
     }
 }

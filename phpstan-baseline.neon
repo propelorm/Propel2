@@ -451,6 +451,11 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLock\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:bindValues\\(\\)\\.$#"
 			count: 3
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php

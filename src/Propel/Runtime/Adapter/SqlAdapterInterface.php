@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -58,6 +59,16 @@ interface SqlAdapterInterface extends AdapterInterface
      * @return void
      */
     public function applyLimit(&$sql, $offset, $limit);
+
+    /**
+     * Modifies the passed-in SQL to add locking capabilities
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void;
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
