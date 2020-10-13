@@ -1275,7 +1275,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Adds the removeSelectColumns() method.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      *
      * @return void
      */
