@@ -54,6 +54,11 @@ class ConnectionFactory
                     }
                     $value = constant($value);
                 }
+                
+                if ($option == "ATTR_EMULATE_PREPARES" || $option == "ATTR_TIMEOUT") {
+                    continue;
+                }
+                
                 $connection->setAttribute($option, $value);
             }
         }
