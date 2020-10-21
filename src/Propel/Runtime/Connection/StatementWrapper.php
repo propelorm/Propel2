@@ -14,7 +14,7 @@ namespace Propel\Runtime\Connection;
  * Wraps a Statement class, providing logging.
  *
  */
-class StatementWrapper extends \PDOStatement implements \IteratorAggregate
+class StatementWrapper implements StatementInterface, \IteratorAggregate
 {
 
     /**
@@ -82,9 +82,11 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
      */
     public function query()
     {
-        $this->statement = $this->connection->getWrappedConnection()->query($this->sql);
+        $wrapped_connection = $this->connection->getWrappedConnection();
 
-        return $this->connection->getWrappedConnection()->getDataFetcher($this);
+        $this->statement = $wrapped_connection->query($this->sql);
+
+        return $wrapped_connection->getDataFetcher($this);
     }
 
     /**
@@ -324,9 +326,83 @@ class StatementWrapper extends \PDOStatement implements \IteratorAggregate
         return $this->boundValues;
     }
 
-    public function __call($method, $args)
+    /**
+     * {@inheritDoc}
+     */
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {
-        return call_user_func_array([$this->statement, $method], $args);
+        return $this->statement->bindColumn($column, $param, $type, $maxlen, $driverdata);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function fetchObject($class_name = "stdClass", array $ctor_args = array())
+    {
+        return $this->statement->fetchObject($class_name, $ctor_args);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function errorCode()
+    {
+        return $this->statement->errorCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function errorInfo()
+    {
+        return $this->statement->errorInfo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setAttribute($attribute, $value)
+    {
+        return $this->statement->setAttribute($attribute, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAttribute($attribute)
+    {
+        return $this->statement->getAttribute($attribute);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getColumnMeta($column)
+    {
+        return $this->statement->getColumnMeta($column);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = array())
+    {
+        return $this->statement->setFetchMode($mode, $classNameObject, $ctorarfg);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function nextRowset()
+    {
+        return $this->statement->nextRowset();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function debugDumpParams()
+    {
+        return $this->statement->debugDumpParams();
+    }
 }

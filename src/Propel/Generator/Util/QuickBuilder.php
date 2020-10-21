@@ -24,6 +24,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\StatementWrapper;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
@@ -227,7 +228,7 @@ class QuickBuilder
             }
             try {
                 $stmt = $con->prepare($statement);
-                if ($stmt instanceof \PDOStatement) {
+                if ($stmt instanceof StatementWrapper) {
                     // only execute if has no error
                     $stmt->execute();
                 }

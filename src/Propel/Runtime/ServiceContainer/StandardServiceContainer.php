@@ -532,7 +532,7 @@ class StandardServiceContainer implements ServiceContainerInterface
         $this->loggerConfigurations[$name] = $loggerConfiguration;
     }
 
-    final private function __clone()
+    private function __clone()
     {
     }
 }

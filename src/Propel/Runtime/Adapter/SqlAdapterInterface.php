@@ -10,6 +10,7 @@
 
 namespace Propel\Runtime\Adapter;
 
+use Propel\Runtime\Connection\StatementWrapper;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -112,23 +113,23 @@ interface SqlAdapterInterface extends AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param \PDOStatement $stmt
-     * @param array         $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param DatabaseMap   $dbMap
+     * @param StatementWrapper $stmt
+     * @param array            $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param DatabaseMap      $dbMap
      */
-    public function bindValues(\PDOStatement $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementWrapper $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt      The statement to bind
-     * @param string        $parameter Parameter identifier
-     * @param mixed         $value     The value to bind
-     * @param ColumnMap     $cMap      The ColumnMap of the column to bind
-     * @param null|integer  $position  The position of the parameter to bind
+     * @param StatementWrapper $stmt      The statement to bind
+     * @param string           $parameter Parameter identifier
+     * @param mixed            $value     The value to bind
+     * @param ColumnMap        $cMap      The ColumnMap of the column to bind
+     * @param null|integer     $position  The position of the parameter to bind
      *
      * @return boolean
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementWrapper $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

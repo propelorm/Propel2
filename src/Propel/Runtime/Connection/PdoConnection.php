@@ -98,7 +98,7 @@ class PdoConnection implements ConnectionInterface
             $attribute = constant($attribute);
         }
 
-        $this->pdo->setAttribute($attribute, $value);
+        return $this->pdo->setAttribute($attribute, $value);
     }
 
     /**
@@ -122,7 +122,7 @@ class PdoConnection implements ConnectionInterface
      */
     public function query($statement)
     {
-        $this->pdo->query($statement);
+        return $this->pdo->query($statement);
     }
 
     /**
@@ -135,11 +135,17 @@ class PdoConnection implements ConnectionInterface
         return $this->getDataFetcher($stmt);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function inTransaction()
     {
-        // TODO: Implement inTransaction() method.
+        return $this->pdo->inTransaction();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAttribute(int $attribute)
     {
         return $this->pdo->getAttribute($attribute);
