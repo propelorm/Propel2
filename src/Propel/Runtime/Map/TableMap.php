@@ -287,7 +287,7 @@ class TableMap
     public function getCollectionClassName()
     {
         $collectionClass = $this->getClassName() . 'Collection';
-        if (class_exists($collectionClass)) {
+        if (class_exists($collectionClass) && !is_subclass_of($collectionClass, '\Propel\Runtime\ActiveRecord\ActiveRecordInterface')) {
             return $collectionClass;
         }
 
