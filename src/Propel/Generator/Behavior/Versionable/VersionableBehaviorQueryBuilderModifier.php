@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Versionable;
@@ -18,33 +16,37 @@ namespace Propel\Generator\Behavior\Versionable;
 class VersionableBehaviorQueryBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
      */
     protected $behavior;
+
     /**
      * @var \Propel\Generator\Model\Table
      */
     protected $table;
+
     /**
      * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     protected $builder;
+
     /**
      * @var string
      */
     protected $objectClassName;
+
     /**
      * @var string
      */
     protected $queryClassName;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
      */
     public function __construct($behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table = $behavior->getTable();
     }
 
     /**
@@ -63,7 +65,7 @@ static \$isVersioningEnabled = true;
     /**
      * @param string $key
      *
-     * @return array
+     * @return mixed
      */
     protected function getParameter($key)
     {
@@ -113,6 +115,8 @@ static \$isVersioningEnabled = true;
     /**
      * Get the getter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related getter, e.g. 'getVersion'
      */
     protected function getColumnGetter($name = 'version_column')
@@ -122,6 +126,8 @@ static \$isVersioningEnabled = true;
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */
@@ -139,7 +145,7 @@ static \$isVersioningEnabled = true;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }

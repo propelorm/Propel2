@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Model\Diff;
 
+use PHPUnit\Framework\TestCase;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
@@ -9,15 +16,17 @@ use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\DefaultPlatform;
 
-class TableDiffTest extends \PHPUnit\Framework\TestCase
+class TableDiffTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testDefaultObjectState()
     {
         $fromTable = new Table('article');
-        $toTable   = new Table('article');
+        $toTable = new Table('article');
 
         $diff = $this->createTableDiff($fromTable, $toTable);
         
@@ -39,6 +48,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($diff->hasRenamedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAddedColumns()
     {
         $column = new Column('is_published', 'boolean');
@@ -51,6 +63,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasAddedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveAddedColumn()
     {
         $diff = $this->createTableDiff();
@@ -62,6 +77,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($diff->hasAddedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRemovedColumns()
     {
         $column = new Column('is_active');
@@ -74,6 +92,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasRemovedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRemoveRemovedColumn()
     {
         $diff = $this->createTableDiff();
@@ -86,6 +107,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($diff->hasRemovedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetModifiedColumns()
     {
         $columnDiff = new ColumnDiff();
@@ -97,10 +121,13 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testAddRenamedColumn()
     {
         $fromColumn = new Column('is_published', 'boolean');
-        $toColumn   = new Column('is_active', 'boolean');
+        $toColumn = new Column('is_active', 'boolean');
 
         $diff = $this->createTableDiff();
         $diff->setRenamedColumns([ [ $fromColumn, $toColumn ] ]);
@@ -109,6 +136,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasRenamedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAddedPkColumns()
     {
         $column = new Column('id', 'integer', 7);
@@ -122,6 +152,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedPk());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveAddedPkColumn()
     {
         $column = new Column('id', 'integer', 7);
@@ -137,6 +170,8 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException \Propel\Generator\Exception\DiffException
+     *
+     * @return void
      */
     public function testCantAddNonPrimaryKeyColumn()
     {
@@ -144,6 +179,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $diff->addAddedPkColumn('id', new Column('id', 'integer'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetRemovedPkColumns()
     {
         $column = new Column('id', 'integer');
@@ -156,6 +194,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedPk());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveRemovedPkColumn()
     {
         $diff = $this->createTableDiff();
@@ -165,6 +206,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($diff->getRemovedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRenamedPkColumns()
     {
         $diff = $this->createTableDiff();
@@ -174,6 +218,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedPk());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAddedIndices()
     {
         $table = new Table();
@@ -189,6 +236,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasAddedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRemovedIndices()
     {
         $table = new Table();
@@ -204,6 +254,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasRemovedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testSetModifiedIndices()
     {
         $table = new Table('users');
@@ -224,6 +277,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAddedFks()
     {
         $fk = new ForeignKey('fk_blog_author');
@@ -235,6 +291,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasAddedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveAddedFk()
     {
         $diff = $this->createTableDiff();
@@ -245,6 +304,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($diff->hasAddedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testSetRemovedFk()
     {
         $diff = $this->createTableDiff();
@@ -254,6 +316,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasRemovedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveRemovedFk()
     {
         $diff = $this->createTableDiff();
@@ -264,6 +329,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($diff->hasRemovedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testSetModifiedFks()
     {
         $diff = $this->createTableDiff();
@@ -273,6 +341,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($diff->hasModifiedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testGetSimpleReverseDiff()
     {
         $tableA = new Table('users');
@@ -286,6 +357,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($tableB, $reverseDiff->getFromTable());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasModifiedColumns()
     {
         $c1 = new Column('title', 'varchar', 50);
@@ -302,6 +376,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([ 'title' => $reverseColumnDiff ], $reverseDiff->getModifiedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRemovedColumns()
     {
         $column = new Column('slug', 'varchar', 100);
@@ -314,6 +391,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($column, $reverseDiff->getRemovedColumn('slug'));
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasAddedColumns()
     {
         $column = new Column('slug', 'varchar', 100);
@@ -326,6 +406,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($column, $reverseDiff->getAddedColumn('slug'));
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRenamedColumns()
     {
         $columnA = new Column('login', 'varchar', 15);
@@ -338,6 +421,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([ [ $columnB, $columnA ] ], $reverseDiff->getRenamedColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasAddedPkColumns()
     {
         $column = new Column('client_id', 'integer');
@@ -351,6 +437,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($reverseDiff->hasAddedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRemovedPkColumns()
     {
         $column = new Column('client_id', 'integer');
@@ -364,6 +453,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($reverseDiff->hasRemovedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRenamedPkColumn()
     {
         $fromColumn = new Column('post_id', 'integer');
@@ -380,6 +472,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([[ $toColumn, $fromColumn ]], $reverseDiff->getRenamedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasAddedIndices()
     {
         $table = new Table();
@@ -396,6 +491,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $reverseDiff->getAddedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRemovedIndices()
     {
         $table = new Table();
@@ -412,6 +510,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $reverseDiff->getRemovedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasModifiedIndices()
     {
         $table = new Table();
@@ -432,6 +533,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([ 'i1' => [ $toIndex, $fromIndex ]], $reverseDiff->getModifiedIndices());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasRemovedFks()
     {
         $diff = $this->createTableDiff();
@@ -442,6 +546,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $reverseDiff->getRemovedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasAddedFks()
     {
         $diff = $this->createTableDiff();
@@ -452,6 +559,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $reverseDiff->getAddedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testReverseDiffHasModifiedFks()
     {
         $fromFk = new ForeignKey('fk_1');
@@ -465,7 +575,7 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([ 'fk_1' => [ $toFk, $fromFk ]], $reverseDiff->getModifiedFks());
     }
     
-    private function createTableDiff(Table $fromTable = null, Table $toTable = null)
+    private function createTableDiff(?Table $fromTable = null, ?Table $toTable = null)
     {
         if (null === $fromTable) {
             $fromTable = new Table('users');
@@ -478,6 +588,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         return new TableDiff($fromTable, $toTable);
     }
 
+    /**
+     * @return void
+     */
     public function testToString()
     {
         $tableA = new Table('A');
@@ -521,7 +634,7 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $diff->addModifiedIndex('test_index', $index, $indexChanged);
         $diff->addRemovedIndex('test_index', $index);
 
-        $string = (string) $diff;
+        $string = (string)$diff;
 
         $expected = '  A:
     addedColumns:
@@ -554,6 +667,9 @@ class TableDiffTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $string);
     }
 
+    /**
+     * @return void
+     */
     public function testMagicClone()
     {
         $diff = new TableDiff(new Table('A'), new Table('B'));

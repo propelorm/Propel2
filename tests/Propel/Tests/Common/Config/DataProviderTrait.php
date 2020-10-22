@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config;
@@ -15,6 +13,9 @@ namespace Propel\Tests\Common\Config;
  */
 trait DataProviderTrait
 {
+    /**
+     * @return string[][]
+     */
     public function providerForInvalidConnections()
     {
         return [
@@ -33,8 +34,7 @@ propel:
       connections:
           - wrongsource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -51,8 +51,7 @@ propel:
           - mysource
           - wrongsource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -68,8 +67,7 @@ propel:
       connections:
           - wrongsource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -86,8 +84,7 @@ propel:
           - wrongsource
           - mysource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -109,11 +106,13 @@ propel:
           - wrongsource
 
 
-"
-            , 'runtime'],
+", 'runtime'],
         ];
     }
 
+    /**
+     * @return string[][]
+     */
     public function providerForInvalidDefaultConnection()
     {
         return [
@@ -132,8 +131,7 @@ propel:
       connections:
           - mysource
 
-"
-            , 'runtime'],
+", 'runtime'],
             ["
 propel:
   database:
@@ -149,8 +147,7 @@ propel:
       connections:
           - mysource
 
-"
-            , 'generator'],
+", 'generator'],
             ["
 propel:
   database:
@@ -172,15 +169,16 @@ propel:
           - mysource
 
 
-"
-            , 'runtime'],
+", 'runtime'],
         ];
     }
 
+    /**
+     * @return array
+     */
     public function providerForXmlToArrayConverter()
     {
-        return [
-            [<<< XML
+        $moviesXml = <<<EOF
 <?xml version='1.0' standalone='yes'?>
 <movies>
  <movie>
@@ -192,10 +190,9 @@ propel:
   <starred>false</starred>
  </movie>
 </movies>
-XML
-            , ['movie' => [0 => ['title' => 'Star Wars', 'starred' => true], 1 => ['title' => 'The Lord Of The Rings', 'starred' => false]]]
-            ],
-            [<<< XML
+EOF;
+
+        $loggerXml = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <log>
@@ -210,24 +207,9 @@ XML
     </logger>
   </log>
 </config>
-XML
-            , ['log' => [
-                'logger' => [
-                    [
-                        'type' => 'stream',
-                        'path' => '/var/log/propel.log',
-                        'level' => '300',
-                        'name' => 'defaultLogger',
-                    ],
-                    [
-                        'type' => 'stream',
-                        'path' => '/var/log/propel_bookstore.log',
-                        'name' => 'bookstore',
-                    ],
-                ],
-            ]]
-            ],
-            [<<<EOF
+EOF;
+
+        $bookstoreXml = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -247,22 +229,8 @@ XML
     </datasource>
   </datasources>
 </config>
-EOF
-            , ['datasources' => [
-                'bookstore' => [
-                    'adapter' => 'mysql',
-                    'connection' => ['dsn' => 'mysql:host=localhost;dbname=bookstore'],
-                    'slaves' => [
-                        'connection' => [
-                            ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
-                            ['dsn' => 'mysql:host=slave-server2; dbname=bookstore'],
-                        ],
-                    ],
-                ],
-                'default' => 'bookstore',
-            ]]
-            ],
-            [<<<EOF
+EOF;
+        $bookstore2Xml = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <datasources default="bookstore">
@@ -274,67 +242,122 @@ EOF
     </datasource>
   </datasources>
 </config>
-EOF
-            , ['datasources' => [
-                'bookstore' => [
-                    'adapter' => 'mysql',
-                    'connection' => [
-                        'dsn' => 'mysql:host=localhost;dbname=bookstore',
-                    ],
-                ],
-                'default' => 'bookstore',
-            ]]
-            ],
-            [<<<EOF
+EOF;
+
+        $profilerXml = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <profiler class="\Runtime\Runtime\Util\Profiler">
     <slowTreshold>0.2</slowTreshold>
     <details>
-      <time name="Time" precision="3" pad="8" />
-      <mem name="Memory" precision="3" pad="8" />
+      <time name="Time" precision="3" pad="8"/>
+      <mem name="Memory" precision="3" pad="8"/>
     </details>
     <innerGlue>: </innerGlue>
     <outerGlue> | </outerGlue>
   </profiler>
- </config>
-EOF
-            , ['profiler' => [
-                'class' => '\Runtime\Runtime\Util\Profiler',
-                'slowTreshold' => 0.2,
-                'details' => [
-                    'time' => ['name' => 'Time', 'precision' => 3, 'pad' => '8'],
-                    'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => '8'],
-                ],
-                'innerGlue' => ': ',
-                'outerGlue' => ' | '
-            ]]
-            ]
+</config>
+EOF;
+
+        return [
+            [
+                $moviesXml,
+                ['movie' => [0 => ['title' => 'Star Wars', 'starred' => true], 1 => ['title' => 'The Lord Of The Rings', 'starred' => false]]],
+            ],
+            [
+                $loggerXml, [
+                'log' => [
+                    'logger' => [
+                        [
+                            'type' => 'stream',
+                            'path' => '/var/log/propel.log',
+                            'level' => '300',
+                            'name' => 'defaultLogger',
+                        ],
+                        [
+                            'type' => 'stream',
+                            'path' => '/var/log/propel_bookstore.log',
+                            'name' => 'bookstore',
+                        ],
+                    ],
+                ]],
+            ],
+            [
+                $bookstoreXml, [
+                'datasources' => [
+                    'bookstore' => [
+                        'adapter' => 'mysql',
+                        'connection' => ['dsn' => 'mysql:host=localhost;dbname=bookstore'],
+                        'slaves' => [
+                            'connection' => [
+                                ['dsn' => 'mysql:host=slave-server1; dbname=bookstore'],
+                                ['dsn' => 'mysql:host=slave-server2; dbname=bookstore'],
+                            ],
+                        ],
+                    ],
+                    'default' => 'bookstore',
+                ]],
+            ],
+            [
+                $bookstore2Xml, [
+                'datasources' => [
+                    'bookstore' => [
+                        'adapter' => 'mysql',
+                        'connection' => [
+                            'dsn' => 'mysql:host=localhost;dbname=bookstore',
+                        ],
+                    ],
+                    'default' => 'bookstore',
+                ]],
+            ],
+            [
+                $profilerXml, [
+                'profiler' => [
+                    'class' => '\Runtime\Runtime\Util\Profiler',
+                    'slowTreshold' => 0.2,
+                    'details' => [
+                        'time' => ['name' => 'Time', 'precision' => 3, 'pad' => '8'],
+                        'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => '8'],
+                    ],
+                    'innerGlue' => ': ',
+                    'outerGlue' => ' | ',
+                ]],
+            ],
         ];
     }
 
-    public function providerForXmlToArrayConverterXmlInclusions() {
-        return [
-            [
-                <<<XML
+    /**
+     * @return array
+     */
+    public function providerForXmlToArrayConverterXmlInclusions()
+    {
+        $xmlOne = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="named" defaultIdMethod="native">
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
                 href="testconvert_include.xml"
                 xpointer="xpointer( /database/* )"
-                />
+               />
 </database>
-XML
-                , <<<XML
+EOF;
+        $xmlTwo = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="mixin" defaultIdMethod="native">
     <table name="book" phpName="Book"/>
 </database>
-XML
-            , ['table' => [
+EOF;
+        $array = [
+            'table' => [
                 'name' => 'book',
                 'phpName' => 'Book',
-            ]]
+            ],
+        ];
+
+        return [
+            [
+                $xmlOne,
+                $xmlTwo,
+                $array,
             ],
         ];
     }

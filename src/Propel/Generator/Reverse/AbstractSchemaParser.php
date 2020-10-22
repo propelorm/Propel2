@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -24,7 +22,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * The database connection.
      *
-     * @var ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $dbh;
 
@@ -38,7 +36,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * GeneratorConfig object holding build properties.
      *
-     * @var GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     private $generatorConfig;
 
@@ -74,11 +72,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Constructor.
      *
-     * @param ConnectionInterface $dbh Optional database connection
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $dbh Optional database connection
      */
-    public function __construct(ConnectionInterface $dbh = null)
+    public function __construct(?ConnectionInterface $dbh = null)
     {
-        if (null !== $dbh) {
+        if ($dbh !== null) {
             $this->setConnection($dbh);
         }
     }
@@ -86,7 +84,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the database connection.
      *
-     * @param ConnectionInterface $dbh
+     * @param \Propel\Runtime\Connection\ConnectionInterface $dbh
+     *
+     * @return void
      */
     public function setConnection(ConnectionInterface $dbh)
     {
@@ -95,7 +95,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
     /**
      * Gets the database connection.
-     * @return ConnectionInterface
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
     public function getConnection()
     {
@@ -106,6 +107,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Setter for the migrationTable property
      *
      * @param string $migrationTable
+     *
+     * @return void
      */
     public function setMigrationTable($migrationTable)
     {
@@ -126,6 +129,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Pushes a message onto the stack of warnings.
      *
      * @param string $msg The warning message.
+     *
+     * @return void
      */
     protected function warn($msg)
     {
@@ -145,7 +150,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
-     * @param GeneratorConfigInterface $config
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $config
+     *
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $config)
     {
@@ -155,7 +162,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets the GeneratorConfig option.
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     public function getGeneratorConfig()
     {
@@ -165,19 +172,20 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a type mapping from native type to Propel type.
      *
-     * @return array The mapped Propel type.
+     * @return string[] The mapped Propel type.
      */
     abstract protected function getTypeMapping();
 
     /**
      * Gets a mapped Propel type for specified native type.
      *
-     * @param  string $nativeType
-     * @return string The mapped Propel type.
+     * @param string $nativeType
+     *
+     * @return string|null The mapped Propel type.
      */
     protected function getMappedPropelType($nativeType)
     {
-        if (null === $this->nativeToPropelTypeMap) {
+        if ($this->nativeToPropelTypeMap === null) {
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
         }
 
@@ -191,12 +199,13 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Give a best guess at the native type.
      *
-     * @param  string $propelType
+     * @param string $propelType
+     *
      * @return string The native SQL type that best matches the specified Propel type.
      */
     protected function getMappedNativeType($propelType)
     {
-        if (null === $this->reverseTypeMap) {
+        if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
         }
 
@@ -207,6 +216,8 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Gets a new VendorInfo object for this platform with specified params.
      *
      * @param array $params
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     protected function getNewVendorInfoObject(array $params)
     {
@@ -218,6 +229,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
         return $vi;
     }
 
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
+     */
     public function setPlatform($platform)
     {
         $this->platform = $platform;
@@ -230,7 +246,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      */
     public function getPlatform()
     {
-        if (null === $this->platform) {
+        if ($this->platform === null) {
             $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
         }
 

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Config;
@@ -17,11 +15,17 @@ class QuickGeneratorConfigTest extends TestCase
 {
     protected $generatorConfig;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->generatorConfig = new QuickGeneratorConfig();
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredBuilder()
     {
         $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
@@ -31,8 +35,10 @@ class QuickGeneratorConfigTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid data model builder type `bad_type`
+     *
+     * @return void
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
@@ -40,6 +46,9 @@ class QuickGeneratorConfigTest extends TestCase
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPluralizer()
     {
         $actual = $this->generatorConfig->getConfiguredPluralizer();
@@ -47,11 +56,17 @@ class QuickGeneratorConfigTest extends TestCase
         $this->assertInstanceOf('\\Propel\\Common\\Pluralizer\\StandardEnglishPluralizer', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPlatform()
     {
         $this->assertNull($this->generatorConfig->getConfiguredPlatform());
     }
 
+    /**
+     * @return void
+     */
     public function testGetBehaviorLocator()
     {
         $actual = $this->generatorConfig->getBehaviorLocator();
@@ -59,6 +74,9 @@ class QuickGeneratorConfigTest extends TestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Util\\BehaviorLocator', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testPassExtraConfigProperties()
     {
         $extraConf = [
@@ -68,23 +86,23 @@ class QuickGeneratorConfigTest extends TestCase
                         'fakeConn' => [
                             'adapter' => 'sqlite',
                             'dsn' => 'sqlite:fakeDb.sqlite',
-                            'user'=> '',
+                            'user' => '',
                             'password' => '',
                             'model_paths' => [
                                 'src',
-                                'vendor'
-                            ]
-                        ]
-                    ]
+                                'vendor',
+                            ],
+                        ],
+                    ],
                 ],
                 'runtime' => [
                     'defaultConnection' => 'fakeConn',
-                    'connections' => ['fakeConn', 'default']
+                    'connections' => ['fakeConn', 'default'],
                 ],
                 'paths' => [
-                    'composerDir' => 'path/to/composer'
-                ]
-            ]
+                    'composerDir' => 'path/to/composer',
+                ],
+            ],
         ];
         $generatorConfig = new QuickGeneratorConfig($extraConf);
 
@@ -100,8 +118,8 @@ class QuickGeneratorConfigTest extends TestCase
                 'password' => '',
                 'model_paths' => [
                     'src',
-                    'vendor'
-                ]
+                    'vendor',
+                ],
             ],
             $generatorConfig->get()['database']['connections']['fakeConn']
         );
@@ -114,8 +132,8 @@ class QuickGeneratorConfigTest extends TestCase
                 'password' => '',
                 'model_paths' => [
                     'src',
-                    'vendor'
-                ]
+                    'vendor',
+                ],
             ],
             $generatorConfig->get()['database']['connections']['default']
         );

@@ -1,18 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior;
 
-use Propel\Tests\TestCase;
-use Propel\Generator\Util\BehaviorLocator;
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Util\BehaviorLocator;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the table structure behavior hooks.
@@ -21,6 +19,9 @@ use Propel\Generator\Config\QuickGeneratorConfig;
  */
 class BehaviorLocatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,6 +29,9 @@ class BehaviorLocatorTest extends TestCase
         require_once(__DIR__ . '/../../../../Fixtures/behavior-development/src/CollectionBehavior.php');
     }
 
+    /**
+     * @return void
+     */
     public function testBehaviorLocatorWithComposerLock()
     {
         $configOptions['propel']['paths']['composerDir'] = __DIR__ . '/../../../../Fixtures/behavior-installer';
@@ -45,6 +49,9 @@ class BehaviorLocatorTest extends TestCase
         $this->assertSame('\\gossi\\propel\\behavior\\l10n\\L10nBehavior', $locator->getBehavior('l10n'));
     }
 
+    /**
+     * @return void
+     */
     public function testBehaviorLocatorWithComposerJson()
     {
         $configOptions['propel']['paths']['composerDir'] = __DIR__ . '/../../../../Fixtures/behavior-development';

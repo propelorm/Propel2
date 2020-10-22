@@ -1,31 +1,35 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Model\Diff;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Platform\MysqlPlatform;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
- *
  */
 class ColumnComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNoDifference()
     {
         $c1 = new Column();
@@ -43,6 +47,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals([], ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareType()
     {
         $c1 = new Column();
@@ -50,12 +57,15 @@ class ColumnComparatorTest extends TestCase
         $c2 = new Column();
         $c2->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
         $expectedChangedProperties = [
-            'type'    => ['VARCHAR', 'LONGVARCHAR'],
+            'type' => ['VARCHAR', 'LONGVARCHAR'],
             'sqlType' => ['VARCHAR', 'TEXT'],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareScale()
     {
         $c1 = new Column();
@@ -66,6 +76,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSize()
     {
         $c1 = new Column();
@@ -76,6 +89,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSqlType()
     {
         $c1 = new Column();
@@ -87,6 +103,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNotNull()
     {
         $c1 = new Column();
@@ -97,6 +116,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDefaultValueToNull()
     {
         $c1 = new Column();
@@ -104,11 +126,14 @@ class ColumnComparatorTest extends TestCase
         $c2 = new Column();
         $expectedChangedProperties = [
             'defaultValueType' => [ColumnDefaultValue::TYPE_VALUE, null],
-            'defaultValueValue' => [123, null]
+            'defaultValueValue' => [123, null],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDefaultValueFromNull()
     {
         $c1 = new Column();
@@ -116,11 +141,14 @@ class ColumnComparatorTest extends TestCase
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $expectedChangedProperties = [
             'defaultValueType' => [null, ColumnDefaultValue::TYPE_VALUE],
-            'defaultValueValue' => [null, 123]
+            'defaultValueValue' => [null, 123],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDefaultValueValue()
     {
         $c1 = new Column();
@@ -128,11 +156,14 @@ class ColumnComparatorTest extends TestCase
         $c2 = new Column();
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(456, ColumnDefaultValue::TYPE_VALUE));
         $expectedChangedProperties = [
-            'defaultValueValue' => [123, 456]
+            'defaultValueValue' => [123, 456],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDefaultValueType()
     {
         $c1 = new Column();
@@ -140,23 +171,28 @@ class ColumnComparatorTest extends TestCase
         $c2 = new Column();
         $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_EXPR));
         $expectedChangedProperties = [
-            'defaultValueType' => [ColumnDefaultValue::TYPE_VALUE, ColumnDefaultValue::TYPE_EXPR]
+            'defaultValueType' => [ColumnDefaultValue::TYPE_VALUE, ColumnDefaultValue::TYPE_EXPR],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
     /**
      * @see http://www.propelorm.org/ticket/1141
+     *
+     * @return void
      */
     public function testCompareDefaultExrpCurrentTimestamp()
     {
         $c1 = new Column();
-        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue("NOW()", ColumnDefaultValue::TYPE_EXPR));
+        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue('NOW()', ColumnDefaultValue::TYPE_EXPR));
         $c2 = new Column();
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue("CURRENT_TIMESTAMP", ColumnDefaultValue::TYPE_EXPR));
+        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue('CURRENT_TIMESTAMP', ColumnDefaultValue::TYPE_EXPR));
         $this->assertEquals([], ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareAutoincrement()
     {
         $c1 = new Column();
@@ -167,6 +203,9 @@ class ColumnComparatorTest extends TestCase
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareMultipleDifferences()
     {
         $c1 = new Column();
@@ -181,11 +220,11 @@ class ColumnComparatorTest extends TestCase
         $expectedChangedProperties = [
             'type' => ['INTEGER', 'DOUBLE'],
             'sqlType' => ['INTEGER', 'DOUBLE'],
-            'scale' => [NULL, 2],
-            'size' => [NULL, 3],
+            'scale' => [null, 2],
+            'size' => [null, 3],
             'notNull' => [false, true],
-            'defaultValueType' => [NULL, ColumnDefaultValue::TYPE_VALUE],
-            'defaultValueValue' => [NULL, 123]
+            'defaultValueType' => [null, ColumnDefaultValue::TYPE_VALUE],
+            'defaultValueValue' => [null, 123],
         ];
         $this->assertEquals($expectedChangedProperties, ColumnComparator::compareColumns($c1, $c2));
     }

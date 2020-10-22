@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Reverse;
@@ -14,7 +12,6 @@ use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\MysqlSchemaParser;
-
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
 
@@ -27,7 +24,9 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class MysqlSchemaParserTest extends TestCaseFixturesDatabase
 {
-
+    /**
+     * @return void
+     */
     public function testParse()
     {
         $this->markTestSkipped('Skipped as we now use one database for the whole test suite');

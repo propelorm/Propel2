@@ -1,19 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\I18n;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Generator\Behavior\I18n\I18nBehavior;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
 
 /**
@@ -23,6 +18,9 @@ use Propel\Tests\TestCase;
  */
 class I18nBehaviorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testModifyDatabaseOverridesDefaultLocale()
     {
         $schema = <<<EOF
@@ -58,6 +56,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModifyDatabaseDoesNotOverrideTableLocale()
     {
         $schema = <<<EOF
@@ -95,6 +96,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testSkipSqlParameterOnParentTable()
     {
         $schema = <<<EOF
@@ -152,6 +156,8 @@ EOF;
 
     /**
      * @dataProvider schemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsI18nTable($schema)
     {
@@ -171,6 +177,8 @@ EOF;
 
     /**
      * @dataProvider schemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableRelatesI18nTableToMainTable($schema)
     {
@@ -184,6 +192,8 @@ EOF;
 
     /**
      * @dataProvider schemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableAddsLocaleColumnToI18n($schema)
     {
@@ -200,6 +210,8 @@ EOF;
 
     /**
      * @dataProvider schemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableMovesI18nColumns($schema)
     {
@@ -220,6 +232,8 @@ EOF;
 
     /**
      * @dataProvider schemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableDoesNotMoveNonI18nColumns($schema)
     {
@@ -236,6 +250,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModiFyTableUsesCustomI18nTableName()
     {
         $schema = <<<EOF
@@ -270,6 +287,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModiFyTableUsesCustomLocaleColumnName()
     {
         $schema = <<<EOF
@@ -304,6 +324,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModiFyTableUsesCustomLocaleDefault()
     {
         $schema = <<<EOF
@@ -338,6 +361,9 @@ EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
 
+    /**
+     * @return void
+     */
     public function testModiFyTableUsesCustomI18nLocaleLength()
     {
         $schema = <<<EOF
@@ -410,6 +436,8 @@ EOF;
 
     /**
      * @dataProvider customPkSchemaDataProvider
+     *
+     * @return void
      */
     public function testModifyTableRelatesI18nTableToMainTableWithCustomPk($schema)
     {
@@ -433,5 +461,4 @@ CREATE TABLE i18n_behavior_test_custom_pk_0_i18n
 EOF;
         $this->assertContains($expected, $builder->getSQL());
     }
-
 }

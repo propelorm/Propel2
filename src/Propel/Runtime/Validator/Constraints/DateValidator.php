@@ -1,16 +1,16 @@
 <?php
+
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Validator\Constraints;
 
-use Symfony\Component\Validator\Constraints\DateValidator as SymfonyDateValidator;
+use DateTimeInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\DateValidator as SymfonyDateValidator;
 
 /**
  * Validates Dates
@@ -20,12 +20,14 @@ use Symfony\Component\Validator\Constraint;
 class DateValidator extends SymfonyDateValidator
 {
     /**
-     * {@inheritdoc}
+     * @param mixed $value The value that should be validated
+     * @param \Symfony\Component\Validator\Constraint $constraint
+     *
+     * @return void
      */
     public function validate($value, Constraint $constraint)
     {
-
-        if ($value instanceof \DateTimeInterface) {
+        if ($value instanceof DateTimeInterface) {
             return;
         }
 

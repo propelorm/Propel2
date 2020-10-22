@@ -1,18 +1,26 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-
-
 /**
  * This test proves the bug described in https://github.com/propelorm/Propel2/issues/915.
+ *
  * @group database
  */
 class Issue915Test extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('\Base\Issue915Book')) {
@@ -30,6 +38,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSerialize()
     {
         $o = new Issue915Book();
@@ -38,5 +49,4 @@ EOF;
         $unserializedBook = unserialize(serialize($o));
         $this->assertEquals('blue', $unserializedBook->getColor());
     }
-
 }

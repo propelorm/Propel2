@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
+
+use Exception;
 
 /**
  * Transaction helper trait
@@ -23,9 +23,9 @@ trait TransactionTrait
      *
      * @param callable $callable A callable to be wrapped in a transaction
      *
-     * @return mixed Returns the result of the callable.
-     *
      * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
+     *
+     * @return mixed Returns the result of the callable.
      */
     public function transaction(callable $callable)
     {
@@ -37,16 +37,25 @@ trait TransactionTrait
             $this->commit();
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->rollBack();
 
             throw $e;
         }
     }
 
+    /**
+     * @return bool
+     */
     abstract public function beginTransaction();
 
+    /**
+     * @return bool
+     */
     abstract public function commit();
 
+    /**
+     * @return bool
+     */
     abstract public function rollBack();
 }

@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for BasicModelCriterion.
@@ -22,6 +19,9 @@ use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
  */
 class BasicModelCriterionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testAppendPsToAddsBindingInfoForNotNullValues()
     {
         $cton = new BasicModelCriterion(new Criteria(), 'A.COL = ?', 'A.COL', 'foo');
@@ -32,13 +32,15 @@ class BasicModelCriterionTest extends BaseTestCase
 
         $this->assertEquals('A.COL = :p1', $ps);
         $expected = [
-            ['table' => 'A', 'column' => 'COL', 'value' => 'foo']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
         ];
         $this->assertEquals($expected, $params);
     }
 
     /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
+     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
+     *
+     * @return void
      */
     public function testAppendPsToThrowsExceptionWhenBindingAValueToAClauseWithNoQuestionMark()
     {
@@ -49,6 +51,9 @@ class BasicModelCriterionTest extends BaseTestCase
         $cton->appendPsTo($ps, $params);
     }
 
+    /**
+     * @return void
+     */
     public function testAppendPsToAddsClauseWithoutBindingForNullValues()
     {
         $cton = new BasicModelCriterion(new Criteria(), 'A.COL IS NULL', 'A.COL', null);
@@ -60,5 +65,4 @@ class BasicModelCriterionTest extends BaseTestCase
         $this->assertEquals('A.COL IS NULL', $ps);
         $this->assertEquals([], $params);
     }
-
 }

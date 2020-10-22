@@ -1,28 +1,32 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
 
-use Propel\Common\Config\Loader\IniFileLoader;
 use Propel\Common\Config\FileLocator;
+use Propel\Common\Config\Loader\IniFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
 
 class IniFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->loader = new IniFileLoader(new FileLocator(sys_get_temp_dir()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.ini'), '->supports() returns true if the resource is loadable');
@@ -33,6 +37,9 @@ class IniFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.foo.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testIniFileCanBeLoaded()
     {
         $content = <<<EOF
@@ -48,8 +55,10 @@ EOF;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "inexistent.ini" does not exist (in:
+     *
+     * @return void
      */
     public function testIniFileDoesNotExist()
     {
@@ -57,8 +66,10 @@ EOF;
     }
 
     /**
-     * @expectedException        Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage The configuration file 'nonvalid.ini' has invalid content.
+     *
+     * @return void
      */
     public function testIniFileHasInvalidContent()
     {
@@ -72,6 +83,9 @@ EOF;
         @$this->loader->load('nonvalid.ini');
     }
 
+    /**
+     * @return void
+     */
     public function testIniFileIsEmpty()
     {
         $content = '';
@@ -82,6 +96,9 @@ EOF;
         $this->assertEquals([], $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testWithSections()
     {
         $content = <<<EOF
@@ -102,6 +119,9 @@ EOF;
         $this->assertEquals('Minnie', $actual['Cartoons']['Mickey']['love']);
     }
 
+    /**
+     * @return void
+     */
     public function testNestedSections()
     {
         $content = <<<EOF
@@ -119,6 +139,9 @@ EOF;
         $this->assertEquals('blabar', $actual['bla']['bar']);
     }
 
+    /**
+     * @return void
+     */
     public function testMixedNestedSections()
     {
         $content = <<<EOF
@@ -140,6 +163,8 @@ EOF;
     /**
      * @expectedException \Propel\Common\Config\Exception\IniParseException
      * @expectedExceptionMessage Invalid key ".foo"
+     *
+     * @return void
      */
     public function testInvalidSectionThrowsException()
     {
@@ -155,6 +180,8 @@ EOF;
     /**
      * @expectedException \Propel\Common\Config\Exception\IniParseException
      * @expectedExceptionMessage Invalid key "foo."
+     *
+     * @return void
      */
     public function testInvalidParamThrowsException()
     {
@@ -170,6 +197,8 @@ EOF;
     /**
      * @expectedException \Propel\Common\Config\Exception\IniParseException
      * @expectedExceptionMessage Cannot create sub-key for "foo", as key already exists
+     *
+     * @return void
      */
     public function testAlreadyExistentParamThrowsException()
     {
@@ -182,6 +211,9 @@ EOF;
         $test = $this->loader->load('parameters.ini');
     }
 
+    /**
+     * @return void
+     */
     public function testSectionZero()
     {
         $content = <<<EOF
@@ -194,9 +226,12 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InputOutputException
+     * @expectedException \Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.ini.
+     *
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testIniFileNotReadableThrowsException()
     {
@@ -211,7 +246,5 @@ EOF;
         $actual = $this->loader->load('notreadable.ini');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }
-

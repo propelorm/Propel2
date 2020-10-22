@@ -1,17 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Exception\InvalidArgumentException;
+use PDO;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
  * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
@@ -40,6 +39,8 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     *
+     * @return void
      */
     public function setName($name)
     {
@@ -83,14 +84,15 @@ class PdoConnection implements ConnectionInterface
      * This is overridden here to allow names corresponding to PDO constant names.
      *
      * @param int|string $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
-     * @param mixed   $value     The attribute value.
+     * @param mixed $value The attribute value.
+     *
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
      *
      * @return bool
-     * @throws InvalidArgumentException
      */
     public function setAttribute($attribute, $value)
     {
-        if (is_string($attribute) && false === strpos($attribute, '::')) {
+        if (is_string($attribute) && strpos($attribute, '::') === false) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
                 throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
@@ -102,7 +104,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDataFetcher($data)
     {
@@ -110,7 +112,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getSingleDataFetcher($data)
     {
@@ -118,7 +120,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function query($statement)
     {
@@ -126,7 +128,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exec($statement)
     {
@@ -154,7 +156,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @param string|null $name
      *
-     * @return string
+     * @return string|int
      */
     public function lastInsertId($name = null)
     {
@@ -162,6 +164,8 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
+     * Overwrite. Fixes HHVM strict issue.
+     * 
      * @param string $statement
      * @param array $driver_options
      *
@@ -172,6 +176,14 @@ class PdoConnection implements ConnectionInterface
         return $this->pdo->prepare($statement, $driver_options);
     }
 
+    /**
+     * Overwrite. Fixes HHVM strict issue.
+     *
+     * @param string $string
+     * @param int $parameterType
+     *
+     * @return string
+     */
     public function quote($string, $parameter_type = \PDO::PARAM_STR)
     {
         return $this->pdo->quote($string, $parameter_type);

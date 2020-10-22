@@ -1,17 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
-use Propel\Generator\Command\Console\Input\ArrayInput;
 use Propel\Generator\Builder\Util\PropelTemplate;
+use Propel\Generator\Command\Console\Input\ArrayInput;
 use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Generator\Command\Helper\ConsoleHelper3;
 use Propel\Generator\Command\Helper\ConsoleHelperInterface;
@@ -27,9 +25,19 @@ use Symfony\Component\Finder\Finder;
  */
 class InitCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     private $defaultSchemaDir;
+
+    /**
+     * @var string
+     */
     private $defaultPhpDir;
 
+    /**
+     * @param string|null $name
+     */
     public function __construct($name = null)
     {
         parent::__construct($name);
@@ -37,16 +45,24 @@ class InitCommand extends AbstractCommand
         $this->defaultPhpDir = $this->detectDefaultPhpDir();
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
 
         $this
             ->setName('init')
-            ->setDescription('Initializes a new project')
-            ;
+            ->setDescription('Initializes a new project');
     }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $consoleHelper = $this->createConsoleHelper($input, $output);
@@ -63,7 +79,7 @@ class InitCommand extends AbstractCommand
             'pgsql' => 'PostgreSQL',
             'oracle' => 'Oracle',
             'sqlsrv' => 'MSSQL (via pdo-sqlsrv)',
-            'mssql' => 'MSSQL (via pdo-mssql)'
+            'mssql' => 'MSSQL (via pdo-mssql)',
         ];
 
         $options['rdbms'] = $consoleHelper->select('Please pick your favorite database management system', $supportedRdbms);
@@ -74,28 +90,31 @@ class InitCommand extends AbstractCommand
         $connectionAttemptCount = 0;
         do {
             if ($connectionAttemptCount >= $connectionAttemptLimit) {
-              $consoleHelper->writeln('');
-              $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
-              $consoleHelper->writeln('');
+                $consoleHelper->writeln('');
+                $consoleHelper->writeSection('Exceeded 10 attempts to connect to database');
+                $consoleHelper->writeln('');
 
-              return 1;
+                return 1;
             }
             $connectionAttemptCount += 1;
             switch ($options['rdbms']) {
                 case 'mysql':
                     $options['dsn'] = $this->initMysql($consoleHelper);
+
                     break;
                 case 'sqlite':
                     $options['dsn'] = $this->initSqlite($consoleHelper);
+
                     break;
                 case 'pgsql':
                     $options['dsn'] = $this->initPgsql($consoleHelper);
+
                     break;
                 default:
                     $options['dsn'] = $this->initDsn($consoleHelper, $options['rdbms']);
+
                     break;
             }
-
 
             $options['user'] = $consoleHelper->askQuestion('Please enter your database user', 'root');
             $options['password'] = $consoleHelper->askHiddenResponse('Please enter your database password');
@@ -147,6 +166,7 @@ class InitCommand extends AbstractCommand
 
         if (!$correct) {
             $consoleHelper->writeln('<error>Process aborted.</error>');
+
             return static::CODE_ERROR;
         }
 
@@ -158,6 +178,9 @@ class InitCommand extends AbstractCommand
         return static::CODE_SUCCESS;
     }
 
+    /**
+     * @return string
+     */
     private function detectDefaultPhpDir()
     {
         if (file_exists(getcwd() . '/src/')) {
@@ -174,6 +197,11 @@ class InitCommand extends AbstractCommand
         return getcwd();
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initMysql(ConsoleHelperInterface $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host', 'localhost');
@@ -183,6 +211,11 @@ class InitCommand extends AbstractCommand
         return sprintf('mysql:host=%s;port=%s;dbname=%s', $host, $port, $database);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initSqlite(ConsoleHelperInterface $consoleHelper)
     {
         $path = $consoleHelper->askQuestion('Where should the sqlite database be stored?', getcwd() . '/my.app.sq3');
@@ -190,6 +223,11 @@ class InitCommand extends AbstractCommand
         return sprintf('sqlite:%s', $path);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     *
+     * @return string
+     */
     private function initPgsql(ConsoleHelperInterface $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host (without port)', 'localhost');
@@ -199,17 +237,26 @@ class InitCommand extends AbstractCommand
         return sprintf('pgsql:host=%s;port=%s;dbname=%s', $host, $port, $database);
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param string $rdbms
+     *
+     * @return mixed
+     */
     private function initDsn(ConsoleHelperInterface $consoleHelper, $rdbms)
     {
         switch ($rdbms) {
             case 'oracle':
                 $help = 'https://php.net/manual/en/ref.pdo-oci.connection.php#refsect1-ref.pdo-oci.connection-description';
+
                 break;
             case 'sqlsrv':
                 $help = 'https://php.net/manual/en/ref.pdo-sqlsrv.connection.php#refsect1-ref.pdo-sqlsrv.connection-description';
+
                 break;
             case 'mssql':
                 $help = 'https://php.net/manual/en/ref.pdo-dblib.connection.php#refsect1-ref.pdo-dblib.connection-description';
+
                 break;
             default:
                 $help = 'https://php.net/manual/en/pdo.drivers.php';
@@ -218,6 +265,12 @@ class InitCommand extends AbstractCommand
         return $consoleHelper->askQuestion(sprintf('Please enter the dsn (see <comment>%s</comment>) for your database connection', $help));
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param array $options
+     *
+     * @return void
+     */
     private function generateProject(OutputInterface $output, array $options)
     {
         $schema = new PropelTemplate();
@@ -240,6 +293,9 @@ class InitCommand extends AbstractCommand
         $this->buildSqlAndModelsAndConvertConfig();
     }
 
+    /**
+     * @return void
+     */
     private function buildSqlAndModelsAndConvertConfig()
     {
         $this->getApplication()->setAutoExit(false);
@@ -250,8 +306,8 @@ class InitCommand extends AbstractCommand
             'config:convert',
         ];
 
-        foreach($followupCommands as $command) {
-            if (0 !== $this->getApplication()->run(new ArrayInput([$command]))) {
+        foreach ($followupCommands as $command) {
+            if ($this->getApplication()->run(new ArrayInput([$command])) !== 0) {
                 exit(1);
             }
         }
@@ -259,6 +315,13 @@ class InitCommand extends AbstractCommand
         $this->getApplication()->setAutoExit(true);
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param string $filename
+     * @param string $content
+     *
+     * @return void
+     */
     private function writeFile(OutputInterface $output, $filename, $content)
     {
         $this->getFilesystem()->dumpFile($filename, $content);
@@ -266,6 +329,12 @@ class InitCommand extends AbstractCommand
         $output->writeln(sprintf('<info> + %s</info>', $filename));
     }
 
+    /**
+     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param array $options
+     *
+     * @return bool
+     */
     private function testConnection(ConsoleHelperInterface $consoleHelper, array $options)
     {
         $adapter = AdapterFactory::create($options['rdbms']);
@@ -274,18 +343,19 @@ class InitCommand extends AbstractCommand
             ConnectionFactory::create($options, $adapter);
 
             $consoleHelper->writeBlock('Connected to sql server successful!');
+
             return true;
         } catch (ConnectionException $e) {
             // get the "real" wrapped exception message
             do {
                 $message = $e->getMessage();
-            } while (null !== ($e = $e->getPrevious()));
+            } while (($e = $e->getPrevious()) !== null);
 
             $consoleHelper->writeBlock('Unable to connect to the specific sql server: ' . $message, 'error');
             $consoleHelper->writeSection('Make sure the specified credentials are correct and try it again.');
             $consoleHelper->writeln('');
 
-            if (OutputInterface::VERBOSITY_DEBUG === $consoleHelper->getOutput()->getVerbosity()) {
+            if ($consoleHelper->getOutput()->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $consoleHelper->writeln($e);
             }
 
@@ -293,6 +363,12 @@ class InitCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param array $options
+     *
+     * @return string
+     */
     private function reverseEngineerSchema(OutputInterface $output, array $options)
     {
         $outputDir = sys_get_temp_dir();
@@ -303,7 +379,7 @@ class InitCommand extends AbstractCommand
         $arrInput = [
             'reverse',
             'connection' => $fullDsn,
-            '--output-dir' => $outputDir
+            '--output-dir' => $outputDir,
         ];
 
         if (isset($options['namespace'])) {
@@ -311,9 +387,9 @@ class InitCommand extends AbstractCommand
         }
 
         $input = new ArrayInput($arrInput);
-        $result = $this->getApplication()->run($input,$output);
+        $result = $this->getApplication()->run($input, $output);
 
-        if (0 === $result) {
+        if ($result === 0) {
             $schema = file_get_contents($outputDir . '/schema.xml');
         } else {
             exit(1);
@@ -325,10 +401,10 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return ConsoleHelperInterface
+     * @return \Propel\Generator\Command\Helper\ConsoleHelperInterface
      */
     protected function createConsoleHelper(InputInterface $input, OutputInterface $output)
     {

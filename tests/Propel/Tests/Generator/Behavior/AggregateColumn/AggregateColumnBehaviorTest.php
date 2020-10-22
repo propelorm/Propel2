@@ -1,28 +1,23 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\AggregateColumn;
 
-use Propel\Runtime\Propel;
-use Propel\Tests\Bookstore\Behavior\AggregateColumn;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
-use Propel\Tests\Bookstore\Behavior\AggregatePost;
-use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
-use Propel\Tests\Bookstore\Behavior\Map\AggregatePostTableMap;
 use Propel\Tests\Bookstore\Behavior\AggregateItem;
 use Propel\Tests\Bookstore\Behavior\AggregateItemQuery;
 use Propel\Tests\Bookstore\Behavior\AggregatePoll;
 use Propel\Tests\Bookstore\Behavior\AggregatePollQuery;
+use Propel\Tests\Bookstore\Behavior\AggregatePost;
+use Propel\Tests\Bookstore\Behavior\AggregatePostQuery;
+use Propel\Tests\Bookstore\Behavior\Map\AggregatePostTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
 
 /**
  * Tests for AggregateColumnBehavior class
@@ -33,12 +28,18 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class AggregateColumnBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
-        include_once(__DIR__.'/AggregateColumnsBehaviorTestClasses.php');
+        include_once(__DIR__ . '/AggregateColumnsBehaviorTestClasses.php');
     }
 
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $postTable = AggregatePostTableMap::getTableMap();
@@ -46,6 +47,9 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertTrue(method_exists('Propel\Tests\Bookstore\Behavior\AggregatePost', 'getNbComments'));
     }
 
+    /**
+     * @return void
+     */
     public function testCompute()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
@@ -65,6 +69,9 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(1, $post->computeNbComments($this->con), 'The compute method computes the aggregate function on related objects');
     }
 
+    /**
+     * @return void
+     */
     public function testUpdate()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
@@ -83,6 +90,9 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(0, $post->getNbComments(), 'The update method updates the aggregate column');
     }
 
+    /**
+     * @return void
+     */
     public function testCreateRelated()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
@@ -102,9 +112,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $post->getNbComments(), 'Adding a new related object updates the aggregate column');
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateRelated()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         $item1->setScore(10);
@@ -113,9 +126,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteRelated()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         $item1->delete($this->con);
@@ -126,9 +142,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(0, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateRelatedWithQuery()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
@@ -137,9 +156,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateRelatedWithQueryUsingAlias()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
@@ -149,9 +171,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(2, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteRelatedWithQuery()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
         AggregateItemQuery::create()
@@ -160,9 +185,12 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(0, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteRelatedWithQueryUsingAlias()
     {
-        list($poll, $item1, $item2) = $this->populatePoll();
+        [$poll, $item1, $item2] = $this->populatePoll();
         $this->assertEquals(19, $poll->getTotalScore());
         $this->assertEquals(2, $poll->getNbVotes());
 
@@ -178,6 +206,9 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(1, $poll->getNbVotes());
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveRelation()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
@@ -196,6 +227,9 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
         $this->assertEquals(1, $post->getNbComments(), 'Removing a relation changes the related object aggregate column');
     }
 
+    /**
+     * @return void
+     */
     public function testReplaceRelation()
     {
         AggregateCommentQuery::create()->deleteAll($this->con);
@@ -232,5 +266,4 @@ class AggregateColumnBehaviorTest extends BookstoreTestBase
 
         return [$poll, $item1, $item2];
     }
-
 }

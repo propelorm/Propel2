@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -19,10 +17,29 @@ namespace Propel\Generator\Model;
  */
 class Inheritance extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     private $key;
+
+    /**
+     * @var string|null
+     */
     private $className;
+
+    /**
+     * @var string|null
+     */
     private $package;
+
+    /**
+     * @var string|null
+     */
     private $ancestor;
+
+    /**
+     * @var \Propel\Generator\Model\Column|null
+     */
     private $column;
 
     /**
@@ -36,13 +53,14 @@ class Inheritance extends MappingModel
     }
 
     /**
-    * Get constant names' safe value of the key name.
-    *
-    * @return string
-    */
+     * Get constant names' safe value of the key name.
+     *
+     * @return string
+     */
     public function getConstantSuffix()
     {
         $separator = PhpNameGenerator::STD_SEPARATOR_CHAR;
+
         return strtoupper(rtrim(preg_replace('/(\W|_)+/', $separator, $this->key), $separator));
     }
 
@@ -50,6 +68,8 @@ class Inheritance extends MappingModel
      * Sets a key name.
      *
      * @param string $key
+     *
+     * @return void
      */
     public function setKey($key)
     {
@@ -57,23 +77,25 @@ class Inheritance extends MappingModel
     }
 
     /**
-     * Returns the parent column.
-     *
-     * @return Column
-     */
-    public function getColumn()
-    {
-        return $this->column;
-    }
-
-    /**
      * Sets the parent column
      *
-     * @param Column $column
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return void
      */
     public function setColumn(Column $column)
     {
         $this->column = $column;
+    }
+
+    /**
+     * Returns the parent column.
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    public function getColumn()
+    {
+        return $this->column;
     }
 
     /**
@@ -90,6 +112,8 @@ class Inheritance extends MappingModel
      * Sets the class name.
      *
      * @param string $name
+     *
+     * @return void
      */
     public function setClassName($name)
     {
@@ -110,6 +134,8 @@ class Inheritance extends MappingModel
      * Sets the package.
      *
      * @param string $package
+     *
+     * @return void
      */
     public function setPackage($package)
     {
@@ -119,7 +145,7 @@ class Inheritance extends MappingModel
     /**
      * Returns the ancestor value.
      *
-     * @return string
+     * @return string|null
      */
     public function getAncestor()
     {
@@ -130,17 +156,22 @@ class Inheritance extends MappingModel
      * Sets the ancestor.
      *
      * @param string $ancestor
+     *
+     * @return void
      */
     public function setAncestor($ancestor)
     {
         $this->ancestor = $ancestor;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
-        $this->key       = $this->getAttribute('key');
+        $this->key = $this->getAttribute('key');
         $this->className = $this->getAttribute('class');
-        $this->package   = $this->getAttribute('package');
-        $this->ancestor  = $this->getAttribute('extends');
+        $this->package = $this->getAttribute('package');
+        $this->ancestor = $this->getAttribute('extends');
     }
 }

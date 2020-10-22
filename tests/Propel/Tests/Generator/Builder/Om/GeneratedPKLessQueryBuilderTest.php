@@ -1,23 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Map\StuffTableMap;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
+use Stuff;
+use StuffQuery;
 
 /**
  * @author Kévin Gomez <contact@kevingomez.fr>
  */
 class GeneratedPKLessQueryBuilderTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (class_exists('Stuff')) {
@@ -37,57 +41,69 @@ SCHEMA;
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testFindPkThrowsAnError()
     {
-        \StuffQuery::create()->findPk(42);
+        StuffQuery::create()->findPk(42);
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testBuildPkeyCriteria()
     {
-        $stuff = new \Stuff();
+        $stuff = new Stuff();
         $stuff->buildPkeyCriteria();
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testTableMapDoDelete()
     {
-        \Map\StuffTableMap::doDelete([]);
+        StuffTableMap::doDelete([]);
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testFindPksThrowsAnError()
     {
-        \StuffQuery::create()->findPks([42, 24]);
+        StuffQuery::create()->findPks([42, 24]);
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testFilterByPrimaryKeyThrowsAnError()
     {
-        \StuffQuery::create()->filterByPrimaryKey(42);
+        StuffQuery::create()->filterByPrimaryKey(42);
     }
 
     /**
-     * @expectedException           \Propel\Runtime\Exception\LogicException
-     * @expectedExceptionMessage    The Stuff object has no primary key
+     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @expectedExceptionMessage The Stuff object has no primary key
+     *
+     * @return void
      */
     public function testFilterByPrimaryKeysThrowsAnError()
     {
-        \StuffQuery::create()->filterByPrimaryKeys(42);
+        StuffQuery::create()->filterByPrimaryKeys(42);
     }
 }

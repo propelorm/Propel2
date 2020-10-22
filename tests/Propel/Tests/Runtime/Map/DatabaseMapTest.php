@@ -1,21 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\TableNotFoundException;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -27,6 +25,9 @@ class DatabaseMapTest extends TestCaseFixtures
 {
     protected $databaseMap;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,17 +35,26 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->databaseMap = TestDatabaseBuilder::getDmap();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         // nothing to do for now
         parent::tearDown();
     }
 
+    /**
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assertEquals($this->databaseName, $this->databaseMap->getName(), 'constructor sets the table name');
     }
 
+    /**
+     * @return void
+     */
     public function testAddTable()
     {
         $this->assertFalse($this->databaseMap->hasTable('foo'), 'tables are empty by default');
@@ -59,6 +69,9 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->assertEquals($tmap, $this->databaseMap->getTable('foo'), 'getTable() returns a table by name when the table was added by way of addTable()');
     }
 
+    /**
+     * @return void
+     */
     public function testAddTableObject()
     {
         $this->assertFalse($this->databaseMap->hasTable('foo2'), 'tables are empty by default');
@@ -74,6 +87,9 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->assertEquals($tmap, $this->databaseMap->getTable('foo2'), 'getTable() returns a table by name when the table was added by way of addTableObject()');
     }
 
+    /**
+     * @return void
+     */
     public function testAddTableFromMapClass()
     {
         $table1 = $this->databaseMap->addTableFromMapClass('\Propel\Tests\Runtime\Map\BazTableMap');
@@ -85,6 +101,9 @@ class DatabaseMapTest extends TestCaseFixtures
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumn()
     {
         try {
@@ -104,6 +123,9 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->assertEquals($column, $this->databaseMap->getColumn('foo.BAR'), 'getColumn() returns a ColumnMap object based on a fully qualified name');
     }
 
+    /**
+     * @return void
+     */
     public function testGetTableByPhpName()
     {
         try {
@@ -125,29 +147,38 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
     }
 
+    /**
+     * @return void
+     */
     public function testGetTableByPhpNameNotLoaded()
     {
         $this->assertEquals('book', Propel::getServiceContainer()->getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the class is generated and autoloaded');
     }
-
 }
 
 class TestDatabaseBuilder
 {
     protected static $dmap = null;
+
     protected static $tmap = null;
+
     public static function getDmap()
     {
-        if (is_null(self::$dmap)) {
+        if ((self::$dmap === null)) {
             self::$dmap = new DatabaseMap('foodb');
         }
 
         return self::$dmap;
     }
+
+    /**
+     * @return void
+     */
     public static function setTmap($tmap)
     {
         self::$tmap = $tmap;
     }
+
     public static function getTmap()
     {
         return self::$tmap;
@@ -156,6 +187,9 @@ class TestDatabaseBuilder
 
 class BazTableMap extends TableMap
 {
+    /**
+     * @return void
+     */
     public function initialize()
     {
         $this->setName('baz');

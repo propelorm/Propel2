@@ -1,23 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
-use Propel\Tests\Bookstore\Behavior\SortableMultiScopes;
-use Propel\Tests\Bookstore\Behavior\Map\SortableMultiScopesTableMap;
-use Propel\Tests\Bookstore\Behavior\SortableMultiCommaScopes;
 use Propel\Tests\Bookstore\Behavior\Map\SortableMultiCommaScopesTableMap;
-
+use Propel\Tests\Bookstore\Behavior\Map\SortableMultiScopesTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableMultiCommaScopes;
+use Propel\Tests\Bookstore\Behavior\SortableMultiScopes;
 use Propel\Tests\Bookstore\Behavior\SortableTable12 as Table12;
 use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
-use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
 
 /**
  * Tests for SortableBehavior class
@@ -28,6 +25,9 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  */
 class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -35,6 +35,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->populateTable12();
     }
 
+    /**
+     * @return void
+     */
     public function testPreInsert()
     {
         SortableTable12TableMap::doDeleteAll();
@@ -52,6 +55,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t2->getRank(), 1, 'Sortable inserts new line in last position');
     }
 
+    /**
+     * @return void
+     */
     public function testPreDelete()
     {
         $max = SortableTable12Query::create()->getMaxRank(1);
@@ -64,6 +70,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'delete() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testIsFirst()
     {
         $first = SortableTable12Query::retrieveByRank(1, 1);
@@ -78,6 +87,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertFalse($last->isFirst(), 'isFirst() returns false for the last in the rank');
     }
 
+    /**
+     * @return void
+     */
     public function testIsLast()
     {
         $first = SortableTable12Query::retrieveByRank(1, 1);
@@ -92,6 +104,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertTrue($last->isLast(), 'isLast() returns true for the last in the rank');
     }
 
+    /**
+     * @return void
+     */
     public function testGetNext()
     {
         $t = SortableTable12Query::retrieveByRank(1, 1);
@@ -106,6 +121,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertNull($t->getNext(), 'getNext() returns null for the last object');
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrevious()
     {
         $t = SortableTable12Query::retrieveByRank(2, 1);
@@ -120,6 +138,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertNull($t->getPrevious(), 'getPrevious() returns null for the first object');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtRank()
     {
         $t = new Table12();
@@ -135,6 +156,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtRankNoScope()
     {
         $t = new Table12();
@@ -153,6 +177,8 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testInsertAtNegativeRank()
     {
@@ -163,6 +189,8 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testInsertAtOverMaxRank()
     {
@@ -171,6 +199,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t->insertAtRank(6);
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtBottom()
     {
         $t = new Table12();
@@ -186,6 +217,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtBottom() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtBottomNoScope()
     {
         $t = new Table12();
@@ -202,6 +236,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtTop()
     {
         $t = new Table12();
@@ -217,6 +254,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtTop() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAtTopNoScope()
     {
         $t = new Table12();
@@ -233,6 +273,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'insertAtRank() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToRank()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -252,6 +295,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToRank() can move down');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToRankNoScope()
     {
         $t2 = SortableTable12Query::retrieveByRank(2);
@@ -275,6 +321,8 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testMoveToNewObject()
     {
@@ -284,6 +332,8 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testMoveToNegativeRank()
     {
@@ -293,6 +343,8 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
     /**
      * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testMoveToOverMaxRank()
     {
@@ -300,6 +352,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $t->moveToRank(5);
     }
 
+    /**
+     * @return void
+     */
     public function testSwapWith()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -311,6 +366,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'swapWith() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testSwapWithBetweenScopes()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -324,6 +382,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'swapWith() leaves rest of suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveUp()
     {
         $t3 = SortableTable12Query::retrieveByRank(3, 1);
@@ -341,6 +402,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveUp() changes nothing when called on the object at the top');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveDown()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -358,6 +422,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveDown() changes nothing when called on the object at the bottom');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToTop()
     {
         $t3 = SortableTable12Query::retrieveByRank(3, 1);
@@ -372,6 +439,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToTop() changes nothing when called on the top node');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToBottom()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -386,6 +456,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(1), 'moveToBottom() changes nothing when called on the bottom node');
     }
 
+    /**
+     * @return void
+     */
     public function testRemoveFromList()
     {
         $t2 = SortableTable12Query::retrieveByRank(2, 1);
@@ -405,7 +478,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @expectedException \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testRemoveFromListNoScope()
     {
@@ -414,7 +489,7 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @return SortableMultiScopes[]
+     * @return \Propel\Tests\Bookstore\Behavior\SortableMultiScopes[]
      */
     private function generateMultipleScopeEntries()
     {
@@ -425,11 +500,11 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             [  1,  1,  'item 1'],  //1
             [  2,  1,  'item 2'],  //1
             [  3,  1,  'item 3'],  //1
-            [  3,  1,  'item 3.1'],//2
-            [  1,  1,  'item 1.1'],//2
-            [  1,  1,  'item 1.2'],//3
-            [  1,  2,  'item 1.3'],//1
-            [  1,  2,  'item 1.4'],//2
+            [  3,  1,  'item 3.1'], //2
+            [  1,  1,  'item 1.1'], //2
+            [  1,  1,  'item 1.2'], //3
+            [  1,  2,  'item 1.3'], //1
+            [  1,  2,  'item 1.4'], //2
         ];
 
         $result = [];
@@ -444,8 +519,9 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         return $result;
     }
+
     /**
-     * @return SortableMultiCommaScopes[]
+     * @return \Propel\Tests\Bookstore\Behavior\SortableMultiCommaScopes[]
      */
     private function generateMultipleCommaScopeEntries()
     {
@@ -456,11 +532,11 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             [  1,  1,  'item 1'],  //1
             [  2,  1,  'item 2'],  //1
             [  3,  1,  'item 3'],  //1
-            [  3,  1,  'item 3.1'],//2
-            [  1,  1,  'item 1.1'],//2
-            [  1,  1,  'item 1.2'],//3
-            [  1,  2,  'item 1.3'],//1
-            [  1,  2,  'item 1.4'],//2
+            [  3,  1,  'item 3.1'], //2
+            [  1,  1,  'item 1.1'], //2
+            [  1,  1,  'item 1.2'], //3
+            [  1,  2,  'item 1.3'], //1
+            [  1,  2,  'item 1.4'], //2
         ];
 
         $result = [];
@@ -476,9 +552,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         return $result;
     }
 
+    /**
+     * @return void
+     */
     public function testMultipleScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t2->getRank(), 1);
@@ -490,12 +569,14 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_2->getRank(), 3);
         $this->assertEquals($t1_3->getRank(), 1);
         $this->assertEquals($t1_4->getRank(), 2);
-
     }
 
+    /**
+     * @return void
+     */
     public function testMoveMultipleScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t1_1->getRank(), 2);
@@ -522,9 +603,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_2->getRank(), 1);
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteMultipleScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t1_1->getRank(), 2);
@@ -538,9 +622,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_2->getRank(), 2);
     }
 
+    /**
+     * @return void
+     */
     public function testMultipleCommaScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleCommaScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleCommaScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t2->getRank(), 1);
@@ -554,9 +641,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_4->getRank(), 2);
     }
 
+    /**
+     * @return void
+     */
     public function testMoveMultipleCommaScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleCommaScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleCommaScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t1_1->getRank(), 2);
@@ -583,9 +673,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_2->getRank(), 1);
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteMultipleCommaScopes()
     {
-        list($t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4) = $this->generateMultipleCommaScopeEntries();
+        [$t1, $t2, $t3, $t3_1, $t1_1, $t1_2, $t1_3, $t1_4] = $this->generateMultipleCommaScopeEntries();
 
         $this->assertEquals($t1->getRank(), 1);
         $this->assertEquals($t1_1->getRank(), 2);
@@ -598,5 +691,4 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t1_1->getRank(), 1);
         $this->assertEquals($t1_2->getRank(), 2);
     }
-
 }

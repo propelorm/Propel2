@@ -30,3 +30,6 @@ phpstan-baseline.neon export-ignore linguist-generated=true
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
+.license export-ignore
+phpunit.xml.dist export-ignore
+pom.xml.dist export-ignore

@@ -1,18 +1,27 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
+use Exception;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
-
-
 /**
  * This test proves the bug described in https://github.com/propelorm/Propel2/issues/1033.
+ *
  * @group database
  */
 class Issue1033Test extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('\Base\Issue1033Book')) {
@@ -30,17 +39,19 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSerialize()
     {
         try {
             $o = new Issue1033Book();
             $unserializedBook = unserialize(serialize($o));
             $noExceptionThrown = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $noExceptionThrown = false;
-	}
+        }
 
         $this->assertTrue($noExceptionThrown);
     }
-
 }

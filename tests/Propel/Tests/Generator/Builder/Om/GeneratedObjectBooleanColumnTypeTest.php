@@ -1,17 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
-use Propel\Generator\Util\QuickBuilder;
+namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Runtime\Propel;
-use \Propel\Tests\TestCase;
+use ComplexColumnTypeEntity4;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the generated objects for boolean column types accessor & mutator
@@ -20,6 +19,9 @@ use \Propel\Tests\TestCase;
  */
 class GeneratedObjectBooleanColumnTypeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         if (!class_exists('ComplexColumnTypeEntity4')) {
@@ -39,6 +41,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testIsserName()
     {
         $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'isBar'));
@@ -46,6 +51,9 @@ EOF;
         $this->assertTrue(method_exists('ComplexColumnTypeEntity4', 'hasXy'));
     }
 
+    /**
+     * @return array
+     */
     public function providerForSetter()
     {
         return [
@@ -73,6 +81,8 @@ EOF;
 
     /**
      * @dataProvider providerForSetter
+     *
+     * @return void
      */
     public function testSetterBooleanValue($value, $expected)
     {
@@ -87,6 +97,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultValue()
     {
         $e = new ComplexColumnTypeEntity4();
@@ -94,5 +107,4 @@ EOF;
         $this->assertTrue($e->getTrueBar());
         $this->assertFalse($e->getFalseBar());
     }
-
 }

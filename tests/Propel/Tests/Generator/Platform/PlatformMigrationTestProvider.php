@@ -1,27 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Table;
-use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Table;
 
 /**
  * provider for platform migration unit tests
  */
 abstract class PlatformMigrationTestProvider extends PlatformTestBase
 {
-
+    /**
+     * @return array
+     */
     public function providerForTestGetModifyDatabaseDDL()
     {
         $schema1 = <<<EOF
@@ -127,7 +127,7 @@ EOF;
         $t1 = $this->getDatabaseFromSchema($schema1)->getTable('foo');
         $t2 = $this->getDatabaseFromSchema($schema2)->getTable('foo');
 
-        return [[TableComparator::computeDiff($t1,$t2)]];
+        return [[TableComparator::computeDiff($t1, $t2)]];
     }
 
     public function providerForTestGetModifyTableColumnsDDL()
@@ -199,6 +199,7 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
+        <column name="bax" type="VARCHAR" size="12" required="true" />
         <index name="bar_fk">
             <index-column name="bar"/>
         </index>
@@ -206,6 +207,9 @@ EOF;
             <index-column name="bar"/>
             <index-column name="baz"/>
         </index>
+        <unique name="bax_unique">
+            <unique-column name="bax"/>
+        </unique>
     </table>
 </database>
 EOF;
@@ -215,6 +219,8 @@ EOF;
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
         <column name="bar" type="INTEGER" />
         <column name="baz" type="VARCHAR" size="12" required="true" />
+        <column name="bay" type="VARCHAR" size="12" required="true" />
+        <column name="bax" type="VARCHAR" size="12" required="true" />
         <index name="bar_baz_fk">
             <index-column name="id"/>
             <index-column name="bar"/>
@@ -223,6 +229,10 @@ EOF;
         <index name="baz_fk">
             <index-column name="baz"/>
         </index>
+        <unique name="bax_bay_unique">
+            <unique-column name="bax"/>
+            <unique-column name="bay"/>
+        </unique>
     </table>
 </database>
 EOF;
@@ -447,8 +457,8 @@ EOF;
         $t2->addColumn($c4);
 
         return [[[
-            ColumnComparator::computeDiff($c1, $c3),
-            ColumnComparator::computeDiff($c2, $c4)
+        ColumnComparator::computeDiff($c1, $c3),
+        ColumnComparator::computeDiff($c2, $c4),
         ]]];
     }
 
@@ -569,5 +579,4 @@ EOF;
 
         return [[$diff]];
     }
-
 }

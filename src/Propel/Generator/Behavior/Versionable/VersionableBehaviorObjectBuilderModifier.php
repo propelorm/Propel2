@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Versionable;
@@ -20,25 +18,32 @@ use Propel\Generator\Model\Column;
 class VersionableBehaviorObjectBuilderModifier
 {
     /**
-     * @var \Propel\Generator\Model\Behavior
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
      */
     protected $behavior;
+
     /**
      * @var \Propel\Generator\Model\Table
      */
     protected $table;
+
     /**
      * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     protected $builder;
+
     /**
      * @var string
      */
     protected $objectClassName;
+
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
     /**
-     * @param \Propel\Generator\Model\Behavior $behavior
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
      */
     public function __construct($behavior)
     {
@@ -49,7 +54,7 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * @param string $key
      *
-     * @return array
+     * @return mixed
      */
     protected function getParameter($key)
     {
@@ -99,13 +104,15 @@ class VersionableBehaviorObjectBuilderModifier
      */
     protected function setBuilder($builder)
     {
-        $this->builder         = $builder;
+        $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
-        $this->queryClassName  = $builder->getQueryClassName();
+        $this->queryClassName = $builder->getQueryClassName();
     }
 
     /**
      * Get the getter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related getter, e.g. 'getVersion'
      */
@@ -116,6 +123,8 @@ class VersionableBehaviorObjectBuilderModifier
 
     /**
      * Get the setter of the column of the behavior
+     *
+     * @param string $name
      *
      * @return string The related setter, e.g. 'setVersion'
      */
@@ -162,7 +171,7 @@ class VersionableBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
-     * @return string
+     * @return string|null
      */
     public function postDelete($builder)
     {
@@ -175,6 +184,8 @@ class VersionableBehaviorObjectBuilderModifier
 
             return $script;
         }
+
+        return null;
     }
 
     /**
@@ -216,7 +227,7 @@ protected \$enforceVersion = false;
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addVersionSetter($script);
             $this->addVersionGetter($script);
         }
@@ -341,9 +352,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
         }
 
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
-
             if ($fk->isLocalPrimaryKey()) {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk);
                 $script .= "
     if (\$this->single{$fkGetter}) {
@@ -360,7 +369,6 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
     }
 ";
             } else {
-
                 $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
                 $script .= "
     if (\$this->coll{$fkGetter}) {
@@ -396,7 +404,7 @@ public function isVersioningNecessary(ConnectionInterface \$con = null)
      */
     protected function addAddVersion(&$script)
     {
-        $versionTable       = $this->behavior->getVersionTable();
+        $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($versionTable));
 
         $script .= "
@@ -414,7 +422,7 @@ public function addVersion(ConnectionInterface \$con = null)
     \$version = new {$versionARClassName}();";
         foreach ($this->table->getColumns() as $col) {
             $script .= "
-    \$version->set" . $col->getPhpName() . "(\$this->get" . $col->getPhpName() . "());";
+    \$version->set" . $col->getPhpName() . '($this->get' . $col->getPhpName() . '());';
         }
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
@@ -523,12 +531,15 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         $columns = $this->table->getColumns();
         foreach ($columns as $col) {
             $script .= "
-    \$this->set" . $col->getPhpName() . "(\$version->get" . $col->getPhpName() . "());";
+    \$this->set" . $col->getPhpName() . '($version->get' . $col->getPhpName() . '());';
         }
         $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
-            $foreignVersionTable = $fk->getForeignTable()->getBehavior($this->behavior->getId())->getVersionTable();
+
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior */
+            $behavior = $fk->getForeignTable()->getBehavior($this->behavior->getId());
+            $foreignVersionTable = $behavior->getVersionTable();
             $relatedClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($foreignTable));
             $relatedVersionQueryClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($foreignVersionTable));
             $fkColumnName = $fk->getLocalColumnName();
@@ -558,6 +569,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $plural = false;
             $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural);
             $foreignTable = $fk->getTable();
+            /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $foreignBehavior */
             $foreignBehavior = $foreignTable->getBehavior($this->behavior->getId());
             $foreignVersionTable = $foreignBehavior->getVersionTable();
             $fkColumnIds = $this->behavior->getReferrerIdsColumn($fk);
@@ -865,7 +877,7 @@ public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys =
         $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
         $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
-        $versionGetter = 'get'.$relCol;
+        $versionGetter = 'get' . $relCol;
         $colPrefix = Column::CONSTANT_PREFIX;
 
         $script .= <<<EOF

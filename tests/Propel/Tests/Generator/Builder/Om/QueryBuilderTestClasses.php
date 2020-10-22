@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -14,15 +12,14 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Tests\Bookstore\BookQuery;
 
-
-class myCustomBookQuery extends BookQuery
+class MyCustomBookQuery extends BookQuery
 {
-    public static function create($modelAlias = null, Criteria $criteria = null)
+    public static function create($modelAlias = null, ?Criteria $criteria = null)
     {
-        if ($criteria instanceof myCustomBookQuery) {
+        if ($criteria instanceof MyCustomBookQuery) {
             return $criteria;
         }
-        $query = new myCustomBookQuery();
+        $query = new MyCustomBookQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -32,10 +29,9 @@ class myCustomBookQuery extends BookQuery
 
         return $query;
     }
-
 }
 
-class mySecondBookQuery extends BookQuery
+class MySecondBookQuery extends BookQuery
 {
     public static $preSelectWasCalled = false;
 
@@ -45,6 +41,9 @@ class mySecondBookQuery extends BookQuery
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
+    /**
+     * @return void
+     */
     public function preSelect(ConnectionInterface $con)
     {
         self::$preSelectWasCalled = true;

@@ -1,18 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\LogicException;
+use ReflectionClass;
 
 /**
  * Array formatter for Propel query
@@ -22,11 +21,24 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 class ArrayFormatter extends AbstractFormatter
 {
+    /**
+     * @var array
+     */
     protected $alreadyHydratedObjects = [];
 
+    /**
+     * @var mixed
+     */
     protected $emptyVariable;
 
-    public function format(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return array|\Propel\Runtime\Collection\Collection
+     */
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
 
@@ -46,7 +58,7 @@ class ArrayFormatter extends AbstractFormatter
         foreach ($dataFetcher as $row) {
             $object = &$this->getStructuredArrayFromRow($row);
             if ($object) {
-                $items[] =& $object;
+                $items[] = &$object;
             }
         }
 
@@ -61,12 +73,22 @@ class ArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return array|null
+     */
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
@@ -97,15 +119,18 @@ class ArrayFormatter extends AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
      * @return array The original record turned into an array
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         return $record ? $record->toArray() : [];
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;
@@ -116,10 +141,10 @@ class ArrayFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     *  @param    array  $row associative array indexed by column number,
+     * @param array $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()
      *
-     * @return Array
+     * @return array
      */
     public function &getStructuredArrayFromRow($row)
     {
@@ -142,13 +167,13 @@ class ArrayFormatter extends AbstractFormatter
 
         // related objects added using with()
         foreach ($this->getWith() as $relAlias => $modelWith) {
-
             // determine class to use
             if ($modelWith->isSingleTableInheritance()) {
                 $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
-                $refl = new \ReflectionClass($class);
+                $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant('Map\\'.$class . 'TableMap::NUM_COLUMNS');
+                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+
                     continue;
                 }
             } else {
@@ -166,7 +191,6 @@ class ArrayFormatter extends AbstractFormatter
             // in order to get the $col variable increased anyway
             $secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
             if (!isset($this->alreadyHydratedObjects[$relAlias][$key])) {
-
                 if ($secondaryObject->isPrimaryKeyNull()) {
                     $this->alreadyHydratedObjects[$relAlias][$key] = [];
                 } else {
@@ -181,16 +205,18 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             if ($modelWith->isAdd()) {
-                if (!isset($arrayToAugment[$modelWith->getRelationName()]) ||
+                if (
+                    !isset($arrayToAugment[$modelWith->getRelationName()]) ||
                     !in_array(
                         $this->alreadyHydratedObjects[$relAlias][$key],
-                        $arrayToAugment[$modelWith->getRelationName()]
+                        $arrayToAugment[$modelWith->getRelationName()],
+                        true
                     )
                 ) {
-                    $arrayToAugment[$modelWith->getRelationName()][] = & $this->alreadyHydratedObjects[$relAlias][$key];
+                    $arrayToAugment[$modelWith->getRelationName()][] = &$this->alreadyHydratedObjects[$relAlias][$key];
                 }
             } else {
-                $arrayToAugment[$modelWith->getRelationName()] = & $this->alreadyHydratedObjects[$relAlias][$key];
+                $arrayToAugment[$modelWith->getRelationName()] = &$this->alreadyHydratedObjects[$relAlias][$key];
             }
 
             $hydrationChain[$modelWith->getRightPhpName()] = &$this->alreadyHydratedObjects[$relAlias][$key];

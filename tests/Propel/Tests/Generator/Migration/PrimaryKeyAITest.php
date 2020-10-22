@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Migration;
 
 /**
@@ -7,7 +13,9 @@ namespace Propel\Tests\Generator\Migration;
  */
 class PrimaryKeyAITest extends MigrationTestCase
 {
-
+    /**
+     * @return void
+     */
     public function testAdd()
     {
         $originXml = '
@@ -30,6 +38,9 @@ class PrimaryKeyAITest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testRemove()
     {
         $originXml = '
@@ -52,6 +63,9 @@ class PrimaryKeyAITest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChange()
     {
         $originXml = '
@@ -76,6 +90,9 @@ class PrimaryKeyAITest extends MigrationTestCase
         $this->migrateAndTest($originXml, $targetXml);
     }
 
+    /**
+     * @return void
+     */
     public function testChangeName()
     {
         $originXml = '
@@ -100,6 +117,8 @@ class PrimaryKeyAITest extends MigrationTestCase
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testChangeSize()
     {
@@ -122,5 +141,4 @@ class PrimaryKeyAITest extends MigrationTestCase
 ';
         $this->migrateAndTest($originXml, $targetXml);
     }
-
 }

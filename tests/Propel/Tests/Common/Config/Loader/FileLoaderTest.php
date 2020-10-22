@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
@@ -17,6 +15,9 @@ class FileLoaderTest extends TestCase
 {
     private $loader;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->loader = new TestableFileLoader();
@@ -28,91 +29,97 @@ class FileLoaderTest extends TestCase
             [
                 ['foo'],
                 ['foo'],
-                '->resolve() returns its argument unmodified if no placeholders are found'
+                '->resolve() returns its argument unmodified if no placeholders are found',
             ],
             [
                 ['foo' => 'bar', 'I\'m a %foo%'],
                 ['foo' => 'bar', 'I\'m a bar'],
-                '->resolve() replaces placeholders by their values'
+                '->resolve() replaces placeholders by their values',
             ],
             [
                 ['foo' => 'bar', '%foo%' => '%foo%'],
                 ['foo' => 'bar', 'bar' => 'bar'],
-                '->resolve() replaces placeholders in keys and values of arrays'
+                '->resolve() replaces placeholders in keys and values of arrays',
             ],
             [
                 ['foo' => 'bar', '%foo%' => ['%foo%' => ['%foo%' => '%foo%']]],
                 ['foo' => 'bar', 'bar' => ['bar' => ['bar' => 'bar']]],
-                '->resolve() replaces placeholders in nested arrays'
+                '->resolve() replaces placeholders in nested arrays',
             ],
             [
                 ['foo' => 'bar', 'I\'m a %%foo%%'],
                 ['foo' => 'bar', 'I\'m a %foo%'],
-                '->resolve() supports % escaping by doubling it'
+                '->resolve() supports % escaping by doubling it',
             ],
             [
                 ['foo' => 'bar', 'I\'m a %foo% %%foo %foo%'],
                 ['foo' => 'bar', 'I\'m a bar %foo bar'],
-                '->resolve() supports % escaping by doubling it'
+                '->resolve() supports % escaping by doubling it',
             ],
             [
-                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %%foo %%bar']]],
-                ['foo'=>'bar', 'foo' => ['bar' => ['ding' => 'I\'m a bar %foo %bar']]],
-                '->resolve() supports % escaping by doubling it'
+                ['foo' => ['bar' => ['ding' => 'I\'m a bar %%foo %%bar']]],
+                ['foo' => ['bar' => ['ding' => 'I\'m a bar %foo %bar']]],
+                '->resolve() supports % escaping by doubling it',
             ],
             [
                 ['foo' => 'bar', 'baz' => '%%%foo% %foo%%% %%foo%% %%%foo%%%'],
                 ['foo' => 'bar', 'baz' => '%bar bar% %foo% %bar%'],
-                '->resolve() replaces params placed besides escaped %'
+                '->resolve() replaces params placed besides escaped %',
             ],
             [
                 ['baz' => '%%s?%%s', '%baz%'],
                 ['baz' => '%s?%s', '%s?%s'],
-                '->resolve() is not replacing greedily'
+                '->resolve() is not replacing greedily',
             ],
             [
                 ['host' => 'foo.bar', 'port' => 1337, '%host%:%port%'],
                 ['host' => 'foo.bar', 'port' => 1337, 'foo.bar:1337'],
-                ''
+                '',
             ],
             [
                 ['foo' => 'bar', '%foo%'],
                 ['foo' => 'bar', 'bar'],
-                'Parameters must be wrapped by %.'
+                'Parameters must be wrapped by %.',
             ],
             [
                 ['foo' => 'bar', '% foo %'],
                 ['foo' => 'bar', '% foo %'],
-                'Parameters should not have spaces.'
+                'Parameters should not have spaces.',
             ],
             [
                 ['foo' => 'bar', '{% set my_template = "foo" %}'],
                 ['foo' => 'bar', '{% set my_template = "foo" %}'],
-                'Twig-like strings are not parameters.'
+                'Twig-like strings are not parameters.',
             ],
             [
                 ['foo' => 'bar', '50% is less than 100%'],
                 ['foo' => 'bar', '50% is less than 100%'],
-                'Text between % signs is allowed, if there are spaces.'
+                'Text between % signs is allowed, if there are spaces.',
             ],
             [
                 ['foo' => ['bar' => 'baz', '%bar%' => 'babar'], 'babaz' => '%foo%'],
                 ['foo' => ['bar' => 'baz', 'baz' => 'babar'], 'babaz' => ['bar' => 'baz', 'baz' => 'babar']],
-                ''
+                '',
             ],
             [
                 ['foo' => ['bar' => 'baz'], 'babaz' => '%foo%'],
                 ['foo' => ['bar' => 'baz'], 'babaz' => ['bar' => 'baz']],
-                ''
-            ]
+                '',
+            ],
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testInitialResolveValueIsFalse()
     {
         $this->assertAttributeEquals(false, 'resolved', $this->loader);
     }
 
+    /**
+     * @return void
+     */
     public function testResolveParams()
     {
         putenv('host=127.0.0.1');
@@ -129,11 +136,11 @@ class FileLoaderTest extends TestCase
                 'conf' => '%project%',
                 'schema' => '%project%/schema',
                 'template' => '%HoMe%/templates',
-                'output%project%' => '/build'
+                'output%project%' => '/build',
             ],
             '%HoMe%' => 4,
             'host' => '%env.host%',
-            'user' => '%env.user%'
+            'user' => '%env.user%',
         ];
 
         $expected = [
@@ -147,11 +154,11 @@ class FileLoaderTest extends TestCase
                 'conf' => 'myProject',
                 'schema' => 'myProject/schema',
                 'template' => 'myHome/templates',
-                'outputmyProject' => '/build'
+                'outputmyProject' => '/build',
             ],
             'myHome' => 4,
             'host' => '127.0.0.1',
-            'user' => 'root'
+            'user' => 'root',
         ];
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
@@ -159,28 +166,34 @@ class FileLoaderTest extends TestCase
         //cleanup environment
         putenv('host');
         putenv('user');
-
     }
 
     /**
      * @dataProvider resolveParamsProvider
+     *
+     * @return void
      */
     public function testResolveValues($conf, $expected, $message)
     {
         $this->assertEquals($expected, $this->loader->resolveParams($conf), $message);
     }
 
+    /**
+     * @return void
+     */
     public function testResolveReplaceWithoutCasting()
     {
-        $conf = $this->loader->resolveParams(['foo'=>true, 'expfoo' => '%foo%', 'bar' => null, 'expbar' => '%bar%']);
+        $conf = $this->loader->resolveParams(['foo' => true, 'expfoo' => '%foo%', 'bar' => null, 'expbar' => '%bar%']);
 
         $this->assertTrue($conf['expfoo'], '->resolve() replaces arguments that are just a placeholder by their value without casting them to strings');
         $this->assertNull($conf['expbar'], '->resolve() replaces arguments that are just a placeholder by their value without casting them to strings');
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'baz' not found in configuration file.
+     *
+     * @return void
      */
     public function testResolveThrowsExceptionIfInvalidPlaceholder()
     {
@@ -188,8 +201,10 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Parameter 'foobar' not found in configuration file.
+     *
+     * @return void
      */
     public function testResolveThrowsExceptionIfNonExistentParameter()
     {
@@ -197,8 +212,10 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
+     *
+     * @return void
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReference()
     {
@@ -206,14 +223,19 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\RuntimeException
+     * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
+     *
+     * @return void
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReferenceMixed()
     {
         $this->loader->resolveParams(['foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%']);
     }
 
+    /**
+     * @return void
+     */
     public function testResolveEnvironmentVariable()
     {
         putenv('home=myHome');
@@ -229,8 +251,8 @@ class FileLoaderTest extends TestCase
                 'projects' => '%home%/projects',
                 'schema' => '%env.schema%',
                 'template' => '%home%/templates',
-                'output%env.home%' => '/build'
-            ]
+                'output%env.home%' => '/build',
+            ],
         ];
 
         $expected = [
@@ -241,8 +263,8 @@ class FileLoaderTest extends TestCase
                 'projects' => 'myHome/projects',
                 'schema' => 'mySchema',
                 'template' => 'myHome/templates',
-                'outputmyHome' => '/build'
-            ]
+                'outputmyHome' => '/build',
+            ],
         ];
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
@@ -254,16 +276,19 @@ class FileLoaderTest extends TestCase
         putenv('integer');
     }
 
+    /**
+     * @return void
+     */
     public function testResolveEmptyEnvironmentVariable()
     {
         putenv('home=');
 
         $config = [
-            'home' => '%env.home%'
+            'home' => '%env.home%',
         ];
 
         $expected = [
-            'home' => ''
+            'home' => '',
         ];
 
         $this->assertEquals($expected, $this->loader->resolveParams($config));
@@ -272,21 +297,29 @@ class FileLoaderTest extends TestCase
         putenv('home');
     }
 
+    /**
+     * @return void
+     */
     public function testResourceNameIsNotStringReturnsFalse()
     {
         $this->assertFalse($this->loader->checkSupports('ini', null));
-        $this->assertFalse($this->loader->checkSupports('yaml', ['foo',  'bar']));
+        $this->assertFalse($this->loader->checkSupports('yaml', false));
     }
 
+    /**
+     * @return void
+     */
     public function testExtensionIsNotStringOrArrayReturnsFalse()
     {
-        $this->assertFalse($this->loader->checkSupports(null, '/tmp/propel.yaml'));
-        $this->assertFalse($this->loader->checkSupports(12, '/tmp/propel.yaml'));
+        $this->assertFalse($this->loader->checkSupports('', '/tmp/propel.yaml'));
+        $this->assertFalse($this->loader->checkSupports('12', '/tmp/propel.yaml'));
     }
 
     /**
      * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage Environment variable 'foo' is not defined.
+     *
+     * @return void
      */
     public function testNonExistentEnvironmentVariableThrowsException()
     {
@@ -303,42 +336,57 @@ class FileLoaderTest extends TestCase
     /**
      * @expectedException \Propel\Common\Config\Exception\RuntimeException
      * @expectedExceptionMessage A string value must be composed of strings and/or numbers,
+     *
+     * @return void
      */
     public function testParameterIsNotStringOrNumber()
     {
         $config = [
             'foo' => 'a %bar%',
             'bar' => [],
-            'baz' => '%foo%'
+            'baz' => '%foo%',
         ];
 
         $this->loader->resolveParams($config);
     }
 
-    public function testCallResolveParamTwiceReturnNull()
+    /**
+     * @return void
+     */
+    public function testCallResolveParamTwiceReturnsEmpty()
     {
         $config = [
             'foo' => 'bar',
-            'baz' => '%foo%'
+            'baz' => '%foo%',
         ];
 
         $this->assertEquals(['foo' => 'bar', 'baz' => 'bar'], $this->loader->resolveParams($config));
-        $this->assertNull($this->loader->resolveParams($config));
+        $this->assertSame([], $this->loader->resolveParams($config));
     }
 }
 
 class TestableFileLoader extends BaseFileLoader
 {
+    /**
+     * @return void
+     */
     public function load($file, $type = null)
     {
-
     }
 
+    /**
+     * @return void
+     */
     public function supports($resource, $type = null)
     {
-
     }
 
+    /**
+     * @param string|string[] $ext
+     * @param string|false $resource
+     *
+     * @return bool
+     */
     public function checkSupports($ext, $resource)
     {
         return parent::checkSupports($ext, $resource);

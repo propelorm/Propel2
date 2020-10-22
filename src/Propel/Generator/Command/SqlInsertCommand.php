@@ -1,19 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Propel\Generator\Manager\SqlManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -21,7 +19,7 @@ use Propel\Generator\Manager\SqlManager;
 class SqlInsertCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function configure()
     {
@@ -32,12 +30,11 @@ class SqlInsertCommand extends AbstractCommand
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)')
             ->setName('sql:insert')
             ->setAliases(['insert-sql'])
-            ->setDescription('Insert SQL statements')
-        ;
+            ->setDescription('Insert SQL statements');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -56,7 +53,7 @@ class SqlInsertCommand extends AbstractCommand
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
-                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                [$name, $dsn, $infos] = $this->parseConnection($connection);
                 $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }

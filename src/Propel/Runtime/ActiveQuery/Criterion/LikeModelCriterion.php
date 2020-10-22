@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -19,18 +17,21 @@ use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
  */
 class LikeModelCriterion extends BasicModelCriterion
 {
-    /** flag to ignore case in comparison */
+    /**
+     * @var bool
+     */
     protected $ignoreStringCase = false;
 
     /**
      * Sets ignore case.
      *
-     * @param  boolean                  $b True if case should be ignored.
-     * @return $this|LikeModelCriterion A modified Criterion object.
+     * @param bool $b True if case should be ignored.
+     *
+     * @return $this A modified Criterion object.
      */
     public function setIgnoreCase($b)
     {
-        $this->ignoreStringCase = (Boolean) $b;
+        $this->ignoreStringCase = (bool)$b;
 
         return $this;
     }
@@ -38,7 +39,7 @@ class LikeModelCriterion extends BasicModelCriterion
     /**
      * Is ignore case on or off?
      *
-     * @return boolean True if case is ignored.
+     * @return bool True if case is ignored.
      */
     public function isIgnoreCase()
     {
@@ -49,8 +50,12 @@ class LikeModelCriterion extends BasicModelCriterion
      * Appends a Prepared Statement representation of the ModelCriterion onto the buffer
      * Handles case insensitivity for VARCHAR columns
      *
-     * @param string &$sb    The string that will receive the Prepared Statement
-     * @param array  $params A list to which Prepared Statement parameters will be appended
+     * @param string $sb The string that will receive the Prepared Statement
+     * @param array $params A list to which Prepared Statement parameters will be appended
+     *
+     * @throws \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
+     *
+     * @return void
      */
     protected function appendPsForUniqueClauseTo(&$sb, array &$params)
     {
@@ -65,5 +70,4 @@ class LikeModelCriterion extends BasicModelCriterion
         }
         parent::appendPsForUniqueClauseTo($sb, $params);
     }
-
 }

@@ -1,25 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Timestampable;
 
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Tests\Bookstore\Behavior\Table1;
-use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2;
-use Propel\Tests\Bookstore\Behavior\Map\Table2TableMap;
-use Propel\Tests\Bookstore\Behavior\Table2Query;
-
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
+use Propel\Tests\Bookstore\Behavior\Map\Table2TableMap;
+use Propel\Tests\Bookstore\Behavior\Table2;
+use Propel\Tests\Bookstore\Behavior\Table2Query;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use TableWithoutCreatedAt;
+use TableWithoutUpdatedAt;
 
 /**
  * Tests for TimestampableBehavior class
@@ -30,6 +27,9 @@ use Propel\Runtime\Collection\ObjectCollection;
  */
 class TimestampableBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public static function setUpBeforeClass(): void
     {
         static::$isInitialized = false;
@@ -49,6 +49,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $table2 = Table2TableMap::getTableMap();
@@ -61,6 +64,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table1', 'getUpdatedOn'), 'Timestampable allows customization of update_column name');
     }
 
+    /**
+     * @return void
+     */
     public function testPreSave()
     {
         $t1 = new Table2();
@@ -78,6 +84,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTimeEquals($tupdate, $t1->getUpdatedAt('U'), 'Timestampable changes updated_column to time() on update');
     }
 
+    /**
+     * @return void
+     */
     public function testPreSaveNoChange()
     {
         $t1 = new Table2();
@@ -91,6 +100,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable only changes updated_column if the object was modified');
     }
 
+    /**
+     * @return void
+     */
     public function testPreSaveManuallyUpdated()
     {
         $t1 = new Table2();
@@ -107,6 +119,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertLessThan($tupdate, $t1->getUpdatedAt('U'), 'Timestampable does not change updated_column to time() on update when it is set by the user');
     }
 
+    /**
+     * @return void
+     */
     public function testPreInsert()
     {
         $t1 = new Table2();
@@ -121,6 +136,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertTimeEquals($tsave, $t1->getCreatedAt('U'), 'Timestampable does not update created_column on update');
     }
 
+    /**
+     * @return void
+     */
     public function testPreInsertManuallyUpdated()
     {
         $t1 = new Table2();
@@ -130,6 +148,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertLessThan($tsave, $t1->getCreatedAt('U'), 'Timestampable does not set created_column to time() on creation when it is set by the user');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectKeepUpdateDateUnchanged()
     {
         $t1 = new Table2();
@@ -155,38 +176,46 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $tsave = time();
         $t1->save();
         $this->assertLessThan($tsave, $t1->getUpdatedAt('U'), 'keepUpdateDateUnchanged() prevents the behavior from updating the update date');
-
     }
 
+    /**
+     * @return void
+     */
     protected function populateUpdatedAt()
     {
         Table2Query::create()->deleteAll();
         $ts = new ObjectCollection();
         $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $t = new Table2();
             $t->setTitle('UpdatedAt' . $i);
             /* additional -30 in case the check is done in the same second (which we can't guarantee, so no assert(8 ...) below).*/
             $t->setUpdatedAt(time() - $i * 24 * 60 * 60 - 30);
-            $ts[]= $t;
+            $ts[] = $t;
         }
         $ts->save();
     }
 
+    /**
+     * @return void
+     */
     protected function populateCreatedAt()
     {
         Table2Query::create()->deleteAll();
         $ts = new ObjectCollection();
         $ts->setModel('\Propel\Tests\Bookstore\Behavior\Table2');
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $t = new Table2();
             $t->setTitle('CreatedAt' . $i);
             $t->setCreatedAt(time() - $i * 24 * 60 * 60 - 30);
-            $ts[]= $t;
+            $ts[] = $t;
         }
         $ts->save();
     }
 
+    /**
+     * @return void
+     */
     public function testQueryRecentlyUpdated()
     {
         $q = Table2Query::create()->recentlyUpdated();
@@ -198,6 +227,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals(5, $ts, 'recentlyUpdated() accepts a number of days as parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryRecentlyCreated()
     {
         $q = Table2Query::create()->recentlyCreated();
@@ -209,6 +241,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals(5, $ts, 'recentlyCreated() accepts a number of days as parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryLastUpdatedFirst()
     {
         $q = Table2Query::create()->lastUpdatedFirst();
@@ -218,6 +253,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('UpdatedAt0', $t->getTitle(), 'lastUpdatedFirst() returns element with most recent update date first');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryFirstUpdatedFirst()
     {
         $q = Table2Query::create()->firstUpdatedFirst();
@@ -227,6 +265,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('UpdatedAt9', $t->getTitle(), 'firstUpdatedFirst() returns the element with oldest updated date first');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryLastCreatedFirst()
     {
         $q = Table2Query::create()->lastCreatedFirst();
@@ -236,6 +277,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('CreatedAt0', $t->getTitle(), 'lastCreatedFirst() returns element with most recent create date first');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryFirstCreatedFirst()
     {
         $q = Table2Query::create()->firstCreatedFirst();
@@ -245,6 +289,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('CreatedAt9', $t->getTitle(), 'firstCreatedFirst() returns the element with oldest create date first');
     }
 
+    /**
+     * @return void
+     */
     public function testDisableUpdatedAt()
     {
         $schema = <<<EOF
@@ -269,13 +316,16 @@ EOF;
         $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'getUpdatedAt'));
         $this->assertFalse(method_exists('TableWithoutUpdatedAt', 'setUpdatedAt'));
 
-        $obj = new \TableWithoutUpdatedAt();
+        $obj = new TableWithoutUpdatedAt();
         $obj->setName('Peter');
         $this->assertNull($obj->getCreatedAt());
         $this->assertEquals(1, $obj->save());
         $this->assertNotNull($obj->getCreatedAt());
     }
 
+    /**
+     * @return void
+     */
     public function testDisableCreatedAt()
     {
         $schema = <<<EOF
@@ -300,7 +350,7 @@ EOF;
         $this->assertTrue(method_exists('TableWithoutCreatedAt', 'getUpdatedAt'));
         $this->assertTrue(method_exists('TableWithoutCreatedAt', 'setUpdatedAt'));
 
-        $obj = new \TableWithoutCreatedAt();
+        $obj = new TableWithoutCreatedAt();
         $obj->setName('Peter');
         $this->assertNull($obj->getUpdatedAt());
         $this->assertEquals(1, $obj->save());

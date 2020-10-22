@@ -1,29 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbMySQL adapter
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author William Durand
  */
 class MysqlAdapterTest extends TestCaseFixtures
 {
+    /**
+     * @return array
+     */
     public static function getConParams()
     {
         return [
@@ -31,24 +29,32 @@ class MysqlAdapterTest extends TestCaseFixtures
                 [
                     'dsn' => 'dsn=my_dsn',
                     'settings' => [
-                        'charset' => 'foobar'
-                    ]
-                ]
-            ]
+                        'charset' => 'foobar',
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @dataProvider getConParams
+     *
+     * @param array $conparams
+     *
+     * @return void
      */
     public function testPrepareParamsThrowsException($conparams)
     {
         $db = new TestableMysqlAdapter();
-        $db->prepareParams($conparams);
+        $result = $db->prepareParams($conparams);
+
+        $this->assertIsArray($result);
     }
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testPrepareParams($conparams)
     {
@@ -62,6 +68,8 @@ class MysqlAdapterTest extends TestCaseFixtures
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testNoSetNameQueryExecuted($conparams)
     {
@@ -91,6 +99,11 @@ class MysqlAdapterTest extends TestCaseFixtures
 
 class TestableMysqlAdapter extends MysqlAdapter
 {
+    /**
+     * @param array $conparams
+     *
+     * @return array
+     */
     public function prepareParams($conparams)
     {
         return parent::prepareParams($conparams);

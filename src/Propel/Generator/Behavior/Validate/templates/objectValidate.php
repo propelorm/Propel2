@@ -60,6 +60,6 @@ public function validate(ValidatorInterface $validator = null)
 
     $this->validationFailures = $failureMap;
 
-    return (Boolean) (!(count($this->validationFailures) > 0));
+    return (bool) (!(count($this->validationFailures) > 0));
 
 }

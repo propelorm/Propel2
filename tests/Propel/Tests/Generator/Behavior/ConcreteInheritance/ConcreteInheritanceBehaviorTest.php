@@ -1,35 +1,35 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
+use ConcreteArticleSetPk;
+use ConcreteArticleSetPkQuery;
+use ConcreteContentSetPk;
+use ConcreteContentSetPkQuery;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\RelationMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticle;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
-use Propel\Tests\Bookstore\Behavior\Map\ConcreteArticleTableMap;
-use Propel\Tests\Bookstore\Behavior\Map\ConcreteAuthorTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategory;
 use Propel\Tests\Bookstore\Behavior\ConcreteCategoryQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
 use Propel\Tests\Bookstore\Behavior\ConcreteContentQuery;
-use Propel\Tests\Bookstore\Behavior\Map\ConcreteContentTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizz;
-use Propel\Tests\Bookstore\Behavior\Map\ConcreteQuizzTableMap;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
-
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Map\RelationMap;
-use Propel\Runtime\ActiveQuery\Criteria;
-
-use Propel\Generator\Util\QuickBuilder;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteArticleTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteAuthorTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteContentTableMap;
+use Propel\Tests\Bookstore\Behavior\Map\ConcreteQuizzTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use ReflectionClass;
 
 /**
  * Tests for ConcreteInheritanceBehavior class
@@ -40,6 +40,9 @@ use Propel\Generator\Util\QuickBuilder;
  */
 class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -69,9 +72,12 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testCopyToChild()
     {
-        $article = new \ConcreteArticleSetPk();
+        $article = new ConcreteArticleSetPk();
         $this->assertTrue(method_exists($article, 'getSyncParent'));
         $this->assertTrue(method_exists($article, 'syncParentToChild'));
         $parent = $article->getSyncParent();
@@ -82,6 +88,9 @@ EOF;
         $this->assertEquals('test title', $article->getTitle());
     }
 
+    /**
+     * @return void
+     */
     public function testParentBehavior()
     {
         $behaviors = ConcreteContentTableMap::getTableMap()->getBehaviors();
@@ -89,6 +98,9 @@ EOF;
         $this->assertEquals('descendant_class', $behaviors['concrete_inheritance_parent']['descendant_column'], 'modifyTable() passed the descendant_column parameter to the parent behavior');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsParentColumn()
     {
         $contentColumns = ['id', 'title', 'category_id'];
@@ -100,6 +112,9 @@ EOF;
         $this->assertEquals(3, count($quizz->getColumns()), 'modifyTable() does not add a column of the parent table if a similar column exists');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableCopyDataAddsOneToOneRelationships()
     {
         $article = ConcreteArticleTableMap::getTableMap();
@@ -111,17 +126,23 @@ EOF;
         $this->assertEquals(RelationMap::ONE_TO_ONE, $relation->getType(), 'modifyTable adds a one-to-one relationship');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableNoCopyDataNoParentRelationship()
     {
         $quizz = ConcreteQuizzTableMap::getTableMap();
         $this->assertFalse($quizz->hasRelation('ConcreteContent'), 'modifyTable() does not add a relationship to the parent when copy_data is false');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableCopyDataRemovesAutoIncrement()
     {
         $content = new ConcreteContent();
         $content->save();
-        $c = new Criteria;
+        $c = new Criteria();
         $c->add(ConcreteArticleTableMap::COL_ID, $content->getId());
         try {
             ConcreteArticleTableMap::doInsert($c);
@@ -131,22 +152,31 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableNoCopyDataKeepsAutoIncrement()
     {
-        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        $this->expectException(PropelException::class);
         $content = new ConcreteContent();
         $content->save();
-        $c = new Criteria;
+        $c = new Criteria();
         $c->add(ConcreteQuizzTableMap::COL_ID, $content->getId());
         ConcreteQuizzTableMap::doInsert($c);
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsForeignKeys()
     {
         $article = ConcreteArticleTableMap::getTableMap();
         $this->assertTrue($article->hasRelation('ConcreteCategory'), 'modifyTable() copies relationships from parent table');
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableAddsForeignKeysWithoutDuplicates()
     {
         $article = ConcreteAuthorTableMap::getTableMap();
@@ -155,22 +185,31 @@ EOF;
 
     // no way to test copying of indices and uniques, except by reverse engineering the db...
 
+    /**
+     * @return void
+     */
     public function testParentObjectClass()
     {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticle');
+        $r = new ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticle');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizz');
+        $r = new ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizz');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContent', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Model Object to the parent object class');
     }
 
+    /**
+     * @return void
+     */
     public function testParentQueryClass()
     {
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticleQuery');
+        $r = new ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteArticleQuery');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
-        $r = new \ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzQuery');
+        $r = new ReflectionClass('Propel\Tests\Bookstore\Behavior\Base\ConcreteQuizzQuery');
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteContentQuery', $r->getParentClass()->getName(), 'concrete_inheritance changes the parent class of the Query Object to the parent object class');
     }
 
+    /**
+     * @return void
+     */
     public function testPreSaveCopyData()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -189,6 +228,9 @@ EOF;
         $this->assertEquals($category->getId(), $content->getCategoryId());
     }
 
+    /**
+     * @return void
+     */
     public function testPreSaveNoCopyData()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -201,6 +243,9 @@ EOF;
         $this->assertNull($content);
     }
 
+    /**
+     * @return void
+     */
     public function testGetParentOrCreateNew()
     {
         $article = new ConcreteArticle();
@@ -210,6 +255,9 @@ EOF;
         $this->assertEquals('Propel\Tests\Bookstore\Behavior\ConcreteArticle', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
     }
 
+    /**
+     * @return void
+     */
     public function testGetParentOrCreateExisting()
     {
         $article = new ConcreteArticle();
@@ -221,6 +269,9 @@ EOF;
         $this->assertEquals($article->getId(), $content->getId(), 'getParentOrCreate() returns the parent object related to the current object');
     }
 
+    /**
+     * @return void
+     */
     public function testGetParentOrCreateExistingParent()
     {
         ConcreteContentQuery::create()->deleteAll();
@@ -236,6 +287,9 @@ EOF;
         $this->assertEquals(1, ConcreteContentQuery::create()->count(), 'getParentOrCreate() creates no new parent entry');
     }
 
+    /**
+     * @return void
+     */
     public function testGetSyncParent()
     {
         $category = new ConcreteCategory();
@@ -248,6 +302,9 @@ EOF;
         $this->assertEquals($category, $content->getConcreteCategory(), 'getSyncParent() returns a synchronized parent object');
     }
 
+    /**
+     * @return void
+     */
     public function testPostDeleteCopyData()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -264,42 +321,51 @@ EOF;
         $this->assertNull(ConcreteContentQuery::create()->findPk($id), 'delete() removes the parent record as well');
     }
 
+    /**
+     * @return void
+     */
     public function testGetParentOrCreateNewWithPK()
     {
-        \ConcreteContentSetPkQuery::create()->deleteAll();
-        \ConcreteArticleSetPkQuery::create()->deleteAll();
-        $article = new \ConcreteArticleSetPk();
+        ConcreteContentSetPkQuery::create()->deleteAll();
+        ConcreteArticleSetPkQuery::create()->deleteAll();
+        $article = new ConcreteArticleSetPk();
         $article->setId(5);
         $content = $article->getParentOrCreate();
         $this->assertEquals(5, $article->getId(), 'getParentOrCreate() keeps manually set pk');
-        $this->assertTrue($content instanceof \ConcreteContentSetPk, 'getParentOrCreate() returns an instance of the parent class');
+        $this->assertTrue($content instanceof ConcreteContentSetPk, 'getParentOrCreate() returns an instance of the parent class');
         $this->assertTrue($content->isNew(), 'getParentOrCreate() returns a new instance of the parent class if the object is new');
-        $this->assertEquals(5,$content->getId(), 'getParentOrCreate() returns a instance of the parent class with pk set');
+        $this->assertEquals(5, $content->getId(), 'getParentOrCreate() returns a instance of the parent class with pk set');
         $this->assertEquals('ConcreteArticleSetPk', $content->getDescendantClass(), 'getParentOrCreate() correctly sets the descendant_class of the parent object');
     }
 
+    /**
+     * @return void
+     */
     public function testSetPKOnNewObject()
     {
-        \ConcreteContentSetPkQuery::create()->deleteAll();
-        \ConcreteArticleSetPkQuery::create()->deleteAll();
-        $article = new \ConcreteArticleSetPk();
+        ConcreteContentSetPkQuery::create()->deleteAll();
+        ConcreteArticleSetPkQuery::create()->deleteAll();
+        $article = new ConcreteArticleSetPk();
         $article->setId(2);
         $article->save();
         $this->assertEquals(2, $article->getId(), 'getParentOrCreate() keeps manually set pk after save');
-        $this->assertEquals(1, \ConcreteContentSetPkQuery::create()->count(), 'getParentOrCreate() creates a parent entry');
-        $articledb = \ConcreteArticleSetPkQuery::create()->findOneById(2);
+        $this->assertEquals(1, ConcreteContentSetPkQuery::create()->count(), 'getParentOrCreate() creates a parent entry');
+        $articledb = ConcreteArticleSetPkQuery::create()->findOneById(2);
         $this->assertEquals(2, $articledb->getId(), 'getParentOrCreate() keeps manually set pk after save and reload from db');
     }
 
+    /**
+     * @return void
+     */
     public function testSetPKOnNewObjectWithPkAlreadyInParentTable()
     {
-        \ConcreteContentSetPkQuery::create()->deleteAll();
-        \ConcreteArticleSetPkQuery::create()->deleteAll();
+        ConcreteContentSetPkQuery::create()->deleteAll();
+        ConcreteArticleSetPkQuery::create()->deleteAll();
         try {
-            $article = new \ConcreteArticleSetPk();
+            $article = new ConcreteArticleSetPk();
             $article->setId(4);
             $article->save();
-            $article = new \ConcreteArticleSetPk();
+            $article = new ConcreteArticleSetPk();
             $article->setId(4);
             $article->save();
             $this->fail('getParentOrCreate() returns a new parent object on new child objects with pk set');
@@ -308,6 +374,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSetPkAllowPkInsertIsFalse()
     {
         ConcreteContentQuery::create()->deleteAll();
@@ -321,5 +390,4 @@ EOF;
             $this->assertTrue(true, 'SetPk fails when allowPkInsert is false');
         }
     }
-
 }

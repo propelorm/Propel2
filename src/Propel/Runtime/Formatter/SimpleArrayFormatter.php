@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -23,7 +21,14 @@ use Propel\Runtime\Exception\LogicException;
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {
-    public function format(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return array|\Propel\Runtime\Collection\Collection
+     */
+    public function format(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
 
@@ -49,12 +54,22 @@ class SimpleArrayFormatter extends AbstractFormatter
         return $collection;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCollectionClassName()
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
 
-    public function formatOne(DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return array|null
+     */
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
@@ -82,20 +97,28 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
      * @return array The original record turned into an array
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         return $record ? $record->toArray() : [];
     }
 
+    /**
+     * @return bool
+     */
     public function isObjectFormatter()
     {
         return false;
     }
 
+    /**
+     * @param array $row
+     *
+     * @return array
+     */
     public function getStructuredArrayFromRow($row)
     {
         $columnNames = array_keys($this->getAsColumns());

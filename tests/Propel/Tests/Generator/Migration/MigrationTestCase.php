@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Migration;
 
+use Exception;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Database;
@@ -13,14 +20,13 @@ use Propel\Tests\TestCaseFixturesDatabase;
 
 class MigrationTestCase extends TestCaseFixturesDatabase
 {
-
     /**
      * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $con;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $database;
 
@@ -34,6 +40,9 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      */
     protected $platform;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -61,8 +70,11 @@ class MigrationTestCase extends TestCaseFixturesDatabase
 
     /**
      * @param string $xml
+     * @param bool $changeRequired
      *
-     * @return Database|boolean
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Database|bool
      */
     public function applyXml($xml, $changeRequired = false)
     {
@@ -81,7 +93,8 @@ class MigrationTestCase extends TestCaseFixturesDatabase
 
         if (false === $diff) {
             if ($changeRequired) {
-                throw new BuildException(sprintf("No changes in schema to current database: \nSchema database:\n%s\n\nCurrent Database:\n%s",
+                throw new BuildException(sprintf(
+                    "No changes in schema to current database: \nSchema database:\n%s\n\nCurrent Database:\n%s",
                     $database,
                     $this->database
                 ));
@@ -94,9 +107,11 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         $this->con->beginTransaction();
         if (!$sql) {
             throw new BuildException(
-                sprintf('Ooops. There is a diff between current database and schema xml but no SQL has been generated. Change: %s',
-                $diff
-            ));
+                sprintf(
+                    'Ooops. There is a diff between current database and schema xml but no SQL has been generated. Change: %s',
+                    $diff
+                )
+            );
         }
 
         $statements = SqlParser::parseString($sql);
@@ -104,8 +119,9 @@ class MigrationTestCase extends TestCaseFixturesDatabase
             try {
                 $stmt = $this->con->prepare($statement);
                 $stmt->execute();
-            } catch (\Exception $e) {
-                throw new BuildException(sprintf("Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
+            } catch (Exception $e) {
+                throw new BuildException(sprintf(
+                    "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
                     $statement,
                     $this->database,
                     $database
@@ -117,6 +133,9 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         return $database;
     }
 
+    /**
+     * @return void
+     */
     public function readDatabase()
     {
         $this->database = new Database();
@@ -131,6 +150,10 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      *
      * @param string $originXml
      * @param string $targetXml
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return void
      */
     public function migrateAndTest($originXml, $targetXml)
     {
@@ -144,12 +167,14 @@ class MigrationTestCase extends TestCaseFixturesDatabase
             $this->applyXmlAndTest($targetXml, true);
         } catch (BuildException $e) {
             throw new BuildException('There was a exception in applying the second(target) schema', 0, $e);
-       }
+        }
     }
 
     /**
      * @param string $xml
-     * @param bool   $changeRequired
+     * @param bool $changeRequired
+     *
+     * @return void
      */
     public function applyXmlAndTest($xml, $changeRequired = false)
     {
@@ -162,8 +187,11 @@ class MigrationTestCase extends TestCaseFixturesDatabase
     /**
      * Compares the current database with $database.
      *
-     * @param Database $database
-     * @throws BuildException if a difference has been found between $database and the real database
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @throws \Propel\Generator\Exception\BuildException if a difference has been found between $database and the real database
+     *
+     * @return void
      */
     public function compareCurrentDatabase(Database $database)
     {
@@ -171,13 +199,14 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         $diff = DatabaseComparator::computeDiff($this->database, $database);
         if (false !== $diff) {
             $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
+
             throw new BuildException(sprintf(
-                    "There are unexpected diffs (real to model): \n%s\n-----%s-----\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
-                    $diff,
-                    $sql,
-                    $this->database,
-                    $database)
-            );
+                "There are unexpected diffs (real to model): \n%s\n-----%s-----\nCurrent Database: \n%s\nTo XML Database: \n%s\n",
+                $diff,
+                $sql,
+                $this->database,
+                $database
+            ));
         }
         $this->assertFalse($diff, 'no changes.');
     }

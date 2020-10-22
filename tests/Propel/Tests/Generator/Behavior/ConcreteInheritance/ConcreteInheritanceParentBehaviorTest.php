@@ -1,23 +1,19 @@
 <?php
 
-/*
- *	$Id: ConcreteInheritanceBehaviorTest.php 1458 2010-01-13 16:09:51Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\ConcreteInheritance;
-
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 use Propel\Tests\Bookstore\Behavior\ConcreteArticle;
 use Propel\Tests\Bookstore\Behavior\ConcreteArticleQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteContent;
 use Propel\Tests\Bookstore\Behavior\ConcreteContentQuery;
 use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests for ConcreteInheritanceParentBehavior class
@@ -28,6 +24,9 @@ use Propel\Tests\Bookstore\Behavior\ConcreteQuizzQuery;
  */
 class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testHasChildObject()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -43,6 +42,9 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $this->assertTrue($content->hasChildObject());
     }
 
+    /**
+     * @return void
+     */
     public function testGetChildObject()
     {
         ConcreteArticleQuery::create()->deleteAll();
@@ -58,5 +60,4 @@ class ConcreteInheritanceParentBehaviorTest extends BookstoreTestBase
         $content = $article->getConcreteContent();
         $this->assertEquals($article, $content->getChildObject());
     }
-
 }

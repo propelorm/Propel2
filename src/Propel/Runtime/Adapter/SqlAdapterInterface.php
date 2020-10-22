@@ -1,31 +1,28 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter;
 
 use Propel\Runtime\Connection\StatementWrapper;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Interface for adapters.
- *
  */
 interface SqlAdapterInterface extends AdapterInterface
 {
-
     /**
      * This method is used to ignore case.
      *
-     * @param  string $in The string to transform to upper case.
+     * @param string $in The string to transform to upper case.
+     *
      * @return string The upper case string.
      */
     public function toUpperCase($in);
@@ -33,7 +30,8 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * This method is used to ignore case.
      *
-     * @param  string $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
+     *
      * @return string The string in a case that can be ignored.
      */
     public function ignoreCase($in);
@@ -41,19 +39,23 @@ interface SqlAdapterInterface extends AdapterInterface
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
      *
-     * @param string      $sql    The sql statement
-     * @param array       $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param Criteria    $values
-     * @param DatabaseMap $dbMap
+     * @param string $sql The sql statement
+     * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param \Propel\Runtime\ActiveQuery\Criteria $values
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
+     * @return void
      */
     public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
      *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit);
 
@@ -61,14 +63,16 @@ interface SqlAdapterInterface extends AdapterInterface
      * Gets the SQL string that this adapter uses for getting a random number.
      *
      * @param mixed $seed (optional) seed value for databases that support this
+     *
+     * @return string
      */
     public function random($seed = null);
 
     /**
      * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
      *
-     * @param Criteria $criteria
-     * @param string   $tableName
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param string $tableName
      *
      * @return string
      */
@@ -78,9 +82,9 @@ interface SqlAdapterInterface extends AdapterInterface
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      *
-     * @param Criteria $criteria
-     * @param array    $fromClause
-     * @param boolean  $aliasAll
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param array $fromClause
+     * @param bool $aliasAll
      *
      * @return string
      */
@@ -92,8 +96,9 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
     public function turnSelectColumnsToAliases(Criteria $criteria);
 
@@ -114,8 +119,10 @@ interface SqlAdapterInterface extends AdapterInterface
      * </code>
      *
      * @param StatementWrapper $stmt
-     * @param array            $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param DatabaseMap      $dbMap
+     * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     * 
+     * @return void
      */
     public function bindValues(StatementWrapper $stmt, array $params, DatabaseMap $dbMap);
 
@@ -123,13 +130,13 @@ interface SqlAdapterInterface extends AdapterInterface
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param StatementWrapper $stmt      The statement to bind
-     * @param string           $parameter Parameter identifier
-     * @param mixed            $value     The value to bind
-     * @param ColumnMap        $cMap      The ColumnMap of the column to bind
-     * @param null|integer     $position  The position of the parameter to bind
+     * @param StatementWrapper $stmt The statement to bind
+     * @param string $parameter Parameter identifier
+     * @param mixed $value The value to bind
+     * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
+     * @param int|null $position The position of the parameter to bind
      *
-     * @return boolean
+     * @return bool
      */
     public function bindValue(StatementWrapper $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

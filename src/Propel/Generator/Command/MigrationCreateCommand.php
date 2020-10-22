@@ -1,22 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
-use Propel\Common\Config\ConfigurationManager;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\Output;
-use Propel\Generator\Exception\RuntimeException;
 use Propel\Generator\Manager\MigrationManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -25,26 +20,25 @@ use Propel\Generator\Manager\MigrationManager;
 class MigrationCreateCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->addOption('schema-dir',         null, InputOption::VALUE_REQUIRED,  'The directory where the schema files are placed')
-            ->addOption('output-dir',         null, InputOption::VALUE_REQUIRED,  'The output directory where the migration files are located')
-            ->addOption('connection',         null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', [])
-            ->addOption('editor',             null, InputOption::VALUE_OPTIONAL,  'The text editor to use to open diff files', null)
-            ->addOption('comment',            "m",  InputOption::VALUE_OPTIONAL,  'A comment for the migration', '')
-            ->addOption('suffix',             null, InputOption::VALUE_OPTIONAL,  'A suffix for the migration class', '')
+            ->addOption('schema-dir', null, InputOption::VALUE_REQUIRED, 'The directory where the schema files are placed')
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory where the migration files are located')
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use. Example: \'bookstore=mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' where "bookstore" is your propel database name (used in your schema.xml)', [])
+            ->addOption('editor', null, InputOption::VALUE_OPTIONAL, 'The text editor to use to open diff files', null)
+            ->addOption('comment', 'm', InputOption::VALUE_OPTIONAL, 'A comment for the migration', '')
+            ->addOption('suffix', null, InputOption::VALUE_OPTIONAL, 'A suffix for the migration class', '')
             ->setName('migration:create')
-            ->setDescription('Create an empty migration class')
-            ;
+            ->setDescription('Create an empty migration class');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -72,16 +66,16 @@ class MigrationCreateCommand extends AbstractCommand
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
 
-        $migrationsUp   = [];
+        $migrationsUp = [];
         $migrationsDown = [];
         foreach ($manager->getDatabases() as $appDatabase) {
             $name = $appDatabase->getName();
-            $migrationsUp[$name]    = '';
-            $migrationsDown[$name]  = '';
+            $migrationsUp[$name] = '';
+            $migrationsDown[$name] = '';
         }
 
         $timestamp = time();
-        $migrationFileName  = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
+        $migrationFileName = $manager->getMigrationFileName($timestamp, $input->getOption('suffix'));
         $migrationClassBody = $manager->getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $input->getOption('comment'), $input->getOption('suffix'));
 
         $file = $generatorConfig->getSection('paths')['migrationDir'] . DIRECTORY_SEPARATOR . $migrationFileName;
@@ -99,5 +93,4 @@ class MigrationCreateCommand extends AbstractCommand
 
         return static::CODE_SUCCESS;
     }
-
 }

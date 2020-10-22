@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -18,22 +16,27 @@ namespace Propel\Generator\Model;
  */
 class VendorInfo extends MappingModel
 {
+    /**
+     * @var string|null
+     */
     private $type;
+
+    /**
+     * @var array
+     */
     private $parameters;
 
     /**
      * Creates a new VendorInfo instance.
      *
-     * @param string $type       RDBMS type (optional)
-     * @param array  $parameters An associative array of vendor's parameters (optional)
+     * @param string|null $type RDBMS type (optional)
+     * @param array $parameters An associative array of vendor's parameters (optional)
      */
     public function __construct($type = null, array $parameters = [])
     {
-        parent::__construct();
-
         $this->parameters = [];
 
-        if (null !== $type) {
+        if ($type !== null) {
             $this->setType($type);
         }
 
@@ -46,6 +49,8 @@ class VendorInfo extends MappingModel
      * Sets the RDBMS type for this vendor specific information.
      *
      * @param string $type
+     *
+     * @return void
      */
     public function setType($type)
     {
@@ -65,8 +70,10 @@ class VendorInfo extends MappingModel
     /**
      * Sets a parameter value.
      *
-     * @param string $name  The parameter name
-     * @param mixed  $value The parameter value
+     * @param string $name The parameter name
+     * @param mixed $value The parameter value
+     *
+     * @return void
      */
     public function setParameter($name, $value)
     {
@@ -76,7 +83,8 @@ class VendorInfo extends MappingModel
     /**
      * Returns a parameter value.
      *
-     * @param  string $name The parameter name
+     * @param string $name The parameter name
+     *
      * @return mixed
      */
     public function getParameter($name)
@@ -87,8 +95,9 @@ class VendorInfo extends MappingModel
     /**
      * Returns whether or not a parameter exists.
      *
-     * @param  string  $name
-     * @return boolean
+     * @param string $name
+     *
+     * @return bool
      */
     public function hasParameter($name)
     {
@@ -99,6 +108,8 @@ class VendorInfo extends MappingModel
      * Sets an associative array of parameters for vendor specific information.
      *
      * @param array $parameters Parameter data.
+     *
+     * @return void
      */
     public function setParameters(array $parameters = [])
     {
@@ -119,7 +130,7 @@ class VendorInfo extends MappingModel
     /**
      * Returns whether or not this vendor info is empty.
      *
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -129,8 +140,9 @@ class VendorInfo extends MappingModel
     /**
      * Returns a new VendorInfo object that combines two VendorInfo objects.
      *
-     * @param  VendorInfo $info
-     * @return VendorInfo
+     * @param \Propel\Generator\Model\VendorInfo $info
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
     public function getMergedVendorInfo(VendorInfo $info)
     {
@@ -142,6 +154,9 @@ class VendorInfo extends MappingModel
         return $newInfo;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->type = $this->getAttribute('type');

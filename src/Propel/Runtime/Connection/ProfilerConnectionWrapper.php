@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -21,7 +19,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * Whether or not the debug is enabled
      *
-     * @var boolean
+     * @var bool
      */
     public $useDebug = true;
 
@@ -31,6 +29,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     protected $profiler;
 
     /**
+     * @var bool
      * Whether the logging is enabled only for slow queries.
      * The slow threshold is set on the profiler.
      */
@@ -38,6 +37,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
 
     /**
      * @param \Propel\Runtime\Util\Profiler $profiler
+     *
+     * @return void
      */
     public function setProfiler(Profiler $profiler)
     {
@@ -49,7 +50,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      */
     public function getProfiler()
     {
-        if (null === $this->profiler) {
+        if ($this->profiler === null) {
             $this->profiler = Propel::getServiceContainer()->getProfiler();
         }
 
@@ -61,6 +62,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed  $value
+     * 
+     * @return bool
      */
     public function setAttribute($attribute, $value)
     {
@@ -69,14 +72,15 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
                 // Set whether the connection must only log slow queries.
                 // The slow threshold must be set on the profiler (100ms by default).
                 $this->isSlowOnly = $value;
-                break;
+
+                return true;
             default:
-                parent::setAttribute($attribute, $value);
+                return parent::setAttribute($attribute, $value);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prepare(string $statement, array $driver_options = [])
     {
@@ -86,7 +90,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exec($sql)
     {
@@ -96,7 +100,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function query($statement = '')
     {
@@ -107,7 +111,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function createStatementWrapper($sql)
     {
@@ -115,7 +119,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function log($msg)
     {
@@ -124,6 +128,6 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
         }
         $msg = $this->getProfiler()->getProfile() . $msg;
 
-        return parent::log($msg);
+        parent::log($msg);
     }
 }

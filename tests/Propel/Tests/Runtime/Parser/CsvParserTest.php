@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -35,6 +33,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testFromArray($arrayData, $csvData, $type)
     {
@@ -44,6 +44,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testToCSV($arrayData, $csvData, $type)
     {
@@ -53,6 +55,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testToArray($arrayData, $csvData, $type)
     {
@@ -62,6 +66,8 @@ class CsvParserTest extends TestCase
 
     /**
      * @dataProvider arrayCsvConversionDataProvider
+     *
+     * @return void
      */
     public function testFromCSV($arrayData, $csvData, $type)
     {
@@ -92,6 +98,8 @@ EOF;
 
     /**
      * @dataProvider listToCSVDataProvider
+     *
+     * @return void
      */
     public function testListToCSV($list, $heading, $csv)
     {
@@ -104,6 +112,8 @@ EOF;
 
     /**
      * @dataProvider listToCSVDataProvider
+     *
+     * @return void
      */
     public function testCSVToList($list, $heading, $csv)
     {

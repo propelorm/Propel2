@@ -1,28 +1,32 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
 
-use Propel\Common\Config\Loader\PhpFileLoader;
 use Propel\Common\Config\FileLocator;
+use Propel\Common\Config\Loader\PhpFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
 
 class PhpFileLoaderTest extends ConfigTestCase
 {
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->loader = new PhpFileLoader(new FileLocator(sys_get_temp_dir()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.php'), '->supports() returns true if the resource is loadable');
@@ -33,6 +37,9 @@ class PhpFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.foo.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testPhpFileCanBeLoaded()
     {
         $content = <<<EOF
@@ -48,8 +55,10 @@ EOF;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The file "inexistent.php" does not exist (in:
+     *
+     * @return void
      */
     public function testPhpFileDoesNotExist()
     {
@@ -57,9 +66,11 @@ EOF;
     }
 
     /**
-    * @expectedException        Propel\Common\Config\Exception\InvalidArgumentException
-    * @expectedExceptionMessage The configuration file 'nonvalid.php' has invalid content.
-    */
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedExceptionMessage The configuration file 'nonvalid.php' has invalid content.
+     *
+     * @return void
+     */
     public function testPhpFileHasInvalidContent()
     {
         $content = <<<EOF
@@ -72,8 +83,10 @@ EOF;
     }
 
     /**
-     * @expectedException        Propel\Common\Config\Exception\InvalidArgumentException
+     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
      * @expectedExceptionMessage The configuration file 'empty.php' has invalid content.
+     *
+     * @return void
      */
     public function testPhpFileIsEmpty()
     {
@@ -84,9 +97,12 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InputOutputException
+     * @expectedException \Propel\Common\Config\Exception\InputOutputException
      * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.php.
+     *
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testConfigFileNotReadableThrowsException()
     {
@@ -103,6 +119,5 @@ EOF;
         $actual = $this->loader->load('notreadable.php');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }

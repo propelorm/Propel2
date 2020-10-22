@@ -1,19 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Propel\Generator\Manager\MigrationManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -21,24 +19,23 @@ use Propel\Generator\Manager\MigrationManager;
 class MigrationStatusCommand extends AbstractCommand
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function configure()
     {
         parent::configure();
 
         $this
-            ->addOption('output-dir',       null, InputOption::VALUE_REQUIRED,  'The output directory')
-            ->addOption('migration-table',  null, InputOption::VALUE_REQUIRED,  'Migration table name')
-            ->addOption('connection',       null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
+            ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
+            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
             ->setName('migration:status')
             ->setAliases(['status'])
-            ->setDescription('Get migration status')
-        ;
+            ->setDescription('Get migration status');
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -60,12 +57,13 @@ class MigrationStatusCommand extends AbstractCommand
         $manager->setGeneratorConfig($generatorConfig);
 
         $connections = [];
+        /** @var string[] $optionConnections */
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
         } else {
             foreach ($optionConnections as $connection) {
-                list($name, $dsn, $infos) = $this->parseConnection($connection);
+                [$name, $dsn, $infos] = $this->parseConnection($connection);
                 $connections[$name] = array_merge(['dsn' => $dsn], $infos);
             }
         }
@@ -101,7 +99,7 @@ class MigrationStatusCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Latest migration was executed on %s (timestamp %d)',
                     date('Y-m-d H:i:s', $oldestMigrationTimestamp),
-                    $oldestMigrationTimestamp
+                    (string)$oldestMigrationTimestamp
                 ));
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');
@@ -110,7 +108,7 @@ class MigrationStatusCommand extends AbstractCommand
 
         $output->writeln('Listing Migration files...');
         $dir = $generatorConfig->getSection('paths')['migrationDir'];
-        $migrationTimestamps  = $manager->getMigrationTimestamps();
+        $migrationTimestamps = $manager->getMigrationTimestamps();
         $nbExistingMigrations = count($migrationTimestamps);
 
         if ($migrationTimestamps) {

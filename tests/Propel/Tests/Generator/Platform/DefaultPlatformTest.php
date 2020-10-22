@@ -1,18 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
-use Propel\Runtime\Propel;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 class DefaultPlatformTest extends TestCase
 {
@@ -21,7 +20,7 @@ class DefaultPlatformTest extends TestCase
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {
@@ -32,6 +31,9 @@ class DefaultPlatformTest extends TestCase
         return $this->platform;
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->platform = null;
@@ -40,6 +42,7 @@ class DefaultPlatformTest extends TestCase
     /**
      * @dataProvider provideValidBooleanValues
      *
+     * @return void
      */
     public function testGetBooleanString($value)
     {
@@ -66,6 +69,7 @@ class DefaultPlatformTest extends TestCase
     /**
      * @dataProvider provideInvalidBooleanValues
      *
+     * @return void
      */
     public function testGetNonBooleanString($value)
     {
@@ -90,11 +94,14 @@ class DefaultPlatformTest extends TestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testQuote()
     {
         $p = $this->getPlatform();
 
-        $unquoted = "Nice";
+        $unquoted = 'Nice';
         $quoted = $p->quote($unquoted);
 
         $this->assertEquals("'$unquoted'", $quoted);
@@ -137,31 +144,32 @@ class DefaultPlatformTest extends TestCase
     public function getColumnDefaultValueDDLDataProvider()
     {
         return [
-            [$this->createColumn(PropelTypes::INTEGER, 0), "DEFAULT 0"],
-            [$this->createColumn(PropelTypes::INTEGER, '0'), "DEFAULT 0"],
+            [$this->createColumn(PropelTypes::INTEGER, 0), 'DEFAULT 0'],
+            [$this->createColumn(PropelTypes::INTEGER, '0'), 'DEFAULT 0'],
             [$this->createColumn(PropelTypes::VARCHAR, 'foo'), "DEFAULT 'foo'"],
             [$this->createColumn(PropelTypes::VARCHAR, 0), "DEFAULT '0'"],
-            [$this->createColumn(PropelTypes::BOOLEAN, true), "DEFAULT 1"],
-            [$this->createColumn(PropelTypes::BOOLEAN, false), "DEFAULT 0"],
-            [$this->createColumn(PropelTypes::BOOLEAN, 'true'), "DEFAULT 1"],
-            [$this->createColumn(PropelTypes::BOOLEAN, 'false'), "DEFAULT 0"],
-            [$this->createColumn(PropelTypes::BOOLEAN, 'TRUE'), "DEFAULT 1"],
-            [$this->createColumn(PropelTypes::BOOLEAN, 'FALSE'), "DEFAULT 0"],
-            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'foo'), "DEFAULT 0"],
-            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'bar'), "DEFAULT 1"],
-            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'baz'), "DEFAULT 2"],
-            [$this->createSetColumn(['foo', 'bar', 'baz'], 'foo'), "DEFAULT 1"],
-            [$this->createSetColumn(['foo', 'bar', 'baz'], 'bar'), "DEFAULT 2"],
-            [$this->createSetColumn(['foo', 'bar', 'baz'], 'baz'), "DEFAULT 4"],
+            [$this->createColumn(PropelTypes::BOOLEAN, true), 'DEFAULT 1'],
+            [$this->createColumn(PropelTypes::BOOLEAN, false), 'DEFAULT 0'],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'true'), 'DEFAULT 1'],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'false'), 'DEFAULT 0'],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'TRUE'), 'DEFAULT 1'],
+            [$this->createColumn(PropelTypes::BOOLEAN, 'FALSE'), 'DEFAULT 0'],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'foo'), 'DEFAULT 0'],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'bar'), 'DEFAULT 1'],
+            [$this->createEnumColumn(['foo', 'bar', 'baz'], 'baz'), 'DEFAULT 2'],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'foo'), 'DEFAULT 1'],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'bar'), 'DEFAULT 2'],
+            [$this->createSetColumn(['foo', 'bar', 'baz'], 'baz'), 'DEFAULT 4'],
         ];
     }
 
     /**
      * @dataProvider getColumnDefaultValueDDLDataProvider
+     *
+     * @return void
      */
     public function testGetColumnDefaultValueDDL($column, $default)
     {
         $this->assertEquals($default, $this->getPlatform()->getColumnDefaultValueDDL($column));
     }
-
 }

@@ -1,34 +1,38 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model\Diff;
+
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ForeignKey;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\TableDiff;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Generator\Model\Database;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the Column methods of the TableComparator service class.
- *
  */
 class PropelTableForeignKeyComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSameFks()
     {
         $c1 = new Column('Foo');
@@ -47,6 +51,9 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNotSameFks()
     {
         $c1 = new Column('Foo');
@@ -62,6 +69,9 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $this->assertTrue($diff instanceof TableDiff);
     }
 
+    /**
+     * @return void
+     */
     public function testCaseInsensitive()
     {
         $t1 = new Table('Baz');
@@ -82,6 +92,9 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $this->assertFalse($diff);
     }
 
+    /**
+     * @return void
+     */
     public function testCompareAddedFks()
     {
         $db1 = new Database();
@@ -109,6 +122,9 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $this->assertEquals(['Baz_fk_9c94ed' => $fk2], $tableDiff->getAddedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRemovedFks()
     {
         $db1 = new Database();
@@ -136,6 +152,9 @@ class PropelTableForeignKeyComparatorTest extends TestCase
         $this->assertEquals(['Baz_fk_9c94ed' => $fk1], $tableDiff->getRemovedFks());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareModifiedFks()
     {
         $db1 = new Database();
