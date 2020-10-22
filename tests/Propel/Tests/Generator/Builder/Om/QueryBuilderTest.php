@@ -13,15 +13,18 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookOpinionQuery;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\EssayQuery;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookListRelTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
@@ -882,6 +885,26 @@ class QueryBuilderTest extends BookstoreTestBase
             ->find($this->con);
 
         $this->fail('Expected PropelException : filterBy{RelationName}() only accepts arguments of type {RelationName}');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFilterByRefNonPrimaryFKey()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+
+        $testBookstoreEmployeeAccount = BookstoreEmployeeAccountQuery::create()
+            ->findOne();
+        $testAccAuditLog = $testBookstoreEmployeeAccount->getAcctAuditLogs();
+
+        $result = AcctAuditLogQuery::create()
+            ->addJoin(AcctAuditLogTableMap::COL_UID, BookstoreEmployeeAccountTableMap::COL_LOGIN)
+            ->filterByBookstoreEmployeeAccount($testBookstoreEmployeeAccount)
+            ->find($this->con);
+
+        $this->assertEquals($testAccAuditLog, $result, 'Generated query handles filterByRefFk() methods correctly for non primary fkeys');
     }
 
     /**
