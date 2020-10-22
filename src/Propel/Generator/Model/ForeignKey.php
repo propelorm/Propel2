@@ -856,6 +856,7 @@ class ForeignKey extends MappingModel
                 $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();
             }
         }
+
         return (bool)array_diff($foreignCols, $foreignPKCols);
     }
 

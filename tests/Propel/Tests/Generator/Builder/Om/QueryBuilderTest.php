@@ -20,7 +20,6 @@ use Propel\Tests\Bookstore\BookClubListQuery;
 use Propel\Tests\Bookstore\BookListRelQuery;
 use Propel\Tests\Bookstore\BookOpinionQuery;
 use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\EssayQuery;
