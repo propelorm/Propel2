@@ -419,4 +419,15 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     {
         return $this->statement->debugDumpParams();
     }
+
+    /**
+     * @param $method
+     * @param $args
+     *
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return call_user_func_array([$this->statement, $method], $args);
+    }
 }

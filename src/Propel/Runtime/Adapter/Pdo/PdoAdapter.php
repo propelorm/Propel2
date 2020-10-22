@@ -10,14 +10,13 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
 use PDOException;
-use PDOStatement;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\PdoConnection;
-use Propel\Runtime\Connection\StatementWrapper;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -574,13 +573,13 @@ abstract class PdoAdapter
      * $stmt->execute();
      * </code>
      *
-     * @param StatementWrapper $stmt
-     * @param array            $params array('column' => ..., 'table' => ..., 'value' => ...)
-     * @param DatabaseMap      $dbMap
-     * 
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
+     * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
      * @return void
      */
-    public function bindValues(StatementWrapper $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
     {
         $position = 0;
         foreach ($params as $param) {
@@ -608,7 +607,7 @@ abstract class PdoAdapter
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param StatementWrapper $stmt The statement to bind
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt The statement to bind
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
@@ -616,7 +615,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function bindValue(StatementWrapper $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

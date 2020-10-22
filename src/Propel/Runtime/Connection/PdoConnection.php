@@ -13,7 +13,7 @@ use Propel\Runtime\DataFetcher\PDODataFetcher;
 use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
- * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
+ * PDO extension that implements ConnectionInterface and builds StatementInterface statements.
  */
 class PdoConnection implements ConnectionInterface
 {
@@ -31,6 +31,11 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * Forward any call to a method not found to the proxied connection.
+     * 
+     * @param $method
+     * @param $args
+     * 
+     * @return mixed 
      */
     public function __call($method, $args)
     {
