@@ -23,6 +23,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementWrapper;
+use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
 
 class QuickBuilder

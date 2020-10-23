@@ -31,11 +31,11 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * Forward any call to a method not found to the proxied connection.
-     * 
+     *
      * @param $method
      * @param $args
-     * 
-     * @return mixed 
+     *
+     * @return mixed
      */
     public function __call($method, $args)
     {
@@ -78,6 +78,8 @@ class PdoConnection implements ConnectionInterface
                 $pdoOptions[$index] = $option;
             }
         }
+
+        //var_dump($dsn, $user, $password, $pdoOptions);
 
         $this->pdo = new \PDO($dsn, $user, $password, $pdoOptions);
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -170,7 +172,7 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * Overwrite. Fixes HHVM strict issue.
-     * 
+     *
      * @param string $statement
      * @param array $driver_options
      *
