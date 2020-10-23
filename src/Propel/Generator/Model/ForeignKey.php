@@ -841,7 +841,7 @@ class ForeignKey extends MappingModel
      *
      * @return bool Returns true if all columns inside this foreign key are not primary keys of the foreign table
      */
-    public function isForeignNonPrimaryKey()
+    public function isForeignNonPrimaryKey(): bool
     {
         $foreignTable = $this->getForeignTable();
 
