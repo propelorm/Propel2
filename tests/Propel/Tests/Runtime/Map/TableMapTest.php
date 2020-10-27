@@ -196,12 +196,12 @@ class TableMapTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Map\Exception\RelationNotFoundException
-     *
      * @return void
      */
     public function testLoadWrongRelations()
     {
+        $this->expectException(\Propel\Runtime\Map\Exception\RelationNotFoundException::class);
+
         $this->tmap->getRelation('Bar');
     }
 

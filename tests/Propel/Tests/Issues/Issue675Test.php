@@ -23,12 +23,12 @@ class Issue675Test extends TestCaseFixtures
     /**
      * Test incomplete foreign key references
      *
-     * @expectedException \Propel\Generator\Exception\BuildException
-     *
      * @return void
      */
     public function testIncompleteForeignReference()
     {
+        $this->expectException(\Propel\Generator\Exception\BuildException::class);
+
         $schema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <database name="test" defaultIdMethod="native">

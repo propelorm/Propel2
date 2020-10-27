@@ -29,12 +29,12 @@ class AbstractParserTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\FileNotFoundException
-     *
      * @return void
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {
+        $this->expectException(\Propel\Runtime\Exception\FileNotFoundException::class);
+
         $parser = AbstractParser::getParser('Foo');
     }
 

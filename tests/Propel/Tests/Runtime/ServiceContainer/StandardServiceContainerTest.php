@@ -327,12 +327,12 @@ class StandardServiceContainerTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
-     *
      * @return void
      */
     public function testGetConnectionManagerWithUnknownDatasource()
     {
+        $this->expectException(\Propel\Runtime\Exception\RuntimeException::class);
+
         $this->sc->getConnectionManager('unknown');
     }
 

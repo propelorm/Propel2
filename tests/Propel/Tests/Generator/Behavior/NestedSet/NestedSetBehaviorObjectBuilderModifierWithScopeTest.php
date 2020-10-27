@@ -26,12 +26,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         NestedSetTable10TableMap::doDeleteAll();
         $t1 = new NestedSetTable10();
         $t1->setScopeValue(1);

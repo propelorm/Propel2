@@ -56,24 +56,24 @@ XML;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.xml" does not exist (in:
-     *
      * @return void
      */
     public function testXmlFileDoesNotExist()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.xml" does not exist (in:');
+
         $this->loader->load('inexistent.xml');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid xml content
-     *
      * @return void
      */
     public function testXmlFileHasInvalidContent()
     {
+        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid xml content");
+
         $content = <<<EOF
 not xml content
 only plain
@@ -98,15 +98,15 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.xml.
-     *
      * @requires OS ^(?!Win.*)
      *
      * @return void
      */
     public function testXmlFileNotReadableThrowsException()
     {
+        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.xml.");
+
         $content = <<< XML
 <?xml version='1.0' standalone='yes'?>
 <properties>

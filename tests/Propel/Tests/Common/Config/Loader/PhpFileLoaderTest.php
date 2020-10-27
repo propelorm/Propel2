@@ -55,24 +55,24 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.php" does not exist (in:
-     *
      * @return void
      */
     public function testPhpFileDoesNotExist()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.php" does not exist (in:');
+
         $this->loader->load('inexistent.php');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The configuration file 'nonvalid.php' has invalid content.
-     *
      * @return void
      */
     public function testPhpFileHasInvalidContent()
     {
+        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage("The configuration file 'nonvalid.php' has invalid content.");
+
         $content = <<<EOF
 not php content
 only plain
@@ -83,13 +83,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The configuration file 'empty.php' has invalid content.
-     *
      * @return void
      */
     public function testPhpFileIsEmpty()
     {
+        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage("The configuration file 'empty.php' has invalid content.");
+
         $content = '';
         $this->dumpTempFile('empty.php', $content);
 
@@ -97,15 +97,15 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.php.
-     *
      * @requires OS ^(?!Win.*)
      *
      * @return void
      */
     public function testConfigFileNotReadableThrowsException()
     {
+        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.php.");
+
         $content = <<<EOF
 <?php
 

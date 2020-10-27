@@ -21,12 +21,12 @@ use Propel\Tests\Helpers\BaseTestCase;
 class RawModelCriterionTest extends BaseTestCase
 {
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
-     *
      * @return void
      */
     public function testAppendPsToThrowsExceptionWhenClauseHasNoQuestionMark()
     {
+        $this->expectException(\Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException::class);
+
         $cton = new RawModelCriterion(new Criteria(), 'A.COL = BAR', 'A.COL', 1, null, PDO::PARAM_INT);
 
         $params = [];

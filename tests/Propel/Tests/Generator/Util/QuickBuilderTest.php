@@ -95,10 +95,10 @@ EOF;
     public function testGetClasses($builder)
     {
         $script = $builder->getClasses();
-        $this->assertContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
-        $this->assertContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
     /**
@@ -109,10 +109,10 @@ EOF;
     public function testGetClassesLimitedClassTargets($builder)
     {
         $script = $builder->getClasses(['tablemap', 'object', 'query']);
-        $this->assertNotContains('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
-        $this->assertNotContains('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
-        $this->assertContains('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
-        $this->assertContains('class QuickBuildFoo1Query extends ModelCriteria', $script);
+        $this->assertStringNotContainsString('class QuickBuildFoo1 extends BaseQuickBuildFoo1', $script);
+        $this->assertStringNotContainsString('class QuickBuildFoo1Query extends BaseQuickBuildFoo1Query', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1 implements ActiveRecordInterface', $script);
+        $this->assertStringContainsString('class QuickBuildFoo1Query extends ModelCriteria', $script);
     }
 
     /**

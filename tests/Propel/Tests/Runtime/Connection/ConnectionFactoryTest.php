@@ -17,12 +17,12 @@ use Propel\Tests\Helpers\BaseTestCase;
 class ConnectionFactoryTest extends BaseTestCase
 {
     /**
-     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testCreateFailsIfGivenIncorrectConfiguration()
     {
+        $this->expectException(\Propel\Runtime\Exception\InvalidArgumentException::class);
+
         $con = ConnectionFactory::create([], new SqliteAdapter());
     }
 
@@ -93,12 +93,12 @@ class ConnectionFactoryTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testCreateFailsWhenPassedAnIncorrectAttributeName()
     {
+        $this->expectException(\Propel\Runtime\Exception\InvalidArgumentException::class);
+
         $con = ConnectionFactory::create(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CAE' => PDO::CASE_LOWER]], new SqliteAdapter());
     }
 }

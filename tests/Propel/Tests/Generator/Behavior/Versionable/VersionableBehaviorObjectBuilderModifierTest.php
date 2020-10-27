@@ -587,12 +587,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testToVersionThrowsExceptionOnIncorrectVersion()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         $o = new VersionableBehaviorTest1();
         $o->setBar(123); // version 1
         $o->save();

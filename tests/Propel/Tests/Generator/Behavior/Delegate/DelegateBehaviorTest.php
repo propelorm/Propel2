@@ -194,12 +194,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testAModelCannotHaveCascadingDelegates()
     {
+        $this->expectException(\Propel\Runtime\Exception\BadMethodCallException::class);
+
         $main = new DelegateMain();
         $main->setSummary('bar');
         $main->setBody('baz');

@@ -85,12 +85,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInvalidValueThrowsPropelException()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         $r = new ComplexColumnTypeEntity5();
         $r->setBar1('Invalid Date');
     }

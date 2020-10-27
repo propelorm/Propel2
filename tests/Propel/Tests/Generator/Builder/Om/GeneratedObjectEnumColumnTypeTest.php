@@ -67,12 +67,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         $e = new PublicComplexColumnTypeEntity3();
         $e->bar = 156;
         $e->getBar();
@@ -105,12 +105,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        
         $e = new ComplexColumnTypeEntity3();
         $e->setBar('bazz');
     }

@@ -105,12 +105,12 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSaveRootInTreeWithExistingRoot()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         NestedSetTable9TableMap::doDeleteAll();
         $t1 = new NestedSetTable9();
         $t1->makeRoot();

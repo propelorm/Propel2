@@ -110,12 +110,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testWhereInvalidValueThrowsException()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         ComplexColumnTypeEntitySet2Query::create()
             ->where('ComplexColumnTypeEntitySet2.Tags LIKE ?', 'bar231')
             ->find();

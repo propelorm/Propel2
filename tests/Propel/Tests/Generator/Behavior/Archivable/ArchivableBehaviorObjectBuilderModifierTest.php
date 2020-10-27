@@ -220,12 +220,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testArchiveThrowsExceptionOnNewObjects()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        
         $a = new ArchivableTest10();
         $a->archive();
     }
@@ -239,12 +239,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testRestoreFromArchiveThrowsExceptionOnUnarchivedObjects()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        
         $a = new ArchivableTest10();
         $a->setTitle('foo');
         $a->setAge(12);

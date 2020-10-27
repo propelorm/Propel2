@@ -520,6 +520,13 @@ class QuickBuilder
      */
     public function fixNamespaceDeclarations($source)
     {
+
+        $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING];
+
+        if (PHP_VERSION_ID >= 80000) {
+            $cooperativeLexems = array_merge($cooperativeLexems, [T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED]);
+        }
+
         $source = $this->forceNamespace($source);
 
         if (!function_exists('token_get_all')) {
@@ -544,7 +551,7 @@ class QuickBuilder
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], $cooperativeLexems)) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && $t === '{') {

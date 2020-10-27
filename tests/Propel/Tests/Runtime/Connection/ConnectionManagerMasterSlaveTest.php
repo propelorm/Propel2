@@ -38,12 +38,12 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testGetWriteConnectionFailsIfManagerIsNotConfigured()
     {
+        $this->expectException(\Propel\Runtime\Exception\InvalidArgumentException::class);
+
         $manager = new ConnectionManagerMasterSlave();
         $con = $manager->getWriteConnection(new SqliteAdapter());
     }

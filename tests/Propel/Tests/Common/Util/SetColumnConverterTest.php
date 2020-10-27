@@ -54,12 +54,12 @@ class SetColumnConverterTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Common\Exception\SetColumnConverterException
-     *
      * @return void
      */
     public function testConvertToIntValueNotInSet()
     {
+        $this->expectException(\Propel\Common\Exception\SetColumnConverterException::class);
+
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertToInt(['g'], $valueSet);
     }
@@ -90,16 +90,16 @@ class SetColumnConverterTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Common\Exception\SetColumnConverterException
-     *
      * @return void
      */
     public function testConvertIntToArrayIntOutOfRange()
     {
+        $this->expectException(\Propel\Common\Exception\SetColumnConverterException::class);
+
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertIntToArray('65', $valueSet);
     }
-    
+
     public function convertValuesProvider()
     {
         return [

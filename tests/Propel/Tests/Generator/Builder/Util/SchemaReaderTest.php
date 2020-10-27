@@ -58,12 +58,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\SchemaException
-     *
      * @return void
      */
     public function testParseStringIncorrectSchema()
     {
+        $this->expectException(\Propel\Generator\Exception\SchemaException::class);
+
         $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>');
     }
 

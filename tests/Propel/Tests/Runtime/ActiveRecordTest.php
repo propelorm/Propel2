@@ -51,12 +51,12 @@ class ActiveRecordTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetVirtualColumnWrongKey()
     {
+        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+
         $b = new TestableActiveRecord();
         $b->getVirtualColumn('foo');
     }

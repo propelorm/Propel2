@@ -56,12 +56,12 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\LogicException
-     *
      * @return void
      */
     public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
     {
+        $this->expectException(\Propel\Generator\Exception\LogicException::class);
+
         $b = new Behavior();
         $b->loadMapping(['name' => 'foo', 'id' => 'lala']);
     }
@@ -144,12 +144,12 @@ EOF;
     }
 
   /**
-   * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
-   *
    * @return void
    */
     public function testUnknownBehavior()
     {
+        $this->expectException(\Propel\Generator\Exception\BehaviorNotFoundException::class);
+
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">

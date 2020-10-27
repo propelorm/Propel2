@@ -164,12 +164,12 @@ class CriteriaMergeTest extends TestCaseFixtures
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testMergeWithAsColumnsThrowsException()
     {
+        $this->expectException(\Propel\Runtime\Exception\LogicException::class);
+
         $c1 = new Criteria();
         $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
         $c2 = new Criteria();
@@ -427,12 +427,12 @@ class CriteriaMergeTest extends TestCaseFixtures
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testMergeWithAliasesThrowsException()
     {
+        $this->expectException(\Propel\Runtime\Exception\LogicException::class);
+
         $c1 = new Criteria();
         $c1->addAlias('b', BookTableMap::TABLE_NAME);
         $c2 = new Criteria();
