@@ -22,6 +22,8 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
     /**
      * @dataProvider dataForTestException
      *
+     * @param mixed $groupBy
+     *
      * @return void
      */
     public function testGroupByArrayThrowException($groupBy)
@@ -97,6 +99,9 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
         $this->assertEquals(3, $authors[1]['nbBooks']);
     }
 
+    /**
+     * @return array
+     */
     public function dataForTestException()
     {
         return [

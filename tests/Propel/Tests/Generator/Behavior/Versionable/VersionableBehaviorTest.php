@@ -22,9 +22,9 @@ class VersionableBehaviorTest extends TestCase
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -67,10 +67,10 @@ EOF;
             $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-            <parameter name="version_column" value="foo_ver" />
+            <parameter name="version_column" value="foo_ver"/>
         </behavior>
     </table>
 </database>
@@ -103,10 +103,10 @@ EOF;
             $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="version" type="BIGINT" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <column name="version" type="BIGINT"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -135,18 +135,18 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="foreign_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <column name="foreign_id" type="INTEGER"/>
         <foreign-key foreignTable="versionable_behavior_test_1">
-            <reference local="foreign_id" foreign="id" />
+            <reference local="foreign_id" foreign="id"/>
         </foreign-key>
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
     <table name="versionable_behavior_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -292,10 +292,10 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-          <parameter name="version_table" value="foo_ver" />
+          <parameter name="version_table" value="foo_ver"/>
         </behavior>
     </table>
 </database>
@@ -331,13 +331,13 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
     <table name="versionable_behavior_test_0_version">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="baz" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="baz" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -381,12 +381,12 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-          <parameter name="log_created_at" value="true" />
-          <parameter name="log_created_by" value="true" />
-          <parameter name="log_comment" value="true" />
+          <parameter name="log_created_at" value="true"/>
+          <parameter name="log_created_by" value="true"/>
+          <parameter name="log_comment" value="true"/>
         </behavior>
     </table>
 </database>
@@ -465,10 +465,10 @@ EOF;
     {
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
-    <behavior name="versionable" />
+    <behavior name="versionable"/>
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -503,13 +503,13 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <index>
             <index-column name="bar"/>
         </index>
         <behavior name="versionable">
-            <parameter name="indices" value="true" />
+            <parameter name="indices" value="true"/>
         </behavior>
     </table>
 </database>
@@ -541,9 +541,9 @@ EOF;
         $schema = <<<EOF
 <database name="versionable_behavior_test_0">
     <table name="versionable_behavior_test_0" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -559,9 +559,9 @@ EOF;
         $schema = <<<XML
 <database name="versionable_behavior_test_0" tablePrefix="prefix_">
     <table name="versionable_behavior_test_0">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>
 XML;

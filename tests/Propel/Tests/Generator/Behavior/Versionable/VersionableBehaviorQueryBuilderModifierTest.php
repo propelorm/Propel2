@@ -27,9 +27,9 @@ class VersionableBehaviorQueryBuilderModifierTest extends TestCase
             $schema = <<<EOF
 <database name="versionable_behavior_test_10">
     <table name="versionable_behavior_test_10">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
 </database>>
 EOF;

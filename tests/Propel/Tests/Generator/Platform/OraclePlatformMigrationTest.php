@@ -329,27 +329,27 @@ ALTER TABLE foo ADD
         $schema1 = <<<EOF
 <database name="test">
     <table name="foo1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="blooopoo" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="blooopoo" type="INTEGER"/>
     </table>
     <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <column name="baz" type="VARCHAR" size="12" required="true"/>
     </table>
     <table name="foo3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="yipee" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="yipee" type="INTEGER"/>
     </table>
 </database>
 EOF;
         $schema2 = <<<EOF
 <database name="test">
     <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="12" required="false" />
-        <column name="baz3" type="CLOB" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="baz" type="VARCHAR" size="12" required="false"/>
+        <column name="baz3" type="CLOB"/>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
             <parameter name="InitTrans" value="4"/>
@@ -366,8 +366,8 @@ EOF;
         </vendor>
     </table>
     <table name="foo4">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="yipee" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="yipee" type="INTEGER"/>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
             <parameter name="InitTrans" value="4"/>
@@ -384,9 +384,9 @@ EOF;
         </vendor>
     </table>
     <table name="foo5">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="lkdjfsh" type="INTEGER" />
-        <column name="dfgdsgf" type="CLOB" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="lkdjfsh" type="INTEGER"/>
+        <column name="dfgdsgf" type="CLOB"/>
         <index name="lkdjfsh_IDX">
             <index-column name="lkdjfsh"/>
             <vendor type="oracle">

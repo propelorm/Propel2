@@ -858,8 +858,8 @@ class GeneratedObjectTest extends BookstoreTestBase
         $schema = <<<EOF
 <database name="test"  namespace="MyNameSpace">
     <table name="test_key_type_table">
-        <column name="id_key_type" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name_key_type" type="VARCHAR" />
+        <column name="id_key_type" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name_key_type" type="VARCHAR"/>
     </table>
 </database>
 EOF;

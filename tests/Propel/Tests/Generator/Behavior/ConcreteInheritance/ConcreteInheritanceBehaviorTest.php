@@ -51,18 +51,18 @@ class ConcreteInheritanceBehaviorTest extends BookstoreTestBase
             $schema = <<<EOF
 <database name="concrete_content_set_pk">
     <table name="concrete_content_set_pk" allowPkInsert="true">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
     </table>
     <table name="concrete_article_set_pk" allowPkInsert="true">
-        <column name="body" type="longvarchar" />
-        <column name="author_id" required="false" type="INTEGER" />
+        <column name="body" type="longvarchar"/>
+        <column name="author_id" required="false" type="INTEGER"/>
         <behavior name="concrete_inheritance">
-            <parameter name="extends" value="concrete_content_set_pk" />
-            <parameter name="copy_data_to_child" value="title" />
+            <parameter name="extends" value="concrete_content_set_pk"/>
+            <parameter name="copy_data_to_child" value="title"/>
         </behavior>
     </table>
 </database>

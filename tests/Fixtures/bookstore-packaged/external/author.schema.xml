@@ -4,7 +4,7 @@
 <database package="core.author" name="bookstore" defaultIdMethod="native">
 
   <table name="author" description="Author Table">
-        <behavior name="auto_add_pk" />
+        <behavior name="auto_add_pk"/>
     <column
       name="first_name"
       required="true"

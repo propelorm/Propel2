@@ -31,9 +31,9 @@ class GeneratedObjectEnumColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_3">
     <table name="complex_column_type_entity_3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar " />
-        <column name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="ENUM" valueSet="foo, bar, baz, 1, 4,(, foo bar "/>
+        <column name="bar2" type="ENUM" valueSet="foo, bar" defaultValue="bar"/>
     </table>
 </database>
 EOF;

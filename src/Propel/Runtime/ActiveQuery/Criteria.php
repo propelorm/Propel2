@@ -1636,7 +1636,7 @@ class Criteria
                 }
 
                 $joins = $criteria->getJoins();
-                if (count($joins) != count($this->joins)) {
+                if (count($joins) !== count($this->joins)) {
                     return false;
                 }
 

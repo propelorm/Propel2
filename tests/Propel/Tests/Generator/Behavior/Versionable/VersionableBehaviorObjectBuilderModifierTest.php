@@ -56,41 +56,41 @@ class VersionableBehaviorObjectBuilderModifierTest extends TestCase
         $schema = <<<EOF
 <database name="versionable_behavior_test_1">
     <table name="versionable_behavior_test_1">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
-        <behavior name="versionable" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
+        <behavior name="versionable"/>
     </table>
     <table name="versionable_behavior_test_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-            <parameter name="version_column" value="foo_ver" />
+            <parameter name="version_column" value="foo_ver"/>
         </behavior>
     </table>
     <table name="versionable_behavior_test_3">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-            <parameter name="version_table" value="foo_ver" />
+            <parameter name="version_table" value="foo_ver"/>
         </behavior>
     </table>
     <table name="versionable_behavior_test_4">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-            <parameter name="log_comment" value="true" />
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+            <parameter name="log_comment" value="true"/>
         </behavior>
     </table>
     <table name="versionable_behavior_test_5">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="VARCHAR" size="100" />
-        <column name="foreign_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="VARCHAR" size="100"/>
+        <column name="foreign_id" type="INTEGER"/>
         <foreign-key foreignTable="versionable_behavior_test_4">
-            <reference local="foreign_id" foreign="id" />
+            <reference local="foreign_id" foreign="id"/>
         </foreign-key>
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -99,30 +99,30 @@ EOF;
         $schema2 = <<<EOF
 <database name="versionable_behavior_test_2" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest6">
-        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="FooBar" type="VARCHAR" size="100" />
+        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="FooBar" type="VARCHAR" size="100"/>
         <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-            <parameter name="log_comment" value="true" />
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+            <parameter name="log_comment" value="true"/>
         </behavior>
     </table>
 
     <table name="VersionableBehaviorTest7">
-        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="FooBar" type="VARCHAR" size="100" />
+        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="FooBar" type="VARCHAR" size="100"/>
 
-        <column name="Style" type="ENUM" valueSet="novel, essay, poetry" />
-        <column name="Style2" type="SET" valueSet="novel, essay, poetry" />
+        <column name="Style" type="ENUM" valueSet="novel, essay, poetry"/>
+        <column name="Style2" type="SET" valueSet="novel, essay, poetry"/>
 
         <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-            <parameter name="log_comment" value="true" />
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+            <parameter name="log_comment" value="true"/>
 
-            <parameter name="version_created_by_column" value="VersionCreatedBy" />
-            <parameter name="version_created_at_column" value="VersionCreatedAt" />
-            <parameter name="version_comment_column" value="MyComment" />
+            <parameter name="version_created_by_column" value="VersionCreatedBy"/>
+            <parameter name="version_created_at_column" value="VersionCreatedAt"/>
+            <parameter name="version_comment_column" value="MyComment"/>
         </behavior>
     </table>
 </database>
@@ -132,15 +132,15 @@ EOF;
         $schema3 = <<<EOF
 <database name="versionable_behavior_test_3" defaultPhpNamingMethod="nochange">
     <table name="VersionableBehaviorTest8">
-        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="FooBar" type="VARCHAR" size="100" />
+        <column name="Id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="FooBar" type="VARCHAR" size="100"/>
         <column name="class_key" type="INTEGER" required="true" default="1" inheritance="single">
-            <inheritance key="1" class="VersionableBehaviorTest8" />
-            <inheritance key="2" class="VersionableBehaviorTest8Foo" extends="VersionableBehaviorTest8" />
-            <inheritance key="3" class="VersionableBehaviorTest8Bar" extends="VersionableBehaviorTest8Foo" />
+            <inheritance key="1" class="VersionableBehaviorTest8"/>
+            <inheritance key="2" class="VersionableBehaviorTest8Foo" extends="VersionableBehaviorTest8"/>
+            <inheritance key="3" class="VersionableBehaviorTest8Bar" extends="VersionableBehaviorTest8Foo"/>
         </column>
 
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
 </database>
 EOF;
@@ -149,30 +149,30 @@ EOF;
         $schema4 = <<<EOF
 <database name="versionable_behavior_test_4">
     <table name="VersionableBehaviorTest10">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
 
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
 
     <table name="VersionableBehaviorTest11">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="VARCHAR" size="100"/>
     </table>
 
     <table name="VersionableBehaviorTest12">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
-        <column name="foo_id" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="25" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
+        <column name="foo_id" type="INTEGER"/>
+        <column name="baz" type="VARCHAR" size="25"/>
 
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
 
         <foreign-key foreignTable="VersionableBehaviorTest10">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
         <foreign-key foreignTable="VersionableBehaviorTest11">
-            <reference local="foo_id" foreign="id" />
+            <reference local="foo_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>
@@ -187,7 +187,7 @@ EOF;
     <table name="versionable_behavior_test_one_to_one">
         <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
         <column name="bar" type="varchar" size="32"/>
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
 
     <table name="versionable_behavior_test_one_to_one_key">
@@ -196,7 +196,7 @@ EOF;
         <foreign-key foreignTable="versionable_behavior_test_one_to_one">
             <reference local="foo_id" foreign="id"/>
         </foreign-key>
-        <behavior name="versionable" />
+        <behavior name="versionable"/>
     </table>
 </database>
 XML;
@@ -206,8 +206,8 @@ XML;
 <database name="versionable_behavior_test_custom_field_database">
 
     <table name="versionable_behavior_test_custom_field">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
 
         <behavior name="versionable">
             <parameter name="version_column" value="CustomVersion"/>
@@ -215,16 +215,16 @@ XML;
     </table>
 
     <table name="versionable_behavior_test_custom_field_key">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="25" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
+        <column name="baz" type="VARCHAR" size="25"/>
 
         <behavior name="versionable">
             <parameter name="version_column" value="CustomVersion"/>
       	</behavior>
 
         <foreign-key foreignTable="versionable_behavior_test_custom_field">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>

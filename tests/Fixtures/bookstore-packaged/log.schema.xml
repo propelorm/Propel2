@@ -4,7 +4,7 @@
 <database package="util.log" name="bookstore-log" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
   <table name="log" phpName="BookstoreLog" description="Used to test multiple databases support">
-    <behavior name="auto_add_pk" />
+    <behavior name="auto_add_pk"/>
     <column
       name="time"
       required="true"

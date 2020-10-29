@@ -30,9 +30,9 @@ class GeneratedQuerySetColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_set_2">
     <table name="complex_column_type_entity_set_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="tags" valueSet="foo, bar, baz, bar23" type="SET" />
-        <column name="value_set" valueSet="foo, bar, baz, kevin" type="SET" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="tags" valueSet="foo, bar, baz, bar23" type="SET"/>
+        <column name="value_set" valueSet="foo, bar, baz, kevin" type="SET"/>
     </table>
 </database>
 EOF;

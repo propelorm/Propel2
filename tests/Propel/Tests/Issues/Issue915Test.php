@@ -27,8 +27,8 @@ class Issue915Test extends BookstoreTestBase
             $schema = <<<EOF
 <database>
     <table name="Issue915Book">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id" />
-        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id"/>
+        <column name="title" type="VARCHAR" required="true" description="Book Title" primaryString="true"/>
     </table>
 </database>
 EOF;

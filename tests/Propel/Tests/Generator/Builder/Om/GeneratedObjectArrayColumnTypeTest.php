@@ -34,11 +34,11 @@ class GeneratedObjectArrayColumnTypeTest extends TestCase
             $schema = <<<EOF
 <database name="generated_object_complex_type_test_2" namespace="MyNameSpace">
     <table name="complex_column_type_entity_2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="tags" type="ARRAY" />
-        <column name="value_set" type="ARRAY" />
-        <column name="defaults" type="ARRAY" defaultValue="FOO" />
-        <column name="multiple_defaults" type="ARRAY" defaultValue="FOO, BAR,BAZ" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="tags" type="ARRAY"/>
+        <column name="value_set" type="ARRAY"/>
+        <column name="defaults" type="ARRAY" defaultValue="FOO"/>
+        <column name="multiple_defaults" type="ARRAY" defaultValue="FOO, BAR,BAZ"/>
     </table>
 </database>
 EOF;
@@ -278,8 +278,8 @@ EOF;
         $schema = <<<EOF
 <database name="generated_object_complex_type_test_with_constructor" namespace="MyNameSpace">
   <table name="complex_column_type_entity_with_constructor">
-    <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-    <column name="tags" type="ARRAY" />
+    <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+    <column name="tags" type="ARRAY"/>
   </table>
 </database>
 EOF;

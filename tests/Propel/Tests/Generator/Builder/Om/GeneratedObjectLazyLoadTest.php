@@ -29,10 +29,10 @@ class GeneratedObjectLazyLoadTest extends TestCase
             $schema = <<<EOF
 <database name="lazy_load_active_record_1">
     <table name="lazy_load_active_record">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="foo" type="VARCHAR" size="100" />
-        <column name="bar" type="VARCHAR" size="100" lazyLoad="true" />
-        <column name="baz" type="VARCHAR" size="100" defaultValue="world" lazyLoad="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="foo" type="VARCHAR" size="100"/>
+        <column name="bar" type="VARCHAR" size="100" lazyLoad="true"/>
+        <column name="baz" type="VARCHAR" size="100" defaultValue="world" lazyLoad="true"/>
     </table>
 </database>
 EOF;

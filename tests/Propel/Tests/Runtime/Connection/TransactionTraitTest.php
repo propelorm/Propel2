@@ -8,8 +8,10 @@
 
 namespace Propel\Tests\Runtime\Connection;
 
+use Error;
 use Exception;
 use Propel\Tests\TestCase;
+use Throwable;
 
 /**
  * Tests the PdoConnection class
@@ -37,6 +39,29 @@ class TransactionTraitTest extends TestCase
             });
             $this->fail('missing exception');
         } catch (Exception $e) {
+            $this->assertEquals('boom', $e->getMessage(), 'exception was rethrown');
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     *
+     * @return void
+     */
+    public function testTransactionRollbackOnThrowable()
+    {
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
+
+        $con->expects($this->once())->method('beginTransaction');
+        $con->expects($this->once())->method('rollback');
+        $con->expects($this->never())->method('commit');
+
+        try {
+            $con->transaction(function () {
+                throw new Error('boom');
+            });
+            $this->fail('missing throwable');
+        } catch (Throwable $e) {
             $this->assertEquals('boom', $e->getMessage(), 'exception was rethrown');
         }
     }
@@ -109,6 +134,31 @@ class TransactionTraitTest extends TestCase
             });
             $this->fail('expecting a nested exception to be re-thrown');
         } catch (Exception $e) {
+            $this->assertEquals('boooom', $e->getMessage());
+        }
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return void
+     */
+    public function testTransactionNestedThrowable()
+    {
+        $con = $this->getMockForTrait('Propel\Runtime\Connection\TransactionTrait');
+
+        $con->expects($this->exactly(2))->method('beginTransaction');
+        $con->expects($this->exactly(2))->method('rollback');
+        $con->expects($this->never())->method('commit');
+
+        try {
+            $con->transaction(function () use ($con) {
+                $con->transaction(function () {
+                    throw new Error('boooom');
+                });
+            });
+            $this->fail('expecting a nested throwable to be re-thrown');
+        } catch (Throwable $e) {
             $this->assertEquals('boooom', $e->getMessage());
         }
     }

@@ -836,6 +836,31 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns whether this foreign key is not the primary key of the foreign
+     * table.
+     *
+     * @return bool Returns true if all columns inside this foreign key are not primary keys of the foreign table
+     */
+    public function isForeignNonPrimaryKey(): bool
+    {
+        $foreignTable = $this->getForeignTable();
+
+        $foreignPKCols = [];
+        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
+            $foreignPKCols[] = $fPKCol->getName();
+        }
+
+        $foreignCols = [];
+        foreach ($this->localColumns as $idx => $colName) {
+            if ($this->foreignColumns[$idx]) {
+                $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();
+            }
+        }
+
+        return (bool)array_diff($foreignCols, $foreignPKCols);
+    }
+
+    /**
      * Returns whether or not this foreign key relies on more than one
      * column binding.
      *

@@ -6,7 +6,7 @@
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
         <column name="title" type="VARCHAR" primaryString="true"/>
         <column name="by" type="VARCHAR" size="64"/>
-        <column name="as" type="INTEGER" />
+        <column name="as" type="INTEGER"/>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="quoting_author">
             <reference local="author_id" foreign="id"/>
@@ -15,7 +15,7 @@
     <table name="quoting_author" phpName="Author" identifierQuoting="false">
         <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
         <column name="name" type="VARCHAR" primaryString="true"/>
-        <column name="type_id" type="INTEGER" />
+        <column name="type_id" type="INTEGER"/>
         <foreign-key foreignTable="quoting_author_type">
             <reference local="type_id" foreign="id"/>
         </foreign-key>
