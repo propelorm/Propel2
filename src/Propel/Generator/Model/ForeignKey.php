@@ -800,7 +800,7 @@ class ForeignKey extends MappingModel
      *
      * @return bool
      */
-    public function isAtLeastOneLocalColumnIsRequired()
+    public function isAtLeastOneLocalPrimaryKeyIsRequired()
     {
         foreach ($this->getLocalColumnObjects() as $pk) {
             if ($pk->isNotNull() && !$pk->hasDefaultValue()) {
