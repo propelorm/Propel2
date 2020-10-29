@@ -11,6 +11,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\AuthorQuery;
@@ -307,7 +308,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->save($this->con);
 
         $book = BookQuery::create()->select(['Book.Title', 'Book.ISBN'])->findPk($b->getId(), $this->con);
-        $this->assertInternalType('array', $book);
+        $this->assertIsArray($book);
 
         $book = BookQuery::create()->filterByTitle('bar')->findPk($b->getId(), $this->con);
         $this->assertNull($book);
@@ -863,12 +864,12 @@ class QueryBuilderTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testFilterUsingCollectionByRelationNameCompositePk()
     {
+        $this->expectException(PropelException::class);
+
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
 

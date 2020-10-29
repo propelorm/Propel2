@@ -127,7 +127,7 @@ CREATE TABLE `issue617_group`
 ) ENGINE=InnoDB CHARACTER SET=\'utf8\';
 ';
 
-        $this->assertContains($expected, $sql);
+        $this->assertStringContainsString($expected, $sql);
         $this->updateSchema($builder->getDatabase());
     }
 
@@ -180,7 +180,7 @@ ALTER TABLE `issue617_user`
   DROP `group_id`;
 ';
 
-        $this->assertContains($expected, $sql);
+        $this->assertStringContainsString($expected, $sql);
         $this->updateSchema($this->updatedBuilder->getDatabase());
     }
 
@@ -199,7 +199,7 @@ ALTER TABLE `issue617_user`
 
         $expected = 'issue617_user';
 
-        $this->assertNotContains($expected, $sql);
+        $this->assertStringNotContainsString($expected, $sql);
     }
 
     /**

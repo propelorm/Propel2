@@ -276,8 +276,8 @@ class Ticket520Test extends BookstoreTestBase
 
         $books = $a->getBooksJoinPublisher();
         $this->assertEquals(2, count($books));
-        $this->assertContains($b1, $books);
-        $this->assertContains($b2, $books);
+        $this->assertStringContainsString($b1, $books);
+        $this->assertStringContainsString($b2, $books);
 
         $a->save();
         $this->assertFalse($b1->isNew());

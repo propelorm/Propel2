@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -21,12 +22,12 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
     /**
      * @dataProvider dataForTestException
      *
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGroupByArrayThrowException($groupBy)
     {
+        $this->expectException(PropelException::class);
+
         $authors = AuthorQuery::create()
             ->leftJoinBook()
             ->select(['FirstName', 'LastName'])
@@ -35,7 +36,7 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
             ->orderByLastName()
             ->find();
     }
-    
+
     /**
      * @return void
      */
@@ -50,13 +51,13 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
         $byron->setFirstName('George');
         $byron->setLastName('Byron');
         $byron->save();
-        
+
         $phoenix = new Book();
         $phoenix->setTitle('Harry Potter and the Order of the Phoenix');
         $phoenix->setISBN('043935806X');
         $phoenix->setAuthor($stephenson);
         $phoenix->save();
-        
+
         $qs = new Book();
         $qs->setISBN('0380977427');
         $qs->setTitle('Quicksilver');
@@ -74,7 +75,7 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
         $td->setTitle('The Tin Drum');
         $td->setAuthor($byron);
         $td->save();
-        
+
         $authors = AuthorQuery::create()
             ->leftJoinBook()
             ->select(['FirstName', 'LastName'])
@@ -82,20 +83,20 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
             ->groupBy(['FirstName', 'LastName'])
             ->orderByLastName()
             ->find();
-        
+
         $expectedSql = 'SELECT COUNT(book.id) AS nbBooks, author.first_name AS "FirstName", author.last_name AS "LastName" FROM author LEFT JOIN book ON (author.id=book.author_id) GROUP BY author.first_name,author.last_name ORDER BY author.last_name ASC';
-        
+
         $this->assertEquals($expectedSql, $this->con->getLastExecutedQuery());
-        
+
         $this->assertEquals(2, count($authors));
-        
+
         $this->assertEquals('George', $authors[0]['FirstName']);
         $this->assertEquals(1, $authors[0]['nbBooks']);
-        
+
         $this->assertEquals('Neal', $authors[1]['FirstName']);
         $this->assertEquals(3, $authors[1]['nbBooks']);
     }
-    
+
     public function dataForTestException()
     {
         return [

@@ -803,7 +803,7 @@ class TableTest extends ModelTestCase
         $this->assertInstanceOf('Propel\Generator\Model\ForeignKey', $table->addForeignKey($fk));
         $this->assertCount(1, $table->getForeignKeys());
         $this->assertTrue($table->hasForeignKeys());
-        $this->assertContains('authors', $table->getForeignTableNames());
+        $this->assertStringContainsString('authors', $table->getForeignTableNames());
     }
 
     /**
@@ -826,7 +826,7 @@ class TableTest extends ModelTestCase
         $this->assertCount(1, $table->getForeignKeys());
         $this->assertTrue($table->hasForeignKeys());
 
-        $this->assertContains('authors', $table->getForeignTableNames());
+        $this->assertStringContainsString('authors', $table->getForeignTableNames());
     }
 
     /**
@@ -882,7 +882,7 @@ class TableTest extends ModelTestCase
         $table->addForeignKey($fk2);
 
         $this->assertCount(1, $table->getColumnForeignKeys('author_id'));
-        $this->assertContains($fk1, $table->getColumnForeignKeys('author_id'));
+        $this->assertStringContainsString($fk1, $table->getColumnForeignKeys('author_id'));
     }
 
     /**

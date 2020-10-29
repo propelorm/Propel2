@@ -254,24 +254,24 @@ class TableMapTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testDoDeleteNoCondition()
     {
+        $this->expectException(PropelException::class);
+
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->doDelete($con);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testDoDeleteJoin()
     {
+        $this->expectException(PropelException::class);
+
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::COL_TITLE, 'War And Peace');

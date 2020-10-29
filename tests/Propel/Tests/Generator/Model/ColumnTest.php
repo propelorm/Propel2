@@ -498,8 +498,8 @@ class ColumnTest extends ModelTestCase
         $this->assertSame('int', $column->getPhpType());
         $this->assertTrue($column->isPhpPrimitiveType());
         $this->assertTrue($column->isEnumType());
-        $this->assertContains('FOO', $column->getValueSet());
-        $this->assertContains('BAR', $column->getValueSet());
+        $this->assertStringContainsString('FOO', $column->getValueSet());
+        $this->assertStringContainsString('BAR', $column->getValueSet());
     }
 
     /**
@@ -521,8 +521,8 @@ class ColumnTest extends ModelTestCase
         $this->assertSame('int', $column->getPhpType());
         $this->assertTrue($column->isPhpPrimitiveType());
         $this->assertTrue($column->isSetType());
-        $this->assertContains('FOO', $column->getValueSet());
-        $this->assertContains('BAR', $column->getValueSet());
+        $this->assertStringContainsString('FOO', $column->getValueSet());
+        $this->assertStringContainsString('BAR', $column->getValueSet());
     }
 
     /**
@@ -533,9 +533,9 @@ class ColumnTest extends ModelTestCase
         $column = new Column();
         $column->setValueSet(' FOO , BAR , BAZ');
 
-        $this->assertContains('FOO', $column->getValueSet());
-        $this->assertContains('BAR', $column->getValueSet());
-        $this->assertContains('BAZ', $column->getValueSet());
+        $this->assertStringContainsString('FOO', $column->getValueSet());
+        $this->assertStringContainsString('BAR', $column->getValueSet());
+        $this->assertStringContainsString('BAZ', $column->getValueSet());
     }
 
     /**

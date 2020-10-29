@@ -134,7 +134,7 @@ class ConnectionManagerPrimaryReplicaTest extends BaseTestCase
         $con = $manager->getReadConnection(new SqliteAdapter());
         $pdo = $con->getWrappedConnection();
         $expected = [PDO::CASE_LOWER, PDO::CASE_UPPER];
-        $this->assertContains($pdo->getAttribute(PDO::ATTR_CASE), $expected);
+        $this->assertStringContainsString($pdo->getAttribute(PDO::ATTR_CASE), $expected);
     }
 
     /**
