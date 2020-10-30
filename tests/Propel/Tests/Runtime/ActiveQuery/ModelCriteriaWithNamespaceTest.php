@@ -1,18 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
-
+use Foo\Bar\Map\NamespacedBookTableMap;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Helpers\Namespaces\NamespacesTestBase;
 
 /**
  * Test class for ModelCriteria with namespaces.
@@ -39,14 +37,19 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
 
     /**
      * @dataProvider conditionsForTestReplaceNamesWithNamespaces
+     *
+     * @return void
      */
-    public function testReplaceNamesWithNamespaces($origClause, $columnPhpName = false, $modifiedClause)
+    public function testReplaceNamesWithNamespaces($origClause, $columnPhpName, $modifiedClause)
     {
         $c = new TestableModelCriteriaWithNamespace('bookstore_namespaced', 'Foo\\Bar\\NamespacedBook');
-        $this->doTestReplaceNames($c, \Foo\Bar\Map\NamespacedBookTableMap::getTableMap(),  $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, NamespacedBookTableMap::getTableMap(), $origClause, $columnPhpName, $modifiedClause);
     }
 
-    public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
+    /**
+     * @return void
+     */
+    public function doTestReplaceNames($c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
     {
         $c->replaceNames($origClause);
         $columns = $c->replacedColumns;
@@ -55,7 +58,6 @@ class ModelCriteriaWithNamespaceTest extends NamespacesTestBase
         }
         $this->assertEquals($modifiedClause, $origClause);
     }
-
 }
 
 class TestableModelCriteriaWithNamespace extends ModelCriteria

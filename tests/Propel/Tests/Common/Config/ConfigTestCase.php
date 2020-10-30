@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config;
@@ -21,10 +19,13 @@ use Symfony\Component\Filesystem\Filesystem;
 class ConfigTestCase extends TestCase
 {
     /**
-     * Symfony\Component\Filesystem\Filesystem instance
+     * @var \Symfony\Component\Filesystem\Filesystem|null
      */
-    private $fileSystem = null;
+    private $fileSystem;
 
+    /**
+     * @return \Symfony\Component\Filesystem\Filesystem
+     */
     public function getFilesystem()
     {
         if (null === $this->fileSystem) {
@@ -38,7 +39,9 @@ class ConfigTestCase extends TestCase
      * Create a temporary config file inside the system temporary directory
      *
      * @param string $filename File Name
-     * @param string $content  File content
+     * @param string $content File content
+     *
+     * @return void
      */
     public function dumpTempFile($filename, $content)
     {

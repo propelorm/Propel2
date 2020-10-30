@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config;
@@ -22,31 +20,32 @@ class XmlToArrayConverter
     /**
      * Create a PHP array from the XML file
      *
-     * @param String $xmlToParse The XML file or a string containing xml to parse
-     *
-     * @return array
+     * @param string $xmlToParse The XML file or a string containing xml to parse
      *
      * @throws \Propel\Common\Config\Exception\XmlParseException if parse errors occur
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException
+     *
+     * @return array
      */
     public static function convert($xmlToParse)
     {
         if (!is_string($xmlToParse)) {
-            throw new InvalidArgumentException("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
+            throw new InvalidArgumentException('XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml');
         }
 
         $isFile = file_exists($xmlToParse);
 
         //Empty xml file returns empty array
         if (
-            ($isFile && 0 === filesize($xmlToParse))
-            or (!$isFile && '' === $xmlToParse)
+            ($isFile && filesize($xmlToParse) === 0)
+            || (!$isFile && $xmlToParse === '')
         ) {
             return [];
         }
 
         if (
             ($isFile && file_get_contents($xmlToParse, false, null, 0, 1) !== '<')
-            or (!$isFile && $xmlToParse[0] !== '<')
+            || (!$isFile && $xmlToParse[0] !== '<')
         ) {
             throw new InvalidArgumentException('Invalid xml content');
         }
@@ -78,10 +77,12 @@ class XmlToArrayConverter
 
     /**
      * Recursive function that converts an SimpleXML object into an array.
-     * @author     Christophe VG (based on code form php.net manual comment)
      *
-     * @param  \SimpleXMLElement $xml SimpleXML object.
-     * @return array             Array representation of SimpleXML object.
+     * @author Christophe VG (based on code form php.net manual comment)
+     *
+     * @param \SimpleXMLElement $xml SimpleXML object.
+     *
+     * @return array Array representation of SimpleXML object.
      */
     protected static function simpleXmlToArray($xml)
     {
@@ -97,7 +98,7 @@ class XmlToArrayConverter
 
             // add the children attributes as if they where children
             foreach ($v->attributes() as $ak => $av) {
-                if ($ak == 'id') {
+                if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
                     $k = self::getConvertedXmlValue($av);
@@ -134,28 +135,30 @@ class XmlToArrayConverter
 
     /**
      * Process XML value, handling boolean, if appropriate.
-     * @param  \SimpleXMLElement $value The simplexml value object.
-     * @return mixed             string or boolean value
+     *
+     * @param \SimpleXMLElement $value The simplexml value object.
+     *
+     * @return mixed string or boolean value
      */
     private static function getConvertedXmlValue($value)
     {
-        $value = (string) $value; // convert from simplexml to string
+        $value = (string)$value; // convert from simplexml to string
 
         //handle numeric values
         if (is_numeric($value)) {
             if (ctype_digit($value)) {
-                $value = intval($value);
+                $value = (int)$value;
             } else {
-                $value = floatval($value);
+                $value = (float)$value;
             }
         }
 
         // handle booleans specially
         $lwr = strtolower($value);
-        if ($lwr === "false") {
+        if ($lwr === 'false') {
             return false;
         }
-        if ($lwr === "true") {
+        if ($lwr === 'true') {
             return true;
         }
 

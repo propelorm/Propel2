@@ -1,24 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\ActiveQuery\PropelQuery;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookQuery;
+use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
 use Propel\Tests\Bookstore\Behavior\Table6;
 use Propel\Tests\Bookstore\Behavior\Table6Query;
-use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for PropelQuery
@@ -29,13 +27,18 @@ use Propel\Tests\Bookstore\Behavior\Map\Table6TableMap;
  */
 class PropelQueryTest extends BookstoreTestBase
 {
-
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
-        include_once(__DIR__.'/PropelQueryTestClasses.php');
+        include_once(__DIR__ . '/PropelQueryTestClasses.php');
     }
 
+    /**
+     * @return void
+     */
     public function testFrom()
     {
         $q = PropelQuery::from('\Propel\Tests\Bookstore\Book');
@@ -48,7 +51,7 @@ class PropelQueryTest extends BookstoreTestBase
         $this->assertEquals($expected, $q, 'from() sets the model alias if found after the blank');
 
         $q = PropelQuery::from('\Propel\Tests\Runtime\ActiveQuery\myBook');
-        $expected = new myBookQuery();
+        $expected = new MyBookQuery();
         $this->assertEquals($expected, $q, 'from() can find custom query classes');
 
         try {
@@ -59,6 +62,9 @@ class PropelQueryTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuery()
     {
         BookstoreDataPopulator::depopulate();
@@ -70,7 +76,6 @@ class PropelQueryTest extends BookstoreTestBase
             ->findOne();
         $this->assertTrue($book instanceof Book);
         $this->assertEquals('Don Juan', $book->getTitle());
-
     }
 
     /**
@@ -79,6 +84,7 @@ class PropelQueryTest extends BookstoreTestBase
      * Various test for filterById functions
      * Id's are autoincrement so we have to use a Select to get current ID's
      *
+     * @return void
      */
     public function testFilterById()
     {
@@ -112,7 +118,8 @@ class PropelQueryTest extends BookstoreTestBase
 
         $booksIn = BookQuery::create()
             ->filterById(
-               ['min' => $booksAll[2]->getId()])
+                ['min' => $booksAll[2]->getId()]
+            )
             ->find();
 
         $this->assertTrue($booksIn[1] == $booksAll[3]);
@@ -122,7 +129,8 @@ class PropelQueryTest extends BookstoreTestBase
 
         $booksIn = BookQuery::create()
           ->filterById(
-            ['max' => $booksAll[1]->getId()] )
+              ['max' => $booksAll[1]->getId()]
+          )
           ->find();
 
         $this->assertTrue($booksIn[1] == $booksAll[1]);
@@ -134,22 +142,26 @@ class PropelQueryTest extends BookstoreTestBase
 
         $minMax = BookQuery::create()
           ->filterById(
-            ['min' => $booksAll[1]->getId(),
+              [
+              'min' => $booksAll[1]->getId(),
                 'max' => $booksAll[2]->getId()]
-            )
+          )
           ->find();
 
         $In = BookQuery::create()
           ->filterById(
-            [$booksAll[1]->getId(),
+              [$booksAll[1]->getId(),
                 $booksAll[2]->getId()]
-            )
+          )
           ->find();
 
         $this->assertTrue($minMax[0] === $In[0]);
         $this->assertTrue(count($minMax->getData()) === count($In->getData()));
     }
 
+    /**
+     * @return void
+     */
     public function testInstancePool()
     {
         $object = new Table6();

@@ -1,6 +1,14 @@
 <?php
 
 /**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Propel\Tests\Generator\Util;
+
+/**
  * This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,11 +17,8 @@
  */
 
 use Propel\Generator\Util\SqlParser;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
-/**
- *
- */
 class SqlParserTest extends TestCase
 {
     public function stripSqlCommentsDataProvider()
@@ -23,10 +28,10 @@ class SqlParserTest extends TestCase
             ['foo with no comments', 'foo with no comments'],
             ['foo with // inline comments', 'foo with // inline comments'],
             ["foo with\n// comments", "foo with\n"],
-            [" // comments preceded by blank\nfoo", "foo"],
-            ["// slash-style comments\nfoo", "foo"],
-            ["-- dash-style comments\nfoo", "foo"],
-            ["# hash-style comments\nfoo", "foo"],
+            [" // comments preceded by blank\nfoo", 'foo'],
+            ["// slash-style comments\nfoo", 'foo'],
+            ["-- dash-style comments\nfoo", 'foo'],
+            ["# hash-style comments\nfoo", 'foo'],
             ["/* c-style comments*/\nfoo", "\nfoo"],
             ["foo with\n// comments\nwith foo", "foo with\nwith foo"],
             ["// comments with\nfoo with\n// comments\nwith foo", "foo with\nwith foo"],
@@ -35,6 +40,8 @@ class SqlParserTest extends TestCase
 
     /**
      * @dataProvider stripSqlCommentsDataProvider
+     *
+     * @return void
      */
     public function testStripSQLComments($input, $output)
     {
@@ -48,7 +55,7 @@ class SqlParserTest extends TestCase
     {
         return [
             ['', ''],
-            ["foo bar", "foo bar"],
+            ['foo bar', 'foo bar'],
             ["foo\nbar", "foo\nbar"],
             ["foo\rbar", "foo\nbar"],
             ["foo\r\nbar", "foo\nbar"],
@@ -58,6 +65,8 @@ class SqlParserTest extends TestCase
 
     /**
      * @dataProvider convertLineFeedsToUnixStyleDataProvider
+     *
+     * @return void
      */
     public function testConvertLineFeedsToUnixStyle($input, $output)
     {
@@ -82,8 +91,11 @@ class SqlParserTest extends TestCase
             ['foo"\";"bar;', ['foo"\";"bar']],
         ];
     }
+
     /**
      * @dataProvider explodeIntoStatementsDataProvider
+     *
+     * @return void
      */
     public function testExplodeIntoStatements($input, $output)
     {

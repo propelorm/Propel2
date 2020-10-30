@@ -1,21 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
 
+use Closure;
+use DOMDocument;
+use Exception;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Schema;
+use XsltProcessor;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema
@@ -28,12 +28,13 @@ use Propel\Generator\Model\Schema;
 abstract class AbstractManager
 {
     /**
+     * @var array
      * Data models that we collect. One from each XML schema file.
      */
     protected $dataModels = [];
 
     /**
-     * @var Database[]
+     * @var \Propel\Generator\Model\Database[]
      */
     protected $databases;
 
@@ -42,29 +43,40 @@ abstract class AbstractManager
      * Should probably stick to the convention
      * of them being the same but I know right now
      * in a lot of cases they won't be.
+     *
+     * @var array
      */
     protected $dataModelDbMap;
 
     /**
      * DB encoding to use for SchemaReader object
+     *
+     * @var string
      */
     protected $dbEncoding = 'UTF-8';
 
     /**
      * Whether to perform validation (XSD) on the schema.xml file(s).
-     * @var boolean
+     *
+     * @var bool
      */
-    protected $validate;
+    protected $validate = false;
 
     /**
      * The XSD schema file to use for validation.
-     * @var string
+     *
+     * @deprecated Not in use and not working due to missing class.
+     *
+     * @var mixed
      */
     protected $xsd;
 
     /**
      * XSL file to use to normalize (or otherwise transform) schema before validation.
-     * @var string
+     *
+     * @deprecated Not in use and not working due to missing class.
+     *
+     * @var mixed
      */
     protected $xsl;
 
@@ -81,20 +93,21 @@ abstract class AbstractManager
     protected $workingDirectory;
 
     /**
-     * @var \Closure
+     * @var \Closure|null
      */
-    private $loggerClosure = null;
+    private $loggerClosure;
 
     /**
      * Have datamodels been initialized?
-     * @var boolean
+     *
+     * @var bool
      */
     private $dataModelsLoaded = false;
 
     /**
      * An initialized GeneratorConfig object.
      *
-     * @var GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     private $generatorConfig;
 
@@ -111,7 +124,9 @@ abstract class AbstractManager
     /**
      * Sets the schemas list.
      *
-     * @param array
+     * @param array $schemas
+     *
+     * @return void
      */
     public function setSchemas($schemas)
     {
@@ -122,6 +137,8 @@ abstract class AbstractManager
      * Sets the working directory path.
      *
      * @param string $workingDirectory
+     *
+     * @return void
      */
     public function setWorkingDirectory($workingDirectory)
     {
@@ -138,12 +155,11 @@ abstract class AbstractManager
         return $this->workingDirectory;
     }
 
-
     /**
      * Returns the data models that have been
      * processed.
      *
-     * @return Schema[]
+     * @return \Propel\Generator\Model\Schema[]
      */
     public function getDataModels()
     {
@@ -169,11 +185,11 @@ abstract class AbstractManager
     }
 
     /**
-     * @return Database[]
+     * @return \Propel\Generator\Model\Database[]
      */
     public function getDatabases()
     {
-        if (null === $this->databases) {
+        if ($this->databases === null) {
             $databases = [];
             foreach ($this->getDataModels() as $dataModel) {
                 foreach ($dataModel->getDatabases() as $database) {
@@ -197,23 +213,27 @@ abstract class AbstractManager
     }
 
     /**
-     * @param  string $name
-     * @return Database|null
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Database|null
      */
     public function getDatabase($name)
     {
         $dbs = $this->getDatabases();
-        return @$dbs[$name];
+
+        return $dbs[$name] ?? null;
     }
 
     /**
      * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
-     * @param boolean $validate
+     * @param bool $validate
+     *
+     * @return void
      */
     public function setValidate($validate)
     {
-        $this->validate = (boolean) $validate;
+        $this->validate = (bool)$validate;
     }
 
     /**
@@ -221,6 +241,8 @@ abstract class AbstractManager
      * file(s).
      *
      * @param string $xsd
+     *
+     * @return void
      */
     public function setXsd($xsd)
     {
@@ -231,7 +253,9 @@ abstract class AbstractManager
      * Sets the normalization XSLT to use to transform datamodel schema.xml
      * file(s) before validation and parsing.
      *
-     * @param string $xsl
+     * @param mixed $xsl
+     *
+     * @return void
      */
     public function setXsl($xsl)
     {
@@ -242,6 +266,8 @@ abstract class AbstractManager
      * Sets the current target database encoding.
      *
      * @param string $encoding Target database encoding
+     *
+     * @return void
      */
     public function setDbEncoding($encoding)
     {
@@ -252,8 +278,10 @@ abstract class AbstractManager
      * Sets a logger closure.
      *
      * @param \Closure $logger
+     *
+     * @return void
      */
-    public function setLoggerClosure(\Closure $logger)
+    public function setLoggerClosure(Closure $logger)
     {
         $this->loggerClosure = $logger;
     }
@@ -261,12 +289,17 @@ abstract class AbstractManager
     /**
      * Returns all matching XML schema files and loads them into data models for
      * class.
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return void
      */
     protected function loadDataModels()
     {
         $schemas = [];
-        $totalNbTables   = 0;
-        $dataModelFiles  = $this->getSchemas();
+        $totalNbTables = 0;
+        $dataModelFiles = $this->getSchemas();
         $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
         // Make a transaction for each file
@@ -274,7 +307,7 @@ abstract class AbstractManager
             $dmFilename = $schema->getPathName();
             $this->log('Processing: ' . $schema->getFileName());
 
-            $dom = new \DOMDocument('1.0', 'UTF-8');
+            $dom = new DOMDocument('1.0', 'UTF-8');
             $dom->load($dmFilename);
 
             $this->includeExternalSchemas($dom, $schema->getPath());
@@ -287,9 +320,9 @@ abstract class AbstractManager
                     $this->log('Could not perform XLST transformation. Make sure PHP has been compiled/configured to support XSLT.');
                 } else {
                     // normalize the document using normalizer stylesheet
-                    $xslDom = new \DOMDocument('1.0', 'UTF-8');
+                    $xslDom = new DOMDocument('1.0', 'UTF-8');
                     $xslDom->load($this->xsl->getAbsolutePath());
-                    $xsl = new \XsltProcessor();
+                    $xsl = new XsltProcessor();
                     $xsl->importStyleSheet($xslDom);
                     $dom = $xsl->transformToDoc($dom);
                 }
@@ -349,9 +382,13 @@ abstract class AbstractManager
      * users don't have those and adding some more informative exceptions would be better
      *
      * @param \DOMDocument $dom
-     * @param string       $srcDir
+     * @param string $srcDir
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return int
      */
-    protected function includeExternalSchemas(\DOMDocument $dom, $srcDir)
+    protected function includeExternalSchemas(DOMDocument $dom, $srcDir)
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
@@ -379,14 +416,14 @@ abstract class AbstractManager
                 throw new BuildException("External schema '$include' does not exist");
             }
 
-            $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
+            $externalSchemaDom = new DOMDocument('1.0', 'UTF-8');
             $externalSchemaDom->load(realpath($include));
 
             // The external schema may have external schemas of its own ; recurs
             $this->includeExternalSchemas($externalSchemaDom, $srcDir);
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
-                if ("true" === $referenceOnly) {
-                    $tableNode->setAttribute("skipSql", "true");
+                if ($referenceOnly === 'true') {
+                    $tableNode->setAttribute('skipSql', 'true');
                 }
                 $databaseNode->appendChild($dom->importNode($tableNode, true));
             }
@@ -402,8 +439,9 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param  array  $schemas
-     * @return Schema
+     * @param array $schemas
+     *
+     * @return \Propel\Generator\Model\Schema
      */
     protected function joinDataModels(array $schemas)
     {
@@ -417,7 +455,7 @@ abstract class AbstractManager
      * Returns the GeneratorConfig object for this manager or creates it
      * on-demand.
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
     protected function getGeneratorConfig()
     {
@@ -427,13 +465,20 @@ abstract class AbstractManager
     /**
      * Sets the GeneratorConfigInterface implementation.
      *
-     * @param GeneratorConfigInterface $generatorConfig
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
+     * @return void
      */
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
     {
         $this->generatorConfig = $generatorConfig;
     }
 
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return void
+     */
     protected function validate()
     {
         if ($this->validate) {
@@ -443,9 +488,14 @@ abstract class AbstractManager
         }
     }
 
+    /**
+     * @param string $message
+     *
+     * @return void
+     */
     protected function log($message)
     {
-        if (null !== $this->loggerClosure) {
+        if ($this->loggerClosure !== null) {
             $closure = $this->loggerClosure;
             $closure($message);
         }
@@ -454,15 +504,18 @@ abstract class AbstractManager
     /**
      * Returns an array of properties as key/value pairs from an input file.
      *
-     * @param  string $file
-     * @return array
+     * @param string $file
+     *
+     * @throws \Exception
+     *
+     * @return string[]
      */
     protected function getProperties($file)
     {
         $properties = [];
 
         if (false === $lines = @file($file)) {
-            throw new \Exception(sprintf('Unable to parse contents of "%s".', $file));
+            throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
         }
 
         foreach ($lines as $line) {

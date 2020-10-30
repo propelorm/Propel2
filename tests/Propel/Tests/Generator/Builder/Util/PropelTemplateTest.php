@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Util;
@@ -15,10 +13,12 @@ use Propel\Tests\TestCase;
 
 /**
  * Tests for PropelTemplate class
- *
  */
 class PropelTemplateTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testRenderStringNoParam()
     {
         $t = new PropelTemplate();
@@ -27,6 +27,9 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, 3', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderStringOneParam()
     {
         $t = new PropelTemplate();
@@ -35,6 +38,9 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, John', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderStringParams()
     {
         $time = time();
@@ -44,10 +50,13 @@ class PropelTemplateTest extends TestCase
         $this->assertEquals('Hello, John, it is ' . $time . ' to go!', $res);
     }
 
+    /**
+     * @return void
+     */
     public function testRenderFile()
     {
         $t = new PropelTemplate();
-        $t->setTemplateFile(dirname(__FILE__).'/template.php');
+        $t->setTemplateFile(FIXTURES . 'generator' . DS . 'builder' . DS . 'template.php');
         $res = $t->render(['name' => 'John']);
         $this->assertEquals('Hello, John', $res);
     }

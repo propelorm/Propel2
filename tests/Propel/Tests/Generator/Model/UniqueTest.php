@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -22,6 +20,11 @@ class UniqueTest extends ModelTestCase
     /**
      * @dataProvider provideTableSpecificAttributes
      *
+     * @param string $tableName
+     * @param int $maxColumnNameLength
+     * @param string $indexName
+     *
+     * @return void
      */
     public function testCreateDefaultUniqueIndexName($tableName, $maxColumnNameLength, $indexName)
     {
@@ -29,13 +32,12 @@ class UniqueTest extends ModelTestCase
         $database
             ->expects($this->any())
             ->method('getMaxColumnNameLength')
-            ->will($this->returnValue($maxColumnNameLength))
-        ;
+            ->will($this->returnValue($maxColumnNameLength));
 
         $table = $this->getTableMock($tableName, [
             'common_name' => $tableName,
-            'unices'      => [ new Unique(), new Unique() ],
-            'database'    => $database,
+            'unices' => [ new Unique(), new Unique() ],
+            'database' => $database,
         ]);
 
         $index = new Unique();
@@ -45,6 +47,9 @@ class UniqueTest extends ModelTestCase
         $this->assertSame($indexName, $index->getName());
     }
 
+    /**
+     * @return array
+     */
     public function provideTableSpecificAttributes()
     {
         return [

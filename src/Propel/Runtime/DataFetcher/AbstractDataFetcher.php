@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Runtime\DataFetcher;
 
 /**
@@ -8,7 +14,7 @@ namespace Propel\Runtime\DataFetcher;
 abstract class AbstractDataFetcher implements DataFetcherInterface
 {
     /**
-     * @var mixed
+     * @var mixed|null
      */
     protected $dataObject;
 
@@ -21,7 +27,9 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @param mixed|null $dataObject
+     *
+     * @return void
      */
     public function setDataObject($dataObject)
     {
@@ -29,7 +37,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @return mixed
      */
     public function getDataObject()
     {
@@ -37,14 +45,14 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetchColumn($index = null)
     {
         $next = $this->fetch();
 
         if ($next) {
-            return null === $index ? current($next) : (isset($next[$index]) ? $next[$index] : null);
+            return $index === null ? current($next) : (isset($next[$index]) ? $next[$index] : null);
         }
     }
 }

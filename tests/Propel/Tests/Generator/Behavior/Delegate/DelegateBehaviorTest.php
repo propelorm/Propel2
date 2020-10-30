@@ -1,20 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Delegate;
 
-use Propel\Generator\Behavior\Delegate\DelegateBehavior;
+use DelegateBasketballer;
+use DelegateDelegate;
+use DelegateFootballer;
+use DelegateMain;
+use Map\DelegateDelegateTableMap;
 use Propel\Generator\Util\QuickBuilder;
-
-use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
+use SecondDelegateDelegate;
+use TestTablePrefixSameDatabaseMain;
 
 /**
  * Tests for DelegateBehavior class
@@ -23,79 +25,81 @@ use Propel\Tests\TestCase;
  */
 class DelegateBehaviorTest extends TestCase
 {
-
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         if (!class_exists('DelegateDelegate')) {
             $schema = <<<EOF
 <database name="delegate_behavior_test_1">
 
     <table name="delegate_main">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="delegate_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="delegate_id" type="INTEGER"/>
         <foreign-key foreignTable="second_delegate_delegate">
-            <reference local="delegate_id" foreign="id" />
+            <reference local="delegate_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_delegate, second_delegate_delegate" />
+            <parameter name="to" value="delegate_delegate, second_delegate_delegate"/>
         </behavior>
     </table>
 
     <table name="delegate_delegate">
-        <column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+        <column name="subtitle" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="second_delegate_delegate">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="summary" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="summary" type="VARCHAR" size="100" primaryString="true"/>
         <behavior name="delegate">
-            <parameter name="to" value="third_delegate_delegate" />
+            <parameter name="to" value="third_delegate_delegate"/>
         </behavior>
     </table>
 
     <table name="third_delegate_delegate">
-        <column name="body" type="VARCHAR" size="100" primaryString="true" />
+        <column name="body" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_player">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="first_name" type="VARCHAR" size="100" primaryString="true" />
-        <column name="last_name" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="first_name" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="last_name" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_basketballer">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="points" type="INTEGER" />
-        <column name="field_goals" type="INTEGER" />
-        <column name="player_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="points" type="INTEGER"/>
+        <column name="field_goals" type="INTEGER"/>
+        <column name="player_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_player">
-            <reference local="player_id" foreign="id" />
+            <reference local="player_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player" />
+            <parameter name="to" value="delegate_player"/>
         </behavior>
     </table>
 
     <table name="delegate_team">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
     <table name="delegate_footballer">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="goals_scored" type="INTEGER" />
-        <column name="fouls_committed" type="INTEGER" />
-        <column name="player_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="goals_scored" type="INTEGER"/>
+        <column name="fouls_committed" type="INTEGER"/>
+        <column name="player_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_player">
-            <reference local="player_id" foreign="id" />
+            <reference local="player_id" foreign="id"/>
         </foreign-key>
-        <column name="team_id" type="INTEGER" />
+        <column name="team_id" type="INTEGER"/>
         <foreign-key foreignTable="delegate_team">
-            <reference local="team_id" foreign="id" />
+            <reference local="team_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="delegate_player, delegate_team" />
+            <parameter name="to" value="delegate_player, delegate_team"/>
         </behavior>
     </table>
 
@@ -105,18 +109,24 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testModifyTableRelatesOneToOneDelegate()
     {
-        $delegateTable = \Map\DelegateDelegateTableMap::getTableMap();
+        $delegateTable = DelegateDelegateTableMap::getTableMap();
         $this->assertEquals(2, count($delegateTable->getColumns()));
         $this->assertEquals(1, count($delegateTable->getRelations()));
         $this->assertTrue(method_exists('DelegateMain', 'getDelegateDelegate'));
         $this->assertTrue(method_exists('DelegateDelegate', 'getDelegateMain'));
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegationCreatesANewDelegateIfNoneExists()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $delegate = $main->getDelegateDelegate();
         $this->assertInstanceOf('DelegateDelegate', $delegate);
@@ -125,9 +135,12 @@ EOF;
         $this->assertEquals('foo', $main->getSubtitle());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegationCreatesANewDelegateIfNoneExists()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('foo');
         $delegate = $main->getSecondDelegateDelegate();
         $this->assertInstanceOf('SecondDelegateDelegate', $delegate);
@@ -136,27 +149,36 @@ EOF;
         $this->assertEquals('foo', $main->getSummary());
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegationUsesExistingDelegateIfExists()
     {
-        $main = new \DelegateMain();
-        $delegate = new \DelegateDelegate();
+        $main = new DelegateMain();
+        $delegate = new DelegateDelegate();
         $delegate->setSubtitle('bar');
         $main->setDelegateDelegate($delegate);
         $this->assertEquals('bar', $main->getSubtitle());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegationUsesExistingDelegateIfExists()
     {
-        $main = new \DelegateMain();
-        $delegate = new \SecondDelegateDelegate();
+        $main = new DelegateMain();
+        $delegate = new SecondDelegateDelegate();
         $delegate->setSummary('bar');
         $main->setSecondDelegateDelegate($delegate);
         $this->assertEquals('bar', $main->getSummary());
     }
 
+    /**
+     * @return void
+     */
     public function testAModelCanHaveSeveralDelegates()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $main->setSummary('bar');
         $delegate = $main->getDelegateDelegate();
@@ -173,17 +195,22 @@ EOF;
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testAModelCannotHaveCascadingDelegates()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('bar');
         $main->setBody('baz');
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOneDelegatesCanBePersisted()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSubtitle('foo');
         $main->save();
         $this->assertFalse($main->isNew());
@@ -191,9 +218,12 @@ EOF;
         $this->assertNull($main->getSecondDelegateDelegate());
     }
 
+    /**
+     * @return void
+     */
     public function testManyToOneDelegatesCanBePersisted()
     {
-        $main = new \DelegateMain();
+        $main = new DelegateMain();
         $main->setSummary('foo');
         $main->save();
         $this->assertFalse($main->isNew());
@@ -201,9 +231,12 @@ EOF;
         $this->assertNull($main->getDelegateDelegate());
     }
 
+    /**
+     * @return void
+     */
     public function testDelegateSimulatesClassTableInheritance()
     {
-        $basketballer = new \DelegateBasketballer();
+        $basketballer = new DelegateBasketballer();
         $basketballer->setPoints(101);
         $basketballer->setFieldGoals(47);
         $this->assertNull($basketballer->getDelegatePlayer());
@@ -215,9 +248,12 @@ EOF;
         $basketballer->save(); // should not throw exception
     }
 
+    /**
+     * @return void
+     */
     public function testDelegateSimulatesMultipleClassTableInheritance()
     {
-        $footballer = new \DelegateFootballer();
+        $footballer = new DelegateFootballer();
         $footballer->setGoalsScored(43);
         $footballer->setFoulsCommitted(4);
         $this->assertNull($footballer->getDelegatePlayer());
@@ -234,32 +270,35 @@ EOF;
         $footballer->save(); // should not throw exception
     }
 
+    /**
+     * @return void
+     */
     public function testTablePrefixSameDatabase()
     {
         $schema = <<<EOF
 <database name="testTablePrefixSameDatabase_database" tablePrefix="foo">
 
     <table name="testTablePrefixSameDatabase_main">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="delegate_id" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="delegate_id" type="INTEGER"/>
         <foreign-key foreignTable="testTablePrefixSameDatabase_delegate">
-            <reference local="delegate_id" foreign="id" />
+            <reference local="delegate_id" foreign="id"/>
         </foreign-key>
         <behavior name="delegate">
-            <parameter name="to" value="testTablePrefixSameDatabase_delegate" />
+            <parameter name="to" value="testTablePrefixSameDatabase_delegate"/>
         </behavior>
     </table>
 
     <table name="testTablePrefixSameDatabase_delegate">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="subtitle" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="subtitle" type="VARCHAR" size="100" primaryString="true"/>
     </table>
 
 </database>
 EOF;
         QuickBuilder::buildSchema($schema);
-        $main = new \TestTablePrefixSameDatabaseMain();
+        $main = new TestTablePrefixSameDatabaseMain();
         $main->setSubtitle('bar');
         $delegate = $main->getTestTablePrefixSameDatabaseDelegate();
         $this->assertInstanceOf('TestTablePrefixSameDatabaseDelegate', $delegate);
@@ -267,5 +306,4 @@ EOF;
         $this->assertEquals('bar', $delegate->getSubtitle());
         $this->assertEquals('bar', $main->getSubtitle());
     }
-
 }

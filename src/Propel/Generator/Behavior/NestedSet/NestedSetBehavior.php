@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\NestedSet;
@@ -19,22 +17,34 @@ use Propel\Generator\Model\Behavior;
  */
 class NestedSetBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var string[]
+     */
     protected $parameters = [
-        'left_column'       => 'tree_left',
-        'right_column'      => 'tree_right',
-        'level_column'      => 'tree_level',
-        'use_scope'         => 'false',
-        'scope_column'      => 'tree_scope',
-        'method_proxies'    => 'false'
+        'left_column' => 'tree_left',
+        'right_column' => 'tree_right',
+        'level_column' => 'tree_level',
+        'use_scope' => 'false',
+        'scope_column' => 'tree_scope',
+        'method_proxies' => 'false',
     ];
 
+    /**
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
     /**
      * Add the left, right and scope to the current table
+     *
+     * @return void
      */
     public function modifyTable()
     {
@@ -43,60 +53,79 @@ class NestedSetBehavior extends Behavior
         if (!$table->hasColumn($this->getParameter('left_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('left_column'),
-                'type' => 'INTEGER'
+                'type' => 'INTEGER',
             ]);
         }
 
         if (!$table->hasColumn($this->getParameter('right_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('right_column'),
-                'type' => 'INTEGER'
+                'type' => 'INTEGER',
             ]);
         }
 
         if (!$table->hasColumn($this->getParameter('level_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('level_column'),
-                'type' => 'INTEGER'
+                'type' => 'INTEGER',
             ]);
         }
 
-        if ('true' === $this->getParameter('use_scope') && !$table->hasColumn($this->getParameter('scope_column'))) {
+        if ($this->getParameter('use_scope') === 'true' && !$table->hasColumn($this->getParameter('scope_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('scope_column'),
-                'type' => 'INTEGER'
+                'type' => 'INTEGER',
             ]);
         }
     }
 
+    /**
+     * @return $this|\Propel\Generator\Behavior\NestedSet\NestedSetBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
-        if (null === $this->objectBuilderModifier) {
+        if ($this->objectBuilderModifier === null) {
             $this->objectBuilderModifier = new NestedSetBehaviorObjectBuilderModifier($this);
         }
 
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return $this|\Propel\Generator\Behavior\NestedSet\NestedSetBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
-        if (null === $this->queryBuilderModifier) {
+        if ($this->queryBuilderModifier === null) {
             $this->queryBuilderModifier = new NestedSetBehaviorQueryBuilderModifier($this);
         }
 
         return $this->queryBuilderModifier;
     }
 
+    /**
+     * @return bool
+     */
     public function useScope()
     {
-        return 'true' === $this->getParameter('use_scope');
+        return $this->getParameter('use_scope') === 'true';
     }
 
+    /**
+     * @param string $columnName
+     *
+     * @return string
+     */
     public function getColumnConstant($columnName)
     {
         return $this->getColumn($columnName)->getName();
     }
 
+    /**
+     * @param string $columnName
+     *
+     * @return \Propel\Generator\Model\Column
+     */
     public function getColumn($columnName)
     {
         return $this->getColumnForParameter($columnName);

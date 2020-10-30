@@ -2,9 +2,9 @@
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.add_class" namespace="Propel\Tests\Bookstore\Behavior">
 
     <table name="add_class_table">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <behavior name="\Propel\Tests\Helpers\Bookstore\Behavior\AddClassBehavior" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <behavior name="\Propel\Tests\Helpers\Bookstore\Behavior\AddClassBehavior"/>
     </table>
 
 </database>

@@ -1,18 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests;
 
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends PHPUnitTestCase
 {
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'sqlite';
@@ -22,9 +24,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * Makes the sql compatible with the current database.
      * Means: replaces ` etc.
      *
-     * @param  string $sql
-     * @param  string $source
-     * @param  string $target
+     * @param string $sql
+     * @param string $source
+     * @param string|null $target
+     *
      * @return mixed
      */
     protected function getSql($sql, $source = 'mysql', $target = null)
@@ -49,7 +52,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Returns true if the current driver in the connection ($this->con) is $db.
      *
-     * @param  string $db
+     * @param string $db
+     *
      * @return bool
      */
     protected function isDb($db = 'mysql')
@@ -104,17 +108,19 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         $className = sprintf('\\Propel\\Generator\\Platform\\%sPlatform', ucfirst($this->getDriver()));
 
-        return new $className;
+        return new $className();
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
      * @return \Propel\Generator\Reverse\SchemaParserInterface
      */
     protected function getParser($con)
     {
         $className = sprintf('\\Propel\\Generator\\Reverse\\%sSchemaParser', ucfirst($this->getDriver()));
 
-        $obj =  new $className($con);
+        $obj = new $className($con);
 
         return $obj;
     }

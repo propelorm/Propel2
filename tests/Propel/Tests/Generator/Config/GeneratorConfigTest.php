@@ -1,36 +1,41 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Config;
 
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Tests\Common\Config\ConfigTestCase;
+use ReflectionClass;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
  * @author Cristiano Cinotti
- * @package	propel.generator.config
+ * @package propel.generator.config
  */
 class GeneratorConfigTest extends ConfigTestCase
 {
     protected $generatorConfig;
 
+    /**
+     * @return void
+     */
     public function setConfig($config)
     {
-        $ref = new \ReflectionClass('\\Propel\\Common\\Config\\ConfigurationManager');
+        $ref = new ReflectionClass('\\Propel\\Common\\Config\\ConfigurationManager');
         $refProp = $ref->getProperty('config');
         $refProp->setAccessible(true);
         $refProp->setValue($this->generatorConfig, $config);
     }
 
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         $php = "
 <?php
@@ -78,6 +83,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->generatorConfig = new GeneratorConfig(sys_get_temp_dir() . '/propel.php.dist');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPlatformDeafult()
     {
         $actual = $this->generatorConfig->getConfiguredPlatform();
@@ -85,6 +93,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\MysqlPlatform', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPlatformGivenDatabaseName()
     {
         $actual = $this->generatorConfig->getConfiguredPlatform(null, 'mysource');
@@ -92,6 +103,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\SqlitePlatform', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPlatform()
     {
         $this->setConfig(['generator' => ['platformClass' => '\\Propel\\Generator\\Platform\\PgsqlPlatform']]);
@@ -100,14 +114,19 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
+     *
+     * @return void
      */
     public function testGetConfiguredPlatformGivenBadDatabaseNameThrowsException()
     {
         $this->generatorConfig->getConfiguredPlatform(null, 'badsource');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPlatformGivenPlatform()
     {
         $this->setConfig(['generator' => ['platformClass' => '\\Propel\\Generator\\Platform\\PgsqlPlatform']]);
@@ -116,6 +135,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Platform\\PgsqlPlatform', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredSchemaParserDefaultClass()
     {
         $stubCon = $this->getMockBuilder('\\Propel\\Runtime\\Connection\\ConnectionWrapper')
@@ -126,12 +148,16 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Reverse\\SqliteSchemaParser', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredSchemaParserGivenClass()
     {
         $this->setConfig(
-            ['migrations' => [
+            [
+            'migrations' => [
                 'tableName' => 'propel_migration',
-                'parserClass' => '\\Propel\\Generator\\Reverse\\PgsqlSchemaParser'
+                'parserClass' => '\\Propel\\Generator\\Reverse\\PgsqlSchemaParser',
             ]]
         );
         $stubCon = $this->getMockBuilder('\\Propel\\Runtime\\Connection\\ConnectionWrapper')
@@ -143,15 +169,18 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\BuildException
+     * @expectedException \Propel\Generator\Exception\BuildException
      * @expectedExceptionMessage Specified class (\Propel\Generator\Platform\MysqlPlatform) does not implement \Propel\Generator\Reverse\SchemaParserInterface interface.
+     *
+     * @return void
      */
     public function testGetConfiguredSchemaParserGivenNonSchemaParserClass()
     {
         $this->setConfig(
-            ['migrations' => [
+            [
+            'migrations' => [
                 'tableName' => 'propel_migration',
-                'parserClass' => '\\Propel\\Generator\\Platform\\MysqlPlatform'
+                'parserClass' => '\\Propel\\Generator\\Platform\\MysqlPlatform',
             ]]
         );
 
@@ -161,15 +190,18 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
      * @expectedExceptionMessage Reverse SchemaParser class for `\Propel\Generator\Reverse\BadSchemaParser` not found.
+     *
+     * @return void
      */
     public function testGetConfiguredSchemaParserGivenBadClass()
     {
         $this->setConfig(
-            ['migrations' => [
+            [
+            'migrations' => [
                 'tableName' => 'propel_migration',
-                'parserClass' => '\\Propel\\Generator\\Reverse\\BadSchemaParser'
+                'parserClass' => '\\Propel\\Generator\\Reverse\\BadSchemaParser',
             ]]
         );
 
@@ -178,23 +210,31 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Generator\\Reverse\\PgsqlSchemaParser', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredBuilder()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'query');
 
         $this->assertInstanceOf('\\Propel\\Generator\\Builder\\Om\\QueryBuilder', $actual);
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
+     *
+     * @return void
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $stubTable = $this->getMock('\\Propel\\Generator\\Model\\Table');
+        $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfiguredPluralizer()
     {
         $actual = $this->generatorConfig->getConfiguredPluralizer();
@@ -208,8 +248,10 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\ClassNotFoundException
+     * @expectedException \Propel\Generator\Exception\ClassNotFoundException
      * @expectedExceptionMessage Class \Propel\Common\Pluralizer\WrongEnglishPluralizer not found.
+     *
+     * @return void
      */
     public function testGetConfiguredPluralizerNonExistentClassThrowsException()
     {
@@ -220,8 +262,10 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\BuildException
+     * @expectedException \Propel\Generator\Exception\BuildException
      * @expectedExceptionMessage Specified class (\Propel\Common\Config\PropelConfiguration) does not implement
+     *
+     * @return void
      */
     public function testGetConfiguredPluralizerWrongClassThrowsException()
     {
@@ -231,6 +275,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $actual = $this->generatorConfig->getConfiguredPluralizer();
     }
 
+    /**
+     * @return void
+     */
     public function testGetBuildConnections()
     {
         $expected = [
@@ -242,8 +289,8 @@ class GeneratorConfigTest extends ConfigTestCase
                 'password' => '',
                 'model_paths' => [
                     'src',
-                    'vendor'
-                ]
+                    'vendor',
+                ],
             ],
             'yoursource' => [
                 'adapter' => 'mysql',
@@ -253,9 +300,9 @@ class GeneratorConfigTest extends ConfigTestCase
                 'password' => '',
                 'model_paths' => [
                     'src',
-                    'vendor'
-                ]
-            ]
+                    'vendor',
+                ],
+            ],
         ];
 
         $actual = $this->generatorConfig->getBuildConnections();
@@ -263,6 +310,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetBuildConnection()
     {
         $expected = [
@@ -273,8 +323,8 @@ class GeneratorConfigTest extends ConfigTestCase
             'password' => '',
             'model_paths' => [
                 'src',
-                'vendor'
-            ]
+                'vendor',
+            ],
         ];
 
         $actual = $this->generatorConfig->getBuildConnection();
@@ -282,6 +332,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetBuildConnectionGivenDatabase()
     {
         $expected = [
@@ -292,8 +345,8 @@ class GeneratorConfigTest extends ConfigTestCase
             'password' => '',
             'model_paths' => [
                 'src',
-                'vendor'
-            ]
+                'vendor',
+            ],
         ];
 
         $actual = $this->generatorConfig->getBuildConnection('yoursource');
@@ -302,14 +355,19 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `wrongsource`.
+     *
+     * @return void
      */
     public function testGetBuildConnectionGivenWrongDatabaseThrowsException()
     {
         $actual = $this->generatorConfig->getBuildConnection('wrongsource');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionDefault()
     {
         $actual = $this->generatorConfig->getConnection();
@@ -317,6 +375,9 @@ class GeneratorConfigTest extends ConfigTestCase
         $this->assertInstanceOf('\\Propel\\Runtime\\Connection\\ConnectionWrapper', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnection()
     {
         $actual = $this->generatorConfig->getConnection('mysource');
@@ -325,14 +386,19 @@ class GeneratorConfigTest extends ConfigTestCase
     }
 
     /**
-     * @expectedException Propel\Generator\Exception\InvalidArgumentException
+     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid database name: no configured connection named `badsource`.
+     *
+     * @return void
      */
     public function testGetConnectionWrongDatabaseThrowsException()
     {
         $actual = $this->generatorConfig->getConnection('badsource');
     }
 
+    /**
+     * @return void
+     */
     public function testGetBehaviorLocator()
     {
         $actual = $this->generatorConfig->getBehaviorLocator();

@@ -1,20 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\collection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\Collection;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for Collection.
@@ -25,6 +23,9 @@ use Propel\Runtime\Collection\Collection;
  */
 class CollectionTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testClone()
     {
         $col = new Collection(['Bar1']);
@@ -35,6 +36,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertCount(2, $colCloned);
     }
 
+    /**
+     * @return void
+     */
     public function testArrayAccess()
     {
         $data = ['bar1', 'bar2', 'bar3'];
@@ -44,6 +48,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals('bar3', $col[2], 'Collection allows access via $foo[$index]');
     }
 
+    /**
+     * @return void
+     */
     public function testGetData()
     {
         $col = new Collection();
@@ -55,6 +62,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals('bar1', $data[0], 'getData() returns a copy of the collection data');
     }
 
+    /**
+     * @return void
+     */
     public function testSetData()
     {
         $col = new Collection();
@@ -67,6 +77,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals($data, $col->getArrayCopy(), 'setData() sets the collection data');
     }
 
+    /**
+     * @return void
+     */
     public function testIsEmpty()
     {
         $col = new Collection();
@@ -76,6 +89,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertFalse($col->isEmpty(), 'isEmpty() returns false on a non empty collection');
     }
 
+    /**
+     * @return void
+     */
     public function testCallIteratorMethods()
     {
         $methods = ['getPosition', 'isFirst', 'isLast', 'isOdd', 'isEven'];
@@ -92,6 +108,9 @@ class CollectionTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testNestedIteration()
     {
         $data = ['bar1', 'bar2', 'bar3'];
@@ -106,6 +125,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals('i0;k0;k1;k2;i1;k0;k1;k2;i2;k0;k1;k2;', $sequence);
     }
 
+    /**
+     * @return void
+     */
     public function testGet()
     {
         $col = new Collection(['foo', 'bar']);
@@ -114,6 +136,8 @@ class CollectionTest extends BookstoreTestBase
 
     /**
      * @expectedException \UnexpectedValueException
+     *
+     * @return void
      */
     public function testGetUnknownOffset()
     {
@@ -121,6 +145,9 @@ class CollectionTest extends BookstoreTestBase
         $bar = $col->get('foo');
     }
 
+    /**
+     * @return void
+     */
     public function testPop()
     {
         $col = new Collection();
@@ -131,6 +158,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(['bar1', 'bar2'], $col->getData(), 'pop() removes the last element of the collection');
     }
 
+    /**
+     * @return void
+     */
     public function testShift()
     {
         $col = new Collection();
@@ -141,6 +171,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(['bar2', 'bar3'], $col->getData(), 'shift() removes the first element of the collection');
     }
 
+    /**
+     * @return void
+     */
     public function testPrepend()
     {
         $col = new Collection();
@@ -151,6 +184,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(['bar4', 'bar1', 'bar2', 'bar3'], $col->getData(), 'prepend() adds new element to the beginning of the collection');
     }
 
+    /**
+     * @return void
+     */
     public function testSet()
     {
         $col = new Collection();
@@ -163,6 +199,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(['foo', 'bar'], $col->getData(), 'set() adds an element to the collection without a key');
     }
 
+    /**
+     * @return void
+     */
     public function testRemove()
     {
         $col = new Collection();
@@ -174,6 +213,8 @@ class CollectionTest extends BookstoreTestBase
 
     /**
      * @expectedException \UnexpectedValueException
+     *
+     * @return void
      */
     public function testRemoveUnknownOffset()
     {
@@ -181,6 +222,9 @@ class CollectionTest extends BookstoreTestBase
         $col->remove(2);
     }
 
+    /**
+     * @return void
+     */
     public function testClear()
     {
         $col = new Collection();
@@ -192,6 +236,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals([], $col->getData(), 'clear() empties the collection');
     }
 
+    /**
+     * @return void
+     */
     public function testContains()
     {
         $col = new Collection();
@@ -202,6 +249,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertFalse($col->contains('bar4'), 'contains() returns false when the key does not exist');
     }
 
+    /**
+     * @return void
+     */
     public function testSearch()
     {
         $col = new Collection();
@@ -212,6 +262,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertFalse($col->search('bar4'), 'search() returns false when the element does not exist');
     }
 
+    /**
+     * @return void
+     */
     public function testSerializable()
     {
         $data = ['bar1', 'bar2', 'bar3'];
@@ -225,6 +278,8 @@ class CollectionTest extends BookstoreTestBase
 
     /**
      * @database
+     *
+     * @return void
      */
     public function testGetWriteConnection()
     {
@@ -236,6 +291,8 @@ class CollectionTest extends BookstoreTestBase
 
     /**
      * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return void
      */
     public function testGetConnectionNoModel()
     {
@@ -243,6 +300,9 @@ class CollectionTest extends BookstoreTestBase
         $col->getConnection();
     }
 
+    /**
+     * @return void
+     */
     public function testDiffWithEmptyCollectionReturnsCurrentCollection()
     {
         $col1 = new Collection();
@@ -258,6 +318,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertSame($b, $result[0]);
     }
 
+    /**
+     * @return void
+     */
     public function testDiffWithEmptyCollections()
     {
         $col1 = new Collection();
@@ -269,6 +332,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(0, count($result));
     }
 
+    /**
+     * @return void
+     */
     public function testDiffWithASimilarCollectionReturnsAnEmptyCollection()
     {
         $col1 = new Collection();
@@ -284,12 +350,15 @@ class CollectionTest extends BookstoreTestBase
         $this->assertEquals(0, count($result));
     }
 
+    /**
+     * @return void
+     */
     public function testDiffWithNonEmptyCollectionReturnsObjectsInTheFirstCollectionWhichAreNotInTheSecondCollection()
     {
         $col1 = new Collection();
         $col2 = new Collection();
 
-        $b  = new Book();
+        $b = new Book();
         $b1 = new Book();
         $col1[] = $b;
         $col1[] = $b1;
@@ -302,6 +371,9 @@ class CollectionTest extends BookstoreTestBase
         $this->assertSame($b1, $result[0]);
     }
 
+    /**
+     * @return void
+     */
     public function testDiffWithACollectionHavingObjectsNotPresentInTheFirstCollection()
     {
         $col1 = new Collection();

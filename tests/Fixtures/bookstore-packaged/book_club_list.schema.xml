@@ -5,7 +5,7 @@
 
   <!-- this table exists to test the many-to-many -->
   <table name="book_club_list" description="Reading list for a book club.">
-    <behavior name="auto_add_pk" />
+    <behavior name="auto_add_pk"/>
     <column
       name="group_leader"
       required="true"

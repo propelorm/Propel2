@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for SeveralModelCriterion.
@@ -22,6 +19,9 @@ use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
  */
 class SeveralModelCriterionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testAppendPsToAddsBindingInfoForNotNullValues()
     {
         $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', ['foo', 'bar']);
@@ -33,13 +33,15 @@ class SeveralModelCriterionTest extends BaseTestCase
         $this->assertEquals('A.COL BETWEEN :p1 AND :p2', $ps);
         $expected = [
             ['table' => 'A', 'column' => 'COL', 'value' => 'foo'],
-            ['table' => 'A', 'column' => 'COL', 'value' => 'bar']
+            ['table' => 'A', 'column' => 'COL', 'value' => 'bar'],
         ];
         $this->assertEquals($expected, $params);
     }
 
     /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     *
+     * @return void
      */
     public function testAppendPsToThrowsExceptionWhenOneOfTheValuesIsNull()
     {
@@ -51,7 +53,9 @@ class SeveralModelCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
+     *
+     * @return void
      */
     public function testAppendPsToThrowsExceptionWhenTheValueIsNull()
     {
@@ -61,5 +65,4 @@ class SeveralModelCriterionTest extends BaseTestCase
         $ps = '';
         $cton->appendPsTo($ps, $params);
     }
-
 }

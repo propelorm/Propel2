@@ -1,29 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-
-use Propel\Runtime\Propel;
+use PDO;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\StatementFormatter;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-
-use Propel\Runtime\DataFetcher\PDODataFetcher;
-
-use \PDO;
+use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for StatementFormatter.
@@ -34,12 +26,18 @@ use \PDO;
  */
 class StatementFormatterTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoCriteria()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -54,6 +52,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -70,6 +71,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -85,6 +89,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals('Quicksilver', $book['title'], 'StatementFormatter::format() returns the rows matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatNoResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -98,6 +105,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $this->assertEquals(0, $books->count(), 'StatementFormatter::format() returns as many rows as the results in the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatoneNoCriteria()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -112,6 +122,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneManyResults()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -124,6 +137,9 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
         $this->assertInstanceOf('Propel\Runtime\DataFetcher\PDODataFetcher', $book, 'StatementFormatter::formatOne() returns a PDODataFetcher');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatOneNoResult()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -135,5 +151,4 @@ class StatementFormatterTest extends BookstoreEmptyTestBase
 
         $this->assertNull($book, 'StatementFormatter::formatOne() returns null when no result');
     }
-
 }

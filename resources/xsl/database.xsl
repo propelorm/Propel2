@@ -10,7 +10,7 @@
     <!--
     Output indented UTF 8 XML
     -->
-    <xsl:output method="xml" indent="yes" encoding="UTF-8" />
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
     <!--
     Matches root database node, the only allowed root node

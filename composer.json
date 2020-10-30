@@ -1,7 +1,7 @@
 {
     "name": "propel/propel",
     "type": "library",
-    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.",
+    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.",
     "keywords": [
         "ORM",
         "persistence",
@@ -16,30 +16,41 @@
         }
     ],
     "require": {
-        "php": ">=5.5",
-        "symfony/yaml": "~2.3||~3.0||~4.0",
-        "symfony/console": "~2.3||~3.0||~4.0",
-        "symfony/finder": "~2.3||~3.0||~4.0",
-        "symfony/validator": "~2.3||~3.0.0||~3.1.0||^3.2.4||~4.0",
-        "symfony/filesystem": "~2.3||~3.0||~4.0",
-        "symfony/config": "~2.3||~3.0||~4.0",
-        "psr/log": "~1.0"
+        "php": ">=7.2",
+        "symfony/yaml": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/config": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/console": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/filesystem": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/finder": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/translation": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/validator": "^3.4.0||^4.0.0||^5.0.0",
+        "psr/log": "^1.0"
     },
     "require-dev": {
-        "monolog/monolog": "~1.3",
-        "phpunit/phpunit": "~4.0||~5.0"
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "monolog/monolog": "^1.3",
+        "phpstan/phpstan": "^0.12.4",
+        "phpunit/phpunit": "^7.5.15",
+        "spryker/code-sniffer": "^0.15.6"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
     },
     "autoload": {
-        "psr-0": {
-            "Propel": "src/"
+        "psr-4": {
+            "Propel\\": "src/Propel/"
         }
     },
     "bin": [
         "bin/propel"
     ],
+    "scripts": {
+        "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
+        "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
+        "stan": "vendor/bin/phpstan analyze",
+        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Command;
@@ -24,11 +22,17 @@ class AbstractCommandTest extends TestCase
 {
     protected $command;
 
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         $this->command = new TestableAbstractCommand();
     }
 
+    /**
+     * @return void
+     */
     public function testParseConnection()
     {
         $password = 'H7{“Qj1n>\%28=;P';
@@ -42,6 +46,9 @@ class AbstractCommandTest extends TestCase
         $this->assertEquals($password, $result[2]['password']);
     }
 
+    /**
+     * @return void
+     */
     public function testRecursiveSearch()
     {
         $app = new Application();
@@ -52,8 +59,8 @@ class AbstractCommandTest extends TestCase
         $tester->execute(
             [
                 'command' => 'testable-command',
-                '--config-dir' =>  realpath(__DIR__ . '/../../../../Fixtures/recursive'),
-                '--recursive' => true
+                '--config-dir' => realpath(__DIR__ . '/../../../../Fixtures/recursive'),
+                '--recursive' => true,
             ]
         );
 
@@ -62,8 +69,8 @@ class AbstractCommandTest extends TestCase
         $tester->execute(
             [
                 'command' => 'testable-command',
-                '--config-dir' =>  realpath(__DIR__ . '/../../../../Fixtures/recursive'),
-                '--recursive' => false
+                '--config-dir' => realpath(__DIR__ . '/../../../../Fixtures/recursive'),
+                '--recursive' => false,
             ]
         );
 
@@ -73,6 +80,9 @@ class AbstractCommandTest extends TestCase
 
 class TestableAbstractCommand extends AbstractCommand
 {
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
@@ -84,10 +94,12 @@ class TestableAbstractCommand extends AbstractCommand
         return parent::parseConnection($connection);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->getSchemas($input->getOption('config-dir'), $input->getOption('recursive'));
 
         $output->write(count($result));
+
+        return 0;
     }
 }

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
@@ -39,6 +37,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testFromArray($arrayData, $jsonData, $type)
     {
@@ -48,6 +48,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testToJSON($arrayData, $jsonData, $type)
     {
@@ -57,6 +59,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testToArray($arrayData, $jsonData, $type)
     {
@@ -66,6 +70,8 @@ class JsonParserTest extends TestCase
 
     /**
      * @dataProvider arrayJsonConversionDataProvider
+     *
+     * @return void
      */
     public function testFromJSON($arrayData, $jsonData, $type)
     {
@@ -89,6 +95,8 @@ EOF;
 
     /**
      * @dataProvider listToJSONDataProvider
+     *
+     * @return void
      */
     public function testListToJSON($list, $json)
     {
@@ -98,6 +106,8 @@ EOF;
 
     /**
      * @dataProvider listToJSONDataProvider
+     *
+     * @return void
      */
     public function testJSONToList($list, $json)
     {
