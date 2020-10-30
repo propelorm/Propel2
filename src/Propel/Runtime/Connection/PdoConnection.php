@@ -79,8 +79,6 @@ class PdoConnection implements ConnectionInterface
             }
         }
 
-        //var_dump($dsn, $user, $password, $pdoOptions);
-
         $this->pdo = new \PDO($dsn, $user, $password, $pdoOptions);
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
