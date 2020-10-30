@@ -10,8 +10,10 @@
 
 namespace Propel\Runtime\Connection;
 
+use PDO;
+
 /**
- * Interface for Propel StatementWrapper object.
+ * Interface for Propel Statement object.
  * Based on the PDOStatement interface.
  * @see http://php.net/manual/en/book.pdo.php
  *
@@ -370,7 +372,7 @@ interface StatementInterface
 
     /**
      * Dump an SQL prepared command
-     * @return bool No value is returned.
+     * @return void No value is returned.
      */
     public function debugDumpParams();
 }

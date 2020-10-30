@@ -9,8 +9,8 @@
 namespace Propel\Tests\Common\Config;
 
 use Propel\Common\Config\ConfigurationManager;
-use Propel\Common\Config\Exception\InvalidConfigurationException;
 use Propel\Common\Config\Exception\InvalidArgumentException;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class ConfigurationManagerTest extends ConfigTestCase
 {

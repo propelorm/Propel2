@@ -391,11 +391,6 @@ parameters:
 			path: src/Propel/Generator/Util/BehaviorLocator.php
 
 		-
-			message: "#^Parameter \\#1 \\$attribute of method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Util/QuickBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php

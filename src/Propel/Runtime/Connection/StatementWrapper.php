@@ -76,7 +76,9 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function prepare($options)
     {
-        $this->statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+        /** @var \PDOStatement $statement */
+        $statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+        $this->statement = $statement;
 
         return $this;
     }
@@ -86,10 +88,11 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function query()
     {
-        $wrapped_connection = $this->connection->getWrappedConnection();
-        $this->statement = $wrapped_connection->query($this->sql);
+        /** @var \PDOStatement $statement */
+        $statement = $this->connection->getWrappedConnection()->query($this->sql);
+        $this->statement = $statement;
 
-        return $wrapped_connection->getDataFetcher($this);
+        return $this->connection->getWrappedConnection()->getDataFetcher($this);
     }
 
     /**
@@ -301,7 +304,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator(): \Iterator
+    public function getIterator(): \Traversable
     {
         return $this->statement;
     }
@@ -415,18 +418,18 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * {@inheritDoc}
      */
-    public function debugDumpParams()
+    public function debugDumpParams(): void
     {
-        return $this->statement->debugDumpParams();
+        $this->statement->debugDumpParams();
     }
 
     /**
-     * @param $method
-     * @param $args
+     * @param string $method
+     * @param mixed $args
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, $args)
     {
         return call_user_func_array([$this->statement, $method], $args);
     }

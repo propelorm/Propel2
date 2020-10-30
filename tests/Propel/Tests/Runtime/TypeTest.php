@@ -30,7 +30,7 @@ class TypeTest extends BookstoreTestBase
         $method = $reflection->getMethod('setDummyObject');
         $param = $method->getParameters()[0];
 
-        $this->assertEquals(DummyObjectClass::class, $param->getClass()->name);
+        $this->assertEquals(DummyObjectClass::class, $param->getType()->getName());
         $this->assertTrue($param->allowsNull());
     }
 
@@ -43,7 +43,7 @@ class TypeTest extends BookstoreTestBase
         $method = $reflection->getMethod('setSomeArray');
         $param = $method->getParameters()[0];
 
-        $this->assertTrue($param->isArray());
+        $this->assertTrue($param->getType() && $param->getType()->getName() === 'array');
         $this->assertTrue($param->allowsNull());
     }
 
@@ -56,7 +56,7 @@ class TypeTest extends BookstoreTestBase
         $method = $reflection->getMethod('setTypeObject');
         $param = $method->getParameters()[0];
 
-        $this->assertEquals(TypeObjectInterface::class, $param->getClass()->name);
+        $this->assertEquals(TypeObjectInterface::class, $param->getType()->getName());
         $this->assertTrue($param->allowsNull());
     }
 

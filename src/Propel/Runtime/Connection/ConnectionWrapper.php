@@ -231,7 +231,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0) {
+        if ($opcount > 0 and $this->inTransaction()) {
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new RollbackException('Cannot commit because a nested transaction was rolled back');
@@ -260,7 +260,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0) {
+        if ($opcount > 0 and $this->inTransaction()) {
             if ($opcount === 1) {
                 $return = $this->connection->rollBack();
                 if ($this->useDebug) {
@@ -335,7 +335,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set an attribute.
      *
-     * @param string|int $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed $value
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
@@ -380,10 +380,10 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
      * @param string $statement This must be a valid SQL statement for the target database server.
-     * @param array|null $driver_options One $array or more key => value pairs to set attribute values
+     * @param array $driver_options One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
-     * @return \PDOStatement
+     * @return \Propel\Runtime\Connection\StatementInterface|bool
      */
     public function prepare(string $statement, array $driver_options = [])
     {

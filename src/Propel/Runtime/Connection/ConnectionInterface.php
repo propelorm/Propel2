@@ -77,7 +77,7 @@ interface ConnectionInterface
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string|int $attribute The name of the attribute to retrieve,
+     * @param int $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
@@ -88,7 +88,7 @@ interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param string|int $attribute
+     * @param int|string $attribute
      * @param mixed $value
      *
      * @return bool TRUE on success or FALSE on failure.
@@ -166,12 +166,11 @@ interface ConnectionInterface
      *
      * @param string $statement This must be a valid SQL statement for the target
      *                               database server.
-     * @param array|null $driver_options
+     * @param array $driver_options
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \PDOStatement|bool A Statement object if the database server
-     *                            successfully prepares, FALSE otherwise.
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool
      */
     public function prepare(string $statement, array $driver_options = []);
 

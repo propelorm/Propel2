@@ -176,7 +176,7 @@ class PdoConnection implements ConnectionInterface
      * @param string $statement
      * @param array $driver_options
      *
-     * @return bool|\PDOStatement
+     * @return \PDOStatement|bool
      */
     public function prepare(string $statement, array $driver_options = [])
     {
@@ -196,16 +196,25 @@ class PdoConnection implements ConnectionInterface
         return $this->pdo->quote($string, $parameter_type);
     }
 
+    /**
+     * @return bool
+     */
     public function beginTransaction()
     {
         return $this->pdo->beginTransaction();
     }
 
+    /**
+     * @return bool
+     */
     public function commit()
     {
         return $this->pdo->commit();
     }
 
+    /**
+     * @return bool
+     */
     public function rollBack()
     {
         return $this->pdo->rollBack();
