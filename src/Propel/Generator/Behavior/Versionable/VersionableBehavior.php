@@ -137,7 +137,8 @@ class VersionableBehavior extends Behavior
         $table = $this->getTable();
         $database = $table->getDatabase();
         $versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getOriginCommonName() . '_version');
-        if (!$database->hasTable($versionTableName)) {
+        $this->versionTable = $database->getTable($versionTableName);
+        if (empty($this->versionTable)) {
             // create the version table
             $versionTable = $database->addTable([
                 'name' => $versionTableName,
@@ -188,8 +189,6 @@ class VersionableBehavior extends Behavior
             $versionColumn->setNotNull(true);
             $versionColumn->setPrimaryKey(true);
             $this->versionTable = $versionTable;
-        } else {
-            $this->versionTable = $database->getTable($versionTableName);
         }
     }
 
@@ -211,7 +210,7 @@ class VersionableBehavior extends Behavior
         }
 
         foreach ($this->getVersionableReferrers() as $fk) {
-            $fkTableName = $fk->getTable()->getName();
+            $fkTableName = $fk->getTable()->getCommonName();
             $fkIdsColumnName = $fkTableName . '_ids';
             if (!$versionTable->hasColumn($fkIdsColumnName)) {
                 $versionTable->addColumn([
@@ -287,7 +286,7 @@ class VersionableBehavior extends Behavior
      */
     public function getReferrerIdsColumn(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
+        $fkTableName = $fk->getTable()->getCommonName();
         $fkIdsColumnName = $fkTableName . '_ids';
 
         return $this->versionTable->getColumn($fkIdsColumnName);
@@ -300,7 +299,7 @@ class VersionableBehavior extends Behavior
      */
     public function getReferrerVersionsColumn(ForeignKey $fk)
     {
-        $fkTableName = $fk->getTable()->getName();
+        $fkTableName = $fk->getTable()->getCommonName();
         $fkIdsColumnName = $fkTableName . '_versions';
 
         return $this->versionTable->getColumn($fkIdsColumnName);
