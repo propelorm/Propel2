@@ -407,6 +407,7 @@ abstract class AbstractManager
                 foreach ($this->getGeneratorConfig()->getConfigProperty('paths') as $path) {
                     if (is_readable($path . DIRECTORY_SEPARATOR . $include)) {
                         $include = realpath($path . DIRECTORY_SEPARATOR . $include);
+
                         break;
                     }
                 }
