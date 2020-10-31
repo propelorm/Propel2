@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Util\PropelDateTime;
 
 /**
@@ -196,7 +197,7 @@ class PropelDateTimeTest extends TestCase
      */
     public function testNewInstanceInvalidValue()
     {
-        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        $this->expectException(PropelException::class);
 
         $dt = PropelDateTime::newInstance('some string');
     }

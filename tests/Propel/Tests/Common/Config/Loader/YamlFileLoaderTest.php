@@ -8,9 +8,12 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\YamlFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 class YamlFileLoaderTest extends ConfigTestCase
 {
@@ -59,7 +62,7 @@ EOF;
      */
     public function testYamlFileDoesNotExist()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The file "inexistent.yaml" does not exist (in:');
 
         $this->loader->load('inexistent.yaml');
@@ -70,7 +73,7 @@ EOF;
      */
     public function testYamlFileHasInvalidContent()
     {
-        $this->expectException(\Symfony\Component\Yaml\Exception\ParseException::class);
+        $this->expectException(ParseException::class);
         $this->expectExceptionMessage('Unable to parse');
 
         $content = <<<EOF
@@ -102,7 +105,7 @@ EOF;
      */
     public function testYamlFileNotReadableThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectException(InputOutputException::class);
         $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.yaml.");
 
         $content = <<<EOF

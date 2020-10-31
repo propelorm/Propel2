@@ -8,6 +8,8 @@
 
 namespace Propel\Tests\Common\Config;
 
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\XmlParseException;
 use Propel\Common\Config\XmlToArrayConverter;
 
 class XmlToArrayConverterTest extends ConfigTestCase
@@ -57,8 +59,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
      */
     public function testInvalidFileNameThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessage("XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml");
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml');
 
         XmlToArrayConverter::convert(1);
     }
@@ -68,8 +70,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
      */
     public function testInexistentFileThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid xml content");
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid xml content');
 
         XmlToArrayConverter::convert('nonexistent.xml');
     }
@@ -79,8 +81,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
      */
     public function testInvalidXmlThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid xml content");
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid xml content');
 
         $invalidXml = <<< XML
 No xml
@@ -95,8 +97,8 @@ XML;
      */
     public function testErrorInXmlThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\XmlParseException::class);
-        $this->expectExceptionMessage("An error occurred while parsing XML configuration file:");
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('An error occurred while parsing XML configuration file:');
 
         $xmlWithError = <<< XML
 <?xml version='1.0' standalone='yes'?>
@@ -117,8 +119,8 @@ XML;
      */
     public function testMultipleErrorsInXmlThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\XmlParseException::class);
-        $this->expectExceptionMessage("Some errors occurred while parsing XML configuration file:");
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('Some errors occurred while parsing XML configuration file:');
 
         $xmlWithErrors = <<< XML
 <?xml version='1.0' standalone='yes'?>

@@ -61,8 +61,8 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      * Overrides the parent setAttribute to support the isSlowOnly attribute.
      *
      * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
-     * @param mixed  $value
-     * 
+     * @param mixed $value
+     *
      * @return bool
      */
     public function setAttribute($attribute, $value)
@@ -82,11 +82,11 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    public function prepare(string $statement, array $driver_options = [])
+    public function prepare(string $statement, array $driverOptions = [])
     {
         $this->getProfiler()->start();
 
-        return parent::prepare($statement, $driver_options);
+        return parent::prepare($statement, $driverOptions);
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Propel\Runtime\Connection;
 use IteratorAggregate;
 use PDO;
 use PDOStatement;
+use Traversable;
 
 /**
  * Wraps a Statement class, providing logging.
@@ -304,7 +305,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return $this->statement;
     }
@@ -344,7 +345,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {
@@ -352,15 +353,15 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function fetchObject($class_name = "stdClass", array $ctor_args = array())
+    public function fetchObject($class_name = 'stdClass', array $ctor_args = [])
     {
         return $this->statement->fetchObject($class_name, $ctor_args);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function errorCode()
     {
@@ -368,7 +369,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function errorInfo()
     {
@@ -376,7 +377,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setAttribute($attribute, $value)
     {
@@ -384,7 +385,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getAttribute($attribute)
     {
@@ -392,7 +393,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getColumnMeta($column)
     {
@@ -400,15 +401,15 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = array())
+    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = [])
     {
         return $this->statement->setFetchMode($mode, $classNameObject, $ctorarfg);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function nextRowset()
     {
@@ -416,7 +417,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function debugDumpParams(): void
     {

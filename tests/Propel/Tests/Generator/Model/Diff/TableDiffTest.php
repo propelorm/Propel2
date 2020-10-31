@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Model\Diff;
 
 use PHPUnit\Framework\TestCase;
+use Propel\Generator\Exception\DiffException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
@@ -173,7 +174,7 @@ class TableDiffTest extends TestCase
      */
     public function testCantAddNonPrimaryKeyColumn()
     {
-        $this->expectException(\Propel\Generator\Exception\DiffException::class);
+        $this->expectException(DiffException::class);
 
         $diff = $this->createTableDiff();
         $diff->addAddedPkColumn('id', new Column('id', 'integer'));

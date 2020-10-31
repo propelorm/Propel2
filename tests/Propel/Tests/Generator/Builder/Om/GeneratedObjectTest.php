@@ -16,7 +16,7 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Collection\ObjectCollection;
-use \Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\AcctAuditLog;

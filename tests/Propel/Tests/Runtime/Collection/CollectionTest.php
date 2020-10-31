@@ -14,6 +14,7 @@ use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use UnexpectedValueException;
 
 /**
  * Test class for Collection.
@@ -140,7 +141,7 @@ class CollectionTest extends BookstoreTestBase
      */
     public function testGetUnknownOffset()
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
 
         $col = new Collection();
         $bar = $col->get('foo');
@@ -217,7 +218,7 @@ class CollectionTest extends BookstoreTestBase
      */
     public function testRemoveUnknownOffset()
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
 
         $col = new Collection();
         $col->remove(2);

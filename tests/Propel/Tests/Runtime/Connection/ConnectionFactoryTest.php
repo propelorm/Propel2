@@ -12,6 +12,7 @@ use PDO;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Tests\Helpers\BaseTestCase;
 
 class ConnectionFactoryTest extends BaseTestCase
@@ -21,7 +22,7 @@ class ConnectionFactoryTest extends BaseTestCase
      */
     public function testCreateFailsIfGivenIncorrectConfiguration()
     {
-        $this->expectException(\Propel\Runtime\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $con = ConnectionFactory::create([], new SqliteAdapter());
     }
@@ -97,7 +98,7 @@ class ConnectionFactoryTest extends BaseTestCase
      */
     public function testCreateFailsWhenPassedAnIncorrectAttributeName()
     {
-        $this->expectException(\Propel\Runtime\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $con = ConnectionFactory::create(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CAE' => PDO::CASE_LOWER]], new SqliteAdapter());
     }

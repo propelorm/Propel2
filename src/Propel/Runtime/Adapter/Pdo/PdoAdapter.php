@@ -611,7 +611,7 @@ abstract class PdoAdapter
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
-     * @param null|int $position The position of the parameter to bind
+     * @param int|null $position The position of the parameter to bind
      *
      * @return bool
      */

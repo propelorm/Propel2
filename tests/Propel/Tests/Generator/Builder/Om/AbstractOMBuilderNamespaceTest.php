@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
@@ -128,7 +129,7 @@ class AbstractOMBuilderNamespaceTest extends TestCase
      */
     public function testDeclareClassNamespaceDuplicateException()
     {
-        $this->expectException(\Propel\Generator\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $builder = new TestableOMBuilder2(new Table('fooTable'));
         $builder->declareClassNamespace('Bar');

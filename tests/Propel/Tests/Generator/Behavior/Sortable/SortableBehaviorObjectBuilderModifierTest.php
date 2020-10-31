@@ -8,10 +8,10 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
-use Propel\Runtime\Exception\PropelException;
 
 /**
  * Tests for SortableBehavior class

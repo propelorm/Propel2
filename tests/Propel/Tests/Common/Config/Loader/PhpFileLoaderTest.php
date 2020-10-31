@@ -8,6 +8,9 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\PhpFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
@@ -59,7 +62,7 @@ EOF;
      */
     public function testPhpFileDoesNotExist()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The file "inexistent.php" does not exist (in:');
 
         $this->loader->load('inexistent.php');
@@ -70,7 +73,7 @@ EOF;
      */
     public function testPhpFileHasInvalidContent()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(PropelInvalidArgumentException::class);
         $this->expectExceptionMessage("The configuration file 'nonvalid.php' has invalid content.");
 
         $content = <<<EOF
@@ -87,7 +90,7 @@ EOF;
      */
     public function testPhpFileIsEmpty()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(PropelInvalidArgumentException::class);
         $this->expectExceptionMessage("The configuration file 'empty.php' has invalid content.");
 
         $content = '';
@@ -103,7 +106,7 @@ EOF;
      */
     public function testConfigFileNotReadableThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectException(InputOutputException::class);
         $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.php.");
 
         $content = <<<EOF

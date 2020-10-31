@@ -8,6 +8,8 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\Loader\FileLoader as BaseFileLoader;
 use Propel\Tests\TestCase;
 
@@ -186,7 +188,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsExceptionIfInvalidPlaceholder()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Parameter 'baz' not found in configuration file.");
 
         $this->loader->resolveParams(['foo' => 'bar', '%baz%']);
@@ -197,7 +199,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsExceptionIfNonExistentParameter()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Parameter 'foobar' not found in configuration file.");
 
         $this->loader->resolveParams(['foo %foobar% bar']);
@@ -208,7 +210,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReference()
     {
-        $this->expectException(\Propel\Common\Config\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Circular reference detected for parameter 'bar'.");
 
         $this->loader->resolveParams(['foo' => '%bar%', 'bar' => '%foobar%', 'foobar' => '%foo%']);
@@ -219,7 +221,7 @@ class FileLoaderTest extends TestCase
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReferenceMixed()
     {
-        $this->expectException(\Propel\Common\Config\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Circular reference detected for parameter 'bar'.");
 
         $this->loader->resolveParams(['foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%']);
@@ -312,7 +314,7 @@ class FileLoaderTest extends TestCase
      */
     public function testNonExistentEnvironmentVariableThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Environment variable 'foo' is not defined.");
 
         putenv('home=myHome');
@@ -330,8 +332,8 @@ class FileLoaderTest extends TestCase
      */
     public function testParameterIsNotStringOrNumber()
     {
-        $this->expectException(\Propel\Common\Config\Exception\RuntimeException::class);
-        $this->expectExceptionMessage("A string value must be composed of strings and/or numbers,");
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A string value must be composed of strings and/or numbers,');
 
         $config = [
             'foo' => 'a %bar%',

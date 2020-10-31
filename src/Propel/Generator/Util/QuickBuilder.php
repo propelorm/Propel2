@@ -10,7 +10,6 @@ namespace Propel\Generator\Util;
 
 use Exception;
 use PDO;
-use PDOStatement;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -22,8 +21,8 @@ use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
-use Propel\Runtime\Connection\StatementWrapper;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Connection\StatementWrapper;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
@@ -520,7 +519,6 @@ class QuickBuilder
      */
     public function fixNamespaceDeclarations($source)
     {
-
         $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING];
 
         if (PHP_VERSION_ID >= 80000) {

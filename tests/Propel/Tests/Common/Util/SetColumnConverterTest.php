@@ -9,6 +9,7 @@
 namespace Propel\Tests\Common\Util;
 
 use PHPUnit\Framework\TestCase;
+use Propel\Common\Exception\SetColumnConverterException;
 use Propel\Common\Util\SetColumnConverter;
 
 /**
@@ -58,7 +59,7 @@ class SetColumnConverterTest extends TestCase
      */
     public function testConvertToIntValueNotInSet()
     {
-        $this->expectException(\Propel\Common\Exception\SetColumnConverterException::class);
+        $this->expectException(SetColumnConverterException::class);
 
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertToInt(['g'], $valueSet);
@@ -94,7 +95,7 @@ class SetColumnConverterTest extends TestCase
      */
     public function testConvertIntToArrayIntOutOfRange()
     {
-        $this->expectException(\Propel\Common\Exception\SetColumnConverterException::class);
+        $this->expectException(SetColumnConverterException::class);
 
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertIntToArray('65', $valueSet);

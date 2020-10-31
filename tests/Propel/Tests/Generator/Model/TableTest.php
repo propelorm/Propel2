@@ -592,7 +592,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddEmptyIndex()
     {
-        $this->expectException(\Propel\Generator\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $table = new Table();
         $table->addIndex(new Index());

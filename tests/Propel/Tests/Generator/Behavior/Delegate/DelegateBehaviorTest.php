@@ -14,6 +14,7 @@ use DelegateFootballer;
 use DelegateMain;
 use Map\DelegateDelegateTableMap;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Tests\TestCase;
 use SecondDelegateDelegate;
 use TestTablePrefixSameDatabaseMain;
@@ -198,7 +199,7 @@ EOF;
      */
     public function testAModelCannotHaveCascadingDelegates()
     {
-        $this->expectException(\Propel\Runtime\Exception\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $main = new DelegateMain();
         $main->setSummary('bar');

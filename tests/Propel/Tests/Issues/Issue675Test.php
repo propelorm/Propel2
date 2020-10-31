@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Issues;
 
+use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCaseFixtures;
 
@@ -27,7 +28,7 @@ class Issue675Test extends TestCaseFixtures
      */
     public function testIncompleteForeignReference()
     {
-        $this->expectException(\Propel\Generator\Exception\BuildException::class);
+        $this->expectException(BuildException::class);
 
         $schema = <<<EOF
 <?xml version="1.0" encoding="utf-8"?>

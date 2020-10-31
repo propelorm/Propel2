@@ -8,6 +8,9 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\XmlFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
@@ -60,7 +63,7 @@ XML;
      */
     public function testXmlFileDoesNotExist()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The file "inexistent.xml" does not exist (in:');
 
         $this->loader->load('inexistent.xml');
@@ -71,8 +74,8 @@ XML;
      */
     public function testXmlFileHasInvalidContent()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid xml content");
+        $this->expectException(PropelInvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid xml content');
 
         $content = <<<EOF
 not xml content
@@ -104,7 +107,7 @@ EOF;
      */
     public function testXmlFileNotReadableThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectException(InputOutputException::class);
         $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.xml.");
 
         $content = <<< XML

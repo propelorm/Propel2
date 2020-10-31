@@ -11,6 +11,7 @@ namespace Propel\Tests\Generator\Behavior\NestedSet;
 use Map\NestedSetTable10TableMap;
 use NestedSetTable10;
 use NestedSetTable10Query;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
 
 /**
@@ -30,7 +31,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
-        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        $this->expectException(PropelException::class);
 
         NestedSetTable10TableMap::doDeleteAll();
         $t1 = new NestedSetTable10();

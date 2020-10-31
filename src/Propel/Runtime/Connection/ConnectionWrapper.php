@@ -231,7 +231,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0 and $this->inTransaction()) {
+        if ($opcount > 0 && $this->inTransaction()) {
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new RollbackException('Cannot commit because a nested transaction was rolled back');
@@ -260,7 +260,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0 and $this->inTransaction()) {
+        if ($opcount > 0 && $this->inTransaction()) {
             if ($opcount === 1) {
                 $return = $this->connection->rollBack();
                 if ($this->useDebug) {
@@ -380,12 +380,12 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
      * @param string $statement This must be a valid SQL statement for the target database server.
-     * @param array $driver_options One $array or more key => value pairs to set attribute values
+     * @param array $driverOptions One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
      * @return \Propel\Runtime\Connection\StatementInterface|bool
      */
-    public function prepare(string $statement, array $driver_options = [])
+    public function prepare(string $statement, array $driverOptions = [])
     {
         $statementWrapper = null;
 
@@ -393,7 +393,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             $statementWrapper = $this->cachedPreparedStatements[$statement];
         } else {
             $statementWrapper = $this->createStatementWrapper($statement);
-            $statementWrapper->prepare($driver_options);
+            $statementWrapper->prepare($driverOptions);
             if ($this->isCachePreparedStatements) {
                 $this->cachedPreparedStatements[$statement] = $statementWrapper;
             }
@@ -464,16 +464,16 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * the underlying driver.
      *
      * @param string $string The string to be quoted.
-     * @param int $parameter_type Provides a data type hint for drivers that
+     * @param int $parameterType Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
      * @return string A quoted string that is theoretically safe to pass into an
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = 2)
+    public function quote($string, $parameterType = 2)
     {
-        return $this->connection->quote($string, $parameter_type);
+        return $this->connection->quote($string, $parameterType);
     }
 
     /**

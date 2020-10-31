@@ -11,7 +11,7 @@ namespace Propel\Runtime\Connection;
 use PDO;
 
 /**
- * Interface for Propel Connection object.
+ * Interface for Propel Connection class.
  * Based on the PDO interface.
  *
  * @see http://php.net/manual/en/book.pdo.php
@@ -164,15 +164,14 @@ interface ConnectionInterface
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement This must be a valid SQL statement for the target
-     *                               database server.
-     * @param array $driver_options
+     * @param string $statement This must be a valid SQL statement for the target database server.
+     * @param array $driverOptions
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
      * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool
      */
-    public function prepare(string $statement, array $driver_options = []);
+    public function prepare(string $statement, array $driverOptions = []);
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.

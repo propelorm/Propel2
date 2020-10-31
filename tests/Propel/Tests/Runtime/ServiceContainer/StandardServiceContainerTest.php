@@ -14,6 +14,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
@@ -331,7 +332,7 @@ class StandardServiceContainerTest extends BaseTestCase
      */
     public function testGetConnectionManagerWithUnknownDatasource()
     {
-        $this->expectException(\Propel\Runtime\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->sc->getConnectionManager('unknown');
     }

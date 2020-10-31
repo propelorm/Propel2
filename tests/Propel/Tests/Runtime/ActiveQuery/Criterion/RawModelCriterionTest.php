@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
 use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
 use Propel\Tests\Helpers\BaseTestCase;
 
@@ -25,7 +26,7 @@ class RawModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenClauseHasNoQuestionMark()
     {
-        $this->expectException(\Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException::class);
+        $this->expectException(InvalidClauseException::class);
 
         $cton = new RawModelCriterion(new Criteria(), 'A.COL = BAR', 'A.COL', 1, null, PDO::PARAM_INT);
 

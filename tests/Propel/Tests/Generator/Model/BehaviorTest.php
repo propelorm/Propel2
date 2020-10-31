@@ -9,6 +9,8 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Exception\BehaviorNotFoundException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
 use Propel\Tests\Helpers\MultipleBehavior;
@@ -60,7 +62,7 @@ class BehaviorTest extends TestCase
      */
     public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
     {
-        $this->expectException(\Propel\Generator\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $b = new Behavior();
         $b->loadMapping(['name' => 'foo', 'id' => 'lala']);
@@ -148,7 +150,7 @@ EOF;
    */
     public function testUnknownBehavior()
     {
-        $this->expectException(\Propel\Generator\Exception\BehaviorNotFoundException::class);
+        $this->expectException(BehaviorNotFoundException::class);
 
         $schemaReader = new SchemaReader();
         $schema = <<<EOF

@@ -8,8 +8,8 @@
 
 namespace Propel\Generator\Util;
 
-use \Propel\Runtime\Connection\ConnectionInterface;
-use \Propel\Runtime\Connection\StatementInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Service class for parsing a large SQL string into an array of SQL statements

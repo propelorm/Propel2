@@ -437,7 +437,6 @@ EOF;
     }
 
     /**
-     *
      * @return void
      */
     public function testNotDefineDatabaseSectionTrowsException()
@@ -457,7 +456,6 @@ EOF;
     }
 
     /**
-     *
      * @return void
      */
     public function testDotInConnectionNamesArentAccepted()
@@ -648,7 +646,6 @@ EOF;
     }
 
     /**
-     *
      * @return void
      */
     public function testGetConfigPropertyBadNameThrowsException()

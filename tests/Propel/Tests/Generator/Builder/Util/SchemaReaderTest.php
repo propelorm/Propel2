@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Builder\Util;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Exception\SchemaException;
 use Propel\Tests\TestCase;
 
 class SchemaReaderTest extends TestCase
@@ -62,7 +63,7 @@ EOF;
      */
     public function testParseStringIncorrectSchema()
     {
-        $this->expectException(\Propel\Generator\Exception\SchemaException::class);
+        $this->expectException(SchemaException::class);
 
         $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>');
     }

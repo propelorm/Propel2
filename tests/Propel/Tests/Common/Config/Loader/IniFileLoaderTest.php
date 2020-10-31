@@ -8,6 +8,10 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\IniParseException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\IniFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
@@ -59,7 +63,7 @@ EOF;
      */
     public function testIniFileDoesNotExist()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The file "inexistent.ini" does not exist (in:');
 
         $this->loader->load('inexistent.ini');
@@ -70,7 +74,7 @@ EOF;
      */
     public function testIniFileHasInvalidContent()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InvalidArgumentException::class);
+        $this->expectException(PropelInvalidArgumentException::class);
         $this->expectExceptionMessage("The configuration file 'nonvalid.ini' has invalid content.");
 
         $content = <<<EOF
@@ -165,7 +169,7 @@ EOF;
      */
     public function testInvalidSectionThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\IniParseException::class);
+        $this->expectException(IniParseException::class);
         $this->expectExceptionMessage('Invalid key ".foo"');
 
         $content = <<<EOF
@@ -182,7 +186,7 @@ EOF;
      */
     public function testInvalidParamThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\IniParseException::class);
+        $this->expectException(IniParseException::class);
         $this->expectExceptionMessage('Invalid key "foo."');
 
         $content = <<<EOF
@@ -199,7 +203,7 @@ EOF;
      */
     public function testAlreadyExistentParamThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\IniParseException::class);
+        $this->expectException(IniParseException::class);
         $this->expectExceptionMessage('Cannot create sub-key for "foo", as key already exists');
 
         $content = <<<EOF
@@ -232,7 +236,7 @@ EOF;
      */
     public function testIniFileNotReadableThrowsException()
     {
-        $this->expectException(\Propel\Common\Config\Exception\InputOutputException::class);
+        $this->expectException(InputOutputException::class);
         $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.ini.");
 
         $content = <<<EOF

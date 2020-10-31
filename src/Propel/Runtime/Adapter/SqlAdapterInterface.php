@@ -8,8 +8,8 @@
 
 namespace Propel\Runtime\Adapter;
 
-use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 

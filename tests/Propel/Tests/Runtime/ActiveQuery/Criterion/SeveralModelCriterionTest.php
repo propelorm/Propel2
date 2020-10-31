@@ -9,6 +9,7 @@
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException;
 use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
 use Propel\Tests\Helpers\BaseTestCase;
 
@@ -43,7 +44,7 @@ class SeveralModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenOneOfTheValuesIsNull()
     {
-        $this->expectException(\Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException::class);
+        $this->expectException(InvalidValueException::class);
 
         $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', ['foo', null]);
 
@@ -57,7 +58,7 @@ class SeveralModelCriterionTest extends BaseTestCase
      */
     public function testAppendPsToThrowsExceptionWhenTheValueIsNull()
     {
-        $this->expectException(\Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException::class);
+        $this->expectException(InvalidValueException::class);
 
         $cton = new SeveralModelCriterion(new Criteria(), 'A.COL BETWEEN ? AND ?', 'A.COL', null);
 

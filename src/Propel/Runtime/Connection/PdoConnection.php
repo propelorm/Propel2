@@ -32,12 +32,12 @@ class PdoConnection implements ConnectionInterface
     /**
      * Forward any call to a method not found to the proxied connection.
      *
-     * @param $method
-     * @param $args
+     * @param string $method
+     * @param mixed $args
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, $args)
     {
         return call_user_func_array([$this->pdo, $method], $args);
     }
@@ -70,17 +70,17 @@ class PdoConnection implements ConnectionInterface
      */
     public function __construct(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null)
     {
-        // Convert option keys from a string to a \PDO:: constant
+        // Convert option keys from a string to a PDO:: constant
         $pdoOptions = [];
         if (is_array($options)) {
             foreach ($options as $key => $option) {
-                $index = (is_numeric($key)) ? $key : constant('\PDO::' . $key);
+                $index = (is_numeric($key)) ? $key : constant('PDO::' . $key);
                 $pdoOptions[$index] = $option;
             }
         }
 
-        $this->pdo = new \PDO($dsn, $user, $password, $pdoOptions);
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($dsn, $user, $password, $pdoOptions);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -143,7 +143,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function inTransaction()
     {
@@ -151,7 +151,7 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getAttribute(int $attribute)
     {
@@ -172,13 +172,13 @@ class PdoConnection implements ConnectionInterface
      * Overwrite. Fixes HHVM strict issue.
      *
      * @param string $statement
-     * @param array $driver_options
+     * @param array $driverOptions
      *
      * @return \PDOStatement|bool
      */
-    public function prepare(string $statement, array $driver_options = [])
+    public function prepare(string $statement, array $driverOptions = [])
     {
-        return $this->pdo->prepare($statement, $driver_options);
+        return $this->pdo->prepare($statement, $driverOptions);
     }
 
     /**
@@ -189,9 +189,9 @@ class PdoConnection implements ConnectionInterface
      *
      * @return string
      */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR)
+    public function quote($string, $parameterType = PDO::PARAM_STR)
     {
-        return $this->pdo->quote($string, $parameter_type);
+        return $this->pdo->quote($string, $parameterType);
     }
 
     /**
