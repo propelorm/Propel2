@@ -49,25 +49,26 @@ jobs:
       services:
       addons:
         mariadb: 10.1
-
-    - php: 7.2
-      env: DB=mysql MARIADB=10.2
-      addons:
-        mariadb: 10.2
-    - php: 7.4
-      env: DB=mysql MARIADB=10.2
-      addons:
-        mariadb: 10.2
-    - php: 7.4
+    - php: nightly
       dist: trusty
       env: DB=mysql MARIADB=10.1
       services:
       addons:
         mariadb: 10.1
+
+    - php: 7.2
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
     - php: 7.4
       env: DB=mysql MARIADB=10.2
       addons:
         mariadb: 10.2
+    - php: nightly
+      env: DB=mysql MARIADB=10.2
+      addons:
+        mariadb: 10.2
+
     - php: 7.2
       env: DB=mysql MARIADB=10.3
       addons:
@@ -76,6 +77,11 @@ jobs:
       env: DB=mysql MARIADB=10.3
       addons:
         mariadb: 10.3
+    - php: nightly
+      env: DB=mysql MARIADB=10.3
+      addons:
+        mariadb: 10.3
+
     - php: 7.2
       env: DB=mysql MARIADB=10.4 DB_USER=travis
       addons:
@@ -96,12 +102,26 @@ jobs:
         - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
         - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
         - ./tests/bin/setup.$DB.sh
+    - php: nightly
+      env: DB=mysql MARIADB=10.4 DB_USER=travis
+      addons:
+        mariadb: 10.4
+      before_script:
+        - sudo mysql -e 'drop user if exists travis@localhost;'
+        - sudo mysql -e 'create user travis@localhost;'
+        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
+        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
+        - ./tests/bin/setup.$DB.sh
 
     - php: 7.2
       env: DB=pgsql POSTGRES=9.5
       addons:
         postgresql: 9.5
     - php: 7.4
+      env: DB=pgsql POSTGRES=9.5
+      addons:
+        postgresql: 9.5
+    - php: nightly
       env: DB=pgsql POSTGRES=9.5
       addons:
         postgresql: 9.5
@@ -114,6 +134,11 @@ jobs:
       env: DB=pgsql POSTGRES=9.6
       addons:
         postgresql: 9.6
+    - php: nightly
+      env: DB=pgsql POSTGRES=9.6
+      addons:
+        postgresql: 9.6
+
     - php: 7.2
       env: DB=pgsql POSTGRES=10
       addons:
@@ -122,6 +147,11 @@ jobs:
       env: DB=pgsql POSTGRES=10
       addons:
         postgresql: 10
+    - php: nightly
+      env: DB=pgsql POSTGRES=10
+      addons:
+        postgresql: 10
+
     - php: 7.2
       env: DB=pgsql POSTGRES=11
       addons:
@@ -130,6 +160,11 @@ jobs:
       env: DB=pgsql POSTGRES=11
       addons:
         postgresql: 11
+    - php: nightly
+      env: DB=pgsql POSTGRES=11
+      addons:
+        postgresql: 11
+
     - php: 7.2
       env: DB=pgsql POSTGRES=12 PGPORT=5432
       addons:
@@ -162,37 +197,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - composer install -v
         - composer show
-    - php: 7.4
-      env: DB=mysql MARIADB=10.3
-      addons:
-        mariadb: 10.3
-    - php: 7.4
-      env: DB=mysql MARIADB=10.4 DB_USER=travis
-      addons:
-        mariadb: 10.4
-      before_script:
-        - sudo mysql -e 'drop user if exists travis@localhost;'
-        - sudo mysql -e 'create user travis@localhost;'
-        - sudo mysql -e "GRANT ALL PRIVILEGES ON db.* TO 'travis'@'localhost'";
-        - sudo mysql -e "GRANT ALL ON *.* to travis@localhost;";
-        - ./tests/bin/setup.$DB.sh
-    - php: 7.4
-      env: DB=pgsql POSTGRES=9.5
-      addons:
-        postgresql: 9.5
-    - php: 7.4
-      env: DB=pgsql POSTGRES=9.6
-      addons:
-        postgresql: 9.6
-    - php: 7.4
-      env: DB=pgsql POSTGRES=10
-      addons:
-        postgresql: 10
-    - php: 7.4
-      env: DB=pgsql POSTGRES=11
-      addons:
-        postgresql: 11
-    - php: 7.4
+    - php: nightly
       env: DB=pgsql POSTGRES=12 PGPORT=5432
       addons:
         postgresql: 12
@@ -223,6 +228,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
         - composer show
+
     - name: "PHP 7.4, Agnostic, Symfony ~4"
       php: 7.4
       env: DB=agnostic
@@ -237,6 +243,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
         - composer show
+
     - name: "PHP 7.4, Agnostic, Symfony ~5"
       php: 7.4
       env: DB=agnostic
@@ -266,6 +273,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
         - composer show
+
     - name: "PHP 7.4, MySql, Symfony ~4"
       php: 7.4
       env: DB=mysql
@@ -280,6 +288,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
         - composer show
+
     - name: "PHP 7.4, MySql, Symfony ~5"
       php: 7.4
       env: DB=mysql
@@ -290,95 +299,11 @@ jobs:
     - name: "PHP 7.4, MySql, Symfony ^5"
       php: 7.4
       env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ~3"
-      php: 7.4
-      env: DB=agnostic
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ^3"
-      php: 7.4
-      env: DB=agnostic
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ~4"
-      php: 7.4
-      env: DB=agnostic
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ^4"
-      php: 7.4
-      env: DB=agnostic
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ~5"
-      php: 7.4
-      env: DB=agnostic
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
-        - composer show
-    - name: "PHP 7.4, Agnostic, Symfony ^5"
-      php: 7.4
-      env: DB=agnostic
       install:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
         - composer show
 
-    - name: "PHP 7.4, MySql, Symfony ~3"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony3-min.json composer install
-        - composer show
-    - name: "PHP 7.4, MySql, Symfony ^3"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
-        - composer show
-    - name: "PHP 7.4, MySql, Symfony ~4"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
-        - composer show
-    - name: "PHP 7.4, MySql, Symfony ^4"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
-        - composer show
-    - name: "PHP 7.4, MySql, Symfony ~5"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony5-min.json composer install
-        - composer show
-    - name: "PHP 7.4, MySql, Symfony ^5"
-      php: 7.4
-      env: DB=mysql
-      install:
-        - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-        - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
-        - composer show
     - name: "PHP 7.2, Agnostic, Symfony ~3"
       php: 7.2
       env: DB=agnostic
@@ -393,6 +318,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
         - composer show
+
     - name: "PHP 7.2, Agnostic, Symfony ~4"
       php: 7.2
       env: DB=agnostic
@@ -407,6 +333,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
         - composer show
+
     - name: "PHP 7.2, Agnostic, Symfony ~5"
       php: 7.2
       env: DB=agnostic
@@ -436,6 +363,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony3-max.json composer install
         - composer show
+
     - name: "PHP 7.2, MySql, Symfony ~4"
       php: 7.2
       env: DB=mysql
@@ -443,7 +371,6 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony4-min.json composer install
         - composer show
-
     - name: "PHP 7.2, MySql, Symfony ^4"
       php: 7.2
       env: DB=mysql
@@ -451,6 +378,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony4-max.json composer install
         - composer show
+
     - name: "PHP 7.2, MySql, Symfony ~5"
       php: 7.2
       env: DB=mysql
@@ -465,6 +393,7 @@ jobs:
         - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
         - COMPOSER=./tests/composer/composer-symfony5-max.json composer install
         - composer show
+
     - name: Checks
       php: 7.4
       env: DB=agnostic CHECKS=1
