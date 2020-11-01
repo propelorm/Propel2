@@ -291,6 +291,11 @@ parameters:
 			path: src/Propel/Generator/Model/ForeignKey.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between int\\<1, max\\> and 0 will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/MappingModel.php
+
+		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Schema.php
@@ -522,16 +527,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Parameter \\#1 \\$values \\(array\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:doUpdate\\(\\) should be compatible with parameter \\$updateValues \\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:doUpdate\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
