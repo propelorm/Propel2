@@ -148,8 +148,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int The number of rows that were modified or deleted by the SQL
-     *             statement you issued. If no rows were affected, returns 0.
+     * @return mixed The number of rows that were modified or deleted.
      */
     public function exec($statement);
 
@@ -181,7 +180,7 @@ interface ConnectionInterface
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|bool
      */
     public function query($statement);
 

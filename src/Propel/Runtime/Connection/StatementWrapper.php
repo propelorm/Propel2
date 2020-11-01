@@ -102,22 +102,22 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
-     * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $variable The value to bind to the parameter.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      * @param int $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param mixed $driver_options
+     * @param mixed $driverOptions
      *
      * @return bool
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null)
     {
-        $return = $this->statement->bindParam($pos, $value, $type, $length, $driver_options);
+        $return = $this->statement->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-            $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
-            $this->boundValues[$pos] = $valuestr;
-            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $valuestr = $length > 100 ? '[Large value]' : var_export($variable, true);
+            $this->boundValues[$parameter] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
 
@@ -128,20 +128,20 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR)
     {
-        $return = $this->statement->bindValue($pos, $value, $type);
+        $return = $this->statement->bindValue($parameter, $value, $dataType);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-            $valuestr = $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
-            $this->boundValues[$pos] = $valuestr;
-            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $valuestr = $dataType == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
+            $this->boundValues[$parameter] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
 
@@ -195,15 +195,15 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param array|null $input_parameters
+     * @param array|null $inputParameters
      *
      * @return bool
      */
-    public function execute($input_parameters = null)
+    public function execute($inputParameters = null)
     {
-        $return = $this->statement->execute($input_parameters);
+        $return = $this->statement->execute($inputParameters);
         if ($this->connection->useDebug) {
-            $sql = $this->getExecutedQueryString($input_parameters);
+            $sql = $this->getExecutedQueryString($inputParameters);
             $this->connection->log($sql);
             $this->connection->setLastExecutedQuery($sql);
             $this->connection->incrementQueryCount();
@@ -213,11 +213,11 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     }
 
     /**
-     * @param array|null $input_parameters
+     * @param array|null $inputParameters
      *
      * @return string
      */
-    public function getExecutedQueryString($input_parameters = null)
+    public function getExecutedQueryString($inputParameters = null)
     {
         $sql = $this->statement->queryString;
         $matches = [];
@@ -228,8 +228,8 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
                 if (isset($this->boundValues[$pos])) {
                     $sql = str_replace($pos, $this->boundValues[$pos], $sql);
                 }
-                if ($input_parameters && isset($input_parameters[$pos])) {
-                    $sql = str_replace($pos, $input_parameters[$pos], $sql);
+                if ($inputParameters && isset($inputParameters[$pos])) {
+                    $sql = str_replace($pos, $inputParameters[$pos], $sql);
                 }
             }
         }
@@ -275,7 +275,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * value is supplied, PDOStatement->fetchColumn()
      * fetches the first column.
      *
-     * @return string A single column in the next row of a result set.
+     * @return string|null A single column in the next row of a result set.
      */
     public function fetchColumn($columnIndex = 0)
     {
@@ -355,9 +355,9 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function fetchObject($class_name = 'stdClass', array $ctor_args = [])
+    public function fetchObject($className = 'stdClass', array $ctorArgs = [])
     {
-        return $this->statement->fetchObject($class_name, $ctor_args);
+        return $this->statement->fetchObject($className, $ctorArgs);
     }
 
     /**

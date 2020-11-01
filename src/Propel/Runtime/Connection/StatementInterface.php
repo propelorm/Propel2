@@ -23,37 +23,35 @@ interface StatementInterface
     /**
      * Executes a prepared statement
      *
-     * @param array|null $input_parameters
-     *
-     * @throws \PDOException On error if PDO::ERRMODE_EXCEPTION option is true.
+     * @param array|null $inputParameters
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute($input_parameters = null);
+    public function execute($inputParameters = null);
 
     /**
      * Fetches the next row from a result set
      *
-     * @param int|null $fetch_style Controls how the next row will be returned to the caller.
-     * @param int $cursor_orientation This value determines which row will be returned to the caller.
-     * @param int $cursor_offset
+     * @param int|null $fetchStyle Controls how the next row will be returned to the caller.
+     * @param int $cursorOrientation This value determines which row will be returned to the caller.
+     * @param int $cursorOffset
      *
      * @return mixed
      */
-    public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0);
+    public function fetch($fetchStyle = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0);
 
     /**
      * Binds a parameter to the specified variable name
      *
      * @param mixed $parameter Parameter identifier.
      * @param mixed $variable Name of the PHP variable to bind to the SQL statement parameter.
-     * @param int $data_type Explicit data type for the parameter using the PDO::PARAM_* constants.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants.
      * @param int|null $length Length of the data type.
-     * @param mixed $driver_options
+     * @param mixed $driverOptions
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null);
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = null, $driverOptions = null);
 
     /**
      * Bind a column to a PHP variable
@@ -73,11 +71,11 @@ interface StatementInterface
      *
      * @param mixed $parameter Parameter identifier.
      * @param mixed $value The value to bind to the parameter.
-     * @param int $data_type Explicit data type for the parameter using the PDO::PARAM_* constants.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants.
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR);
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR);
 
     /**
      * Returns the number of rows affected by the last SQL statement
@@ -91,30 +89,30 @@ interface StatementInterface
      *
      * @param int $column_number 0-indexed number of the column you wish to retrieve from the row.
      *
-     * @return mixed Returns a single column from the next row of a result set or FALSE if there are no more rows.
+     * @return string|null Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
     public function fetchColumn($column_number = 0);
 
     /**
      * Returns an array containing all of the result set rows
      *
-     * @param int|null $fetch_style Controls the contents of the returned array as documented in PDOStatement::fetch.
-     * @param mixed $fetch_argument This argument have a different meaning depending on the value of the fetch_style
-     * @param array $ctor_args Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS.
+     * @param int|null $fetchStyle Controls the contents of the returned array as documented in PDOStatement::fetch.
+     * @param mixed $fetchArgument This argument have a different meaning depending on the value of the fetch_style
+     * @param array $ctorArgs Arguments of custom class constructor when the fetch_style parameter is PDO::FETCH_CLASS.
      *
      * @return array returns an array containing all of the remaining rows in the result set.
      */
-    public function fetchAll($fetch_style = null, $fetch_argument = null, array $ctor_args = []);
+    public function fetchAll($fetchStyle = null, $fetchArgument = null, array $ctorArgs = []);
 
     /**
      * Fetches the next row and returns it as an object.
      *
-     * @param string $class_name Name of the created class.
-     * @param array $ctor_args Elements of this array are passed to the constructor.
+     * @param string $className Name of the created class.
+     * @param array $ctorArgs Elements of this array are passed to the constructor.
      *
      * @return mixed
      */
-    public function fetchObject($class_name = 'stdClass', array $ctor_args = []);
+    public function fetchObject($className = 'stdClass', array $ctorArgs = []);
 
     /**
      * Fetch the SQLSTATE associated with the last operation on the statement handle

@@ -126,6 +126,8 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * @inheritDoc
+     *
+     * @return \PDOStatement|bool
      */
     public function query($statement)
     {
@@ -134,6 +136,8 @@ class PdoConnection implements ConnectionInterface
 
     /**
      * @inheritDoc
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function exec($statement)
     {

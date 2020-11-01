@@ -364,7 +364,7 @@ class TestableFileLoader extends BaseFileLoader
     /**
      * @return void
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null)
     {
     }
 
