@@ -30,7 +30,7 @@ class PdoConnection implements ConnectionInterface
     protected $pdo;
 
     /**
-     * Forward any call to a method not found to the proxied connection.
+     * Forward any calls to an inaccessible method to the proxied connection.
      *
      * @param string $method
      * @param mixed $args

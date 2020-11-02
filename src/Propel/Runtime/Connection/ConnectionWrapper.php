@@ -407,12 +407,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * Execute an SQL statement and return the number of affected rows.
-     * Overrides PDO::exec() to log queries when required
-     *
-     * @param string $sql
-     *
-     * @return int
+     * @inehritDoc
      */
     public function exec($sql)
     {

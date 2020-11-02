@@ -21,14 +21,14 @@ use PDO;
 interface ConnectionInterface
 {
     /**
-     * @param string $name The datasource name associated to this connection
+     * @param string $name The datasource name associated to this connection.
      *
      * @return void
      */
     public function setName($name);
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string The datasource name associated to this connection.
      */
     public function getName();
 
@@ -78,7 +78,7 @@ interface ConnectionInterface
      * Retrieve a database connection attribute.
      *
      * @param int $attribute The name of the attribute to retrieve,
-     *                          e.g. PDO::ATTR_AUTOCOMMIT
+     *                          e.g. PDO::ATTR_AUTOCOMMIT.
      *
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
@@ -134,7 +134,7 @@ interface ConnectionInterface
      *
      * In case you want the transaction to rollback just throw an Exception of any type.
      *
-     * @param callable $callable A callable to be wrapped in a transaction
+     * @param callable $callable A callable to be wrapped in a transaction.
      *
      * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      *
@@ -148,7 +148,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return mixed The number of rows that were modified or deleted.
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface The number of rows that were modified or deleted.
      */
     public function exec($statement);
 
