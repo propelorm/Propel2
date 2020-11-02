@@ -402,6 +402,7 @@ jobs:
         - composer install --prefer-dist --no-interaction
       script:
         - composer stan
+        - composer psalm
         - composer cs-check
 
   fast_finish: true
