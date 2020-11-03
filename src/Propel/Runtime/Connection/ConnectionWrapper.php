@@ -407,15 +407,15 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * @inehritDoc
+     * @inheritDoc
      */
-    public function exec($sql)
+    public function exec($statement)
     {
-        $return = $this->connection->exec($sql);
+        $return = $this->connection->exec($statement);
 
         if ($this->useDebug) {
-            $this->log($sql);
-            $this->setLastExecutedQuery($sql);
+            $this->log($statement);
+            $this->setLastExecutedQuery($statement);
             $this->incrementQueryCount();
         }
 
@@ -433,7 +433,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return \PDOStatement
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function query($statement)
     {

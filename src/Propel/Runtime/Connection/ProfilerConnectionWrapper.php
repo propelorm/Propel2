@@ -92,11 +92,11 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    public function exec($sql)
+    public function exec($statement)
     {
         $this->getProfiler()->start();
 
-        return parent::exec($sql);
+        return parent::exec($statement);
     }
 
     /**
