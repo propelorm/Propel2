@@ -4105,11 +4105,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $varName = $this->getFKVarName($fk);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param  $className \$v
+     * @param  {$className}{$orNull} \$v
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws PropelException
      */
@@ -4231,13 +4233,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $localColumns = count($localColumns) > 1 ?
             ('array(' . implode(', ', $localColumns) . ')') : reset($localColumns);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
 
     /**
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className $returnDesc
+     * @return {$className}{$orNull} $returnDesc
      * @throws PropelException
      */
     public function get" . $this->getFKPhpNameAffix($fk, false) . "(ConnectionInterface \$con = null)
