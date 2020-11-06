@@ -556,16 +556,17 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param bool $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * Not supported by ArrayCollection, as ArrayFormatter has
      * already included lazy-load columns in the array used here.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      *
      * @return string The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns);
+        $array = $this->toArray(null, $usePrefix, $keyType, $includeLazyLoadColumns);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }
@@ -594,8 +595,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             $format = substr($name, 2);
             $usePrefix = isset($params[0]) ? $params[0] : false;
             $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
+            $keyType = isset($params[2]) ? $params[2] : TableMap::TYPE_PHPNAME;
 
-            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
+            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns, $keyType);
         }
 
         throw new BadMethodCallException('Call to undefined method: ' . $name);
