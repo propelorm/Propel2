@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Tests\Helpers\BaseTestCase;
 
@@ -133,12 +134,12 @@ class BasicCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidValueException
-     *
      * @return void
      */
     public function testAppendPsThrowsExceptionWhenValueIsNullAndComparisonIsComplex()
     {
+        $this->expectException(InvalidValueException::class);
+
         $cton = new BasicCriterion(new Criteria(), 'A.COL', null, Criteria::GREATER_THAN);
 
         $params = [];

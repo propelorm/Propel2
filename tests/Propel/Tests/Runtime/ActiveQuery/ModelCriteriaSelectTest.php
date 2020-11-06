@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\OnDemandFormatter;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -26,23 +27,23 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 class ModelCriteriaSelectTest extends BookstoreTestBase
 {
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSelectThrowsExceptionWhenCalledWithAnEmptyString()
     {
+        $this->expectException(PropelException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select('');
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSelectThrowsExceptionWhenCalledWithAnEmptyArray()
     {
+        $this->expectException(PropelException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select([]);
     }
@@ -153,12 +154,12 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
      * As $failSilently is true by default, it doesn't throw any exception, just returns null.
      * So, we check the query fails here.
      *
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSelectStringFindCalledWithNonExistingColumn()
     {
+        $this->expectException(PropelException::class);
+
         BookstoreDataPopulator::depopulate($this->con);
         BookstoreDataPopulator::populate($this->con);
 

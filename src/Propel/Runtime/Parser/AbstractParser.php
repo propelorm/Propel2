@@ -43,14 +43,14 @@ abstract class AbstractParser
     abstract public function toArray($data, $rootKey = 'data');
 
     /**
-     * @param array $data
+     * @param array $array
      * @param string|null $rootKey
      *
      * @return string
      */
-    public function listFromArray($data, $rootKey = 'data')
+    public function listFromArray($array, $rootKey = 'data')
     {
-        return $this->fromArray($data, $rootKey);
+        return $this->fromArray($array, $rootKey);
     }
 
     /**

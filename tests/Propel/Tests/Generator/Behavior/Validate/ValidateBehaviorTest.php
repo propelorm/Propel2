@@ -9,6 +9,8 @@
 namespace Propel\Tests\Generator\Behavior\Validate;
 
 use Exception;
+use Propel\Generator\Exception\ConstraintNotFoundException;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\Bookstore\Behavior\ValidateAuthor;
 use Propel\Tests\Bookstore\Behavior\ValidateBook;
@@ -103,13 +105,13 @@ class ValidateBehaviorTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Please, define your rules for validation.
-     *
      * @return void
      */
     public function testParametersNotDefined()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please, define your rules for validation.');
+
         $schema = <<<EOF
 <database name="bookstore-behavior">
   <table name="validate_author" description="Author Table">
@@ -123,13 +125,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Please, define the column to validate.
-     *
      * @return void
      */
     public function testColumnNameNotDefined()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please, define the column to validate.');
+
         $schema = <<<EOF
 <database name="bookstore-behavior">
   <table name="validate_author" description="Author Table">
@@ -146,13 +148,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Please, define the validator constraint.
-     *
      * @return void
      */
     public function testValidatorNameNotDefined()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please, define the validator constraint.');
+
         $schema = <<<EOF
 <database name="bookstore-behavior">
   <table name="validate_author" description="Author Table">
@@ -169,13 +171,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\ConstraintNotFoundException
-     * @expectedExceptionMessage The constraint class MaximumLength does not exist.
-     *
      * @return void
      */
     public function testConstraintNameNotValid()
     {
+        $this->expectException(ConstraintNotFoundException::class);
+        $this->expectExceptionMessage('The constraint class MaximumLength does not exist.');
+
         $schema = <<<EOF
 <database name="bookstore-behavior">
   <table name="validate_author" description="Author Table">
@@ -192,13 +194,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The options value, in <parameter> tag must be an array
-     *
      * @return void
      */
     public function testConstraintOptionsNotValid()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The options value, in <parameter> tag must be an array');
+
         $schema = <<<EOF
 <database name="bookstore-behavior">
   <table name="validate_author" description="Author Table">

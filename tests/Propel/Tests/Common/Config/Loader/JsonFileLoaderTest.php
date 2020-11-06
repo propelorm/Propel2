@@ -8,6 +8,9 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\JsonParseException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\JsonFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
@@ -54,23 +57,23 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.json" does not exist (in:
-     *
      * @return void
      */
     public function testJsonFileDoesNotExist()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.json" does not exist (in:');
+
         $this->loader->load('inexistent.json');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\JsonParseException
-     *
      * @return void
      */
     public function testJsonFileHasInvalidContent()
     {
+        $this->expectException(JsonParseException::class);
+
         $content = <<<EOF
 not json content
 only plain
@@ -95,15 +98,15 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.json.
-     *
      * @requires OS ^(?!Win.*)
      *
      * @return void
      */
     public function testJsonFileNotReadableThrowsException()
     {
+        $this->expectException(InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.json.");
+
         $content = <<<EOF
 {
   "foo": "bar",

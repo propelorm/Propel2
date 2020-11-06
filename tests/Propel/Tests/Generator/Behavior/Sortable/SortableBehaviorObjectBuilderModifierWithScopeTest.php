@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Behavior\Map\SortableMultiCommaScopesTableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableMultiScopesTableMap;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
@@ -176,24 +177,24 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInsertAtNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->setScopeValue(1);
         $t->insertAtRank(0);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInsertAtOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->setScopeValue(1);
         $t->insertAtRank(6);
@@ -320,34 +321,34 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToNewObject()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table12();
         $t->moveToRank(2);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = SortableTable12Query::retrieveByRank(2, 1);
         $t->moveToRank(0);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = SortableTable12Query::retrieveByRank(2, 1);
         $t->moveToRank(5);
     }
@@ -478,12 +479,12 @@ class SortableBehaviorObjectBuilderModifierWithScopeTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testRemoveFromListNoScope()
     {
+        $this->expectException(PropelException::class);
+
         $t2 = SortableTable12Query::retrieveByRank(2);
         $t2->removeFromList();
     }

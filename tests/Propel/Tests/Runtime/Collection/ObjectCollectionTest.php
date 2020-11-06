@@ -10,6 +10,8 @@ namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
@@ -47,12 +49,12 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
@@ -61,12 +63,12 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
@@ -173,13 +175,13 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
-     * @expectedExceptionMessage Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection
-     *
      * @return void
      */
     public function testPopulateRelationWhenInstancePoolingIsDisabled()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection');
+
         $coll = new ObjectCollection();
 
         Propel::disableInstancePooling();

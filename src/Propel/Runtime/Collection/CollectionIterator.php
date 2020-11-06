@@ -229,20 +229,26 @@ class CollectionIterator extends ArrayIterator
     }
 
     /**
+     * @param int $sort_flags
+     *
      * @return void
      */
-    public function asort()
+    public function asort($sort_flags = SORT_REGULAR)
     {
-        parent::asort();
+        /* @phpstan-ignore-next-line */
+        parent::asort($sort_flags);
         $this->refreshPositions();
     }
 
     /**
+     * @param int $sort_flags
+     *
      * @return void
      */
-    public function ksort()
+    public function ksort($sort_flags = SORT_REGULAR)
     {
-        parent::ksort();
+        /* @phpstan-ignore-next-line */
+        parent::ksort($sort_flags);
         $this->refreshPositions();
     }
 

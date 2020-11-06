@@ -20,7 +20,6 @@ use Propel\Tests\TestCaseFixtures;
  */
 class Issue1659Test extends TestCaseFixtures
 {
-
     /**
      * Test non-primary foreign key references
      * foreign table have composite primary key
