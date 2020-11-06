@@ -9,6 +9,7 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
@@ -164,12 +165,12 @@ class CriteriaMergeTest extends TestCaseFixtures
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testMergeWithAsColumnsThrowsException()
     {
+        $this->expectException(LogicException::class);
+
         $c1 = new Criteria();
         $c1->addAsColumn('foo', BookTableMap::COL_TITLE);
         $c2 = new Criteria();
@@ -427,12 +428,12 @@ class CriteriaMergeTest extends TestCaseFixtures
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testMergeWithAliasesThrowsException()
     {
+        $this->expectException(LogicException::class);
+
         $c1 = new Criteria();
         $c1->addAlias('b', BookTableMap::TABLE_NAME);
         $c2 = new Criteria();

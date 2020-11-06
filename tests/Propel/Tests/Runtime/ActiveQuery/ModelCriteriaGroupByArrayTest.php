@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
@@ -21,14 +22,14 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
     /**
      * @dataProvider dataForTestException
      *
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @param mixed $groupBy
      *
      * @return void
      */
     public function testGroupByArrayThrowException($groupBy)
     {
+        $this->expectException(PropelException::class);
+
         $authors = AuthorQuery::create()
             ->leftJoinBook()
             ->select(['FirstName', 'LastName'])

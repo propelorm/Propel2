@@ -44,20 +44,20 @@ class IniFileLoader extends FileLoader
     /**
      * Loads a resource, merge it with the default configuration array and resolve its parameters.
      *
-     * @param string $file The resource
+     * @param string $resource The resource
      * @param string|null $type The resource type
      *
-     * @throws \InvalidArgumentException if configuration file not found
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException When ini file is not valid
+     * @throws \InvalidArgumentException if configuration file not found
      *
      * @return array The configuration array
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null)
     {
-        $ini = parse_ini_file($this->getPath($file), true, INI_SCANNER_RAW);
+        $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
         if ($ini === false) {
-            throw new InvalidArgumentException("The configuration file '$file' has invalid content.");
+            throw new InvalidArgumentException("The configuration file '$resource' has invalid content.");
         }
 
         $ini = $this->parse($ini); //Parse for nested sections

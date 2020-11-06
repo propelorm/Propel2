@@ -153,9 +153,6 @@ abstract class MappingModel implements MappingModelInterface
         foreach (explode(',', $stringValue) as $v) {
             $values[] = trim($v);
         }
-        if (count($values) === 0) {
-            return null;
-        }
 
         return $values;
     }

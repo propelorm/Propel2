@@ -8,8 +8,8 @@
 
 namespace Propel\Runtime\Adapter;
 
-use PDOStatement;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 
@@ -118,19 +118,19 @@ interface SqlAdapterInterface extends AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param \Propel\Runtime\Map\DatabaseMap $dbMap
      *
      * @return void
      */
-    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt The statement to bind
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt The statement to bind
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
@@ -138,5 +138,5 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
 }

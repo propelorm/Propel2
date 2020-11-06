@@ -106,6 +106,6 @@ class Issue646Test extends TestCaseFixtures
 
         $dates = PkDateQuery::create()->find();
 
-        $this->assertInternalType('array', $dates->toArray());
+        $this->assertIsArray($dates->toArray());
     }
 }

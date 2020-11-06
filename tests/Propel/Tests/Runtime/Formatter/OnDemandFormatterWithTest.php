@@ -9,6 +9,7 @@
 namespace Propel\Tests\Runtime\Formatter;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
@@ -275,12 +276,12 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testFindOneWithOneToMany()
     {
+        $this->expectException(LogicException::class);
+
         BookstoreDataPopulator::populate();
         BookTableMap::clearInstancePool();
         AuthorTableMap::clearInstancePool();

@@ -11,11 +11,12 @@ namespace Propel\Runtime\Connection;
 use IteratorAggregate;
 use PDO;
 use PDOStatement;
+use Traversable;
 
 /**
  * Wraps a Statement class, providing logging.
  */
-class StatementWrapper extends PDOStatement implements IteratorAggregate
+class StatementWrapper implements StatementInterface, IteratorAggregate
 {
     /**
      * The wrapped statement class
@@ -76,7 +77,9 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      */
     public function prepare($options)
     {
-        $this->statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+        /** @var \PDOStatement $statement */
+        $statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
+        $this->statement = $statement;
 
         return $this;
     }
@@ -99,22 +102,22 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
-     * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $variable The value to bind to the parameter.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      * @param int $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param mixed $driver_options
+     * @param mixed $driverOptions
      *
      * @return bool
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null)
     {
-        $return = $this->statement->bindParam($pos, $value, $type, $length, $driver_options);
+        $return = $this->statement->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-            $valuestr = $length > 100 ? '[Large value]' : var_export($value, true);
-            $this->boundValues[$pos] = $valuestr;
-            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $valuestr = $length > 100 ? '[Large value]' : var_export($variable, true);
+            $this->boundValues[$parameter] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
 
@@ -125,20 +128,20 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR)
     {
-        $return = $this->statement->bindValue($pos, $value, $type);
+        $return = $this->statement->bindValue($parameter, $value, $dataType);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$type]) ? self::$typeMap[$type] : '(default)';
-            $valuestr = $type == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
-            $this->boundValues[$pos] = $valuestr;
-            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $pos, $typestr);
+            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $valuestr = $dataType == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
+            $this->boundValues[$parameter] = $valuestr;
+            $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
 
@@ -192,15 +195,15 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param array|null $input_parameters
+     * @param array|null $inputParameters
      *
      * @return bool
      */
-    public function execute($input_parameters = null)
+    public function execute($inputParameters = null)
     {
-        $return = $this->statement->execute($input_parameters);
+        $return = $this->statement->execute($inputParameters);
         if ($this->connection->useDebug) {
-            $sql = $this->getExecutedQueryString($input_parameters);
+            $sql = $this->getExecutedQueryString($inputParameters);
             $this->connection->log($sql);
             $this->connection->setLastExecutedQuery($sql);
             $this->connection->incrementQueryCount();
@@ -210,11 +213,11 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
     }
 
     /**
-     * @param array|null $input_parameters
+     * @param array|null $inputParameters
      *
      * @return string
      */
-    public function getExecutedQueryString($input_parameters = null)
+    public function getExecutedQueryString($inputParameters = null)
     {
         $sql = $this->statement->queryString;
         $matches = [];
@@ -225,8 +228,8 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
                 if (isset($this->boundValues[$pos])) {
                     $sql = str_replace($pos, $this->boundValues[$pos], $sql);
                 }
-                if ($input_parameters && isset($input_parameters[$pos])) {
-                    $sql = str_replace($pos, $input_parameters[$pos], $sql);
+                if ($inputParameters && isset($inputParameters[$pos])) {
+                    $sql = str_replace($pos, $inputParameters[$pos], $sql);
                 }
             }
         }
@@ -272,7 +275,7 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      * value is supplied, PDOStatement->fetchColumn()
      * fetches the first column.
      *
-     * @return string A single column in the next row of a result set.
+     * @return string|null A single column in the next row of a result set.
      */
     public function fetchColumn($columnIndex = 0)
     {
@@ -302,7 +305,7 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->statement;
     }
@@ -342,12 +345,92 @@ class StatementWrapper extends PDOStatement implements IteratorAggregate
     }
 
     /**
+     * @inheritDoc
+     */
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    {
+        return $this->statement->bindColumn($column, $param, $type, $maxlen, $driverdata);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fetchObject($className = 'stdClass', array $ctorArgs = [])
+    {
+        return $this->statement->fetchObject($className, $ctorArgs);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function errorCode()
+    {
+        return $this->statement->errorCode();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function errorInfo()
+    {
+        return $this->statement->errorInfo();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setAttribute($attribute, $value)
+    {
+        return $this->statement->setAttribute($attribute, $value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAttribute($attribute)
+    {
+        return $this->statement->getAttribute($attribute);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getColumnMeta($column)
+    {
+        return $this->statement->getColumnMeta($column);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = [])
+    {
+        return $this->statement->setFetchMode($mode, $classNameObject, $ctorarfg);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function nextRowset()
+    {
+        return $this->statement->nextRowset();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function debugDumpParams(): void
+    {
+        $this->statement->debugDumpParams();
+    }
+
+    /**
      * @param string $method
-     * @param array $args
+     * @param mixed $args
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, $args)
     {
         return call_user_func_array([$this->statement, $method], $args);
     }

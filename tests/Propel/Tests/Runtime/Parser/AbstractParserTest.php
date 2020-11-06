@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\Parser;
 
+use Propel\Runtime\Exception\FileNotFoundException;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\XmlParser;
 use Propel\Tests\TestCase;
@@ -29,12 +30,12 @@ class AbstractParserTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\FileNotFoundException
-     *
      * @return void
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {
+        $this->expectException(FileNotFoundException::class);
+
         $parser = AbstractParser::getParser('Foo');
     }
 

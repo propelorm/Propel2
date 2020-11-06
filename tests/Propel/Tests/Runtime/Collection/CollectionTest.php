@@ -9,10 +9,12 @@
 namespace Propel\Tests\Runtime\collection;
 
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use UnexpectedValueException;
 
 /**
  * Test class for Collection.
@@ -135,12 +137,12 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
-     *
      * @return void
      */
     public function testGetUnknownOffset()
     {
+        $this->expectException(UnexpectedValueException::class);
+
         $col = new Collection();
         $bar = $col->get('foo');
     }
@@ -212,12 +214,12 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
-     *
      * @return void
      */
     public function testRemoveUnknownOffset()
     {
+        $this->expectException(UnexpectedValueException::class);
+
         $col = new Collection();
         $col->remove(2);
     }
@@ -290,12 +292,12 @@ class CollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testGetConnectionNoModel()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new Collection();
         $col->getConnection();
     }
