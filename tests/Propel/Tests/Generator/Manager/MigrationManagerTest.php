@@ -197,6 +197,6 @@ class MigrationManagerTest extends TestCase
 
         $body = $migrationManager->getMigrationClassBody('foo', 'bar', 4, 'migration comment');
 
-        $this->assertContains('public $comment = \'migration comment\';', $body);
+        $this->assertStringContainsString('public $comment = \'migration comment\';', $body);
     }
 }

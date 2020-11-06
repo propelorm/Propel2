@@ -53,7 +53,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -93,7 +93,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -172,7 +172,7 @@ DROP TABLE IF EXISTS i18n_behavior_test_0_i18n;
 
 CREATE TABLE i18n_behavior_test_0_i18n
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -187,7 +187,7 @@ EOF;
         $expected = <<<EOF
 FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -205,7 +205,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
     id INTEGER NOT NULL,
     locale VARCHAR(5) DEFAULT 'en_US' NOT NULL,
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -227,7 +227,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
     UNIQUE (id,locale),
     FOREIGN KEY (id) REFERENCES i18n_behavior_test_0 (id)
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -247,7 +247,7 @@ CREATE TABLE i18n_behavior_test_0
     UNIQUE (id)
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -284,7 +284,7 @@ CREATE TABLE foo_table
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -321,7 +321,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -358,7 +358,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     /**
@@ -395,7 +395,7 @@ CREATE TABLE i18n_behavior_test_0_i18n
         ON DELETE CASCADE
 );
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 
     public function customPkSchemaDataProvider()
@@ -459,6 +459,6 @@ CREATE TABLE i18n_behavior_test_custom_pk_0_i18n
     UNIQUE (custom_id,locale),
     FOREIGN KEY (custom_id) REFERENCES i18n_behavior_test_custom_pk_0 (id)
 EOF;
-        $this->assertContains($expected, $builder->getSQL());
+        $this->assertStringContainsString($expected, $builder->getSQL());
     }
 }

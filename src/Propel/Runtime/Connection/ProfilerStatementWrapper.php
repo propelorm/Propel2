@@ -21,36 +21,36 @@ class ProfilerStatementWrapper extends StatementWrapper
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
-     * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $variable The value to bind to the parameter.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      * @param int|null $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param mixed $driver_options
+     * @param mixed $driverOptions
      *
      * @return bool
      */
-    public function bindParam($pos, &$value, $type = PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null)
     {
         $this->connection->getProfiler()->start();
 
-        return parent::bindParam($pos, $value, $type, $length, $driver_options);
+        return parent::bindParam($parameter, $variable, $dataType, $length, $driverOptions);
     }
 
     /**
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param int $pos Parameter identifier (for determining what to replace in the query).
+     * @param int $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
-     * @param int $type Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue($pos, $value, $type = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR)
     {
         $this->connection->getProfiler()->start();
 
-        return parent::bindValue($pos, $value, $type);
+        return parent::bindValue($parameter, $value, $dataType);
     }
 
     /**

@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
@@ -139,23 +140,23 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInsertAtNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table11();
         $t->insertAtRank(0);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInsertAtOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table11();
         $t->insertAtRank(6);
     }
@@ -211,34 +212,34 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToNewObject()
     {
+        $this->expectException(PropelException::class);
+
         $t = new Table11();
         $t->moveToRank(2);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToNegativeRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = SortableTable11Query::retrieveByRank(2);
         $t->moveToRank(0);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testMoveToOverMaxRank()
     {
+        $this->expectException(PropelException::class);
+
         $t = SortableTable11Query::retrieveByRank(2);
         $t->moveToRank(5);
     }

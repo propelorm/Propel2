@@ -11,6 +11,8 @@ namespace Propel\Tests\Runtime\Collection;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Collection\ArrayCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
@@ -56,12 +58,12 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ArrayCollection();
         $col->setModel('Country');
         $cv = new Country();
@@ -83,12 +85,12 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ArrayCollection();
         $col->setModel('Country');
         $cv = new Country();
@@ -247,12 +249,12 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetWorkerObjectNoModel()
     {
+        $this->expectException(PropelException::class);
+
         $col = new TestableArrayCollection();
         $col->getWorkerObject();
     }

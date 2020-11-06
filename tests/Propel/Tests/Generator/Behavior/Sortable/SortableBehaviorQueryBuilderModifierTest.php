@@ -10,6 +10,7 @@ namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
 use Propel\Tests\Bookstore\Behavior\SortableTable11 as Table11;
 use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
@@ -65,12 +66,12 @@ class SortableBehaviorQueryBuilderModifierTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testOrderByRankIncorrectDirection()
     {
+        $this->expectException(PropelException::class);
+
         SortableTable11Query::create()->orderByRank('foo');
     }
 
