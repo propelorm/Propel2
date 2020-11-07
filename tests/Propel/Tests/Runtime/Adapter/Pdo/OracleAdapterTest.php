@@ -11,6 +11,7 @@ namespace Propel\Tests\Runtime\Adapter\Pdo;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Pdo\OracleAdapter;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\TestCaseFixtures;
@@ -23,6 +24,14 @@ use Propel\Tests\TestCaseFixtures;
  */
 class OracleAdapterTest extends TestCaseFixtures
 {
+    /**
+     * @return string
+     */
+    protected function getDriver()
+    {
+        return 'oracle';
+    }
+
     /**
      * @return void
      */
@@ -87,5 +96,43 @@ class OracleAdapterTest extends TestCaseFixtures
         $selectSql = $db->createSelectSqlPart($c, $fromClause);
         $this->assertEquals('SELECT book.id, book.id AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
         $this->assertEquals(['book'], $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
+    }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     */
+    public function testSimpleLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForShare();
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book LOCK IN SHARE MODE';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     */
+    public function testComplexLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForUpdate([BookTableMap::TABLE_NAME], true);
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book FOR UPDATE';
+
+        $this->assertEquals($expected, $result);
     }
 }
