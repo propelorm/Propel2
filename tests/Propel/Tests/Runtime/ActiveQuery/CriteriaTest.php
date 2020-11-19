@@ -11,6 +11,7 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
@@ -1117,6 +1118,44 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testWithSimpleLock()
+    {
+        $c = new Criteria();
+        $c->lockForShare();
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForShare() adds a shared read lock to the Criteria');
+        $this->assertSame(Lock::SHARED, $c->getLock()->getType());
+        $this->assertEmpty($c->getLock()->getTableNames());
+        $this->assertFalse($c->getLock()->isNoWait());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithComplexLock()
+    {
+        $c = new Criteria();
+        $c->lockForUpdate(['tableA', 'tableB'], true);
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForUpdate() adds an exclusive read lock to the Criteria');
+        $this->assertSame(Lock::EXCLUSIVE, $c->getLock()->getType());
+        $this->assertSame(['tableA', 'tableB'], $c->getLock()->getTableNames());
+        $this->assertTrue($c->getLock()->isNoWait());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithoutLock()
+    {
+        $c = new Criteria();
+        $c->lockForShare();
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForShare() adds a shared read lock to the Criteria');
+        $c->withoutLock();
+        $this->assertNull($c->getLock(), 'withoutLock() removes read lock from the Criteria');
+    }
+
+    /**
+     * @return void
+     */
     public function testClone()
     {
         $c1 = new Criteria();
@@ -1192,6 +1231,8 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
 
         $this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
+
+        $this->assertNull($c->getLock(), 'lock is null by default');
     }
 
     /**

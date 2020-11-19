@@ -8,6 +8,10 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\IniParseException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\IniFileLoader;
 use Propel\Tests\Common\Config\ConfigTestCase;
@@ -55,24 +59,24 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.ini" does not exist (in:
-     *
      * @return void
      */
     public function testIniFileDoesNotExist()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.ini" does not exist (in:');
+
         $this->loader->load('inexistent.ini');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The configuration file 'nonvalid.ini' has invalid content.
-     *
      * @return void
      */
     public function testIniFileHasInvalidContent()
     {
+        $this->expectException(PropelInvalidArgumentException::class);
+        $this->expectExceptionMessage("The configuration file 'nonvalid.ini' has invalid content.");
+
         $content = <<<EOF
 {not ini content}
 only plain
@@ -161,13 +165,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\IniParseException
-     * @expectedExceptionMessage Invalid key ".foo"
-     *
      * @return void
      */
     public function testInvalidSectionThrowsException()
     {
+        $this->expectException(IniParseException::class);
+        $this->expectExceptionMessage('Invalid key ".foo"');
+
         $content = <<<EOF
 .foo = bar
 bar = baz
@@ -178,13 +182,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\IniParseException
-     * @expectedExceptionMessage Invalid key "foo."
-     *
      * @return void
      */
     public function testInvalidParamThrowsException()
     {
+        $this->expectException(IniParseException::class);
+        $this->expectExceptionMessage('Invalid key "foo."');
+
         $content = <<<EOF
 foo. = bar
 bar = baz
@@ -195,13 +199,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\IniParseException
-     * @expectedExceptionMessage Cannot create sub-key for "foo", as key already exists
-     *
      * @return void
      */
     public function testAlreadyExistentParamThrowsException()
     {
+        $this->expectException(IniParseException::class);
+        $this->expectExceptionMessage('Cannot create sub-key for "foo", as key already exists');
+
         $content = <<<EOF
 foo = bar
 foo.babar = baz
@@ -226,15 +230,15 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.ini.
-     *
      * @requires OS ^(?!Win.*)
      *
      * @return void
      */
     public function testIniFileNotReadableThrowsException()
     {
+        $this->expectException(InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.ini.");
+
         $content = <<<EOF
 foo = bar
 bar = baz

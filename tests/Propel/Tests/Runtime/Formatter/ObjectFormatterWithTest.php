@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Formatter;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
@@ -361,12 +362,12 @@ class ObjectFormatterWithTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
-     *
      * @return void
      */
     public function testFindOneWithOneToManyAndLimit()
     {
+        $this->expectException(LogicException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->add(BookTableMap::COL_ISBN, '043935806X');
         $c->leftJoin('Book.Review');

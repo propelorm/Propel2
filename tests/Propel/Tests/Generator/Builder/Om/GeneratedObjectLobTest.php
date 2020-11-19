@@ -104,8 +104,8 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
         $img = $m1->getCoverImage();
         $txt = $m1->getExcerpt();
 
-        $this->assertInternalType('resource', $img, 'Expected results of BLOB method to be a resource.');
-        $this->assertInternalType('string', $txt, 'Expected results of CLOB method to be a string.');
+        $this->assertIsResource($img, 'Expected results of BLOB method to be a resource.');
+        $this->assertIsString($txt, 'Expected results of CLOB method to be a string.');
 
         $stat = fstat($img);
         $size = $stat['size'];
@@ -148,7 +148,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 
         // 1) Assert that we've got a valid stream to start with
 
-        $this->assertInternalType('resource', $img, 'Expected results of BLOB method to be a resource.');
+        $this->assertIsResource($img, 'Expected results of BLOB method to be a resource.');
 
         // read first 100 bytes
         $firstBytes = fread($img, 100);
@@ -215,18 +215,18 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
 
         // 1) Assert that we've got a valid stream to start with
         $img = $m1->getCoverImage();
-        $this->assertInternalType('resource', $img, 'Expected results of BLOB method to be a resource.');
+        $this->assertIsResource($img, 'Expected results of BLOB method to be a resource.');
 
         // 2) Test setting a BLOB column with file contents
         $m1->setCoverImage(file_get_contents($blob2_path));
-        $this->assertInternalType('resource', $m1->getCoverImage(), 'Expected to get a resource back after setting BLOB with file contents.');
+        $this->assertIsResource($m1->getCoverImage(), 'Expected to get a resource back after setting BLOB with file contents.');
 
         // commit those changes & reload
         $m1->save();
 
         // 3) Verify that we've got a valid resource after reload
         $m1->reload();
-        $this->assertInternalType('resource', $m1->getCoverImage(), 'Expected to get a resource back after setting reloading object.');
+        $this->assertIsResource($m1->getCoverImage(), 'Expected to get a resource back after setting reloading object.');
 
         // 4) Test isModified() behavior
         $fp = fopen('php://temp', 'r+');

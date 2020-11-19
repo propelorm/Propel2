@@ -260,6 +260,10 @@ protected function createRawSlug()
  */
 protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->getParameter('replacement') . "')
 {
+    // set locale explicitly
+    \$localeOrigin = setlocale(LC_CTYPE, 0);
+    setlocale(LC_CTYPE, 'C.UTF-8');
+
     // transliterate
     if (function_exists('iconv')) {
         \$slug = iconv('utf-8', 'us-ascii//TRANSLIT', \$slug);
@@ -280,6 +284,8 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 
     // trim
     \$slug = trim(\$slug, \$replacement);
+
+    setlocale(LC_CTYPE, \$localeOrigin);
 
     if (empty(\$slug)) {
         return 'n-a';

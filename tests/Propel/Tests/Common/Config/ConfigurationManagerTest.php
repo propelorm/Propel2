@@ -9,7 +9,8 @@
 namespace Propel\Tests\Common\Config;
 
 use Propel\Common\Config\ConfigurationManager;
-use Propel\Common\Config\Exception\InvalidConfigurationException;
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class ConfigurationManagerTest extends ConfigTestCase
 {
@@ -153,14 +154,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     *
-     * @exceptionMessage Propel expects only one configuration file
-     *
      * @return void
      */
     public function testMoreThanOneConfigurationFileInSameDirectoryThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Propel expects only one configuration file');
+
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
@@ -176,14 +176,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     *
-     * @exceptionMessage Propel expects only one configuration file
-     *
      * @return void
      */
     public function testMoreThanOneConfigurationFileInDifferentDirectoriesThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Propel expects only one configuration file');
+
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
@@ -384,13 +383,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unrecognized options "foo, bar" under "propel"
-     *
      * @return void
      */
     public function testInvalidHierarchyTrowsException()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Unrecognized options "foo, bar" under "propel"');
+
         $yamlConf = <<<EOF
 runtime:
     foo: bar
@@ -438,13 +437,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "database" at path "propel" must be configured
-     *
      * @return void
      */
     public function testNotDefineDatabaseSectionTrowsException()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child node "database" at path "propel" must be configured');
+
         $yamlConf = <<<EOF
 propel:
   general:
@@ -457,13 +456,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Dots are not allowed in connection names
-     *
      * @return void
      */
     public function testDotInConnectionNamesArentAccepted()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Dots are not allowed in connection names');
+
         $yamlConf = <<<EOF
 propel:
   database:
@@ -647,13 +646,13 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid configuration property name
-     *
      * @return void
      */
     public function testGetConfigPropertyBadNameThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid configuration property name');
+
         $yamlConf = <<<EOF
 propel:
   database:

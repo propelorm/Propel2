@@ -13,6 +13,7 @@ use MyNameSpace\ComplexColumnTypeEntitySetQuery;
 use MyNameSpace\Map\ComplexColumnTypeEntitySetTableMap;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 use PublicComplexColumnTypeEntitySet;
 
@@ -112,12 +113,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
+        $this->expectException(PropelException::class);
+
         $e = new PublicComplexColumnTypeEntitySet();
         $e->bar = 156;
         $e->getBar();
@@ -199,12 +200,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
+        $this->expectException(PropelException::class);
+
         $e = new ComplexColumnTypeEntitySet();
         $e->setBar(['bazz']);
     }

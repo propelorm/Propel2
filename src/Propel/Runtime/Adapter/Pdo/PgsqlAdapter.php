@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -229,7 +230,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con propel connection
      * @param \Propel\Runtime\ActiveQuery\Criteria|string $query query the criteria or the query string
      *
-     * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
     {
@@ -262,5 +263,34 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function getExplainPlanQuery($query)
     {
         return 'EXPLAIN ' . $query;
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' FOR SHARE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $tableNames = $lock->getTableNames();
+        if (!empty($tableNames)) {
+            $tableNames = array_map([$this, 'quoteIdentifier'], array_unique($tableNames));
+            $sql .= ' OF ' . implode(', ', $tableNames);
+        }
+
+        if ($lock->isNoWait()) {
+            $sql .= ' NOWAIT';
+        }
     }
 }

@@ -8,8 +8,8 @@
 
 namespace Propel\Generator\Util;
 
-use PDOStatement;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
@@ -111,7 +111,7 @@ class SqlParser
 
         foreach ($statements as $statement) {
             $stmt = $connection->prepare($statement);
-            if ($stmt instanceof PDOStatement) {
+            if ($stmt instanceof StatementInterface) {
                 // only execute if has no error
                 $stmt->execute();
                 $executed++;

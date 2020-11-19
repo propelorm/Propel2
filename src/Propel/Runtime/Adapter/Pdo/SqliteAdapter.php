@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -127,5 +128,17 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     public function random($seed = null)
     {
         return 'random()';
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
     }
 }

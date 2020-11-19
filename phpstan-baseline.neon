@@ -391,11 +391,6 @@ parameters:
 			path: src/Propel/Generator/Util/BehaviorLocator.php
 
 		-
-			message: "#^Parameter \\#1 \\$attribute of method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Util/QuickBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
@@ -432,6 +427,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLimit\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLock\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
@@ -541,17 +541,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Parameter \\#1 \\$values \\(array\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:doUpdate\\(\\) should be compatible with parameter \\$updateValues \\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:doUpdate\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method iterable\\<TReturn\\>&TColl of Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:save\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 

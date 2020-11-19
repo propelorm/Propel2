@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": ">=7.2",
-        "symfony/yaml": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/config": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/console": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/filesystem": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/finder": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/translation": "^3.4.0||^4.3.0||^5.0.0",
-        "symfony/validator": "^3.4.0||^4.3.0||^5.0.0",
+        "symfony/yaml": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/config": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/console": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/filesystem": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/finder": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/translation": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/validator": "^3.4.0||^4.0.0||^5.0.0",
         "psr/log": "^1.0"
     },
     "require-dev": {
@@ -31,8 +31,9 @@
         "ext-json": "*",
         "monolog/monolog": "^1.3",
         "phpstan/phpstan": "^0.12.4",
-        "phpunit/phpunit": "^7.5.15",
-        "spryker/code-sniffer": "^0.15.6"
+        "phpunit/phpunit": "^8.0.0||^9.0.0",
+        "spryker/code-sniffer": "^0.15.6",
+        "psalm/phar": "^4.1.0"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
@@ -49,7 +50,11 @@
         "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
         "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
         "stan": "vendor/bin/phpstan analyze",
-        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline"
+        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
+        "psalm": "vendor/bin/psalm.phar --show-info=false",
+        "psalm-update-baseline": "vendor/bin/psalm.phar --update-baseline",
+        "psalm-set-baseline": "vendor/bin/psalm.phar --set-baseline=psalm-baseline.xml",
+        "psalm-update-report": "vendor/bin/psalm.phar --report=psalm-report.xml"
     },
     "extra": {
         "branch-alias": {

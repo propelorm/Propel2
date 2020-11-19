@@ -106,6 +106,11 @@ class PropelPDOTest extends BookstoreTestBase
         $stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
         $stmt->execute();
         $stmt->fetchAll(); // should not throw exception
+
+        $stmt = $con->prepare('SELECT author.FIRST_NAME, author.LAST_NAME FROM author');
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC); // should not throw exception
+        $stmt->fetchAll();
     }
 
     /**

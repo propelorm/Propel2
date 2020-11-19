@@ -10,7 +10,6 @@ namespace Propel\Generator\Util;
 
 use Exception;
 use PDO;
-use PDOStatement;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -23,6 +22,7 @@ use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
@@ -265,7 +265,7 @@ class QuickBuilder
             }
             try {
                 $stmt = $con->prepare($statement);
-                if ($stmt instanceof PDOStatement) {
+                if ($stmt instanceof StatementInterface) {
                     // only execute if has no error
                     $stmt->execute();
                 }
@@ -519,6 +519,12 @@ class QuickBuilder
      */
     public function fixNamespaceDeclarations($source)
     {
+        $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING];
+
+        if (PHP_VERSION_ID >= 80000) {
+            $cooperativeLexems = array_merge($cooperativeLexems, [T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED]);
+        }
+
         $source = $this->forceNamespace($source);
 
         if (!function_exists('token_get_all')) {
@@ -543,7 +549,7 @@ class QuickBuilder
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], $cooperativeLexems)) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && $t === '{') {

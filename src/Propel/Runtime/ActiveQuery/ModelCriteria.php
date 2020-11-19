@@ -1817,13 +1817,13 @@ class ModelCriteria extends BaseModelCriteria
      * Issue an UPDATE query based the current ModelCriteria and a list of changes.
      * This method is called by ModelCriteria::update() inside a transaction.
      *
-     * @param array $values Associative array of keys and values to replace
+     * @param array|\Propel\Runtime\ActiveQuery\Criteria $updateValues Associative array of keys and values to replace
      * @param \Propel\Runtime\Connection\ConnectionInterface $con a connection object
      * @param bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return int Number of updated rows
      */
-    public function doUpdate($values, ConnectionInterface $con, $forceIndividualSaves = false)
+    public function doUpdate($updateValues, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         if ($forceIndividualSaves) {
             // Update rows one by one
@@ -1831,7 +1831,7 @@ class ModelCriteria extends BaseModelCriteria
             $classString = ModelCriteria::FORMAT_OBJECT;
             $objects = $this->setFormatter($classString)->find($con);
             foreach ($objects as $object) {
-                foreach ($values as $key => $value) {
+                foreach ($updateValues as $key => $value) {
                     $object->setByName($key, $value);
                 }
             }
@@ -1839,11 +1839,11 @@ class ModelCriteria extends BaseModelCriteria
             $affectedRows = count($objects);
         } else {
             // update rows in a single query
-            if ($values instanceof Criteria) {
-                $set = $values;
+            if ($updateValues instanceof Criteria) {
+                $set = $updateValues;
             } else {
                 $set = new Criteria($this->getDbName());
-                foreach ($values as $columnName => $value) {
+                foreach ($updateValues as $columnName => $value) {
                     $realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
                     $set->add($realColumnName, $value);
                 }

@@ -12,6 +12,7 @@ use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
+use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\TestCase;
@@ -196,12 +197,12 @@ class TableMapTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Map\Exception\RelationNotFoundException
-     *
      * @return void
      */
     public function testLoadWrongRelations()
     {
+        $this->expectException(RelationNotFoundException::class);
+
         $this->tmap->getRelation('Bar');
     }
 

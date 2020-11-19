@@ -11,7 +11,7 @@ namespace Propel\Runtime\Connection;
 use PDO;
 
 /**
- * Interface for Propel Connection object.
+ * Interface for Propel Connection class.
  * Based on the PDO interface.
  *
  * @see http://php.net/manual/en/book.pdo.php
@@ -21,14 +21,14 @@ use PDO;
 interface ConnectionInterface
 {
     /**
-     * @param string $name The datasource name associated to this connection
+     * @param string $name The datasource name associated to this connection.
      *
      * @return void
      */
     public function setName($name);
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string The datasource name associated to this connection.
      */
     public function getName();
 
@@ -77,18 +77,18 @@ interface ConnectionInterface
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string|int $attribute The name of the attribute to retrieve,
-     *                          e.g. PDO::ATTR_AUTOCOMMIT
+     * @param int $attribute The name of the attribute to retrieve,
+     *                          e.g. PDO::ATTR_AUTOCOMMIT.
      *
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute);
+    public function getAttribute(int $attribute);
 
     /**
      * Set an attribute.
      *
-     * @param string|int $attribute
+     * @param int|string $attribute
      * @param mixed $value
      *
      * @return bool TRUE on success or FALSE on failure.
@@ -134,7 +134,7 @@ interface ConnectionInterface
      *
      * In case you want the transaction to rollback just throw an Exception of any type.
      *
-     * @param callable $callable A callable to be wrapped in a transaction
+     * @param callable $callable A callable to be wrapped in a transaction.
      *
      * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      *
@@ -148,8 +148,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int The number of rows that were modified or deleted by the SQL
-     *             statement you issued. If no rows were affected, returns 0.
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface The number of rows that were modified or deleted.
      */
     public function exec($statement);
 
@@ -164,16 +163,14 @@ interface ConnectionInterface
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement This must be a valid SQL statement for the target
-     *                               database server.
-     * @param array|null $driver_options
+     * @param string $statement This must be a valid SQL statement for the target database server.
+     * @param array $driverOptions
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \PDOStatement|bool A Statement object if the database server
-     *                            successfully prepares, FALSE otherwise.
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool
      */
-    public function prepare($statement, $driver_options = null);
+    public function prepare(string $statement, array $driverOptions = []);
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
@@ -183,7 +180,7 @@ interface ConnectionInterface
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|bool
      */
     public function query($statement);
 

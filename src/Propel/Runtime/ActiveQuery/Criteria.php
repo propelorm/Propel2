@@ -144,6 +144,13 @@ class Criteria
     protected $selectModifiers = [];
 
     /**
+     * Lock to be used to retrieve rows (if any).
+     *
+     * @var \Propel\Runtime\ActiveQuery\Lock|null
+     */
+    protected $lock;
+
+    /**
      * Storage of conditions data. Collection of Criterion objects.
      *
      * @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion[]
@@ -306,6 +313,7 @@ class Criteria
         $this->ignoreCase = false;
         $this->singleRecord = false;
         $this->selectModifiers = [];
+        $this->lock = null;
         $this->selectColumns = [];
         $this->orderByColumns = [];
         $this->groupByColumns = [];
@@ -1248,6 +1256,75 @@ class Criteria
     }
 
     /**
+     * @return \Propel\Runtime\ActiveQuery\Lock|null Get read lock value.
+     */
+    public function getLock(): ?Lock
+    {
+        return $this->lock;
+    }
+
+    /**
+     * Apply a shared read lock to be used to retrieve rows.
+     *
+     * @param string[] $tableNames
+     * @param bool $noWait
+     *
+     * @return $this Modified Criteria object (for fluent API)
+     */
+    public function lockForShare(array $tableNames = [], bool $noWait = false)
+    {
+        $this->withLock(Lock::SHARED, $tableNames, $noWait);
+
+        return $this;
+    }
+
+    /**
+     * Apply an exclusive read lock to be used to retrieve rows.
+     *
+     * @param string[] $tableNames
+     * @param bool $noWait
+     *
+     * @return $this Modified Criteria object (for fluent API)
+     */
+    public function lockForUpdate(array $tableNames = [], bool $noWait = false)
+    {
+        $this->withLock(Lock::EXCLUSIVE, $tableNames, $noWait);
+
+        return $this;
+    }
+
+    /**
+     * Apply a read lock to be used to retrieve rows.
+     *
+     * @see Lock::SHARED
+     * @see Lock::EXCLUSIVE
+     *
+     * @param string $lockType
+     * @param string[] $tableNames
+     * @param bool $noWait
+     *
+     * @return $this Modified Criteria object (for fluent API)
+     */
+    protected function withLock(string $lockType, array $tableNames = [], bool $noWait = false)
+    {
+        $this->lock = new Lock($lockType, $tableNames, $noWait);
+
+        return $this;
+    }
+
+    /**
+     * Retrieve rows without any read locking.
+     *
+     * @return $this Modified Criteria object (for fluent API)
+     */
+    public function withoutLock()
+    {
+        $this->lock = null;
+
+        return $this;
+    }
+
+    /**
      * Sets ignore case.
      *
      * @param bool $b True if case should be ignored.
@@ -1646,6 +1723,15 @@ class Criteria
                     }
                 }
 
+                $aLock = $this->lock;
+                $bLock = $criteria->getLock();
+                if ($aLock instanceof Lock && !$aLock->equals($bLock)) {
+                    return false;
+                }
+                if ($bLock instanceof Lock && !$bLock->equals($aLock)) {
+                    return false;
+                }
+
                 return true;
             } else {
                 return false;
@@ -1686,6 +1772,12 @@ class Criteria
         $selectModifiers = $criteria->getSelectModifiers();
         if ($selectModifiers && !$this->selectModifiers) {
             $this->selectModifiers = $selectModifiers;
+        }
+
+        // merge lock
+        $lock = $criteria->getLock();
+        if ($lock && !$this->lock) {
+            $this->lock = $lock;
         }
 
         // merge select columns
@@ -2114,6 +2206,10 @@ class Criteria
             $adapter->applyLimit($sql, $this->getOffset(), $this->getLimit(), $this);
         }
 
+        if (null !== $this->lock) {
+            $adapter->applyLock($sql, $this->lock);
+        }
+
         return $sql;
     }
 
@@ -2421,7 +2517,7 @@ class Criteria
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $updateValues A Criteria object containing values used in set clause.
+     * @param array|\Propel\Runtime\ActiveQuery\Criteria $updateValues A Criteria object containing values used in set clause.
      * @param \Propel\Runtime\Connection\ConnectionInterface $con The ConnectionInterface connection object to use.
      *
      * @throws \Propel\Runtime\Exception\PropelException
