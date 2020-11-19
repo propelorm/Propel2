@@ -22,7 +22,7 @@ use Propel\Runtime\Propel;
  * @author Francois Zaninotto
  *
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends Collection<T>
+ * @phpstan-extends Collection<T, T>
  */
 class ObjectCollection extends Collection
 {

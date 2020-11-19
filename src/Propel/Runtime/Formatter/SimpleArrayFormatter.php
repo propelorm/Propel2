@@ -18,6 +18,10 @@ use Propel\Runtime\Exception\LogicException;
  * or an array
  *
  * @author Benjamin Runnels
+ *
+ * @phpstan-template T of ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\ArrayCollection
+ * @phpstan-extends AbstractFormatter<T, TColl, array>
  */
 class SimpleArrayFormatter extends AbstractFormatter
 {

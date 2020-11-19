@@ -17,7 +17,7 @@ use Propel\Runtime\Exception\PropelException;
  * @author Francois Zaninotto
  *
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends Collection<T>
+ * @phpstan-extends  Collection<T, mixed[]>
  */
 class ArrayCollection extends Collection
 {
@@ -204,11 +204,11 @@ class ArrayCollection extends Collection
     }
 
     /**
-     * @phpstan-return T
-     *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     *
+     * @phpstan-return T
      */
     protected function getWorkerObject()
     {

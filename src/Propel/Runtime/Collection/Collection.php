@@ -37,15 +37,16 @@ use Serializable;
  *
  * @author Francois Zaninotto
  *
- * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-implements \ArrayAccess<string|int, T|array>
- * @phpstan-implements \IteratorAggregate<T|array>
+ * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template T
+ * @phpstan-implements \ArrayAccess<string|int, T>
+ * @phpstan-implements \IteratorAggregate<T>
  */
 class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {
     /**
      * @var string
-     * @phpstan-var class-string<T>
+     * @phpstan-var class-string<TType>
      */
     protected $model = '';
 
@@ -53,18 +54,19 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * The fully qualified classname of the model
      *
      * @var string
-     * @phpstan-var class-string<T>
+     * @phpstan-var class-string<TType>
      */
     protected $fullyQualifiedModel = '';
 
     /**
      * @var \Propel\Runtime\Formatter\AbstractFormatter
-     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<T>
+     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<TType, Collection, T>
      */
     protected $formatter;
 
     /**
      * @var array
+     * @phpstan-var T[]
      */
     protected $data = [];
 
@@ -75,6 +77,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * @param array $data
+     *
+     * @phpstan-param T[] $data
      */
     public function __construct($data = [])
     {
@@ -85,6 +89,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $value
      *
      * @return void
+     *
+     * @phpstan-param T $value
      */
     public function append($value)
     {
@@ -105,6 +111,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $offset
      *
      * @return mixed
+     *
+     * @phpstan-return T|void
      */
     public function &offsetGet($offset)
     {
@@ -118,6 +126,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $value
      *
      * @return void
+     *
+     * @phpstan-param T $value
      */
     public function offsetSet($offset, $value)
     {
@@ -142,6 +152,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param array $input
      *
      * @return void
+     *
+     * @phpstan-param T[] $input
      */
     public function exchangeArray($input)
     {
@@ -152,6 +164,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Get the data in the collection
      *
      * @return array
+     *
+     * @phpstan-return T[]
      */
     public function getData()
     {
@@ -160,6 +174,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * @return array
+     *
+     * @phpstan-return T[]
      */
     public function getArrayCopy()
     {
@@ -172,6 +188,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param array $data
      *
      * @return void
+     *
+     * @phpstan-param T[] $data
      */
     public function setData($data)
     {
@@ -179,9 +197,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-return \Iterator<T|array>
-     *
      * @return \Iterator
+     *
+     * @phpstan-return \Iterator<T>
      */
     public function getIterator()
     {
@@ -202,6 +220,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Get the first element in the collection
      *
      * @return mixed
+     *
+     * @phpstan-return T|null
      */
     public function getFirst()
     {
@@ -248,6 +268,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @throws \Propel\Runtime\Exception\UnexpectedValueException
      *
      * @return mixed The element
+     *
+     * @phpstan-return T
      */
     public function get($key)
     {
@@ -255,6 +277,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
         }
 
+        /** @phpstan-var T */
         return $this->offsetGet($key);
     }
 
@@ -262,6 +285,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Pops an element off the end of the collection
      *
      * @return mixed The popped element
+     *
+     * @phpstan-return T|null
      */
     public function pop()
     {
@@ -280,6 +305,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Pops an element off the beginning of the collection
      *
      * @return mixed The popped element
+     *
+     * @phpstan-return T|null
      */
     public function shift()
     {
@@ -298,6 +325,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $value the element to prepend
      *
      * @return void
+     *
+     * @phpstan-param T $value
      */
     public function push($value)
     {
@@ -310,6 +339,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $value the element to prepend
      *
      * @return int The number of new elements in the array
+     *
+     * @phpstan-param T $value
      */
     public function prepend($value)
     {
@@ -330,6 +361,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $value
      *
      * @return void
+     *
+     * @phpstan-param T $value
      */
     public function set($key, $value)
     {
@@ -371,6 +404,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $element
      *
      * @return bool
+     *
+     * @phpstan-param T $element
      */
     public function contains($element)
     {
@@ -383,6 +418,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $element
      *
      * @return mixed Returns the key for the element if it is found in the collection, FALSE otherwise
+     *
+     * @phpstan-param T $element
      */
     public function search($element)
     {
@@ -396,6 +433,10 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param \Propel\Runtime\Collection\Collection $collection A Propel collection.
      *
      * @return \Propel\Runtime\Collection\Collection An array of Propel objects from the collection that are not presents in the given collection.
+     *
+     * @phpstan-param Collection<TType, T> $collection
+     *
+     * @phpstan-return self
      */
     public function diff(Collection $collection)
     {
@@ -445,7 +486,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Set the model of the elements in the collection
      *
-     * @phpstan-param class-string<T> $model
+     * @phpstan-param class-string<TType> $model
      *
      * @param string $model Name of the Propel object classes stored in the collection
      *
@@ -464,7 +505,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
-     * @phpstan-return class-string<T>
+     * @phpstan-return class-string<TType>
      *
      * @return string Name of the Propel object class stored in the collection
      */
@@ -476,7 +517,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
-     * @phpstan-return class-string<T>
+     * @phpstan-return class-string<TType>
      *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
@@ -486,7 +527,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-return class-string<\Propel\Runtime\Map\TableMap<T>>
+     * @phpstan-return class-string<\Propel\Runtime\Map\TableMap<TType>>
      *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
@@ -504,7 +545,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<T> $formatter
+     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<TType, self, T> $formatter
      *
      * @param \Propel\Runtime\Formatter\AbstractFormatter $formatter
      *
@@ -516,7 +557,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<T>
+     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<TType, Collection, T>
      *
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */

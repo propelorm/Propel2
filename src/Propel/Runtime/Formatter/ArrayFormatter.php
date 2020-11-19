@@ -18,6 +18,10 @@ use ReflectionClass;
  * format() returns a ArrayCollection of associative arrays
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\ArrayCollection
+ * @phpstan-extends  AbstractFormatter<T, TColl, array>
  */
 class ArrayFormatter extends AbstractFormatter
 {
@@ -74,6 +78,17 @@ class ArrayFormatter extends AbstractFormatter
     }
 
     /**
+     * @return \Propel\Runtime\Collection\ArrayCollection
+     *
+     * @phpstan-return TColl<T>
+     */
+    public function getCollection()
+    {
+        /** @phpstan-var TColl<T> */
+        return parent::getCollection();
+    }
+
+    /**
      * @return string|null
      */
     public function getCollectionClassName()
@@ -122,6 +137,8 @@ class ArrayFormatter extends AbstractFormatter
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
      * @return array The original record turned into an array
+     *
+     * @phpstan-param T|null $record
      */
     public function formatRecord(?ActiveRecordInterface $record = null)
     {

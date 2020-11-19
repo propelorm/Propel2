@@ -18,6 +18,8 @@ use Traversable;
 
 /**
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
  */
 class BaseModelCriteria extends Criteria implements IteratorAggregate
 {
@@ -40,6 +42,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
 
     /**
      * @var \Propel\Runtime\Map\TableMap
+     *
+     * @phpstan-var \Propel\Runtime\Map\TableMap<T>
      */
     protected $tableMap;
 
@@ -64,11 +68,11 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @phpstan-param null|class-string<T> $modelName
-     *
      * @param string|null $dbName The dabase name
      * @param string|null $modelName The phpName of a model, e.g. 'Book'
      * @param string|null $modelAlias The alias for the model in this query, e.g. 'b'
+     *
+     * @phpstan-param class-string<T> $modelName
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
@@ -119,6 +123,11 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
      *
      * @return $this The current object, for fluid interface
+     *
+     * @phpstan-template AColl of \Propel\Runtime\Collection\Collection
+     * @phpstan-template AReturn
+     * @phpstan-param    \Propel\Runtime\Formatter\AbstractFormatter<T, AColl, AReturn>|class-string<\Propel\Runtime\Formatter\AbstractFormatter> $formatter
+     * @phpstan-return   $this<T, AColl, AReturn>
      */
     public function setFormatter($formatter)
     {

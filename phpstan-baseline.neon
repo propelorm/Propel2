@@ -411,7 +411,7 @@ parameters:
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:\\$useAliasInSQL\\.$#"
+			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface, TColl of Propel\\\\Runtime\\\\Collection\\\\Collection, TReturn\\>\\:\\:\\$useAliasInSQL\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
@@ -421,7 +421,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:find\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface, TColl of Propel\\\\Runtime\\\\Collection\\\\Collection, TReturn\\>\\:\\:find\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
@@ -546,6 +546,11 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Call to an undefined method iterable\\<TReturn\\>&TColl of Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:save\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -631,22 +636,22 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Property Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:\\$model \\(class\\-string\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\) does not accept default value of type string\\.$#"
+			message: "#^Property Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:\\$model \\(class\\-string\\<TType of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\) does not accept default value of type string\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/Collection.php
 
 		-
-			message: "#^Property Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:\\$fullyQualifiedModel \\(class\\-string\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\) does not accept default value of type string\\.$#"
+			message: "#^Property Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:\\$fullyQualifiedModel \\(class\\-string\\<TType of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\) does not accept default value of type string\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/Collection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Collection\\\\Collection\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:fromArray\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Collection\\\\Collection\\<TType of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface, T\\>\\:\\:fromArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/Collection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Collection\\\\Collection\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:toArray\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Collection\\\\Collection\\<TType of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface, T\\>\\:\\:toArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/Collection.php
 
@@ -681,12 +686,27 @@ parameters:
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Cannot call method initRelation\\(\\) on array\\|T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\.$#"
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:initRelation\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
+			message: "#^Array \\(array\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\) does not accept object\\.$#"
+			count: 3
+			path: src/Propel/Runtime/Collection/ObjectCollection.php
+
+		-
+			message: "#^Argument of an invalid type Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface supplied for foreach, only iterables are supported\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of method Propel\\\\Runtime\\\\Collection\\\\Collection\\<Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface,Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:push\\(\\) expects Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface, array given\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
 
@@ -706,17 +726,22 @@ parameters:
 			path: src/Propel/Runtime/Connection/ProfilerStatementWrapper.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:hydrate\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Formatter/AbstractFormatter.php
+
+		-
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
 			count: 3
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\<Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\<T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\>\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
@@ -741,12 +766,12 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setVirtualColumn\\(\\)\\.$#"
+			message: "#^Call to an undefined method T of Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setVirtualColumn\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 

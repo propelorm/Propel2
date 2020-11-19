@@ -26,7 +26,7 @@ class OnDemandIterator implements Iterator
 {
     /**
      * @var \Propel\Runtime\Formatter\ObjectFormatter
-     * @phpstan-var \Propel\Runtime\Formatter\ObjectFormatter<T>
+     * @phpstan-var \Propel\Runtime\Formatter\ObjectFormatter<T, \Propel\Runtime\Collection\OnDemandCollection>
      */
     protected $formatter;
 
@@ -56,9 +56,9 @@ class OnDemandIterator implements Iterator
     protected $enableInstancePoolingOnFinish;
 
     /**
-     * @phpstan-param \Propel\Runtime\Formatter\ObjectFormatter<T> $formatter
+     * @phpstan-param \Propel\Runtime\Formatter\OnDemandFormatter<T, \Propel\Runtime\Collection\OnDemandCollection> $formatter
      *
-     * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
+     * @param \Propel\Runtime\Formatter\OnDemandFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
      */
     public function __construct(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)

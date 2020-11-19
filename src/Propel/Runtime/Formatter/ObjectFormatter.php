@@ -18,24 +18,25 @@ use Propel\Runtime\Exception\LogicException;
  * @author Francois Zaninotto
  *
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends AbstractFormatter<T>
+ * @phpstan-template TColl of \Propel\Runtime\Collection\ObjectCollection
+ * @phpstan-extends  AbstractFormatter<T, TColl, T>
  */
 class ObjectFormatter extends AbstractFormatter
 {
     /**
-     * @var array
+     * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface[]
      * @phpstan-var array<T>
      */
     protected $objects = [];
 
     /**
-     * @phpstan-return array<T>|\Propel\Runtime\Collection\Collection<T>
-     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection
+     * @return \Propel\Runtime\Collection\ObjectCollection
+     *
+     * @phpstan-return \Propel\Runtime\Collection\ObjectCollection<T>
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
@@ -74,9 +75,20 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
-     * @phpstan-return null|class-string<\Propel\Runtime\Collection\Collection<T>>
+     * @return \Propel\Runtime\Collection\ObjectCollection
      *
-     * @return string|null
+     * @phpstan-return TColl<T>
+     */
+    public function getCollection()
+    {
+        /** @phpstan-var TColl<T> */
+        return parent::getCollection();
+    }
+
+    /**
+     * @phpstan-return class-string<TColl<T>>
+     *
+     * @return string
      */
     public function getCollectionClassName()
     {
@@ -84,13 +96,13 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
-     * @phpstan-return T|null
-     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null
+     *
+     * @phpstan-return T|null
      */
     public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
@@ -127,12 +139,12 @@ class ObjectFormatter extends AbstractFormatter
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
      *
-     * @phpstan-return T
-     *
      * @param array $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     *
+     * @phpstan-return T
      */
     public function getAllObjectsFromRow($row)
     {

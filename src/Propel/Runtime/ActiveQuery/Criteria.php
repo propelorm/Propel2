@@ -179,7 +179,7 @@ class Criteria
     protected $joins = [];
 
     /**
-     * @var \Propel\Runtime\ActiveQuery\Criteria[]
+     * @var array<string,\Propel\Runtime\ActiveQuery\Criteria>
      */
     protected $selectQueries = [];
 

@@ -20,6 +20,8 @@ use Propel\Runtime\Propel;
  * @author Francois Zaninotto
  *
  * @phpstan-template T of ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
  */
 abstract class AbstractFormatter
 {
@@ -66,10 +68,10 @@ abstract class AbstractFormatter
     protected $dataFetcher;
 
     /**
-     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T> $criteria
-     *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @phpstan-param BaseModelCriteria<T, TColl, TReturn> $criteria
      */
     public function __construct(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
     {
@@ -104,14 +106,15 @@ abstract class AbstractFormatter
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
      *
-     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T> $criteria
-     *
-     * @phpstan-return self<T>
-     *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @return $this The current formatter object
+     *
+     * @phpstan-template AColl of \Propel\Runtime\Collection\Collection
+     * @phpstan-template AReturn
+     * @phpstan-param    BaseModelCriteria<T, AColl, AReturn> $criteria
+     * @phpstan-return   $this<T, AColl, AReturn>
      */
     public function init(BaseModelCriteria $criteria, ?DataFetcherInterface $dataFetcher = null)
     {
@@ -148,11 +151,11 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @phpstan-param class-string<T> $class
-     *
      * @param string $class
      *
      * @return void
+     *
+     * @phpstan-param class-string<T> $class
      */
     public function setClass($class)
     {
@@ -161,9 +164,9 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @phpstan-return class-string<T>|null
-     *
      * @return string
+     *
+     * @phpstan-return class-string<T>
      */
     public function getClass()
     {
@@ -227,9 +230,9 @@ abstract class AbstractFormatter
     /**
      * Returns a Collection object or a simple array.
      *
-     * @phpstan-return \Propel\Runtime\Collection\Collection<T>|array<T>
-     *
      * @return \Propel\Runtime\Collection\Collection|array
+     *
+     * @phpstan-return TColl<TReturn>|array
      */
     protected function getCollection()
     {
@@ -247,7 +250,7 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @phpstan-return null|class-string<\Propel\Runtime\Collection\Collection<T>>
+     * @phpstan-return null|class-string<TColl<TReturn>>
      *
      * @return string|null
      */
@@ -336,6 +339,9 @@ abstract class AbstractFormatter
      * @param int $col The start column for the hydration (modified)
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     *
+     * @phpstan-param class-string<T> $class
+     * @phpstan-return T
      */
     public function getSingleObjectFromRow($row, $class, &$col = 0)
     {

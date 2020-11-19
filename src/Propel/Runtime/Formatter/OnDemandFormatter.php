@@ -19,6 +19,10 @@ use ReflectionClass;
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\OnDemandCollection
+ * @phpstan-extends  ObjectFormatter<T, TColl>
  */
 class OnDemandFormatter extends ObjectFormatter
 {
@@ -28,12 +32,17 @@ class OnDemandFormatter extends ObjectFormatter
     protected $isSingleTableInheritance = false;
 
     /**
-     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @return $this
+     *
+     * @phpstan-template AColl of \Propel\Runtime\Collection\Collection
+     * @phpstan-template AReturn
+     * @phpstan-param    BaseModelCriteria<T, AColl, T> $criteria
+     * @phpstan-return   $this<T, AColl, AReturn>
      */
-    public function init(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
+    public function init(BaseModelCriteria $criteria, ?DataFetcherInterface $dataFetcher = null)
     {
         parent::init($criteria, $dataFetcher);
 
@@ -47,7 +56,9 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
+     * @return \Propel\Runtime\Collection\OnDemandCollection
+     *
+     * @phpstan-return TColl<T>
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
@@ -69,7 +80,9 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @return string|null
+     * @return string
+     *
+     * @phpstan-return class-string<TColl<T>>
      */
     public function getCollectionClassName()
     {
@@ -78,6 +91,8 @@ class OnDemandFormatter extends ObjectFormatter
 
     /**
      * @return \Propel\Runtime\Collection\OnDemandCollection
+     *
+     * @phpstan-return TColl<T>
      */
     public function getCollection()
     {
@@ -98,6 +113,8 @@ class OnDemandFormatter extends ObjectFormatter
      * @param array $row associative array with data
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     *
+     * @phpstan-return T
      */
     public function getAllObjectsFromRow($row)
     {

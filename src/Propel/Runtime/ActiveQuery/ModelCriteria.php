@@ -51,6 +51,8 @@ use Propel\Runtime\Util\PropelModelPager;
  * @author François Zaninotto
  *
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
  */
 class ModelCriteria extends BaseModelCriteria
 {
@@ -66,6 +68,8 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * @var \Propel\Runtime\ActiveQuery\ModelCriteria|null
+     *
+     * @phpstan-var self<T,TColl,TReturn>|null
      */
     protected $primaryCriteria;
 
@@ -436,6 +440,8 @@ class ModelCriteria extends BaseModelCriteria
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return $this The current object, for fluid interface
+     *
+     * @phpstan-return $this<T, ArrayCollection<T>, mixed[]>
      */
     public function select($columnArray)
     {
@@ -786,6 +792,10 @@ class ModelCriteria extends BaseModelCriteria
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return \Propel\Runtime\ActiveQuery\ModelCriteria The secondary criteria object
+     *
+     * @phpstan-template TRel of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     * @phpstan-param    class-string<TRel> $secondaryCriteriaClass
+     * @phpstan-return   ModelCriteria<TRel, TColl, TReturn>
      */
     public function useQuery($relationName, $secondaryCriteriaClass = null)
     {
@@ -860,6 +870,8 @@ class ModelCriteria extends BaseModelCriteria
      * The ModelCriteria's Model and alias 'all the properties set by construct) will remain.
      *
      * @return $this The primary criteria object
+     *
+     * @phpstan-return $this<T, ObjectCollection<T>, T>
      */
     public function clear()
     {
@@ -880,6 +892,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param \Propel\Runtime\ActiveQuery\Join $previousJoin The previousJoin for this ModelCriteria
      *
      * @return void
+     *
+     * @phpstan-param ModelCriteria<T, TColl, TReturn> $criteria
      */
     public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
     {
@@ -1065,11 +1079,11 @@ class ModelCriteria extends BaseModelCriteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
      *
-     * @phpstan-return \Propel\Runtime\Collection\ObjectCollection<T>|T[]|mixed
-     *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
      * @return \Propel\Runtime\Collection\ObjectCollection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
+     *
+     * @phpstan-return TColl<TReturn>
      */
     public function find(?ConnectionInterface $con = null)
     {
@@ -1813,7 +1827,9 @@ class ModelCriteria extends BaseModelCriteria
     {
         if ($forceIndividualSaves) {
             // Update rows one by one
-            $objects = $this->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
+            /** @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<T, \Propel\Runtime\Collection\ObjectCollection, T> */
+            $classString = ModelCriteria::FORMAT_OBJECT;
+            $objects = $this->setFormatter($classString)->find($con);
             foreach ($objects as $object) {
                 foreach ($values as $key => $value) {
                     $object->setByName($key, $value);
@@ -2123,7 +2139,9 @@ class ModelCriteria extends BaseModelCriteria
 
         // select() needs the PropelSimpleArrayFormatter if no formatter given
         if ($this->formatter === null) {
-            $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
+            /** @phpstan-var \Propel\Runtime\Formatter\SimpleArrayFormatter<T, \Propel\Runtime\Collection\ArrayCollection> */
+            $classString = '\Propel\Runtime\Formatter\SimpleArrayFormatter';
+            $this->setFormatter($classString);
         }
 
         // clear only the selectColumns, clearSelectColumns() clears asColumns too

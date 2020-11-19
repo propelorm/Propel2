@@ -20,9 +20,9 @@ use Propel\Runtime\Map\TableMap;
  * @author Francois Zaninotto
  *
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends Collection<T>
+ * @phpstan-extends ObjectCollection<T>
  */
-class OnDemandCollection extends Collection
+class OnDemandCollection extends ObjectCollection
 {
     /**
      * @phpstan-var \Propel\Runtime\Collection\OnDemandIterator<T>
@@ -32,7 +32,7 @@ class OnDemandCollection extends Collection
     private $lastIterator;
 
     /**
-     * @phpstan-param \Propel\Runtime\Formatter\ObjectFormatter<T> $formatter
+     * @phpstan-param \Propel\Runtime\Formatter\OnDemandFormatter<T, \Propel\Runtime\Collection\OnDemandCollection> $formatter
      *
      * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
@@ -256,7 +256,7 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy($keyColumn = null, $usePrefix = false)
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
