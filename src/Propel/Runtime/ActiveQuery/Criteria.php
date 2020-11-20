@@ -186,7 +186,9 @@ class Criteria
     protected $joins = [];
 
     /**
-     * @var array<string,\Propel\Runtime\ActiveQuery\Criteria>
+     * @var \Propel\Runtime\ActiveQuery\Criteria[]
+     *
+     * @phpstan-var array<string,\Propel\Runtime\ActiveQuery\Criteria>
      */
     protected $selectQueries = [];
 
