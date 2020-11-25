@@ -6609,16 +6609,18 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         } catch (Exception \$e) {
             throw new PropelException('Unable to get autoincrement id.', 0, \$e);
         }";
-            $column = $table->getFirstPrimaryKeyColumn();
-            if ($column) {
+            foreach ($table->getPrimaryKey() as $col) {
+                if (!$col->isAutoIncrement()) {
+                    continue;
+                }
                 if ($table->isAllowPkInsert()) {
                     $script .= "
         if (\$pk !== null) {
-            \$this->set" . $column->getPhpName() . "(\$pk);
+            \$this->set" . $col->getPhpName() . "(\$pk);
         }";
                 } else {
                     $script .= "
-        \$this->set" . $column->getPhpName() . '($pk);';
+        \$this->set" . $col->getPhpName() . '($pk);';
                 }
             }
             $script .= "
