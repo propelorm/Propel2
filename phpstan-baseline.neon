@@ -291,11 +291,6 @@ parameters:
 			path: src/Propel/Generator/Model/ForeignKey.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int\\<1, max\\> and 0 will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/MappingModel.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Schema.php
