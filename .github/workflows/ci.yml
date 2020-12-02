@@ -1,7 +1,6 @@
 name: PropelORM CI
 
 on: [
-    push,
     pull_request
 ]
 
