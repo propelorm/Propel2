@@ -38,7 +38,7 @@ interface StatementInterface
      *
      * @return mixed
      */
-    public function fetch($fetchStyle = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0);
+    public function fetch($fetchStyle = PDO::FETCH_BOTH, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0);
 
     /**
      * Binds a parameter to the specified variable name.
@@ -102,7 +102,7 @@ interface StatementInterface
      *
      * @return array returns an array containing all of the remaining rows in the result set.
      */
-    public function fetchAll($fetchStyle = null, $fetchArgument = null, array $ctorArgs = []);
+    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []);
 
     /**
      * Fetches the next row and returns it as an object.
