@@ -1,0 +1,41 @@
+name: CI
+
+on: [
+    pull_request
+]
+
+jobs:
+    code-style-and-static-analysis:
+        runs-on: ubuntu-18.04
+        steps:
+            - uses: actions/checkout@v1
+              with:
+                  fetch-depth: 1
+
+            - name: Composer get cache directory
+              id: composer-cache
+              run: |
+                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Composer cache
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+            - name: Composer validate
+              run: composer validate
+
+            - name: Composer install
+              run: composer install --prefer-dist --no-interaction
+
+            - name: Code Style
+              run: composer cs-check
+
+            - name: PHPStan
+              run: composer stan
+
+            - name: Psalm
+              run: composer psalm
