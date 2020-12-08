@@ -442,7 +442,8 @@ EOF;
     public function testNotDefineDatabaseSectionTrowsException()
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('The child node "database" at path "propel" must be configured');
+        //Starting from Symfony Config 5.2, the following message changed
+        //$this->expectExceptionMessage('The child node "database" at path "propel" must be configured');
 
         $yamlConf = <<<EOF
 propel:
