@@ -4,6 +4,7 @@ composer.phar
 /composer.lock
 autoload.php
 phpunit.xml
+.phpunit.result.cache
 pom.xml
 php-cs-fixer.phar
 
@@ -41,3 +42,4 @@ tests/Fixtures/fixtures_built
 tests/graphviztest/
 tests/migrationdiff/
 tests/reversecommand/
+tests/test.sq3
