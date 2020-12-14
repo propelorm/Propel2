@@ -41,4 +41,4 @@ Please see our [contribution guideline](http://propelorm.org/contribute.html). T
 
 ## License
 
-See the `LICENSE` file.
+MIT. See the `LICENSE` file for details.
