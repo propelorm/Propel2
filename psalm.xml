@@ -11,6 +11,9 @@
 >
     <projectFiles>
         <directory name="src/Propel/"/>
+        <ignoreFiles>
+            <directory name="src/Propel/Generator/Command/templates/" />
+        </ignoreFiles>
     </projectFiles>
 
     <issueHandlers>

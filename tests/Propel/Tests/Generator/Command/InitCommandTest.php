@@ -15,6 +15,7 @@ use Propel\Generator\Command\SqlBuildCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixtures;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 

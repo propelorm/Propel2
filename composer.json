@@ -33,7 +33,7 @@
         "phpstan/phpstan": "^0.12.4",
         "phpunit/phpunit": "^8.0.0||^9.0.0",
         "spryker/code-sniffer": "^0.15.6",
-        "psalm/phar": "^4.1.0"
+        "psalm/phar": "4.2.1"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
