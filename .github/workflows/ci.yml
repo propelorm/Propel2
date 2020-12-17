@@ -90,7 +90,12 @@ jobs:
             - name: Run PostgreSQL tests
               if: matrix.db-type == 'pgsql'
               shell: 'script -q -e -c "bash {0}"'
-              run: vendor/bin/phpunit -c tests/pgsql.phpunit.xml
+              run: |
+                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
+                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/pgsql.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
+                  else
+                    vendor/bin/phpunit -c tests/pgsql.phpunit.xml
+                  fi
               env:
                   DB_NAME: 'propel-tests'
                   DB_USER: 'postgres'
@@ -107,7 +112,7 @@ jobs:
                   fi
 
             - name: Code Coverage Report
-              if: success() && matrix.db-type == 'mysql' && matrix.php-version == '7.4' && matrix.symfony-version == '5-max'
+              if: success() && matrix.php-version == '7.4' && matrix.symfony-version == '5-max'
               uses: codecov/codecov-action@v1
               with:
                   flags: ${{ matrix.php-version }}, ${{ matrix.db-type }}, ${{ matrix.symfony-version }}
