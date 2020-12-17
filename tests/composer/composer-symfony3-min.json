@@ -27,9 +27,13 @@
         "psr/log": "^1.0"
     },
     "require-dev": {
+        "ext-pdo": "*",
+        "ext-json": "*",
         "monolog/monolog": "^1.3",
         "phpstan/phpstan": "^0.12.4",
-        "phpunit/phpunit": "^7.5.15"
+        "phpunit/phpunit": "^8.0.0||^9.0.0",
+        "spryker/code-sniffer": "^0.15.6",
+        "psalm/phar": "^4.1.0"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."

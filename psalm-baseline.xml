@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.1.1@16bfbd9224698bd738c665f33039fade2a1a3977">
+<files psalm-version="4.2.1@ea9cb72143b77e7520c52fa37290bd8d8bc88fd9">
   <file src="src/Propel/Common/Config/PropelConfiguration.php">
     <TooFewArguments occurrences="1">
       <code>new TreeBuilder()</code>
@@ -459,104 +459,6 @@
     <NullArgument occurrences="1">
       <code>$e</code>
     </NullArgument>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.ini.dist.php">
-    <UndefinedGlobalVariable occurrences="6">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$phpDir</code>
-      <code>$rdbms</code>
-      <code>$schemaDir</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.ini.php">
-    <UndefinedGlobalVariable occurrences="5">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$password</code>
-      <code>$rdbms</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.json.dist.php">
-    <UndefinedGlobalVariable occurrences="2">
-      <code>$phpDir</code>
-      <code>$schemaDir</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.json.php">
-    <UndefinedGlobalVariable occurrences="5">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$password</code>
-      <code>$rdbms</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.php.dist.php">
-    <UndefinedGlobalVariable occurrences="6">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$phpDir</code>
-      <code>$rdbms</code>
-      <code>$schemaDir</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.php.php">
-    <UndefinedGlobalVariable occurrences="5">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$password</code>
-      <code>$rdbms</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.xml.dist.php">
-    <UndefinedGlobalVariable occurrences="6">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$phpDir</code>
-      <code>$rdbms</code>
-      <code>$schemaDir</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.xml.php">
-    <UndefinedGlobalVariable occurrences="5">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$password</code>
-      <code>$rdbms</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.yml.dist.php">
-    <UndefinedGlobalVariable occurrences="6">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$phpDir</code>
-      <code>$rdbms</code>
-      <code>$schemaDir</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/propel.yml.php">
-    <UndefinedGlobalVariable occurrences="5">
-      <code>$charset</code>
-      <code>$dsn</code>
-      <code>$password</code>
-      <code>$rdbms</code>
-      <code>$user</code>
-    </UndefinedGlobalVariable>
-  </file>
-  <file src="src/Propel/Generator/Command/templates/schema.xml.php">
-    <UndefinedGlobalVariable occurrences="3">
-      <code>$namespace</code>
-      <code>$rdbms</code>
-      <code>$schemaDir</code>
-    </UndefinedGlobalVariable>
   </file>
   <file src="src/Propel/Generator/Manager/AbstractManager.php">
     <UndefinedMethod occurrences="1">
