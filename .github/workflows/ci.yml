@@ -14,12 +14,15 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.2', '7.4' ]
+                php-version: [ '7.2', '7.4', '8.0' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
+                exclude:
+                  - php-version: '8.0'
+                    symfony-version: '4-min'
         steps:
             - name: Install PostgreSQL latest
-              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4'
+              if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
               uses: CasperWA/postgresql-action@v1.2
               with:
                   postgresql db: 'propel-tests'
@@ -36,7 +39,7 @@ jobs:
                   postgresql password: 'postgres'
 
             - name: Install MariaDb latest
-              if: matrix.db-type == 'mysql' && matrix.php-version == '7.4'
+              if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
               uses: getong/mariadb-action@v1.1
 
             - name: Install MariaDb min
