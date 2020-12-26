@@ -46,21 +46,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Variable \\$paramsDoc might not be defined\\.$#"
-			count: 4
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$methodSignature might not be defined\\.$#"
-			count: 10
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$buildScope might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
@@ -556,16 +541,6 @@ parameters:
 			path: src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php
 
 		-
-			message: "#^Variable \\$dbMap might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
-
-		-
-			message: "#^Variable \\$params might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionInterface\\:\\:sqliteCreateFunction\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Adapter/Pdo/SqliteAdapter.php
@@ -609,6 +584,16 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
+			message: "#^Method ArrayIterator\\<mixed,mixed\\>\\:\\:asort\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
+			message: "#^Method ArrayIterator\\<mixed,mixed\\>\\:\\:ksort\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
