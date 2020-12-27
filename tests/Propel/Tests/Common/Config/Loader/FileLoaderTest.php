@@ -15,6 +15,7 @@ use Propel\Tests\TestCase;
 
 class FileLoaderTest extends TestCase
 {
+    /** @var TestableFileLoader */
     private $loader;
 
     /**

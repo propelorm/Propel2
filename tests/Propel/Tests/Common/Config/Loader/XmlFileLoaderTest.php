@@ -13,10 +13,14 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\XmlFileLoader;
-use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Tests\TestCase;
+use Propel\Tests\VfsTrait;
 
-class XmlFileLoaderTest extends ConfigTestCase
+class XmlFileLoaderTest extends TestCase
 {
+    use VfsTrait;
+
+    /** @var XmlFileLoader */
     protected $loader;
 
     /**
@@ -24,7 +28,7 @@ class XmlFileLoaderTest extends ConfigTestCase
      */
     protected function setUp(): void
     {
-        $this->loader = new XmlFileLoader(new FileLocator(sys_get_temp_dir()));
+        $this->loader = new XmlFileLoader(new FileLocator($this->getRoot()->url()));
     }
 
     /**
@@ -51,7 +55,7 @@ class XmlFileLoaderTest extends ConfigTestCase
   <bar>baz</bar>
 </properties>
 XML;
-        $this->dumpTempFile('parameters.xml', $content);
+        $this->newFile('parameters.xml', $content);
 
         $test = $this->loader->load('parameters.xml');
         $this->assertEquals('bar', $test['foo']);
@@ -82,7 +86,7 @@ not xml content
 only plain
 text
 EOF;
-        $this->dumpTempFile('nonvalid.xml', $content);
+        $this->newFile('nonvalid.xml', $content);
 
         @$this->loader->load('nonvalid.xml');
     }
@@ -92,8 +96,7 @@ EOF;
      */
     public function testXmlFileIsEmpty()
     {
-        $content = '';
-        $this->dumpTempFile('empty.xml', $content);
+        $this->newFile('empty.xml', '');
 
         $actual = $this->loader->load('empty.xml');
 
@@ -118,8 +121,7 @@ EOF;
 </properties>
 XML;
 
-        $this->dumpTempFile('notreadable.xml', $content);
-        $this->getFilesystem()->chmod(sys_get_temp_dir() . '/notreadable.xml', 0200);
+        $this->newFile('notreadable.xml', $content)->chmod(200);
 
         $actual = $this->loader->load('notreadable.xml');
         $this->assertEquals('bar', $actual['foo']);

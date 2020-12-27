@@ -8,12 +8,16 @@
 
 namespace Propel\Tests\Common\Config;
 
+use org\bovigo\vfs\vfsStream;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\XmlParseException;
 use Propel\Common\Config\XmlToArrayConverter;
+use Propel\Tests\TestCase;
+use Propel\Tests\VfsTrait;
 
-class XmlToArrayConverterTest extends ConfigTestCase
+class XmlToArrayConverterTest extends TestCase
 {
+    use VfsTrait;
     use DataProviderTrait;
 
     /**
@@ -35,8 +39,8 @@ class XmlToArrayConverterTest extends ConfigTestCase
      */
     public function testConvertFromFile($xml, $expected)
     {
-        $this->dumpTempFile('testconvert.xml', $xml);
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/testconvert.xml');
+        $file = $this->newFile('testconvert.xml', $xml);
+        $actual = XmlToArrayConverter::convert($file->url());
 
         $this->assertEquals($expected, $actual);
     }
@@ -48,9 +52,9 @@ class XmlToArrayConverterTest extends ConfigTestCase
      */
     public function testConvertFromFileWithXmlInclusion($xmlLoad, $xmlInclude, $expected)
     {
-        $this->dumpTempFile('testconvert.xml', $xmlLoad);
-        $this->dumpTempFile('testconvert_include.xml', $xmlInclude);
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/testconvert.xml');
+        $this->newFile('testconvert.xml', $xmlLoad);
+        $this->newFile('testconvert_include.xml', $xmlInclude);
+        $actual = XmlToArrayConverter::convert(vfsStream::url('root/testconvert.xml'));
         $this->assertEquals($expected, $actual);
     }
 
@@ -141,8 +145,8 @@ XML;
      */
     public function testEmptyFileReturnsEmptyArray()
     {
-        $this->dumpTempFile('empty.xml', '');
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/empty.xml');
+        $file = $this->newFile('empty.xml', '');
+        $actual = XmlToArrayConverter::convert($file->url());
 
         $this->assertEquals([], $actual);
     }
