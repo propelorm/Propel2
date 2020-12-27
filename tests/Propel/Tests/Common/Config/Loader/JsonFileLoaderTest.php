@@ -13,10 +13,14 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\Exception\JsonParseException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\JsonFileLoader;
-use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Tests\TestCase;
+use Propel\Tests\VfsTrait;
 
-class JsonFileLoaderTest extends ConfigTestCase
+class JsonFileLoaderTest extends TestCase
 {
+    use VfsTrait;
+
+    /** @var JsonFileLoader */
     protected $loader;
 
     /**
@@ -24,7 +28,7 @@ class JsonFileLoaderTest extends ConfigTestCase
      */
     protected function setUp(): void
     {
-        $this->loader = new JsonFileLoader(new FileLocator(sys_get_temp_dir()));
+        $this->loader = new JsonFileLoader(new FileLocator($this->getRoot()->url()));
     }
 
     /**
@@ -49,7 +53,7 @@ class JsonFileLoaderTest extends ConfigTestCase
   "bar": "baz"
 }
 EOF;
-        $this->dumpTempFile('parameters.json', $content);
+        $this->newFile('parameters.json', $content);
 
         $actual = $this->loader->load('parameters.json');
         $this->assertEquals('bar', $actual['foo']);
@@ -79,7 +83,7 @@ not json content
 only plain
 text
 EOF;
-        $this->dumpTempFile('nonvalid.json', $content);
+        $this->newFile('nonvalid.json', $content);
 
         $this->loader->load('nonvalid.json');
     }
@@ -89,8 +93,7 @@ EOF;
      */
     public function testJsonFileIsEmpty()
     {
-        $content = '';
-        $this->dumpTempFile('empty.json', $content);
+        $this->newFile('empty.json');
 
         $actual = $this->loader->load('empty.json');
 
@@ -113,9 +116,7 @@ EOF;
   "bar": "baz"
 }
 EOF;
-
-        $this->dumpTempFile('notreadable.json', $content);
-        $this->getFilesystem()->chmod(sys_get_temp_dir() . '/notreadable.json', 0200);
+        $this->newFile('notreadable.json', $content)->chmod(200);
 
         $actual = $this->loader->load('notreadable.json');
         $this->assertEquals('bar', $actual['foo']);

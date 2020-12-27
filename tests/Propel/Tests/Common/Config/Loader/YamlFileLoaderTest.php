@@ -12,11 +12,15 @@ use InvalidArgumentException;
 use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\YamlFileLoader;
-use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Tests\TestCase;
+use Propel\Tests\VfsTrait;
 use Symfony\Component\Yaml\Exception\ParseException;
 
-class YamlFileLoaderTest extends ConfigTestCase
+class YamlFileLoaderTest extends TestCase
 {
+    use VfsTrait;
+
+    /** @var YamlFileLoader  */
     protected $loader;
 
     /**
@@ -24,7 +28,7 @@ class YamlFileLoaderTest extends ConfigTestCase
      */
     protected function setUp(): void
     {
-        $this->loader = new YamlFileLoader(new FileLocator(sys_get_temp_dir()));
+        $this->loader = new YamlFileLoader(new FileLocator($this->getRoot()->url()));
     }
 
     /**
@@ -50,7 +54,7 @@ class YamlFileLoaderTest extends ConfigTestCase
 foo: bar
 bar: baz
 EOF;
-        $this->dumpTempFile('parameters.yaml', $content);
+        $this->newFile('parameters.yaml', $content);
 
         $test = $this->loader->load('parameters.yaml');
         $this->assertEquals('bar', $test['foo']);
@@ -81,7 +85,7 @@ not yaml content
 only plain
 text
 EOF;
-        $this->dumpTempFile('nonvalid.yaml', $content);
+        $this->newFile('nonvalid.yaml', $content);
         $this->loader->load('nonvalid.yaml');
     }
 
@@ -90,8 +94,7 @@ EOF;
      */
     public function testYamlFileIsEmpty()
     {
-        $content = '';
-        $this->dumpTempFile('empty.yaml', $content);
+        $this->newFile('empty.yaml', '');
 
         $actual = $this->loader->load('empty.yaml');
 
@@ -112,9 +115,7 @@ EOF;
 foo: bar
 bar: baz
 EOF;
-
-        $this->dumpTempFile('notreadable.yaml', $content);
-        $this->getFilesystem()->chmod(sys_get_temp_dir() . '/notreadable.yaml', 0200);
+        $this->newFile('notreadable.yaml', $content)->chmod(200);
 
         $actual = $this->loader->load('notreadable.yaml');
         $this->assertEquals('bar', $actual['foo']);

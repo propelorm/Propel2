@@ -13,6 +13,8 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Tests\TestCase;
+use Propel\Tests\VfsTrait;
 use ReflectionClass;
 
 /**
@@ -20,8 +22,10 @@ use ReflectionClass;
  * @author Cristiano Cinotti
  * @package propel.generator.config
  */
-class GeneratorConfigTest extends ConfigTestCase
+class GeneratorConfigTest extends TestCase
 {
+    use VfsTrait;
+
     protected $generatorConfig;
 
     /**
@@ -81,9 +85,9 @@ class GeneratorConfigTest extends ConfigTestCase
         )
 );
 ";
-        $this->dumpTempFile('propel.php.dist', $php);
+        $file = $this->newFile('propel.php.dist', $php);
 
-        $this->generatorConfig = new GeneratorConfig(sys_get_temp_dir() . '/propel.php.dist');
+        $this->generatorConfig = new GeneratorConfig($file->url());
     }
 
     /**
