@@ -17,6 +17,7 @@ use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Tests\VfsTrait;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -26,6 +27,8 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class DatabaseTest extends ModelTestCase
 {
+    use VfsTrait;
+
     /**
      * @return void
      */
@@ -537,13 +540,10 @@ propel:
           autoNamespace: true
 EOF;
 
-        $configFilename = sys_get_temp_dir() . '/propel.yml';
-
-        $filesystem = new Filesystem();
-        $filesystem->dumpFile($configFilename, $yamlConf);
+        $configFile = $this->newFile('propel.yml', $yamlConf);
 
         $schema = 'TestSchema';
-        $config = new GeneratorConfig($configFilename);
+        $config = new GeneratorConfig($configFile->url());
         $platform = new MysqlPlatform();
         $parentSchema = new Schema($platform);
         $parentSchema->setGeneratorConfig($config);

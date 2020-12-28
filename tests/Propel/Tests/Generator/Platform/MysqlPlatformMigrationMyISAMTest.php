@@ -10,9 +10,12 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Tests\VfsTrait;
 
 class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
 {
+    use VfsTrait;
+
     protected $platform;
 
     /**
@@ -49,9 +52,8 @@ propel:
       - bookstore
 EOF;
 
-            $configFile = sys_get_temp_dir() . '/propel.yaml';
-            file_put_contents($configFile, $configFileContent);
-            $config = new GeneratorConfig($configFile);
+            $configFile =  $this->newFile('propel.yaml', $configFileContent);
+            $config = new GeneratorConfig($configFile->url());
 
             $this->platform->setGeneratorConfig($config);
         }
