@@ -1,13 +1,12 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
+
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
-namespace Propel\Tests;
+namespace Propel\Generator\Util;
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
@@ -20,15 +19,17 @@ use org\bovigo\vfs\vfsStreamFile;
  */
 trait VfsTrait
 {
-    /** @var vfsStreamDirectory */
+    /**
+     * @var \org\bovigo\vfs\vfsStreamDirectory
+     */
     private $root;
 
     /**
-     * @return vfsStreamDirectory
+     * @return \org\bovigo\vfs\vfsStreamDirectory
      */
     public function getRoot(): vfsStreamDirectory
     {
-        if (null === $this->root) {
+        if ($this->root === null) {
             $this->root = vfsStream::setup();
         }
 
@@ -43,14 +44,14 @@ trait VfsTrait
      * @param string $filename
      * @param string $content
      *
-     * @return vfsStreamFile
+     * @return \org\bovigo\vfs\vfsStreamFile
      */
     public function newFile(string $filename, string $content = ''): vfsStreamFile
     {
         $path = pathinfo($filename);
         $dir = $this->getDir($path['dirname']);
 
-        return vfsStream::newFile($filename)->at($dir)->setContent($content);
+        return vfsStream::newFile($path['basename'])->at($dir)->setContent($content);
     }
 
     /**
@@ -60,7 +61,7 @@ trait VfsTrait
      *
      * @param string $dirname
      *
-     * @return vfsStreamDirectory
+     * @return \org\bovigo\vfs\vfsStreamDirectory
      */
     private function getDir(string $dirname): vfsStreamDirectory
     {

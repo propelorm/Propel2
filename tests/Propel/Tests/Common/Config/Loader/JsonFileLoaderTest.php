@@ -14,7 +14,7 @@ use Propel\Common\Config\Exception\JsonParseException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\JsonFileLoader;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 class JsonFileLoaderTest extends TestCase
 {

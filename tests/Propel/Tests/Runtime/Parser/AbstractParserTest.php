@@ -12,7 +12,7 @@ use Propel\Runtime\Exception\FileNotFoundException;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\XmlParser;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 /**
  * Test for JsonParser class

@@ -11,7 +11,7 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
