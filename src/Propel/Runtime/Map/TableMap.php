@@ -68,6 +68,13 @@ class TableMap
     protected $columnsByPhpName = [];
 
     /**
+     * Map of normalized column names
+     *
+     * @var string[]
+     */
+    protected $normalizedColumnNameMap = [];
+
+    /**
      * The database this table belongs to
      *
      * @var \Propel\Runtime\Map\DatabaseMap
@@ -412,6 +419,16 @@ class TableMap
     }
 
     /**
+     * @param string $columnName
+     *
+     * @return string
+     */
+    protected function getNormalizedColumnName(string $columnName): string
+    {
+        return $this->normalizedColumnNameMap[$columnName] ?? ColumnMap::normalizeName($columnName);
+    }
+
+    /**
      * Add a column to the table.
      *
      * @param string $name A String with the column name.
@@ -445,7 +462,7 @@ class TableMap
             $this->foreignKeys[$name] = $col;
         }
 
-        $this->columns[ColumnMap::normalizeName($name)] = $col;
+        $this->columns[$this->getNormalizedColumnName($name)] = $col;
         $this->columnsByPhpName[$phpName] = $col;
 
         return $col;
@@ -479,7 +496,7 @@ class TableMap
         if ($name instanceof ColumnMap) {
             $name = $name->getName();
         } elseif ($normalize) {
-            $name = ColumnMap::normalizeName($name);
+            $name = $this->getNormalizedColumnName($name);
         }
 
         return isset($this->columns[$name]);
@@ -498,7 +515,7 @@ class TableMap
     public function getColumn($name, $normalize = true)
     {
         if ($normalize) {
-            $name = ColumnMap::normalizeName($name);
+            $name = $this->getNormalizedColumnName($name);
         }
         if (!$this->hasColumn($name, false)) {
             throw new ColumnNotFoundException(sprintf('Cannot fetch ColumnMap for undefined column: %s in table %s.', $name, $this->getName()));
