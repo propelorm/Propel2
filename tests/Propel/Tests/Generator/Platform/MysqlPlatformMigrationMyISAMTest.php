@@ -10,7 +10,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
 {

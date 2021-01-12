@@ -13,7 +13,7 @@ use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\XmlParseException;
 use Propel\Common\Config\XmlToArrayConverter;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 class XmlToArrayConverterTest extends TestCase
 {

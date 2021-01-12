@@ -14,7 +14,7 @@ use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgu
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\XmlFileLoader;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 
 class XmlFileLoaderTest extends TestCase
 {

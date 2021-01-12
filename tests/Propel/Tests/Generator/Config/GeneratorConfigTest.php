@@ -14,7 +14,7 @@ use Propel\Generator\Exception\ClassNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Tests\Common\Config\ConfigTestCase;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 use ReflectionClass;
 
 /**

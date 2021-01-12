@@ -13,7 +13,7 @@ use Propel\Common\Config\Exception\InputOutputException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\YamlFileLoader;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 class YamlFileLoaderTest extends TestCase

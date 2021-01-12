@@ -12,7 +12,7 @@ use org\bovigo\vfs\vfsStream;
 use Propel\Common\Config\ConfigurationManager;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Tests\TestCase;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class ConfigurationManagerTest extends TestCase

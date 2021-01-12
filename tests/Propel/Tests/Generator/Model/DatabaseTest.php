@@ -17,7 +17,7 @@ use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PgsqlPlatform;
-use Propel\Tests\VfsTrait;
+use Propel\Generator\Util\VfsTrait;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
