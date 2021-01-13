@@ -146,6 +146,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         $this->addAttributes($script);
 
         $script .= $this->addFieldsAttributes();
+        $this->addNormalizedColumnNameMap($script);
 
         if ($table->hasValueSetColumns()) {
             $this->addValueSetColumnAttributes($script);
@@ -442,6 +443,64 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
                 'fieldKeysFieldName' => $fieldKeysFieldName,
                 'fieldKeysNum' => $fieldKeysNum,
         ]);
+    }
+
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addNormalizedColumnNameMap(&$script): void
+    {
+        $script .= '
+    /**
+     * Holds a list of column names and their normalized version.
+     *
+     * @var string[]
+     */
+    protected $normalizedColumnNameMap = [' . PHP_EOL;
+
+        $table = $this->getTable();
+        $tableColumns = $table->getColumns();
+
+        foreach ($tableColumns as $num => $column) {
+            $normalizedName = strtoupper($column->getName());
+
+            // ColumnName => COLUMN_NAME
+            $script .= '
+        \'' . $column->getPhpName() . '\' => \'' . $normalizedName . '\',';
+
+            // TableName.ColumnName => COLUMN_NAME
+            $script .= '
+        \'' . $table->getPhpName() . '.' . $column->getPhpName() . '\' => \'' . $normalizedName . '\',';
+
+            // columnName => COLUMN_NAME
+            $script .= '
+        \'' . $column->getCamelCaseName() . '\' => \'' . $normalizedName . '\',';
+
+            // tableName.columnName => COLUMN_NAME
+            $script .= '
+        \'' . $table->getCamelCaseName() . '.' . $column->getCamelCaseName() . '\' => \'' . $normalizedName . '\',';
+
+            // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
+            $script .= '
+        \'' . $this->getColumnConstant($column, $this->getTableMapClass()) . '\' => \'' . $normalizedName . '\',';
+
+            // COL_COLUMN_NAME => COLUMN_NAME
+            $script .= '
+        \'' . $column->getConstantName() . '\' => \'' . $normalizedName . '\',';
+
+            // column_name => COLUMN_NAME
+            $script .= '
+        \'' . $column->getName() . '\' => \'' . $normalizedName . '\',';
+
+            // table_name.column_name => COLUMN_NAME
+            $script .= '
+        \'' . $table->getName() . '.' . $column->getName() . '\' => \'' . $normalizedName . '\',';
+        }
+
+        $script .= '
+    ];' . PHP_EOL;
     }
 
     /**
