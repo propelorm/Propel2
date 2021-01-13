@@ -454,7 +454,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     {
         $script .= '
     /**
-     * Holds a list of column names to be normalized
+     * Holds a list of column names and their normalized version.
      *
      * @var string[]
      */
