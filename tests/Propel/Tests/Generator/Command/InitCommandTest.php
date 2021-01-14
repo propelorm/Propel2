@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Command;
@@ -17,6 +15,7 @@ use Propel\Generator\Command\SqlBuildCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixtures;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -25,18 +24,25 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class InitCommandTest extends TestCaseFixtures
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $dir;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $currentDir;
 
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
-        $this->dir = sys_get_temp_dir() . "/propel_init";
-        $filesystem= new Filesystem();
+        $this->dir = sys_get_temp_dir() . '/propel_init';
+        $filesystem = new Filesystem();
         if ($filesystem->exists($this->dir)) {
             $filesystem->remove($this->dir);
         }
@@ -46,22 +52,30 @@ class InitCommandTest extends TestCaseFixtures
         chdir($this->dir);
     }
 
+    /**
+     * @return void
+     */
     public function testExecute()
     {
+        if (!method_exists(CommandTester::class, 'setInputs')) {
+            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symfony/console');
+        }
+
         $app = new Application('Propel', Propel::VERSION);
         $app->addCommands([
             new InitCommand(),
             new ModelBuildCommand(),
             new SqlBuildCommand(),
-            new ConfigConvertCommand()
+            new ConfigConvertCommand(),
         ]);
 
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
-        $commandTester->setInputs($this->getInputsArray());
-        $commandTester->execute(['command'  => $command->getName()]);
 
-        $this->assertContains('Propel 2 is ready to be used!', $commandTester->getDisplay());
+        $commandTester->setInputs($this->getInputsArray());
+        $commandTester->execute(['command' => $command->getName()]);
+
+        $this->assertStringContainsString('Propel 2 is ready to be used!', $commandTester->getDisplay());
         $this->assertTrue(file_exists($this->dir . '/schema.xml'), 'Example schema file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml'), 'Configuration file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml.dist'), 'Dist configuration file created.');
@@ -72,24 +86,36 @@ class InitCommandTest extends TestCaseFixtures
         $this->assertTrue(file_exists($this->dir . '/generated-sql/default.sql'), 'Sql file from example schema created.');
     }
 
+    /**
+     * @return void
+     */
     public function testExecuteAborted()
     {
+        if (!method_exists(CommandTester::class, 'setInputs')) {
+            $this->markTestSkipped('Interactive console input was not present in some earlier versions of symphony/console');
+        }
+
         $app = new Application('Propel', Propel::VERSION);
         $app->addCommands([
             new InitCommand(),
             new ModelBuildCommand(),
             new SqlBuildCommand(),
-            new ConfigConvertCommand()
+            new ConfigConvertCommand(),
         ]);
 
         $command = $app->find('init');
         $commandTester = new CommandTester($command);
         $commandTester->setInputs($this->getInputsArray('no'));
-        $commandTester->execute(['command'  => $command->getName()]);
+        $commandTester->execute(['command' => $command->getName()]);
 
-        $this->assertContains('Process aborted', $commandTester->getDisplay());
+        $this->assertStringContainsString('Process aborted', $commandTester->getDisplay());
     }
 
+    /**
+     * @param string $lastAnswer
+     *
+     * @return array
+     */
     private function getInputsArray($lastAnswer = 'yes')
     {
         $dsn = $this->getConnectionDsn('bookstore', true);
@@ -103,13 +129,12 @@ class InitCommandTest extends TestCaseFixtures
             }
 
             return $element;
-
         }, $dsnArray);
 
         $inputs = [];
         $firstDsnElement = array_shift($dsnArray);
         if ($firstDsnElement) {
-          $inputs[] = $firstDsnElement;
+            $inputs[] = $firstDsnElement;
         }
 
         if ($this->getDriver() !== 'sqlite') {
@@ -126,7 +151,7 @@ class InitCommandTest extends TestCaseFixtures
             $this->dir . '/Model/',
             'Init\\Command\\Namespace',
             'yml',
-            $lastAnswer
+            $lastAnswer,
         ]);
 
         return $inputs;

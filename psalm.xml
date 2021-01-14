@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="6"
+    allowStringToStandInForClass="true"
+    usePhpDocMethodsWithoutMagicCall="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    autoloader="autoload.php.dist"
+    errorBaseline="psalm-baseline.xml"
+>
+    <projectFiles>
+        <directory name="src/Propel/"/>
+        <ignoreFiles>
+            <directory name="src/Propel/Generator/Command/templates/" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <RedundantConditionGivenDocblockType errorLevel="suppress"/>
+        <DocblockTypeContradiction errorLevel="suppress"/>
+        <MissingClosureParamType errorLevel="suppress"/>
+        <MissingClosureReturnType errorLevel="suppress"/>
+        <PropertyNotSetInConstructor errorLevel="suppress"/>
+        <UnresolvableInclude errorLevel="suppress"/>
+        <ImplementedReturnTypeMismatch errorLevel="suppress"/>
+        <ImplicitToStringCast errorLevel="suppress"/>
+        <UndefinedMagicMethod errorLevel="suppress"/>
+    </issueHandlers>
+</psalm>

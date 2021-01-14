@@ -1,30 +1,34 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
 
+use ArrayIterator;
+
 /**
  * Iterator class for iterating over Collection data
  */
-class CollectionIterator extends \ArrayIterator
+class CollectionIterator extends ArrayIterator
 {
-    /** @var Collection */
+    /**
+     * @var \Propel\Runtime\Collection\Collection
+     */
     protected $collection;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $positions = [];
 
     /**
      * Constructor
      *
-     * @param Collection $collection
+     * @param \Propel\Runtime\Collection\Collection $collection
      */
     public function __construct(Collection $collection)
     {
@@ -37,7 +41,7 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Returns the collection instance
      *
-     * @return Collection
+     * @return \Propel\Runtime\Collection\Collection
      */
     public function getCollection()
     {
@@ -47,22 +51,22 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check if the collection is empty
      *
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
-        return 0 === $this->count();
+        return $this->count() === 0;
     }
 
     /**
      * Gets the position of the internal pointer
      * This position can be later used in seek()
      *
-     * @return integer
+     * @return int
      */
     public function getPosition()
     {
-        if (null === $this->key()) {
+        if ($this->key() === null) {
             return 0;
         }
 
@@ -88,11 +92,11 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check whether the internal pointer is at the beginning of the list
      *
-     * @return boolean
+     * @return bool
      */
     public function isFirst()
     {
-        return 0 === $this->getPosition();
+        return $this->getPosition() === 0;
     }
 
     /**
@@ -155,7 +159,7 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check whether the internal pointer is at the end of the list
      *
-     * @return boolean
+     * @return bool
      */
     public function isLast()
     {
@@ -170,23 +174,29 @@ class CollectionIterator extends \ArrayIterator
     /**
      * Check if the current index is an odd integer
      *
-     * @return boolean
+     * @return bool
      */
     public function isOdd()
     {
-        return (boolean) ($this->getPosition() % 2);
+        return (bool)($this->getPosition() % 2);
     }
 
     /**
      * Check if the current index is an even integer
      *
-     * @return boolean
+     * @return bool
      */
     public function isEven()
     {
         return !$this->isOdd();
     }
 
+    /**
+     * @param string $index
+     * @param string $newval
+     *
+     * @return void
+     */
     public function offsetSet($index, $newval)
     {
         $this->collection->offsetSet($index, $newval);
@@ -194,6 +204,11 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $index
+     *
+     * @return void
+     */
     public function offsetUnset($index)
     {
         $this->collection->offsetUnset($index);
@@ -201,6 +216,11 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
     public function append($value)
     {
         $this->collection->append($value);
@@ -208,42 +228,71 @@ class CollectionIterator extends \ArrayIterator
         $this->refreshPositions();
     }
 
-    public function asort()
+    /**
+     * @param int $sort_flags
+     *
+     * @return void
+     */
+    public function asort($sort_flags = SORT_REGULAR)
     {
-        parent::asort();
+        parent::asort($sort_flags);
         $this->refreshPositions();
     }
 
-    public function ksort()
+    /**
+     * @param int $sort_flags
+     *
+     * @return void
+     */
+    public function ksort($sort_flags = SORT_REGULAR)
     {
-        parent::ksort();
+        parent::ksort($sort_flags);
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $cmp_function
+     *
+     * @return void
+     */
     public function uasort($cmp_function)
     {
         parent::uasort($cmp_function);
         $this->refreshPositions();
     }
 
+    /**
+     * @param string $cmp_function
+     *
+     * @return void
+     */
     public function uksort($cmp_function)
     {
         parent::uksort($cmp_function);
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function natsort()
     {
         parent::natsort();
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     public function natcasesort()
     {
         parent::natcasesort();
         $this->refreshPositions();
     }
 
+    /**
+     * @return void
+     */
     private function refreshPositions()
     {
         $this->positions = array_flip(array_keys($this->getArrayCopy()));

@@ -1,16 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\NestedSet;
 
+use Map\NestedSetTable10TableMap;
+use NestedSetTable10;
+use NestedSetTable10Query;
 use Propel\Runtime\Exception\PropelException;
+use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
@@ -21,42 +23,50 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 {
     protected function getByTitle($title)
     {
-        return \NestedSetTable10Query::create()->filterByTitle($title)->findOne();
+        return NestedSetTable10Query::create()->filterByTitle($title)->findOne();
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @return void
      */
     public function testSaveRootInTreeWithExistingRootWithSameScope()
     {
-        \Map\NestedSetTable10TableMap::doDeleteAll();
-        $t1 = new \NestedSetTable10();
+        $this->expectException(PropelException::class);
+
+        NestedSetTable10TableMap::doDeleteAll();
+        $t1 = new NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
         $t1->save();
-        $t2 = new \NestedSetTable10();
+        $t2 = new NestedSetTable10();
         $t2->setScopeValue(1);
         $t2->makeRoot();
         $t2->save();
     }
 
+    /**
+     * @return void
+     */
     public function testSaveRootInTreeWithExistingRootWithDifferentScope()
     {
-        \Map\NestedSetTable10TableMap::doDeleteAll();
-        $t1 = new \NestedSetTable10();
+        NestedSetTable10TableMap::doDeleteAll();
+        $t1 = new NestedSetTable10();
         $t1->setScopeValue(1);
         $t1->makeRoot();
         $t1->save();
-        $t2 = new \NestedSetTable10();
+        $t2 = new NestedSetTable10();
         $t2->setScopeValue(2);
         $t2->makeRoot();
         $t2->save();
         $this->assertTrue(!$t2->isNew());
     }
 
+    /**
+     * @return void
+     */
     public function testDelete()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -87,9 +97,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'delete() does not delete anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testIsDescendantOf()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -110,6 +123,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertFalse($t2->isDescendantOf($t8), 'is false, since both are in different scopes');
     }
 
+    /**
+     * @return void
+     */
     public function testGetParent()
     {
         $this->initTreeWithScope();
@@ -123,9 +139,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t4->getParent($this->con), $t3, 'getParent() retrieves the same parent for nodes');
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrevSibling()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -147,9 +166,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($t7->getPrevSibling($this->con), $t6, 'getPrevSibling() correctly retrieves prev sibling');
     }
 
+    /**
+     * @return void
+     */
     public function testGetNextSibling()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -171,9 +193,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertNull($t7->getNextSibling($this->con), 'getNextSibling() returns null for last siblings');
     }
 
+    /**
+     * @return void
+     */
     public function testGetDescendants()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -198,9 +223,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpNodes($descendants), 'getDescendants() returns descendants from the current scope only');
     }
 
+    /**
+     * @return void
+     */
     public function testGetAncestors()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -224,6 +252,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpNodes($ancestors), 'getAncestors() returns ancestors from the current scope only');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsFirstChildOf()
     {
         $this->assertTrue(
@@ -246,7 +277,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new Fixtures\PublicTable10();
+        $t11 = new PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsFirstChildOf($fixtures[2]); // first child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsFirstChildOf() sets the scope value correctly');
@@ -259,7 +290,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             't5' => [9, 14, 2],
             't6' => [10, 11, 3],
             't7' => [12, 13, 3],
-            't11' => [5, 6, 2]
+            't11' => [5, 6, 2],
         ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsFirstChildOf() shifts the other nodes correctly');
         $expected = [
@@ -270,17 +301,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsFirstChildOf() does not shift anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsFirstChildOfExistingObject()
     {
-        \NestedSetTable10Query::create()->deleteAll();
-        $t = new \NestedSetTable10();
+        NestedSetTable10Query::create()->deleteAll();
+        $t = new NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new \NestedSetTable10();
+        $t1 = new NestedSetTable10();
         $t1->save();
         $t1->insertAsFirstChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -297,6 +331,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, $t1->getLevel());
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsLastChildOf()
     {
         $this->assertTrue(
@@ -319,7 +356,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new Fixtures\PublicTable10();
+        $t11 = new PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsLastChildOf($fixtures[2]); // last child of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsLastChildOf() sets the scope value correctly');
@@ -332,7 +369,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             't5' => [7, 12, 2],
             't6' => [8, 9, 3],
             't7' => [10, 11, 3],
-            't11' => [13, 14, 2]
+            't11' => [13, 14, 2],
         ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsLastChildOf() shifts the other nodes correctly');
         $expected = [
@@ -343,17 +380,20 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsLastChildOf() does not shift anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsLastChildOfExistingObject()
     {
-        \NestedSetTable10Query::create()->deleteAll();
-        $t = new \NestedSetTable10();
+        NestedSetTable10Query::create()->deleteAll();
+        $t = new NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
         $this->assertEquals(1, $t->getLeftValue());
         $this->assertEquals(2, $t->getRightValue());
         $this->assertEquals(0, $t->getLevel());
-        $t1 = new \NestedSetTable10();
+        $t1 = new NestedSetTable10();
         $t1->save();
         $t1->insertAsLastChildOf($t);
         $this->assertEquals(2, $t1->getLeftValue());
@@ -370,6 +410,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, $t1->getLevel());
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsPrevSiblingOf()
     {
         $this->assertTrue(
@@ -392,7 +435,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new Fixtures\PublicTable10();
+        $t11 = new PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsPrevSiblingOf($fixtures[2]); // prev sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsPrevSiblingOf() sets the scope value correctly');
@@ -405,7 +448,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             't5' => [9, 14, 2],
             't6' => [10, 11, 3],
             't7' => [12, 13, 3],
-            't11' => [4, 5, 1]
+            't11' => [4, 5, 1],
         ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsPrevSiblingOf() shifts the other nodes correctly');
         $expected = [
@@ -416,14 +459,17 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsPrevSiblingOf() does not shift anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsPrevSiblingOfExistingObject()
     {
-        \NestedSetTable10Query::create()->deleteAll();
-        $t = new \NestedSetTable10();
+        NestedSetTable10Query::create()->deleteAll();
+        $t = new NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
-        $t1 = new \NestedSetTable10();
+        $t1 = new NestedSetTable10();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -433,7 +479,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new \NestedSetTable10();
+        $t2 = new NestedSetTable10();
         $t2->save();
         $t2->insertAsPrevSiblingOf($t1);
         $this->assertEquals(2, $t2->getLeftValue());
@@ -454,6 +500,9 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, $t2->getLevel());
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsNextSiblingOf()
     {
         $this->assertTrue(
@@ -476,7 +525,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
          | \
          t9 t10
         */
-        $t11 = new Fixtures\PublicTable10();
+        $t11 = new PublicTable10();
         $t11->setTitle('t11');
         $t11->insertAsNextSiblingOf($fixtures[2]); // next sibling of t3
         $this->assertEquals(1, $t11->getScopeValue(), 'insertAsNextSiblingOf() sets the scope value correctly');
@@ -489,7 +538,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
             't5' => [7, 12, 2],
             't6' => [8, 9, 3],
             't7' => [10, 11, 3],
-            't11' => [14, 15, 1]
+            't11' => [14, 15, 1],
         ];
         $this->assertEquals($expected, $this->dumpTreeWithScope(1), 'insertAsNextSiblingOf() shifts the other nodes correctly');
         $expected = [
@@ -500,14 +549,17 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'insertAsNextSiblingOf() does not shift anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testInsertAsNextSiblingOfExistingObject()
     {
-        \NestedSetTable10Query::create()->deleteAll();
-        $t = new \NestedSetTable10();
+        NestedSetTable10Query::create()->deleteAll();
+        $t = new NestedSetTable10();
         $t->setScopeValue(34);
         $t->makeRoot();
         $t->save();
-        $t1 = new \NestedSetTable10();
+        $t1 = new NestedSetTable10();
         $t1->insertAsFirstChildOf($t);
         $t1->save();
         $this->assertEquals(1, $t->getLeftValue());
@@ -517,7 +569,7 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(3, $t1->getRightValue());
         $this->assertEquals(34, $t1->getScopeValue());
         $this->assertEquals(1, $t1->getLevel());
-        $t2 = new \NestedSetTable10();
+        $t2 = new NestedSetTable10();
         $t2->save();
         $t2->insertAsNextSiblingOf($t1);
         $this->assertEquals(4, $t2->getLeftValue());
@@ -538,9 +590,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, $t2->getLevel());
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToFirstChildOf()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -591,18 +646,21 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
 
         $t8->moveToFirstChildOf($t3);
 
-        $this->assertEquals($t3->getLeftValue()+1, $t8->getLeftValue(), 't8 has been moved to first children of t3');
+        $this->assertEquals($t3->getLeftValue() + 1, $t8->getLeftValue(), 't8 has been moved to first children of t3');
         $this->assertEquals(19, $t3->getRightValue(), 't3 was extended for 3 more children, from 13+(3*2) to 19');
-        $this->assertEquals($oldt4Left+(2*3), $t4->getLeftValue(), 't4 was moved by 3 items before it');
+        $this->assertEquals($oldt4Left + (2 * 3), $t4->getLeftValue(), 't4 was moved by 3 items before it');
         $this->assertEquals(3, $t9->getLevel(), 'New level is 3');
 
         $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToLastChildOf()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -657,9 +715,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToPrevSiblingOf()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -717,9 +778,12 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
     }
 
+    /**
+     * @return void
+     */
     public function testMoveToNextSiblingOf()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -768,24 +832,27 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(6, $t8->getRightValue(), 't8 extended by 1 item, 4+2 => 6');
         $this->assertEquals(1, $t7->getLevel(), 'New level is 1');
 
-        $this->assertEquals($t9->getRightValue()+1, $t7->getLeftValue(), 'Moved after t9, so we have t9.right+1 as left');
+        $this->assertEquals($t9->getRightValue() + 1, $t7->getLeftValue(), 'Moved after t9, so we have t9.right+1 as left');
 
         //dispose scope 2
         $oldT1Right = $t1->getRightValue();
         $t8->moveToNextSiblingOf($t3);
 
-        $this->assertEquals($oldT1Right+(2*3), $t1->getRightValue(), 't1 has been extended by 3 items');
+        $this->assertEquals($oldT1Right + (2 * 3), $t1->getRightValue(), 't1 has been extended by 3 items');
         $this->assertEquals(13, $t3->getRightValue(), 't3 has no change.');
         $this->assertEquals(1, $t8->getLevel(), 'New level is 1');
         $this->assertEquals(2, $t9->getLevel(), 'New level is 2');
 
         $expected = [];
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'root of scope 2 to scope 1, therefore scope 2 is empty');
-}
+    }
 
+    /**
+     * @return void
+     */
     public function testDeleteDescendants()
     {
-        list($t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10) = $this->initTreeWithScope();
+        [$t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10] = $this->initTreeWithScope();
         /* Tree used for tests
          Scope 1
          t1
@@ -815,11 +882,14 @@ class NestedSetBehaviorObjectBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->dumpTreeWithScope(2), 'deleteDescendants() does not delete anything out of the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testConstants()
     {
-        $this->assertEquals(\NestedSetTable10::LEFT_COL,  'nested_set_table10.my_left_column');
-        $this->assertEquals(\NestedSetTable10::RIGHT_COL, 'nested_set_table10.my_right_column');
-        $this->assertEquals(\NestedSetTable10::LEVEL_COL, 'nested_set_table10.my_level_column');
-        $this->assertEquals(\NestedSetTable10::SCOPE_COL, 'nested_set_table10.my_scope_column');
+        $this->assertEquals(NestedSetTable10::LEFT_COL, 'nested_set_table10.my_left_column');
+        $this->assertEquals(NestedSetTable10::RIGHT_COL, 'nested_set_table10.my_right_column');
+        $this->assertEquals(NestedSetTable10::LEVEL_COL, 'nested_set_table10.my_level_column');
+        $this->assertEquals(NestedSetTable10::SCOPE_COL, 'nested_set_table10.my_scope_column');
     }
 }

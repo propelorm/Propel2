@@ -1,21 +1,25 @@
 <?php
+
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
 namespace Propel\Tests\Issues;
 
+use Issue730DepartmentGroup;
+use Issue730DepartmentGroupQuery;
+use Issue730Group;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCaseFixtures;
 
-/**
- */
 class Issue730Test extends TestCaseFixtures
 {
+    /**
+     * @return void
+     */
     public function testNamespace()
     {
         $schema = <<<EOF
@@ -45,10 +49,10 @@ EOF;
 
         $quickBuilder->build();
 
-        $groupA = new \Issue730Group();
+        $groupA = new Issue730Group();
         $groupA->setName('groupA');
 
-        $departmentGroup = new \Issue730DepartmentGroup();
+        $departmentGroup = new Issue730DepartmentGroup();
         $departmentGroup->setName('my department');
         $departmentGroup->setIssue730Group($groupA);
 
@@ -60,7 +64,7 @@ EOF;
 
         $groupA->save();
 
-        $departmentGroups = \Issue730DepartmentGroupQuery::create()->filterByIssue730Group($groupA)->find();
+        $departmentGroups = Issue730DepartmentGroupQuery::create()->filterByIssue730Group($groupA)->find();
         $this->assertCount(1, $departmentGroups);
         $this->assertEquals($departmentGroup, $departmentGroups->getFirst());
         $this->assertEquals('my department', $departmentGroups->getFirst()->getName());

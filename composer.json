@@ -1,7 +1,7 @@
 {
     "name": "propel/propel",
     "type": "library",
-    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.",
+    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.",
     "keywords": [
         "ORM",
         "persistence",
@@ -16,19 +16,25 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
-        "symfony/yaml": "~2.3||~3.0||~4.0||^5.0",
-        "symfony/console": "~2.4||~3.0||^4.0",
-        "symfony/finder": "~2.3||~3.0||~4.0||^5.0",
-        "symfony/validator": "~2.3||~3.0.0||~3.1.0||^3.2.4||~4.0.0||~4.1.0",
-        "symfony/filesystem": "~2.3||~3.0||~4.0||^5.0",
-        "symfony/config": "~2.3||~3.0||^4.0",
+        "php": ">=7.2",
+        "symfony/yaml": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/config": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/console": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/filesystem": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/finder": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/translation": "^3.4.0||^4.0.0||^5.0.0",
+        "symfony/validator": "^3.4.0||^4.0.0||^5.0.0",
         "psr/log": "^1.0"
     },
     "require-dev": {
+        "ext-pdo": "*",
+        "ext-json": "*",
         "monolog/monolog": "^1.3",
-        "phpunit/phpunit": "^7.0",
-        "phpstan/phpstan": "^0.12.4"
+        "phpstan/phpstan": "^0.12.4",
+        "phpunit/phpunit": "^8.0.0||^9.0.0",
+        "spryker/code-sniffer": "^0.15.6",
+        "psalm/phar": "4.2.1",
+        "mikey179/vfsstream": "^1.6"
     },
     "suggest": {
         "monolog/monolog": "The recommended logging library to use with Propel."
@@ -42,13 +48,26 @@
         "bin/propel"
     ],
     "scripts": {
-        "stan": [
-            "vendor/bin/phpstan analyze -l 1 -c tests/phpstan.neon src/"
-        ]
+        "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
+        "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
+        "stan": "vendor/bin/phpstan analyze",
+        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
+        "psalm": "vendor/bin/psalm.phar --show-info=false",
+        "psalm-update-baseline": "vendor/bin/psalm.phar --update-baseline",
+        "psalm-set-baseline": "vendor/bin/psalm.phar --set-baseline=psalm-baseline.xml",
+        "psalm-update-report": "vendor/bin/psalm.phar --report=psalm-report.xml",
+        "test": "phpunit --colors=always",
+        "test:agnostic": "@test -c tests/agnostic.phpunit.xml",
+        "test:mysql": "@test -c tests/mysql.phpunit.xml",
+        "test:sqlite": "@test -c tests/sqlite.phpunit.xml",
+        "test:pgsql": "@test -c tests/pgsql.phpunit.xml"
     },
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"
         }
+    },
+    "config": {
+        "process-timeout": 0
     }
 }

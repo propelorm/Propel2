@@ -1,45 +1,41 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Book2;
-use Propel\Tests\Bookstore\Book2Query;
-use Propel\Tests\Bookstore\Publisher;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Map\PublisherTableMap;
-use Propel\Tests\Bookstore\Map\ReviewTableMap;
-
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\UnexpectedValueException;
-use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Formatter\StatementFormatter;
-use Propel\Runtime\Formatter\ArrayFormatter;
-use Propel\Runtime\Map\TableMap;
-use Propel\Runtime\Util\PropelModelPager;
+use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\EntityNotFoundException;
+use Propel\Runtime\Exception\InvalidArgumentException;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Formatter\ArrayFormatter;
+use Propel\Runtime\Formatter\StatementFormatter;
+use Propel\Runtime\Propel;
+use Propel\Runtime\Util\PropelModelPager;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Book2;
+use Propel\Tests\Bookstore\Book2Query;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for ModelCriteria.
@@ -50,6 +46,9 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
  */
 class ModelCriteriaTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     protected function assertCriteriaTranslation($criteria, $expectedSql, $expectedParams, $message = '')
     {
         $params = [];
@@ -59,6 +58,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedParams, $params, $message);
     }
 
+    /**
+     * @return void
+     */
     public function testGetModelName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -68,6 +70,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('Propel\Tests\Bookstore\Book', $c->getModelName(), 'getModelName() returns the name of the class associated to the model class');
     }
 
+    /**
+     * @return void
+     */
     public function testGetFullyQualifiedModelName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -77,6 +82,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('\Propel\Tests\Bookstore\Book', $c->getFullyQualifiedModelName(), 'getFullyQualifiedModelName() returns the name of the class associated to the model class');
     }
 
+    /**
+     * @return void
+     */
     public function testFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -104,7 +112,6 @@ class ModelCriteriaTest extends BookstoreTestBase
         } catch (InvalidArgumentException $e) {
             $this->assertTrue(true, 'setFormatter() throws an exception when passed an object not extending AbstractFormatter');
         }
-
     }
 
     public static function conditionsForTestReplaceNames()
@@ -140,14 +147,19 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestReplaceNames
+     *
+     * @return void
      */
-    public function testReplaceNames($origClause, $columnPhpName = false, $modifiedClause)
+    public function testReplaceNames($origClause, $columnPhpName, $modifiedClause)
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName = false, $modifiedClause);
+        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName, $modifiedClause);
     }
 
-    public function doTestReplaceNames(Criteria $c, $tableMap, $origClause, $columnPhpName = false, $modifiedClause)
+    /**
+     * @return void
+     */
+    public function doTestReplaceNames(Criteria $c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
     {
         $c->replaceNames($origClause);
         $columns = $c->replacedColumns;
@@ -169,6 +181,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestReplaceMultipleNames
+     *
+     * @return void
      */
     public function testReplaceMultipleNames($origClause, $expectedColumns, $modifiedClause)
     {
@@ -182,13 +196,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($modifiedClause, $origClause);
     }
 
+    /**
+     * @return void
+     */
     public function testTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setModelAlias('b');
         $c->where('b.Title = ?', 'foo');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE book.title = :p1");
+        $sql = $this->getSql('SELECT  FROM book WHERE book.title = :p1');
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
@@ -197,13 +214,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'foo');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE book.title = :p1");
+        $sql = $this->getSql('SELECT  FROM book WHERE book.title = :p1');
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'A ModelCriteria accepts a model name with an alias');
     }
 
+    /**
+     * @return void
+     */
     public function testTrueTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -212,7 +232,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->join('b.Author a');
         $c->where('a.FirstName = ?', 'john');
 
-        $sql = $this->getSql("SELECT  FROM book b INNER JOIN author a ON (b.author_id=a.id) WHERE b.title = :p1 AND a.first_name = :p2");
+        $sql = $this->getSql('SELECT  FROM book b INNER JOIN author a ON (b.author_id=a.id) WHERE b.title = :p1 AND a.first_name = :p2');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -221,6 +241,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
     }
 
+    /**
+     * @return void
+     */
     public function testCondition()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -228,7 +251,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->combine(['cond1', 'cond2'], 'or');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -237,19 +260,22 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() can store condition for later combination');
     }
 
+    /**
+     * @return void
+     */
     public function testConditionCustomOperator()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
         $c->condition('cond1', 'Book.Title <> ?', 'foo');
-        $c->condition('cond2', 'title_start like ?', '%bar%', \PDO::PARAM_STR);
+        $c->condition('cond2', 'title_start like ?', '%bar%', PDO::PARAM_STR);
         $c->combine(['cond1', 'cond2'], 'or');
 
-        $sql = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, SUBSTRING(book.title, 1, 4) AS title_start FROM book WHERE (book.title <> :p1 OR title_start like :p2)");
+        $sql = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, SUBSTRING(book.title, 1, 4) AS title_start FROM book WHERE (book.title <> :p1 OR title_start like :p2)');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
-            ['table' => null, 'type' => \PDO::PARAM_STR, 'value' => '%bar%'],
+            ['table' => null, 'type' => PDO::PARAM_STR, 'value' => '%bar%'],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'condition() accepts RAW sql parameters');
     }
@@ -273,6 +299,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestWhere
+     *
+     * @return void
      */
     public function testWhere($clause, $value, $sql, $params)
     {
@@ -284,6 +312,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a string clause');
     }
 
+    /**
+     * @return void
+     */
     public function testWhereUsesDefaultOperator()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -300,6 +331,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() uses the default operator');
     }
 
+    /**
+     * @return void
+     */
     public function testWhereTwiceSameColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -317,6 +351,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() adds clauses on the same column correctly');
     }
 
+    /**
+     * @return void
+     */
     public function testWhereConditions()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -324,7 +361,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->where(['cond1', 'cond2']);
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.title <> :p1 AND book.title like :p2)");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.title <> :p1 AND book.title like :p2)');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -337,18 +374,21 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->where(['cond1', 'cond2'], Criteria::LOGICAL_OR);
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)');
 
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts an array of named conditions with operator');
     }
 
+    /**
+     * @return void
+     */
     public function testWhereNoReplacement()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('b.Title = ?', 'foo');
         $c->where('1=1');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE book.title = :p1 AND 1=1");
+        $sql = $this->getSql('SELECT  FROM book WHERE book.title = :p1 AND 1=1');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -364,12 +404,15 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testWhereFunction()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->where('UPPER(b.Title) = ?', 'foo');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE UPPER(book.title) = :p1");
+        $sql = $this->getSql('SELECT  FROM book WHERE UPPER(book.title) = :p1');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -379,16 +422,18 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testWhereTypeValue()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
-        $c->where('LOCATE(\'foo\', b.Title) = ?', true, \PDO::PARAM_BOOL);
+        $c->where('LOCATE(\'foo\', b.Title) = ?', true, PDO::PARAM_BOOL);
 
         $sql = $this->getSql("SELECT  FROM book WHERE LOCATE('foo', book.title) = :p1");
 
         $params = [
-            ['table' => null, 'type' => \PDO::PARAM_BOOL, 'value' => true],
+            ['table' => null, 'type' => PDO::PARAM_BOOL, 'value' => true],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'where() accepts a complex calculation');
         $c->find($this->con);
@@ -398,13 +443,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
+    /**
+     * @return void
+     */
     public function testOrWhere()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->where('Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
         $c->_or()->where('Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.title <> :p1 OR book.title like :p2)');
 
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
@@ -413,6 +461,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() combines the clause with the previous one using  OR');
     }
 
+    /**
+     * @return void
+     */
     public function testOrWhereConditions()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -421,7 +472,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->_or()->where(['cond1', 'cond2']);
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.id = :p1 OR (book.title <> :p2 AND book.title like :p3))");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.id = :p1 OR (book.title <> :p2 AND book.title like :p3))');
 
         $params = [
             ['table' => 'book', 'column' => 'id', 'value' => 12],
@@ -436,11 +487,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->_or()->where(['cond1', 'cond2'], Criteria::LOGICAL_OR);
 
-        $sql = $this->getSql("SELECT  FROM book WHERE (book.id = :p1 OR (book.title <> :p2 OR book.title like :p3))");
+        $sql = $this->getSql('SELECT  FROM book WHERE (book.id = :p1 OR (book.title <> :p2 OR book.title like :p3))');
 
         $this->assertCriteriaTranslation($c, $sql, $params, 'orWhere() accepts an array of named conditions with operator');
     }
 
+    /**
+     * @return void
+     */
     public function testMixedCriteria()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -449,14 +503,17 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         $sql = $this->getSql('SELECT  FROM book WHERE book.title = :p1 AND book.id IN (:p2,:p3)');
 
-        $params =  [
+        $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
             ['table' => 'book', 'column' => 'id', 'value' => 1],
-            ['table' => 'book', 'column' => 'id', 'value' => 2]
+            ['table' => 'book', 'column' => 'id', 'value' => 2],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'ModelCriteria accepts Criteria operators');
     }
 
+    /**
+     * @return void
+     */
     public function testFilterBy()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -493,15 +550,17 @@ class ModelCriteriaTest extends BookstoreTestBase
             $params,
             'filterBy() accepts a simple column name, even if initialized with an alias'
         );
-
     }
 
+    /**
+     * @return void
+     */
     public function testGetParams()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo');
 
-        $expectedParams =  [
+        $expectedParams = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
 
@@ -512,26 +571,31 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo', Criteria::LIKE);
 
-        $expectedParams =  [
+        $expectedParams = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
 
         $this->assertEquals($expectedParams, $params, 'test getting parameters with Specialized Criterion used for LIKE expressions');
-
     }
 
+    /**
+     * @return void
+     */
     public function testHaving()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->having('Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
 
-        $sql = "SELECT  FROM  HAVING book.title <> :p1";
+        $sql = 'SELECT  FROM  HAVING book.title <> :p1';
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts a string clause');
     }
 
+    /**
+     * @return void
+     */
     public function testHavingConditions()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -539,7 +603,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->having(['cond1', 'cond2']);
 
-        $sql = "SELECT  FROM  HAVING (book.title <> :p1 AND book.title like :p2)";
+        $sql = 'SELECT  FROM  HAVING (book.title <> :p1 AND book.title like :p2)';
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
             ['table' => 'book', 'column' => 'title', 'value' => '%bar%'],
@@ -551,18 +615,20 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->having(['cond1', 'cond2'], Criteria::LOGICAL_OR);
 
-        $sql = "SELECT  FROM  HAVING (book.title <> :p1 OR book.title like :p2)";
+        $sql = 'SELECT  FROM  HAVING (book.title <> :p1 OR book.title like :p2)';
         $this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts an array of named conditions with an operator');
     }
 
     /**
      * @group mysql
+     *
+     * @return void
      */
     public function testHavingWithColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->withColumn('SUBSTRING(Book.Title, 1, 4)', 'title_start');
-        $c->having('title_start = ?', 'foo', \PDO::PARAM_STR);
+        $c->having('title_start = ?', 'foo', PDO::PARAM_STR);
 
         $sql = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, SUBSTRING(book.title, 1, 4) AS title_start FROM book HAVING title_start = :p1');
 
@@ -577,6 +643,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $this->con->getLastExecutedQuery());
     }
 
+    /**
+     * @return void
+     */
     public function testOrderBy()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -608,6 +677,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testOrderBySimpleColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -618,6 +690,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a simple column name and adds an ORDER BY clause');
     }
 
+    /**
+     * @return void
+     */
     public function testOrderByAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -629,6 +704,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a column alias and adds an ORDER BY clause');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupBy()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -647,6 +725,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGroupBySimpleColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -657,6 +738,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a simple column name and adds a GROUP BY clause');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -669,14 +753,19 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\ClassNotFoundException
+     * @return void
      */
     public function testGroupByClassThrowsExceptionOnUnknownClass()
     {
+        $this->expectException(ClassNotFoundException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupByClass('Author');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByClass()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -687,6 +776,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class name and adds a GROUP BY clause for all columns of the class');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByClassAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -697,6 +789,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class alias and adds a GROUP BY clause for all columns of the class');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByClassTrueAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -708,6 +803,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a true class alias and adds a GROUP BY clause for all columns of the class');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByClassJoinedModel()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
@@ -719,6 +817,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the class name of a joined model');
     }
 
+    /**
+     * @return void
+     */
     public function testGroupByClassJoinedModelWithAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
@@ -730,6 +831,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts the alias of a joined model');
     }
 
+    /**
+     * @return void
+     */
     public function testDistinct()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -739,6 +843,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'distinct() adds a DISTINCT clause');
     }
 
+    /**
+     * @return void
+     */
     public function testLimit()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -751,9 +858,11 @@ class ModelCriteriaTest extends BookstoreTestBase
         $sql = 'SELECT  FROM  LIMIT 0';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
-
     }
 
+    /**
+     * @return void
+     */
     public function testOffset()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -768,6 +877,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoin()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -778,6 +890,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'addJoin() works the same as in Criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testJoin()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -813,6 +928,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() uses the current model name when given a simple relation name');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinQuery()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -828,6 +946,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, count($books), 'join() issues a real JOIN query');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinRelationName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee');
@@ -837,6 +958,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() uses relation names as defined in schema.xml');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinComposite()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\ReaderFavorite');
@@ -846,6 +970,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() knows how to create a JOIN clause for relationships with composite fkeys');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinType()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -879,6 +1006,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() accepts any join string');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinDirection()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -906,6 +1036,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() adds a JOIN clause correctly for one to one relationship');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinSeveral()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
@@ -919,6 +1052,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() can guess relationships from related tables');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -966,6 +1102,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() allows the use of relation alias in further join()');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinTrueTableAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -983,6 +1122,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() supports relation without alias name on true table alias');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinOnSameTable()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee', 'be');
@@ -996,6 +1138,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() allows two joins on the same table thanks to aliases');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinAliasQuery()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1015,6 +1160,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'join() allows the use of relation alias in further joins()');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionSimple()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1022,10 +1170,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->join('Propel\Tests\Bookstore\Book.Author', Criteria::INNER_JOIN);
         $c->addJoinCondition('Author', 'Propel\Tests\Bookstore\Book.Title IS NOT NULL');
         $books = BookQuery::create(null, $c)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON (book.author_id=author.id AND book.title IS NOT NULL)");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON (book.author_id=author.id AND book.title IS NOT NULL)');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionBinding()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1037,6 +1188,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with values to bind');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionSeveral()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1049,6 +1203,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of several custom conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionBindingAndWhere()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1061,6 +1218,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with values and lives well with WHERE conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionAlias()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1068,10 +1228,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->join('Propel\Tests\Bookstore\Book.Author a', Criteria::INNER_JOIN);
         $c->addJoinCondition('a', 'Book.Title IS NOT NULL');
         $books = BookQuery::create(null, $c)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author a ON (book.author_id=a.id AND book.title IS NOT NULL)");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author a ON (book.author_id=a.id AND book.title IS NOT NULL)');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions even on aliased relations');
     }
 
+    /**
+     * @return void
+     */
     public function testAddJoinConditionOperator()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1079,10 +1242,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->join('Propel\Tests\Bookstore\Book.Author', Criteria::INNER_JOIN);
         $c->addJoinCondition('Author', 'Propel\Tests\Bookstore\Book.Title IS NOT NULL', null, Criteria::LOGICAL_OR);
         $books = BookQuery::create(null, $c)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON (book.author_id=author.id OR book.title IS NOT NULL)");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON (book.author_id=author.id OR book.title IS NOT NULL)');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'addJoinCondition() allows the use of custom conditions with a custom operator');
     }
 
+    /**
+     * @return void
+     */
     public function testSetJoinConditionCriterion()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1091,10 +1257,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $criterion = $c->getNewCriterion(BookTableMap::COL_TITLE, BookTableMap::COL_TITLE . ' = ' . AuthorTableMap::COL_FIRST_NAME, Criteria::CUSTOM);
         $c->setJoinCondition('Author', $criterion);
         $books = BookQuery::create(null, $c)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON book.title = author.first_name");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON book.title = author.first_name');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'setJoinCondition() can override a previous join condition with a Criterion');
     }
 
+    /**
+     * @return void
+     */
     public function testSetJoinConditionNamedCondition()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1103,19 +1272,25 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond1', 'Propel\Tests\Bookstore\Book.Title = Author.FirstName');
         $c->setJoinCondition('Author', 'cond1');
         $books = BookQuery::create(null, $c)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON book.title = author.first_name");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book INNER JOIN author ON book.title = author.first_name');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'setJoinCondition() can override a previous join condition with a named condition');
     }
 
+    /**
+     * @return void
+     */
     public function testGetJoin()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author');
 
         $joins = $c->getJoins();
-        $this->assertEquals($joins['Author'], $c->getJoin('Author'), "getJoin() returns a specific Join from the ModelCriteria");
+        $this->assertEquals($joins['Author'], $c->getJoin('Author'), 'getJoin() returns a specific Join from the ModelCriteria');
     }
 
+    /**
+     * @return void
+     */
     public function testWith()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1127,14 +1302,19 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Exception\UnknownRelationException
+     * @return void
      */
     public function testWithThrowsExceptionWhenJoinLacks()
     {
+        $this->expectException(UnknownRelationException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->with('Propel\Tests\Bookstore\Author');
     }
 
+    /**
+     * @return void
+     */
     public function testWithAlias()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1145,15 +1325,20 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Exception\UnknownRelationException
+     * @return void
      */
     public function testWithThrowsExceptionWhenNotUsingAlias()
     {
+        $this->expectException(UnknownRelationException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author a');
         $c->with('Propel\Tests\Bookstore\Author');
     }
 
+    /**
+     * @return void
+     */
     public function testWithAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1171,11 +1356,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_FIRST_NAME,
             AuthorTableMap::COL_LAST_NAME,
             AuthorTableMap::COL_EMAIL,
-            AuthorTableMap::COL_AGE
+            AuthorTableMap::COL_AGE,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table');
     }
 
+    /**
+     * @return void
+     */
     public function testWithAliasAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1193,11 +1381,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             'a.first_name',
             'a.last_name',
             'a.email',
-            'a.age'
+            'a.age',
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table');
     }
 
+    /**
+     * @return void
+     */
     public function testWithAddsSelectColumnsOfMainTable()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1214,11 +1405,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_FIRST_NAME,
             AuthorTableMap::COL_LAST_NAME,
             AuthorTableMap::COL_EMAIL,
-            AuthorTableMap::COL_AGE
+            AuthorTableMap::COL_AGE,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table if required');
     }
 
+    /**
+     * @return void
+     */
     public function testWithAliasAddsSelectColumnsOfMainTable()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1236,11 +1430,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             'a.first_name',
             'a.last_name',
             'a.email',
-            'a.age'
+            'a.age',
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the main table with an alias if required');
     }
 
+    /**
+     * @return void
+     */
     public function testWithOneToManyAddsSelectColumns()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
@@ -1263,6 +1460,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'with() adds the columns of the related table even in a one-to-many relationship');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinWith()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1278,7 +1478,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_FIRST_NAME,
             AuthorTableMap::COL_LAST_NAME,
             AuthorTableMap::COL_EMAIL,
-            AuthorTableMap::COL_AGE
+            AuthorTableMap::COL_AGE,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the join');
         $joins = $c->getJoins();
@@ -1286,6 +1486,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'joinWith() adds an INNER JOIN by default');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinWithType()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1295,6 +1498,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'joinWith() accepts a join type as second parameter');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinWithAlias()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1310,11 +1516,14 @@ class ModelCriteriaTest extends BookstoreTestBase
             'a.first_name',
             'a.last_name',
             'a.email',
-            'a.age'
+            'a.age',
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the join with the alias');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinWithSeveral()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
@@ -1340,7 +1549,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_EMAIL,
             AuthorTableMap::COL_AGE,
             PublisherTableMap::COL_ID,
-            PublisherTableMap::COL_NAME
+            PublisherTableMap::COL_NAME,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWith() adds the with');
         $joins = $c->getJoins();
@@ -1348,6 +1557,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedJoinKeys, array_keys($joins), 'joinWith() adds the join');
     }
 
+    /**
+     * @return void
+     */
     public function testJoinWithTwice()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1391,6 +1603,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestWithColumn
+     *
+     * @return void
      */
     public function testWithColumn($clause, $alias, $selectTranslation)
     {
@@ -1419,6 +1633,8 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestWithColumnAndQuotes
+     *
+     * @return void
      */
     public function testWithColumnAndQuotes($clause, $alias, $selectTranslation)
     {
@@ -1429,6 +1645,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() adds a calculated column using quotes to the select clause');
     }
 
+    /**
+     * @return void
+     */
     public function testWithColumnAndSelectColumns()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1461,6 +1680,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertCriteriaTranslation($c, $sql, $params, 'withColumn() called repeatedly adds several as columns');
     }
 
+    /**
+     * @return void
+     */
     public function testKeepQuery()
     {
         $c = BookQuery::create();
@@ -1471,6 +1693,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertTrue($c->isKeepQuery(), 'keepQuery() enables the keepQuery property');
     }
 
+    /**
+     * @return void
+     */
     public function testKeepQueryFind()
     {
         $c = BookQuery::create();
@@ -1486,6 +1711,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $c->getSelectColumns(), 'keepQuery(false) forces find() to use the original query');
     }
 
+    /**
+     * @return void
+     */
     public function testKeepQueryFindOne()
     {
         $c = BookQuery::create();
@@ -1500,6 +1728,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, $c->getLimit(), 'keepQuery(false) forces findOne() to use the original query');
     }
 
+    /**
+     * @return void
+     */
     public function testKeepQueryFindPk()
     {
         $c = BookQuery::create();
@@ -1513,6 +1744,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $c->getSelectColumns(), 'keepQuery(false) forces findPk() to use the original query');
     }
 
+    /**
+     * @return void
+     */
     public function testKeepQueryCount()
     {
         $c = BookQuery::create();
@@ -1527,6 +1761,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals([], $c->getOrderByColumns(), 'keepQuery() forces count() to use the original query');
     }
 
+    /**
+     * @return void
+     */
     public function testFind()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -1546,25 +1783,34 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('Quicksilver', $book->getTitle(), 'find() returns the model objects matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFindAddsSelectColumns()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->find($con);
-        $sql = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book");
+        $sql = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book');
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'find() adds the select columns of the current model');
     }
 
+    /**
+     * @return void
+     */
     public function testFindTrueAliasAddsSelectColumns()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setModelAlias('b', true);
         $books = $c->find($con);
-        $sql = $this->getSql("SELECT b.id, b.title, b.isbn, b.price, b.publisher_id, b.author_id FROM book b");
+        $sql = $this->getSql('SELECT b.id, b.title, b.isbn, b.price, b.publisher_id, b.author_id FROM book b');
         $this->assertEquals($sql, $con->getLastExecutedQuery(), 'find() uses the true model alias if available');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOne()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -1579,6 +1825,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('Don Juan', $book->getTitle(), 'find() returns the model objects matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateNotExists()
     {
         BookQuery::create()->deleteAll();
@@ -1592,6 +1841,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(125, $book->getPrice(), 'findOneOrCreate() returns a populated objects based on the conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateNotExistsFormatter()
     {
         BookQuery::create()->deleteAll();
@@ -1605,6 +1857,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(125, $book['Price'], 'findOneOrCreate() returns a populated array based on the conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateExists()
     {
         BookQuery::create()->deleteAll();
@@ -1624,10 +1879,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException Propel\Runtime\Exception\PropelException
+     * @return void
      */
     public function testFindOneOrCreateThrowsExceptionWhenQueryContainsJoin()
     {
+        $this->expectException(PropelException::class);
+
         $book = BookQuery::create('b')
             ->filterByPrice(125)
             ->useAuthorQuery()
@@ -1636,6 +1893,9 @@ class ModelCriteriaTest extends BookstoreTestBase
             ->findOneOrCreate();
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateMakesOneQueryWhenRecordNotExists()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1647,6 +1907,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($count + 1, $con->getQueryCount(), 'findOneOrCreate() makes only a single query when the record doesn\'t exist');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateMakesOneQueryWhenRecordExists()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1663,6 +1926,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($count + 1, $con->getQueryCount(), 'findOneOrCreate() makes only a single query when the record exists');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateWithEnums()
     {
         Book2Query::create()->deleteAll();
@@ -1693,6 +1959,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('novel', $book->getStyle(), 'findOneOrCreate() returns a populated objects based on the conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateWithSets()
     {
         Book2Query::create()->deleteAll();
@@ -1723,6 +1992,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(['novel', 'essay'], $book->getStyle2(), 'findOneOrCreate() returns a populated objects based on the conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneOrCreateWithArrays()
     {
         Book2Query::create()->deleteAll();
@@ -1744,6 +2016,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertSame(['poetry'], $book->getTags(), 'findOneOrCreate() returns a populated objects based on the conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindPkSimpleKey()
     {
         BookstoreDataPopulator::depopulate();
@@ -1763,6 +2038,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($testBook, $book, 'findPk() returns a model object corresponding to the pk');
     }
 
+    /**
+     * @return void
+     */
     public function testFindPksSimpleKey()
     {
         BookstoreDataPopulator::depopulate();
@@ -1785,6 +2063,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals([$testBook2, $testBook1], $books->getData(), 'findPks() returns an array of model objects corresponding to the pks');
     }
 
+    /**
+     * @return void
+     */
     public function testFindPkCompositeKey()
     {
         BookstoreDataPopulator::depopulate();
@@ -1814,15 +2095,19 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @return void
      */
     public function testFindPksCompositeKey()
     {
+        $this->expectException(PropelException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookListRel');
         $bookListRel = $c->findPks([[1, 2]]);
-
     }
 
+    /**
+     * @return void
+     */
     public function testFindBy()
     {
         try {
@@ -1845,6 +2130,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('Don Juan', $book->getTitle(), 'findBy() returns the model objects matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFindByArray()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1854,6 +2142,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByArray() adds multiple column conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneBy()
     {
         try {
@@ -1873,6 +2164,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('Don Juan', $book->getTitle(), 'findOneBy() returns the model object matching the query');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneByArray()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -1882,12 +2176,18 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneBy() adds multiple column conditions');
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorReturnsATraversable()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $this->assertInstanceOf('Traversable', $c->getIterator());
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorAllowsTraversingQueryObjects()
     {
         BookstoreDataPopulator::depopulate();
@@ -1900,6 +2200,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbResults);
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorReturnsATraversableWithArrayFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1907,6 +2210,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertInstanceOf('Traversable', $c->getIterator());
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorAllowsTraversingQueryObjectsWithArrayFormatter()
     {
         BookstoreDataPopulator::depopulate();
@@ -1920,6 +2226,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbResults);
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorReturnsATraversableWithOnDemandFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1929,6 +2238,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $it->closeCursor();
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorAllowsTraversingQueryObjectsWithOnDemandFormatter()
     {
         BookstoreDataPopulator::depopulate();
@@ -1942,6 +2254,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbResults);
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorReturnsATraversableWithStatementFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1949,6 +2264,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertInstanceOf('Traversable', $c->getIterator());
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorAllowsTraversingQueryObjectsWithStatementFormatter()
     {
         BookstoreDataPopulator::depopulate();
@@ -1962,6 +2280,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbResults);
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorReturnsATraversableWithSimpleArrayFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -1969,6 +2290,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertInstanceOf('Traversable', $c->getIterator());
     }
 
+    /**
+     * @return void
+     */
     public function testGetIteratorAllowsTraversingQueryObjectsWithSimpleArrayFormatter()
     {
         BookstoreDataPopulator::depopulate();
@@ -1982,6 +2306,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbResults);
     }
 
+    /**
+     * @return void
+     */
     public function testCount()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -1998,6 +2325,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(1, $nbBooks, 'count() returns the number of results in the query');
     }
 
+    /**
+     * @return void
+     */
     public function testExists()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2012,6 +2342,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertTrue($booksExists, 'exists() returns true when there are matching results');
     }
 
+    /**
+     * @return void
+     */
     public function testPaginate()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2025,6 +2358,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testDelete()
     {
         BookstoreDataPopulator::depopulate();
@@ -2055,6 +2391,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(3, $nbBooks, 'delete() deletes rows in the database');
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteUsingTableAlias()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2080,6 +2419,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteAll()
     {
         BookstoreDataPopulator::depopulate();
@@ -2099,6 +2441,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(4, $nbBooks, 'deleteAll() ignores conditions on the criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUpdate()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2132,6 +2477,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('3456', $book->getISBN(), 'update() updates only the records matching the criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateUsingTableAlias()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2153,6 +2501,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testUpdateOneByOne()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2212,12 +2563,17 @@ class ModelCriteriaTest extends BookstoreTestBase
 
     /**
      * @dataProvider conditionsForTestGetRelationName
+     *
+     * @return void
      */
     public function testGetRelationName($relation, $relationName)
     {
         $this->assertEquals($relationName, ModelCriteria::getrelationName($relation));
     }
 
+    /**
+     * @return void
+     */
     public function testMagicJoin()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2273,9 +2629,11 @@ class ModelCriteriaTest extends BookstoreTestBase
             $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author ON (book.author_id=author.id) WHERE author.first_name = 'Leo' LIMIT 1");
             $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'leftJoinX() is turned into join($x, Criteria::LEFT_JOIN)');
         }
-
     }
 
+    /**
+     * @return void
+     */
     public function testMagicJoinWith()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2291,7 +2649,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             'a.first_name',
             'a.last_name',
             'a.email',
-            'a.age'
+            'a.age',
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'leftJoinWith() adds the join with the alias');
         $joins = $c->getJoins();
@@ -2299,6 +2657,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'leftJoinWith() adds a LEFT JOIN');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicJoinWithRelation()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2314,7 +2675,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_FIRST_NAME,
             AuthorTableMap::COL_LAST_NAME,
             AuthorTableMap::COL_EMAIL,
-            AuthorTableMap::COL_AGE
+            AuthorTableMap::COL_AGE,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'joinWithXXX() adds the join with the XXX relation');
         $joins = $c->getJoins();
@@ -2322,6 +2683,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(Criteria::INNER_JOIN, $join->getJoinType(), 'joinWithXXX() adds an INNER JOIN');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicJoinWithTypeAndRelation()
     {
         $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2337,7 +2701,7 @@ class ModelCriteriaTest extends BookstoreTestBase
             AuthorTableMap::COL_FIRST_NAME,
             AuthorTableMap::COL_LAST_NAME,
             AuthorTableMap::COL_EMAIL,
-            AuthorTableMap::COL_AGE
+            AuthorTableMap::COL_AGE,
         ];
         $this->assertEquals($expectedColumns, $c->getSelectColumns(), 'leftJoinWithXXX() adds the join with the XXX relation');
         $joins = $c->getJoins();
@@ -2345,6 +2709,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(Criteria::LEFT_JOIN, $join->getJoinType(), 'leftJoinWithXXX() adds an INNER JOIN');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicFind()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2370,6 +2737,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findOneByXXX($value) is turned into findOneBy(XXX, $value)');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicFilterBy()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2380,21 +2750,27 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'filterByXXX($value) is turned into filterBy(XXX, $value)');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicOrderBy()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->orderByTitle()->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'orderByXXX() is turned into orderBy(XXX)');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->orderByTitle(Criteria::DESC)->find($con);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title DESC");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title DESC');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'orderByXXX($direction) is turned into orderBy(XXX, $direction)');
     }
 
+    /**
+     * @return void
+     */
     public function testMagicGroupBy()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2403,14 +2779,17 @@ class ModelCriteriaTest extends BookstoreTestBase
         $books = $c->groupByTitle()->find($con);
 
         if ($this->isDb('pgsql')) {
-            $expectedSQL = "SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title,book.id,book.isbn,book.price,book.publisher_id,book.author_id";
+            $expectedSQL = 'SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title,book.id,book.isbn,book.price,book.publisher_id,book.author_id';
         } else {
-            $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title");
+            $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title');
         }
 
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'groupByXXX() is turned into groupBy(XXX)');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQuery()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2434,7 +2813,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         if (!$this->runningOnMySQL()) {
             $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author ON (book.author_id=author.id) WHERE book.title = 'foo' AND author.first_name = 'john' LIMIT 5 OFFSET 10");
-
         } else {
             $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author ON (book.author_id=author.id) WHERE book.title = 'foo' AND author.first_name = 'john' LIMIT 10, 5");
         }
@@ -2442,6 +2820,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQueryAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2466,7 +2847,6 @@ class ModelCriteriaTest extends BookstoreTestBase
 
         if (!$this->runningOnMySQL()) {
             $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author a ON (book.author_id=a.id) WHERE book.title = 'foo' AND a.first_name = 'john' LIMIT 5 OFFSET 10");
-
         } else {
             $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book LEFT JOIN author a ON (book.author_id=a.id) WHERE book.title = 'foo' AND a.first_name = 'john' LIMIT 10, 5");
         }
@@ -2474,6 +2854,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQueryCustomClass()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2493,6 +2876,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a custom secondary criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQueryJoinWithFind()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
@@ -2512,11 +2898,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
         $c->find($con);
 
-        $expectedSQL = $this->getSql("SELECT review.id, review.reviewed_by, review.review_date, review.recommended, review.status, review.book_id, book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, author.id, author.first_name, author.last_name, author.email, author.age FROM review INNER JOIN book ON (review.book_id=book.id) INNER JOIN author ON (book.author_id=author.id)");
+        $expectedSQL = $this->getSql('SELECT review.id, review.reviewed_by, review.review_date, review.recommended, review.status, review.book_id, book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, author.id, author.first_name, author.last_name, author.email, author.age FROM review INNER JOIN book ON (review.book_id=book.id) INNER JOIN author ON (book.author_id=author.id)');
 
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and joinWith() can be used together and form a correct query');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQueryCustomRelationPhpName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreContest');
@@ -2538,6 +2927,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testUseQueryCustomRelationPhpNameAndAlias()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreContest');
@@ -2559,6 +2951,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'useQuery() and endUse() allow to merge a secondary criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithJoins()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2587,12 +2982,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('INNER JOIN publisher p ON (book.publisher_id=p.id)', $joins['p']->toString(), 'mergeWith() merge joins to an empty join');
     }
 
+    /**
+     * @return void
+     */
     public function testMergeWithWiths()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -2601,6 +3000,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -2609,6 +3009,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->leftJoinWith('b.Author a');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
@@ -2618,13 +3019,16 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->innerJoinWith('b.Publisher p');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Publisher, relationName: Publisher, relationMethod: setPublisher, leftPhpName: , rightPhpName: p', $with['p']->__toString(), 'mergeWith() merge joins to an empty join');
-
     }
 
+    /**
+     * @return void
+     */
     public function testGetAliasedColName()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2639,6 +3043,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals('foo.title', $c->getAliasedColName(BookTableMap::COL_TITLE), 'getAliasedColName() returns the column name with table alias when the table has a true alias');
     }
 
+    /**
+     * @return void
+     */
     public function testAddUsingAliasNoAlias()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2648,6 +3055,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to add() when the table has no alias');
     }
 
+    /**
+     * @return void
+     */
     public function testAddUsingAliasQueryAlias()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
@@ -2657,6 +3067,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates the colname using the table alias before calling add() when the table has a true alias');
     }
 
+    /**
+     * @return void
+     */
     public function testAddUsingAliasTrueAlias()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2668,6 +3081,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to add() when the table has a true alias');
     }
 
+    /**
+     * @return void
+     */
     public function testAddUsingAliasTwice()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2679,6 +3095,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
     }
 
+    /**
+     * @return void
+     */
     public function testAddUsingAliasTrueAliasTwice()
     {
         $c1 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2692,6 +3111,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($c2, $c1, 'addUsingalias() translates to addAnd() when the table already has a condition on the column');
     }
 
+    /**
+     * @return void
+     */
     public function testCloneCopiesConditions()
     {
         $bookQuery1 = BookQuery::create()
@@ -2707,6 +3129,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals($expected, $sql, 'conditions applied on a cloned query don\'t get applied on the original query');
     }
 
+    /**
+     * @return void
+     */
     public function testCloneCopiesFormatter()
     {
         $formatter1 = new ArrayFormatter();
@@ -2720,6 +3145,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertFalse($formatter1->test);
     }
 
+    /**
+     * @return void
+     */
     public function testCloneCopiesSelect()
     {
         $bookQuery1 = BookQuery::create();
@@ -2729,6 +3157,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertEquals(['Id', 'Title'], $bookQuery1->getSelect());
     }
 
+    /**
+     * @return void
+     */
     public function testMagicFindByObject()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -2737,7 +3168,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $q = BookQuery::create()
             ->findByAuthor($testAuthor);
 
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=" . $testAuthor->getId());
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=' . $testAuthor->getId());
 
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXX($value) is turned into findBy(XXX, $value)');
 
@@ -2745,10 +3176,13 @@ class ModelCriteriaTest extends BookstoreTestBase
         $testAuthor = $c->findOne();
         $q = BookQuery::create()
             ->findByAuthorAndISBN($testAuthor, 1234);
-        $expectedSQL = $this->getSql("SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=" . $testAuthor->getId() . " AND book.isbn=1234");
+        $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.author_id=' . $testAuthor->getId() . ' AND book.isbn=1234');
         $this->assertEquals($expectedSQL, $con->getLastExecutedQuery(), 'findByXXXAndYYY($value) is turned into findBy(array(XXX, YYY), $value)');
     }
 
+    /**
+     * @return void
+     */
     public function testRequirePkReturnsModel()
     {
         // retrieve the test data
@@ -2759,52 +3193,76 @@ class ModelCriteriaTest extends BookstoreTestBase
         $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
     }
 
+    /**
+     * @return void
+     */
     public function testRequirePkThrowsException()
     {
-        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
+        $this->expectException(EntityNotFoundException::class);
 
         BookQuery::create()->requirePk(-1337);
     }
 
+    /**
+     * @return void
+     */
     public function testRequireOneReturnsModel()
     {
         $book = BookQuery::create()->orderByTitle()->requireOne();
         $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
     }
 
+    /**
+     * @return void
+     */
     public function testRequireOneThrowsException()
     {
-        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
+        $this->expectException(EntityNotFoundException::class);
 
         BookQuery::create()->filterByTitle('Not existing title')->requireOne();
     }
 
+    /**
+     * @return void
+     */
     public function testMagicRequireOneReturnsModel()
     {
         $book = BookQuery::create()->requireOneByTitle('Harry Potter and the Order of the Phoenix');
         $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
     }
 
+    /**
+     * @return void
+     */
     public function testMagicRequireOneThrowsException()
     {
-        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
+        $this->expectException(EntityNotFoundException::class);
 
         BookQuery::create()->requireOneById(-1337);
     }
 
+    /**
+     * @return void
+     */
     public function testMagicRequireOneWithAndReturnsModel()
     {
         $book = BookQuery::create()->requireOneByIsbnAndTitle('043935806X', 'Harry Potter and the Order of the Phoenix');
         $this->assertInstanceOf(BookTableMap::OM_CLASS, $book);
     }
 
+    /**
+     * @return void
+     */
     public function testMagicRequireOneWithAndThrowsException()
     {
-        $this->expectException(\Propel\Runtime\Exception\EntityNotFoundException::class);
+        $this->expectException(EntityNotFoundException::class);
 
         BookQuery::create()->requireOneByTitleAndId('Not Existing Book', -1337);
     }
 
+    /**
+     * @return void
+     */
     public function testJoinSelectColumn()
     {
         BookQuery::create()

@@ -1,29 +1,29 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
-use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
  * Tests the DbMySQL adapter
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author William Durand
  */
 class MysqlAdapterTest extends TestCaseFixtures
 {
+    /**
+     * @return array
+     */
     public static function getConParams()
     {
         return [
@@ -31,24 +31,40 @@ class MysqlAdapterTest extends TestCaseFixtures
                 [
                     'dsn' => 'dsn=my_dsn',
                     'settings' => [
-                        'charset' => 'foobar'
-                    ]
-                ]
-            ]
+                        'charset' => 'foobar',
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
-     * @dataProvider getConParams
+     * @return string
      */
-    public function testPrepareParamsThrowsException($conparams)
+    protected function getDriver()
     {
-        $db = new TestableMysqlAdapter();
-        $db->prepareParams($conparams);
+        return 'mysql';
     }
 
     /**
      * @dataProvider getConParams
+     *
+     * @param array $conparams
+     *
+     * @return void
+     */
+    public function testPrepareParamsThrowsException($conparams)
+    {
+        $db = new TestableMysqlAdapter();
+        $result = $db->prepareParams($conparams);
+
+        $this->assertIsArray($result);
+    }
+
+    /**
+     * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testPrepareParams($conparams)
     {
@@ -62,6 +78,8 @@ class MysqlAdapterTest extends TestCaseFixtures
 
     /**
      * @dataProvider getConParams
+     *
+     * @return void
      */
     public function testNoSetNameQueryExecuted($conparams)
     {
@@ -87,10 +105,79 @@ class MysqlAdapterTest extends TestCaseFixtures
 
         return $con;
     }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testSimpleLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForShare();
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book LOCK IN SHARE MODE';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testComplexLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForUpdate([BookTableMap::TABLE_NAME], true);
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book FOR UPDATE';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testSubQueryWithSharedLock()
+    {
+        $subCriteria = new BookQuery();
+        $subCriteria->addSelectColumn(BookTableMap::COL_ID);
+        $subCriteria->lockForShare([BookTableMap::TABLE_NAME]);
+
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
+        $c->lockForShare([BookTableMap::TABLE_NAME], true);
+
+        $expected ='SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
+
+        $params = [];
+        $this->assertSame($expected, $c->createSelectSql($params), 'Subquery contains shared read lock');
+    }
 }
 
 class TestableMysqlAdapter extends MysqlAdapter
 {
+    /**
+     * @param array $conparams
+     *
+     * @return array
+     */
     public function prepareParams($conparams)
     {
         return parent::prepareParams($conparams);

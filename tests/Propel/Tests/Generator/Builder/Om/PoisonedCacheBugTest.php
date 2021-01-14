@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
@@ -14,9 +12,9 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
@@ -26,30 +24,33 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 class PoisonedCacheBugTest extends BookstoreTestBase
 {
     /**
-     * @var Author
+     * @var \Propel\Tests\Bookstore\Author
      */
     private $author;
 
     /**
-     * @var Book[]
+     * @var \Propel\Tests\Bookstore\Book[]
      */
     private $books;
 
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
         $a = new Author();
-        $a->setFirstName("Douglas");
-        $a->setLastName("Adams");
+        $a->setFirstName('Douglas');
+        $a->setLastName('Adams');
 
         $b1 = new Book();
-        $b1->setTitle("The Hitchhikers Guide To The Galaxy");
+        $b1->setTitle('The Hitchhikers Guide To The Galaxy');
         $b1->setISBN('01234');
         $a->addBook($b1);
 
         $b2 = new Book();
-        $b2->setTitle("The Restaurant At The End Of The Universe");
+        $b2->setTitle('The Restaurant At The End Of The Universe');
         $b2->setISBN('5678');
         $a->addBook($b2);
 
@@ -64,6 +65,9 @@ class PoisonedCacheBugTest extends BookstoreTestBase
         AuthorTableMap::clearInstancePool();
     }
 
+    /**
+     * @return void
+     */
     public function testSetUp()
     {
         $this->assertTrue(Propel::isInstancePoolingEnabled());
@@ -74,6 +78,8 @@ class PoisonedCacheBugTest extends BookstoreTestBase
 
     /**
      * Very common use case where fetching a book, and showing other books by the author
+     *
+     * @return void
      */
     public function testPoisonedCacheWhenDoSelectJoinAuthor()
     {
@@ -88,6 +94,8 @@ class PoisonedCacheBugTest extends BookstoreTestBase
 
     /**
      * To illustrate that instance pooling makes no difference
+     *
+     * @return void
      */
     public function testPoisonedCacheWithJoinInstancePoolingDisabled()
     {
@@ -96,6 +104,9 @@ class PoisonedCacheBugTest extends BookstoreTestBase
         $this->testPoisonedCacheWhenDoSelectJoinAuthor();
     }
 
+    /**
+     * @return void
+     */
     public function testPoisonedCacheWhenSavingABook()
     {
         $b1 = BookQuery::create()->findPk($this->books[0]->getId());
@@ -113,18 +124,24 @@ class PoisonedCacheBugTest extends BookstoreTestBase
         $this->assertEquals(2, $author->countBooks());
     }
 
+    /**
+     * @return void
+     */
     public function testAddingABook()
     {
         $author = AuthorQuery::create()->findPk($this->author->getId());
 
         $c1 = new Book();
-        $c1->setTitle("ORM 101");
+        $c1->setTitle('ORM 101');
         $author->addBook($c1);
 
         $this->assertEquals(3, count($author->getBooks()));
         $this->assertEquals(3, $author->countBooks());
     }
 
+    /**
+     * @return void
+     */
     public function testModifiedObjectsRemainInTheCollection()
     {
         $c = new Criteria();

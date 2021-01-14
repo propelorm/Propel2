@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -21,17 +19,17 @@ use Propel\Generator\Model\Table;
 class DatabaseComparator
 {
     /**
-     * @var DatabaseDiff
+     * @var \Propel\Generator\Model\Diff\DatabaseDiff
      */
     protected $databaseDiff;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $fromDatabase;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $toDatabase;
 
@@ -44,20 +42,26 @@ class DatabaseComparator
     protected $withRenaming = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $removeTable = true;
 
     /**
-     * @var array list of excluded tables
+     * @var string[] list of excluded tables
      */
     protected $excludedTables = [];
 
+    /**
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff|null $databaseDiff
+     */
     public function __construct($databaseDiff = null)
     {
-        $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;
+        $this->databaseDiff = ($databaseDiff === null) ? new DatabaseDiff() : $databaseDiff;
     }
 
+    /**
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff
+     */
     public function getDatabaseDiff()
     {
         return $this->databaseDiff;
@@ -66,7 +70,9 @@ class DatabaseComparator
     /**
      * Sets the fromDatabase property.
      *
-     * @param Database $fromDatabase
+     * @param \Propel\Generator\Model\Database $fromDatabase
+     *
+     * @return void
      */
     public function setFromDatabase(Database $fromDatabase)
     {
@@ -76,7 +82,7 @@ class DatabaseComparator
     /**
      * Returns the fromDatabase property.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     public function getFromDatabase()
     {
@@ -86,7 +92,9 @@ class DatabaseComparator
     /**
      * Sets the toDatabase property.
      *
-     * @param Database $toDatabase
+     * @param \Propel\Generator\Model\Database $toDatabase
+     *
+     * @return void
      */
     public function setToDatabase(Database $toDatabase)
     {
@@ -96,7 +104,7 @@ class DatabaseComparator
     /**
      * Returns the toDatabase property.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
     public function getToDatabase()
     {
@@ -106,7 +114,9 @@ class DatabaseComparator
     /**
      * Set true to handle removed tables or false to ignore them
      *
-     * @param boolean $removeTable
+     * @param bool $removeTable
+     *
+     * @return void
      */
     public function setRemoveTable($removeTable)
     {
@@ -114,7 +124,7 @@ class DatabaseComparator
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getRemoveTable()
     {
@@ -124,7 +134,9 @@ class DatabaseComparator
     /**
      * Set the list of tables excluded from the comparison
      *
-     * @param array $excludedTables set the list of table name
+     * @param string[] $excludedTables set the list of table name
+     *
+     * @return void
      */
     public function setExcludedTables(array $excludedTables)
     {
@@ -134,7 +146,7 @@ class DatabaseComparator
     /**
      * Returns the list of tables excluded from the comparison
      *
-     * @return array
+     * @return string[]
      */
     public function getExcludedTables()
     {
@@ -144,13 +156,23 @@ class DatabaseComparator
     /**
      * Returns the computed difference between two database objects.
      *
-     * @param  Database             $fromDatabase
-     * @param  Database             $toDatabase
-     * @param  boolean              $caseInsensitive
-     * @return DatabaseDiff|Boolean
+     * @param \Propel\Generator\Model\Database $fromDatabase
+     * @param \Propel\Generator\Model\Database $toDatabase
+     * @param bool $caseInsensitive
+     * @param bool $withRenaming
+     * @param bool $removeTable
+     * @param array $excludedTables
+     *
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff|bool
      */
-    public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false, $withRenaming = false, $removeTable = true, $excludedTables = [])
-    {
+    public static function computeDiff(
+        Database $fromDatabase,
+        Database $toDatabase,
+        $caseInsensitive = false,
+        $withRenaming = false,
+        $removeTable = true,
+        $excludedTables = []
+    ) {
         $databaseComparator = new self();
         $databaseComparator->setFromDatabase($fromDatabase);
         $databaseComparator->setToDatabase($toDatabase);
@@ -176,7 +198,9 @@ class DatabaseComparator
     }
 
     /**
-     * @param boolean $withRenaming
+     * @param bool $withRenaming
+     *
+     * @return void
      */
     public function setWithRenaming($withRenaming)
     {
@@ -184,7 +208,7 @@ class DatabaseComparator
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getWithRenaming()
     {
@@ -197,8 +221,9 @@ class DatabaseComparator
      * Compares the tables of the fromDatabase and the toDatabase, and modifies
      * the inner databaseDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
     public function compareTables($caseInsensitive = false)
     {
@@ -258,6 +283,7 @@ class DatabaseComparator
                     } else {
                         $this->databaseDiff->addPossibleRenamedTable($removedTableName, $addedTableName);
                     }
+
                     // skip to the next added table
                     break;
                 }
@@ -268,7 +294,8 @@ class DatabaseComparator
     }
 
     /**
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return bool
      */
     protected function isTableExcluded(Table $table)
@@ -279,10 +306,11 @@ class DatabaseComparator
         }
 
         foreach ($this->excludedTables as $exclude_tablename) {
-            if (preg_match('/^'.str_replace('*', '.*', $exclude_tablename).'$/', $tablename)) {
+            if (preg_match('/^' . str_replace('*', '.*', $exclude_tablename) . '$/', $tablename)) {
                 return true;
             }
         }
 
         return false;
-    }}
+    }
+}

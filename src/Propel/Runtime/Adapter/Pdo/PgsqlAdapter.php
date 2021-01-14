@@ -1,23 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDOStatement;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -41,31 +38,32 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function compareRegex($left, $right)
     {
-        return sprintf("%s ~* %s", $left, $right);
+        return sprintf('%s ~* %s', $left, $right);
     }
 
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
     public function subString($s, $pos, $len)
     {
-        return "substring($s from $pos" . ($len > -1 ? "for $len" : "") . ")";
+        return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
     public function strLength($s)
@@ -76,7 +74,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::getIdMethod()
      *
-     * @return integer
+     * @return int
      */
     protected function getIdMethod()
     {
@@ -86,15 +84,17 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Gets ID for specified sequence name.
      *
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
-     * @return integer
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     *
+     * @return int
      */
     public function getId(ConnectionInterface $con, $name = null)
     {
-        if (null === $name) {
-            throw new InvalidArgumentException("Unable to fetch next sequence ID without sequence name.");
+        if ($name === null) {
+            throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 
@@ -103,6 +103,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
     /**
      * Returns timestamp formatter string for use in date() function.
+     *
      * @return string
      */
     public function getTimestampFormatter()
@@ -123,9 +124,11 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::applyLimit()
      *
-     * @param string  $sql
-     * @param integer $offset
-     * @param integer $limit
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return void
      */
     public function applyLimit(&$sql, $offset, $limit)
     {
@@ -138,7 +141,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @param Criteria $criteria
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
@@ -153,7 +156,6 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
             foreach ($selected as $colName) {
                 if (!in_array($colName, $groupBy)) {
-
                     // is a alias there that is grouped?
                     if ($alias = array_search($colName, $asSelects)) {
                         if (in_array($alias, $groupBy)) {
@@ -163,10 +165,10 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
                     $groupBy[] = $colName;
                 }
             }
+        }
 
-            if ($groupBy) {
-                return ' GROUP BY ' . implode(',', $groupBy);
-            }
+        if ($groupBy) {
+            return ' GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -175,7 +177,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::random()
      *
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
     public function random($seed = null)
@@ -186,8 +189,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see PdoAdapter::getDeleteFromClause()
      *
-     * @param Criteria $criteria
-     * @param string   $tableName
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param string $tableName
      *
      * @return string
      */
@@ -211,7 +214,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::quoteIdentifierTable()
      *
-     * @param  string $table
+     * @param string $table
+     *
      * @return string
      */
     public function quoteIdentifierTable($table)
@@ -223,11 +227,10 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Do Explain Plan for query object or query string
      *
-     * @param ConnectionInterface $con   propel connection
-     * @param Criteria|string     $query query the criteria or the query string
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con propel connection
+     * @param \Propel\Runtime\ActiveQuery\Criteria|string $query query the criteria or the query string
      *
-     * @throws PropelException
-     * @return PDOStatement    A PDO statement executed using the connection, ready to be fetched
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
     {
@@ -254,9 +257,40 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * Explain Plan compute query getter
      *
      * @param string $query query to explain
+     *
+     * @return string
      */
     public function getExplainPlanQuery($query)
     {
         return 'EXPLAIN ' . $query;
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' FOR SHARE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $tableNames = $lock->getTableNames();
+        if (!empty($tableNames)) {
+            $tableNames = array_map([$this, 'quoteIdentifier'], array_unique($tableNames));
+            $sql .= ' OF ' . implode(', ', $tableNames);
+        }
+
+        if ($lock->isNoWait()) {
+            $sql .= ' NOWAIT';
+        }
     }
 }

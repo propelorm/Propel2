@@ -9,19 +9,11 @@
 public function validate(ValidatorInterface $validator = null)
 {
     if (null === $validator) {
-<?php if(class_exists('Symfony\\Component\\Validator\\Validator\\RecursiveValidator')): //if SF >= 2.5 use new validator classes?>
         $validator = new RecursiveValidator(
             new ExecutionContextFactory(new IdentityTranslator()),
             new LazyLoadingMetadataFactory(new StaticMethodLoader()),
             new ConstraintValidatorFactory()
         );
-<?php else: ?>
-        $validator = new Validator(
-            new ClassMetadataFactory(new StaticMethodLoader()),
-            new ConstraintValidatorFactory(),
-            new DefaultTranslator()
-        );
-<?php endif; ?>
     }
 
     $failureMap = new ConstraintViolationList();
@@ -38,7 +30,7 @@ public function validate(ValidatorInterface $validator = null)
 
 <?php foreach($aVarNames as $aVarName) : ?>
         // If validate() method exists, the validate-behavior is configured for related object
-        if (method_exists($this-><?php echo $aVarName; ?>, 'validate')) {
+        if (is_object($this-><?php echo $aVarName; ?>) and method_exists($this-><?php echo $aVarName; ?>, 'validate')) {
             if (!$this-><?php echo $aVarName; ?>->validate($validator)) {
                 $failureMap->addAll($this-><?php echo $aVarName; ?>->getValidationFailures());
             }
@@ -68,6 +60,6 @@ public function validate(ValidatorInterface $validator = null)
 
     $this->validationFailures = $failureMap;
 
-    return (Boolean) (!(count($this->validationFailures) > 0));
+    return (bool) (!(count($this->validationFailures) > 0));
 
 }

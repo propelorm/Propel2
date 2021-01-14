@@ -1,22 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
 
-use Propel\Runtime\Exception\InvalidArgumentException;
+use PDO;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
+use Propel\Runtime\Exception\InvalidArgumentException;
 
 /**
- * PDO extension that implements ConnectionInterface and builds \PDOStatement statements.
+ * PDO extension that implements ConnectionInterface and builds StatementInterface statements.
  */
-class PdoConnection extends \PDO implements ConnectionInterface
+class PdoConnection implements ConnectionInterface
 {
     use TransactionTrait;
 
@@ -26,7 +25,27 @@ class PdoConnection extends \PDO implements ConnectionInterface
     protected $name;
 
     /**
+     * @var \PDO
+     */
+    protected $pdo;
+
+    /**
+     * Forward any calls to an inaccessible method to the proxied connection.
+     *
+     * @param string $method
+     * @param mixed $args
+     *
+     * @return mixed
+     */
+    public function __call(string $method, $args)
+    {
+        return call_user_func_array([$this->pdo, $method], $args);
+    }
+
+    /**
      * @param string $name The datasource name associated to this connection
+     *
+     * @return void
      */
     public function setName($name)
     {
@@ -43,22 +62,25 @@ class PdoConnection extends \PDO implements ConnectionInterface
 
     /**
      * Creates a PDO instance representing a connection to a database.
+     *
+     * @param string $dsn
+     * @param string|null $user
+     * @param string|null $password
+     * @param array|null $options
      */
-    public function __construct($dsn, $user = null, $password = null, array $options = null)
+    public function __construct(string $dsn, ?string $user = null, ?string $password = null, ?array $options = null)
     {
-
-        // Convert option keys from a string to a \PDO:: constant
+        // Convert option keys from a string to a PDO:: constant
         $pdoOptions = [];
         if (is_array($options)) {
             foreach ($options as $key => $option) {
-                $index = (is_numeric($key)) ? $key : constant('self::' . $key);
+                $index = (is_numeric($key)) ? $key : constant('PDO::' . $key);
                 $pdoOptions[$index] = $option;
             }
         }
 
-        parent::__construct($dsn, $user, $password, $pdoOptions);
-
-        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($dsn, $user, $password, $pdoOptions);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -66,15 +88,16 @@ class PdoConnection extends \PDO implements ConnectionInterface
      *
      * This is overridden here to allow names corresponding to PDO constant names.
      *
-     * @param integer $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
-     * @param mixed   $value     The attribute value.
+     * @param int|string $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
+     * @param mixed $value The attribute value.
+     *
+     * @throws \Propel\Runtime\Exception\InvalidArgumentException
      *
      * @return bool
-     * @throws InvalidArgumentException
      */
     public function setAttribute($attribute, $value)
     {
-        if (is_string($attribute) && false === strpos($attribute, '::')) {
+        if (is_string($attribute) && strpos($attribute, '::') === false) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
                 throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
@@ -82,11 +105,11 @@ class PdoConnection extends \PDO implements ConnectionInterface
             $attribute = constant($attribute);
         }
 
-        return parent::setAttribute($attribute, $value);
+        return $this->pdo->setAttribute($attribute, $value);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDataFetcher($data)
     {
@@ -94,7 +117,7 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getSingleDataFetcher($data)
     {
@@ -102,65 +125,100 @@ class PdoConnection extends \PDO implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
+     *
+     * @return \PDOStatement|bool
      */
     public function query($statement)
     {
-        return parent::query($statement);
+        return $this->pdo->query($statement);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     public function exec($statement)
     {
-        $stmt = parent::exec($statement);
+        $stmt = $this->pdo->exec($statement);
 
         return $this->getDataFetcher($stmt);
     }
 
     /**
-     * Overwrite. Fixes HHVM strict issue.
-     *
-     * @return bool|void
+     * @inheritDoc
      */
     public function inTransaction()
     {
-        return parent::inTransaction();
+        return $this->pdo->inTransaction();
     }
 
     /**
-     * Overwrite. Fixes HHVM strict issue.
+     * @inheritDoc
+     */
+    public function getAttribute(int $attribute)
+    {
+        return $this->pdo->getAttribute($attribute);
+    }
+
+    /**
+     * @param string|null $name
      *
-     * @param  null        $name
-     * @return string|void
+     * @return string|int
      */
     public function lastInsertId($name = null)
     {
-        return parent::lastInsertId($name);
+        return $this->pdo->lastInsertId();
     }
 
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  string                                     $statement
-     * @param  array                                      $driver_options
-     * @return bool|\PDOStatement|void
+     * @param string $statement
+     * @param array $driverOptions
+     *
+     * @return \PDOStatement|bool
      */
-    public function prepare($statement, $driver_options = null)
+    public function prepare(string $statement, array $driverOptions = [])
     {
-        return parent::prepare($statement, $driver_options ?: []);
+        return $this->pdo->prepare($statement, $driverOptions);
     }
 
     /**
      * Overwrite. Fixes HHVM strict issue.
      *
-     * @param  string $string
-     * @param  int    $parameter_type
+     * @param string $string
+     * @param int $parameterType
+     *
      * @return string
      */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR)
+    public function quote($string, $parameterType = PDO::PARAM_STR)
     {
-        return parent::quote($string, $parameter_type);
+        return $this->pdo->quote($string, $parameterType);
+    }
+
+    /**
+     * @return bool
+     */
+    public function beginTransaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * @return bool
+     */
+    public function commit()
+    {
+        return $this->pdo->commit();
+    }
+
+    /**
+     * @return bool
+     */
+    public function rollBack()
+    {
+        return $this->pdo->rollBack();
     }
 }

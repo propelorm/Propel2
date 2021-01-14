@@ -1,12 +1,18 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
-use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Issue1463ItemQuery;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCase;
-
 
 /**
  * Regression tests for a SQL injection vulnerability with `limit()`.
@@ -15,8 +21,10 @@ use Propel\Tests\TestCase;
  */
 class Issue1463Test extends TestCase
 {
-
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -27,8 +35,8 @@ class Issue1463Test extends TestCase
         $schema = <<<END
 <database name="issue_1463">
     <table name="issue_1463_item">
-        <column name="id" type="INTEGER" size="10" sqlType="INT(10) UNSIGNED" primaryKey="true" required="true" autoIncrement="true" />
-        <column name="name" type="VARCHAR" size="32" required="true" />
+        <column name="id" type="INTEGER" size="10" sqlType="INT(10) UNSIGNED" primaryKey="true" required="true" autoIncrement="true"/>
+        <column name="name" type="VARCHAR" size="32" required="true"/>
     </table>
 </database>
 END;
@@ -42,10 +50,12 @@ END;
      * Verifies that the correct SQL is generated for queries that use `limit()`.
      *
      * @dataProvider dataLimit
+     *
+     * @return void
      */
     public function testLimit($limit, $expectedSql)
     {
-        $query = \Issue1463ItemQuery::create()->limit($limit);
+        $query = Issue1463ItemQuery::create()->limit($limit);
 
         $params = [];
         $actualSql = $query->createSelectSql($params);
@@ -55,71 +65,73 @@ END;
 
     public function dataLimit()
     {
-        return array(
+        return [
 
             /*
                 Valid limits
              */
 
-            'Zero' => array(
-                'limit'       => 0,
-                'expectedSql' => 'SELECT  FROM  LIMIT 0'
-            ),
+            'Zero' => [
+                'limit' => 0,
+                'expectedSql' => 'SELECT  FROM  LIMIT 0',
+            ],
 
-            'Small integer' => array(
-                'limit'       => 38427,
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427'
-            ),
-            'Small integer as a string' => array(
-                'limit'       => '38427',
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427'
-            ),
+            'Small integer' => [
+                'limit' => 38427,
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427',
+            ],
+            'Small integer as a string' => [
+                'limit' => '38427',
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427',
+            ],
 
-            'Large integer' => array(
-                'limit'       => 9223372036854775807,
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807'
-            ),
-            'Large integer as a string' => array(
-                'limit'       => '9223372036854775807',
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807'
-            ),
+            'Large integer' => [
+                'limit' => 9223372036854775807,
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807',
+            ],
+            'Large integer as a string' => [
+                'limit' => '9223372036854775807',
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807',
+            ],
 
-            'Decimal value' => array(
-                'limit'       => 123.9,
-                'expectedSql' => 'SELECT  FROM  LIMIT 123'
-            ),
-            'Decimal value as a string' => array(
-                'limit'       => '123.9',
-                'expectedSql' => 'SELECT  FROM  LIMIT 123'
-            ),
+            'Decimal value' => [
+                'limit' => 123.9,
+                'expectedSql' => 'SELECT  FROM  LIMIT 123',
+            ],
+            'Decimal value as a string' => [
+                'limit' => '123.9',
+                'expectedSql' => 'SELECT  FROM  LIMIT 123',
+            ],
 
             /*
                 Invalid limits
              */
 
-            'Negative value' => array(
-                'limit'       => -1,
-                'expectedSql' => 'SELECT  FROM '
-            ),
-            'Non-numeric string' => array(
-                'limit'       => 'foo',
-                'expectedSql' => 'SELECT  FROM  LIMIT 0'
-            ),
-            'Injected SQL' => array(
-                'limit'       => '3;DROP TABLE abc',
-                'expectedSql' => 'SELECT  FROM  LIMIT 3'
-            ),
-        );
+            'Negative value' => [
+                'limit' => -1,
+                'expectedSql' => 'SELECT  FROM ',
+            ],
+            'Non-numeric string' => [
+                'limit' => 'foo',
+                'expectedSql' => 'SELECT  FROM  LIMIT 0',
+            ],
+            'Injected SQL' => [
+                'limit' => '3;DROP TABLE abc',
+                'expectedSql' => 'SELECT  FROM  LIMIT 3',
+            ],
+        ];
     }
 
     /**
      * Verifies that the correct SQL is generated for queries that use `offset()`.
      *
      * @dataProvider dataOffset
+     *
+     * @return void
      */
     public function testOffset($offset, $expectedSql)
     {
-        $query = \Issue1463ItemQuery::create()->offset($offset);
+        $query = Issue1463ItemQuery::create()->offset($offset);
 
         $params = [];
         $actualSql = $query->createSelectSql($params);
@@ -129,71 +141,73 @@ END;
 
     public function dataOffset()
     {
-        return array(
+        return [
 
             /*
                 Valid offsets
              */
 
-            'Zero' => array(
-                'offset'      => 0,
-                'expectedSql' => 'SELECT  FROM '
-            ),
+            'Zero' => [
+                'offset' => 0,
+                'expectedSql' => 'SELECT  FROM ',
+            ],
 
-            'Small integer' => array(
-                'offset'      => 38427,
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 18446744073709551615'
-            ),
-            'Small integer as a string' => array(
-                'offset'      => '38427',
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 18446744073709551615'
-            ),
+            'Small integer' => [
+                'offset' => 38427,
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 18446744073709551615',
+            ],
+            'Small integer as a string' => [
+                'offset' => '38427',
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 18446744073709551615',
+            ],
 
-            'Large integer' => array(
-                'offset'      => 9223372036854775807,
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 18446744073709551615'
-            ),
-            'Large integer as a string' => array(
-                'offset'      => '9223372036854775807',
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 18446744073709551615'
-            ),
+            'Large integer' => [
+                'offset' => 9223372036854775807,
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 18446744073709551615',
+            ],
+            'Large integer as a string' => [
+                'offset' => '9223372036854775807',
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 18446744073709551615',
+            ],
 
-            'Decimal value' => array(
-                'offset'      => 123.9,
-                'expectedSql' => 'SELECT  FROM  LIMIT 123, 18446744073709551615'
-            ),
-            'Decimal value as a string' => array(
-                'offset'      => '123.9',
-                'expectedSql' => 'SELECT  FROM  LIMIT 123, 18446744073709551615'
-            ),
+            'Decimal value' => [
+                'offset' => 123.9,
+                'expectedSql' => 'SELECT  FROM  LIMIT 123, 18446744073709551615',
+            ],
+            'Decimal value as a string' => [
+                'offset' => '123.9',
+                'expectedSql' => 'SELECT  FROM  LIMIT 123, 18446744073709551615',
+            ],
 
             /*
                 Invalid offsets
              */
 
-            'Negative value' => array(
-                'offset'      => -1,
-                'expectedSql' => 'SELECT  FROM '
-            ),
-            'Non-numeric string' => array(
-                'offset'      => 'foo',
-                'expectedSql' => 'SELECT  FROM '
-            ),
-            'Injected SQL' => array(
-                'offset'      => '3;DROP TABLE abc',
-                'expectedSql' => 'SELECT  FROM  LIMIT 3, 18446744073709551615'
-            ),
-        );
+            'Negative value' => [
+                'offset' => -1,
+                'expectedSql' => 'SELECT  FROM ',
+            ],
+            'Non-numeric string' => [
+                'offset' => 'foo',
+                'expectedSql' => 'SELECT  FROM ',
+            ],
+            'Injected SQL' => [
+                'offset' => '3;DROP TABLE abc',
+                'expectedSql' => 'SELECT  FROM  LIMIT 3, 18446744073709551615',
+            ],
+        ];
     }
 
     /**
      * Verifies that the correct SQL is generated for queries that use both `offset()` and `limit()`.
      *
      * @dataProvider dataOffsetAndLimit
+     *
+     * @return void
      */
     public function testOffsetAndLimit($offset, $expectedSql)
     {
-        $query = \Issue1463ItemQuery::create()->offset($offset)->limit(999);
+        $query = Issue1463ItemQuery::create()->offset($offset)->limit(999);
 
         $params = [];
         $actualSql = $query->createSelectSql($params);
@@ -203,61 +217,60 @@ END;
 
     public function dataOffsetAndLimit()
     {
-        return array(
+        return [
 
             /*
                 Valid offsets
              */
 
-            'Zero' => array(
-                'offset'      => 0,
-                'expectedSql' => 'SELECT  FROM  LIMIT 999'
-            ),
+            'Zero' => [
+                'offset' => 0,
+                'expectedSql' => 'SELECT  FROM  LIMIT 999',
+            ],
 
-            'Small integer' => array(
-                'offset'      => 38427,
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 999'
-            ),
-            'Small integer as a string' => array(
-                'offset'      => '38427',
-                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 999'
-            ),
+            'Small integer' => [
+                'offset' => 38427,
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 999',
+            ],
+            'Small integer as a string' => [
+                'offset' => '38427',
+                'expectedSql' => 'SELECT  FROM  LIMIT 38427, 999',
+            ],
 
-            'Large integer' => array(
-                'offset'      => 9223372036854775807,
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 999'
-            ),
-            'Large integer as a string' => array(
-                'offset'      => '9223372036854775807',
-                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 999'
-            ),
+            'Large integer' => [
+                'offset' => 9223372036854775807,
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 999',
+            ],
+            'Large integer as a string' => [
+                'offset' => '9223372036854775807',
+                'expectedSql' => 'SELECT  FROM  LIMIT 9223372036854775807, 999',
+            ],
 
-            'Decimal value' => array(
-                'offset'      => 123.9,
-                'expectedSql' => 'SELECT  FROM  LIMIT 123, 999'
-            ),
-            'Decimal value as a string' => array(
-                'offset'      => '123.9',
-                'expectedSql' => 'SELECT  FROM  LIMIT 123, 999'
-            ),
+            'Decimal value' => [
+                'offset' => 123.9,
+                'expectedSql' => 'SELECT  FROM  LIMIT 123, 999',
+            ],
+            'Decimal value as a string' => [
+                'offset' => '123.9',
+                'expectedSql' => 'SELECT  FROM  LIMIT 123, 999',
+            ],
 
             /*
                 Invalid offsets
              */
 
-            'Negative value' => array(
-                'offset'      => -1,
-                'expectedSql' => 'SELECT  FROM  LIMIT 999'
-            ),
-            'Non-numeric string' => array(
-                'offset'      => 'foo',
-                'expectedSql' => 'SELECT  FROM  LIMIT 999'
-            ),
-            'Injected SQL' => array(
-                'offset'      => '3;DROP TABLE abc',
-                'expectedSql' => 'SELECT  FROM  LIMIT 3, 999'
-            ),
-        );
+            'Negative value' => [
+                'offset' => -1,
+                'expectedSql' => 'SELECT  FROM  LIMIT 999',
+            ],
+            'Non-numeric string' => [
+                'offset' => 'foo',
+                'expectedSql' => 'SELECT  FROM  LIMIT 999',
+            ],
+            'Injected SQL' => [
+                'offset' => '3;DROP TABLE abc',
+                'expectedSql' => 'SELECT  FROM  LIMIT 3, 999',
+            ],
+        ];
     }
-
 }

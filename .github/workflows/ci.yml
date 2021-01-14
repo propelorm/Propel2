@@ -1,0 +1,164 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+      branches:
+        - master
+
+jobs:
+    testsuite:
+        runs-on: ubuntu-18.04
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version: [ '7.2', '7.4', '8.0' ]
+                db-type: [ sqlite, mysql, pgsql, agnostic ]
+                symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
+                exclude:
+                  - php-version: '8.0'
+                    symfony-version: '4-min'
+        steps:
+            - name: Install PostgreSQL latest
+              if: matrix.db-type == 'pgsql' && matrix.php-version != '7.2'
+              uses: CasperWA/postgresql-action@v1.2
+              with:
+                  postgresql db: 'propel-tests'
+                  postgresql user: 'postgres'
+                  postgresql password: 'postgres'
+
+            - name: Install PostgreSQL min
+              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.2'
+              uses: CasperWA/postgresql-action@v1.2
+              with:
+                  postgresql version: 9
+                  postgresql db: 'propel-tests'
+                  postgresql user: 'postgres'
+                  postgresql password: 'postgres'
+
+            - name: Install MariaDb latest
+              if: matrix.db-type == 'mysql' && matrix.php-version != '7.2'
+              uses: getong/mariadb-action@v1.1
+
+            - name: Install MariaDb min
+              if: matrix.db-type == 'mysql' && matrix.php-version == '7.2'
+              uses: getong/mariadb-action@v1.1
+              with:
+                  mariadb version: '10.2'
+
+            - name: Setup PHP, with composer and extensions
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
+                  coverage: pcov
+
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 1
+
+            - name: Composer get cache directory
+              id: composer-cache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Composer cache dependencies
+              uses: actions/cache@v1
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Move specific composer.json (Symfony version ${{ matrix.symfony-version }})
+              run: mv tests/composer/composer-symfony${{ matrix.symfony-version }}.json composer.json
+
+            - name: Composer install (Symfony version ${{ matrix.symfony-version }})
+              run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+            - name: Setup Postgresql database for test suite
+              if: matrix.db-type == 'pgsql'
+              run: tests/bin/setup.pgsql.sh
+              env:
+                  PGPASSWORD: 'postgres'
+                  DB_NAME: 'propel-tests'
+                  DB_USER: 'postgres'
+                  DB_PW: 'postgres'
+
+            - name: Setup the database for test suite
+              if: matrix.db-type != 'agnostic' && matrix.db-type != 'pgsql'
+              run: tests/bin/setup.${{ matrix.db-type }}.sh
+
+            - name: Run PostgreSQL tests
+              if: matrix.db-type == 'pgsql'
+              shell: 'script -q -e -c "bash {0}"'
+              run: |
+                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
+                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/pgsql.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
+                  else
+                    vendor/bin/phpunit -c tests/pgsql.phpunit.xml
+                  fi
+              env:
+                  DB_NAME: 'propel-tests'
+                  DB_USER: 'postgres'
+                  DB_PW: 'postgres'
+
+            - name: Run ${{ matrix.db-type }} tests
+              if: matrix.db-type != 'pgsql'
+              shell: 'script -q -e -c "bash {0}"'
+              run: |
+                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
+                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
+                  else
+                    vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
+                  fi
+
+            - name: Code Coverage Report
+              if: success() && matrix.php-version == '7.4' && matrix.symfony-version == '5-max'
+              uses: codecov/codecov-action@v1
+              with:
+                  flags: ${{ matrix.php-version }}, ${{ matrix.db-type }}, ${{ matrix.symfony-version }}
+                  file: tests/coverage.xml
+
+    code-style-and-static-analysis:
+        runs-on: ubuntu-18.04
+        steps:
+            - name: Setup PHP 7.4
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 7.4
+                  extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
+                  coverage: pcov
+
+            - uses: actions/checkout@v1
+              with:
+                  fetch-depth: 1
+
+            - name: Composer get cache directory
+              id: composer-cache
+              run: |
+                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Composer cache
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+            - name: Composer validate
+              run: composer validate
+
+            - name: Composer install
+              run: composer install --prefer-dist --no-interaction
+
+            - name: Code Style
+              run: composer cs-check
+
+            - name: PHPStan
+              run: composer stan
+
+            - name: Psalm
+              run: composer psalm

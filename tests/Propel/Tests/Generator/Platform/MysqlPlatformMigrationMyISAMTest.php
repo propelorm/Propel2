@@ -1,30 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfig;
-use Propel\Generator\Model\Column;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Util\VfsTrait;
 
-/**
- *
- */
 class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
 {
+    use VfsTrait;
+
     protected $platform;
 
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PlatformInterface
      */
     protected function getPlatform()
     {
@@ -55,9 +52,8 @@ propel:
       - bookstore
 EOF;
 
-            $configFile = sys_get_temp_dir().'/propel.yaml';
-            file_put_contents($configFile, $configFileContent);
-            $config = new GeneratorConfig($configFile);
+            $configFile =  $this->newFile('propel.yaml', $configFileContent);
+            $config = new GeneratorConfig($configFile->url());
 
             $this->platform->setGeneratorConfig($config);
         }
@@ -67,6 +63,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
+     *
+     * @return void
      */
     public function testRenameTableDDL($databaseDiff)
     {
@@ -103,6 +101,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 
     /**
      * @dataProvider providerForTestGetRenameTableDDL
+     *
+     * @return void
      */
     public function testGetRenameTableDDL($fromName, $toName)
     {
@@ -114,6 +114,8 @@ RENAME TABLE `foo1` TO `foo2`;
 
     /**
      * @dataProvider providerForTestGetModifyTableDDL
+     *
+     * @return void
      */
     public function testGetModifyTableDDL($tableDiff)
     {
@@ -141,6 +143,8 @@ CREATE INDEX `baz_fk` ON `foo` (`baz3`);
 
     /**
      * @dataProvider providerForTestGetModifyTableColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyTableColumnsDDL($tableDiff)
     {
@@ -156,6 +160,8 @@ ALTER TABLE `foo` ADD `baz3` TEXT AFTER `baz`;
 
     /**
      * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTablePrimaryKeysDDL($tableDiff)
     {
@@ -169,13 +175,19 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
 
     /**
      * @dataProvider providerForTestGetModifyTableIndicesDDL
+     *
+     * @return void
      */
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
         $expected = "
 DROP INDEX `bar_fk` ON `foo`;
 
+DROP INDEX `bax_unique` ON `foo`;
+
 CREATE INDEX `baz_fk` ON `foo` (`baz`);
+
+CREATE UNIQUE INDEX `bax_bay_unique` ON `foo` (`bax`, `bay`);
 
 DROP INDEX `bar_baz_fk` ON `foo`;
 
@@ -186,26 +198,32 @@ CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
     }
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSqlDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff));
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getModifyTableForeignKeysDDL($tableDiff->getReverseDiff()));
     }
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
     {
@@ -217,6 +235,8 @@ CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
 
     /**
      * @dataProvider providerForTestGetRemoveColumnDDL
+     *
+     * @return void
      */
     public function testGetRemoveColumnDDL($column)
     {
@@ -228,6 +248,8 @@ ALTER TABLE `foo` DROP `bar`;
 
     /**
      * @dataProvider providerForTestGetRenameColumnDDL
+     *
+     * @return void
      */
     public function testGetRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -239,6 +261,8 @@ ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
 
     /**
      * @dataProvider providerForTestGetModifyColumnDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnDDL($columnDiff)
     {
@@ -250,6 +274,8 @@ ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE(3);
 
     /**
      * @dataProvider providerForTestGetModifyColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnsDDL($columnDiffs)
     {
@@ -263,6 +289,8 @@ ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
 
     /**
      * @dataProvider providerForTestGetAddColumnDDL
+     *
+     * @return void
      */
     public function testGetAddColumnDDL($column)
     {
@@ -274,6 +302,8 @@ ALTER TABLE `foo` ADD `bar` INTEGER AFTER `id`;
 
     /**
      * @dataProvider providerForTestGetAddColumnsDDL
+     *
+     * @return void
      */
     public function testGetAddColumnsDDL($columns)
     {

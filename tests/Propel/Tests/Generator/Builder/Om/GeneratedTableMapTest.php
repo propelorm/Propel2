@@ -1,24 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\EssayTableMap;
 use Propel\Tests\Bookstore\Map\MediaTableMap;
 use Propel\Tests\Bookstore\Map\PublisherTableMap;
-
-use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests the generated TableMap classes.
@@ -26,18 +22,21 @@ use Propel\Runtime\ActiveQuery\Criteria;
  * This test uses generated Bookstore classes to test the behavior of various
  * TableMap operations.
  *
- * The database is reloaded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test. This
  * means that you can always rely on the contents of the databases being the same
- * for each test method in this class.  See the BookstoreDataPopulator::populate()
+ * for each test method in this class. See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
- * @see        BookstoreDataPopulator
+ * @see BookstoreDataPopulator
  * @author Hans Lellelid <hans@xmpl.org>
  *
  * @group database
  */
 class GeneratedTableMapTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testAlias()
     {
         $this->assertEquals('foo.id', BookTableMap::alias('foo', BookTableMap::COL_ID), 'alias() returns a column name using the table alias');
@@ -46,6 +45,9 @@ class GeneratedTableMapTest extends BookstoreTestBase
         $this->assertEquals('foo.subtitle', EssayTableMap::alias('foo', EssayTableMap::COL_SUBTITLE), 'alias() also works for columns with custom phpName');
     }
 
+    /**
+     * @return void
+     */
     public function testAddSelectColumns()
     {
         $c = new Criteria();
@@ -56,22 +58,28 @@ class GeneratedTableMapTest extends BookstoreTestBase
             BookTableMap::COL_ISBN,
             BookTableMap::COL_PRICE,
             BookTableMap::COL_PUBLISHER_ID,
-            BookTableMap::COL_AUTHOR_ID
+            BookTableMap::COL_AUTHOR_ID,
         ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() adds the columns of the model to the criteria');
     }
 
+    /**
+     * @return void
+     */
     public function testAddSelectColumnsLazyLoad()
     {
         $c = new Criteria();
         MediaTableMap::addSelectColumns($c);
         $expected = [
             MediaTableMap::COL_ID,
-            MediaTableMap::COL_BOOK_ID
+            MediaTableMap::COL_BOOK_ID,
         ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns');
     }
 
+    /**
+     * @return void
+     */
     public function testAddSelectColumnsAlias()
     {
         $c = new Criteria();
@@ -82,27 +90,32 @@ class GeneratedTableMapTest extends BookstoreTestBase
             'foo.isbn',
             'foo.price',
             'foo.publisher_id',
-            'foo.author_id'
+            'foo.author_id',
         ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() uses the second parameter as a table alias');
     }
 
+    /**
+     * @return void
+     */
     public function testAddSelectColumnsAliasLazyLoad()
     {
         $c = new Criteria();
         MediaTableMap::addSelectColumns($c, 'bar');
         $expected = [
             'bar.id',
-            'bar.book_id'
+            'bar.book_id',
         ];
         $this->assertEquals($expected, $c->getSelectColumns(), 'addSelectColumns() does not add lazy loaded columns but uses the second parameter as an alias');
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultStringFormatConstant()
     {
         $this->assertTrue(defined('Propel\Tests\Bookstore\Map\BookTableMap::DEFAULT_STRING_FORMAT'), 'every TableMap class has the DEFAULT_STRING_FORMAT constant');
         $this->assertEquals('YAML', AuthorTableMap::DEFAULT_STRING_FORMAT, 'default string format is YAML by default');
         $this->assertEquals('XML', PublisherTableMap::DEFAULT_STRING_FORMAT, 'default string format can be customized using the defaultStringFormat attribute in the schema');
     }
-
 }

@@ -1,16 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Platform\PlatformInterface;
+use RuntimeException;
 
 /**
  * A class for information about table foreign keys.
@@ -26,14 +24,13 @@ class ForeignKey extends MappingModel
     /**
      * These constants are the uppercase equivalents of the onDelete / onUpdate
      * values in the schema definition.
-     *
      */
-    const NONE       = '';           // No 'ON [ DELETE | UPDATE]' behavior
-    const NOACTION   = 'NO ACTION';
-    const CASCADE    = 'CASCADE';
-    const RESTRICT   = 'RESTRICT';
-    const SETDEFAULT = 'SET DEFAULT';
-    const SETNULL    = 'SET NULL';
+    public const NONE = '';           // No 'ON [ DELETE | UPDATE]' behavior
+    public const NOACTION = 'NO ACTION';
+    public const CASCADE = 'CASCADE';
+    public const RESTRICT = 'RESTRICT';
+    public const SETDEFAULT = 'SET DEFAULT';
+    public const SETNULL = 'SET NULL';
 
     /**
      * @var string
@@ -76,29 +73,29 @@ class ForeignKey extends MappingModel
     private $onDelete = '';
 
     /**
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     private $parentTable;
 
     /**
      * @var string[]
      */
-    private $localColumns;
+    private $localColumns = [];
 
     /**
-     * @var string[]
+     * @var (string|null)[]
      */
-    private $foreignColumns;
+    private $foreignColumns = [];
 
     /**
-     * @var string[]
+     * @var (string|null)[]
      */
-    private $localValues;
+    private $localValues = [];
 
     /**
      * @var bool
      */
-    private $skipSql;
+    private $skipSql = false;
 
     /**
      * @var string
@@ -113,38 +110,39 @@ class ForeignKey extends MappingModel
     /**
      * Constructs a new ForeignKey object.
      *
-     * @param string $name
+     * @param string|null $name
      */
     public function __construct($name = null)
     {
-        parent::__construct();
-
-        if (null !== $name) {
+        if ($name !== null) {
             $this->setName($name);
         }
 
-        $this->onUpdate       = self::NONE;
-        $this->onDelete       = self::NONE;
-        $this->localColumns   = [];
-        $this->foreignColumns = [];
-        $this->skipSql        = false;
+        $this->onUpdate = self::NONE;
+        $this->onDelete = self::NONE;
     }
 
+    /**
+     * @return void
+     */
     protected function setupObject()
     {
         $this->foreignTableCommonName = $this->parentTable->getDatabase()->getTablePrefix() . $this->getAttribute('foreignTable');
-        $this->foreignSchemaName      = $this->getAttribute('foreignSchema');
+        $this->foreignSchemaName = $this->getAttribute('foreignSchema');
 
-        $this->name        = $this->getAttribute('name');
-        $this->phpName     = $this->getAttribute('phpName');
-        $this->refPhpName  = $this->getAttribute('refPhpName');
+        $this->name = $this->getAttribute('name');
+        $this->phpName = $this->getAttribute('phpName');
+        $this->refPhpName = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
-        $this->interface   = $this->getAttribute('interface');
-        $this->onUpdate    = $this->normalizeFKey($this->getAttribute('onUpdate'));
-        $this->onDelete    = $this->normalizeFKey($this->getAttribute('onDelete'));
-        $this->skipSql     = $this->booleanValue($this->getAttribute('skipSql'));
+        $this->interface = $this->getAttribute('interface');
+        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));
+        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'));
+        $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
+    /**
+     * @return void
+     */
     protected function doNaming()
     {
         if (!$this->name || $this->autoNaming) {
@@ -152,8 +150,8 @@ class ForeignKey extends MappingModel
 
             $hash = [];
             $hash[] = $this->foreignSchemaName . '.' . $this->foreignTableCommonName;
-            $hash[] = implode(',', (array)$this->localColumns);
-            $hash[] = implode(',', (array)$this->foreignColumns);
+            $hash[] = implode(',', $this->localColumns);
+            $hash[] = implode(',', $this->foreignColumns);
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
 
@@ -169,22 +167,23 @@ class ForeignKey extends MappingModel
     /**
      * Returns the normalized input of onDelete and onUpdate behaviors.
      *
-     * @param  string $behavior
+     * @param string|null $behavior
+     *
      * @return string
      */
     public function normalizeFKey($behavior)
     {
-        if (null === $behavior) {
+        if ($behavior === null) {
             return self::NONE;
         }
 
         $behavior = strtoupper($behavior);
 
-        if ('NONE' === $behavior) {
+        if ($behavior === 'NONE') {
             return self::NONE;
         }
 
-        if ('SETNULL' === $behavior) {
+        if ($behavior === 'SETNULL') {
             return self::SETNULL;
         }
 
@@ -194,28 +193,29 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether or not the onUpdate behavior is set.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasOnUpdate()
     {
-        return self::NONE !== $this->onUpdate;
+        return $this->onUpdate !== self::NONE;
     }
 
     /**
      * Returns whether or not the onDelete behavior is set.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasOnDelete()
     {
-        return self::NONE !== $this->onDelete;
+        return $this->onDelete !== self::NONE;
     }
 
     /**
      * Returns true if $column is in our local columns list.
      *
-     * @param  Column  $column
-     * @return boolean
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return bool
      */
     public function hasLocalColumn(Column $column)
     {
@@ -246,6 +246,8 @@ class ForeignKey extends MappingModel
      * Sets the onDelete behavior.
      *
      * @param string $behavior
+     *
+     * @return void
      */
     public function setOnDelete($behavior)
     {
@@ -255,7 +257,9 @@ class ForeignKey extends MappingModel
     /**
      * Sets the onUpdate behavior.
      *
-     * @param string $behavior
+     * @param string|null $behavior
+     *
+     * @return void
      */
     public function setOnUpdate($behavior)
     {
@@ -278,6 +282,8 @@ class ForeignKey extends MappingModel
      * Sets the foreign key name.
      *
      * @param string $name
+     *
+     * @return void
      */
     public function setName($name)
     {
@@ -295,6 +301,8 @@ class ForeignKey extends MappingModel
 
     /**
      * @param string $interface
+     *
+     * @return void
      */
     public function setInterface($interface)
     {
@@ -315,6 +323,8 @@ class ForeignKey extends MappingModel
      * Sets a phpName to use for this foreign key.
      *
      * @param string $name
+     *
+     * @return void
      */
     public function setPhpName($name)
     {
@@ -335,6 +345,8 @@ class ForeignKey extends MappingModel
      * Sets a refPhpName to use for this foreign key.
      *
      * @param string $name
+     *
+     * @return void
      */
     public function setRefPhpName($name)
     {
@@ -355,6 +367,8 @@ class ForeignKey extends MappingModel
      * Sets the default join strategy for this foreign key (if any).
      *
      * @param string $join
+     *
+     * @return void
      */
     public function setDefaultJoin($join)
     {
@@ -364,7 +378,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the PlatformInterface instance.
      *
-     * @return PlatformInterface
+     * @return \Propel\Generator\Platform\PlatformInterface|null
      */
     private function getPlatform()
     {
@@ -374,7 +388,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the Database object of this Column.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database|null
      */
     public function getDatabase()
     {
@@ -392,16 +406,14 @@ class ForeignKey extends MappingModel
         if ($this->foreignSchemaName && $platform->supportsSchemas()) {
             return $this->foreignSchemaName
                 . $platform->getSchemaDelimiter()
-                . $this->foreignTableCommonName
-            ;
+                . $this->foreignTableCommonName;
         }
 
         $database = $this->getDatabase();
         if ($database && ($schema = $this->parentTable->guessSchemaName()) && $platform->supportsSchemas()) {
             return $schema
                 . $platform->getSchemaDelimiter()
-                . $this->foreignTableCommonName
-            ;
+                . $this->foreignTableCommonName;
         }
 
         return $this->foreignTableCommonName;
@@ -421,6 +433,8 @@ class ForeignKey extends MappingModel
      * Sets the foreign table common name of the FK.
      *
      * @param string $tableName
+     *
+     * @return void
      */
     public function setForeignTableCommonName($tableName)
     {
@@ -430,13 +444,16 @@ class ForeignKey extends MappingModel
     /**
      * Returns the resolved foreign Table model object.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table|null
      */
     public function getForeignTable()
     {
-        if ($database = $this->parentTable->getDatabase()) {
+        $database = $this->parentTable->getDatabase();
+        if ($database) {
             return $database->getTable($this->getForeignTableName());
         }
+
+        return null;
     }
 
     /**
@@ -453,6 +470,8 @@ class ForeignKey extends MappingModel
      * Set the foreign schema name of the foreign key.
      *
      * @param string $schemaName
+     *
+     * @return void
      */
     public function setForeignSchemaName($schemaName)
     {
@@ -462,7 +481,9 @@ class ForeignKey extends MappingModel
     /**
      * Sets the parent Table of the foreign key.
      *
-     * @param Table $parent
+     * @param \Propel\Generator\Model\Table $parent
+     *
+     * @return void
      */
     public function setTable(Table $parent)
     {
@@ -472,7 +493,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns the parent Table of the foreign key.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
     public function getTable()
     {
@@ -504,6 +525,8 @@ class ForeignKey extends MappingModel
      *
      * @param mixed $ref1 A Column object or an associative array or a string
      * @param mixed $ref2 A Column object or a single string name
+     *
+     * @return void
      */
     public function addReference($ref1, $ref2 = null)
     {
@@ -536,7 +559,7 @@ class ForeignKey extends MappingModel
             $foreign = $ref2->getName();
             $this->foreignColumns[] = $foreign;
             $this->localValues[] = null;
-        } else if ($ref1 instanceof Column) {
+        } elseif ($ref1 instanceof Column) {
             $this->foreignColumns[] = null;
             $this->localValues[] = $ref2;
         }
@@ -545,10 +568,11 @@ class ForeignKey extends MappingModel
     /**
      * Clears the references of this foreign key.
      *
+     * @return void
      */
     public function clearReferences()
     {
-        $this->localColumns   = [];
+        $this->localColumns = [];
         $this->foreignColumns = [];
         $this->localValues = [];
     }
@@ -566,7 +590,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of local column objects.
      *
-     * @return Column[]
+     * @return \Propel\Generator\Model\Column[]
      */
     public function getLocalColumnObjects()
     {
@@ -581,7 +605,8 @@ class ForeignKey extends MappingModel
     /**
      * Returns a local column name identified by a position.
      *
-     * @param  integer $index
+     * @param int $index
+     *
      * @return string
      */
     public function getLocalColumnName($index = 0)
@@ -592,8 +617,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns a local Column object identified by a position.
      *
-     * @param  integer $index
-     * @return Column
+     * @param int $index
+     *
+     * @return \Propel\Generator\Model\Column
      */
     public function getLocalColumn($index = 0)
     {
@@ -645,7 +671,7 @@ class ForeignKey extends MappingModel
         $foreignTable = $this->getForeignTable();
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
             $mapping[] = [
-                'local'   => $this->parentTable->getColumn($this->localColumns[$i]),
+                'local' => $this->parentTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
                 'value' => $this->localValues[$i],
             ];
@@ -657,24 +683,28 @@ class ForeignKey extends MappingModel
     /**
      * Returns the foreign column name mapped to a specified local column.
      *
-     * @param  string $local
+     * @param string $local
+     *
      * @return string
      */
     public function getMappedForeignColumn($local)
     {
         $index = array_search($local, $this->localColumns);
+
         return $this->foreignColumns[$index];
     }
 
     /**
      * Returns the local column name mapped to a specified foreign column.
      *
-     * @param  string $foreign
+     * @param string $foreign
+     *
      * @return string
      */
     public function getMappedLocalColumn($foreign)
     {
         $index = array_search($foreign, $this->foreignColumns);
+
         return $this->localColumns[$index];
     }
 
@@ -699,7 +729,7 @@ class ForeignKey extends MappingModel
         $foreignTable = $this->getForeignTable();
         foreach ($this->foreignColumns as $columnName) {
             $column = $foreignTable->getColumn($columnName);
-            if (null !== $column) {
+            if ($column !== null) {
                 $columns[] = $column;
             }
         }
@@ -710,7 +740,8 @@ class ForeignKey extends MappingModel
     /**
      * Returns a foreign column name.
      *
-     * @param  integer $index
+     * @param int $index
+     *
      * @return string
      */
     public function getForeignColumnName($index = 0)
@@ -721,7 +752,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns a foreign column object.
      *
-     * @return Column
+     * @param int $index
+     *
+     * @return \Propel\Generator\Model\Column
      */
     public function getForeignColumn($index = 0)
     {
@@ -731,7 +764,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether this foreign key uses only required local columns.
      *
-     * @return boolean
+     * @return bool
      */
     public function isLocalColumnsRequired()
     {
@@ -747,7 +780,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether this foreign key uses at least one required local column.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAtLeastOneLocalColumnRequired()
     {
@@ -763,7 +796,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns whether this foreign key uses at least one required(notNull && no defaultValue) local primary key.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAtLeastOneLocalPrimaryKeyIsRequired()
     {
@@ -780,7 +813,7 @@ class ForeignKey extends MappingModel
      * Returns whether this foreign key is also the primary key of the foreign
      * table.
      *
-     * @return boolean Returns true if all columns inside this foreign key are primary keys of the foreign table
+     * @return bool Returns true if all columns inside this foreign key are primary keys of the foreign table
      */
     public function isForeignPrimaryKey()
     {
@@ -803,10 +836,35 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns whether this foreign key is not the primary key of the foreign
+     * table.
+     *
+     * @return bool Returns true if all columns inside this foreign key are not primary keys of the foreign table
+     */
+    public function isForeignNonPrimaryKey(): bool
+    {
+        $foreignTable = $this->getForeignTable();
+
+        $foreignPKCols = [];
+        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
+            $foreignPKCols[] = $fPKCol->getName();
+        }
+
+        $foreignCols = [];
+        foreach ($this->localColumns as $idx => $colName) {
+            if ($this->foreignColumns[$idx]) {
+                $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();
+            }
+        }
+
+        return (bool)array_diff($foreignCols, $foreignPKCols);
+    }
+
+    /**
      * Returns whether or not this foreign key relies on more than one
      * column binding.
      *
-     * @return boolean
+     * @return bool
      */
     public function isComposite()
     {
@@ -823,7 +881,7 @@ class ForeignKey extends MappingModel
         $result = [];
 
         foreach ($mapping as $map) {
-            list ($left, $right) = $map;
+            [$left, $right] = $map;
             $item = [];
             $item[0] = $left instanceof Column ? ':' . $left->getName() : $left;
             $item[1] = $right instanceof Column ? ':' . $right->getName() : $right;
@@ -838,12 +896,12 @@ class ForeignKey extends MappingModel
      *
      * At least one reference with a expression attribute set.
      *
-     * @return boolean
+     * @return bool
      */
     public function isPolymorphic()
     {
         foreach ($this->localValues as $value) {
-            if (null !== $value) {
+            if ($value !== null) {
                 return true;
             }
         }
@@ -871,7 +929,7 @@ class ForeignKey extends MappingModel
      * Returns whether or not this foreign key is also the primary key of
      * the local table.
      *
-     * @return boolean True if all local columns are at the same time a primary key
+     * @return bool True if all local columns are at the same time a primary key
      */
     public function isLocalPrimaryKey()
     {
@@ -887,18 +945,20 @@ class ForeignKey extends MappingModel
      * Sets whether or not this foreign key should have its creation SQL
      * generated.
      *
-     * @param boolean $skip
+     * @param bool $skip
+     *
+     * @return void
      */
     public function setSkipSql($skip)
     {
-        $this->skipSql = (boolean) $skip;
+        $this->skipSql = (bool)$skip;
     }
 
     /**
      * Returns whether or not the SQL generation must be skipped for this
      * foreign key.
      *
-     * @return boolean
+     * @return bool
      */
     public function isSkipSql()
     {
@@ -909,20 +969,30 @@ class ForeignKey extends MappingModel
      * Whether this foreign key is matched by an inverted foreign key (on foreign table).
      *
      * This is to prevent duplicate columns being generated for a 1:1 relationship that is represented
-     * by foreign keys on both tables.  I don't know if that's good practice ... but hell, why not
+     * by foreign keys on both tables. I don't know if that's good practice ... but hell, why not
      * support it.
      *
-     * @return boolean
      * @link http://propel.phpdb.org/trac/ticket/549
+     *
+     * @return bool
      */
     public function isMatchedByInverseFK()
     {
-        return (boolean) $this->getInverseFK();
+        return (bool)$this->getInverseFK();
     }
 
+    /**
+     * @throws \RuntimeException
+     *
+     * @return \Propel\Generator\Model\ForeignKey|null
+     */
     public function getInverseFK()
     {
         $foreignTable = $this->getForeignTable();
+        if (!$foreignTable) {
+            throw new RuntimeException('No foreign table given');
+        }
+
         $map = $this->getInverseMapping();
 
         foreach ($foreignTable->getForeignKeys() as $refFK) {
@@ -932,20 +1002,22 @@ class ForeignKey extends MappingModel
                 return $refFK;
             }
         }
+
+        return null;
     }
 
     /**
      * Returns the list of other foreign keys starting on the same table.
      * Used in many-to-many relationships.
      *
-     * @return ForeignKey[]
+     * @return \Propel\Generator\Model\ForeignKey[]
      */
     public function getOtherFks()
     {
         $fks = [];
         foreach ($this->parentTable->getForeignKeys() as $fk) {
             if ($fk !== $this) {
-                $fks[]= $fk;
+                $fks[] = $fk;
             }
         }
 
@@ -953,46 +1025,9 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Whether at least one foreign column is also the primary key of the foreign table.
-     *
-     * @return boolean True if there is at least one column that is a primary key of the foreign table
-     */
-    public function isAtLeastOneForeignPrimaryKey()
-    {
-        $cols = $this->getForeignPrimaryKeys();
-
-        return 0 !== count($cols);
-    }
-
-    /**
-     * Returns all foreign columns which are also a primary key of the foreign table.
-     *
-     * @return array Column[]
-     */
-    public function getForeignPrimaryKeys()
-    {
-        $lfmap = $this->getLocalForeignMapping();
-        $foreignTable = $this->getForeignTable();
-
-        $foreignPKCols = [];
-        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
-            $foreignPKCols[$fPKCol->getName()] = true;
-        }
-
-        $foreignCols = [];
-        foreach ($this->getLocalColumn() as $colName) {
-            if ($foreignPKCols[$lfmap[$colName]]) {
-                $foreignCols[] = $foreignTable->getColumn($lfmap[$colName]);
-            }
-        }
-
-        return $foreignCols;
-    }
-
-    /**
      * Returns all local columns which are also a primary key of the local table.
      *
-     * @return Column[]
+     * @return \Propel\Generator\Model\Column[]
      */
     public function getLocalPrimaryKeys()
     {
@@ -1011,12 +1046,12 @@ class ForeignKey extends MappingModel
     /**
      * Whether at least one local column is also a primary key.
      *
-     * @return boolean True if there is at least one column that is a primary key
+     * @return bool True if there is at least one column that is a primary key
      */
     public function isAtLeastOneLocalPrimaryKey()
     {
         $cols = $this->getLocalPrimaryKeys();
 
-        return 0 !== count($cols);
+        return count($cols) !== 0;
     }
 }

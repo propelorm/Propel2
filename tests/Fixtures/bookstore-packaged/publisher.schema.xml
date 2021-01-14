@@ -4,7 +4,7 @@
 <database package="core.publisher" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
   <table name="publisher" description="Publisher Table">
-    <behavior name="auto_add_pk" />
+    <behavior name="auto_add_pk"/>
     <column
       name="name"
       required="true"

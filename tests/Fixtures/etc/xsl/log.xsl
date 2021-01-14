@@ -26,7 +26,7 @@
   @author <a href="mailto:sbailliez@apache.org">Stephane Bailliez</a>
 
 -->
-<xsl:decimal-format decimal-separator="." grouping-separator="," />
+<xsl:decimal-format decimal-separator="." grouping-separator=","/>
 
 <xsl:template match="/">
 <html>

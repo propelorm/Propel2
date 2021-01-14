@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Map;
 
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
-
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
+use Propel\Runtime\Map\TableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -28,7 +25,10 @@ class ColumnMapTest extends TestCaseFixtures
 {
     protected $databaseMap;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         $this->dmap = new DatabaseMap('foodb');
@@ -37,12 +37,18 @@ class ColumnMapTest extends TestCaseFixtures
         $this->cmap = new ColumnMap($this->columnName, $this->tmap);
     }
 
-    protected function tearDown()
+    /**
+     * @return void
+     */
+    protected function tearDown(): void
     {
         // nothing to do for now
         parent::tearDown();
     }
 
+    /**
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assertEquals($this->columnName, $this->cmap->getName(), 'constructor sets the column name');
@@ -50,6 +56,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertNull($this->cmap->getType(), 'A new column map has no type');
     }
 
+    /**
+     * @return void
+     */
     public function testPhpName()
     {
         $this->assertNull($this->cmap->getPhpName(), 'phpName is empty until set');
@@ -57,6 +66,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals('FooBar', $this->cmap->getPhpName(), 'phpName is set by setPhpName()');
     }
 
+    /**
+     * @return void
+     */
     public function testType()
     {
         $this->assertNull($this->cmap->getType(), 'type is empty until set');
@@ -64,6 +76,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals('FooBar', $this->cmap->getType(), 'type is set by setType()');
     }
 
+    /**
+     * @return void
+     */
     public function tesSize()
     {
         $this->assertEquals(0, $this->cmap->getSize(), 'size is empty until set');
@@ -71,6 +86,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals(123, $this->cmap->getSize(), 'size is set by setSize()');
     }
 
+    /**
+     * @return void
+     */
     public function testPrimaryKey()
     {
         $this->assertFalse($this->cmap->isPrimaryKey(), 'primaryKey is false by default');
@@ -78,6 +96,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertTrue($this->cmap->isPrimaryKey(), 'primaryKey is set by setPrimaryKey()');
     }
 
+    /**
+     * @return void
+     */
     public function testNotNull()
     {
         $this->assertFalse($this->cmap->isNotNull(), 'notNull is false by default');
@@ -85,6 +106,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertTrue($this->cmap->isNotNull(), 'notNull is set by setPrimaryKey()');
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultValue()
     {
         $this->assertNull($this->cmap->getDefaultValue(), 'defaultValue is empty until set');
@@ -92,6 +116,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals('FooBar', $this->cmap->getDefaultValue(), 'defaultValue is set by setDefaultValue()');
     }
 
+    /**
+     * @return void
+     */
     public function testGetForeignKey()
     {
         $this->assertFalse($this->cmap->isForeignKey(), 'foreignKey is false by default');
@@ -116,6 +143,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals($relatedCmap, $this->cmap->getRelatedColumn(), 'getRelatedColumn returns the related ColumnMap object');
     }
 
+    /**
+     * @return void
+     */
     public function testGetRelation()
     {
         $bookTable = BookTableMap::getTableMap();
@@ -126,9 +156,11 @@ class ColumnMapTest extends TestCaseFixtures
         $bookstoreTable = BookstoreEmployeeTableMap::getTableMap();
         $supervisorColumn = $bookstoreTable->getColumn('SUPERVISOR_ID');
         $this->assertEquals($supervisorColumn->getRelation(), $supervisorColumn->getRelation('Supervisor'), 'getRelation() returns the RelationMap object even whit ha specific refPhpName');
-
     }
 
+    /**
+     * @return void
+     */
     public function testNormalizeName()
     {
         $this->assertEquals('', ColumnMap::normalizeName(''), 'normalizeColumnName() returns an empty string when passed an empty string');
@@ -139,6 +171,9 @@ class ColumnMapTest extends TestCaseFixtures
         $this->assertEquals('BAR_BAZ', ColumnMap::normalizeName('foo.bar_baz'), 'normalizeColumnName() can do all the above at the same time');
     }
 
+    /**
+     * @return void
+     */
     public function testIsPrimaryString()
     {
         $bookTable = BookTableMap::getTableMap();

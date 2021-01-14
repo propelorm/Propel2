@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -16,28 +14,25 @@ use Propel\Generator\Model\ForeignKey;
  * Service class for comparing ForeignKey objects
  * Heavily inspired by Doctrine2's Migrations
  * (see http://github.com/doctrine/dbal/tree/master/lib/Doctrine/DBAL/Schema/)
- *
  */
 class ForeignKeyComparator
 {
     /**
      * Compute the difference between two Foreign key objects
      *
-     * @param ForeignKey $fromFk
-     * @param ForeignKey $toFk
+     * @param \Propel\Generator\Model\ForeignKey $fromFk
+     * @param \Propel\Generator\Model\ForeignKey $toFk
+     * @param bool $caseInsensitive Whether the comparison is case insensitive.
+     * False by default.
      *
-     * @param boolean $caseInsensitive Whether the comparison is case insensitive.
-     *                                 False by default.
-     *
-     * @return boolean false if the two fks are similar, true if they have differences
+     * @return bool false if the two fks are similar, true if they have differences
      */
     public static function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false)
     {
         // Check for differences in local and remote table
         $test = $caseInsensitive ?
             strtolower($fromFk->getTableName()) !== strtolower($toFk->getTableName()) :
-            $fromFk->getTableName() !== $toFk->getTableName()
-        ;
+            $fromFk->getTableName() !== $toFk->getTableName();
 
         if ($test) {
             return true;
@@ -45,8 +40,7 @@ class ForeignKeyComparator
 
         $test = $caseInsensitive ?
             strtolower($fromFk->getForeignTableName()) !== strtolower($toFk->getForeignTableName()) :
-            $fromFk->getForeignTableName() !== $toFk->getForeignTableName()
-        ;
+            $fromFk->getForeignTableName() !== $toFk->getForeignTableName();
 
         if ($test) {
             return true;
@@ -79,5 +73,4 @@ class ForeignKeyComparator
         // compare skipSql
         return $fromFk->isSkipSql() !== $toFk->isSkipSql();
     }
-
 }

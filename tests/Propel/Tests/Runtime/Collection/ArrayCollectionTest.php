@@ -1,27 +1,25 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Country;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Collection\ArrayCollection;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\Collection\ArrayCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Country;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for ObjectCollection.
@@ -32,12 +30,18 @@ use Propel\Runtime\Map\TableMap;
  */
 class ArrayCollectionTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);
     }
 
+    /**
+     * @return void
+     */
     public function testSave()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -54,17 +58,22 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @return void
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ArrayCollection();
         $col->setModel('Country');
         $cv = new Country();
-        $col []= $cv;
+        $col[] = $cv;
         $col->save();
     }
 
+    /**
+     * @return void
+     */
     public function testDelete()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -76,18 +85,23 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @return void
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ArrayCollection();
         $col->setModel('Country');
         $cv = new Country();
         $cv->setNew(false);
-        $col []= $cv;
+        $col[] = $cv;
         $col->delete();
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeys()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -98,7 +112,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
             'Book_0',
             'Book_1',
             'Book_2',
-            'Book_3'
+            'Book_3',
         ];
         $this->assertEquals($keys, array_keys($pks));
 
@@ -112,6 +126,9 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testFromArray()
     {
         $author = new Author();
@@ -120,7 +137,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
         $author->save();
         $books = [
             ['Title' => 'Mansfield Park', 'ISBN' => 'FA404-A', 'AuthorId' => $author->getId()],
-            ['Title' => 'Pride And Prejudice', 'ISBN' => 'FA404-B', 'AuthorId' => $author->getId()]
+            ['Title' => 'Pride And Prejudice', 'ISBN' => 'FA404-B', 'AuthorId' => $author->getId()],
         ];
         $col = new ArrayCollection();
         $col->setModel('Propel\Tests\Bookstore\Book');
@@ -137,6 +154,9 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, $booksByJane);
     }
 
+    /**
+     * @return void
+     */
     public function testToArray()
     {
         $books = PropelQuery::from('Propel\Tests\Bookstore\Book')->setFormatter(ModelCriteria::FORMAT_ARRAY)->find();
@@ -157,7 +177,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
             'Book_0',
             'Book_1',
             'Book_2',
-            'Book_3'
+            'Book_3',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
 
@@ -170,11 +190,14 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
             'Book_Harry Potter and the Order of the Phoenix',
             'Book_Quicksilver',
             'Book_Don Juan',
-            'Book_The Tin Drum'
+            'Book_The Tin Drum',
         ];
         $this->assertEquals($keys, array_keys($booksArray));
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayDeep()
     {
         $author = new Author();
@@ -190,7 +213,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
         $coll = new ArrayCollection();
         $coll->setModel('Propel\Tests\Bookstore\Book');
-        $coll[]= $book->toArray(TableMap::TYPE_PHPNAME, true, [], true);
+        $coll[] = $book->toArray(TableMap::TYPE_PHPNAME, true, [], true);
         $expected = [[
             'Id' => 9012,
             'Title' => 'Don Juan',
@@ -206,12 +229,15 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
                 'Age' => null,
                 'Books' => [
                     0 => '*RECURSION*',
-                ]
+                ],
             ],
         ]];
         $this->assertEquals($expected, $coll->toArray());
     }
 
+    /**
+     * @return void
+     */
     public function getWorkerObject()
     {
         $col = new TestableArrayCollection();
@@ -223,14 +249,15 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @return void
      */
     public function testGetWorkerObjectNoModel()
     {
+        $this->expectException(PropelException::class);
+
         $col = new TestableArrayCollection();
         $col->getWorkerObject();
     }
-
 }
 
 class TestableArrayCollection extends ArrayCollection

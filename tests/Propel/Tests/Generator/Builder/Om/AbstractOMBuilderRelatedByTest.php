@@ -1,18 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Tests\TestCase;
 
@@ -20,19 +18,21 @@ use Propel\Tests\TestCase;
  * Test class for OMBuilder.
  *
  * @author François Zaninotto
- * @version    $Id: OMBuilderBuilderTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class AbstractOMBuilderRelatedByTest extends TestCase
 {
     public static $database;
 
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         // run only once to save execution time
         if (null == self::$database) {
             $schemaReader = new SchemaReader(new DefaultPlatform());
             $appData = $schemaReader->parseFile(realpath(__DIR__ . '/../../../../../Fixtures/bookstore/schema.xml'));
-            self::$database = $appData->getDatabase("bookstore");
+            self::$database = $appData->getDatabase('bookstore');
         }
     }
 
@@ -60,6 +60,8 @@ class AbstractOMBuilderRelatedByTest extends TestCase
 
     /**
      * @dataProvider getRelatedBySuffixDataProvider
+     *
+     * @return void
      */
     public function testGetRelatedBySuffix($table, $index, $expectedSuffix, $expectedReverseSuffix)
     {
@@ -81,22 +83,31 @@ class TestableOMBuilder extends AbstractOMBuilder
         return parent::getRefRelatedBySuffix($fk);
     }
 
+    /**
+     * @return void
+     */
     public function getUnprefixedClassName()
     {
     }
 
+    /**
+     * @return void
+     */
     protected function addClassOpen(&$script)
     {
-
     }
 
+    /**
+     * @return void
+     */
     protected function addClassBody(&$script)
     {
-
     }
 
+    /**
+     * @return void
+     */
     protected function addClassClose(&$script)
     {
-
     }
 }

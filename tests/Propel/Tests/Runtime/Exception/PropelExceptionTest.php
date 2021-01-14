@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Exception;
 
+use Exception;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 
@@ -20,13 +19,19 @@ use Propel\Tests\TestCase;
  */
 class PropelExceptionTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testSimpleConstructor()
     {
         $e = new PropelException('this is an error');
-        $this->assertTrue($e instanceof \Exception);
+        $this->assertTrue($e instanceof Exception);
         $this->assertEquals('this is an error', $e->getMessage());
     }
 
+    /**
+     * @return void
+     */
     public function testCompositeConstructor()
     {
         $e1 = new FooException('real cause');
@@ -35,14 +40,22 @@ class PropelExceptionTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
      */
     public function testIsThrowable()
     {
+        $this->expectException(PropelException::class);
+
         $e = new PropelException('this is an error');
+
         throw $e;
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrevious()
     {
         $e1 = new FooException('real cause');
@@ -51,4 +64,6 @@ class PropelExceptionTest extends TestCase
     }
 }
 
-class FooException extends \Exception {}
+class FooException extends Exception
+{
+}

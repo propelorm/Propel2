@@ -1,28 +1,26 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sluggable;
 
+use Exception;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-
+use Propel\Tests\Bookstore\Behavior\Map\Table13TableMap;
+use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
 use Propel\Tests\Bookstore\Behavior\Table13;
 use Propel\Tests\Bookstore\Behavior\Table13Query;
-use Propel\Tests\Bookstore\Behavior\Map\Table13TableMap;
 use Propel\Tests\Bookstore\Behavior\Table14;
 use Propel\Tests\Bookstore\Behavior\Table14Query;
-use Propel\Tests\Bookstore\Behavior\Map\Table14TableMap;
 use Propel\Tests\Bookstore\Behavior\TableWithScope;
 use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Tests for SluggableBehavior class
@@ -33,15 +31,20 @@ use Propel\Tests\Bookstore\Behavior\TableWithScopeQuery;
  */
 class SluggableBehaviorTest extends BookstoreTestBase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         //prevent issue DSN not Found
         self::$isInitialized = false;
         parent::setUp();
-        include_once(__DIR__.'/SluggableBehaviorTestClasses.php');
+        include_once(__DIR__ . '/SluggableBehaviorTestClasses.php');
     }
 
-
+    /**
+     * @return void
+     */
     public function testParameters()
     {
         $table13 = Table13TableMap::getTableMap();
@@ -53,6 +56,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table14', 'getSlug'), 'Sluggable adds a standard getter for the slug column');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectGetter()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13', 'getSlug'), 'Sluggable adds a getter for the slug column');
@@ -65,6 +71,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('foo', $t->getSlug(), 'getSlug() returns the object slug');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectSetter()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Behavior\Table13', 'setSlug'), 'Sluggable adds a setter for the slug column');
@@ -77,6 +86,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('foo', $t->getUrl(), 'setSlug() sets the object slug');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectCreateRawSlug()
     {
         $t = new TestableTable13();
@@ -90,6 +102,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world/bar', $t->createRawSlug(), 'createRawSlug() returns a slug based on a pattern');
     }
 
+    /**
+     * @return string[][]
+     */
     public static function cleanupSlugProvider()
     {
         return [
@@ -107,6 +122,11 @@ class SluggableBehaviorTest extends BookstoreTestBase
 
     /**
      * @dataProvider cleanupSlugProvider
+     *
+     * @param string $in
+     * @param string $out
+     *
+     * @return void
      */
     public function testObjectCleanupSlugPart($in, $out)
     {
@@ -114,6 +134,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($out, $t->cleanupSlugPart($in), 'cleanupSlugPart() cleans up the slug part');
     }
 
+    /**
+     * @return array
+     */
     public static function limitSlugSizeProvider()
     {
         return [
@@ -129,6 +152,8 @@ class SluggableBehaviorTest extends BookstoreTestBase
 
     /**
      * @dataProvider limitSlugSizeProvider
+     *
+     * @return void
      */
     public function testObjectLimitSlugSize($in, $out)
     {
@@ -136,6 +161,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($out, $t->limitSlugSize($in), 'limitSlugsize() limits the slug size');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectMakeSlugUnique()
     {
         Table13Query::create()->deleteAll();
@@ -155,6 +183,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('foo-2', $t->makeSlugUnique('foo'), 'makeSlugUnique() returns an incremented input when it already exists');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectCreateSlug()
     {
         Table13Query::create()->deleteAll();
@@ -180,6 +211,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world/bar/1', $t->createSlug(), 'createSlug() returns a unique slug');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectPreSave()
     {
         Table14Query::create()->deleteAll();
@@ -206,6 +240,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/custom/bar/1', $t->getSlug(), 'preSave() uses the given slug if it exists and makes it unique');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectSlugLifecycle()
     {
         Table13Query::create()->deleteAll();
@@ -231,6 +268,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('/foo/hello-world2/bar', $t->getSlug(), 'setSlug(null) relaunches the slug generation');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectSlugAutoUpdate()
     {
         Table13Query::create()->deleteAll();
@@ -247,6 +287,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('hello-bar', $t->getSlug(), 'preSave() does not autoupdate slug when it was set by the user');
     }
 
+    /**
+     * @return void
+     */
     public function testObjectSlugAutoUpdatePermanent()
     {
         Table14Query::create()->deleteAll();
@@ -262,6 +305,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals('hello-bar', $t->getSlug(), 'setSlug() still works for permanent slugs');
     }
 
+    /**
+     * @return void
+     */
     public function testQueryFindOneBySlug()
     {
         $this->assertFalse(method_exists('\Propel\Tests\Bookstore\Behavior\Table13Query', 'findOneBySlug'), 'The generated query does not provide a findOneBySlug() method if the slug column is "slug".');
@@ -278,6 +324,9 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $this->assertEquals($t1, $t, 'findOneBySlug() returns a single object matching the slug');
     }
 
+    /**
+     * @return void
+     */
     public function testUniqueViolationWithoutScope()
     {
         $this->markTestSkipped('Skipping...');
@@ -288,14 +337,16 @@ class SluggableBehaviorTest extends BookstoreTestBase
         $t->save();
         $this->assertEquals('hello-world', $t->getSlug());
 
-        $this->expectException(\Propel\Runtime\Exception\PropelException::class);
+        $this->expectException(PropelException::class);
 
         $t = new TableWithScope();
         $t->setTitle('Hello, World');
         $t->save();
-
     }
 
+    /**
+     * @return void
+     */
     public function testNoUniqueViolationWithScope()
     {
         TableWithScopeQuery::create()->deleteAll();
@@ -311,11 +362,14 @@ class SluggableBehaviorTest extends BookstoreTestBase
             $t->save();
 
             $this->assertEquals('hello-world', $t->getSlug());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail($e->getMessage());
         }
     }
 
+    /**
+     * @return void
+     */
     public function testNumberOfQueriesForMakeUniqSlug()
     {
         Table13Query::create()->deleteAll();
@@ -327,7 +381,7 @@ class SluggableBehaviorTest extends BookstoreTestBase
             $expectedCount++; //because of the SELECT nextval(...) query
         }
 
-        for ($i=0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $nbQuery = $con->getQueryCount();
 
             $t = new Table13();
@@ -338,12 +392,15 @@ class SluggableBehaviorTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSlugRegexp()
     {
         Table13Query::create()->deleteAll();
         $con = Propel::getServiceContainer()->getConnection(Table13TableMap::DATABASE_NAME);
 
-        for ($i=0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $t = new Table13();
             $t->setTitle('Hello, World');
             $t->save($con);

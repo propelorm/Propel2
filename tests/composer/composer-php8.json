@@ -1,0 +1,57 @@
+{
+    "name": "propel/propel",
+    "type": "library",
+    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "keywords": [
+        "ORM",
+        "persistence",
+        "Active Record"
+    ],
+    "homepage": "http://www.propelorm.org/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "William Durand",
+            "email": "william.durand1@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "symfony/yaml": "^5.0.0",
+        "symfony/config": "^5.0.0",
+        "symfony/console": "^5.0.0",
+        "symfony/filesystem": "^5.0.0",
+        "symfony/finder": "^5.0.0",
+        "symfony/translation": "^5.0.0",
+        "symfony/validator": "^5.0.0",
+        "psr/log": "^1.0"
+    },
+    "require-dev": {
+        "monolog/monolog": "^1.3",
+        "phpunit/phpunit": "9.4.2",
+        "mikey179/vfsstream": "^1.6"
+    },
+    "suggest": {
+        "monolog/monolog": "The recommended logging library to use with Propel."
+    },
+    "autoload": {
+        "psr-4": {
+            "Propel\\": "src/Propel/"
+        }
+    },
+    "bin": [
+        "bin/propel"
+    ],
+    "scripts": {
+        "stan": [
+            "vendor/bin/phpstan analyze -l 1 -c tests/phpstan.neon src/"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    }
+}

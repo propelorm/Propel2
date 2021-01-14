@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -19,6 +17,9 @@ use Propel\Generator\Model\Index;
  */
 class IndexTest extends ModelTestCase
 {
+    /**
+     * @return void
+     */
     public function testCreateNamedIndex()
     {
         $index = new Index('foo_idx');
@@ -32,6 +33,9 @@ class IndexTest extends ModelTestCase
         $this->assertFalse($index->hasColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testSetupObject()
     {
         $index = new Index();
@@ -44,6 +48,7 @@ class IndexTest extends ModelTestCase
     /**
      * @dataProvider provideTableSpecificAttributes
      *
+     * @return void
      */
     public function testCreateDefaultIndexName($tableName, $maxColumnNameLength, $indexName)
     {
@@ -51,13 +56,12 @@ class IndexTest extends ModelTestCase
         $database
             ->expects($this->any())
             ->method('getMaxColumnNameLength')
-            ->will($this->returnValue($maxColumnNameLength))
-        ;
+            ->will($this->returnValue($maxColumnNameLength));
 
         $table = $this->getTableMock($tableName, [
             'common_name' => $tableName,
-            'indices'     => [ new Index(), new Index() ],
-            'database'    => $database,
+            'indices' => [ new Index(), new Index() ],
+            'database' => $database,
         ]);
 
         $index = new Index();
@@ -77,6 +81,7 @@ class IndexTest extends ModelTestCase
     /**
      * @dataProvider provideColumnDefinitions
      *
+     * @return void
      */
     public function testAddIndexedColumns($columns)
     {
@@ -112,6 +117,9 @@ class IndexTest extends ModelTestCase
         return $dataset;
     }
 
+    /**
+     * @return void
+     */
     public function testResetColumnsSize()
     {
         $columns[] = $this->getColumnMock('foo', [ 'size' => 100 ]);
@@ -128,6 +136,9 @@ class IndexTest extends ModelTestCase
         $this->assertFalse($index->hasColumnSize('bar'));
     }
 
+    /**
+     * @return void
+     */
     public function testNoColumnAtFirstPosition()
     {
         $index = new Index();
@@ -137,6 +148,8 @@ class IndexTest extends ModelTestCase
 
     /**
      * @dataProvider provideColumnAttributes
+     *
+     * @return void
      */
     public function testNoColumnAtPositionCaseSensitivity($name, $case)
     {
@@ -154,6 +167,9 @@ class IndexTest extends ModelTestCase
         ];
     }
 
+    /**
+     * @return void
+     */
     public function testNoSizedColumnAtPosition()
     {
         $size = 5;
@@ -165,6 +181,9 @@ class IndexTest extends ModelTestCase
         $this->assertFalse($index->hasColumnAtPosition(0, 'foo', $size));
     }
 
+    /**
+     * @return void
+     */
     public function testHasColumnAtFirstPosition()
     {
         $index = new Index();

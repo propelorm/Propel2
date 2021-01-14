@@ -4,7 +4,7 @@
 <database package="core.review" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
 
   <table name="review" description="Book Review">
-    <behavior name="auto_add_pk" />
+    <behavior name="auto_add_pk"/>
     <column
       name="reviewed_by"
       required="true"

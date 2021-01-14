@@ -2,11 +2,11 @@
 <database name="bookstore-behavior" defaultIdMethod="native" namespace="Propel\Tests\Bookstore\Behavior">
 
     <table name="querycache_table1">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
 
         <behavior name="query_cache">
-            <parameter name="backend" value="array" />
+            <parameter name="backend" value="array"/>
         </behavior>
     </table>
 

@@ -56,7 +56,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		<xsl:attribute name="name">
 			<xsl:value-of select="/DBMODEL/SETTINGS/GLOBALSETTINGS/@ModelName"/>
 		</xsl:attribute>
-		<xsl:apply-templates />
+		<xsl:apply-templates/>
 	</database>
 </xsl:template>
 
@@ -68,10 +68,10 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		</xsl:attribute>
 		<xsl:if test="@Comments != ''">
 			<xsl:attribute name="description">
-				<xsl:value-of select="@Comments" />
+				<xsl:value-of select="@Comments"/>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:apply-templates />
+		<xsl:apply-templates/>
 	</table>
 </xsl:template>
 
@@ -102,7 +102,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 		<xsl:attribute name="type">
 			<xsl:choose>
 				<xsl:when test="$datatype = 'ENUM'">
-					<xsl:value-of select="'CHAR'" />
+					<xsl:value-of select="'CHAR'"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="$datatype"/>
@@ -242,7 +242,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 			</xsl:variable>
 
 			<xsl:call-template name="get_actiontype">
-				<xsl:with-param name="id" select="$actionId" />
+				<xsl:with-param name="id" select="$actionId"/>
 			</xsl:call-template>
 
 		</xsl:attribute>
@@ -292,7 +292,7 @@ version 0.5 (2008-01-25) - added ENUM, GEOMETRY as BLOB, scale for DECIMAL; fixe
 			<xsl:value-of select="substring-before($dtpc,',')"/>
 		</xsl:when>
 		<xsl:when test="$dtype = 'ENUM'">
-			<xsl:value-of select="''" />
+			<xsl:value-of select="''"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:value-of select="$dtpc"/>

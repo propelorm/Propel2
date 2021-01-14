@@ -1,20 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
  * Test class for ModelCriteria.
@@ -25,13 +22,19 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class ModelCriteriaHooksTest extends BookstoreTestBase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
     }
 
+    /**
+     * @return void
+     */
     public function testPreSelect()
     {
         $c = new ModelCriteriaWithPreSelectHook('bookstore', '\Propel\Tests\Bookstore\Book');
@@ -43,6 +46,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals(1, $nbBooks, 'preSelect() can modify the Criteria before count() fires the query');
     }
 
+    /**
+     * @return void
+     */
     public function testPreDelete()
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
@@ -68,6 +74,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals($count, $nbBooks, 'preDelete() can bypass the row deletion');
     }
 
+    /**
+     * @return void
+     */
     public function testPostDelete()
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
@@ -89,6 +98,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals(3, $this->con->lastAffectedRows, 'postDelete() is called after deleteAll()');
     }
 
+    /**
+     * @return void
+     */
     public function testPreAndPostDelete()
     {
         $c = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Book');
@@ -110,6 +122,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals(12, $this->con->lastAffectedRows, 'postDelete() is called after deleteAll() even if preDelete() returns not null');
     }
 
+    /**
+     * @return void
+     */
     public function testPreUpdate()
     {
         $c = new ModelCriteriaWithPreUpdateHook('bookstore', '\Propel\Tests\Bookstore\Book', 'b');
@@ -123,6 +138,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals('1234', $book->getISBN(), 'preUpdate() can modify the values');
     }
 
+    /**
+     * @return void
+     */
     public function testPostUpdate()
     {
         $this->con->lastAffectedRows = 0;
@@ -133,6 +151,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
         $this->assertEquals(1, $this->con->lastAffectedRows, 'postUpdate() is called after update()');
     }
 
+    /**
+     * @return void
+     */
     public function testPreAndPostUpdate()
     {
         $this->con->lastAffectedRows = 0;
@@ -146,6 +167,9 @@ class ModelCriteriaHooksTest extends BookstoreTestBase
 
 class ModelCriteriaWithPreSelectHook extends ModelCriteria
 {
+    /**
+     * @return void
+     */
     public function preSelect(ConnectionInterface $con)
     {
         $this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
@@ -162,6 +186,9 @@ class ModelCriteriaWithPreDeleteHook extends ModelCriteria
 
 class ModelCriteriaWithPostDeleteHook extends ModelCriteria
 {
+    /**
+     * @return void
+     */
     public function postDelete($affectedRows, ConnectionInterface $con)
     {
         $con->lastAffectedRows = $affectedRows;
@@ -178,6 +205,9 @@ class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteH
 
 class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 {
+    /**
+     * @return void
+     */
     public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         $values['ISBN'] = '1234';
@@ -186,6 +216,9 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
 
 class ModelCriteriaWithPostUpdateHook extends ModelCriteria
 {
+    /**
+     * @return void
+     */
     public function postUpdate($affectedRows, ConnectionInterface $con)
     {
         $con->lastAffectedRows = $affectedRows;

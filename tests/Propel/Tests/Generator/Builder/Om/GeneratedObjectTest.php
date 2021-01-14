@@ -1,80 +1,82 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use DateTime;
+use Exception;
+use MyNameSpace\TestKeyTypeTable;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\AcctAuditLog;
 use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\AuthorQuery;
-use Propel\Tests\Bookstore\ContestQuery;
-use Propel\Tests\Bookstore\CountryQuery;
-use Propel\Tests\Bookstore\CountryTranslationQuery;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookSummary;
-use Propel\Tests\Bookstore\BookQuery;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\BookOpinion;
 use Propel\Tests\Bookstore\BookOpinionQuery;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\BookReader;
 use Propel\Tests\Bookstore\Bookstore;
 use Propel\Tests\Bookstore\BookstoreContest;
+use Propel\Tests\Bookstore\BookstoreContestEntry;
 use Propel\Tests\Bookstore\BookstoreEmployee;
-use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccount;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
-use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
-use Propel\Tests\Bookstore\BookstoreContestEntry;
+use Propel\Tests\Bookstore\BookstoreEmployeeQuery;
+use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\BookstoreSale;
+use Propel\Tests\Bookstore\BookSummary;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\Contest;
+use Propel\Tests\Bookstore\ContestQuery;
 use Propel\Tests\Bookstore\Country;
+use Propel\Tests\Bookstore\CountryQuery;
+use Propel\Tests\Bookstore\CountryTranslationQuery;
 use Propel\Tests\Bookstore\Customer;
+use Propel\Tests\Bookstore\CustomerQuery;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
+use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\ContestTableMap;
 use Propel\Tests\Bookstore\Map\CustomerTableMap;
-use Propel\Tests\Bookstore\CustomerQuery;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
+use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
-use Propel\Tests\Bookstore\Map\ReviewTableMap;
-use Propel\Tests\Bookstore\Map\PublisherTableMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
-
-use \DateTime;
-use MyNameSpace\TestKeyTypeTable;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use ReflectionMethod;
 
 /**
  * Tests the generated Object classes.
  *
  * This test uses generated Bookstore classes to test the behavior of various
- * object operations.  The _idea_ here is to test every possible generated method
+ * object operations. The _idea_ here is to test every possible generated method
  * from Object.tpl; if necessary, bookstore will be expanded to accommodate this.
  *
- * The database is reloaded before every test and flushed after every test.  This
+ * The database is reloaded before every test and flushed after every test. This
  * means that you can always rely on the contents of the databases being the same
- * for each test method in this class.  See the BookstoreDataPopulator::populate()
+ * for each test method in this class. See the BookstoreDataPopulator::populate()
  * method for the exact contents of the database.
  *
  * @author Hans Lellelid <hans@xmpl.org>
@@ -85,6 +87,8 @@ class GeneratedObjectTest extends BookstoreTestBase
 {
     /**
      * Test saving an object after setting default values for it.
+     *
+     * @return void
      */
     public function testSaveWithDefaultValues()
     {
@@ -96,18 +100,19 @@ class GeneratedObjectTest extends BookstoreTestBase
         $pub = new Publisher();
         $pub->setName('Penguin');
         $pub->save();
-        $this->assertTrue($pub->getId() !== null, "Expect Publisher to have been saved when default value set.");
+        $this->assertTrue($pub->getId() !== null, 'Expect Publisher to have been saved when default value set.');
 
         // 2) check date/time values
         $review = new Review();
         // note that this is different from how it's represented in schema, but should resolve to same unix timestamp
         $review->setReviewDate('2001-01-01');
         $this->assertTrue($review->isModified(), "Expect Review to have been marked 'modified' after default date/time value set.");
-
     }
 
     /**
      * Test isModified() to be false after setting default value second time
+     *
+     * @return void
      */
     public function testDefaultValueSetTwice()
     {
@@ -121,9 +126,12 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $pub2 = PublisherQuery::create()->findPk($pubId);
         $pub2->setName('Penguin');
-        $this->assertFalse($pub2->isModified(), "Expect Publisher to be not modified after setting default value second time.");
+        $this->assertFalse($pub2->isModified(), 'Expect Publisher to be not modified after setting default value second time.');
     }
 
+    /**
+     * @return void
+     */
     public function testHasApplyDefaultValues()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Publisher', 'applyDefaultValues'), 'Tables with default values should have an applyDefaultValues() method');
@@ -132,63 +140,67 @@ class GeneratedObjectTest extends BookstoreTestBase
 
     /**
      * Test default return values.
+     *
+     * @return void
      */
     public function testDefaultValues()
     {
         $r = new Review();
         $this->assertEquals('2001-01-01', $r->getReviewDate('Y-m-d'));
 
-        $this->assertFalse($r->isModified(), "expected isModified() to be false");
+        $this->assertFalse($r->isModified(), 'expected isModified() to be false');
 
         $acct = new BookstoreEmployeeAccount();
         $this->assertEquals(true, $acct->getEnabled());
         $this->assertFalse($acct->isModified());
 
-        $acct->setLogin("testuser");
-        $acct->setPassword("testpass");
+        $acct->setLogin('testuser');
+        $acct->setPassword('testpass');
         $this->assertTrue($acct->isModified());
     }
 
     /**
      * Tests the use of default expressions and the reloadOnInsert and reloadOnUpdate attributes.
      *
-     * @link       http://propel.phpdb.org/trac/ticket/378
-     * @link       http://propel.phpdb.org/trac/ticket/555
+     * @link http://propel.phpdb.org/trac/ticket/378
+     * @link http://propel.phpdb.org/trac/ticket/555
+     *
+     * @return void
      */
     public function testDefaultExpressions()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
-            $this->markTestSkipped("Cannot test default expressions with SQLite");
+            $this->markTestSkipped('Cannot test default expressions with SQLite');
         }
         BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $b = new Bookstore();
-        $b->setStoreName("Foo!");
+        $b->setStoreName('Foo!');
         $b->save();
 
         $employee = new BookstoreEmployee();
-        $employee->setName("Johnny Walker");
+        $employee->setName('Johnny Walker');
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($employee);
-        $acct->setLogin("test-login");
+        $acct->setLogin('test-login');
 
-        $this->assertNull($acct->getCreated(), "Expected created column to be NULL.");
-        $this->assertNull($acct->getAuthenticator(), "Expected authenticator column to be NULL.");
+        $this->assertNull($acct->getCreated(), 'Expected created column to be NULL.');
+        $this->assertNull($acct->getAuthenticator(), 'Expected authenticator column to be NULL.');
 
         $acct->save();
 
         $acct = BookstoreEmployeeAccountQuery::create()->findPk($acct->getEmployeeId());
 
-        $this->assertNotNull($acct->getAuthenticator(), "Expected a valid (non-NULL) authenticator column after save.");
+        $this->assertNotNull($acct->getAuthenticator(), 'Expected a valid (non-NULL) authenticator column after save.');
         $this->assertEquals('Password', $acct->getAuthenticator(), "Expected authenticator='Password' after save.");
-        $this->assertNotNull($acct->getCreated(), "Expected a valid date after retrieving saved object.");
+        $this->assertNotNull($acct->getCreated(), 'Expected a valid date after retrieving saved object.');
 
-        $now = new DateTime("now");
-        $this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
+        $now = new DateTime('now');
+        $this->assertEquals($now->format('Y-m-d'), $acct->getCreated('Y-m-d'));
 
         $acct->setCreated($now);
-        $this->assertEquals($now->format("Y-m-d"), $acct->getCreated("Y-m-d"));
+        $this->assertEquals($now->format('Y-m-d'), $acct->getCreated('Y-m-d'));
 
         // Unfortunately we can't really test the conjunction of reloadOnInsert and reloadOnUpdate when using just
         // default values. (At least not in a cross-db way.)
@@ -197,23 +209,25 @@ class GeneratedObjectTest extends BookstoreTestBase
     /**
      * Tests the use of default expressions and the reloadOnInsert attribute.
      *
-     * @link       http://propel.phpdb.org/trac/ticket/378
-     * @link       http://propel.phpdb.org/trac/ticket/555
+     * @link http://propel.phpdb.org/trac/ticket/378
+     * @link http://propel.phpdb.org/trac/ticket/555
+     *
+     * @return void
      */
     public function testDefaultExpressions_ReloadOnInsert()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
-            $this->markTestSkipped("Cannot test default date expressions with SQLite");
+            $this->markTestSkipped('Cannot test default date expressions with SQLite');
         }
 
         // Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
 
         $b = new Bookstore();
-        $b->setStoreName("Barnes & Noble");
+        $b->setStoreName('Barnes & Noble');
         $b->save();
 
         $c = new Contest();
-        $c->setName("Bookathon Contest");
+        $c->setName('Bookathon Contest');
         $c->save();
 
         $bc = new BookstoreContest();
@@ -222,7 +236,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $bc->save();
 
         $c = new Customer();
-        $c->setName("Happy Customer");
+        $c->setName('Happy Customer');
         $c->save();
 
         $bce = new BookstoreContestEntry();
@@ -231,28 +245,30 @@ class GeneratedObjectTest extends BookstoreTestBase
         $bce->setCustomer($c);
         $bce->save();
 
-        $this->assertNotNull($bce->getEntryDate(), "Expected a non-null entry_date after save.");
+        $this->assertNotNull($bce->getEntryDate(), 'Expected a non-null entry_date after save.');
     }
 
     /**
      * Tests the overriding reloadOnInsert at runtime.
      *
-     * @link       http://propel.phpdb.org/trac/ticket/378
-     * @link       http://propel.phpdb.org/trac/ticket/555
+     * @link http://propel.phpdb.org/trac/ticket/378
+     * @link http://propel.phpdb.org/trac/ticket/555
+     *
+     * @return void
      */
     public function testDefaultExpressions_ReloadOnInsert_Override()
     {
         if (Propel::getServiceContainer()->getAdapter(BookstoreEmployeeTableMap::DATABASE_NAME) instanceof SqliteAdapter) {
-            $this->markTestSkipped("Cannot test default date expressions with SQLite");
+            $this->markTestSkipped('Cannot test default date expressions with SQLite');
         }
 
         // Create a new bookstore, contest, bookstore_contest, and bookstore_contest_entry
         $b = new Bookstore();
-        $b->setStoreName("Barnes & Noble");
+        $b->setStoreName('Barnes & Noble');
         $b->save();
 
         $c = new Contest();
-        $c->setName("Bookathon Contest");
+        $c->setName('Bookathon Contest');
         $c->save();
 
         $bc = new BookstoreContest();
@@ -261,74 +277,80 @@ class GeneratedObjectTest extends BookstoreTestBase
         $bc->save();
 
         $c = new Customer();
-        $c->setName("Happy Customer");
+        $c->setName('Happy Customer');
         $c->save();
 
         $bce = new BookstoreContestEntry();
         $bce->setBookstore($b);
         $bce->setBookstoreContest($bc);
         $bce->setCustomer($c);
-        $bce->save(null, $skipReload=true);
+        $bce->save(null, $skipReload = true);
 
-        $this->assertNull($bce->getEntryDate(), "Expected a NULL entry_date after save.");
+        $this->assertNull($bce->getEntryDate(), 'Expected a NULL entry_date after save.');
     }
 
     /**
      * Tests the use of default expressions and the reloadOnUpdate attribute.
      *
-     * @link       http://propel.phpdb.org/trac/ticket/555
+     * @link http://propel.phpdb.org/trac/ticket/555
+     *
+     * @return void
      */
     public function testDefaultExpressions_ReloadOnUpdate()
     {
         $b = new Bookstore();
-        $b->setStoreName("Foo!");
+        $b->setStoreName('Foo!');
         $b->save();
 
         $sale = new BookstoreSale();
         $sale->setBookstore(BookstoreQuery::create()->findOne());
-        $sale->setSaleName("Spring Sale");
+        $sale->setSaleName('Spring Sale');
         $sale->save();
 
         // Expect that default values are set, but not default expressions
-        $this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
+        $this->assertNull($sale->getDiscount(), 'Expected discount to be NULL.');
 
-        $sale->setSaleName("Winter Clearance");
+        $sale->setSaleName('Winter Clearance');
         $sale->save();
         // Since reloadOnUpdate = true, we expect the discount to be set now.
 
-        $this->assertNotNull($sale->getDiscount(), "Expected discount to be non-NULL after save.");
+        $this->assertNotNull($sale->getDiscount(), 'Expected discount to be non-NULL after save.');
     }
 
     /**
      * Tests the overriding reloadOnUpdate at runtime.
      *
-     * @link       http://propel.phpdb.org/trac/ticket/378
-     * @link       http://propel.phpdb.org/trac/ticket/555
+     * @link http://propel.phpdb.org/trac/ticket/378
+     * @link http://propel.phpdb.org/trac/ticket/555
+     *
+     * @return void
      */
     public function testDefaultExpressions_ReloadOnUpdate_Override()
     {
         $b = new Bookstore();
-        $b->setStoreName("Foo!");
+        $b->setStoreName('Foo!');
         $b->save();
 
         $sale = new BookstoreSale();
         $sale->setBookstore(BookstoreQuery::create()->findOne());
-        $sale->setSaleName("Spring Sale");
+        $sale->setSaleName('Spring Sale');
         $sale->save();
 
         // Expect that default values are set, but not default expressions
-        $this->assertNull($sale->getDiscount(), "Expected discount to be NULL.");
+        $this->assertNull($sale->getDiscount(), 'Expected discount to be NULL.');
 
-        $sale->setSaleName("Winter Clearance");
-        $sale->save(null, $skipReload=true);
+        $sale->setSaleName('Winter Clearance');
+        $sale->save(null, $skipReload = true);
 
         // Since reloadOnUpdate = true, we expect the discount to be set now.
 
-        $this->assertNull($sale->getDiscount(), "Expected NULL value for discount after save.");
+        $this->assertNull($sale->getDiscount(), 'Expected NULL value for discount after save.');
     }
 
     /**
      * Testing creating & saving new object & instance pool.
+     *
+     * @return void
      */
     public function testObjectInstances_New()
     {
@@ -338,11 +360,11 @@ class GeneratedObjectTest extends BookstoreTestBase
         $id = $emp->getId();
 
         $retrieved = BookstoreEmployeeQuery::create()->findPk($id);
-        $this->assertSame($emp, $retrieved, "Expected same object (from instance pool)");
+        $this->assertSame($emp, $retrieved, 'Expected same object (from instance pool)');
     }
 
     /**
-     *
+     * @return void
      */
     public function testObjectInstances_Fkeys()
     {
@@ -359,8 +381,8 @@ class GeneratedObjectTest extends BookstoreTestBase
         $pub2->save();
 
         $book = new Book();
-        $book->setTitle("Book Title");
-        $book->setISBN("1234");
+        $book->setTitle('Book Title');
+        $book->setISBN('1234');
         $book->setPublisher($pub1);
         $book->save();
 
@@ -368,110 +390,112 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         // now change values behind the scenes
         $con = Propel::getServiceContainer()->getConnection(BookstoreEmployeeAccountTableMap::DATABASE_NAME);
-        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
-            . " publisher_id = " . $pub2->getId()
-            . " WHERE id = " . $book->getId());
+        $con->exec('UPDATE ' . BookTableMap::TABLE_NAME . ' SET '
+            . ' publisher_id = ' . $pub2->getId()
+            . ' WHERE id = ' . $book->getId());
 
         $book2 = BookQuery::create()->findPk($book->getId());
-        $this->assertSame($book, $book2, "Expected same book object instance");
+        $this->assertSame($book, $book2, 'Expected same book object instance');
 
-        $this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have OLD publisher id before reload()");
+        $this->assertEquals($pub1->getId(), $book->getPublisherId(), 'Expected book to have OLD publisher id before reload()');
 
         $book->reload();
 
-        $this->assertEquals($pub2->getId(), $book->getPublisherId(), "Expected book to have new publisher id");
-        $this->assertSame($pub2, $book->getPublisher(), "Expected book to have new publisher object associated.");
+        $this->assertEquals($pub2->getId(), $book->getPublisherId(), 'Expected book to have new publisher id');
+        $this->assertSame($pub2, $book->getPublisher(), 'Expected book to have new publisher object associated.');
 
         // Now let's set it back, just to be double sure ...
 
-        $con->exec("UPDATE " . BookTableMap::TABLE_NAME . " SET "
-            . " publisher_id = " . $pub1->getId()
-            . " WHERE id = " . $book->getId());
+        $con->exec('UPDATE ' . BookTableMap::TABLE_NAME . ' SET '
+            . ' publisher_id = ' . $pub1->getId()
+            . ' WHERE id = ' . $book->getId());
 
         $book->reload();
 
-        $this->assertEquals($pub1->getId(), $book->getPublisherId(), "Expected book to have old publisher id (again).");
-        $this->assertSame($pub1, $book->getPublisher(), "Expected book to have old publisher object associated (again).");
-
+        $this->assertEquals($pub1->getId(), $book->getPublisherId(), 'Expected book to have old publisher id (again).');
+        $this->assertSame($pub1, $book->getPublisher(), 'Expected book to have old publisher object associated (again).');
     }
 
     /**
      * Test the effect of typecast on primary key values and instance pool retrieval.
+     *
+     * @return void
      */
     public function testObjectInstancePoolTypecasting()
     {
         $reader = new BookReader();
-        $reader->setName("Tester");
+        $reader->setName('Tester');
         $reader->save();
         $readerId = $reader->getId();
 
         $book = new Book();
-        $book->setTitle("BookTest");
-        $book->setISBN("TEST");
+        $book->setTitle('BookTest');
+        $book->setISBN('TEST');
         $book->save();
         $bookId = $book->getId();
 
         $opinion = new BookOpinion();
-        $opinion->setBookId((string) $bookId);
-        $opinion->setReaderId((string) $readerId);
+        $opinion->setBookId((string)$bookId);
+        $opinion->setReaderId((string)$readerId);
         $opinion->setRating(5);
         $opinion->setRecommendToFriend(false);
         $opinion->save();
 
-
         $opinion2 = BookOpinionQuery::create()->findPk([$bookId, $readerId]);
 
-        $this->assertSame($opinion, $opinion2, "Expected same object to be retrieved from differently type-casted primary key values.");
-
+        $this->assertSame($opinion, $opinion2, 'Expected same object to be retrieved from differently type-casted primary key values.');
     }
 
     /**
      * Test saving an object and getting correct number of affected rows from save().
      * This includes tests of cascading saves to fk-related objects.
+     *
+     * @return void
      */
     public function testSaveReturnValues()
     {
-
         $author = new Author();
-        $author->setFirstName("Mark");
-        $author->setLastName("Kurlansky");
+        $author->setFirstName('Mark');
+        $author->setLastName('Kurlansky');
         // do not save
 
         $pub = new Publisher();
-        $pub->setName("Penguin Books");
+        $pub->setName('Penguin Books');
         // do not save
 
         $book = new Book();
-        $book->setTitle("Salt: A World History");
-        $book->setISBN("0142001619");
+        $book->setTitle('Salt: A World History');
+        $book->setISBN('0142001619');
         $book->setAuthor($author);
         $book->setPublisher($pub);
 
         $affected = $book->save();
-        $this->assertEquals(3, $affected, "Expected 3 affected rows when saving book + publisher + author.");
+        $this->assertEquals(3, $affected, 'Expected 3 affected rows when saving book + publisher + author.');
 
         // change nothing ...
         $affected = $book->save();
-        $this->assertEquals(0, $affected, "Expected 0 affected rows when saving already-saved book.");
+        $this->assertEquals(0, $affected, 'Expected 0 affected rows when saving already-saved book.');
 
         // modify the book (UPDATE)
-        $book->setTitle("Salt A World History");
+        $book->setTitle('Salt A World History');
         $affected = $book->save();
-        $this->assertEquals(1, $affected, "Expected 1 affected row when saving modified book.");
+        $this->assertEquals(1, $affected, 'Expected 1 affected row when saving modified book.');
 
         // modify the related author
-        $author->setLastName("Kurlanski");
+        $author->setLastName('Kurlanski');
         $affected = $book->save();
-        $this->assertEquals(1, $affected, "Expected 1 affected row when saving book with updated author.");
+        $this->assertEquals(1, $affected, 'Expected 1 affected row when saving book with updated author.');
 
         // modify both the related author and the book
-        $author->setLastName("Kurlansky");
-        $book->setTitle("Salt: A World History");
+        $author->setLastName('Kurlansky');
+        $book->setTitle('Salt: A World History');
         $affected = $book->save();
-        $this->assertEquals(2, $affected, "Expected 2 affected rows when saving updated book with updated author.");
-
+        $this->assertEquals(2, $affected, 'Expected 2 affected rows when saving updated book with updated author.');
     }
 
+    /**
+     * @return void
+     */
     public function testSaveCanInsertNonEmptyObjects()
     {
         $b = new Book();
@@ -483,7 +507,7 @@ class GeneratedObjectTest extends BookstoreTestBase
     }
 
     /**
-     *
+     * @return void
      */
     public function testNoColsModified()
     {
@@ -499,15 +523,21 @@ class GeneratedObjectTest extends BookstoreTestBase
         $super->addSubordinate($e2);
 
         $affected = $super->save();
-
+        $this->assertSame(3, $affected); // Why 3 and not 0?
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseForNewObjects()
     {
         $a = new Author();
         $this->assertFalse($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsTrueForNewObjectsWithModifications()
     {
         $a = new Author();
@@ -515,6 +545,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertTrue($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseForNewObjectsWithNullModifications()
     {
         $a = new Author();
@@ -522,6 +555,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertFalse($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseForObjectsAfterResetModified()
     {
         $a = new Author();
@@ -530,6 +566,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertFalse($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseForSavedObjects()
     {
         $a = new Author();
@@ -539,6 +578,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertFalse($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsTrueForSavedObjectsWithModifications()
     {
         $a = new Author();
@@ -550,6 +592,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertTrue($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseAfterSetToDefaultValueOnNewObject()
     {
         $p = new Publisher();
@@ -557,6 +602,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertFalse($p->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsTrueAfterModifyingOnNonDefaultValueOnNewObject()
     {
         $p = new Publisher();
@@ -564,6 +612,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertTrue($p->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsTrueAfterSetToDefaultValueOnModifiedObject()
     {
         $p = new Publisher();
@@ -573,6 +624,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertTrue($p->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedIsFalseAfterChangingColumnTypeButNotValue()
     {
         $a = new Author();
@@ -587,6 +641,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertFalse($a->isModified());
     }
 
+    /**
+     * @return void
+     */
     public function testIsModifiedAndNullValues()
     {
         $a = new Author();
@@ -596,21 +653,24 @@ class GeneratedObjectTest extends BookstoreTestBase
         $a->save();
 
         $a->setFirstName(null);
-        $this->assertTrue($a->isModified(), "Expected Author to be modified after changing empty string column value to NULL.");
+        $this->assertTrue($a->isModified(), 'Expected Author to be modified after changing empty string column value to NULL.');
 
         $a->setAge(null);
-        $this->assertTrue($a->isModified(), "Expected Author to be modified after changing 0-value int column to NULL.");
+        $this->assertTrue($a->isModified(), 'Expected Author to be modified after changing 0-value int column to NULL.');
 
         $a->setFirstName('');
-        $this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column value to empty string.");
+        $this->assertTrue($a->isModified(), 'Expected Author to be modified after changing NULL column value to empty string.');
 
         $a->setAge(0);
-        $this->assertTrue($a->isModified(), "Expected Author to be modified after changing NULL column to 0-value int.");
+        $this->assertTrue($a->isModified(), 'Expected Author to be modified after changing NULL column to 0-value int.');
     }
 
     /**
      * Test checking for non-default values.
+     *
      * @see http://propel.phpdb.org/trac/ticket/331
+     *
+     * @return void
      */
     public function testHasOnlyDefaultValues()
     {
@@ -621,41 +681,44 @@ class GeneratedObjectTest extends BookstoreTestBase
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($emp);
-        $acct->setLogin("foo");
-        $acct->setPassword("bar");
+        $acct->setLogin('foo');
+        $acct->setPassword('bar');
         $acct->save();
 
-        $this->assertFalse($acct->isModified(), "Expected BookstoreEmployeeAccount NOT to be modified after save().");
+        $this->assertFalse($acct->isModified(), 'Expected BookstoreEmployeeAccount NOT to be modified after save().');
 
         $acct->setEnabled(true);
         $acct->setPassword($acct2->getPassword());
 
-        $this->assertTrue($acct->isModified(), "Expected BookstoreEmployeeAccount to be modified after setting default values.");
+        $this->assertTrue($acct->isModified(), 'Expected BookstoreEmployeeAccount to be modified after setting default values.');
 
-        $this->assertTrue($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to not have only default values.");
+        $this->assertTrue($acct->hasOnlyDefaultValues(), 'Expected BookstoreEmployeeAccount to not have only default values.');
 
-        $acct->setPassword("bar");
-        $this->assertFalse($acct->hasOnlyDefaultValues(), "Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.");
+        $acct->setPassword('bar');
+        $this->assertFalse($acct->hasOnlyDefaultValues(), 'Expected BookstoreEmployeeAccount to have at one non-default value after setting one value to non-default.');
 
         // Test a default date/time value
         $r = new Review();
-        $r->setReviewDate(new DateTime("now"));
+        $r->setReviewDate(new DateTime('now'));
         $this->assertFalse($r->hasOnlyDefaultValues());
     }
 
+    /**
+     * @return void
+     */
     public function testCountRefFk()
     {
         $book = new Book();
-        $book->setTitle("Test Book");
-        $book->setISBN("TT-EE-SS-TT");
+        $book->setTitle('Test Book');
+        $book->setISBN('TT-EE-SS-TT');
 
         $num = 5;
 
-        for ($i=2; $i < $num + 2; $i++) {
+        for ($i = 2; $i < $num + 2; $i++) {
             $r = new Review();
             $r->setReviewedBy('Hans ' . $num);
-            $dt = new DateTime("now");
-            $dt->modify("-".$i." weeks");
+            $dt = new DateTime('now');
+            $dt->modify('-' . $i . ' weeks');
             $r->setReviewDate($dt);
             $r->setRecommended(($i % 2) == 0);
             $book->addReview($r);
@@ -676,30 +739,33 @@ class GeneratedObjectTest extends BookstoreTestBase
         // Now set different criteria and expect different results
         $c = new Criteria();
         $c->add(ReviewTableMap::COL_RECOMMENDED, false);
-        $this->assertEquals(floor($num/2), $book->countReviews($c), "Expected " . floor($num/2) . " results from countReviews(recomm=false)");
+        $this->assertEquals(floor($num / 2), $book->countReviews($c), 'Expected ' . floor($num / 2) . ' results from countReviews(recomm=false)');
 
         // Change Criteria, run again -- expect different.
         $c = new Criteria();
         $c->add(ReviewTableMap::COL_RECOMMENDED, true);
-        $this->assertEquals(ceil($num/2), count($book->getReviews($c)), "Expected " . ceil($num/2) . " results from getReviews(recomm=true)");
+        $this->assertEquals(ceil($num / 2), count($book->getReviews($c)), 'Expected ' . ceil($num / 2) . ' results from getReviews(recomm=true)');
 
         $this->assertEquals($num, $book->countReviews(), "Expected countReviews to return $num with new empty Criteria");
     }
 
     /**
      * Test copying when an object has composite primary key.
+     *
      * @link http://propel.phpdb.org/trac/ticket/618
+     *
+     * @return void
      */
     public function testCopy_CompositePK()
     {
         $br = new BookReader();
-        $br->setName("TestReader");
+        $br->setName('TestReader');
         $br->save();
         $br->copy();
 
         $b = new Book();
-        $b->setTitle("TestBook");
-        $b->setISBN("XX-XX-XX-XX");
+        $b->setTitle('TestBook');
+        $b->setISBN('XX-XX-XX-XX');
         $b->save();
 
         $op = new BookOpinion();
@@ -714,7 +780,7 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertNull($br2->getId());
 
         $opinions = $br2->getBookOpinions();
-        $this->assertEquals(1, count($opinions), "Expected to have a related BookOpinion after copy()");
+        $this->assertEquals(1, count($opinions), 'Expected to have a related BookOpinion after copy()');
 
         // We DO expect the reader_id to be null
         $this->assertNull($opinions[0]->getReaderId());
@@ -722,6 +788,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertEquals($op->getBookId(), $opinions[0]->getBookId());
     }
 
+    /**
+     * @return void
+     */
     public function testToArray()
     {
         $b = new Book();
@@ -734,15 +803,18 @@ class GeneratedObjectTest extends BookstoreTestBase
             'ISBN',
             'Price',
             'PublisherId',
-            'AuthorId'
+            'AuthorId',
         ];
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() returns an associative array with TableMap::TYPE_PHPNAME keys by default');
         $this->assertEquals('Don Juan', $arr1['Title'], 'toArray() returns an associative array representation of the object');
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayDateTimeAsString()
     {
-        $date = new \DateTime('2015-01-04T16:00:02Z');
+        $date = new DateTime('2015-01-04T16:00:02Z');
 
         $review = new Review();
         $review->setReviewDate($date);
@@ -758,6 +830,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertEquals('2015-01-04 16:00:02.000000', $bookClubList->toArray()['CreatedAt'], 'toArray() format toArray() colums of type TIMESTAMP as Y-m-d H:i:s.u');
     }
 
+    /**
+     * @return void
+     */
     public function testWithColumn()
     {
         $book = BookQuery::create()->withColumn('Title', 'TitleCopy')->findOne();
@@ -765,6 +840,9 @@ class GeneratedObjectTest extends BookstoreTestBase
         $this->assertEquals($book->getTitleCopy(), $bookArray['TitleCopy']);
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayKeyType()
     {
         $b = new Book();
@@ -777,19 +855,22 @@ class GeneratedObjectTest extends BookstoreTestBase
             BookTableMap::COL_ISBN,
             BookTableMap::COL_PRICE,
             BookTableMap::COL_PUBLISHER_ID,
-            BookTableMap::COL_AUTHOR_ID
+            BookTableMap::COL_AUTHOR_ID,
         ];
         $this->assertEquals($expectedKeys, array_keys($arr1), 'toArray() accepts a $keyType parameter to change the result keys');
         $this->assertEquals('Don Juan', $arr1[BookTableMap::COL_TITLE], 'toArray() returns an associative array representation of the object');
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayKeyTypePreDefined()
     {
         $schema = <<<EOF
 <database name="test"  namespace="MyNameSpace">
     <table name="test_key_type_table">
-        <column name="id_key_type" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="name_key_type" type="VARCHAR" />
+        <column name="id_key_type" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="name_key_type" type="VARCHAR"/>
     </table>
 </database>
 EOF;
@@ -810,6 +891,8 @@ EOF;
 
     /**
      * Test that setting the auto-increment primary key will result in exception.
+     *
+     * @return void
      */
     public function testSettingAutoIncrementPK()
     {
@@ -818,11 +901,11 @@ EOF;
 
         $b = new Bookstore();
         $b->setId(1);
-        $b->setStoreName("Test");
+        $b->setStoreName('Test');
         try {
             $b->save();
-            $this->fail("Expected setting auto-increment primary key to result in Exception");
-        } catch (\Exception $x) {
+            $this->fail('Expected setting auto-increment primary key to result in Exception');
+        } catch (Exception $x) {
             $this->assertInstanceOf('\Propel\Runtime\Exception\PropelException', $x);
         }
 
@@ -830,11 +913,11 @@ EOF;
         // the same as "not set" in PHP world.
         $b = new Bookstore();
         $b->setId(null);
-        $b->setStoreName("Test2");
+        $b->setStoreName('Test2');
         try {
             $b->save();
-        } catch (\Exception $x) {
-            $this->fail("Expected no exception when setting auto-increment primary key to NULL");
+        } catch (Exception $x) {
+            $this->fail('Expected no exception when setting auto-increment primary key to NULL');
         }
         // success ...
 
@@ -847,11 +930,13 @@ EOF;
      *
      * saves the object, gets it from data-source again and then compares
      * them for equality (thus the instance pool is also checked)
+     *
+     * @return void
      */
     public function testAllowPkInsertOnIdMethodNativeTable()
     {
         CustomerTableMap::doDeleteAll();
-        $cu = new Customer;
+        $cu = new Customer();
         $cu->setPrimaryKey(100000);
         $cu->save();
 
@@ -864,6 +949,8 @@ EOF;
 
     /**
      * Checks if it is allowed to save new, empty objects with a auto increment column
+     *
+     * @return void
      */
     public function testAllowEmptyWithAutoIncrement()
     {
@@ -875,18 +962,21 @@ EOF;
 
     /**
      * Test foreign key relationships based on references to unique cols but not PK.
-     * @link       http://propel.phpdb.org/trac/ticket/691
+     *
+     * @link http://propel.phpdb.org/trac/ticket/691
+     *
+     * @return void
      */
     public function testUniqueFkRel()
     {
         BookstoreEmployeeAccountTableMap::doDeleteAll();
 
         $employee = new BookstoreEmployee();
-        $employee->setName("Johnny Walker");
+        $employee->setName('Johnny Walker');
 
         $acct = new BookstoreEmployeeAccount();
         $acct->setBookstoreEmployee($employee);
-        $acct->setLogin("test-login");
+        $acct->setLogin('test-login');
         $acct->save();
         $acctId = $acct->getEmployeeId();
 
@@ -900,16 +990,19 @@ EOF;
         AcctAuditLogTableMap::clearInstancePool();
 
         $al2 = AcctAuditLogQuery::create()->findPk($alId);
-        /* @var $al2 AcctAuditLog */
+        /** @var \Propel\Tests\Bookstore\AcctAuditLog $al2 */
         $mapacct = $al2->getBookstoreEmployeeAccount();
         $lookupacct = BookstoreEmployeeAccountQuery::create()->findPk($acctId);
 
         $logs = $lookupacct->getAcctAuditLogs();
 
-        $this->assertTrue(count($logs) == 1, "Expected 1 audit log result.");
-        $this->assertEquals($logs[0]->getId(), $al->getId(), "Expected returned audit log to match created audit log.");
+        $this->assertTrue(count($logs) == 1, 'Expected 1 audit log result.');
+        $this->assertEquals($logs[0]->getId(), $al->getId(), 'Expected returned audit log to match created audit log.');
     }
 
+    /**
+     * @return void
+     */
     public function testIsPrimaryKeyNull()
     {
         $b = new Book();
@@ -920,6 +1013,9 @@ EOF;
         $this->assertTrue($b->isPrimaryKeyNull());
     }
 
+    /**
+     * @return void
+     */
     public function testIsPrimaryKeyNullComposite()
     {
         $b = new BookOpinion();
@@ -934,6 +1030,9 @@ EOF;
         $this->assertTrue($b->isPrimaryKeyNull());
     }
 
+    /**
+     * @return void
+     */
     public function testAddToStringDefault()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Author', '__toString'), 'addPrimaryString() adds a __toString() method even if no column has the primaryString attribute');
@@ -948,73 +1047,94 @@ Email: null
 Age: null
 
 EOF;
-        $this->assertEquals($expected, (string) $author, 'addPrimaryString() adds a __toString() method returning the YAML representation of the object where no column is defined as primaryString');
+        $this->assertEquals($expected, (string)$author, 'addPrimaryString() adds a __toString() method returning the YAML representation of the object where no column is defined as primaryString');
     }
 
+    /**
+     * @return void
+     */
     public function testAddToStringPrimaryString()
     {
         $this->assertTrue(method_exists('\Propel\Tests\Bookstore\Book', '__toString'), 'addPrimaryString() adds a __toString() method if a column has the primaryString attribute');
         $book = new Book();
         $book->setTitle('foo');
-        $this->assertEquals('foo', (string) $book, 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
+        $this->assertEquals('foo', (string)$book, 'addPrimaryString() adds a __toString() method returning the value of the the first column where primaryString is true');
     }
 
+    /**
+     * @return void
+     */
     public function testPreInsert()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $this->assertEquals('PreInsertedFirstname', $author->getFirstName());
     }
 
+    /**
+     * @return void
+     */
     public function testPreUpdate()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $author->setNew(false);
         $author->save();
         $this->assertEquals('PreUpdatedFirstname', $author->getFirstName());
     }
 
+    /**
+     * @return void
+     */
     public function testPostInsert()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $this->assertEquals('PostInsertedLastName', $author->getLastName());
     }
 
+    /**
+     * @return void
+     */
     public function testPostUpdate()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $author->setNew(false);
         $author->save();
         $this->assertEquals('PostUpdatedLastName', $author->getLastName());
     }
 
+    /**
+     * @return void
+     */
     public function testPreSave()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $this->assertEquals('pre@save.com', $author->getEmail());
     }
 
+    /**
+     * @return void
+     */
     public function testPreSaveFalse()
     {
         $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
         $nbNestedTransactions = $con->getNestedTransactionCount();
         $author = new TestAuthorSaveFalse();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $res = $author->save($con);
         $this->assertEquals(0, $res);
         $this->assertEquals('pre@save.com', $author->getEmail());
@@ -1023,49 +1143,64 @@ EOF;
         $this->assertEquals($nbNestedTransactions, $con->getNestedTransactionCount());
     }
 
+    /**
+     * @return void
+     */
     public function testPostSave()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $this->assertEquals(115, $author->getAge());
     }
 
+    /**
+     * @return void
+     */
     public function testPreDelete()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $author->delete();
-        $this->assertEquals("Pre-Deleted", $author->getFirstName());
+        $this->assertEquals('Pre-Deleted', $author->getFirstName());
     }
 
+    /**
+     * @return void
+     */
     public function testPreDeleteFalse()
     {
         $con = Propel::getServiceContainer()->getConnection(AuthorTableMap::DATABASE_NAME);
         $author = new TestAuthorDeleteFalse();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save($con);
         $author->delete($con);
-        $this->assertEquals("Pre-Deleted", $author->getFirstName());
-        $this->assertNotEquals("Post-Deleted", $author->getLastName());
+        $this->assertEquals('Pre-Deleted', $author->getFirstName());
+        $this->assertNotEquals('Post-Deleted', $author->getLastName());
         $this->assertFalse($author->isDeleted());
         $this->assertEquals(1, $con->getNestedTransactionCount());
     }
 
+    /**
+     * @return void
+     */
     public function testPostDelete()
     {
         $author = new TestAuthor();
-        $author->setFirstName("bogus");
-        $author->setLastName("Lastname");
+        $author->setFirstName('bogus');
+        $author->setLastName('Lastname');
         $author->save();
         $author->delete();
-        $this->assertEquals("Post-Deleted", $author->getLastName());
+        $this->assertEquals('Post-Deleted', $author->getLastName());
     }
 
+    /**
+     * @return void
+     */
     public function testMagicVirtualColumnGetter()
     {
         $book = new Book();
@@ -1077,10 +1212,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @return void
      */
     public function testMagicCallUndefined()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $book = new Book();
         $book->fooMethodName();
     }
@@ -1092,7 +1229,7 @@ EOF;
             ['delete'],
             ['save'],
             ['doSave'],
-            ['importFrom']
+            ['importFrom'],
         ];
     }
 
@@ -1100,23 +1237,27 @@ EOF;
     {
         return [
             ['setCode'],
-            ['setCapital']
+            ['setCapital'],
         ];
     }
 
     /**
      * @dataProvider conditionsForTestVisibility
+     *
+     * @return void
      */
     public function testMethodVisibility($method)
     {
         $cv = new Country();
-        $reflectionMethod = new \ReflectionMethod($cv, $method);
+        $reflectionMethod = new ReflectionMethod($cv, $method);
 
         $this->assertTrue($reflectionMethod->isProtected(), 'readOnly tables end up with no callable `' . $method . '` method in the generated object class');
     }
 
     /**
      * @dataProvider conditionsForTestReadOnly
+     *
+     * @return void
      */
     public function testReadOnly($method)
     {
@@ -1124,6 +1265,9 @@ EOF;
         $this->assertFalse(method_exists($cv, $method), 'readOnly tables end up with no ' . $method . ' method in the generated object class');
     }
 
+    /**
+     * @return void
+     */
     public function testReadOnlyRelations()
     {
         //add countries
@@ -1156,7 +1300,9 @@ EOF;
         $this->assertEquals('France', $translations[0]->getLabel());
     }
 
-
+    /**
+     * @return void
+     */
     public function testSetterOneToMany()
     {
         // Ensure no data
@@ -1242,6 +1388,9 @@ EOF;
         $this->assertEquals(5, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyWithNoData()
     {
         // Ensure no data
@@ -1263,6 +1412,9 @@ EOF;
         $this->assertEquals(0, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManySavesForeignObjects()
     {
         // Ensure no data
@@ -1300,6 +1452,9 @@ EOF;
         $this->assertSame('My Title', $result);
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyWithNewObjects()
     {
         // Ensure no data
@@ -1330,6 +1485,9 @@ EOF;
         $this->assertEquals(3, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyWithExistingObjects()
     {
         // Ensure no data
@@ -1362,6 +1520,9 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyWithEmptyCollection()
     {
         // Ensure no data
@@ -1380,6 +1541,9 @@ EOF;
         $this->assertEquals(1, AuthorQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyReplacesOldObjectsByNewObjects()
     {
         // Ensure no data
@@ -1426,6 +1590,9 @@ EOF;
         $this->assertEquals(4, BookQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyWithFkRequired()
     {
         // Ensure no data
@@ -1464,12 +1631,12 @@ EOF;
         $this->assertEquals(1, BookQuery::create()->count());
         $this->assertEquals(2, BookSummaryQuery::create()->count());
 
-        $newBookSammary = new BookSummary();
-        $newBookSammary->setSummary('My sammary');
+        $newBookSummary = new BookSummary();
+        $newBookSummary->setSummary('My summary');
 
         // Kind of new collection
         $coll = clone $coll;
-        $coll[] = $newBookSammary;
+        $coll[] = $newBookSummary;
 
         $b->setBookSummaries($coll);
         $b->save();
@@ -1480,11 +1647,11 @@ EOF;
         $this->assertEquals(3, BookSummaryQuery::create()->count());
 
         // Add a new object
-        $newBookSammary1 = new BookSummary();
-        $newBookSammary1->setSummary('My sammary 1');
+        $newBookSummary1 = new BookSummary();
+        $newBookSummary1->setSummary('My summary 1');
 
         // Existing collection - The fix around reference is tested here.
-        $coll[] = $newBookSammary1;
+        $coll[] = $newBookSummary1;
 
         $b->setBookSummaries($coll);
         $b->save();
@@ -1506,6 +1673,9 @@ EOF;
         $this->assertEquals(4, BookSummaryQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testSetterOneToManyReplacesOldObjectsByNewObjectsWithFkRequired()
     {
         // Ensure no data
@@ -1547,6 +1717,9 @@ EOF;
         $this->assertEquals(2, BookSummaryQuery::create()->count());
     }
 
+    /**
+     * @return void
+     */
     public function testUnsavedObjectCallingHashCodeIsNotChangingObject()
     {
         $book1 = new Book();
@@ -1564,6 +1737,9 @@ EOF;
         $this->assertEquals($author, $a);
     }
 
+    /**
+     * @return void
+     */
     public function testSavedObjectCallingHashCodeIsNotChangingObject()
     {
         $book1 = new Book();
@@ -1582,6 +1758,9 @@ EOF;
         $this->assertEquals($author, $a);
     }
 
+    /**
+     * @return void
+     */
     public function testUnsavedObjectCreatesNotSameHashForIdenticalObjects()
     {
         $book1 = new Book();
@@ -1603,6 +1782,8 @@ EOF;
 
     /**
      * Primary key should differ
+     *
+     * @return void
      */
     public function testSavedObjectCreatesDifferentHashForIdenticalObjects()
     {

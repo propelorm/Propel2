@@ -1,21 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Formatter;
 
 use Propel\Runtime\DataFetcher\ArrayDataFetcher;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for DataFetcher.
@@ -24,15 +22,21 @@ use Propel\Runtime\Propel;
  */
 class DataFetcherTest extends BookstoreEmptyTestBase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate();
     }
 
+    /**
+     * @return void
+     */
     public function testGeneral()
     {
-        $items  = [5, 22, 33];
+        $items = [5, 22, 33];
         $items2 = [882, 34];
 
         $dataFetcher = new ArrayDataFetcher($items);
@@ -42,6 +46,9 @@ class DataFetcherTest extends BookstoreEmptyTestBase
         $this->assertEquals($items2, $dataFetcher->getDataObject());
     }
 
+    /**
+     * @return void
+     */
     public function testPDODataFetcher()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -74,13 +81,13 @@ class DataFetcherTest extends BookstoreEmptyTestBase
         $this->assertEquals('Quicksilver', $dataFetcher->fetchColumn(1));
 
         $dataFetcher = $con->query('SELECT id, title, isbn, price, publisher_id, author_id FROM book');
-        $rows        = [];
-        $last        = null;
-        $i           = -1;
+        $rows = [];
+        $last = null;
+        $i = -1;
 
         foreach ($dataFetcher as $k => $row) {
             $rows[] = $row;
-            $last   = $row;
+            $last = $row;
             $i++;
             $this->assertNotNull($row);
             $this->assertEquals($i, $k);
@@ -89,11 +96,14 @@ class DataFetcherTest extends BookstoreEmptyTestBase
         $this->assertEquals('The Tin Drum', $last[1]);
     }
 
+    /**
+     * @return void
+     */
     public function testArrayDataFetcher()
     {
         $items = [
             ['col1' => 'Peter', 'col2' => 'Mueller'],
-            ['col1' => 'Sergey', 'col2' => 'Sayer']
+            ['col1' => 'Sergey', 'col2' => 'Sayer'],
         ];
 
         $dataFetcher = new ArrayDataFetcher($items);
