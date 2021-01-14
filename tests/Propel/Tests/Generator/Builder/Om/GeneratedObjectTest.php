@@ -13,7 +13,6 @@ use Exception;
 use MyNameSpace\TestKeyTypeTable;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Tests\Bookstore\BookClubList;
-use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
