@@ -545,8 +545,7 @@
     </NullArgument>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
-    <UndefinedClass occurrences="2">
-      <code>$tableMap::addSelectColumns($this, $this-&gt;useAliasInSQL ? $this-&gt;modelAlias : null)</code>
+    <UndefinedClass occurrences="1">
       <code>new $secondaryCriteriaClass()</code>
     </UndefinedClass>
     <UndefinedMethod occurrences="10">

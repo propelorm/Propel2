@@ -3004,7 +3004,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if ($col->isTemporalType()) {
                 $script .= "
         if (\$result[\$keys[$num]] instanceof \DateTimeInterface) {
-            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('c');
+            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('" . $this->getTemporalFormatter($col) . "');
         }
         ";
             }
