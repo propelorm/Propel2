@@ -19,7 +19,7 @@ use Propel\Tests\TestCase;
  */
 class Issue1420Test extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!class_exists('\Table1420A')) {
@@ -34,7 +34,7 @@ class Issue1420Test extends TestCase
                     <column name="id" primaryKey="true" type="INTEGER" />
                     <column name="table_1420_a_id" type="INTEGER" />
                     <column name="b_field" type="VARCHAR" size="10" />
-                    
+
                     <foreign-key foreignTable="table_1420_a" name="table_1420_b_fk1">
                         <reference local="table_1420_a_id" foreign="id"/>
                     </foreign-key>
@@ -43,7 +43,7 @@ class Issue1420Test extends TestCase
                     <column name="id" primaryKey="true" type="INTEGER" />
                     <column name="table_1420_a_id" type="INTEGER" />
                     <column name="c_field" type="VARCHAR" size="10" />
-                    
+
                     <foreign-key foreignTable="table_1420_a" name="table_1420_c_fk1">
                         <reference local="table_1420_a_id" foreign="id"/>
                     </foreign-key>
@@ -54,7 +54,7 @@ XML;
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         \Table1420CQuery::create()->deleteAll();
