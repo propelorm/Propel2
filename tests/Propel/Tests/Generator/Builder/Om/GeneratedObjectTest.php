@@ -12,7 +12,6 @@ use DateTime;
 use Exception;
 use MyNameSpace\TestKeyTypeTable;
 use Propel\Generator\Config\QuickGeneratorConfig;
-use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Tests\Bookstore\BookClubList;
 use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Generator\Util\QuickBuilder;
