@@ -953,6 +953,7 @@ class ModelCriteria extends BaseModelCriteria
             return $this;
         }
 
+        /** @var string $tableMap */
         $tableMap = $this->modelTableMapName;
         $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
         $this->isSelfSelected = true;
