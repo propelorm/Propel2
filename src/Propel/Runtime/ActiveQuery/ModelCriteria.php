@@ -974,6 +974,7 @@ class ModelCriteria extends BaseModelCriteria
             return $this;
         }
 
+        /** @var string $tableMap */
         $tableMap = $this->modelTableMapName;
         $tableMap::removeSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
         $this->isSelfSelected = false;
