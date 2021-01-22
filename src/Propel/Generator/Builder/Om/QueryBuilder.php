@@ -183,14 +183,14 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
+ * @method     $modelClass|null findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
  * @method     $modelClass findOneOrCreate(ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
  *";
 
         // magic findBy() methods, for IDE completion
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method     $modelClass findOneBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . ' column';
+ * @method     $modelClass|null findOneBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . ' column';
         }
 
         $script .= " * \n";
