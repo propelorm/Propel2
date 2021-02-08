@@ -1604,7 +1604,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             ->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
     }
 ";
-}
+    }
 
     /**
      * Adds a withRelatedQuery method for this object.
