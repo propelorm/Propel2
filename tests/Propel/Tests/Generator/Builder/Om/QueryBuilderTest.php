@@ -1090,6 +1090,36 @@ class QueryBuilderTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testUseFkQueryWith()
+    {
+        $q = BookQuery::create()
+            ->withAuthorQuery(
+                function (AuthorQuery $q) {
+                    return $q->filterByFirstName('Leo');
+                }
+            );
+        $q1 = BookQuery::create()
+            ->useAuthorQuery()
+            ->filterByFirstName('Leo')
+            ->endUse();
+        $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
+
+        $q = BookSummaryQuery::create()
+            ->withSummarizedBookQuery(
+                function (BookQuery $q) {
+                    return $q->filterByTitle('War and Peace');
+                }
+            );
+        $q1 = BookSummaryQuery::create()
+            ->useSummarizedBookQuery()
+            ->filterByTitle('War and Peace')
+            ->endUse();
+        $this->assertEquals($q1, $q, 'useFkQuery() translates to a condition on an inner join on required columns');
+    }
+
+    /**
+     * @return void
+     */
     public function testUseFkQueryJoinType()
     {
         $q = BookQuery::create()
