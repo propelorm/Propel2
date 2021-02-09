@@ -1625,16 +1625,16 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @param callable({$queryClass}):{$queryClass} \$callable A function working on the related query
      *
-     * @param string \$relationAlias optional alias for the relation
+     * @param string|null \$relationAlias optional alias for the relation
      *
-     * @param string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string|null \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return \$this
      */
     public function with{$relationName}Query(
         callable \$callable,
         string \$relationAlias = null,
-        \$joinType = {$joinType}
+        ?string \$joinType = {$joinType}
     ) {
         \$relatedQuery = \$this->use{$relationName}Query(
             \$relationAlias,
@@ -1642,6 +1642,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         );
         \$callable(\$relatedQuery);
         \$relatedQuery->endUse();
+
         return \$this;
     }
 ";
