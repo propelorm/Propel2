@@ -894,6 +894,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @return string|{$dateTimeClass}{$orNull} Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
+     *
+     * @psalm-return (\$format is null ? {$dateTimeClass}{$orNull} : string{$orNull})
      */";
     }
 
