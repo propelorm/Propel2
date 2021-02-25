@@ -152,6 +152,68 @@ EOF;
     /**
      * @return void
      */
+    public function testXmlErrorReporting()
+    {
+        $brokenSchema = 'lorem ipsum';
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($brokenSchema);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('XML error: Not well-formed', $message);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testMissingAttributeError()
+    {
+        $schemaWithMissingColumnName = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<database name="leDatabase">
+  <table name="leTable">
+    <behavior name="timestampable">
+      <parameter-list>
+      </parameter-list>
+    </behavior>
+  </table>
+</database>
+EOF;
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($schemaWithMissingColumnName);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('Parameter misses expected attribute "name"', $message);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testExceptionContainsFilename()
+    {
+        $schemaWithoutDatabase = '<table name="leTable"></table>';
+        $xmlFileName = 'LeSchema.xml';
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($schemaWithoutDatabase, $xmlFileName);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString($xmlFileName, $message);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->reader = new SchemaReader();
