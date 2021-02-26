@@ -393,13 +393,13 @@ class SchemaReader
 
     /**
      * @param resource $parser
-     * @param string $tag_name
+     * @param string $tagName
      *
      * @throws \Propel\Generator\Exception\SchemaException
      *
      * @return void
      */
-    protected function _throwInvalidTagException($parser, $tag_name)
+    protected function _throwInvalidTagException($parser, $tagName)
     {
         $location = '';
         if ($this->currentXmlFile !== null) {
@@ -411,7 +411,7 @@ class SchemaReader
             $location .= sprintf(', column %d', $col);
         }
 
-        throw new SchemaException(sprintf('Unexpected tag <%s> in %s', $tag_name, $location));
+        throw new SchemaException(sprintf('Unexpected tag <%s> in %s', $tagName, $location));
     }
 
     /**
