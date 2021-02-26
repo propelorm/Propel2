@@ -132,7 +132,7 @@ class BehaviorLocator
             if ($lock === null) {
                 $this->behaviors = [];
             } else {
-                $this->behaviors = $this->loadBehaviors($lock);
+                $this->behaviors = $this->loadBehaviorsFromLockFile($lock);
             }
 
             // find behavior in composer.json (useful when developing a behavior)
@@ -198,20 +198,23 @@ class BehaviorLocator
     }
 
     /**
-     * Finds all behaviors by parsing composer.lock file
+     * Finds all behaviors in composer.lock file
      *
      * @param \Symfony\Component\Finder\SplFileInfo $composerLock
      *
      * @return array
      */
-    private function loadBehaviors($composerLock)
+    private function loadBehaviorsFromLockFile(SplFileInfo $composerLock): array
     {
         $behaviors = [];
 
         $json = json_decode($composerLock->getContents(), true);
 
-        if (isset($json['packages'])) {
-            foreach ($json['packages'] as $package) {
+        foreach (['packages', 'packages-dev'] as $packageSectionName) {
+            if (!isset($json[$packageSectionName])) {
+                continue;
+            }
+            foreach ($json[$packageSectionName] as $package) {
                 $behavior = $this->loadBehavior($package);
 
                 if ($behavior !== null) {
