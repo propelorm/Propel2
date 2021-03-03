@@ -379,8 +379,10 @@ class ObjectCollection extends Collection
         if ($relationMap->getType() === RelationMap::ONE_TO_MANY) {
             // initialize the embedded collections of the main objects
             $relationName = $relationMap->getName();
+            $resetPartialStatusMethod = 'resetPartial' . $relationMap->getPluralName();
             foreach ($this as $mainObj) {
                 $mainObj->initRelation($relationName);
+                $mainObj->$resetPartialStatusMethod(false);
             }
             // associate the related objects to the main objects
             $getMethod = 'get' . $symRelationMap->getName();
