@@ -12,6 +12,8 @@ use InvalidArgumentException;
 use Propel\Generator\Behavior\AggregateColumn\AggregateColumnRelationBehavior;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Model\ForeignKey;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -56,7 +58,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return bool
      */
-    public function allowMultiple()
+    public function allowMultiple(): bool
     {
         return true;
     }
@@ -64,7 +66,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return string
      */
-    public function getAggregationName()
+    public function getAggregationName(): string
     {
         if ($this->aggregationName === null) {
             $this->aggregationName = $this->buildAggregationName();
@@ -76,26 +78,26 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return string
      */
-    private function buildAggregationName()
+    private function buildAggregationName(): string
     {
         $foreignTableName = $this->getForeignTable()->getPhpName();
         $baseAggregationName = 'AggregatedColumnsFrom' . $foreignTableName;
         $tableName = $this->getTable()->getPhpName();
-        if (!array_key_exists($tableName, self::$insertedAggregationNames)) {
-            self::$insertedAggregationNames[$tableName] = [];
+        if (!array_key_exists($tableName, static::$insertedAggregationNames)) {
+            static::$insertedAggregationNames[$tableName] = [];
         }
 
-        $existingNames = &self::$insertedAggregationNames[$tableName];
+        $existingNames = &static::$insertedAggregationNames[$tableName];
         if (!in_array($baseAggregationName, $existingNames)) {
             $existingNames[] = $baseAggregationName;
 
             return $baseAggregationName;
         }
 
-        $ix = 1;
+        $duplicateAvoidanceSuffix = 1;
         do {
-            $aggregationName = $baseAggregationName . $ix;
-            $ix++;
+            $aggregationName = $baseAggregationName . $duplicateAvoidanceSuffix;
+            $duplicateAvoidanceSuffix++;
         } while (in_array($aggregationName, $existingNames));
 
         $existingNames[] = $aggregationName;
@@ -108,7 +110,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $this->validateColumnParameter();
         $this->addMissingColumnsToTable();
@@ -118,18 +120,18 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return void
      */
-    private function validateColumnParameter()
+    private function validateColumnParameter(): void
     {
-        $columnParameters = $this->getParameter(self::PARAMETER_KEY_COLUMNS);
+        $columnParameters = $this->getParameter(static::PARAMETER_KEY_COLUMNS);
         if (empty($columnParameters)) {
             $this->throwInvalidArgumentExceptionWithLocation('At least one column is required');
         }
         foreach ($columnParameters as $columnDefinition) {
-            if (empty($columnDefinition[self::PARAMETER_KEY_COLUMN_NAME])) {
+            if (empty($columnDefinition[static::PARAMETER_KEY_COLUMN_NAME])) {
                 $this->throwInvalidArgumentExceptionWithLocation('Parameter \'name\' is missing on a column');
             }
-            if (empty($columnDefinition[self::PARAMETER_KEY_COLUMN_EXPRESSION])) {
-                $colName = $columnDefinition[self::PARAMETER_KEY_COLUMN_NAME];
+            if (empty($columnDefinition[static::PARAMETER_KEY_COLUMN_EXPRESSION])) {
+                $colName = $columnDefinition[static::PARAMETER_KEY_COLUMN_NAME];
                 $this->throwInvalidArgumentExceptionWithLocation('Parameter \'expression\' is missing on column ' . $colName);
             }
         }
@@ -140,12 +142,12 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return void
      */
-    private function addMissingColumnsToTable()
+    private function addMissingColumnsToTable(): void
     {
         $table = $this->getTable();
-        $columnParameters = $this->getParameter(self::PARAMETER_KEY_COLUMNS);
+        $columnParameters = $this->getParameter(static::PARAMETER_KEY_COLUMNS);
         foreach ($columnParameters as $columnDefinition) {
-            $columnName = $columnDefinition[self::PARAMETER_KEY_COLUMN_NAME];
+            $columnName = $columnDefinition[static::PARAMETER_KEY_COLUMN_NAME];
             if ($table->hasColumn($columnName)) {
                 continue;
             }
@@ -159,9 +161,9 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return void
      */
-    private function addAutoupdateBehaviorToForeignTable()
+    private function addAutoupdateBehaviorToForeignTable(): void
     {
-        if (!$this->getParameter(self::PARAMETER_KEY_FOREIGN_TABLE)) {
+        if (!$this->getParameter(static::PARAMETER_KEY_FOREIGN_TABLE)) {
             $this->throwInvalidArgumentExceptionWithLocation('You must define a \'foreign_table\' parameter');
         }
         $foreignTable = $this->getForeignTable();
@@ -183,7 +185,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods(ObjectBuilder $builder)
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $script = '';
         $script .= $this->addObjectCompute($builder);
@@ -199,15 +201,15 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return string
      */
-    protected function addObjectCompute(ObjectBuilder $builder)
+    protected function addObjectCompute(ObjectBuilder $builder): string
     {
         if ($this->getForeignKey()->isPolymorphic()) {
             throw new InvalidArgumentException('AggregateColumnBehavior does not work with polymorphic relations.');
         }
 
         $conditions = [];
-        if ($this->getParameter(self::PARAMETER_KEY_CONDITION)) {
-            $conditions[] = $this->getParameter(self::PARAMETER_KEY_CONDITION);
+        if ($this->getParameter(static::PARAMETER_KEY_CONDITION)) {
+            $conditions[] = $this->getParameter(static::PARAMETER_KEY_CONDITION);
         }
 
         $bindings = [];
@@ -236,14 +238,14 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return string
      */
-    private function buildSelectionStatement()
+    private function buildSelectionStatement(): string
     {
-        $columnDefinitions = $this->getParameter(self::PARAMETER_KEY_COLUMNS);
+        $columnDefinitions = $this->getParameter(static::PARAMETER_KEY_COLUMNS);
         $selects = [];
         $table = $this->getTable();
         foreach ($columnDefinitions as $columnDefinition) {
-            $expression = $columnDefinition[self::PARAMETER_KEY_COLUMN_EXPRESSION];
-            $columName = $columnDefinition[self::PARAMETER_KEY_COLUMN_NAME];
+            $expression = $columnDefinition[static::PARAMETER_KEY_COLUMN_EXPRESSION];
+            $columName = $columnDefinition[static::PARAMETER_KEY_COLUMN_NAME];
             $columnPhpName = $table->getColumn($columName)->getPhpName();
             $selects[] = "$expression AS $columnPhpName";
         }
@@ -254,15 +256,15 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return string
      */
-    protected function addObjectUpdate()
+    protected function addObjectUpdate(): string
     {
         $table = $this->getTable();
-        $columnPhpNames = array_map(function (array $colDef) use ($table) {
-            $columName = $colDef[AggregateMultipleColumnsBehavior::PARAMETER_KEY_COLUMN_NAME];
+        $columnPhpNames = array_map(function (array $columnParameters) use ($table) {
+            $columName = $columnParameters[AggregateMultipleColumnsBehavior::PARAMETER_KEY_COLUMN_NAME];
 
             return $table->getColumn($columName)->getPhpName();
         },
-        $this->getParameter(self::PARAMETER_KEY_COLUMNS));
+        $this->getParameter(static::PARAMETER_KEY_COLUMNS));
 
         return $this->renderTemplate('objectUpdate', [
             'aggregationName' => $this->getAggregationName(),
@@ -273,12 +275,12 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return string
      */
-    private function getForeignTableNameFullyQualified()
+    private function getForeignTableNameFullyQualified(): string
     {
         $database = $this->getTable()->getDatabase();
-        $foreignTableName = $database->getTablePrefix() . $this->getParameter(self::PARAMETER_KEY_FOREIGN_TABLE);
+        $foreignTableName = $database->getTablePrefix() . $this->getParameter(static::PARAMETER_KEY_FOREIGN_TABLE);
         $platform = $database->getPlatform();
-        $foreignSchema = $this->getParameter(self::PARAMETER_KEY_FOREIGN_SCHEMA);
+        $foreignSchema = $this->getParameter(static::PARAMETER_KEY_FOREIGN_SCHEMA);
         if ($platform->supportsSchemas() && $foreignSchema) {
             $foreignTableName = $foreignSchema . $platform->getSchemaDelimiter() . $foreignTableName;
         }
@@ -289,7 +291,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Table|null
      */
-    protected function getForeignTable()
+    protected function getForeignTable(): Table
     {
         $database = $this->getTable()->getDatabase();
         $foreignTableName = $this->getForeignTableNameFullyQualified();
@@ -300,7 +302,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\ForeignKey
      */
-    protected function getForeignKey()
+    protected function getForeignKey(): ForeignKey
     {
         $foreignTable = $this->getForeignTable();
         // let's infer the relation from the foreign table
@@ -322,7 +324,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return void
      */
-    private function throwInvalidArgumentExceptionWithLocation($format, ...$args)
+    private function throwInvalidArgumentExceptionWithLocation($format, ...$args): void
     {
         $format .= ' in the \'aggregate_multiple_columns\' behavior definition in the \'%s\' table definition';
         $args[] = $this->getTable()->getName();

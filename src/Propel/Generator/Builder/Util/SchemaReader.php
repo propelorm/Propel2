@@ -553,7 +553,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function initParameterListCollector($attributes)
+    private function initParameterListCollector(array $attributes): void
     {
         $parameterName = $this->getExpectedValue($attributes, 'name');
 
@@ -568,7 +568,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function addItemToParameterListCollector()
+    private function addItemToParameterListCollector(): void
     {
         $this->currParameterListCollector['value'][] = [];
     }
@@ -580,7 +580,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function addAttributeToParameterListItem($attributes)
+    private function addAttributeToParameterListItem(array $attributes)
     {
         $name = $this->getExpectedValue($attributes, 'name');
         $value = $this->getExpectedValue($attributes, 'value');
@@ -595,7 +595,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function finalizeParameterList()
+    private function finalizeParameterList(): void
     {
         $parentTag = $this->peekCurrentSchemaTag();
         if ($parentTag === 'behavior') {
@@ -615,7 +615,7 @@ class SchemaReader
      *
      * @return string the non-empty value
      */
-    private function getExpectedValue($attributes, $key)
+    private function getExpectedValue(array $attributes, string $key): string
     {
         if (empty($attributes[$key])) {
             $this->throwSchemaExceptionWithLocation('Parameter misses expected attribute "%s"', $key);
