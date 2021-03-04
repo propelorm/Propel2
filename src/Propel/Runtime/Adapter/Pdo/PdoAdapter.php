@@ -51,7 +51,7 @@ abstract class PdoAdapter
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
-        $driver_options = [];
+        $driverOptions = [];
         if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
                 $value = $optiondata;
@@ -61,12 +61,12 @@ abstract class PdoAdapter
                     }
                     $value = constant($value);
                 }
-                $driver_options[$option] = $value;
+                $driverOptions[$option] = $value;
             }
         }
 
         try {
-            $con = new PdoConnection($dsn, $user, $password, $driver_options);
+            $con = new PdoConnection($dsn, $user, $password, $driverOptions);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : []);
         } catch (PDOException $e) {
             throw new AdapterException('Unable to open PDO connection', 0, $e);

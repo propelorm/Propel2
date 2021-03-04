@@ -582,8 +582,8 @@
   </file>
   <file src="src/Propel/Runtime/Collection/CollectionIterator.php">
     <InvalidArgument occurrences="2">
-      <code>$cmp_function</code>
-      <code>$cmp_function</code>
+      <code>$callback</code>
+      <code>$callback</code>
     </InvalidArgument>
   </file>
   <file src="src/Propel/Runtime/Connection/StatementWrapper.php">

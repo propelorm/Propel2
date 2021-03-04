@@ -628,7 +628,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @return \Propel\Common\Pluralizer\PluralizerInterface|null
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
     protected function getPluralizer()
     {
