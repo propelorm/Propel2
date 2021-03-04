@@ -306,7 +306,7 @@ EOF;
      *
      * @return \Propel\Tests\Bookstore\Behavior\AggregateMultipleScore
      */
-    private function insertScore(AggregateMultipleScoreGroup $group, int $scoreValue, $date = null)
+    private function insertScore(AggregateMultipleScoreGroup $group, int $scoreValue, $date = null): AggregateMultipleScore
     {
         $score = new AggregateMultipleScore();
         $score->setAggregateMultipleScoreGroup($group)->setScore($scoreValue)->setScoredAt($date)->save($this->con);
