@@ -87,11 +87,11 @@ interface StatementInterface
     /**
      * Returns a single column from the next row of a result set.
      *
-     * @param int $column_number 0-indexed number of the column you wish to retrieve from the row.
+     * @param int $columnNumber 0-indexed number of the column you wish to retrieve from the row.
      *
      * @return string|null Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
-    public function fetchColumn($column_number = 0);
+    public function fetchColumn($columnNumber = 0);
 
     /**
      * Returns an array containing all of the result set rows.
