@@ -60,6 +60,22 @@
       <code>$variableName</code>
     </UndefinedGlobalVariable>
   </file>
+  <file src="src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/objectCompute.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$bindings</code>
+      <code>$sql</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/objectUpdate.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$columnPhpNames</code>
+    </UndefinedGlobalVariable>
+  </file>
   <file src="src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php">
     <UndefinedPropertyAssignment occurrences="1">
       <code>$archiveTable-&gt;isArchiveTable</code>

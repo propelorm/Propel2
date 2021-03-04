@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="bookstore-behavior" defaultIdMethod="native" package="behavior.aggregate.multiple" namespace="Propel\Tests\Bookstore\Behavior">
+
+    <table name="aggregate_multiple_score_group" phpName="AggregateMultipleScoreGroup">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="first_score_at" type="DATE"/>
+        <column name="last_score_at" type="DATE"/>
+        <behavior name="aggregate_multiple_columns" id="score_group_aggregates">
+            <parameter name="foreign_table" value="aggregate_multiple_score"/>
+            <parameter-list name="columns">
+                <parameter-list-item>
+                    <parameter name="column_name" value="total_score" />
+                    <parameter name="expression" value="SUM(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="number_of_scores" />
+                    <parameter name="expression" value="COUNT(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="avg_score" />
+                    <parameter name="expression" value="AVG(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="min_score" />
+                    <parameter name="expression" value="MIN(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="max_score" />
+                    <parameter name="expression" value="MAX(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="first_score_at" />
+                    <parameter name="expression" value="MIN(scored_at)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="last_score_at" />
+                    <parameter name="expression" value="MAX(scored_at)" />
+                </parameter-list-item>
+            </parameter-list>
+        </behavior>
+        <!--
+            Second aggregation to detect naming collisions.
+            
+            In practice, there is no need to use a second aggregation on the
+            same foreign table, but let's make sure it works if someone insists.  
+        -->
+        <behavior name="aggregate_multiple_columns" id="another_score_group_aggregates">
+            <parameter name="foreign_table" value="aggregate_multiple_score"/>
+            <parameter name="condition" value="score > 20"/>
+            <parameter-list name="columns">
+                <parameter-list-item>
+                    <parameter name="column_name" value="total_big_score" />
+                    <parameter name="expression" value="SUM(score)" />
+                </parameter-list-item>
+                <parameter-list-item>
+                    <parameter name="column_name" value="number_of_big_scores" />
+                    <parameter name="expression" value="COUNT(score)" />
+                </parameter-list-item>
+            </parameter-list>
+        </behavior>
+    </table>
+
+    <table name="aggregate_multiple_score" phpName="AggregateMultipleScore">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="score" defaultValue="0" type="INTEGER"/>
+        <column name="scored_at" type="DATE"/>
+        <column name="score_group_id" type="INTEGER"/>
+        <foreign-key foreignTable="aggregate_multiple_score_group" onDelete="setnull" onUpdate="cascade">
+            <reference local="score_group_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
+</database>
