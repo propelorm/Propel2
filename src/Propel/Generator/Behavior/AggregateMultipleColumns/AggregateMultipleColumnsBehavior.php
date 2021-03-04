@@ -12,8 +12,8 @@ use InvalidArgumentException;
 use Propel\Generator\Behavior\AggregateColumn\AggregateColumnRelationBehavior;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -289,7 +289,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\Table|null
+     * @return \Propel\Generator\Model\Table
      */
     protected function getForeignTable(): Table
     {
