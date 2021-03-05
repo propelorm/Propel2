@@ -8,7 +8,10 @@
 
 namespace Propel\Tests\Runtime\Util;
 
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\MssqlAdapter;
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\BookQuery;
@@ -17,6 +20,7 @@ use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
@@ -75,6 +79,8 @@ class TableMapTest extends BookstoreTestBase
     }
 
     /**
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testDoCountDuplicateColumnName()
@@ -86,7 +92,7 @@ class TableMapTest extends BookstoreTestBase
         $c->addSelectColumn(AuthorTableMap::COL_ID);
         $c->setLimit(3);
         try {
-            $count = $c->doCount($con);
+            $c->doCount($con);
         } catch (Exception $e) {
             $this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
         }

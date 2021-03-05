@@ -45,6 +45,8 @@ class Issue829Test extends TestCase
      * that can be serialized but cannot be casted to a string (f.in. \DateTime)
      */
     /**
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testAddingToInstancePool()

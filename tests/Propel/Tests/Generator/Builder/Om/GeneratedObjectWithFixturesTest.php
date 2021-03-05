@@ -186,6 +186,8 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
      * This is a test for expected exceptions when saving UNIQUE.
      * See http://propel.phpdb.org/trac/ticket/2
      *
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testSaveUnique()
