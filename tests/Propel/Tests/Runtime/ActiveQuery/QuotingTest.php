@@ -143,6 +143,7 @@ class QuotingTest extends TestCaseFixturesDatabase
         if ($this->runningOnPostgreSQL()) {
             $expected = $this->getSql('SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id,g.name,g.type_id HAVING g.id > 0');
         } else {
+            // note that this only works with MySQL because the query return no data, otherwise an "Expression of SELECT list is not in GROUP BY" error would be thrown
             $expected = $this->getSql('SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id HAVING g.id > 0');
         }
         $this->assertEquals($expected, $this->getLastQuery());
@@ -167,10 +168,15 @@ class QuotingTest extends TestCaseFixturesDatabase
      */
     public function testHaving()
     {
+        $con = Propel::getServiceContainer()->getConnection(GroupTableMap::DATABASE_NAME);
+        if( $this->runningOnMySQL())
+        {
+            $con->exec('SET SESSION sql_mode = "TRADITIONAL"');
+        }
         GroupQuery::create()
         ->groupBy('group.As')
         ->having('group.As > 0')
-        ->find();
+        ->find($con);
 
         if ($this->runningOnPostgreSQL()) {
             $expected = $this->getSql('SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as`,`group`.`id`,`group`.`title`,`group`.`by`,`group`.`author_id` HAVING `group`.`as` > 0');

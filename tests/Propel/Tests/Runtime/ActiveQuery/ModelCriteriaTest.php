@@ -2774,9 +2774,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testMagicGroupBy()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        if( $this->runningOnMySQL())
+        {
+            $con->exec('SET SESSION sql_mode = "TRADITIONAL"');
+        }
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $books = $c->groupByTitle()->find($con);
+        $c->groupByTitle()->find($con);
 
         if ($this->isDb('pgsql')) {
             $expectedSQL = 'SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title,book.id,book.isbn,book.price,book.publisher_id,book.author_id';
@@ -3261,6 +3265,8 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testJoinSelectColumn()
