@@ -45,7 +45,7 @@ class TableMapTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setDistinct();
             if ($db instanceof PgsqlAdapter) {
-                $c->addSelectColumn('substring(' . BookTableMap::TITLE . " from position('Potter' in " . BookTableMap::TITLE . ')) AS col');
+                $c->addSelectColumn('substring(' . BookTableMap::COL_TITLE . " from position('Potter' in " . BookTableMap::COL_TITLE . ')) AS col');
             } else {
                 $this->markTestSkipped('Configured database vendor is not PostgreSQL');
             }
