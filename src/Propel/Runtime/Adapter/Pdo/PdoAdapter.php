@@ -446,7 +446,7 @@ abstract class PdoAdapter
                 // it could be a function:  e.g. MAX(books.price)
                 $tableName = null;
 
-                $selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
+                $selectClause[] = $this->adjustSimpleColumnSelectionLiteral($criteria, $columnName);
 
                 $parenPos = strrpos($columnName, '(');
                 $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
@@ -515,6 +515,22 @@ abstract class PdoAdapter
         }
 
         return $selected;
+    }
+
+    /**
+     * Performs vendor-specific adjustments to a given select column statement.
+     *
+     * Overridden by adapters that need specific adjustment, like MysqlAdapter, which needs to wrap nonaggregated
+     * columns in GROUP BY queries.
+     *
+     * @param \Propel\Runtime\ActiveQuery\Criteria $queryBuilder
+     * @param string $columnSelectionLiteral
+     *
+     * @return string
+     */
+    protected function adjustSimpleColumnSelectionLiteral(Criteria $queryBuilder, string $columnSelectionLiteral): string
+    {
+        return $columnSelectionLiteral;
     }
 
     /**

@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\StatementInterface;
@@ -220,5 +221,41 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
         } elseif (Lock::EXCLUSIVE === $type) {
             $sql .= ' FOR UPDATE';
         }
+    }
+
+    /**
+     * @see \Propel\Runtime\Adapter\Pdo\PdoAdapter::adjustSimpleColumnSelectionLiteral()
+     *
+     * @param \Propel\Runtime\ActiveQuery\Criteria $queryBuilder
+     * @param string $columnSelectionLiteral
+     *
+     * @return string
+     */
+    protected function adjustSimpleColumnSelectionLiteral(Criteria $queryBuilder, string $columnSelectionLiteral): string
+    {
+        $columnSelectionLiteral = parent::adjustSimpleColumnSelectionLiteral($queryBuilder, $columnSelectionLiteral);
+        $isNonaggregatedColumn = !empty($queryBuilder->getGroupByColumns())
+            && strpos($columnSelectionLiteral, '(') === false
+            && !in_array($columnSelectionLiteral, $queryBuilder->getGroupByColumns());
+        if ($isNonaggregatedColumn) {
+            return $this->wrapNonaggregatedSelectedColumn($columnSelectionLiteral);
+        }
+
+        return $columnSelectionLiteral;
+    }
+
+    /**
+     * Wrap nonaggregated columns in GROUP BY queries with an ANY_VALUE aggregation
+     *
+     * @param string $columnSelectionLiteral
+     *
+     * @return string
+     */
+    protected function wrapNonaggregatedSelectedColumn(string $columnSelectionLiteral): string
+    {
+        $positionOfDot = strpos($columnSelectionLiteral, '.');
+        $nonQualifiedColumnName = ($positionOfDot === false) ? $columnSelectionLiteral : substr($columnSelectionLiteral, $positionOfDot + 1);
+
+        return "ANY_VALUE($columnSelectionLiteral) AS '$nonQualifiedColumnName'";
     }
 }

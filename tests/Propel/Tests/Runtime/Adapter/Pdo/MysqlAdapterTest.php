@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -109,9 +110,9 @@ class MysqlAdapterTest extends TestCaseFixtures
     /**
      * Test `applyLock`
      *
-     * @return void
-     *
      * @group mysql
+     *
+     * @return void
      */
     public function testSimpleLock(): void
     {
@@ -130,9 +131,9 @@ class MysqlAdapterTest extends TestCaseFixtures
     /**
      * Test `applyLock`
      *
-     * @return void
-     *
      * @group mysql
+     *
+     * @return void
      */
     public function testComplexLock(): void
     {
@@ -149,9 +150,9 @@ class MysqlAdapterTest extends TestCaseFixtures
     }
 
     /**
-     * @return void
-     *
      * @group mysql
+     *
+     * @return void
      */
     public function testSubQueryWithSharedLock()
     {
@@ -164,10 +165,51 @@ class MysqlAdapterTest extends TestCaseFixtures
         $c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
         $c->lockForShare([BookTableMap::TABLE_NAME], true);
 
-        $expected ='SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
+        $expected = 'SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
 
         $params = [];
         $this->assertSame($expected, $c->createSelectSql($params), 'Subquery contains shared read lock');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWrapOnlyNonaggregatedColumnSelectionLiterals()
+    {
+        $wrapper = new class extends MysqlAdapter{
+            public function wrap(Criteria $queryBuilder, string $columnSelectionLiteral): string
+            {
+                return parent::adjustSimpleColumnSelectionLiteral($queryBuilder, $columnSelectionLiteral);
+            }
+
+            protected function wrapNonaggregatedSelectedColumn(string $columnSelectionLiteral): string
+            {
+                return 'was wrapped';
+            }
+        };
+        $c = new Criteria();
+        $this->assertEquals('table.id', $wrapper->wrap($c, 'table.id'), 'Column should be unchanged if no GROUP BY');
+
+        $gbColumn = 'leGroupByColumn';
+        $c->addGroupByColumn($gbColumn);
+        $this->assertEquals($gbColumn, $wrapper->wrap($c, $gbColumn), 'Columns in GROUP BY should not change');
+        $this->assertEquals('COUNT(*)', $wrapper->wrap($c, 'COUNT(*)'), 'Aggregated columns should not change');
+        $this->assertEquals('was wrapped', $wrapper->wrap($c, 'table.id'), 'Columns not in aggregation should change');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWrappingOfNonaggregatedColumnSelectionLiteral()
+    {
+        $wrapper = new class extends MysqlAdapter{
+            public function wrap(string $columnSelectionLiteral): string
+            {
+                return parent::wrapNonaggregatedSelectedColumn($columnSelectionLiteral);
+            }
+        };
+        $this->assertEquals('ANY_VALUE(id) AS \'id\'', $wrapper->wrap('id'));
+        $this->assertEquals('ANY_VALUE(table.id) AS \'id\'', $wrapper->wrap('table.id'));
     }
 }
 

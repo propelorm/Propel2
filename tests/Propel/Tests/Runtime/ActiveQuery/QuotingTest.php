@@ -86,9 +86,7 @@ class QuotingTest extends TestCaseFixturesDatabase
      */
     public function testJoinWithNonQuotingQuery()
     {
-        $groupQuery = GroupQuery::create();
-
-        $groupQuery
+        GroupQuery::create()
         ->joinAuthor()
         ->useAuthorQuery()
         ->filterByName('Author filter')
@@ -142,6 +140,8 @@ class QuotingTest extends TestCaseFixturesDatabase
 
         if ($this->runningOnPostgreSQL()) {
             $expected = $this->getSql('SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id,g.name,g.type_id HAVING g.id > 0');
+        } else if ($this->runningOnMySQL()) {
+            $expected = $this->getSql('SELECT g.id, ANY_VALUE(g.name) AS \'name\', ANY_VALUE(g.type_id) AS \'type_id\' FROM quoting_author g GROUP BY g.id HAVING g.id > 0');
         } else {
             $expected = $this->getSql('SELECT g.id, g.name, g.type_id FROM quoting_author g GROUP BY g.id HAVING g.id > 0');
         }
@@ -174,6 +174,8 @@ class QuotingTest extends TestCaseFixturesDatabase
 
         if ($this->runningOnPostgreSQL()) {
             $expected = $this->getSql('SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as`,`group`.`id`,`group`.`title`,`group`.`by`,`group`.`author_id` HAVING `group`.`as` > 0');
+        } else if ($this->runningOnMySQL()) {
+            $expected = $this->getSql('SELECT ANY_VALUE(`group`.`id`) AS \'id\', ANY_VALUE(`group`.`title`) AS \'title\', ANY_VALUE(`group`.`by`) AS \'by\', `group`.`as`, ANY_VALUE(`group`.`author_id`) AS \'author_id\' FROM `group` GROUP BY `group`.`as` HAVING `group`.`as` > 0');
         } else {
             $expected = $this->getSql('SELECT `group`.`id`, `group`.`title`, `group`.`by`, `group`.`as`, `group`.`author_id` FROM `group` GROUP BY `group`.`as` HAVING `group`.`as` > 0');
         }

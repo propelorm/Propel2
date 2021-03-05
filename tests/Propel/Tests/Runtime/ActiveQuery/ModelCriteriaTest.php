@@ -2778,8 +2778,11 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $books = $c->groupByTitle()->find($con);
 
-        if ($this->isDb('pgsql')) {
+        if ($this->runningOnPostgreSQL()) {
             $expectedSQL = 'SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title,book.id,book.isbn,book.price,book.publisher_id,book.author_id';
+        } else if ($this->runningOnMySQL()) {
+            $expectedSQL = 'SELECT ANY_VALUE(book.id) AS \'id\', book.title, ANY_VALUE(book.isbn) AS \'isbn\', ANY_VALUE(book.price) AS \'price\', ANY_VALUE(book.publisher_id) AS \'publisher_id\', ANY_VALUE(book.author_id) AS \'author_id\' '
+                . 'FROM book GROUP BY book.title';
         } else {
             $expectedSQL = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title');
         }

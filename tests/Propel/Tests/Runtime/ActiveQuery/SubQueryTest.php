@@ -63,8 +63,10 @@ class SubQueryTest extends BookstoreTestBase
         $c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
         $c->groupBy('subCriteriaAlias.AuthorId');
 
-        if ($this->isDb('pgsql')) {
+        if ($this->runningOnPostgreSQL()) {
             $sql = $this->getSql('SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.author_id,subCriteriaAlias.id,subCriteriaAlias.title,subCriteriaAlias.isbn,subCriteriaAlias.price,subCriteriaAlias.publisher_id');
+        } else if ($this->runningOnMySQL()) {
+            $sql = $this->getSql('SELECT ANY_VALUE(subCriteriaAlias.id) AS \'id\', ANY_VALUE(subCriteriaAlias.title) AS \'title\', ANY_VALUE(subCriteriaAlias.isbn) AS \'isbn\', ANY_VALUE(subCriteriaAlias.price) AS \'price\', ANY_VALUE(subCriteriaAlias.publisher_id) AS \'publisher_id\', subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.author_id');
         } else {
             $sql = $this->getSql('SELECT subCriteriaAlias.id, subCriteriaAlias.title, subCriteriaAlias.isbn, subCriteriaAlias.price, subCriteriaAlias.publisher_id, subCriteriaAlias.author_id FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book ORDER BY book.title ASC) AS subCriteriaAlias GROUP BY subCriteriaAlias.author_id');
         }
@@ -251,11 +253,16 @@ class SubQueryTest extends BookstoreTestBase
         $c->addSelectQuery($latestBookQuery, 'latestBookQuery');
         $c->filterByPrice(12, Criteria::LESS_THAN);
 
-        if ($this->isDb('pgsql')) {
+        if ($this->runningOnPostgreSQL()) {
             $sql = $this->getSql('SELECT latestBookQuery.id, latestBookQuery.title, latestBookQuery.isbn, latestBookQuery.price, latestBookQuery.publisher_id, latestBookQuery.author_id ' .
             'FROM (SELECT sortedBookQuery.id, sortedBookQuery.title, sortedBookQuery.isbn, sortedBookQuery.price, sortedBookQuery.publisher_id, sortedBookQuery.author_id FROM ' .
             '(SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book WHERE book.publisher_id=:p2 ORDER BY book.title DESC,book.id DESC) AS sortedBookQuery ' .
             'GROUP BY sortedBookQuery.author_id,sortedBookQuery.id,sortedBookQuery.title,sortedBookQuery.isbn,sortedBookQuery.price,sortedBookQuery.publisher_id) AS latestBookQuery WHERE latestBookQuery.price<:p1');
+        } else if ($this->runningOnMySQL()) {
+            $sql = 'SELECT latestBookQuery.id, latestBookQuery.title, latestBookQuery.isbn, latestBookQuery.price, latestBookQuery.publisher_id, latestBookQuery.author_id '
+                . 'FROM (SELECT ANY_VALUE(sortedBookQuery.id) AS \'id\', ANY_VALUE(sortedBookQuery.title) AS \'title\', ANY_VALUE(sortedBookQuery.isbn) AS \'isbn\', ANY_VALUE(sortedBookQuery.price) AS \'price\', ANY_VALUE(sortedBookQuery.publisher_id) AS \'publisher_id\', sortedBookQuery.author_id '
+                . 'FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id '
+                . 'FROM book WHERE book.publisher_id=:p2 ORDER BY book.title DESC,book.id DESC) AS sortedBookQuery GROUP BY sortedBookQuery.author_id) AS latestBookQuery WHERE latestBookQuery.price<:p1';
         } else {
             $sql = $this->getSql('SELECT latestBookQuery.id, latestBookQuery.title, latestBookQuery.isbn, latestBookQuery.price, latestBookQuery.publisher_id, latestBookQuery.author_id ' .
             'FROM (SELECT sortedBookQuery.id, sortedBookQuery.title, sortedBookQuery.isbn, sortedBookQuery.price, sortedBookQuery.publisher_id, sortedBookQuery.author_id ' .
