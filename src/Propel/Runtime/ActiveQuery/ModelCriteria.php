@@ -1496,11 +1496,6 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->setDbName($this->getDbName()); // Set the correct dbName
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-
         $dataFetcher = $criteria->doCount($con);
         $row = $dataFetcher->fetch();
         if ($row) {
@@ -1550,11 +1545,6 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->clearSelectColumns(); // We are not retrieving data
         $criteria->addSelectColumn('1');
         $criteria->limit(1);
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
         $dataFetcher = $criteria->doSelect($con);
         $exists = (bool)$dataFetcher->fetchColumn(0);
@@ -1720,7 +1710,6 @@ class ModelCriteria extends BaseModelCriteria
             throw new RuntimeException('Delete does not support join');
         }
 
-        $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
         $tableName = $this->getPrimaryTableName();
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
@@ -1822,9 +1811,6 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        if ($this->modelTableMapName) {
-            $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-        }
 
         return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
             $affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves);
@@ -2166,13 +2152,6 @@ class ModelCriteria extends BaseModelCriteria
 
         // clear only the selectColumns, clearSelectColumns() clears asColumns too
         $this->selectColumns = [];
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        if (!$this->selectQueries) {
-            $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-        }
 
         // Add requested columns which are not withColumns
         $columnNames = is_array($this->select) ? $this->select : [$this->select];
