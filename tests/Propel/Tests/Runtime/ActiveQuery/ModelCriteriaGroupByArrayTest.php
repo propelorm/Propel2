@@ -86,7 +86,7 @@ class ModelCriteriaGroupByArrayTest extends BookstoreEmptyTestBase
             ->orderByLastName()
             ->find();
 
-        $expectedSql = 'SELECT COUNT(book.id) AS nbBooks, author.first_name AS "FirstName", author.last_name AS "LastName" FROM author LEFT JOIN book ON (author.id=book.author_id) GROUP BY author.first_name,author.last_name ORDER BY author.last_name ASC';
+        $expectedSql = 'SELECT author.first_name AS "FirstName", author.last_name AS "LastName", COUNT(book.id) AS nbBooks FROM author LEFT JOIN book ON (author.id=book.author_id) GROUP BY author.first_name,author.last_name ORDER BY author.last_name ASC';
 
         $this->assertEquals($expectedSql, $this->con->getLastExecutedQuery());
 

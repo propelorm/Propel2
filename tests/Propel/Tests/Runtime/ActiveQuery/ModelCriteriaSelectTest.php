@@ -14,6 +14,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\OnDemandFormatter;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
@@ -451,40 +452,35 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
     /**
      * @return void
      */
-    public function testGetSelectReturnsNullByDefault()
-    {
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->assertNull($c->getSelect());
-    }
-
-    /**
-     * @return void
-     */
-    public function testGetSelectReturnsStringWhenSelectingASingleColumn()
+    public function testGetSelectAddsToAsColumns()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select('Title');
-        $this->assertEquals('Title', $c->getSelect());
+
+        $this->assertIsArray($c->getAsColumns());
+        $this->assertCount(1, $c->getAsColumns());
+        $this->assertArrayHasKey('"Title"', $c->getAsColumns());
+        $clause = $c->getAsColumns()['"Title"'];
+        $this->assertEquals('book.title', $clause);
     }
 
     /**
      * @return void
      */
-    public function testGetSelectReturnsArrayWhenSelectingSeveralColumns()
+    public function testGetSelectAddsArrayToAsColumns()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->select(['Id', 'Title']);
-        $this->assertEquals(['Id', 'Title'], $c->getSelect());
-    }
+        $columns = ['Id', 'Title'];
+        $c->select($columns);
 
-    /**
-     * @return void
-     */
-    public function testGetSelectReturnsArrayWhenSelectingASingleColumnAsArray()
-    {
-        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->select(['Title']);
-        $this->assertEquals(['Title'], $c->getSelect());
+        $this->assertIsArray($c->getAsColumns());
+        $this->assertCount(2, $c->getAsColumns());
+        foreach ($columns as $columnName) {
+            $quotedName = "\"$columnName\"";
+            $this->assertArrayHasKey($quotedName, $c->getAsColumns());
+            $clause = $c->getAsColumns()[$quotedName];
+            $this->assertEquals('book.' . strtolower($columnName), $clause);
+        }
     }
 
     /**
@@ -494,14 +490,17 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select('*');
-        $this->assertEquals([
-            'Propel\Tests\Bookstore\Book.Id',
-            'Propel\Tests\Bookstore\Book.Title',
-            'Propel\Tests\Bookstore\Book.ISBN',
-            'Propel\Tests\Bookstore\Book.Price',
-            'Propel\Tests\Bookstore\Book.PublisherId',
-            'Propel\Tests\Bookstore\Book.AuthorId',
-        ], $c->getSelect());
+        $tableColumns = BookTableMap::getTableMap()->getColumns();
+
+        $this->assertIsArray($c->getAsColumns());
+        $this->assertCount(count($tableColumns), $c->getAsColumns());
+        foreach ($tableColumns as $columnMap) {
+            $columnName = $c->getModelName() . '.' . $columnMap->getPhpName();
+            $quotedName = "\"$columnName\"";
+            $this->assertArrayHasKey($quotedName, $c->getAsColumns());
+            $clause = $c->getAsColumns()[$quotedName];
+            $this->assertEquals($columnMap->getFullyQualifiedName(), $clause);
+        }
     }
 
     /**
@@ -516,5 +515,15 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $rows = $c->find($this->con);
 
         $this->assertTrue($c->getFormatter() instanceof OnDemandFormatter, 'The formatter is preserved');
+    }
+    
+    /**
+     * @return void
+     */
+    public function testSelectNonexistentColumnThrowsException()
+    {
+        $this->expectException(PropelException::class);
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->select(['Id', 'LeUnknonwColumn']);
     }
 }
