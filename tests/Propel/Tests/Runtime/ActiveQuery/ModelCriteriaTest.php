@@ -524,7 +524,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->having('Propel\Tests\Bookstore\Book.Title <> ?', 'foo');
 
-        $sql = 'SELECT  FROM  HAVING book.title <> :p1';
+        $sql = 'SELECT  FROM book HAVING book.title <> :p1';
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
@@ -541,7 +541,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->having(['cond1', 'cond2']);
 
-        $sql = 'SELECT  FROM  HAVING (book.title <> :p1 AND book.title like :p2)';
+        $sql = 'SELECT  FROM book HAVING (book.title <> :p1 AND book.title like :p2)';
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
             ['table' => 'book', 'column' => 'title', 'value' => '%bar%'],
@@ -553,7 +553,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->condition('cond2', 'Propel\Tests\Bookstore\Book.Title like ?', '%bar%');
         $c->having(['cond1', 'cond2'], Criteria::LOGICAL_OR);
 
-        $sql = 'SELECT  FROM  HAVING (book.title <> :p1 OR book.title like :p2)';
+        $sql = 'SELECT  FROM book HAVING (book.title <> :p1 OR book.title like :p2)';
         $this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts an array of named conditions with an operator');
     }
 
@@ -589,14 +589,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->orderBy('Propel\Tests\Bookstore\Book.Title');
 
-        $sql = 'SELECT  FROM  ORDER BY book.title ASC';
+        $sql = 'SELECT  FROM book ORDER BY book.title ASC';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a column name and adds an ORDER BY clause');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->orderBy('Propel\Tests\Bookstore\Book.Title', 'desc');
 
-        $sql = 'SELECT  FROM  ORDER BY book.title DESC';
+        $sql = 'SELECT  FROM book ORDER BY book.title DESC';
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts an order parameter');
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -623,7 +623,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->orderBy('Title');
 
-        $sql = 'SELECT  FROM  ORDER BY book.title ASC';
+        $sql = 'SELECT  FROM book ORDER BY book.title ASC';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a simple column name and adds an ORDER BY clause');
     }
@@ -637,7 +637,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->addAsColumn('t', BookTableMap::COL_TITLE);
         $c->orderBy('t');
 
-        $sql = 'SELECT book.title AS t FROM  ORDER BY t ASC';
+        $sql = 'SELECT book.title AS t FROM book ORDER BY t ASC';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'orderBy() accepts a column alias and adds an ORDER BY clause');
     }
@@ -650,7 +650,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupBy('Propel\Tests\Bookstore\Book.AuthorId');
 
-        $sql = 'SELECT  FROM  GROUP BY book.author_id';
+        $sql = 'SELECT  FROM book GROUP BY book.author_id';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a column name and adds a GROUP BY clause');
 
@@ -671,7 +671,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupBy('AuthorId');
 
-        $sql = 'SELECT  FROM  GROUP BY book.author_id';
+        $sql = 'SELECT  FROM book GROUP BY book.author_id';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a simple column name and adds a GROUP BY clause');
     }
@@ -685,7 +685,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->addAsColumn('t', BookTableMap::COL_TITLE);
         $c->groupBy('t');
 
-        $sql = 'SELECT book.title AS t FROM  GROUP BY t';
+        $sql = 'SELECT book.title AS t FROM book GROUP BY t';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupBy() accepts a column alias and adds a GROUP BY clause');
     }
@@ -709,7 +709,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupByClass('Propel\Tests\Bookstore\Book');
 
-        $sql = 'SELECT  FROM  GROUP BY book.id,book.title,book.isbn,book.price,book.publisher_id,book.author_id';
+        $sql = 'SELECT  FROM book GROUP BY book.id,book.title,book.isbn,book.price,book.publisher_id,book.author_id';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class name and adds a GROUP BY clause for all columns of the class');
     }
@@ -722,7 +722,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->groupByClass('b');
 
-        $sql = 'SELECT  FROM  GROUP BY book.id,book.title,book.isbn,book.price,book.publisher_id,book.author_id';
+        $sql = 'SELECT  FROM book GROUP BY book.id,book.title,book.isbn,book.price,book.publisher_id,book.author_id';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a class alias and adds a GROUP BY clause for all columns of the class');
     }
@@ -736,7 +736,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->setModelAlias('b', true);
         $c->groupByClass('b');
 
-        $sql = 'SELECT  FROM  GROUP BY b.id,b.title,b.isbn,b.price,b.publisher_id,b.author_id';
+        $sql = 'SELECT  FROM book GROUP BY b.id,b.title,b.isbn,b.price,b.publisher_id,b.author_id';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'groupByClass() accepts a true class alias and adds a GROUP BY clause for all columns of the class');
     }
@@ -776,7 +776,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->distinct();
-        $sql = 'SELECT DISTINCT  FROM ';
+        $sql = 'SELECT DISTINCT  FROM book';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'distinct() adds a DISTINCT clause');
     }
@@ -788,12 +788,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->limit(10);
-        $sql = 'SELECT  FROM  LIMIT 10';
+        $sql = 'SELECT  FROM book LIMIT 10';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
         //test that limit 0 also works
         $c->limit(0);
-        $sql = 'SELECT  FROM  LIMIT 0';
+        $sql = 'SELECT  FROM book LIMIT 0';
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'limit() adds a LIMIT clause');
     }
@@ -807,9 +807,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->limit(50);
         $c->offset(10);
         if ($this->isDb('mysql')) {
-            $sql = 'SELECT  FROM  LIMIT 10, 50';
+            $sql = 'SELECT  FROM book LIMIT 10, 50';
         } else {
-            $sql = 'SELECT  FROM  LIMIT 50 OFFSET 10';
+            $sql = 'SELECT  FROM book LIMIT 50 OFFSET 10';
         }
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'offset() adds an OFFSET clause');
@@ -891,7 +891,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookstoreEmployee');
         $c->join('Propel\Tests\Bookstore\BookstoreEmployee.Supervisor');
-        $sql = $this->getSql('SELECT  FROM  INNER JOIN bookstore_employee ON (bookstore_employee.supervisor_id=bookstore_employee.id)');
+        $sql = $this->getSql('SELECT  FROM bookstore_employee INNER JOIN bookstore_employee ON (bookstore_employee.supervisor_id=bookstore_employee.id)');
         $params = [];
         $this->assertCriteriaTranslation($c, $sql, $params, 'join() uses relation names as defined in schema.xml');
     }
