@@ -1066,7 +1066,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName('yes'); // WHERE $colName = true
      * </code>
      *
-     * @param     boolean|string|(boolean|string)[] \$$variableName The value to use as filter.
+     * @param     bool|string|(bool|string)[] \$$variableName The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
