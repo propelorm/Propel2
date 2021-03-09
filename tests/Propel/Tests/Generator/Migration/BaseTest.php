@@ -231,7 +231,7 @@ class BaseTest extends MigrationTestCase
     <table name="migration_test_3">
         <column name="field1" type="CHAR" size="5"/>
 
-        <column name="field2" type="INTEGER" size="6"/>
+        <column name="field2" type="VARCHAR" size="6"/>
         <column name="field3" type="BIGINT"/>
         <column name="field4" type="REAL"/>
         <column name="field5" type="FLOAT"/>
@@ -256,7 +256,7 @@ class BaseTest extends MigrationTestCase
     <table name="migration_test_3">
         <column name="field1" type="CHAR" size="5"/>
 
-        <column name="field2" type="INTEGER" size="12"/>
+        <column name="field2" type="VARCHAR" size="12"/>
         <column name="field3" type="REAL"/>
         <column name="field4" type="FLOAT"/>
         <column name="field5" type="DOUBLE"/>

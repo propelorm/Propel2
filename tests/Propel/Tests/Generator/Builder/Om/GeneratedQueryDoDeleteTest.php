@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\AuthorQuery;
@@ -451,6 +452,8 @@ class GeneratedQueryDoDeleteTest extends BookstoreEmptyTestBase
 
     /**
      * Test passing null values to removeInstanceFromPool().
+     *
+     * @doesNotPerformAssertions
      *
      * @return void
      */
