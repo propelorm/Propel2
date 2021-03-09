@@ -8,12 +8,13 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use PDOStatement;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 
@@ -213,7 +214,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param string $parameter
      * @param mixed $value
      * @param \Propel\Runtime\Map\ColumnMap $cMap
@@ -221,7 +222,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->getType() === PropelTypes::CLOB_EMU) {
             return $stmt->bindParam(':p' . $position, $value, $cMap->getPdoType(), strlen($value));
@@ -252,5 +253,24 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         return parent::prepareParams($params);
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' LOCK IN SHARE MODE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
     }
 }

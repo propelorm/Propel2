@@ -40,14 +40,14 @@ class PropelExceptionTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return void
      */
     public function testIsThrowable()
     {
+        $this->expectException(PropelException::class);
+
         $e = new PropelException('this is an error');
 
         throw $e;

@@ -588,12 +588,12 @@ class TableTest extends ModelTestCase
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testAddEmptyIndex()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $table = new Table();
         $table->addIndex(new Index());
 

@@ -8,11 +8,14 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\RuntimeException;
 use Propel\Common\Config\Loader\FileLoader as BaseFileLoader;
 use Propel\Tests\TestCase;
 
 class FileLoaderTest extends TestCase
 {
+    /** @var TestableFileLoader */
     private $loader;
 
     /**
@@ -112,14 +115,6 @@ class FileLoaderTest extends TestCase
     /**
      * @return void
      */
-    public function testInitialResolveValueIsFalse()
-    {
-        $this->assertAttributeEquals(false, 'resolved', $this->loader);
-    }
-
-    /**
-     * @return void
-     */
     public function testResolveParams()
     {
         putenv('host=127.0.0.1');
@@ -190,46 +185,46 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Parameter 'baz' not found in configuration file.
-     *
      * @return void
      */
     public function testResolveThrowsExceptionIfInvalidPlaceholder()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Parameter 'baz' not found in configuration file.");
+
         $this->loader->resolveParams(['foo' => 'bar', '%baz%']);
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Parameter 'foobar' not found in configuration file.
-     *
      * @return void
      */
     public function testResolveThrowsExceptionIfNonExistentParameter()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Parameter 'foobar' not found in configuration file.");
+
         $this->loader->resolveParams(['foo %foobar% bar']);
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\RuntimeException
-     * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
-     *
      * @return void
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReference()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Circular reference detected for parameter 'bar'.");
+
         $this->loader->resolveParams(['foo' => '%bar%', 'bar' => '%foobar%', 'foobar' => '%foo%']);
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\RuntimeException
-     * @expectedExceptionMessage Circular reference detected for parameter 'bar'.
-     *
      * @return void
      */
     public function testResolveThrowsRuntimeExceptionIfCircularReferenceMixed()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Circular reference detected for parameter 'bar'.");
+
         $this->loader->resolveParams(['foo' => 'a %bar%', 'bar' => 'a %foobar%', 'foobar' => 'a %foo%']);
     }
 
@@ -316,13 +311,13 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Environment variable 'foo' is not defined.
-     *
      * @return void
      */
     public function testNonExistentEnvironmentVariableThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Environment variable 'foo' is not defined.");
+
         putenv('home=myHome');
 
         $config = [
@@ -334,13 +329,13 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\RuntimeException
-     * @expectedExceptionMessage A string value must be composed of strings and/or numbers,
-     *
      * @return void
      */
     public function testParameterIsNotStringOrNumber()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A string value must be composed of strings and/or numbers,');
+
         $config = [
             'foo' => 'a %bar%',
             'bar' => [],
@@ -370,7 +365,7 @@ class TestableFileLoader extends BaseFileLoader
     /**
      * @return void
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null)
     {
     }
 

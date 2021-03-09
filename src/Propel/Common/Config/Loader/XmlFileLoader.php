@@ -20,14 +20,14 @@ class XmlFileLoader extends FileLoader
     /**
      * Loads an Xml file.
      *
-     * @param string $file The resource
+     * @param string $resource The resource
      * @param string|null $type The resource type
      *
      * @return array
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null)
     {
-        $content = XmlToArrayConverter::convert($this->getPath($file));
+        $content = XmlToArrayConverter::convert($this->getPath($resource));
         $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
 
         return $content;

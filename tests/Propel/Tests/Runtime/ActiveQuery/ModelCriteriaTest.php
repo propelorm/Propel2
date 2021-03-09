@@ -14,6 +14,7 @@ use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Exception\EntityNotFoundException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\PropelException;
@@ -752,12 +753,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\ClassNotFoundException
-     *
      * @return void
      */
     public function testGroupByClassThrowsExceptionOnUnknownClass()
     {
+        $this->expectException(ClassNotFoundException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->groupByClass('Author');
     }
@@ -1301,12 +1302,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Exception\UnknownRelationException
-     *
      * @return void
      */
     public function testWithThrowsExceptionWhenJoinLacks()
     {
+        $this->expectException(UnknownRelationException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->with('Propel\Tests\Bookstore\Author');
     }
@@ -1324,12 +1325,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Exception\UnknownRelationException
-     *
      * @return void
      */
     public function testWithThrowsExceptionWhenNotUsingAlias()
     {
+        $this->expectException(UnknownRelationException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author a');
         $c->with('Propel\Tests\Bookstore\Author');
@@ -1878,12 +1879,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testFindOneOrCreateThrowsExceptionWhenQueryContainsJoin()
     {
+        $this->expectException(PropelException::class);
+
         $book = BookQuery::create('b')
             ->filterByPrice(125)
             ->useAuthorQuery()
@@ -2094,12 +2095,12 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testFindPksCompositeKey()
     {
+        $this->expectException(PropelException::class);
+
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\BookListRel');
         $bookListRel = $c->findPks([[1, 2]]);
     }
@@ -2773,9 +2774,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     public function testMagicGroupBy()
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
+        if( $this->runningOnMySQL())
+        {
+            $con->exec('SET SESSION sql_mode = "TRADITIONAL"');
+        }
 
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $books = $c->groupByTitle()->find($con);
+        $c->groupByTitle()->find($con);
 
         if ($this->isDb('pgsql')) {
             $expectedSQL = 'SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book GROUP BY book.title,book.id,book.isbn,book.price,book.publisher_id,book.author_id';
@@ -2990,6 +2995,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -2998,6 +3004,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -3006,6 +3013,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->leftJoinWith('b.Author a');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
@@ -3015,6 +3023,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->innerJoinWith('b.Publisher p');
         $c1->mergeWith($c2);
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
@@ -3256,6 +3265,8 @@ class ModelCriteriaTest extends BookstoreTestBase
     }
 
     /**
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testJoinSelectColumn()

@@ -193,14 +193,14 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param string $index
-     * @param string $newval
+     * @param string $value
      *
      * @return void
      */
-    public function offsetSet($index, $newval)
+    public function offsetSet($index, $value)
     {
-        $this->collection->offsetSet($index, $newval);
-        parent::offsetSet($index, $newval);
+        $this->collection->offsetSet($index, $value);
+        parent::offsetSet($index, $value);
         $this->refreshPositions();
     }
 
@@ -229,42 +229,46 @@ class CollectionIterator extends ArrayIterator
     }
 
     /**
-     * @return void
-     */
-    public function asort()
-    {
-        parent::asort();
-        $this->refreshPositions();
-    }
-
-    /**
-     * @return void
-     */
-    public function ksort()
-    {
-        parent::ksort();
-        $this->refreshPositions();
-    }
-
-    /**
-     * @param string $cmp_function
+     * @param int $flags
      *
      * @return void
      */
-    public function uasort($cmp_function)
+    public function asort($flags = SORT_REGULAR)
     {
-        parent::uasort($cmp_function);
+        parent::asort($flags);
         $this->refreshPositions();
     }
 
     /**
-     * @param string $cmp_function
+     * @param int $flags
      *
      * @return void
      */
-    public function uksort($cmp_function)
+    public function ksort($flags = SORT_REGULAR)
     {
-        parent::uksort($cmp_function);
+        parent::ksort($flags);
+        $this->refreshPositions();
+    }
+
+    /**
+     * @param string $callback
+     *
+     * @return void
+     */
+    public function uasort($callback)
+    {
+        parent::uasort($callback);
+        $this->refreshPositions();
+    }
+
+    /**
+     * @param string $callback
+     *
+     * @return void
+     */
+    public function uksort($callback)
+    {
+        parent::uksort($callback);
         $this->refreshPositions();
     }
 

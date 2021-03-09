@@ -206,7 +206,7 @@ class PropelModelPagerTest extends BookstoreEmptyTestBase
         $this->createBooks(5);
         $pager = $this->getPager(4, 1);
         $this->assertEquals(2, $pager->getLastPage(), 'getLastPage() returns the last page number');
-        $this->assertInternalType('integer', $pager->getLastPage(), 'getLastPage() returns an integer');
+        $this->assertIsInt($pager->getLastPage(), 'getLastPage() returns an integer');
     }
 
     /**

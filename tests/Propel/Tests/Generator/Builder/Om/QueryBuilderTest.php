@@ -11,8 +11,10 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookClubListQuery;
@@ -22,6 +24,7 @@ use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\EssayQuery;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookListRelTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
@@ -307,7 +310,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->save($this->con);
 
         $book = BookQuery::create()->select(['Book.Title', 'Book.ISBN'])->findPk($b->getId(), $this->con);
-        $this->assertInternalType('array', $book);
+        $this->assertIsArray($book);
 
         $book = BookQuery::create()->filterByTitle('bar')->findPk($b->getId(), $this->con);
         $this->assertNull($book);
@@ -863,12 +866,12 @@ class QueryBuilderTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testFilterUsingCollectionByRelationNameCompositePk()
     {
+        $this->expectException(PropelException::class);
+
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
 
@@ -882,6 +885,26 @@ class QueryBuilderTest extends BookstoreTestBase
             ->find($this->con);
 
         $this->fail('Expected PropelException : filterBy{RelationName}() only accepts arguments of type {RelationName}');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFilterByRefNonPrimaryFKey()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+
+        $testBookstoreEmployeeAccount = BookstoreEmployeeAccountQuery::create()
+            ->findOne();
+        $testAccAuditLog = $testBookstoreEmployeeAccount->getAcctAuditLogs();
+
+        $result = AcctAuditLogQuery::create()
+            ->addJoin(AcctAuditLogTableMap::COL_UID, BookstoreEmployeeAccountTableMap::COL_LOGIN)
+            ->filterByBookstoreEmployeeAccount($testBookstoreEmployeeAccount)
+            ->find($this->con);
+
+        $this->assertEquals($testAccAuditLog, $result, 'Generated query handles filterByRefFk() methods correctly for non primary fkeys');
     }
 
     /**
@@ -1062,6 +1085,36 @@ class QueryBuilderTest extends BookstoreTestBase
             ->join('BookSummary.SummarizedBook', Criteria::INNER_JOIN)
             ->add(BookTableMap::COL_TITLE, 'War And Peace', Criteria::EQUAL);
         $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on an inner join on required columns');
+    }
+
+    /**
+     * @return void
+     */
+    public function testUseFkQueryWith()
+    {
+        $q = BookQuery::create()
+            ->withAuthorQuery(
+                function (AuthorQuery $q) {
+                    return $q->filterByFirstName('Leo');
+                }
+            );
+        $q1 = BookQuery::create()
+            ->useAuthorQuery()
+            ->filterByFirstName('Leo')
+            ->endUse();
+        $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
+
+        $q = BookSummaryQuery::create()
+            ->withSummarizedBookQuery(
+                function (BookQuery $q) {
+                    return $q->filterByTitle('War and Peace');
+                }
+            );
+        $q1 = BookSummaryQuery::create()
+            ->useSummarizedBookQuery()
+            ->filterByTitle('War and Peace')
+            ->endUse();
+        $this->assertEquals($q1, $q, 'useFkQuery() translates to a condition on an inner join on required columns');
     }
 
     /**

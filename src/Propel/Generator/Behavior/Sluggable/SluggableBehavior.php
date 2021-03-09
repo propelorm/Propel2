@@ -260,6 +260,10 @@ protected function createRawSlug()
  */
 protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->getParameter('replacement') . "')
 {
+    // set locale explicitly
+    \$localeOrigin = setlocale(LC_CTYPE, 0);
+    setlocale(LC_CTYPE, 'C.UTF-8');
+
     // transliterate
     if (function_exists('iconv')) {
         \$slug = iconv('utf-8', 'us-ascii//TRANSLIT', \$slug);
@@ -280,6 +284,8 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 
     // trim
     \$slug = trim(\$slug, \$replacement);
+
+    setlocale(LC_CTYPE, \$localeOrigin);
 
     if (empty(\$slug)) {
         return 'n-a';
@@ -370,9 +376,9 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         ->prune(\$this)";
 
         if ($this->getParameter('scope_column')) {
-            $scope_column = $this->getColumnForParameter('scope_column')->getPhpName();
+            $scopeColumn = $this->getColumnForParameter('scope_column')->getPhpName();
             $script .= "
-            ->filterBy('{$scope_column}', \$this->get{$scope_column}())";
+            ->filterBy('{$scopeColumn}', \$this->get{$scopeColumn}())";
         }
         // watch out: some of the columns may be hidden by the soft_delete behavior
         if ($this->table->hasBehavior('soft_delete')) {

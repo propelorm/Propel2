@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.2.1@ea9cb72143b77e7520c52fa37290bd8d8bc88fd9">
+  <file src="src/Propel/Common/Config/PropelConfiguration.php">
+    <TooFewArguments occurrences="1">
+      <code>new TreeBuilder()</code>
+    </TooFewArguments>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateColumn/templates/objectCompute.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$bindings</code>
+      <code>$column</code>
+      <code>$column</code>
+      <code>$sql</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateColumn/templates/objectUpdate.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$column</code>
+      <code>$column</code>
+      <code>$column</code>
+      <code>$column</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateColumn/templates/objectUpdateRelated.php">
+    <UndefinedGlobalVariable occurrences="14">
+      <code>$aggregateName</code>
+      <code>$aggregateName</code>
+      <code>$aggregateName</code>
+      <code>$aggregateName</code>
+      <code>$relationName</code>
+      <code>$relationName</code>
+      <code>$relationName</code>
+      <code>$relationName</code>
+      <code>$relationName</code>
+      <code>$relationName</code>
+      <code>$updateMethodName</code>
+      <code>$updateMethodName</code>
+      <code>$variableName</code>
+      <code>$variableName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateColumn/templates/queryFindRelated.php">
+    <UndefinedGlobalVariable occurrences="6">
+      <code>$aggregateName</code>
+      <code>$foreignQueryName</code>
+      <code>$foreignTable</code>
+      <code>$refRelationName</code>
+      <code>$relationName</code>
+      <code>$variableName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateColumn/templates/queryUpdateRelated.php">
+    <UndefinedGlobalVariable occurrences="7">
+      <code>$aggregateName</code>
+      <code>$relationName</code>
+      <code>$updateMethodName</code>
+      <code>$variableName</code>
+      <code>$variableName</code>
+      <code>$variableName</code>
+      <code>$variableName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/objectCompute.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$bindings</code>
+      <code>$sql</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/objectUpdate.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$aggregationName</code>
+      <code>$columnPhpNames</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$archiveTable-&gt;isArchiveTable</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectArchive.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$archiveTablePhpName</code>
+      <code>$archiveTablePhpName</code>
+      <code>$archivedAtColumn</code>
+      <code>$hasArchiveClass</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectDeleteWithoutArchive.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectGetArchive.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$archiveTablePhpName</code>
+      <code>$archiveTableQueryName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectPopulateFromArchive.php">
+    <UndefinedGlobalVariable occurrences="5">
+      <code>$archiveTablePhpName</code>
+      <code>$columns</code>
+      <code>$columns</code>
+      <code>$objectClassName</code>
+      <code>$usesAutoIncrement</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectPreDelete.php">
+    <UndefinedGlobalVariable occurrences="3">
+      <code>$isAddHooks</code>
+      <code>$queryClassName</code>
+      <code>$queryClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/objectSaveWithoutArchive.php">
+    <UndefinedGlobalVariable occurrences="3">
+      <code>$isArchiveOnInsert</code>
+      <code>$isArchiveOnUpdate</code>
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Archivable/templates/queryArchive.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$archiveTablePhpName</code>
+      <code>$modelTableMap</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/ConcreteInheritance/ConcreteInheritanceBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$fk-&gt;isParentChild</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Delegate/templates/queryMethodsTemplate.php">
+    <UndefinedGlobalVariable occurrences="14">
+      <code>$childClassName</code>
+      <code>$fieldName</code>
+      <code>$fieldName</code>
+      <code>$fieldName</code>
+      <code>$fieldName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$phpName</code>
+      <code>$tablePhpName</code>
+      <code>$tablePhpName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/I18nBehavior.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$columns</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Propel\Generator\Model\Column[]</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectAttributes.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$defaultLocale</code>
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectClearReferences.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$defaultLocale</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectGetCurrentTranslation.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$i18nTablePhpName</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectGetLocale.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectGetLocaleAlias.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$alias</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectGetTranslation.php">
+    <UndefinedGlobalVariable occurrences="9">
+      <code>$defaultLocale</code>
+      <code>$i18nListVariable</code>
+      <code>$i18nListVariable</code>
+      <code>$i18nQueryName</code>
+      <code>$i18nSetterMethod</code>
+      <code>$i18nTablePhpName</code>
+      <code>$i18nTablePhpName</code>
+      <code>$localeColumnName</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectPostDelete.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$i18nQueryName</code>
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectRemoveTranslation.php">
+    <UndefinedGlobalVariable occurrences="5">
+      <code>$defaultLocale</code>
+      <code>$i18nCollection</code>
+      <code>$i18nCollection</code>
+      <code>$i18nQueryName</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectSetLocale.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$defaultLocale</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectSetLocaleAlias.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$alias</code>
+      <code>$defaultLocale</code>
+      <code>$localeColumnName</code>
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectSetTranslation.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$defaultLocale</code>
+      <code>$i18nTablePhpName</code>
+      <code>$i18nTablePhpName</code>
+      <code>$localeColumnName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectTranslatedColumnGetter.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$columnPhpName</code>
+      <code>$comment</code>
+      <code>$functionStatement</code>
+      <code>$params</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/objectTranslatedColumnSetter.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$columnPhpName</code>
+      <code>$comment</code>
+      <code>$functionStatement</code>
+      <code>$params</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/queryJoinI18n.php">
+    <UndefinedGlobalVariable occurrences="5">
+      <code>$defaultLocale</code>
+      <code>$i18nRelationName</code>
+      <code>$i18nRelationName</code>
+      <code>$localeColumn</code>
+      <code>$queryClass</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/queryJoinWithI18n.php">
+    <UndefinedGlobalVariable occurrences="3">
+      <code>$defaultLocale</code>
+      <code>$i18nRelationName</code>
+      <code>$i18nRelationName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/queryUseI18nQuery.php">
+    <UndefinedGlobalVariable occurrences="4">
+      <code>$defaultLocale</code>
+      <code>$i18nRelationName</code>
+      <code>$namespacedQueryClass</code>
+      <code>$queryClass</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/I18n/templates/staticAttributes.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$defaultLocale</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/NestedSet/templates/objectInsertAsLastChildOf.php">
+    <UndefinedGlobalVariable occurrences="6">
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$queryClassName</code>
+      <code>$useScope</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/NestedSet/templates/objectSetLeft.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$leftColumn</code>
+      <code>$objectClassName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Sortable/templates/tableMapSortable.php">
+    <UndefinedGlobalVariable occurrences="5">
+      <code>$multiScope</code>
+      <code>$rankColumn</code>
+      <code>$scope</code>
+      <code>$tableName</code>
+      <code>$useScope</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Validate/templates/objectLoadValidatorMetadata.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$constraints</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Validate/templates/objectValidate.php">
+    <UndefinedGlobalVariable occurrences="3">
+      <code>$aVarNames</code>
+      <code>$collVarNames</code>
+      <code>$hasForeignKeys</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$versionTable-&gt;isVersionTable</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Builder/DataModelBuilder.php">
+    <InvalidArgument occurrences="1">
+      <code>$this</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php">
+    <UndefinedMethod occurrences="25">
+      <code>addAddArrayElement</code>
+      <code>addAddArrayElement</code>
+      <code>addArrayAccessor</code>
+      <code>addArrayMutator</code>
+      <code>addBooleanAccessor</code>
+      <code>addBooleanMutator</code>
+      <code>addDefaultAccessor</code>
+      <code>addDefaultAccessor</code>
+      <code>addDefaultMutator</code>
+      <code>addEnumAccessor</code>
+      <code>addEnumMutator</code>
+      <code>addHasArrayElement</code>
+      <code>addHasArrayElement</code>
+      <code>addJsonAccessor</code>
+      <code>addJsonMutator</code>
+      <code>addLazyLoader</code>
+      <code>addLobMutator</code>
+      <code>addObjectAccessor</code>
+      <code>addObjectMutator</code>
+      <code>addRemoveArrayElement</code>
+      <code>addRemoveArrayElement</code>
+      <code>addSetAccessor</code>
+      <code>addSetMutator</code>
+      <code>addTemporalAccessor</code>
+      <code>addTemporalMutator</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/baseObjectMethodHook.php">
+    <UndefinedGlobalVariable occurrences="16">
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$hasBaseClass</code>
+      <code>$postDelete</code>
+      <code>$postInsert</code>
+      <code>$postSave</code>
+      <code>$postUpdate</code>
+      <code>$preDelete</code>
+      <code>$preInsert</code>
+      <code>$preSave</code>
+      <code>$preUpdate</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/baseObjectMethodMagicCall.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$behaviorCallScript</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/baseObjectMethods.php">
+    <UndefinedGlobalVariable occurrences="3">
+      <code>$className</code>
+      <code>$className</code>
+      <code>$className</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/tableMapClearRelatedInstancePool.php">
+    <UndefinedGlobalVariable occurrences="2">
+      <code>$relatedClassNames</code>
+      <code>$tableName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/tableMapConstants.php">
+    <UndefinedGlobalVariable occurrences="11">
+      <code>$className</code>
+      <code>$classPath</code>
+      <code>$columns</code>
+      <code>$dbName</code>
+      <code>$nbColumns</code>
+      <code>$nbHydrateColumns</code>
+      <code>$nbLazyLoadColumns</code>
+      <code>$stringFormat</code>
+      <code>$tableName</code>
+      <code>$tableName</code>
+      <code>$tablePhpName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/tableMapFields.php">
+    <UndefinedGlobalVariable occurrences="10">
+      <code>$fieldKeysCamelCaseName</code>
+      <code>$fieldKeysColname</code>
+      <code>$fieldKeysFieldName</code>
+      <code>$fieldKeysNum</code>
+      <code>$fieldKeysPhpName</code>
+      <code>$fieldNamesCamelCaseName</code>
+      <code>$fieldNamesColname</code>
+      <code>$fieldNamesFieldName</code>
+      <code>$fieldNamesNum</code>
+      <code>$fieldNamesPhpName</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/tableMapInstancePool.php">
+    <UndefinedGlobalVariable occurrences="9">
+      <code>$addInstancePoolKeySnippet</code>
+      <code>$countPks</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$objectClassName</code>
+      <code>$removeInstancePoolKeySnippetObjects</code>
+      <code>$removeInstancePoolKeySnippetPks</code>
+    </UndefinedGlobalVariable>
+  </file>
+  <file src="src/Propel/Generator/Builder/Util/SchemaReader.php">
+    <UndefinedFunction occurrences="2">
+      <code>'endElement'</code>
+      <code>'startElement'</code>
+    </UndefinedFunction>
+  </file>
+  <file src="src/Propel/Generator/Command/Console/Input/ArrayInput.php">
+    <InvalidArrayAccess occurrences="2">
+      <code>$key[0]</code>
+      <code>$param[0]</code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="src/Propel/Generator/Command/Helper/ConsoleHelper.php">
+    <UndefinedClass occurrences="1">
+      <code>Symfony23DialogHelper</code>
+    </UndefinedClass>
+  </file>
+  <file src="src/Propel/Generator/Command/Helper/ConsoleHelper3.php">
+    <InvalidReturnType occurrences="2">
+      <code>writeBlock</code>
+      <code>writeSection</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Generator/Command/InitCommand.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$helper</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Propel\Generator\Command\Helper\ConsoleHelperInterface</code>
+    </InvalidReturnType>
+    <MissingDependency occurrences="1">
+      <code>ConsoleHelper</code>
+    </MissingDependency>
+    <NullArgument occurrences="1">
+      <code>$e</code>
+    </NullArgument>
+  </file>
+  <file src="src/Propel/Generator/Manager/AbstractManager.php">
+    <UndefinedMethod occurrences="1">
+      <code>getLocation</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Generator/Manager/MigrationManager.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$migrationTimestamps</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>int[]</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Generator/Model/Column.php">
+    <InvalidArgument occurrences="1">
+      <code>[ $name, $phpNamingMethod, $namePrefix ]</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Generator/Model/ForeignKey.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$columns</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Propel\Generator\Model\Column[]</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Generator/Model/Index.php">
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;columnObjects</code>
+    </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="src/Propel/Generator/Model/Table.php">
+    <InvalidArgument occurrences="1">
+      <code>[ $name, $this-&gt;phpNamingMethod ]</code>
+    </InvalidArgument>
+    <InvalidReturnStatement occurrences="1">
+      <code>$pks</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Propel\Generator\Model\Column[]</code>
+    </InvalidReturnType>
+    <UndefinedMethod occurrences="1">
+      <code>isEarly</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Generator/Platform/SqlitePlatform.php">
+    <InvalidArgument occurrences="1">
+      <code>$column-&gt;getDefaultValue()</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Generator/Reverse/OracleSchemaParser.php">
+    <InvalidArrayOffset occurrences="1">
+      <code>$row[0]</code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="src/Propel/Generator/Util/QuickBuilder.php">
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
+    <UndefinedConstant occurrences="2">
+      <code>T_NAME_FULLY_QUALIFIED</code>
+      <code>T_NAME_QUALIFIED</code>
+    </UndefinedConstant>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php">
+    <UndefinedMethod occurrences="2">
+      <code>find</code>
+      <code>static::getShortName($this-&gt;modelName)</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/Criteria.php">
+    <EmptyArrayAccess occurrences="1">
+      <code>$joinClause</code>
+    </EmptyArrayAccess>
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;conditionalProxy-&gt;getCriteriaOrProxy()</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>$this|\Propel\Runtime\ActiveQuery\Criteria</code>
+    </InvalidReturnType>
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
+    <UndefinedClass occurrences="1">
+      <code>new $secondaryCriteriaClass()</code>
+    </UndefinedClass>
+    <UndefinedMethod occurrences="10">
+      <code>addSelectColumns</code>
+      <code>addSelfSelectColumns</code>
+      <code>getRelationMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>setIgnoreCase</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/OracleAdapter.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$dataFetcher-&gt;fetchColumn()</code>
+    </InvalidReturnStatement>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$dataFetcher-&gt;fetchColumn()</code>
+    </InvalidReturnStatement>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php">
+    <UndefinedConstant occurrences="5">
+      <code>PDO::SQLSRV_ATTR_ENCODING</code>
+      <code>PDO::SQLSRV_ATTR_ENCODING</code>
+      <code>PDO::SQLSRV_ENCODING_BINARY</code>
+      <code>PDO::SQLSRV_ENCODING_SYSTEM</code>
+      <code>PDO::SQLSRV_ENCODING_UTF8</code>
+    </UndefinedConstant>
+  </file>
+  <file src="src/Propel/Runtime/Collection/CollectionIterator.php">
+    <InvalidArgument occurrences="2">
+      <code>$callback</code>
+      <code>$callback</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Runtime/Connection/StatementWrapper.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;statement-&gt;fetchColumn($columnIndex)</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>string|null</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Runtime/Formatter/ArrayFormatter.php">
+    <UndefinedClass occurrences="1">
+      <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
+    </UndefinedClass>
+    <UndefinedMethod occurrences="1">
+      <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/Formatter/ObjectFormatter.php">
+    <UndefinedMethod occurrences="2">
+      <code>populateObject</code>
+      <code>populateObject</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/Formatter/OnDemandFormatter.php">
+    <UndefinedClass occurrences="1">
+      <code>new $class()</code>
+    </UndefinedClass>
+  </file>
+  <file src="src/Propel/Runtime/Map/RelationMap.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;foreignColumns</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Propel\Runtime\Map\ColumnMap[]</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Runtime/Propel.php">
+    <ParadoxicalCondition occurrences="2">
+      <code>self::LOG_ALERT</code>
+      <code>self::LOG_INFO</code>
+    </ParadoxicalCondition>
+  </file>
+  <file src="src/Propel/Runtime/Util/PropelModelPager.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;results</code>
+    </InvalidReturnStatement>
+  </file>
+</files>

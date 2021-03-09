@@ -11,6 +11,7 @@ namespace Propel\Tests\Runtime\Connection;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Tests\Helpers\BaseTestCase;
 
 class ConnectionManagerSingleTest extends BaseTestCase
@@ -35,12 +36,12 @@ class ConnectionManagerSingleTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testGetWriteConnectionFailsIfManagerIsNotConfigured()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $manager = new ConnectionManagerSingle();
         $con = $manager->getWriteConnection(new SqliteAdapter());
     }

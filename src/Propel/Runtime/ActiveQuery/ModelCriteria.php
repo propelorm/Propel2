@@ -843,6 +843,18 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function mergeWith(Criteria $criteria, $operator = null)
     {
+        if (
+            $criteria instanceof ModelCriteria
+            && !$criteria->getPrimaryCriteria()
+            && $criteria->isSelfColumnsSelected()
+            && $criteria->getWith()
+        ) {
+            if (!$this->isSelfColumnsSelected()) {
+                $this->addSelfSelectColumns();
+            }
+            $criteria->removeSelfSelectColumns();
+        }
+
         parent::mergeWith($criteria, $operator);
 
         // merge with
@@ -941,11 +953,43 @@ class ModelCriteria extends BaseModelCriteria
             return $this;
         }
 
+        /** @var string $tableMap */
         $tableMap = $this->modelTableMapName;
         $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
         $this->isSelfSelected = true;
 
         return $this;
+    }
+
+    /**
+     * Removes the select columns for the current table
+     *
+     * @param bool $force To enforce removing columns for changed alias, set it to true (f.e. with sub selects)
+     *
+     * @return $this The current object, for fluid interface
+     */
+    public function removeSelfSelectColumns($force = false)
+    {
+        if (!$this->isSelfSelected && !$force) {
+            return $this;
+        }
+
+        /** @var string $tableMap */
+        $tableMap = $this->modelTableMapName;
+        $tableMap::removeSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        $this->isSelfSelected = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether select columns for the current table are included
+     *
+     * @return bool
+     */
+    public function isSelfColumnsSelected()
+    {
+        return $this->isSelfSelected;
     }
 
     /**
@@ -1797,19 +1841,19 @@ class ModelCriteria extends BaseModelCriteria
      * Issue an UPDATE query based the current ModelCriteria and a list of changes.
      * This method is called by ModelCriteria::update() inside a transaction.
      *
-     * @param array $values Associative array of keys and values to replace
+     * @param array|\Propel\Runtime\ActiveQuery\Criteria $updateValues Associative array of keys and values to replace
      * @param \Propel\Runtime\Connection\ConnectionInterface $con a connection object
      * @param bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return int Number of updated rows
      */
-    public function doUpdate($values, ConnectionInterface $con, $forceIndividualSaves = false)
+    public function doUpdate($updateValues, ConnectionInterface $con, $forceIndividualSaves = false)
     {
         if ($forceIndividualSaves) {
             // Update rows one by one
             $objects = $this->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
             foreach ($objects as $object) {
-                foreach ($values as $key => $value) {
+                foreach ($updateValues as $key => $value) {
                     $object->setByName($key, $value);
                 }
             }
@@ -1817,11 +1861,11 @@ class ModelCriteria extends BaseModelCriteria
             $affectedRows = count($objects);
         } else {
             // update rows in a single query
-            if ($values instanceof Criteria) {
-                $set = $values;
+            if ($updateValues instanceof Criteria) {
+                $set = $updateValues;
             } else {
                 $set = new Criteria($this->getDbName());
-                foreach ($values as $columnName => $value) {
+                foreach ($updateValues as $columnName => $value) {
                     $realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
                     $set->add($realColumnName, $value);
                 }

@@ -44,8 +44,6 @@ class TransactionTraitTest extends TestCase
     }
 
     /**
-     * @throws \Throwable
-     *
      * @return void
      */
     public function testTransactionRollbackOnThrowable()
@@ -139,8 +137,6 @@ class TransactionTraitTest extends TestCase
     }
 
     /**
-     * @throws \Exception
-     *
      * @return void
      */
     public function testTransactionNestedThrowable()

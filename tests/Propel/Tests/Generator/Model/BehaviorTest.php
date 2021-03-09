@@ -9,6 +9,8 @@
 namespace Propel\Tests\Generator\Model;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Exception\BehaviorNotFoundException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
 use Propel\Tests\Helpers\MultipleBehavior;
@@ -56,12 +58,12 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\LogicException
-     *
      * @return void
      */
     public function testSetupObjectFailIfIdGivenOnNotMultipleBehavior()
     {
+        $this->expectException(LogicException::class);
+
         $b = new Behavior();
         $b->loadMapping(['name' => 'foo', 'id' => 'lala']);
     }
@@ -109,7 +111,7 @@ class BehaviorTest extends TestCase
     }
 
     /**
-     * test if the tables get the package name from the properties file
+     * test if a behavior definition in the schema is read correctly by the SchemaReader
      *
      * @return void
      */
@@ -126,6 +128,15 @@ class BehaviorTest extends TestCase
     <behavior name="timestampable">
       <parameter name="create_column" value="created_on"/>
       <parameter name="update_column" value="updated_on"/>
+      <parameter-list name="leParameterList">
+        <parameter-list-item>
+          <parameter name="leListItem1Value" value="leValue1"/>
+        </parameter-list-item>
+        <parameter-list-item>
+          <parameter name="leListItem2Value1" value="leValue2.1"/>
+          <parameter name="leListItem2Value2" value="leValue2.2"/>
+        </parameter-list-item>
+      </parameter-list>
     </behavior>
   </table>
 </database>
@@ -136,20 +147,26 @@ EOF;
         $this->assertEquals(1, count($behaviors), 'SchemaReader ads as many behaviors as there are behaviors tags');
         $behavior = $table->getBehavior('timestampable');
         $this->assertEquals('table1', $behavior->getTable()->getName(), 'SchemaReader sets the behavior table correctly');
-        $this->assertEquals(
-            ['create_column' => 'created_on', 'update_column' => 'updated_on', 'disable_created_at' => 'false', 'disable_updated_at' => 'false'],
-            $behavior->getParameters(),
-            'SchemaReader sets the behavior parameters correctly'
-        );
+        $expectedParameters = [
+            'create_column' => 'created_on',
+            'update_column' => 'updated_on',
+            'disable_created_at' => 'false',
+            'disable_updated_at' => 'false',
+            'leParameterList' => [
+                ['leListItem1Value' => 'leValue1'],
+                ['leListItem2Value1' => 'leValue2.1', 'leListItem2Value2' => 'leValue2.2'],
+            ]
+        ];
+        $this->assertEquals($expectedParameters, $behavior->getParameters(), 'SchemaReader sets the behavior parameters correctly');
     }
 
   /**
-   * @expectedException \Propel\Generator\Exception\BehaviorNotFoundException
-   *
    * @return void
    */
     public function testUnknownBehavior()
     {
+        $this->expectException(BehaviorNotFoundException::class);
+
         $schemaReader = new SchemaReader();
         $schema = <<<EOF
 <database name="test1">

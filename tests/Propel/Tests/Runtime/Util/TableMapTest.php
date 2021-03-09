@@ -8,7 +8,10 @@
 
 namespace Propel\Tests\Runtime\Util;
 
+use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Pdo\MssqlAdapter;
+use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\BookQuery;
@@ -17,6 +20,7 @@ use Propel\Tests\Bookstore\BookstoreQuery;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreTableMap;
 use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Bookstore\Map\PublisherTableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
 /**
@@ -41,7 +45,7 @@ class TableMapTest extends BookstoreTestBase
             $c = new Criteria();
             $c->setDistinct();
             if ($db instanceof PgsqlAdapter) {
-                $c->addSelectColumn('substring(' . BookTableMap::TITLE . " from position('Potter' in " . BookTableMap::TITLE . ')) AS col');
+                $c->addSelectColumn('substring(' . BookTableMap::COL_TITLE . " from position('Potter' in " . BookTableMap::COL_TITLE . ')) AS col');
             } else {
                 $this->markTestSkipped('Configured database vendor is not PostgreSQL');
             }
@@ -75,6 +79,8 @@ class TableMapTest extends BookstoreTestBase
     }
 
     /**
+     * @doesNotPerformAssertions
+     *
      * @return void
      */
     public function testDoCountDuplicateColumnName()
@@ -86,7 +92,7 @@ class TableMapTest extends BookstoreTestBase
         $c->addSelectColumn(AuthorTableMap::COL_ID);
         $c->setLimit(3);
         try {
-            $count = $c->doCount($con);
+            $c->doCount($con);
         } catch (Exception $e) {
             $this->fail('doCount() cannot deal with a criteria selecting duplicate column names ');
         }
@@ -254,24 +260,24 @@ class TableMapTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testDoDeleteNoCondition()
     {
+        $this->expectException(PropelException::class);
+
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->doDelete($con);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testDoDeleteJoin()
     {
+        $this->expectException(PropelException::class);
+
         $con = Propel::getServiceContainer()->getWriteConnection(BookTableMap::DATABASE_NAME);
         $c = new Criteria(BookTableMap::DATABASE_NAME);
         $c->add(BookTableMap::COL_TITLE, 'War And Peace');

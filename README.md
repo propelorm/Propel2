@@ -2,11 +2,11 @@
 
 Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.
 
-[![Build Status](https://travis-ci.org/propelorm/Propel2.svg?branch=master)](https://travis-ci.org/propelorm/Propel2)
+[![Github actions Status](https://github.com/propelorm/Propel2/workflows/CI/badge.svg?branch=master)](https://github.com/propelorm/Propel2/actions?query=workflow%3ACI+branch%3Amaster)
+[![codecov](https://codecov.io/gh/propelorm/Propel2/branch/master/graph/badge.svg?token=L1thFB9nOG)](https://codecov.io/gh/propelorm/Propel2)
 [![Code Climate](https://codeclimate.com/github/propelorm/Propel2/badges/gpa.svg)](https://codeclimate.com/github/propelorm/Propel2)
 [![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/propel/propel/license.svg)](https://packagist.org/packages/propel/propel)
-<a href="https://codeclimate.com/github/propelorm/Propel2"><img src="https://codeclimate.com/github/propelorm/Propel2/badges/coverage.svg"/></a>
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/propelorm/Propel)
 
 ## Requirements
@@ -40,4 +40,4 @@ Please see our [contribution guideline](http://propelorm.org/contribute.html). T
 
 ## License
 
-See the `LICENSE` file.
+MIT. See the `LICENSE` file for details.

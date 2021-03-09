@@ -159,7 +159,7 @@ class DelegateBehavior extends Behavior
                 $relationName = $builder->getFKPhpNameAffix($fk);
             }
                 $script .= "
-if (is_callable(array('$ARFQCN', \$name))) {
+if (method_exists({$ARFQCN}::class, \$name)) {
     \$delegate = \$this->get$relationName();
     if (!\$delegate) {
         \$delegate = new $ARClassName();
@@ -185,7 +185,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
         $matches = [];
         preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
         $values = rtrim($matches[2]) . "\n";
-        $new_result = '';
+        $newResult = '';
         $indent = '        ';
 
         foreach ($this->delegates as $key => $value) {
@@ -193,7 +193,7 @@ if (is_callable(array('$ARFQCN', \$name))) {
 
             $tn = ($delegateTable->getSchema() ? $delegateTable->getSchema() . NameGeneratorInterface::STD_SEPARATOR_CHAR : '') . $delegateTable->getCommonName();
             $ns = $delegateTable->getNamespace() ? '\\' . $delegateTable->getNamespace() : '';
-            $new_result .= "{$indent}\$keys_{$tn} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
+            $newResult .= "{$indent}\$keys_{$tn} = {$ns}\\Map\\{$delegateTable->getPhpName()}TableMap::getFieldNames(\$keyType);\n";
             $i = 0;
             foreach ($delegateTable->getColumns() as $column) {
                 if (!$this->isColumnForeignKeyOrDuplicated($column)) {
@@ -203,8 +203,8 @@ if (is_callable(array('$ARFQCN', \$name))) {
             }
         }
 
-        $new_result .= "{$indent}\$result = array({$values}\n{$indent});";
-        $text = str_replace($matches[1], ltrim($new_result), $text);
+        $newResult .= "{$indent}\$result = array({$values}\n{$indent});";
+        $text = str_replace($matches[1], ltrim($newResult), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();
     }

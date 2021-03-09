@@ -46,21 +46,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Variable \\$paramsDoc might not be defined\\.$#"
-			count: 4
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$methodSignature might not be defined\\.$#"
-			count: 10
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$buildScope might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
@@ -391,11 +376,6 @@ parameters:
 			path: src/Propel/Generator/Util/BehaviorLocator.php
 
 		-
-			message: "#^Parameter \\#1 \\$attribute of method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Util/QuickBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
@@ -432,6 +412,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLimit\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criteria.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLock\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
@@ -531,16 +516,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Parameter \\#1 \\$values \\(array\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:doUpdate\\(\\) should be compatible with parameter \\$updateValues \\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:doUpdate\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Call to function is_array\\(\\) with object will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -564,16 +539,6 @@ parameters:
 			message: "#^Result of \\|\\| is always false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php
-
-		-
-			message: "#^Variable \\$dbMap might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
-
-		-
-			message: "#^Variable \\$params might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionInterface\\:\\:sqliteCreateFunction\\(\\)\\.$#"
@@ -619,6 +584,16 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
+			message: "#^Method ArrayIterator\\<mixed,mixed\\>\\:\\:asort\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
+			message: "#^Method ArrayIterator\\<mixed,mixed\\>\\:\\:ksort\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"

@@ -88,7 +88,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $content = file_get_contents($file);
         $this->assertGreaterThanOrEqual(2, substr_count($content, 'CREATE TABLE '));
-        $this->assertContains('CREATE TABLE ', $content);
+        $this->assertStringContainsString('CREATE TABLE ', $content);
     }
 
     /**
@@ -133,7 +133,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $content = file_get_contents($file);
         $this->assertGreaterThanOrEqual(2, substr_count($content, 'CREATE TABLE '));
-        $this->assertContains('CREATE TABLE ', $content);
+        $this->assertStringContainsString('CREATE TABLE ', $content);
     }
 
     /**
@@ -165,7 +165,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->assertEquals(0, $result, 'migration:up tests exited successfully');
         $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
+        $this->assertStringContainsString('Migration complete.', $outputString);
     }
 
     /**
@@ -197,7 +197,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->assertEquals(0, $result, 'migration:down tests exited successfully');
         $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Reverse migration complete.', $outputString);
+        $this->assertStringContainsString('Reverse migration complete.', $outputString);
     }
 
     /**
@@ -229,7 +229,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->assertEquals(0, $result, 'migration:down tests exited successfully');
         $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
+        $this->assertStringContainsString('Migration complete.', $outputString);
 
         //revert this migration change so we have the same database structure as before this test
         $this->testDownCommand();
@@ -275,7 +275,7 @@ class MigrationTest extends TestCaseFixturesDatabase
         $file = $files[0];
 
         $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
+        $this->assertStringNotContainsString('CREATE TABLE ', $content);
     }
 
     /**
@@ -319,6 +319,6 @@ class MigrationTest extends TestCaseFixturesDatabase
         $file = $files[0];
 
         $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
+        $this->assertStringNotContainsString('CREATE TABLE ', $content);
     }
 }

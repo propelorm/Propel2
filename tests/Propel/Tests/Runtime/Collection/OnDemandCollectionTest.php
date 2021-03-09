@@ -11,6 +11,8 @@ namespace Propel\Tests\Runtime\Collection;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Collection\OnDemandCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
@@ -67,42 +69,42 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testoffsetExists()
     {
+        $this->expectException(PropelException::class);
+
         $this->books->offsetExists(2);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testoffsetGet()
     {
+        $this->expectException(PropelException::class);
+
         $this->books->offsetGet(2);
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testoffsetSet()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $this->books->offsetSet(2, 'foo');
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testoffsetUnset()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $this->books->offsetUnset(2);
     }
 
@@ -116,12 +118,12 @@ class OnDemandCollectionTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testFromArray()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $this->books->fromArray([]);
     }
 }

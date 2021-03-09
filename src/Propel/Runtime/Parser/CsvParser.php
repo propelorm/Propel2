@@ -22,8 +22,6 @@ class CsvParser extends AbstractParser
     public const QUOTE_NONNUMERIC = 2;
     public const QUOTE_MINIMAL = 3;
 
-    // these settings are predefined for Excel CSV format
-
     /**
      * @var string
      */

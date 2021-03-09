@@ -501,6 +501,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * The value for the $clo field.
@@ -515,7 +517,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
         }
         $script .= "
-     * @var        $cptype
+     * @var        $cptype{$orNull}
      */";
     }
 
@@ -879,6 +881,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             // 00:00:00 is a valid time, so no need to check for that.
         }
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [optionally formatted] temporal [$clo] column value.
@@ -887,9 +891,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param string|null \$format The date/time format string (either date()-style or strftime()-style).
      *   If format is NULL, then the raw $dateTimeClass object will be returned.
      *
-     * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
+     * @return string|{$dateTimeClass}{$orNull} Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
+     *
+     * @psalm-return (\$format is null ? {$dateTimeClass}{$orNull} : string{$orNull})
      */";
     }
 
@@ -1086,6 +1092,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1097,7 +1105,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return object
+     * @return object|array{$orNull}
      */";
     }
 
@@ -1292,6 +1300,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1301,7 +1311,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return string
+     * @return string{$orNull}
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
@@ -1483,6 +1493,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1492,7 +1504,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return " . ($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed')) . "
+     * @return " . ($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed')) . $orNull . "
      */";
     }
 
@@ -1738,11 +1750,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addJsonMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param string|array|object \$v new value
+     * @param string|array|object{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
@@ -2026,11 +2041,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $col->getLowercasedName();
 
+        $orNull = $col->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * " . $col->getDescription() . "
-     * @param  mixed \$v string, integer (timestamp), or \DateTimeInterface value.
+     * @param  string|integer|\DateTimeInterface{$orNull} \$v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
@@ -2264,11 +2281,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addEnumMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param  string \$v new value
+     * @param  string{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
@@ -2326,11 +2346,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addSetMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param  array \$v new value
+     * @param  array{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
@@ -2381,6 +2404,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $col->getLowercasedName();
 
+        $orNull = $col->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Sets the value of the [$clo] column.
@@ -2389,7 +2414,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * " . $col->getDescription() . "
-     * @param  boolean|integer|string \$v The new value
+     * @param  boolean|integer|string{$orNull} \$v The new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
@@ -2981,7 +3006,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if ($col->isTemporalType()) {
                 $script .= "
         if (\$result[\$keys[$num]] instanceof \DateTimeInterface) {
-            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('c');
+            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('" . $this->getTemporalFormatter($col) . "');
         }
         ";
             }
@@ -4082,11 +4107,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $varName = $this->getFKVarName($fk);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param  $className \$v
+     * @param  {$className}{$orNull} \$v
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws PropelException
      */
@@ -4208,13 +4235,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $localColumns = count($localColumns) > 1 ?
             ('array(' . implode(', ', $localColumns) . ')') : reset($localColumns);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
 
     /**
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className $returnDesc
+     * @return {$className}{$orNull} $returnDesc
      * @throws PropelException
      */
     public function get" . $this->getFKPhpNameAffix($fk, false) . "(ConnectionInterface \$con = null)

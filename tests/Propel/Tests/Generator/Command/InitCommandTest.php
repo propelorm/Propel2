@@ -15,6 +15,7 @@ use Propel\Generator\Command\SqlBuildCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixtures;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -74,7 +75,7 @@ class InitCommandTest extends TestCaseFixtures
         $commandTester->setInputs($this->getInputsArray());
         $commandTester->execute(['command' => $command->getName()]);
 
-        $this->assertContains('Propel 2 is ready to be used!', $commandTester->getDisplay());
+        $this->assertStringContainsString('Propel 2 is ready to be used!', $commandTester->getDisplay());
         $this->assertTrue(file_exists($this->dir . '/schema.xml'), 'Example schema file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml'), 'Configuration file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml.dist'), 'Dist configuration file created.');
@@ -107,7 +108,7 @@ class InitCommandTest extends TestCaseFixtures
         $commandTester->setInputs($this->getInputsArray('no'));
         $commandTester->execute(['command' => $command->getName()]);
 
-        $this->assertContains('Process aborted', $commandTester->getDisplay());
+        $this->assertStringContainsString('Process aborted', $commandTester->getDisplay());
     }
 
     /**

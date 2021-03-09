@@ -96,8 +96,6 @@ class PropelConfiguration implements ConfigurationInterface
     /**
      * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
      *
-     * @throws \InvalidArgumentException
-     *
      * @return void
      */
     protected function addDatabaseSection(ArrayNodeDefinition $node)

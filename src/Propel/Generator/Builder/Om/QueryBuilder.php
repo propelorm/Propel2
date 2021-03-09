@@ -183,14 +183,14 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
+ * @method     $modelClass|null findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
  * @method     $modelClass findOneOrCreate(ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
  *";
 
         // magic findBy() methods, for IDE completion
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method     $modelClass findOneBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . ' column';
+ * @method     $modelClass|null findOneBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return the first $modelClass filtered by the " . $column->getName() . ' column';
         }
 
         $script .= " * \n";
@@ -1549,6 +1549,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         $joinType = $this->getJoinType($fk);
 
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
+        $this->addWithRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
     }
 
     /**
@@ -1568,6 +1569,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         $joinType = $this->getJoinType($fk);
 
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
+        $this->addWithRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
     }
 
     /**
@@ -1600,6 +1602,48 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         return \$this
             ->join" . $relationName . "(\$relationAlias, \$joinType)
             ->useQuery(\$relationAlias ? \$relationAlias : '$relationName', '$queryClass');
+    }
+";
+    }
+
+    /**
+     * Adds a withRelatedQuery method for this object.
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Table $fkTable
+     * @param string $queryClass
+     * @param string $relationName
+     * @param string $joinType
+     *
+     * @return void
+     */
+    protected function addWithRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType)
+    {
+        $script .= "
+    /**
+     * Use the {$relationName} relation {$fkTable->getPhpName()} object
+     *
+     * @param callable({$queryClass}):{$queryClass} \$callable A function working on the related query
+     *
+     * @param string|null \$relationAlias optional alias for the relation
+     *
+     * @param string|null \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \$this
+     */
+    public function with{$relationName}Query(
+        callable \$callable,
+        string \$relationAlias = null,
+        ?string \$joinType = {$joinType}
+    ) {
+        \$relatedQuery = \$this->use{$relationName}Query(
+            \$relationAlias,
+            \$joinType
+        );
+        \$callable(\$relatedQuery);
+        \$relatedQuery->endUse();
+
+        return \$this;
     }
 ";
     }
