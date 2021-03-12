@@ -1054,10 +1054,18 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName('%fooValue%', Criteria::LIKE); // WHERE $colName LIKE '%fooValue%'
      * </code>
      *
-     * @param     string|string[] \$$variableName The value to use as filter,
-     *            should be an array of values when \$comparison in [Criteria::IN, Criteria::NOT_IN]
+     * @param     string|string[]|null \$$variableName The value to use as filter,
+     *            should be an array of values when \`\$comparison\` in \`[Criteria::IN, Criteria::NOT_IN]\`,
+     *            should be \`null\` when \`\$comparison\` in \`[Criteria::ISNULL, Criteria::ISNOTNULL]\`.
      *
-     * @psalm-param ((\$comparison is Criteria::IN || \$comparison is Criteria::NOT_IN) ? array<string> : string) \$$variableName";
+     * @psalm-param (
+     *                  (\$comparison is Criteria::IN || \$comparison is Criteria::NOT_IN)
+     *                  ? array<string>
+     *                  :
+     *                      (\$comparison is Criteria::ISNULL || \$comparison is Criteria::ISNOTNULL)
+     *                      ? null
+     *                      : string
+     *              ) \$$variableName";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
@@ -1066,13 +1074,15 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName('yes'); // WHERE $colName = true
      * </code>
      *
-     * @param     bool|string|(bool|string)[] \$$variableName The value to use as filter.
+     * @param     bool|string|bool[] \$$variableName The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @psalm-param ((\$comparison is Criteria::IN || \$comparison is Criteria::NOT_IN) ? array<string|bool> : string|bool) \$$variableName";
+     * @psalm-param ((\$comparison is Criteria::IN || \$comparison is Criteria::NOT_IN)
+     *              ? array<bool>
+     *              : 'true'|'on'|'off'|'yes'|'1'|'0'|'false'|'off'|'no'|bool) \$$variableName";
         } else {
             $script .= "
      * @param     mixed \$$variableName The value to use as filter";
