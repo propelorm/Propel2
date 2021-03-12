@@ -2204,8 +2204,9 @@ class ModelCriteria extends BaseModelCriteria
         if ($tableMap->hasColumnByPhpName($phpName)) {
             $column = $tableMap->getColumnByPhpName($phpName);
             $realColumnName = $class . '.' . $column->getName();
+            $this->currentAlias = $class;
 
-            return [$column, $realColumnName];
+            return [null, $realColumnName];
         }
         if (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column

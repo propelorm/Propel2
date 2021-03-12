@@ -9,6 +9,8 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\TestCase;
 
 /**
@@ -17,6 +19,7 @@ use Propel\Tests\TestCase;
 class CriteriaReplaceNameTest extends TestCase
 {
     private const PROJECT_ROOT = __DIR__ . '/../../../../..';
+
     /**
      * Provides test data
      *
@@ -168,9 +171,35 @@ class CriteriaReplaceNameTest extends TestCase
         foreach ($replacedColumns as $index => $replacedColumn) {
             $expectedColumnName = $expectedColumns[$index];
             $expectedColumnMap = $c->getTableMap()->getColumnByPhpName($expectedColumnName);
-            
+
             $this->assertEquals($expectedColumnMap, $replacedColumn);
         }
         $this->assertEquals($modifiedClause, $origClause);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReplaceNamesFromSubquery()
+    {
+        $numberOfBooksQuery = BookQuery::create()
+        ->addAsColumn('NumberOfBooks', 'COUNT(Book.Id)')
+        ->select(['NumberOfBooks', 'AuthorId'])
+        ->groupBy('Book.AuthorId');
+
+        $joinCondition = 'Author.Id = numberOfBooks.AuthorId';
+        
+        $authorQuery = AuthorQuery::create()
+        ->addSelectQuery($numberOfBooksQuery, 'numberOfBooks', false)
+        ->where($joinCondition)
+        ->withColumn('numberOfBooks.NumberOfBooks', 'NumberOfBooks');
+
+        $authorQuery->replaceNames($joinCondition); // note that replaceNames() changes the input string
+        
+        $this->assertEquals('author.id = numberOfBooks.AuthorId', $joinCondition, 'Aliases from subquery should not be replaced');
+
+        $authorIdColumnMap = $authorQuery->getTableMap()->getColumnByPhpName('Id');
+        $replacedColumns = $authorQuery->replacedColumns;
+        $this->assertEquals([$authorIdColumnMap], $replacedColumns, 'Only own column (AuthorId) should count as replaced column');
     }
 }
