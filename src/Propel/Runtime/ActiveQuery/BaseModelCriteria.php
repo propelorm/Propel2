@@ -65,8 +65,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
-        $this->setDbName($dbName);
-        $this->originalDbName = $dbName;
+        parent::__construct($dbName);
         $this->setModelName($modelName);
         $this->modelAlias = $modelAlias;
     }

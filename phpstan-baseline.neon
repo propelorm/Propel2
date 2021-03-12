@@ -421,16 +421,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$currentAlias\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$foundMatch\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:cleanupSQL\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php

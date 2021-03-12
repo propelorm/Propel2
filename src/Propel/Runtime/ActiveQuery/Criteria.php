@@ -278,6 +278,18 @@ class Criteria
     public $replacedColumns = [];
 
     /**
+     * temporary property used in replaceNames
+     *
+     * @var string|null
+     */
+    protected $currentAlias;
+
+    /**
+     * @var bool
+     */
+    protected $foundMatch = false;
+
+    /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *

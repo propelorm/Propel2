@@ -93,18 +93,6 @@ class ModelCriteria extends BaseModelCriteria
     protected $select;
 
     /**
-     * temporary property used in replaceNames
-     *
-     * @var string|null
-     */
-    protected $currentAlias;
-
-    /**
-     * @var bool
-     */
-    protected $foundMatch = false;
-
-    /**
      * Used to memorize whether we added self-select columns before.
      *
      * @var bool
