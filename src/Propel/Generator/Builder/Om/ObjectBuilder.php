@@ -3404,7 +3404,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @param      array  \$arr     An array to populate the object from.
      * @param      string \$keyType The type of keys the array uses.
-     * @return void
+     * @return     \$this|" . $this->getObjectClassName(true) . "
      */
     public function fromArray(\$arr, \$keyType = TableMap::$defaultKeyType)
     {
@@ -3418,6 +3418,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }";
         } /* foreach */
         $script .= "
+
+        return \$this;
     }
 ";
     }
