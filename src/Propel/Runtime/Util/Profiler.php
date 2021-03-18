@@ -31,9 +31,9 @@ class Profiler
     protected $outerGlue;
 
     /**
-     * @var array
+     * @var array|null
      */
-    protected $snapshot = [];
+    protected $snapshot;
 
     /**
      * @var array
@@ -213,7 +213,11 @@ class Profiler
      */
     public function getProfile()
     {
-        return $this->getProfileBetween($this->snapshot, self::getSnapshot());
+        $endSnapshot = self::getSnapshot();
+        $startSnapshot = ($this->snapshot === null) ? $endSnapshot : $this->snapshot;
+        $this->snapshot = null;
+
+        return $this->getProfileBetween($startSnapshot, $endSnapshot);
     }
 
     /**

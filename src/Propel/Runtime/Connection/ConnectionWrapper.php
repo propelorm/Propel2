@@ -123,9 +123,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
-        if ($this->useDebug) {
-            $this->log('Opening connection');
-        }
     }
 
     /**
@@ -688,18 +685,5 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function __call($method, $args)
     {
         return call_user_func_array([$this->connection, $method], $args);
-    }
-
-    /**
-     * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
-     *
-     * @see self::log()
-     */
-    public function __destruct()
-    {
-        if ($this->useDebug) {
-            $this->log('Closing connection');
-        }
-        $this->connection = null;
     }
 }
