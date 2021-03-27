@@ -9,7 +9,7 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
@@ -295,10 +295,8 @@ class TableMap
     public function getCollectionClassName()
     {
         $collectionClass = $this->getClassName() . 'Collection';
-        if (
-            class_exists($collectionClass)
-            && !in_array(ActiveRecordInterface::class, class_implements($collectionClass))
-        ) {
+        $parentClasses = class_parents($collectionClass);
+        if (class_exists($collectionClass) && in_array(Collection::class, $parentClasses)) {
             return $collectionClass;
         }
 
