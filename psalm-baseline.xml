@@ -489,6 +489,21 @@
       <code>int[]</code>
     </InvalidReturnType>
   </file>
+  <file src="src/Propel/Generator/Manager/templates/migration_template.php">
+    <UndefinedGlobalVariable occurrences="11">
+      <code>$commentString</code>
+      <code>$connectionToVariableName</code>
+      <code>$connectionToVariableName</code>
+      <code>$connectionToVariableName</code>
+      <code>$connectionToVariableName</code>
+      <code>$migrationAuthor</code>
+      <code>$migrationClassName</code>
+      <code>$migrationsDown</code>
+      <code>$migrationsUp</code>
+      <code>$timeInWords</code>
+      <code>$timestamp</code>
+    </UndefinedGlobalVariable>
+  </file>
   <file src="src/Propel/Generator/Model/Column.php">
     <InvalidArgument occurrences="1">
       <code>[ $name, $phpNamingMethod, $namePrefix ]</code>

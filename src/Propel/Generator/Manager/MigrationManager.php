@@ -11,6 +11,7 @@ namespace Propel\Generator\Manager;
 use Exception;
 use PDO;
 use PDOException;
+use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Database;
@@ -382,11 +383,12 @@ class MigrationManager extends AbstractManager
     public function getMigrationObject($timestamp)
     {
         $className = $this->getMigrationClassName($timestamp);
-        require_once sprintf(
+        $filename = sprintf(
             '%s/%s.php',
             $this->getWorkingDirectory(),
             $className
         );
+        require_once $filename;
 
         return new $className();
     }
@@ -402,72 +404,57 @@ class MigrationManager extends AbstractManager
      */
     public function getMigrationClassBody($migrationsUp, $migrationsDown, $timestamp, $comment = '', $suffix = '')
     {
-        $timeInWords = date('Y-m-d H:i:s', $timestamp);
-        $migrationAuthor = ($author = $this->getUser()) ? 'by ' . $author : '';
-        $migrationClassName = $this->getMigrationClassName($timestamp, $suffix);
-        $migrationUpString = var_export($migrationsUp, true);
-        $migrationDownString = var_export($migrationsDown, true);
-        $commentString = var_export($comment, true);
-        $migrationClassBody = <<<EOP
-<?php
+        $connectionToVariableName = self::buildConnectionToVariableNameMap($migrationsUp, $migrationsDown);
 
-use Propel\Generator\Manager\MigrationManager;
+        $vars = [
+            'timestamp' => $timestamp,
+            'commentString' => addcslashes($comment, ','),
+            'suffix' => $suffix,
+            'timeInWords' => date('Y-m-d H:i:s', $timestamp),
+            'migrationAuthor' => ($author = $this->getUser()) ? 'by ' . $author : '',
+            'migrationClassName' => $this->getMigrationClassName($timestamp, $suffix),
+            'migrationsUp' => $migrationsUp,
+            'migrationsDown' => $migrationsDown,
+            'connectionToVariableName' => $connectionToVariableName,
+        ];
 
-/**
- * Data object containing the SQL and PHP code to migrate the database
- * up to version $timestamp.
- * Generated on $timeInWords $migrationAuthor
- */
-class $migrationClassName
-{
-    public \$comment = $commentString;
+        $template = new PropelTemplate();
+        $filePath = implode(DIRECTORY_SEPARATOR, [__DIR__, 'templates', 'migration_template.php']);
+        $template->setTemplateFile($filePath);
 
-    public function preUp(MigrationManager \$manager)
-    {
-        // add the pre-migration code here
-    }
-
-    public function postUp(MigrationManager \$manager)
-    {
-        // add the post-migration code here
-    }
-
-    public function preDown(MigrationManager \$manager)
-    {
-        // add the pre-migration code here
-    }
-
-    public function postDown(MigrationManager \$manager)
-    {
-        // add the post-migration code here
+        return $template->render($vars);
     }
 
     /**
-     * Get the SQL statements for the Up migration
+     *  * Builds an array mapping connection names to a string that can be used as a php variable name.
      *
-     * @return array list of the SQL strings to execute for the Up migration
-     *               the keys being the datasources
-     */
-    public function getUpSQL()
-    {
-        return $migrationUpString;
-    }
-
-    /**
-     * Get the SQL statements for the Down migration
+     * @param array $migrationsUp
+     * @param array $migrationsDown
      *
-     * @return array list of the SQL strings to execute for the Down migration
-     *               the keys being the datasources
+     * @return array
      */
-    public function getDownSQL()
+    protected static function buildConnectionToVariableNameMap(array $migrationsUp, array $migrationsDown): array
     {
-        return $migrationDownString;
-    }
+        $connectionToVariableName = [];
+        foreach ([$migrationsUp, $migrationsDown] as $migrations) {
+            $connectionNames = array_keys($migrations);
+            foreach ($connectionNames as $index => $connectionName) {
+                if (array_key_exists($connectionName, $connectionToVariableName)) {
+                    continue;
+                }
+                $alphNums = preg_replace('/\W/', '', $connectionName);
+                if (strlen($alphNums) === 0) {
+                    $alphNums = $index;
+                }
+                $variableName = '$connection_' . $alphNums;
+                while (in_array($variableName, $connectionToVariableName, true)) {
+                    $variableName .= 'I';
+                }
+                $connectionToVariableName[$connectionName] = $variableName;
+            }
+        }
 
-}
-EOP;
-
-        return $migrationClassBody;
+        return $connectionToVariableName;
     }
 
     /**
