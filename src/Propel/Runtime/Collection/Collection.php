@@ -593,9 +593,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
         }
         if (strpos($name, 'to') === 0) {
             $format = substr($name, 2);
-            $usePrefix = isset($params[0]) ? $params[0] : false;
-            $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
-            $keyType = isset($params[2]) ? $params[2] : TableMap::TYPE_PHPNAME;
+            $usePrefix = $params[0] ?? false;
+            $includeLazyLoadColumns = $params[1] ?? true;
+            $keyType = $params[2] ?? TableMap::TYPE_PHPNAME;
 
             return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns, $keyType);
         }

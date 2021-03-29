@@ -46,15 +46,16 @@
 
         if (0 === strpos($name, 'from')) {
             $format = substr($name, 4);
-            $keyType = isset($params[0]) ? $params[0] : TableMap::TYPE_PHPNAME;
+            $inputData = $params[0];
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->importFrom($format, reset($params), $keyType);
+            return $this->importFrom($format, $inputData, $keyType);
         }
 
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
-            $includeLazyLoadColumns = isset($params[0]) ? $params[0] : true;
-            $keyType = isset($params[1]) ? $params[1] : TableMap::TYPE_PHPNAME;
+            $includeLazyLoadColumns = $params[0] ?? true;
+            $keyType = $params[1] ?? TableMap::TYPE_PHPNAME;
 
             return $this->exportTo($format, $includeLazyLoadColumns, $keyType);
         }

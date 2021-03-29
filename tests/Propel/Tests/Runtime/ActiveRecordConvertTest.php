@@ -179,7 +179,7 @@ EOF;
 {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":["*RECURSION*"]},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":["*RECURSION*"]}}
 EOF;
         $camelName = <<<EOF
-{"id":9012,"title":"Don Juan","isbn":"0140422161","price":12.99,"publisherId":1234,"authorId":5678,"publisher":{"id":1234,"name":"Penguin","books":["*RECURSION*"]},"author":{"id":5678,"firstName":"George","lastName":"Byron","email":null,"age":null,"books":["*RECURSION*"]}}
+{"id":9012,"title":"Don Juan","iSBN":"0140422161","price":12.99,"publisherId":1234,"authorId":5678,"publisher":{"id":1234,"name":"Penguin","books":["*RECURSION*"]},"author":{"id":5678,"firstName":"George","lastName":"Byron","email":null,"age":null,"books":["*RECURSION*"]}}
 EOF;
 
         $colName = <<<EOF
@@ -189,7 +189,6 @@ EOF;
         $fieldName = <<<EOF
 {"id":9012,"title":"Don Juan","isbn":"0140422161","price":12.99,"publisher_id":1234,"author_id":5678,"publisher":{"id":1234,"name":"Penguin","books":["*RECURSION*"]},"author":{"id":5678,"first_name":"George","last_name":"Byron","email":null,"age":null,"books":["*RECURSION*"]}}
 EOF;
-
 
         return [[$phpName, TableMap::TYPE_PHPNAME],
                 [$camelName, TableMap::TYPE_CAMELNAME],
