@@ -278,4 +278,39 @@ class ProfilerTest extends BaseTestCase
     {
         $this->assertSame(Profiler::toPrecision(123.456789, $input), $output);
     }
+
+    /**
+     * @doesNotPerformAssertions
+     *
+     * @return void
+     */
+    public function testGetProfilerWithoutStartValuesUsesEndValues()
+    {
+        $profiler = new Profiler();
+        $profile = $profiler->getProfile();
+        $expectedProfilePattern = '/^\s+Time:\s+0ms \| Memory:\s+[0-9.kMGTPEZY]+B \| Memory Delta:\s+0B \| Memory Peak:\s+[0-9.kMGTPEZY]+B \| $/';
+
+        // $this->assertMatchesRegularExpression is currently not available in github testsuite
+        if (preg_match($expectedProfilePattern, $profile) !== 1) {
+            $this->fail("Getting profile without start values should return empty values\nExpected Pattern: $expectedProfilePattern\nReceived Profile: '$profile'");
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetProfilerClearsStartValues()
+    {
+        $profiler = new class () extends Profiler{
+            public function getStartSnapshot(): ?array
+            {
+                return $this->snapshot;
+            }
+        };
+        $profiler->start();
+        $this->assertNotNull($profiler->getStartSnapshot(), 'Snapshot from start should be set');
+        $profiler->getProfile();
+
+        $this->assertNull($profiler->getStartSnapshot(), 'Snapshot from start should be unset');
+    }
 }
