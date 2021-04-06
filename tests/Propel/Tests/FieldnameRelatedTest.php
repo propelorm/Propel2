@@ -334,7 +334,8 @@ class FieldnameRelatedTest extends TestCaseFixtures
 
         foreach ($types as $type) {
             $expected = $expecteds[$type];
-            $book->fromArray($expected, $type);
+            $returnedBook = $book->fromArray($expected, $type);
+            $this->assertEquals($book, $returnedBook);
             $result = [];
             foreach (array_keys($expected) as $key) {
                 $result[$key] = $book->getByName($key, $type);
