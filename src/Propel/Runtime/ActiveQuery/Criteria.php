@@ -2449,6 +2449,7 @@ class Criteria
             $this->add($pk->getFullyQualifiedName(), $id);
         }
 
+        $sql = null;
         try {
             $qualifiedCols = $this->keys(); // we need table.column cols when populating values
             $columns = []; // but just 'column' cols for the SQL
@@ -2577,6 +2578,8 @@ class Criteria
             $whereClause = [];
             $params = [];
             $stmt = null;
+            $sql = null;
+
             try {
                 $sql = 'UPDATE ';
                 $queryComment = $this->getComment();
@@ -2655,9 +2658,7 @@ class Criteria
 
                 $stmt = null; // close
             } catch (Exception $e) {
-                if ($stmt !== null) {
-                    $stmt = null; // close
-                }
+                $stmt = null; // close
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
 
                 throw new PropelException(sprintf('Unable to execute UPDATE statement [%s]', $sql), 0, $e);
@@ -2808,6 +2809,7 @@ class Criteria
             $whereClause = [];
             $params = [];
             $stmt = null;
+            $sql = null;
             try {
                 $sql = $adapter->getDeleteFromClause($this, $tableName);
 
