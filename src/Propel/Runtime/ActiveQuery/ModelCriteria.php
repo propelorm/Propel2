@@ -525,7 +525,7 @@ class ModelCriteria extends BaseModelCriteria
             $tableMap = $this->getTableMap();
         } else {
             [$leftName, $relationName] = explode('.', $fullName);
-            $shortLeftName = self::getShortName($leftName);
+            $shortLeftName = static::getShortName($leftName);
             // find the TableMap for the left table using the $leftName
             if ($leftName === $this->getModelAliasOrName() || $leftName === $this->getModelShortName()) {
                 $previousJoin = $this->getPreviousJoin();
@@ -1725,9 +1725,10 @@ class ModelCriteria extends BaseModelCriteria
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
 
+        $tableName = $this->quoteIdentifierTable($tableName);
+        $sql = 'DELETE FROM ' . $tableName;
+
         try {
-            $tableName = $this->quoteIdentifierTable($tableName);
-            $sql = 'DELETE FROM ' . $tableName;
             $stmt = $con->prepare($sql);
 
             $stmt->execute();
@@ -2061,7 +2062,7 @@ class ModelCriteria extends BaseModelCriteria
             [$prefix, $phpName] = explode('.', $phpName);
         }
 
-        $shortClass = self::getShortName($prefix);
+        $shortClass = static::getShortName($prefix);
 
         if ($prefix === $this->getModelAliasOrName()) {
             // column of the Criteria's model
@@ -2262,20 +2263,6 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         return $colName;
-    }
-
-    /**
-     * Return the short ClassName for class with namespace
-     *
-     * @param string $fullyQualifiedClassName The fully qualified class name
-     *
-     * @return string The short class name
-     */
-    public static function getShortName($fullyQualifiedClassName)
-    {
-        $namespaceParts = explode('\\', $fullyQualifiedClassName);
-
-        return array_pop($namespaceParts);
     }
 
     /**

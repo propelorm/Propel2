@@ -396,11 +396,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:getShortName\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:find\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
@@ -438,16 +433,6 @@ parameters:
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:bindValues\\(\\)\\.$#"
 			count: 3
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 3
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
-			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
@@ -507,11 +492,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:addSelectColumns\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Variable \\$sql might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 

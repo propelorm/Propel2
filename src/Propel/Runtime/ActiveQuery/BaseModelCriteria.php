@@ -238,6 +238,20 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     }
 
     /**
+     * Return the short ClassName for class with namespace
+     *
+     * @param string $fullyQualifiedClassName The fully qualified class name
+     *
+     * @return string The short class name
+     */
+    public static function getShortName($fullyQualifiedClassName)
+    {
+        $namespaceParts = explode('\\', $fullyQualifiedClassName);
+
+        return array_pop($namespaceParts);
+    }
+
+    /**
      * Returns the TableMap object for this Criteria
      *
      * @return \Propel\Runtime\Map\TableMap
