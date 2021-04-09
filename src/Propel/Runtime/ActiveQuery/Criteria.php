@@ -255,7 +255,7 @@ class Criteria
     /**
      * Default operator for combination of criterions
      *
-     * @see addUsingOperator
+     * @see addUsingOperator()
      * @var string Criteria::LOGICAL_AND or Criteria::LOGICAL_OR
      */
     protected $defaultCombineOperator = Criteria::LOGICAL_AND;

@@ -2014,23 +2014,24 @@ class ModelCriteria extends BaseModelCriteria
         $key = $matches[0];
         [$column, $realFullColumnName] = $this->getColumnFromName($key);
 
-        if ($column instanceof ColumnMap) {
-            $this->replacedColumns[] = $column;
-            $this->foundMatch = true;
-
-            if (strpos($key, '.') !== false) {
-                [$tableName, $columnName] = explode('.', $key);
-                $realColumnName = substr($realFullColumnName, strrpos($realFullColumnName, '.') + 1);
-                if (isset($this->aliases[$tableName])) {
-                    //don't replace a alias with their real table name
-                    return $this->quoteIdentifier($tableName . '.' . $realColumnName);
-                }
-            }
-
-            return $this->quoteIdentifier($realFullColumnName);
+        if (!$column instanceof ColumnMap) {
+            return $this->quoteIdentifier($key);
         }
 
-        return $this->quoteIdentifier($key);
+        $this->replacedColumns[] = $column;
+        $this->foundMatch = true;
+
+        if (strpos($key, '.') !== false) {
+            [$tableName, $columnName] = explode('.', $key);
+            if (isset($this->aliases[$tableName])) {
+                //don't replace a alias with their real table name
+                $realColumnName = substr($realFullColumnName, strrpos($realFullColumnName, '.') + 1);
+
+                return $this->quoteIdentifier($tableName . '.' . $realColumnName);
+            }
+        }
+
+        return $this->quoteIdentifier($realFullColumnName);
     }
 
     /**
@@ -2045,7 +2046,7 @@ class ModelCriteria extends BaseModelCriteria
      *   => array($authorFirstNameColumnMap, 'a.first_name')
      * </code>
      *
-     * @param string $phpName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
+     * @param string $columnName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
      * @param bool $failSilently
      *
      * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownColumnException
@@ -2053,13 +2054,13 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return array List($columnMap, $realColumnName)
      */
-    protected function getColumnFromName($phpName, $failSilently = true)
+    protected function getColumnFromName($columnName, $failSilently = true)
     {
-        if (strpos($phpName, '.') === false) {
+        if (strpos($columnName, '.') === false) {
             $prefix = $this->getModelAliasOrName();
         } else {
             // $prefix could be either class name or table name
-            [$prefix, $phpName] = explode('.', $phpName);
+            [$prefix, $columnName] = explode('.', $columnName);
         }
 
         $shortClass = static::getShortName($prefix);
@@ -2080,7 +2081,7 @@ class ModelCriteria extends BaseModelCriteria
             // column of a relations's model
             $tableMap = $this->joins[$shortClass]->getTableMap();
         } elseif ($this->hasSelectQuery($prefix)) {
-            return $this->getColumnFromSubQuery($prefix, $phpName, $failSilently);
+            return $this->getColumnFromSubQuery($prefix, $columnName, $failSilently);
         } elseif ($modelJoin = $this->getModelJoinByTableName($prefix)) {
             $tableMap = $modelJoin->getTableMap();
         } elseif ($failSilently) {
@@ -2089,8 +2090,9 @@ class ModelCriteria extends BaseModelCriteria
             throw new UnknownModelException(sprintf('Unknown model, alias or table "%s"', $prefix));
         }
 
-        if ($tableMap->hasColumnByPhpName($phpName)) {
-            $column = $tableMap->getColumnByPhpName($phpName);
+        $column = $tableMap->findColumnByName($columnName);
+
+        if ($column !== null) {
             if (isset($this->aliases[$prefix])) {
                 $this->currentAlias = $prefix;
                 $realColumnName = $prefix . '.' . $column->getName();
@@ -2099,18 +2101,13 @@ class ModelCriteria extends BaseModelCriteria
             }
 
             return [$column, $realColumnName];
-        } elseif ($tableMap->hasColumn($phpName)) {
-            $column = $tableMap->getColumn($phpName);
-            $realColumnName = $column->getFullyQualifiedName();
-
-            return [$column, $realColumnName];
-        } elseif (isset($this->asColumns[$phpName])) {
+        } elseif (isset($this->asColumns[$columnName])) {
             // aliased column
-            return [null, $phpName];
+            return [null, $columnName];
         } elseif ($failSilently) {
             return [null, null];
         } else {
-            throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $phpName, $prefix));
+            throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $columnName, $prefix));
         }
     }
 

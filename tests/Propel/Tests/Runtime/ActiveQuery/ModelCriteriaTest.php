@@ -240,6 +240,26 @@ class ModelCriteriaTest extends BookstoreTestBase
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
     }
+    
+    /**
+     * @return void
+     */
+    public function testTrueTableAliasWithOriginalColumnName()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->setModelAlias('b', true);
+        $c->where('b.title = ?', 'foo');
+        $c->join('b.Author a');
+        $c->where('a.first_name = ?', 'john');
+        
+        $sql = $this->getSql('SELECT  FROM book b INNER JOIN author a ON (b.author_id=a.id) WHERE b.title = :p1 AND a.first_name = :p2');
+        
+        $params = [
+            ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
+            ['table' => 'author', 'column' => 'first_name', 'value' => 'john'],
+        ];
+        $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
+    }
 
     /**
      * @return void

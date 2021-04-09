@@ -555,6 +555,28 @@ class TableMap
     }
 
     /**
+     * Tries to find a column by name.
+     *
+     * @param string $name
+     *
+     * @return \Propel\Runtime\Map\ColumnMap|null
+     */
+    public function findColumnByName(string $name): ?ColumnMap
+    {
+        if (isset($this->columnsByPhpName[$name])) {
+            return $this->getColumnByPhpName($name);
+        }
+        if ($this->hasColumn($name, false)) {
+            return $this->getColumn($name, false);
+        }
+        if ($this->hasColumn($name, true)) {
+            return $this->getColumn($name, true);
+        }
+
+        return null;
+    }
+
+    /**
      * Get a ColumnMap[] of the columns in this table.
      *
      * @return \Propel\Runtime\Map\ColumnMap[]
