@@ -102,7 +102,7 @@ class MigrationDiffCommand extends AbstractCommand
         if ($manager->hasPendingMigrations()) {
             throw new RuntimeException(sprintf(
                 'Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task. %s',
-                "\n".implode("\n", $manager->getValidMigrationTimestamps())
+                "\n" . implode("\n", $manager->getValidMigrationTimestamps())
             ));
         }
 
