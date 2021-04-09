@@ -100,7 +100,10 @@ class MigrationDiffCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if ($manager->hasPendingMigrations()) {
-            throw new RuntimeException('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
+            throw new RuntimeException(sprintf(
+                'Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task. %s',
+                "\n".implode("\n", $manager->getValidMigrationTimestamps())
+            ));
         }
 
         $totalNbTables = 0;
