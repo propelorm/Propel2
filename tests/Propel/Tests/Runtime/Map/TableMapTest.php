@@ -297,16 +297,37 @@ class TableMapTest extends TestCase
     /**
      * @return void
      */
-    public function testGetCollectionClassName()
+    public function testGetCollectionClassNameReturnsObjectCollection()
     {
-        $this->assertEquals('\Propel\Runtime\Collection\ObjectCollection', $this->tmap->getCollectionClassName());
-
-        $this->tmap->setClassName('Propel\Tests\Runtime\Map\Test');
-        $this->assertEquals('Propel\Tests\Runtime\Map\TestCollection', $this->tmap->getCollectionClassName());
+        $this->assertEquals(ObjectCollection::class, $this->tmap->getCollectionClassName());
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetCollectionClassNameReturnsCustomCollection()
+    {
+        $classWithCollection = __NAMESPACE__ . '\ExtendingTest';
+        $this->tmap->setClassName($classWithCollection);
+        $this->assertEquals(ExtendingTestCollection::class, $this->tmap->getCollectionClassName());
+    }
+        
+    /**
+     * @return void
+     */
+    public function testGetCollectionClassNameReturnsOnlyCollections()
+    {
+        $classWithUnrelatedCollection = __NAMESPACE__ . '\NonExtendingTest';
+        $this->tmap->setClassName($classWithUnrelatedCollection);
+        $this->assertEquals(ObjectCollection::class, $this->tmap->getCollectionClassName());
     }
 }
 
-class TestCollection extends ObjectCollection
+class ExtendingTestCollection extends ObjectCollection
+{
+}
+
+class NonExtendingTestCollection
 {
 }
 
