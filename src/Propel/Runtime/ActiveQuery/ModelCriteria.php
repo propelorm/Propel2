@@ -93,18 +93,6 @@ class ModelCriteria extends BaseModelCriteria
     protected $select;
 
     /**
-     * temporary property used in replaceNames
-     *
-     * @var string|null
-     */
-    protected $currentAlias;
-
-    /**
-     * @var bool
-     */
-    protected $foundMatch = false;
-
-    /**
      * Used to memorize whether we added self-select columns before.
      *
      * @var bool
@@ -2202,8 +2190,9 @@ class ModelCriteria extends BaseModelCriteria
         if ($tableMap->hasColumnByPhpName($phpName)) {
             $column = $tableMap->getColumnByPhpName($phpName);
             $realColumnName = $class . '.' . $column->getName();
+            $this->currentAlias = $class;
 
-            return [$column, $realColumnName];
+            return [null, $realColumnName];
         }
         if (isset($subQueryCriteria->asColumns[$phpName])) {
             // aliased column

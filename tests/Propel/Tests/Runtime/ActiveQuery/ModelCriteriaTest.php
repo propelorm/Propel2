@@ -114,88 +114,6 @@ class ModelCriteriaTest extends BookstoreTestBase
         }
     }
 
-    public static function conditionsForTestReplaceNames()
-    {
-        return [
-            ['Propel\Tests\Bookstore\Book.Title = ?', 'Title', 'book.title = ?'], // basic case
-            ['Propel\Tests\Bookstore\Book.Title=?', 'Title', 'book.title=?'], // without spaces
-            ['Propel\Tests\Bookstore\Book.Id<= ?', 'Id', 'book.id<= ?'], // with non-equal comparator
-            ['Propel\Tests\Bookstore\Book.AuthorId LIKE ?', 'AuthorId', 'book.author_id LIKE ?'], // with SQL keyword separator
-            ['(Propel\Tests\Bookstore\Book.AuthorId) LIKE ?', 'AuthorId', '(book.author_id) LIKE ?'], // with parenthesis
-            ['(Propel\Tests\Bookstore\Book.Id*1.5)=1', 'Id', '(book.id*1.5)=1'], // ignore numbers
-            // dealing with quotes
-            ["Propel\Tests\Bookstore\Book.Id + ' ' + Propel\Tests\Bookstore\Book.AuthorId", null, "book.id + ' ' + book.author_id"],
-            ["'Propel\Tests\Bookstore\Book.Id' + Propel\Tests\Bookstore\Book.AuthorId", null, "'Propel\Tests\Bookstore\Book.Id' + book.author_id"],
-            ["Propel\Tests\Bookstore\Book.Id + 'Propel\Tests\Bookstore\Book.AuthorId'", null, "book.id + 'Propel\Tests\Bookstore\Book.AuthorId'"],
-            ['1=1', null, '1=1'], // with no name
-            ['', null, ''], // with empty string
-
-            //without NS
-            ['Book.Title = ?', 'Title', 'book.title = ?'], // basic case
-            ['Book.Title=?', 'Title', 'book.title=?'], // without spaces
-            ['Book.Id<= ?', 'Id', 'book.id<= ?'], // with non-equal comparator
-            ['Book.AuthorId LIKE ?', 'AuthorId', 'book.author_id LIKE ?'], // with SQL keyword separator
-            ['(Book.AuthorId) LIKE ?', 'AuthorId', '(book.author_id) LIKE ?'], // with parenthesis
-            ['(Book.Id*1.5)=1', 'Id', '(book.id*1.5)=1'], // ignore numbers
-            // dealing with quotes
-            ["Book.Id + ' ' + Book.AuthorId", null, "book.id + ' ' + book.author_id"],
-            ["'Book.Id' + Book.AuthorId", null, "'Book.Id' + book.author_id"],
-            ["Book.Id + 'Book.AuthorId'", null, "book.id + 'Book.AuthorId'"],
-
-        ];
-    }
-
-    /**
-     * @dataProvider conditionsForTestReplaceNames
-     *
-     * @return void
-     */
-    public function testReplaceNames($origClause, $columnPhpName, $modifiedClause)
-    {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $this->doTestReplaceNames($c, BookTableMap::getTableMap(), $origClause, $columnPhpName, $modifiedClause);
-    }
-
-    /**
-     * @return void
-     */
-    public function doTestReplaceNames(Criteria $c, $tableMap, $origClause, $columnPhpName, $modifiedClause)
-    {
-        $c->replaceNames($origClause);
-        $columns = $c->replacedColumns;
-        if ($columnPhpName) {
-            $this->assertEquals([$tableMap->getColumnByPhpName($columnPhpName)], $columns);
-        }
-        $this->assertEquals($modifiedClause, $origClause);
-    }
-
-    public static function conditionsForTestReplaceMultipleNames()
-    {
-        return [
-            ['(Propel\Tests\Bookstore\Book.Id+Book.Id)=1', ['Id', 'Id'], '(book.id+book.id)=1'], // match multiple names
-            ['CONCAT(Propel\Tests\Bookstore\Book.Title,"Book.Id")= ?', ['Title', 'Id'], 'CONCAT(book.title,"Book.Id")= ?'], // ignore names in strings
-            ['CONCAT(Propel\Tests\Bookstore\Book.Title," Book.Id ")= ?', ['Title', 'Id'], 'CONCAT(book.title," Book.Id ")= ?'], // ignore names in strings
-            ['MATCH (Propel\Tests\Bookstore\Book.Title,Book.isbn) AGAINST (?)', ['Title', 'ISBN'], 'MATCH (book.title,book.isbn) AGAINST (?)'],
-        ];
-    }
-
-    /**
-     * @dataProvider conditionsForTestReplaceMultipleNames
-     *
-     * @return void
-     */
-    public function testReplaceMultipleNames($origClause, $expectedColumns, $modifiedClause)
-    {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->replaceNames($origClause);
-        $foundColumns = $c->replacedColumns;
-        foreach ($foundColumns as $column) {
-            $expectedColumn = BookTableMap::getTableMap()->getColumnByPhpName(array_shift($expectedColumns));
-            $this->assertEquals($expectedColumn, $column);
-        }
-        $this->assertEquals($modifiedClause, $origClause);
-    }
-
     /**
      * @return void
      */
@@ -1313,7 +1231,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWith()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
         $withs = $c->getWith();
@@ -1337,7 +1255,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithAlias()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author a');
         $c->with('a');
         $withs = $c->getWith();
@@ -1361,7 +1279,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithAddsSelectColumns()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         BookTableMap::addSelectColumns($c);
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
@@ -1386,7 +1304,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithAliasAddsSelectColumns()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         BookTableMap::addSelectColumns($c);
         $c->join('Propel\Tests\Bookstore\Book.Author a');
         $c->with('a');
@@ -1411,7 +1329,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithAddsSelectColumnsOfMainTable()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Author');
         $c->with('Author');
         $expectedColumns = [
@@ -1435,7 +1353,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithAliasAddsSelectColumnsOfMainTable()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->setModelAlias('b', true);
         $c->join('b.Author a');
         $c->with('a');
@@ -1460,7 +1378,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testWithOneToManyAddsSelectColumns()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         AuthorTableMap::addSelectColumns($c);
         $c->leftJoin('Propel\Tests\Bookstore\Author.Book');
         $c->with('Book');
@@ -1485,7 +1403,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testJoinWith()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->joinWith('Propel\Tests\Bookstore\Book.Author');
         $expectedColumns = [
             BookTableMap::COL_ID,
@@ -1511,7 +1429,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testJoinWithType()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->joinWith('Propel\Tests\Bookstore\Book.Author', Criteria::LEFT_JOIN);
         $joins = $c->getJoins();
         $join = $joins['Author'];
@@ -1523,7 +1441,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testJoinWithAlias()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->joinWith('Propel\Tests\Bookstore\Book.Author a');
         $expectedColumns = [
             BookTableMap::COL_ID,
@@ -1546,7 +1464,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testJoinWithSeveral()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Review');
         $c->joinWith('Review.Book');
         $c->joinWith('Propel\Tests\Bookstore\Book.Author');
         $c->joinWith('Book.Publisher');
@@ -1582,7 +1500,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testJoinWithTwice()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->join('Propel\Tests\Bookstore\Book.Review');
         $c->joinWith('Propel\Tests\Bookstore\Book.Author');
         $c->joinWith('Propel\Tests\Bookstore\Book.Review');
@@ -2656,7 +2574,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testMagicJoinWith()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->leftJoinWith('Propel\Tests\Bookstore\Book.Author a');
         $expectedColumns = [
             BookTableMap::COL_ID,
@@ -2682,7 +2600,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testMagicJoinWithRelation()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->joinWithAuthor();
         $expectedColumns = [
             BookTableMap::COL_ID,
@@ -2708,7 +2626,7 @@ class ModelCriteriaTest extends BookstoreTestBase
      */
     public function testMagicJoinWithTypeAndRelation()
     {
-        $c = new TestableModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->leftJoinWithAuthor();
         $expectedColumns = [
             BookTableMap::COL_ID,
