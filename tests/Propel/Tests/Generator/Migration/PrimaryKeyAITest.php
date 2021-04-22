@@ -8,6 +8,8 @@
 
 namespace Propel\Tests\Generator\Migration;
 
+use PDO;
+
 /**
  * @group database
  */
@@ -122,6 +124,10 @@ class PrimaryKeyAITest extends MigrationTestCase
      */
     public function testChangeSize()
     {
+        if ($this->con->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $this->markTestSkipped('MySQL removed support of integer display width in version 8.0.19');
+        }
+
         $originXml = '
 <database>
     <table name="migration_test_9">

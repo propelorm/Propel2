@@ -155,19 +155,22 @@ class MysqlAdapterTest extends TestCaseFixtures
      */
     public function testSubQueryWithSharedLock()
     {
-        $subCriteria = new BookQuery();
-        $subCriteria->addSelectColumn(BookTableMap::COL_ID);
-        $subCriteria->lockForShare([BookTableMap::TABLE_NAME]);
+        $subquery = BookQuery::create()
+            ->addSelectColumn(BookTableMap::COL_ID)
+            ->lockForShare([BookTableMap::TABLE_NAME])
+        ;
 
-        $c = new BookQuery();
-        $c->addSelectColumn(BookTableMap::COL_ID);
-        $c->addSelectQuery($subCriteria, 'subCriteriaAlias', false);
-        $c->lockForShare([BookTableMap::TABLE_NAME], true);
+        $query = BookQuery::create()
+            ->addSelectColumn('subCriteriaAlias.id')
+            ->addSelectQuery($subquery, 'subCriteriaAlias', false)
+            ->lockForShare([BookTableMap::TABLE_NAME], true)
+        ;
 
-        $expected ='SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
+        $expectedSql ='SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
 
         $params = [];
-        $this->assertSame($expected, $c->createSelectSql($params), 'Subquery contains shared read lock');
+        $generatedSql = $query->createSelectSql($params);
+        $this->assertSame($expectedSql, $generatedSql, 'Subquery should contain shared read lock');
     }
 }
 

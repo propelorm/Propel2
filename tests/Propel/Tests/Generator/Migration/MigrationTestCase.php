@@ -160,13 +160,13 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         try {
             $this->applyXmlAndTest($originXml);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in applying the first(origin) schema', 0, $e);
+            $this->fail("Failed to apply the first/original schema:\n\n" . $e->getMessage());
         }
 
         try {
             $this->applyXmlAndTest($targetXml, true);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in applying the second(target) schema', 0, $e);
+            $this->fail("Failed to apply the second/target schema:\n\n" . $e->getMessage());
         }
     }
 
