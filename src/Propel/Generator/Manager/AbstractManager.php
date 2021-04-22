@@ -386,7 +386,7 @@ abstract class AbstractManager
      *
      * @throws \Propel\Generator\Exception\BuildException
      *
-     * @return int
+     * @return int number of included external schemas
      */
     protected function includeExternalSchemas(DOMDocument $dom, $srcDir)
     {
@@ -395,21 +395,24 @@ abstract class AbstractManager
 
         $nbIncludedSchemas = 0;
         while ($externalSchema = $externalSchemaNodes->item(0)) {
-            $include = $externalSchema->getAttribute('filename');
+            $filePath = $externalSchema->getAttribute('filename');
             $referenceOnly = $externalSchema->getAttribute('referenceOnly');
-            $this->log('Processing external schema: ' . $include);
+            $this->log('Processing external schema: ' . $filePath);
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
-            if (!is_readable($include)) {
-                throw new BuildException("External schema '$include' does not exist");
+            $externalSchemaPath = realpath($srcDir . DIRECTORY_SEPARATOR . $filePath);
+            if ($externalSchemaPath === false) {
+                $externalSchemaPath = realpath($filePath);
+            }
+            if ($externalSchemaPath === false || !is_readable($externalSchemaPath)) {
+                throw new BuildException("Cannot read external schema at '$filePath'");
             }
 
             $externalSchemaDom = new DOMDocument('1.0', 'UTF-8');
-            $externalSchemaDom->load(realpath($include));
+            $externalSchemaDom->load($externalSchemaPath);
 
-            // The external schema may have external schemas of its own ; recurs
-            $this->includeExternalSchemas($externalSchemaDom, $srcDir);
+            $this->includeExternalSchemas($externalSchemaDom, dirname($externalSchemaPath));
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
                 if ($referenceOnly === 'true') {
                     $tableNode->setAttribute('skipSql', 'true');
