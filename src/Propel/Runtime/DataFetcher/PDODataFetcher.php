@@ -84,6 +84,24 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @see \PDOStatement::fetchAll()
+     *
+     * @param int|null $style
+     * @param int|string|object|null $fetch_argument
+     * @param array|null $ctor_args
+     *
+     * @return array
+     */
+    public function fetchAll(?int $style = null, $fetch_argument = null, ?array $ctor_args = null): array
+    {
+        if ($style === null) {
+            $style = $this->style;
+        }
+
+        return $this->getDataObject()->fetchAll($style, $fetch_argument, $ctor_args);
+    }
+
+    /**
      * @return void
      */
     public function next()
