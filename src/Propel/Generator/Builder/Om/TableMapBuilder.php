@@ -453,55 +453,38 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     protected function addNormalizedColumnNameMap(&$script): void
     {
+        $table = $this->getTable();
+        $tableColumns = $table->getColumns();
+
+        $arrayString = '';
+        foreach ($tableColumns as $column) {
+            $variants = [
+                $column->getPhpName(),                                    // ColumnName => COLUMN_NAME
+                $table->getPhpName() . '.' . $column->getPhpName(),       // TableName.ColumnName => COLUMN_NAME
+                $column->getCamelCaseName(),                              // columnName => COLUMN_NAME
+                $table->getCamelCaseName() . '.' . $column->getCamelCaseName(), // tableName.columnName => COLUMN_NAME
+                $this->getColumnConstant($column, $this->getTableMapClass()),   // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
+                $column->getConstantName(),                               // COL_COLUMN_NAME => COLUMN_NAME
+                $column->getName(),                                       // column_name => COLUMN_NAME
+                $table->getName() . '.' . $column->getName(),             // table_name.column_name => COLUMN_NAME
+            ];
+
+            $variants = array_unique($variants);
+
+            $normalizedName = strtoupper($column->getName());
+            array_walk($variants, static function ($variant) use (&$arrayString, $normalizedName) {
+                $arrayString .= PHP_EOL . "        '{$variant}' => '{$normalizedName}',";
+            });
+        }
+
         $script .= '
     /**
      * Holds a list of column names and their normalized version.
      *
      * @var string[]
      */
-    protected $normalizedColumnNameMap = [' . PHP_EOL;
-
-        $table = $this->getTable();
-        $tableColumns = $table->getColumns();
-
-        foreach ($tableColumns as $num => $column) {
-            $normalizedName = strtoupper($column->getName());
-
-            // ColumnName => COLUMN_NAME
-            $script .= '
-        \'' . $column->getPhpName() . '\' => \'' . $normalizedName . '\',';
-
-            // TableName.ColumnName => COLUMN_NAME
-            $script .= '
-        \'' . $table->getPhpName() . '.' . $column->getPhpName() . '\' => \'' . $normalizedName . '\',';
-
-            // columnName => COLUMN_NAME
-            $script .= '
-        \'' . $column->getCamelCaseName() . '\' => \'' . $normalizedName . '\',';
-
-            // tableName.columnName => COLUMN_NAME
-            $script .= '
-        \'' . $table->getCamelCaseName() . '.' . $column->getCamelCaseName() . '\' => \'' . $normalizedName . '\',';
-
-            // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
-            $script .= '
-        \'' . $this->getColumnConstant($column, $this->getTableMapClass()) . '\' => \'' . $normalizedName . '\',';
-
-            // COL_COLUMN_NAME => COLUMN_NAME
-            $script .= '
-        \'' . $column->getConstantName() . '\' => \'' . $normalizedName . '\',';
-
-            // column_name => COLUMN_NAME
-            $script .= '
-        \'' . $column->getName() . '\' => \'' . $normalizedName . '\',';
-
-            // table_name.column_name => COLUMN_NAME
-            $script .= '
-        \'' . $table->getName() . '.' . $column->getName() . '\' => \'' . $normalizedName . '\',';
-        }
-
-        $script .= '
-    ];' . PHP_EOL;
+    protected $normalizedColumnNameMap = [' . $arrayString . PHP_EOL
+            . '    ];' . PHP_EOL;
     }
 
     /**
