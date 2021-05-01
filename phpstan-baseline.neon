@@ -466,11 +466,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criteria.php
 
 		-
-			message: "#^Parameter \\#2 \\$code of class Propel\\\\Runtime\\\\Exception\\\\PropelException constructor expects int, null given\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
 			message: "#^Result of && is always false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
