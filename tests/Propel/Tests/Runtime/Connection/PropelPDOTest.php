@@ -14,6 +14,7 @@ use Monolog\Logger;
 use PDO;
 use PDOException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Connection\PropelPDO;
 use Propel\Tests\Bookstore\Author;
@@ -483,16 +484,8 @@ class PropelPDOTest extends BookstoreTestBase
      */
     public function testDebugLog()
     {
-        $con = $this->con;
+        [$con, $handler] = LastMessageHandler::buildHandledConnection($this->con);
 
-        // save data to return to normal state after test
-        $logger = $con->getLogger();
-        $logMethods = $con->getLogMethods();
-
-        $testLog = new Logger('debug');
-        $handler = new LastMessageHandler();
-        $testLog->pushHandler($handler);
-        $con->setLogger($testLog);
         $con->setLogMethods([
             'exec',
             'query',
@@ -501,7 +494,6 @@ class PropelPDOTest extends BookstoreTestBase
             'commit',
             'rollBack',
         ]);
-        $con->useDebug(true);
 
         $con->beginTransaction();
         // test transaction log
@@ -544,10 +536,22 @@ class PropelPDOTest extends BookstoreTestBase
         $this->assertEquals($latestExecutedQuery, $handler->latestMessage, 'PropelPDO logs exec queries in debug mode');
 
         $con->commit();
+    }
 
-        // return to normal state after test
-        $con->setLogger($logger);
-        $con->setLogMethods($logMethods);
+    /**
+     * @return void
+     */
+    public function testLogFailedQueries()
+    {
+        [$con, $handler] = LastMessageHandler::buildHandledConnection($this->con);
+
+        $incorrectQuery = 'Oh, this is no query';
+        try {
+            $con->exec($incorrectQuery);
+            $this->fail("Cannot run test when query does not fail. Query: [$incorrectQuery]");
+        } catch (PDOException $e) {
+        }
+        $this->assertEquals($incorrectQuery, $handler->latestMessage, 'PropelPDO should log failed queries.');
     }
 }
 
@@ -560,5 +564,17 @@ class LastMessageHandler extends AbstractHandler
         $this->latestMessage = (string)$record['message'];
 
         return false === $this->bubble;
+    }
+
+    public static function buildHandledConnection(ConnectionWrapper $con): array
+    {
+        $con = new ConnectionWrapper($con->getWrappedConnection());
+        $logger = new Logger('debug');
+        $handler = new LastMessageHandler();
+        $logger->pushHandler($handler);
+        $con->setLogger($logger);
+        $con->useDebug(true);
+
+        return [$con, $handler];
     }
 }
