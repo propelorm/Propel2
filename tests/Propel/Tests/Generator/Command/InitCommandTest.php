@@ -75,7 +75,9 @@ class InitCommandTest extends TestCaseFixtures
         $commandTester->setInputs($this->getInputsArray());
         $commandTester->execute(['command' => $command->getName()]);
 
-        $this->assertStringContainsString('Propel 2 is ready to be used!', $commandTester->getDisplay());
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('Propel 2 is ready to be used!', $output);
+        $this->assertStringContainsString('Successfully wrote PHP configuration in file', $output);
         $this->assertTrue(file_exists($this->dir . '/schema.xml'), 'Example schema file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml'), 'Configuration file created.');
         $this->assertTrue(file_exists($this->dir . '/propel.yml.dist'), 'Dist configuration file created.');
