@@ -76,10 +76,16 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns the namespace.
      *
-     * @return string
+     * @param bool $getAbsoluteNamespace
+     *
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(bool $getAbsoluteNamespace = false): ?string
     {
+        if ($getAbsoluteNamespace) {
+            return $this->makeNamespaceAbsolute($this->namespace);
+        }
+
         return $this->namespace;
     }
 
@@ -116,7 +122,23 @@ abstract class ScopedMappingModel extends MappingModel
      */
     public function isAbsoluteNamespace($namespace)
     {
-        return strpos($namespace, '\\') === 0;
+        return ($namespace && substr($namespace, 0, 1) === '\\');
+    }
+
+    /**
+     * Prepends a backslash to a namespace if there is none.
+     *
+     * A namespace with a backslash is considered absolute.
+     *
+     * @param string|null $namespace
+     *
+     * @return string|null
+     */
+    protected function makeNamespaceAbsolute(?string $namespace): ?string
+    {
+        $prependBackslash = ($namespace && !$this->isAbsoluteNamespace($namespace));
+
+        return ($prependBackslash) ?  "\\$namespace" : $namespace;
     }
 
     /**

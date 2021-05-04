@@ -170,6 +170,41 @@ class AbstractOMBuilderNamespaceTest extends TestCase
         ];
         $this->assertEquals($expected, $builder->getDeclaredClasses());
     }
+
+    /**
+     * @return array
+     */
+    public function namespaceDataProvider(): array
+    {
+        //[<table namespace>, <class namespace>, <message>]]
+        return [
+            ['\\My\\Namespace', '\\My\\Namespace', 'slashed namespace should work'],
+            ['My\\Namespace', 'My\\Namespace', 'non-slashed namespace should work'],
+            ['My\\Namespace', '\\My\\Namespace', 'slashes are stripped from class namespace anyway'],
+            ['\\My\\Namespace', 'My\\Namespace', 'slashes are stripped from table namespace anyway'],
+        ];
+    }
+
+    /**
+     * @dataProvider namespaceDataProvider
+     * @doesNotPerformAssertions
+     *
+     * @return void
+     */
+    public function testDeclareClassNamespaceIgnoresLeadingSlashInNamespace(string $tableNamespace, string $classNamespace, string $message): void
+    {
+        $table = new Table('Table1');
+        $table->setNamespace($tableNamespace);
+
+        $builder = new TestableOMBuilder2($table);
+
+        $builder->declareClassNamespace('MyTable1Class', $classNamespace . '\\Base');
+        try{
+            $builder->declareClassNamespace('MyTable1Class', $classNamespace);
+        } catch(LogicException $e) {
+            $this->fail($message);
+        }
+    }
 }
 
 class TestableOMBuilder2 extends AbstractOMBuilder
