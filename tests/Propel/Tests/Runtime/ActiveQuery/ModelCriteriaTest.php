@@ -85,6 +85,18 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testGetTableNameInQuery()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $this->assertEquals('book', $c->getTableNameInQuery());
+
+        $c->setModelAlias('b', true);
+        $this->assertEquals('b', $c->getTableNameInQuery());
+    }
+
+    /**
+     * @return void
+     */
     public function testFormatter()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
@@ -2933,7 +2945,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
-        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function ($v) {
+            return BookTableMap::COL_ID == $v;
+        }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -2942,7 +2956,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c1->leftJoinWith('b.Author a');
         $c2 = new ModelCriteria('bookstore', '\Propel\Tests\Bookstore\Author');
         $c1->mergeWith($c2);
-        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function ($v) {
+            return BookTableMap::COL_ID == $v;
+        }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() does not remove an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() does not remove an existing join');
@@ -2951,7 +2967,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->leftJoinWith('b.Author a');
         $c1->mergeWith($c2);
-        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function ($v) {
+            return BookTableMap::COL_ID == $v;
+        }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(1, count($with), 'mergeWith() merge joins to an empty join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');
@@ -2961,7 +2979,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c2 = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c2->innerJoinWith('b.Publisher p');
         $c1->mergeWith($c2);
-        $this->assertCount(1, array_filter($c1->getSelectColumns(), function($v) { return BookTableMap::COL_ID == $v; }), '$c1 criteria has selected Book columns twice');
+        $this->assertCount(1, array_filter($c1->getSelectColumns(), function ($v) {
+            return BookTableMap::COL_ID == $v;
+        }), '$c1 criteria has selected Book columns twice');
         $with = $c1->getWith();
         $this->assertEquals(2, count($with), 'mergeWith() merge joins to an existing join');
         $this->assertEquals('modelName: Propel\Tests\Bookstore\Author, relationName: Author, relationMethod: setAuthor, leftPhpName: , rightPhpName: a', $with['a']->__toString(), 'mergeWith() merge joins to an empty join');

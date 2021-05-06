@@ -29,6 +29,11 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     protected $modelTableMapName;
 
     /**
+     * @var bool
+     */
+    protected $useAliasInSQL = false;
+
+    /**
      * @var string|null
      */
     protected $modelAlias;
@@ -258,6 +263,22 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     public function getTableMap()
     {
         return $this->tableMap;
+    }
+
+    /**
+     * Returns the name of the table as used in the query.
+     *
+     * Either the SQL name or an alias.
+     *
+     * @return string
+     */
+    public function getTableNameInQuery()
+    {
+        if ($this->useAliasInSQL && $this->modelAlias) {
+            return $this->modelAlias;
+        }
+
+        return $this->getTableMap()->getName();
     }
 
     /**

@@ -431,11 +431,6 @@ parameters:
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:\\$useAliasInSQL\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:find\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php

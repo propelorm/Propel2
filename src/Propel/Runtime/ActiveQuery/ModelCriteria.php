@@ -16,6 +16,7 @@ use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
@@ -58,11 +59,6 @@ class ModelCriteria extends BaseModelCriteria
     public const FORMAT_ON_DEMAND = '\Propel\Runtime\Formatter\OnDemandFormatter';
 
     /**
-     * @var bool
-     */
-    protected $useAliasInSQL = false;
-
-    /**
      * @var \Propel\Runtime\ActiveQuery\ModelCriteria|null
      */
     protected $primaryCriteria;
@@ -98,6 +94,13 @@ class ModelCriteria extends BaseModelCriteria
      * @var bool
      */
     protected $isSelfSelected = false;
+
+    /**
+     * Indicates that this query is wrapped in an EXISTS-statement
+     *
+     * @var bool
+     */
+    protected $isExistsQuery = false;
 
     /**
      * Adds a condition on a column based on a pseudo SQL clause
@@ -207,6 +210,44 @@ class ModelCriteria extends BaseModelCriteria
         $this->addUsingOperator($criterion, null, null);
 
         return $this;
+    }
+
+    /**
+     * Adds an EXISTS clause with a custom query object.
+     *
+     * Note that filter conditions linking data from the outer query with data from the inner
+     * query are not inferred and have to be added manually. If a relationship exists between
+     * outer and inner table, {@link ModelCriteria::useExistsQuery()} can be used to infer filter
+     * automatically..
+     *
+     * @example MyOuterQuery::create()->whereExists(MyDataQuery::create()->where('MyData.MyField = MyOuter.MyField'))
+     *
+     * @phpstan-param ExistsCriterion::TYPE_* $type
+     *
+     * @see ModelCriteria::useExistsQuery() can be used
+     *
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQueryCriteria the query object used in the EXISTS statement
+     * @param string $type Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria*
+     */
+    public function whereExists($existsQueryCriteria, string $type = ExistsCriterion::TYPE_EXISTS)
+    {
+        $criterion = new ExistsCriterion($this, $existsQueryCriteria, $type);
+
+        return $this->addUsingOperator($criterion);
+    }
+
+    /**
+     * Negation of {@link ModelCriteria::whereExists()}
+     *
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQueryCriteria
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function whereNotExists($existsQueryCriteria)
+    {
+        return $this->whereExists($existsQueryCriteria, ExistsCriterion::TYPE_NOT_EXISTS);
     }
 
     /**
@@ -807,6 +848,10 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function endUse()
     {
+        if ($this->isExistsQuery) {
+            return $this->getPrimaryCriteria();
+        }
+
         if (isset($this->aliases[$this->modelAlias])) {
             $this->removeAlias($this->modelAlias);
         }
@@ -815,6 +860,52 @@ class ModelCriteria extends BaseModelCriteria
         $primaryCriteria->mergeWith($this);
 
         return $primaryCriteria;
+    }
+
+    /**
+     * Adds and returns an internal query to be used in an EXISTS-clause.
+     *
+     * @phpstan-param ExistsCriterion::TYPE_* $type
+     *
+     * @param string $relationName name of the relation
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string $type Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function useExistsQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null, string $type = ExistsCriterion::TYPE_EXISTS)
+    {
+        $relationMap = $this->getTableMap()->getRelation($relationName);
+        $className = $relationMap->getRightTable()->getClassName();
+
+        $queryInExists = ($queryClass === null) ? PropelQuery::from($className) : new $queryClass();
+        $queryInExists->isExistsQuery = true;
+        $queryInExists->primaryCriteria = $this;
+        if ($modelAlias !== null) {
+            $queryInExists->setModelAlias($modelAlias, true);
+        }
+
+        $criterion = new ExistsCriterion($this, $queryInExists, $type, $relationMap);
+        $this->addUsingOperator($criterion);
+
+        return $queryInExists;
+    }
+
+    /**
+     * Use NOT EXISTS rather than EXISTS.
+     *
+     * @see ModelCriteria::useExistsQuery()
+     *
+     * @param string $relationName
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function useNotExistsQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null)
+    {
+        return $this->useExistsQuery($relationName, $modelAlias, $queryClass, ExistsCriterion::TYPE_NOT_EXISTS);
     }
 
     /**
@@ -2222,15 +2313,10 @@ class ModelCriteria extends BaseModelCriteria
         if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
             throw new UnknownColumnException('Unknown column ' . $columnName . ' in model ' . $this->modelName);
         }
+        $tableName = $this->getTableNameInQuery();
+        $columnName = $this->getTableMap()->getColumnByPhpName($columnName)->getName();
 
-        if ($this->useAliasInSQL) {
-            return $this->modelAlias . '.' . $this->getTableMap()->getColumnByPhpName($columnName)->getName();
-        }
-
-        return $this
-            ->getTableMap()
-            ->getColumnByPhpName($columnName)
-            ->getFullyQualifiedName();
+        return "$tableName.$columnName";
     }
 
     /**
