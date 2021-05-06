@@ -8,6 +8,9 @@
 
 namespace Propel\Tests\Generator\Builder\Om;
 
+use Propel\Generator\Builder\Om\TableMapBuilder;
+use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
@@ -356,5 +359,44 @@ class TableMapBuilderTest extends BookstoreTestBase
         $this->assertFalse($bookTable->isCrossRef(), 'The map builder add isCrossRef information "false"');
         $BookListRelTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookListRel');
         $this->assertTrue($BookListRelTable->isCrossRef(), 'The map builder add isCrossRef information "true"');
+    }
+
+    /**
+     * @return void
+     */
+    public function testNormalizedColumnMapHasOnlyUniqueKeys()
+    {
+        $databaseXml = '
+<database>
+    <table name="email">
+        <column name="id" type="integer"/>
+        <column name="email_address" type="varchar"/>
+    </table>
+</database>
+';
+        $reader = new SchemaReader();
+        $schema = $reader->parseString($databaseXml);
+        $table = $schema->getDatabase()->getTable('email');
+
+        $tableMapBuilder = new class($table) extends TableMapBuilder {
+            public function getNormalizedColumnNameMapDefinition(): string
+            {
+                $script = '';
+                $this->addNormalizedColumnNameMap($script);
+                return $script;
+            }
+        };
+        $tableMapBuilder->setGeneratorConfig(new QuickGeneratorConfig());
+        $normalizedColumnMapDefinition = $tableMapBuilder->getNormalizedColumnNameMapDefinition();
+
+        // extract inner part of the array
+        $this->assertEquals(1, preg_match('/= \[\n(.*)\n\s*\]/ms', $normalizedColumnMapDefinition, $matches));
+
+        // split, then check for number of lines -- so that we are sure nothing vanishes
+        $list = explode(PHP_EOL, $matches[1]);
+        $this->assertCount(14, $list);
+
+        // check for uniqueness -> unique list has to be the same size
+        $this->assertCount(14, array_unique($list));
     }
 }
