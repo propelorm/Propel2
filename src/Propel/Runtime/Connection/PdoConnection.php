@@ -137,13 +137,11 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     * @return int
      */
     public function exec($statement)
     {
-        $stmt = $this->pdo->exec($statement);
-
-        return $this->getDataFetcher($stmt);
+        return $this->pdo->exec($statement);
     }
 
     /**

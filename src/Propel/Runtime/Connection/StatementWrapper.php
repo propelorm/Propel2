@@ -89,8 +89,12 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function query()
     {
-        /** @var \PDOStatement $statement */
-        $statement = $this->connection->getWrappedConnection()->query($this->sql);
+        if ($this->connection->useDebug) {
+            $callback = [$this->connection->getWrappedConnection(), 'query'];
+            $statement = $this->connection->callUserFunctionWithLogging($callback, [$this->sql], $this->sql);
+        } else {
+            $statement = $this->connection->getWrappedConnection()->query($this->sql);
+        }
         $this->statement = $statement;
 
         return $this->connection->getWrappedConnection()->getDataFetcher($this);
@@ -201,15 +205,14 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function execute($inputParameters = null)
     {
-        $return = $this->statement->execute($inputParameters);
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString($inputParameters);
-            $this->connection->log($sql);
-            $this->connection->setLastExecutedQuery($sql);
-            $this->connection->incrementQueryCount();
+            $args = ($inputParameters !== null) ? [$inputParameters] : [];
+
+            return $this->connection->callUserFunctionWithLogging([$this->statement, 'execute'], $args, $sql);
         }
 
-        return $return;
+        return $this->statement->execute($inputParameters);
     }
 
     /**

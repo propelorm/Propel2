@@ -148,7 +148,7 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface The number of rows that were modified or deleted.
+     * @return int The number of rows that were modified or deleted.
      */
     public function exec($statement);
 

@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Connection;
 
+use PDOException;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
@@ -408,15 +409,13 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function exec($statement)
     {
-        $return = $this->connection->exec($statement);
-
         if ($this->useDebug) {
-            $this->log($statement);
-            $this->setLastExecutedQuery($statement);
-            $this->incrementQueryCount();
+            $callback = [$this->connection, 'exec'];
+
+            return $this->callUserFunctionWithLogging($callback, [$statement], $statement);
         }
 
-        return $return;
+        return $this->connection->exec($statement);
     }
 
     /**
@@ -437,12 +436,43 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $args = func_get_args();
         $sql = array_shift($args);
         $statementWrapper = $this->createStatementWrapper($sql);
-        $return = call_user_func_array([$statementWrapper, 'query'], $args);
+        $callback = [$statementWrapper, 'query'];
 
-        if ($this->useDebug) {
-            $this->log($sql);
-            $this->setLastExecutedQuery($sql);
-            $this->incrementQueryCount();
+        return call_user_func_array($callback, $args);
+    }
+
+    /**
+     * Run a query callback and log the SQL statement.
+     *
+     * This method ensures, that the statement is logged, even if an error occures, and that the
+     * query is logged after it was run. The latter is necessary for profiling to work.
+     *
+     * @param callable $callback
+     * @param array|null $args
+     * @param string $sqlForLog Logged SQL query
+     *
+     * @throws \PDOException
+     *
+     * @return mixed
+     */
+    public function callUserFunctionWithLogging(callable $callback, ?array $args, string $sqlForLog)
+    {
+        $pdoException = null;
+        $return = null;
+
+        try {
+            $return = call_user_func_array($callback, $args ?? []);
+        } catch (PDOException $e) {
+            $pdoException = $e;
+        }
+
+        // For profiling to work, $this->log() needs to be run after the query was executed
+        $this->log($sqlForLog);
+        $this->setLastExecutedQuery($sqlForLog);
+        $this->incrementQueryCount();
+
+        if ($pdoException !== null) {
+            throw $pdoException;
         }
 
         return $return;
@@ -665,7 +695,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         do {
             $callingMethod = $backtrace[$i]['function'];
             $i++;
-        } while ($callingMethod === 'log' && $i < $stackSize);
+        } while (in_array($callingMethod, ['log', 'callUserFunctionWithLogging'], true) && $i < $stackSize);
 
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;
