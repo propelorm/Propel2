@@ -30,6 +30,7 @@ use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
+use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -81,12 +82,6 @@ class ModelCriteria extends BaseModelCriteria
      * @var bool
      */
     protected $isKeepQuery = true;
-
-    // this is for the select method
-    /**
-     * @var string|array|null
-     */
-    protected $select;
 
     /**
      * Used to memorize whether we added self-select columns before.
@@ -469,15 +464,34 @@ class ModelCriteria extends BaseModelCriteria
         if (empty($columnArray)) {
             throw new PropelException('You must ask for at least one column');
         }
+        $this->isSelfSelected = true;
+        if ($this->formatter === null) {
+            $this->setFormatter(SimpleArrayFormatter::class);
+        }
 
         if ($columnArray === '*') {
             $columnArray = [];
-            foreach (call_user_func([$this->modelTableMapName, 'getFieldNames'], TableMap::TYPE_PHPNAME) as $column) {
-                $columnArray[] = $this->modelName . '.' . $column;
+            foreach ($this->getTableMap()->getColumns() as $columnMap) {
+                $columnArray[] = $this->modelName . '.' . $columnMap->getPhpName();
             }
         }
+        if (!is_array($columnArray)) {
+            $columnArray = [$columnArray];
+        }
 
-        $this->select = $columnArray;
+        $this->selectColumns = [];
+
+        foreach ($columnArray as $columnName) {
+            if (array_key_exists($columnName, $this->asColumns)) {
+                continue;
+            }
+            [$columnMap, $realColumnName] = $this->getColumnFromName($columnName);
+            if ($realColumnName === null) {
+                throw new PropelException("Cannot find selected column '$columnName'");
+            }
+            // always put quotes around the columnName to be safe, we strip them in the formatter
+            $this->addAsColumn('"' . $columnName . '"', $realColumnName);
+        }
 
         return $this;
     }
@@ -485,13 +499,15 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Retrieves the columns defined by a previous call to select().
      *
+     * @deprecated Not needed anymore, selected columns are part of {@link Criteria::$asColumns}
+     *
      * @see select()
      *
      * @return array|string A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
      */
     public function getSelect()
     {
-        return $this->select;
+        return array_values($this->asColumns);
     }
 
     /**
@@ -957,7 +973,6 @@ class ModelCriteria extends BaseModelCriteria
         $this->with = [];
         $this->primaryCriteria = null;
         $this->formatter = null;
-        $this->select = null;
 
         return $this;
     }
@@ -1575,11 +1590,6 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->setDbName($this->getDbName()); // Set the correct dbName
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-
         $dataFetcher = $criteria->doCount($con);
         $row = $dataFetcher->fetch();
         if ($row) {
@@ -1599,8 +1609,6 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function doCount(?ConnectionInterface $con = null)
     {
-        $this->configureSelectColumns();
-
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
             $this->addSelfSelectColumns();
@@ -1629,11 +1637,6 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->clearSelectColumns(); // We are not retrieving data
         $criteria->addSelectColumn('1');
         $criteria->limit(1);
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
         $dataFetcher = $criteria->doSelect($con);
         $exists = (bool)$dataFetcher->fetchColumn(0);
@@ -1799,7 +1802,6 @@ class ModelCriteria extends BaseModelCriteria
             throw new RuntimeException('Delete does not support join');
         }
 
-        $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
         $tableName = $this->getPrimaryTableName();
 
         $affectedRows = 0; // initialize this in case the next loop has no iterations.
@@ -1902,9 +1904,6 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        if ($this->modelTableMapName) {
-            $criteria->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-        }
 
         return $con->transaction(function () use ($con, $values, $criteria, $forceIndividualSaves) {
             $affectedRows = $criteria->basePreUpdate($values, $con, $forceIndividualSaves);
@@ -2221,46 +2220,17 @@ class ModelCriteria extends BaseModelCriteria
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
 
-        $this->configureSelectColumns();
-
         return parent::doSelect($con);
     }
 
     /**
+     * @deprecated This method was used to add columns from {@link select()} during query generation, but that is handled
+     * right away now.
+     *
      * @return void
      */
     public function configureSelectColumns()
     {
-        if ($this->select === null) {
-            // leave early
-            return;
-        }
-
-        // select() needs the PropelSimpleArrayFormatter if no formatter given
-        if ($this->formatter === null) {
-            $this->setFormatter('\Propel\Runtime\Formatter\SimpleArrayFormatter');
-        }
-
-        // clear only the selectColumns, clearSelectColumns() clears asColumns too
-        $this->selectColumns = [];
-
-        // We need to set the primary table name, since in the case that there are no WHERE columns
-        // it will be impossible for the createSelectSql() method to determine which
-        // tables go into the FROM clause.
-        if (!$this->selectQueries) {
-            $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
-        }
-
-        // Add requested columns which are not withColumns
-        $columnNames = is_array($this->select) ? $this->select : [$this->select];
-        foreach ($columnNames as $columnName) {
-            // check if the column was added by a withColumn, if not add it
-            if (!array_key_exists($columnName, $this->getAsColumns())) {
-                $column = $this->getColumnFromName($columnName);
-                // always put quotes around the columnName to be safe, we strip them in the formatter
-                $this->addAsColumn('"' . $columnName . '"', $column[1]);
-            }
-        }
     }
 
     /**

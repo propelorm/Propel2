@@ -2183,20 +2183,16 @@ class Criteria
             }
         }
 
-        if (empty($fromClause) && $this->getPrimaryTableName()) {
-            $fromClause[] = $this->getPrimaryTableName();
-        }
-
         // tables should not exist as alias of subQuery
         if ($this->hasSelectQueries()) {
-            foreach ($fromClause as $key => $ftable) {
+            foreach ($fromClause as $index => $ftable) {
                 if (strpos($ftable, ' ') !== false) {
                     [, $tableName] = explode(' ', $ftable);
                 } else {
                     $tableName = $ftable;
                 }
                 if ($this->hasSelectQuery($tableName)) {
-                    unset($fromClause[$key]);
+                    unset($fromClause[$index]);
                 }
             }
         }
@@ -2208,6 +2204,10 @@ class Criteria
         // add subQuery to From after adding quotes
         foreach ($this->getSelectQueries() as $subQueryAlias => $subQueryCriteria) {
             $fromClause[] = '(' . $subQueryCriteria->createSelectSql($params) . ') AS ' . $subQueryAlias;
+        }
+
+        if (empty($fromClause) && $this->getPrimaryTableName()) {
+            $fromClause[] = $this->getPrimaryTableName();
         }
 
         // build from-clause

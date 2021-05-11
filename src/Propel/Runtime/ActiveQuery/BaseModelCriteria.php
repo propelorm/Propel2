@@ -162,23 +162,28 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * Sets the model name.
      * This also sets `this->modelTableMapName` and `this->tableMap`.
      *
-     * @param string $modelName
+     * @param string|null $modelName
      *
      * @return $this The current object, for fluid interface
      */
     public function setModelName($modelName)
     {
-        if (strpos($modelName, '\\') === 0) {
-            $this->modelName = substr($modelName, 1);
-        } else {
-            $this->modelName = $modelName;
+        if (empty($modelName)) {
+            $this->modelName = null;
+
+            return $this;
         }
-        if ($this->modelName && !$this->modelTableMapName) {
+        if (strpos($modelName, '\\') === 0) {
+            $modelName = substr($modelName, 1);
+        }
+
+        $this->modelName = $modelName;
+        if (!$this->modelTableMapName) {
             $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
         }
-        if ($this->modelName) {
-            $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
-        }
+        $dbName = $this->getDbName();
+        $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($dbName)->getTableByPhpName($modelName);
+        $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
 
         return $this;
     }
