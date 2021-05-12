@@ -290,13 +290,15 @@ class InitCommand extends AbstractCommand
         $this->writeFile($output, sprintf('%s/propel.%s', getcwd(), $options['format']), $config->render($options));
         $this->writeFile($output, sprintf('%s/propel.%s.dist', getcwd(), $options['format']), $distConfig->render($options));
 
-        $this->buildSqlAndModelsAndConvertConfig();
+        $this->buildSqlAndModelsAndConvertConfig($output);
     }
 
     /**
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
+     *
      * @return void
      */
-    private function buildSqlAndModelsAndConvertConfig()
+    private function buildSqlAndModelsAndConvertConfig(?OutputInterface $output = null)
     {
         $this->getApplication()->setAutoExit(false);
 
@@ -307,7 +309,8 @@ class InitCommand extends AbstractCommand
         ];
 
         foreach ($followupCommands as $command) {
-            if ($this->getApplication()->run(new ArrayInput([$command])) !== 0) {
+            $input = new ArrayInput([$command]);
+            if ($this->getApplication()->run($input, $output) !== 0) {
                 exit(1);
             }
         }
