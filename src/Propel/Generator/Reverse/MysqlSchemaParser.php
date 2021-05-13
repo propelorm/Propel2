@@ -17,6 +17,8 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Mysql database schema parser.
@@ -90,6 +92,16 @@ class MysqlSchemaParser extends AbstractSchemaParser
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $dbh Optional database connection
+     */
+    public function __construct(?ConnectionInterface $dbh = null)
+    {
+        parent::__construct($dbh);
+
+        $this->setPlatform(new MysqlPlatform());
+    }
+
+    /**
      * @param \Propel\Generator\Model\Database $database
      * @param \Propel\Generator\Model\Table[] $additionalTables
      *
@@ -118,6 +130,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
             $this->addPrimaryKey($table);
 
             $this->addTableVendorInfo($table);
+            $this->addDescriptionToTable($table);
+            $this->addColumnDescriptionsToTable($table);
         }
 
         return count($database->getTables());
@@ -281,6 +295,82 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
 
         return $column;
+    }
+
+    /**
+     * Load and set table description.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
+    protected function addDescriptionToTable(Table $table): void
+    {
+        $tableDescription = $this->loadTableDescription($table);
+        if ($tableDescription) {
+            $table->setDescription($tableDescription);
+        }
+    }
+
+    /**
+     * Sets column descriptions according to source.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
+    protected function addColumnDescriptionsToTable(Table $table): void
+    {
+        foreach ($table->getColumns() as $column) {
+            $columnDescription = $this->loadColumnDescription($column);
+            if ($columnDescription) {
+                $column->setDescription($columnDescription);
+            }
+        }
+    }
+
+    /**
+     * Load a comment for this table.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string|null
+     */
+    protected function loadTableDescription(Table $table): ?string
+    {
+        $tableName = $this->getPlatform()->quote($table->getName());
+        $query = <<< EOT
+SELECT table_comment
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema=DATABASE()
+  AND table_name=($tableName)
+EOT;
+
+        /** @var string|null */
+        return $this->dbh->query($query)->fetchColumn();
+    }
+
+    /**
+     * Load a comment for this column.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string|null
+     */
+    protected function loadColumnDescription(Column $column): ?string
+    {
+        $tableName = $this->getPlatform()->quote($column->getTableName());
+        $columnName = $this->getPlatform()->quote($column->getName());
+        $query = <<< EOT
+SELECT column_comment
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_schema=DATABASE()
+  AND table_name=($tableName)
+  AND column_name=($columnName)
+EOT;
+
+        /** @var string|null */
+        return $this->dbh->query($query)->fetchColumn();
     }
 
     /**
