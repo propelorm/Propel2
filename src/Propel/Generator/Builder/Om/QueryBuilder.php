@@ -67,8 +67,16 @@ class QueryBuilder extends AbstractOMBuilder
     public function getParentClass()
     {
         $parentClass = $this->getBehaviorContent('parentClass');
+        if ($parentClass) {
+            return $parentClass;
+        }
 
-        return $parentClass === null ? ($this->getTable()->getBaseQueryClass() != '' ? $this->getTable()->getBaseQueryClass() : 'ModelCriteria') : $parentClass;
+        $baseQueryClass = $this->getTable()->getBaseQueryClass();
+        if ($baseQueryClass) {
+            return $baseQueryClass;
+        }
+
+        return 'ModelCriteria';
     }
 
     /**
@@ -627,10 +635,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             return null;
         }";
         if ($table->hasCompositePrimaryKey()) {
-            $pks = [];
-            foreach ($table->getPrimaryKey() as $index => $column) {
-                $pks[] = "\$key[$index]";
-            }
+            $numberOfPks = count($table->getPrimaryKey());
+            $pkIndexes = range(0, $numberOfPks - 1);
+            $pks = preg_filter('/(\d+)/', '$key[${1}]', $pkIndexes); // put ids into "$key[]"
         } else {
             $pks = '$key';
         }
@@ -672,6 +679,19 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
 
         // this method is not needed if the table has no primary key
         if (!$table->hasPrimaryKey()) {
+            return;
+        }
+
+        $usesConcreteInheritance = $table->usesConcreteInheritance();
+        if ($table->isAbstract() && !$usesConcreteInheritance) {
+            $tableName = $table->getPhpName();
+            $script .= "
+    protected function findPkSimple(\$key, ConnectionInterface \$con)
+    {
+        throw new PropelException('$tableName is declared abstract, you cannot query it.');
+    }
+";
+
             return;
         }
 
@@ -741,7 +761,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         \$obj = null;
         if (\$row = \$stmt->fetch(\PDO::FETCH_NUM)) {";
 
-        if ($table->getChildrenColumn()) {
+        if ($usesConcreteInheritance) {
             $script .= "
             \$cls = {$tableMapClassName}::getOMClass(\$row, 0, false);
             /** @var $ARClassName \$obj */
@@ -1224,7 +1244,6 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      */
     protected function addFilterByArrayCol(&$script, Column $col)
     {
-        $colPhpName = $col->getPhpName();
         $singularPhpName = $col->getPhpSingularName();
         $colName = $col->getName();
         $variableName = $col->getCamelCaseName();
@@ -1306,7 +1325,6 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException'
         );
-        $table = $this->getTable();
         $queryClass = $this->getQueryClassName();
         $fkTable = $fk->getForeignTable();
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);

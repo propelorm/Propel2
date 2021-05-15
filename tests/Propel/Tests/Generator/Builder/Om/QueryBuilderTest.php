@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Exception\PropelException;
@@ -40,7 +41,6 @@ use Propel\Tests\Bookstore\ReviewQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use ReflectionMethod;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 
 /**
  * Test class for QueryBuilder.
@@ -58,6 +58,7 @@ class QueryBuilderTest extends BookstoreTestBase
     {
         parent::setUp();
         include_once(__DIR__ . '/QueryBuilderTestClasses.php');
+        include_once(__DIR__ . '/TestableQueryBuilder.php');
     }
 
     /**
@@ -1287,7 +1288,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $q2 = $con->getLastExecutedQuery();
         $this->assertEquals($q1, $q2, 'with() can be used after a call to useFkQuery() with no alias');
     }
-    
+
     /**
      * @return void
      */
@@ -1301,10 +1302,10 @@ class QueryBuilderTest extends BookstoreTestBase
         ->useAuthorExistsQuery()
         ->filterByFirstName('Leo')
         ->endUse();
-        
+
         $this->assertEquals($expected, $actual, 'useExistsQuery() is available and calls correct parent method');
     }
-    
+
     /**
      * @return void
      */
@@ -1318,10 +1319,10 @@ class QueryBuilderTest extends BookstoreTestBase
         ->useAuthorNotExistsQuery()
         ->filterByFirstName('Leo')
         ->endUse();
-        
+
         $this->assertEquals($expected, $actual, 'useNotExistsQuery() is available and calls correct parent method');
     }
-    
+
     /**
      * @return void
      */
@@ -1330,7 +1331,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $query = BookQuery::create()->useAuthorExistsQuery(null, BookClubListQuery::class, false);
         $this->assertInstanceOf(BookClubListQuery::class, $query, 'useExistsQuery() passes on given query class');
     }
-    
+
     /**
      * @return void
      */
@@ -1339,7 +1340,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $query = BookQuery::create()->useAuthorNotExistsQuery(null, BookClubListQuery::class);
         $this->assertInstanceOf(BookClubListQuery::class, $query, 'useNotExistsQuery() passes on given query class');
     }
-    
+
     /**
      * @return void
      */
@@ -1388,5 +1389,45 @@ class QueryBuilderTest extends BookstoreTestBase
         $testBookListRel = BookListRelQuery::create()->findOne();
         $nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
         $this->assertEquals(1, $nbBookListRel, 'prune() removes an object from the result');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFindPkSimpleThrowsExceptionWhenTableIsAbstract(): void
+    {
+        $databaseXml = '
+<database>
+    <table name="my_table" abstract="true">
+        <column name="id" type="integer" primaryKey="true"/>
+    </table>
+</database>
+';
+        $script = TestableQueryBuilder::forTableFromXml($databaseXml, 'my_table')->buildScript('addFindPkSimple');
+        $throwStatement = 'throw new PropelException(\'MyTable is declared abstract, you cannot query it.\');';
+        $msg = 'Query class for abstract table should throw exception when calling findPkSimple()';
+        $this->assertStringContainsString($throwStatement, $script, $msg);
+    }
+
+    /**
+     * @return void
+     */
+    public function testFindPkSimpleThrowsNoExceptionWhenTableIsAbstractWithInheritance(): void
+    {
+        $databaseXml = '
+<database>
+    <table name="my_table" abstract="true">
+        <column name="id" type="integer" primaryKey="true"/>
+        <column name="class_key" type="integer" inheritance="single">
+            <inheritance key="1" class="class1"/>
+            <inheritance key="2" class="class2" extends="my_table"/>
+        </column>
+    </table>
+</database>
+';
+        $script = TestableQueryBuilder::forTableFromXml($databaseXml, 'my_table')->buildScript('addFindPkSimple');
+        $throwStatement = 'throw new PropelException(\'MyTable is declared abstract, you cannot query it.\');';
+        $msg = 'Query class for abstract table should not have abstract findPkSimple() method if table uses inheritance';
+        $this->assertStringNotContainsString($throwStatement, $script, $msg);
     }
 }
