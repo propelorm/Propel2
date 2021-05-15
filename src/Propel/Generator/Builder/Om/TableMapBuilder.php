@@ -700,8 +700,19 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addGetBehaviors(&$script)
     {
         $behaviors = $this->getTable()->getBehaviors();
-        if ($behaviors) {
-            $script .= "
+        if (!$behaviors) {
+            return;
+        }
+
+        $stringifiedBehaviors = [];
+        foreach ($behaviors as $behavior) {
+            $id = $behavior->getId();
+            $params = $this->stringify($behavior->getParameters());
+            $stringifiedBehaviors[] = "'$id' => $params,";
+        }
+        $itemsString = implode(PHP_EOL . '            ', $stringifiedBehaviors);
+
+        $script .= "
     /**
      *
      * Gets the list of behaviors registered for this table
@@ -710,28 +721,33 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     public function getBehaviors()
     {
-        return array(";
-            foreach ($behaviors as $behavior) {
-                $script .= "
-            '{$behavior->getId()}' => array(";
-                foreach ($behavior->getParameters() as $key => $value) {
-                    $script .= "'$key' => ";
-                    if (is_array($value)) {
-                        $string = var_export($value, true);
-                        $string = str_replace("\n", '', $string);
-                        $string = str_replace('  ', '', $string);
-                        $script .= $string . ', ';
-                    } else {
-                        $script .= "'$value', ";
-                    }
-                }
-                $script .= '),';
-            }
-            $script .= "
+        return array(
+            $itemsString
         );
     } // getBehaviors()
 ";
+    }
+
+    /**
+     * @param bool|int|float|string|array|null $value
+     *
+     * @return string
+     */
+    protected function stringify($value): string
+    {
+        if (!is_array($value)) {
+            return var_export($value, true);
         }
+
+        $items = [];
+        foreach ($value as $key => $value) {
+            $keyString = var_export($key, true);
+            $valString = $this->stringify($value);
+            $items[] = "$keyString => $valString";
+        }
+        $itemsCsv = implode(', ', $items);
+
+        return "[$itemsCsv]";
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Propel\Tests\Generator\Builder\Om;
 use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Model\Table;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
@@ -378,11 +379,12 @@ class TableMapBuilderTest extends BookstoreTestBase
         $schema = $reader->parseString($databaseXml);
         $table = $schema->getDatabase()->getTable('email');
 
-        $tableMapBuilder = new class($table) extends TableMapBuilder {
+        $tableMapBuilder = new class ($table) extends TableMapBuilder {
             public function getNormalizedColumnNameMapDefinition(): string
             {
                 $script = '';
                 $this->addNormalizedColumnNameMap($script);
+
                 return $script;
             }
         };
@@ -398,5 +400,49 @@ class TableMapBuilderTest extends BookstoreTestBase
 
         // check for uniqueness -> unique list has to be the same size
         $this->assertCount(14, array_unique($list));
+    }
+
+    /**
+     * @return array
+     */
+    public function stringifyDataProvider(): array
+    {
+        return [
+            [1, 'int should stay int'],
+            [3.14, 'float should stay float'],
+            [null, 'null should stay null'],
+            [true, 'bool should stay bool'],
+            ['literal', 'string should stay string'],
+            ['', 'empty string should stay string'],
+            [' ', 'space should stay string'],
+            ["\n", 'new line should stay string'],
+            ['\'quoted literal\'', 'quotes should be escaped'],
+            [[1, 2, 3], 'array should stay array'],
+            [['nr1' => 1, 'nr2' => 2], 'array indexes should remain'],
+            [[1, 3.14, null, true, 'literal'], 'array types should not change'],
+            [[null, 'nested' => [1, true], [2.71, 'arr' => ['any']]], 'nested arrays should work too'],
+        ];
+    }
+
+    /**
+     * @dataProvider stringifyDataProvider
+     *
+     * @param bool|int|float|string|array|null $scalarData
+     * @param string $message
+     *
+     * @return void
+     */
+    public function testStringify($scalarData, string $message): void
+    {
+        $builder = new class (new Table('any')) extends TableMapBuilder{
+            public function doStringify($value): string
+            {
+                return $this->stringify($value);
+            }
+        };
+        $stringifiedData = $builder->doStringify($scalarData);
+        eval("\$restoredData = $stringifiedData;");
+
+        $this->assertSame($scalarData, $restoredData, $message);
     }
 }

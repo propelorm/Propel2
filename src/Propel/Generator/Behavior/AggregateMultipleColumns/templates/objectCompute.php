@@ -8,7 +8,7 @@
  */
 public function compute<?=$aggregationName?>(ConnectionInterface $con)
 {
-    $stmt = $con->prepare('<?=$sql?>');
+    $stmt = $con->prepare(<?= var_export($sql, true) ?>);
 <?php foreach ($bindings as $key => $binding):?>
     $stmt->bindValue(':p<?=$key?>', $this->get<?=$binding?>());
 <?php endforeach;?>

@@ -1,3 +1,4 @@
+
     /**
      * Method to invalidate the instance pool of all tables related to <?= $tableName ?>
      * by a foreign key with ON DELETE CASCADE
