@@ -191,13 +191,13 @@ jobs:
               run: cd suite && composer install
 
             - name: Generate transfer objects
-              run: cd suite && vendor/bin/console transfer:generate
+              run: cd suite && APPLICATION_ENV=development vendor/bin/console transfer:generate
 
             - name: Generate transfer databuilder objects
-              run: cd suite && vendor/bin/console transfer:databuilder:generate
+              run: cd suite && APPLICATION_ENV=development vendor/bin/console transfer:databuilder:generate
 
             - name: Propel install
               run: |
-                  cd suite && vendor/bin/console propel:schema:copy
-                  cd suite && vendor/bin/console propel:model:build
-                  cd suite && vendor/bin/console transfer:entity:generate
+                  cd suite && APPLICATION_ENV=development vendor/bin/console propel:schema:copy
+                  cd suite && APPLICATION_ENV=development vendor/bin/console propel:model:build
+                  cd suite && APPLICATION_ENV=development vendor/bin/console transfer:entity:generate
