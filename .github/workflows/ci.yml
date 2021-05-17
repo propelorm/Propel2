@@ -5,8 +5,6 @@ on:
   pull_request:
   schedule:
     - cron: "0 0 * * *"
-      branches:
-        - master
 
 jobs:
     testsuite:
@@ -57,8 +55,6 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v2
-              with:
-                  fetch-depth: 1
 
             - name: Composer get cache directory
               id: composer-cache
@@ -131,9 +127,7 @@ jobs:
                   extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
                   coverage: pcov
 
-            - uses: actions/checkout@v1
-              with:
-                  fetch-depth: 1
+            - uses: actions/checkout@v2
 
             - name: Composer get cache directory
               id: composer-cache
