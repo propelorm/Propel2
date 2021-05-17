@@ -158,3 +158,46 @@ jobs:
 
             - name: Psalm
               run: composer psalm
+
+    integration:
+        runs-on: ubuntu-18.04
+        steps:
+            - name: Setup PHP 7.4
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 7.4
+                  extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
+                  coverage: pcov
+
+            - uses: actions/checkout@v2
+
+            - name: Composer get cache directory
+              id: composer-cache
+              run: |
+                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Composer cache
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-composer-
+
+            - name: Install integration demo shop
+              run: git clone https://github.com/spryker-shop/suite.git
+
+            - name: Setup
+              run: cd suite && composer install
+
+            - name: Generate transfer objects
+              run: cd suite && vendor/bin/console transfer:generate
+
+            - name: Generate transfer databuilder objects
+              run: cd suite && vendor/bin/console transfer:databuilder:generate
+
+            - name: Propel install
+              run: |
+                  cd suite && vendor/bin/console propel:schema:copy
+                  cd suite && vendor/bin/console propel:model:build
+                  cd suite && vendor/bin/console transfer:entity:generate
