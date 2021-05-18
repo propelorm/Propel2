@@ -516,42 +516,6 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
-    public function testJoinObject()
-    {
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_2');
-        $this->assertEquals('INNER JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_A', $j->getLeftTableName());
-        $this->assertEquals('COL_1', $j->getLeftColumnName());
-        $this->assertEquals('TABLE_B.COL_2', $j->getRightColumn());
-        $this->assertEquals('TABLE_B', $j->getRightTableName());
-        $this->assertEquals('COL_2', $j->getRightColumnName());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::LEFT_JOIN);
-        $this->assertEquals('LEFT JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::RIGHT_JOIN);
-        $this->assertEquals('RIGHT JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
-        $this->assertEquals('INNER JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join(['TABLE_A.COL_1', 'TABLE_A.COL_2'], ['TABLE_B.COL_1', 'TABLE_B.COL_2'], Criteria::INNER_JOIN);
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn(0));
-        $this->assertEquals('TABLE_A.COL_2', $j->getLeftColumn(1));
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn(0));
-        $this->assertEquals('TABLE_B.COL_2', $j->getRightColumn(1));
-    }
-
-    /**
-     * @return void
-     */
     public function testAddStraightJoin()
     {
         $c = new Criteria();
