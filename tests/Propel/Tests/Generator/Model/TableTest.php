@@ -886,14 +886,41 @@ class TableTest extends ModelTestCase
     }
 
     /**
+     * return array
+     */
+    public function baseClassDataProvider(): array
+    {
+        return [
+            // [<Class name>, <Expected class name>, <message>]]
+            ['\CustomBaseQueryObject', '\CustomBaseQueryObject', 'Setter should set base query class'],
+            ['CustomBaseQueryObject', '\CustomBaseQueryObject', 'Setter should set absolute namespace of base query class'],
+        ];
+    }
+
+    /**
+     * @dataProvider baseClassDataProvider
+     *
      * @return void
      */
-    public function testSetBaseClasses()
+    public function testSetBaseClass(string $className, string $expectedClassName, string $message)
     {
         $table = new Table();
-        $table->setBaseClass('BaseObject');
+        $table->setBaseClass($className);
 
-        $this->assertSame('BaseObject', $table->getBaseClass());
+        $this->assertSame($expectedClassName, $table->getBaseClass(), $message);
+    }
+
+    /**
+     * @dataProvider baseClassDataProvider
+     *
+     * @return void
+     */
+    public function testSetBaseQueryClass(string $className, string $expectedClassName, string $message)
+    {
+        $table = new Table();
+        $table->setBaseQueryClass($className);
+
+        $this->assertSame($expectedClassName, $table->getBaseQueryClass(), $message);
     }
 
     /**

@@ -109,8 +109,9 @@ class XmlDumper implements DumperInterface
             $databaseNode->setAttribute('schema', $schema);
         }
 
-        if ($namespace = $database->getNamespace()) {
-            $databaseNode->setAttribute('namespace', $namespace);
+        $absoluteNamespace = $database->getNamespace(true);
+        if ($absoluteNamespace) {
+            $databaseNode->setAttribute('namespace', $absoluteNamespace);
         }
 
         if ($baseClass = $database->getBaseClass()) {
@@ -225,8 +226,9 @@ class XmlDumper implements DumperInterface
             $tableNode->setAttribute('package', $package);
         }
 
-        if ($namespace = $table->getNamespace()) {
-            $tableNode->setAttribute('namespace', $namespace);
+        $absoluteNamespace = $table->getNamespace(true);
+        if ($absoluteNamespace && $absoluteNamespace !== $database->getNamespace(true)) {
+            $tableNode->setAttribute('namespace', $absoluteNamespace);
         }
 
         if ($table->isSkipSql()) {

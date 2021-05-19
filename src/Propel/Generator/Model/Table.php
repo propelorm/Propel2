@@ -545,7 +545,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a delimiter-delimited string list of column names.
      *
-     * @see Platform::getColumnList() if quoting is required
+     * @see \Propel\Generator\Platform\PlatformInterface::getColumnListDDL() if quoting is required
      *
      * @param array $columns
      * @param string $delimiter
@@ -608,7 +608,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setBaseClass($class)
     {
-        $this->baseClass = $class;
+        $this->baseClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**
@@ -620,7 +620,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setBaseQueryClass($class)
     {
-        $this->baseQueryClass = $class;
+        $this->baseQueryClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**

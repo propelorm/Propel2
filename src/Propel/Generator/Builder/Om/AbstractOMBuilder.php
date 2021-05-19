@@ -361,21 +361,23 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * check if the current $class need an alias or if the class could be used with a shortname without conflict
      *
      * @param string $class
-     * @param string $namespace
+     * @param string $classNamespace
      *
      * @return bool
      */
-    protected function needAliasForClassName($class, $namespace)
+    protected function needAliasForClassName($class, $classNamespace)
     {
-        if ($namespace == $this->getNamespace()) {
+        $builderNamespace = trim($this->getNamespace(), '\\');
+
+        if ($classNamespace == $builderNamespace) {
             return false;
         }
 
-        if (str_replace('\\Base', '', $namespace) == str_replace('\\Base', '', $this->getNamespace())) {
+        if (str_replace('\\Base', '', $classNamespace) == str_replace('\\Base', '', $builderNamespace)) {
             return true;
         }
 
-        if (empty($namespace) && $this->getNamespace() === 'Base') {
+        if (empty($classNamespace) && $builderNamespace === 'Base') {
             if (str_replace(['Query'], '', $class) == str_replace(['Query'], '', $this->getUnqualifiedClassName())) {
                 return true;
             }
@@ -385,14 +387,14 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
 
             // force alias for model without namespace
-            if (array_search($class, $this->whiteListOfDeclaredClasses, true) === false) {
+            if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
         }
 
-        if ($namespace === 'Base' && $this->getNamespace() === '') {
+        if ($classNamespace === 'Base' && $builderNamespace === '') {
             // force alias for model without namespace
-            if (array_search($class, $this->whiteListOfDeclaredClasses, true) === false) {
+            if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
         }
