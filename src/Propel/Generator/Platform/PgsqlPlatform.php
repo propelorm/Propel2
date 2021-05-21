@@ -192,7 +192,7 @@ CREATE SEQUENCE %s;
             && $table->getIdMethodParameters() != null
         ) {
             $pattern = "
-DROP SEQUENCE %s;
+DROP SEQUENCE IF EXISTS %s;
 ";
 
             return sprintf(
