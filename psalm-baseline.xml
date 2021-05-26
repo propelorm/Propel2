@@ -439,6 +439,11 @@
       <code>$removeInstancePoolKeySnippetPks</code>
     </UndefinedGlobalVariable>
   </file>
+  <file src="src/Propel/Generator/Builder/Om/templates/tableMapLoaderScript.php">
+    <UndefinedGlobalVariable occurrences="1">
+      <code>$databaseNameToTableMapNames</code>
+    </UndefinedGlobalVariable>
+  </file>
   <file src="src/Propel/Generator/Builder/Util/SchemaReader.php">
     <UndefinedFunction occurrences="2">
       <code>'endElement'</code>
@@ -556,9 +561,8 @@
     </UndefinedConstant>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php">
-    <UndefinedMethod occurrences="2">
+    <UndefinedMethod occurrences="1">
       <code>find</code>
-      <code>static::getShortName($this-&gt;modelName)</code>
     </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/Criteria.php">
@@ -571,9 +575,6 @@
     <InvalidReturnType occurrences="1">
       <code>$this|\Propel\Runtime\ActiveQuery\Criteria</code>
     </InvalidReturnType>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
     <UndefinedClass occurrences="1">

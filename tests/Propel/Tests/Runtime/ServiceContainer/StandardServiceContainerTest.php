@@ -14,6 +14,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Propel;
@@ -35,6 +36,7 @@ class StandardServiceContainerTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->sc = new StandardServiceContainer();
+        $this->sc->initDatabaseMaps([]);
     }
 
     /**
@@ -190,31 +192,106 @@ class StandardServiceContainerTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testCheckInvalidVersion()
+    public function testCheckInvalidVersion(): void
     {
-        $logger = $this->getMockBuilder('Monolog\Logger')
-            ->setMethods(['warning'])
-            ->setConstructorArgs(['mylogger'])
-            ->getMock();
-        $logger->expects($this->once())->method('warning');
+        $this->expectException(PropelException::class);
+        $this->sc->checkVersion(-1);
+    }
 
-        $this->sc->setLogger('defaultLogger', $logger);
-        $this->sc->checkVersion('1.0.0-invalid');
+    /**
+     * @doesNotPerformAssertions
+     *
+     * @return void
+     */
+    public function testCheckValidVersion(): void
+    {
+        try {
+            $this->sc->checkVersion(StandardServiceContainer::CONFIGURATION_VERSION);
+        } catch (PropelException $e) {
+            $this->fail('The current configuration version should pass a check');
+        }
     }
 
     /**
      * @return void
      */
-    public function testCheckValidVersion()
+    public function testUninitializedDatabaseMapThrowsException(): void
     {
-        $logger = $this->getMockBuilder('Monolog\Logger')
-            ->setMethods(['warning'])
-            ->setConstructorArgs(['mylogger'])
-            ->getMock();
-        $logger->expects($this->never())->method('warning');
+        $sc = new StandardServiceContainer();
+        try {
+            $sc->getDatabaseMap('a database name');
+            $this->fail('Accessing database map before initialization should throw exception.');
+        } catch (PropelException $e) {
+            $expectedMessage = 'Database map was not initialized. Please check the database loader script included by your conf';
+            $this->assertSame($expectedMessage, $e->getMessage());
+        }
+    }
 
-        $this->sc->setLogger('defaultLogger', $logger);
-        $this->sc->checkVersion(Propel::VERSION);
+    /**
+     * @return void
+     */
+    public function testInitializedDatabaseMapContainsTableMaps(): void
+    {
+        $sc = new StandardServiceContainer();
+        $dbName = 'myBookstore';
+        $dbMap = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\BookTableMap',
+            ],
+        ];
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap);
+        $dbMap = $sc->getDatabaseMap($dbName);
+
+        $this->assertTrue($dbMap->hasTable('author'));
+        $this->assertTrue($dbMap->hasTable('book'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testInitializingdDatabaseMapsAccumulates(): void
+    {
+        $sc = new StandardServiceContainer();
+        $dbName = 'myBookstore';
+        $dbMap1 = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\BookTableMap',
+            ],
+        ];
+
+        $dbMap2 = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\EssayTableMap',
+            ],
+        ];
+
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap1);
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap2);
+        $dbMap = $sc->getDatabaseMap($dbName);
+
+        $this->assertTrue($dbMap->hasTable('author'));
+        $this->assertTrue($dbMap->hasTable('book'));
+        $this->assertTrue($dbMap->hasTable('essay'));
+    }
+
+    /**
+     * @param \Propel\Runtime\ServiceContainer\StandardServiceContainer $sc
+     * @param String[][] $dbMap
+     *
+     * @return void
+     */
+    private function runInitDatabaseMapsOnContainer(StandardServiceContainer $sc, array $dbMap): void
+    {
+        $initialServiceContainer = Propel::getServiceContainer();
+        try {
+            Propel::setServiceContainer($sc);
+            $sc->initDatabaseMaps($dbMap);
+        } finally {
+            Propel::setServiceContainer($initialServiceContainer);
+        }
     }
 
     /**

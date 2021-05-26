@@ -140,6 +140,7 @@ class TestPrepareCommand extends AbstractCommand
                 'command' => 'config:convert',
                 '--output-dir' => './build/conf',
                 '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
+                '--loader-script-dir' => './build/conf',
             ]);
 
             $command = $this->getApplication()->find('config:convert');
@@ -151,6 +152,7 @@ class TestPrepareCommand extends AbstractCommand
                 'command' => 'model:build',
                 '--schema-dir' => '.',
                 '--output-dir' => 'build/classes/',
+                '--loader-script-dir' => './build/conf',
                 '--platform' => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose' => $input->getOption('verbose'),
             ]);
