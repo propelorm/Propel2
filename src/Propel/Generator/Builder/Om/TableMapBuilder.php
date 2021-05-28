@@ -974,7 +974,6 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             \$pks = [];
             ";
 
-            $pks = [];
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
@@ -1141,16 +1140,21 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     protected function addGetOMClass_NoInheritance_Abstract(&$script)
     {
+        $objectClassName = $this->getObjectClassName();
+
         $script .= "
     /**
      * The class that the tableMap will make instances of.
      *
      * This method must be overridden by the stub subclass, because
-     * " . $this->getObjectClassName() . " is declared abstract in the schema.
+     * $objectClassName is declared abstract in the schema.
      *
      * @param boolean \$withPrefix
      */
-    abstract public static function getOMClass(\$withPrefix = true);
+    public static function getOMClass(\$withPrefix = true)
+    {
+        throw new PropelException('$objectClassName is declared abstract, it cannot be instantiated.');
+    }
 ";
     }
 

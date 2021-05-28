@@ -802,6 +802,16 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Checks whether the table uses concrete inheritance
+     *
+     * @return bool
+     */
+    public function usesConcreteInheritance(): bool
+    {
+        return ($this->inheritanceColumn !== null);
+    }
+
+    /**
      * Returns the subclasses that can be created from this table.
      *
      * @return array|null
