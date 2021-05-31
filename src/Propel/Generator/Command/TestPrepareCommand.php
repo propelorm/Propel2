@@ -49,7 +49,6 @@ class TestPrepareCommand extends AbstractCommand
     protected $fixtures = [
         //directory - array of connections
         'bookstore' => ['bookstore', 'bookstore-cms', 'bookstore-behavior'],
-        'bookstore-packaged' => ['bookstore-packaged', 'bookstore-log'],
         'namespaced' => ['bookstore_namespaced'],
         'reverse/mysql' => ['reverse-bookstore'],
         'reverse/pgsql' => ['reverse-bookstore'],

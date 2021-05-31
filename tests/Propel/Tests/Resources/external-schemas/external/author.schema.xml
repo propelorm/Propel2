@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<!DOCTYPE database SYSTEM "../dtd/database.dtd">
 
 <database package="core.author" name="bookstore" defaultIdMethod="native">
 

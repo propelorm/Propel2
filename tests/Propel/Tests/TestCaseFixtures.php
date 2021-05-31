@@ -12,6 +12,7 @@ use PDO;
 use Propel\Runtime\Propel;
 use ReflectionClass;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Finder\Finder;
@@ -24,6 +25,13 @@ use Symfony\Component\Finder\Finder;
  */
 class TestCaseFixtures extends TestCase
 {
+    /**
+     * File at this location will be used to indicate the version of currently build fixures.
+     *
+     * @var string
+     */
+    protected const INDICATOR_FILE_LOCATION = __DIR__ . '/../../Fixtures/fixtures_built';
+
     /**
      * If setUp() should also initial database's schema.
      *
@@ -39,11 +47,26 @@ class TestCaseFixtures extends TestCase
      */
     protected $con;
 
-    public static $lastBuildDsn;
+    /**
+     * DSN during last build
+     *
+     * @var string
+     */
+    protected static $lastBuildDsn;
 
-    public static $lastBuildMode;
+    /**
+     * Indicates if fixtures were build with database
+     *
+     * @var string
+     */
+    protected static $lastBuildMode;
 
-    public static $lastReadConfigs;
+    /**
+     * Combination of $lastBuildDsn and $lastBuildMode, indicating build version of currently active configurations
+     *
+     * @var string
+     */
+    protected static $activeConfigsVersion;
 
     /**
      * Setup fixture. Needed here because we want to have a realistic code coverage value.
@@ -54,6 +77,55 @@ class TestCaseFixtures extends TestCase
     {
         $dsn = $this->getFixturesConnectionDsn();
 
+        if ($this->getBuiltDsn() !== $dsn || (static::$withDatabaseSchema && $this->getLastBuildMode() !== 'fixtures-database')) {
+            $this->initializeFixtures($dsn);
+        }
+
+        $this->readAllRuntimeConfigs();
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return void
+     */
+    protected function initializeFixtures(string $dsn): void
+    {
+        $input = $this->buildInputOptions($dsn);
+        $output = new BufferedOutput();
+        $app = $this->buildApp();
+
+        if ($app->run($input, $output) === 0) { // Command::SUCCESS is not available on CI
+            $this->registerBuildStatus($dsn);
+        } else {
+            $this->fail('Cannot initialize fixtures: ' . $output->fetch());
+        }
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return void
+     */
+    protected function registerBuildStatus(string $dsn): void
+    {
+        $mode = (static::$withDatabaseSchema) ? 'fixtures-database' : 'fixtures-only';
+
+        $buildIndicatorFileContent = "$dsn\n$mode\nFixtures has been created. Delete this file to let the test suite regenerate all fixtures.";
+        file_put_contents(static::INDICATOR_FILE_LOCATION, $buildIndicatorFileContent);
+
+        static::$lastBuildDsn = $dsn;
+        static::$lastBuildMode = $mode;
+        static::$activeConfigsVersion = null;
+    }
+
+    /**
+     * @param string $dsn
+     *
+     * @return \Symfony\Component\Console\Input\ArrayInput
+     */
+    protected function buildInputOptions(string $dsn): ArrayInput
+    {
         $options = [
             'command' => 'test:prepare',
             '--vendor' => $this->getDriver(),
@@ -64,88 +136,54 @@ class TestCaseFixtures extends TestCase
         if (!static::$withDatabaseSchema) {
             $options['--exclude-database'] = true;
         }
-
-        $mode = static::$withDatabaseSchema ? 'fixtures-database' : 'fixtures-only';
-        $builtMode = $this->getLastBuildMode();
-
-        if ($dsn === $this->getBuiltDsn()) {
-            // we have at least the fixtures built
-
-            // when we need a database update ($withDatabaseSchema == true) then we need to check
-            // if the last build was a test:prepare with database or not. When yes then skip.
-            $skip = true;
-            if (static::$withDatabaseSchema && 'fixtures-database' !== $builtMode) {
-                //we need new test:prepare call with --exclude-schema disabled
-                $skip = false;
-            }
-
-            if ($skip) {
-                $this->readAllRuntimeConfigs();
-
-                //skip, as we've already created all fixtures for current database connection.
-                return;
-            }
-        }
-
-        $finder = new Finder();
-        $finder->files()->name('*.php')->in(__DIR__ . '/../../../src/Propel/Generator/Command')->depth(0);
-
-        $app = new Application('Propel', Propel::VERSION);
-
-        foreach ($finder as $file) {
-            $ns = '\\Propel\\Generator\\Command';
-            $r = new ReflectionClass($ns . '\\' . $file->getBasename('.php'));
-            if ($r->isSubclassOf('Symfony\\Component\\Console\\Command\\Command') && !$r->isAbstract()) {
-                /** @var \Symfony\Component\Console\Command\Command $command */
-                $command = $r->newInstance();
-                $app->add($command);
-            }
-        }
-        if (0 !== strpos($dsn, 'sqlite:')) {
+        if (strpos($dsn, 'sqlite:') !== 0) {
             $options['--user'] = getenv('DB_USER') ?: 'root';
         }
 
-        if (false !== getenv('DB_PW')) {
+        if (getenv('DB_PW') !== false) {
             $options['--password'] = getenv('DB_PW');
         }
 
-        $input = new ArrayInput($options);
-
-        $output = new BufferedOutput();
-        $app->setAutoExit(false);
-        if (0 !== $app->run($input, $output)) {
-            echo $output->fetch();
-            $this->fail('Can not initialize fixtures.');
-
-            return;
-        }
-
-        $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
-        file_put_contents(
-            $builtInfo,
-            "$dsn\n$mode\nFixtures has been created. Delete this file to let the test suite regenerate all fixtures."
-        );
-
-        static::$lastBuildDsn = $dsn;
-        static::$lastBuildMode = $mode;
-        static::$lastReadConfigs = '';
-
-        $this->readAllRuntimeConfigs();
+        return new ArrayInput($options);
     }
 
+    /**
+     * @return \Symfony\Component\Console\Application
+     */
+    protected function buildApp(): Application
+    {
+        $finder = new Finder();
+        $finder->files()->name('*.php')->in(__DIR__ . '/../../../src/Propel/Generator/Command')->depth(0);
+
+        $commands = [];
+        $namespace = '\\Propel\\Generator\\Command\\';
+        foreach ($finder as $file) {
+            $r = new ReflectionClass($namespace . $file->getBasename('.php'));
+            if (!$r->isSubclassOf(Command::class) || $r->isAbstract()) {
+                continue;
+            }
+            $commands[] = $r->newInstance();
+        }
+
+        $app = new Application('Propel', Propel::VERSION);
+        array_map([$app, 'add'], $commands);
+        $app->setAutoExit(false);
+
+        return $app;
+    }
+
+    /**
+     * @return string|null
+     */
     protected function getLastBuildMode()
     {
-        if (static::$lastBuildMode) {
-            return static::$lastBuildMode;
-        }
-
-        $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
-        if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r'))) {
+        if (!static::$lastBuildMode && file_exists(static::INDICATOR_FILE_LOCATION) && ($h = fopen(static::INDICATOR_FILE_LOCATION, 'r'))) {
             fgets($h);
             $secondLine = fgets($h);
-
-            return static::$lastBuildMode = trim($secondLine);
+            static::$lastBuildMode = trim($secondLine);
         }
+
+        return static::$lastBuildMode;
     }
 
     /**
@@ -155,7 +193,8 @@ class TestCaseFixtures extends TestCase
      */
     protected function readAllRuntimeConfigs()
     {
-        if (static::$lastReadConfigs === static::$lastBuildMode . ':' . static::$lastBuildDsn) {
+        $currentConfigsVersion = static::$lastBuildMode . ':' . static::$lastBuildDsn;
+        if (static::$activeConfigsVersion === $currentConfigsVersion) {
             return;
         }
 
@@ -166,7 +205,7 @@ class TestCaseFixtures extends TestCase
             include_once($file->getPathname());
         }
 
-        static::$lastReadConfigs = static::$lastBuildMode . ':' . static::$lastBuildDsn;
+        static::$activeConfigsVersion = $currentConfigsVersion;
     }
 
     /**
@@ -176,14 +215,13 @@ class TestCaseFixtures extends TestCase
      */
     protected function getBuiltDsn()
     {
-        if (static::$lastBuildDsn) {
-            return static::$lastBuildDsn;
+        if (!static::$lastBuildDsn && file_exists(static::INDICATOR_FILE_LOCATION) && ($h = fopen(static::INDICATOR_FILE_LOCATION, 'r'))) {
+            $firstLine = fgets($h);
+
+            static::$lastBuildDsn = trim($firstLine);
         }
 
-        $builtInfo = __DIR__ . '/../../Fixtures/fixtures_built';
-        if (file_exists($builtInfo) && ($h = fopen($builtInfo, 'r')) && $firstLine = fgets($h)) {
-            return static::$lastBuildDsn = trim($firstLine);
-        }
+        return static::$lastBuildDsn;
     }
 
     /**

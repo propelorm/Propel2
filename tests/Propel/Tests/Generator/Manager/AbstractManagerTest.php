@@ -13,9 +13,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Manager\AbstractManager;
 use Propel\Tests\TestCase;
 
-/**
- * @group database
- */
+
 class AbstractManagerTest extends TestCase
 {
     private $manager;
@@ -37,8 +35,8 @@ class AbstractManagerTest extends TestCase
         // include book.schema.xml, which includes external author schema
         $schemaXml = <<< EOT
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database package="core.book" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
-  <external-schema filename="../../../../Fixtures/bookstore-packaged/book.schema.xml" referenceOnly="true"/>
+<database package="core.book" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\Bookstore">
+  <external-schema filename="../../Resources/external-schemas/book.schema.xml" referenceOnly="true"/>
 </database>
 
 EOT;
@@ -68,7 +66,7 @@ EOT;
         // include book.schema.xml, which includes external author schema
         $schemaXml = <<< EOT
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<database package="core.book" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\BookstorePackaged">
+<database package="core.book" name="bookstore" defaultIdMethod="native" namespace="Propel\Tests\Bookstore">
   <external-schema filename="../ThisFileNameDoesNotExistBababuiBababui/book.schema.xml" referenceOnly="true"/>
 </database>
 
