@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Propel\Runtime\ActiveQuery\QueryExecutor;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\SqlBuilder\SelectQuerySqlBuilder;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
+
+/**
+ * This class produces the base object class (e.g. BaseMyTable) which contains
+ * all the custom-built accessor and setter methods.
+ */
+class SelectQueryExecutor extends AbstractQueryExecutor
+{
+    /**
+     * @see AbstractQueryExecutor::NEEDS_WRITE_CONNECTION
+     *
+     * @var bool
+     */
+    protected const NEEDS_WRITE_CONNECTION = false;
+
+    /**
+     * @see SelectQueryExecutor::runInsert()
+     *
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
+    public static function execute(Criteria $criteria, ?ConnectionInterface $con = null): DataFetcherInterface
+    {
+        $executor = new SelectQueryExecutor($criteria, $con);
+
+        return $executor->runSelect();
+    }
+
+    /**
+     * Builds, binds and executes a SELECT query based on the current object.
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface A dataFetcher using the connection, ready to be fetched
+     */
+    public function runSelect(): DataFetcherInterface
+    {
+        $params = [];
+        [$sql, $params] = SelectQuerySqlBuilder::createSelectSql($this->criteria, $params);
+        $stmt = $this->executeStatement($sql, $params);
+
+        return $this->con->getDataFetcher($stmt);
+    }
+}

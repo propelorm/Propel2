@@ -8,7 +8,6 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
-use Exception;
 use Propel\Common\Exception\SetColumnConverterException;
 use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Model\PropelTypes;
@@ -28,7 +27,6 @@ use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Map\ColumnMap;
@@ -1045,7 +1043,7 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Adds the select columns for the given table, defaults to own table
+     * Adds the select columns for the current table
      *
      * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      *
@@ -1805,51 +1803,6 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
-     * This method is called by ModelCriteria::deleteAll() inside a transaction
-     *
-     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
-     *
-     * @throws \Propel\Runtime\Exception\RuntimeException
-     *
-     * @return int the number of deleted rows
-     */
-    public function doDeleteAll(?ConnectionInterface $con = null)
-    {
-        $databaseName = $this->getDbName();
-
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection($databaseName);
-        }
-
-        // join are not supported with DELETE statement
-        if (count($this->getJoins())) {
-            throw new RuntimeException('Delete does not support join');
-        }
-
-        $tableName = $this->getPrimaryTableName();
-
-        $affectedRows = 0; // initialize this in case the next loop has no iterations.
-
-        $tableName = $this->quoteIdentifierTable($tableName);
-        $sql = 'DELETE FROM ' . $tableName;
-
-        try {
-            $stmt = $con->prepare($sql);
-
-            $stmt->execute();
-
-            $affectedRows += $stmt->rowCount();
-        } catch (Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
-
-            throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
-        }
-
-        return $affectedRows;
-    }
-
-    /**
      * Code to execute before every UPDATE statement
      *
      * @param array $values The associative array of columns and values for the update
@@ -2240,10 +2193,6 @@ class ModelCriteria extends BaseModelCriteria
     public function doSelect(?ConnectionInterface $con = null)
     {
         $this->addSelfSelectColumns();
-
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
 
         return parent::doSelect($con);
     }
