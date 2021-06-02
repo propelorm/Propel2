@@ -1020,26 +1020,36 @@ class ModelCriteria extends BaseModelCriteria
 
         parent::addSelectQuery($subQueryCriteria, $alias);
 
-        if ($addAliasAndSelectColumns) {
-            // give this query-model same alias as subquery
-            if ($alias === null) {
-                end($this->selectQueries);
-                $alias = key($this->selectQueries);
+        if (!$addAliasAndSelectColumns) {
+            return $this;
+        }
+
+        if ($alias === null) {
+            // get the default alias set in parent::addSelectQuery()
+            end($this->selectQueries);
+            $alias = key($this->selectQueries);
+        }
+
+        if ($subQueryCriteria instanceof BaseModelCriteria) {
+            if ($subQueryCriteria->modelTableMapName === $this->modelTableMapName) {
+                // this is necessary for backwards compatibility. It allows referencing columns from the subquery by the outer table alias (which is just weird behavior, who does that?)
+                $this->setModelAlias($alias, true);
+                $this->addSelfSelectColumns(true);
+            } else {
+                $tableMapClassName = $subQueryCriteria->modelTableMapName;
+                $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
             }
-            $this->setModelAlias($alias, true);
-            // so we can add selfSelectColumns
-            $this->addSelfSelectColumns(true);
         }
 
         return $this;
     }
 
     /**
-     * Adds the select columns for the current table
+     * Adds the select columns for the given table, defaults to own table
      *
      * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      *
-     * @return $this The current object, for fluid interface
+     * @return $this|\Propel\Runtime\ActiveQuery\ModelCriteria
      */
     public function addSelfSelectColumns($force = false)
     {
@@ -1047,9 +1057,24 @@ class ModelCriteria extends BaseModelCriteria
             return $this;
         }
 
-        /** @var string $tableMap */
-        $tableMap = $this->modelTableMapName;
-        $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        /** @var string $tableMapClassName */
+        $tableMapClassName = $this->modelTableMapName;
+        $alias = ($this->useAliasInSQL) ? $this->modelAlias : null;
+
+        return $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
+    }
+
+    /**
+     * Adds the select columns for the given table.
+     *
+     * @param string $tableMapClassName
+     * @param string|null $alias
+     *
+     * @return $this
+     */
+    public function addSelfSelectColumnsFromTableMapClass(string $tableMapClassName, ?string $alias = null)
+    {
+        $tableMapClassName::addSelectColumns($this, $alias);
         $this->isSelfSelected = true;
 
         return $this;
