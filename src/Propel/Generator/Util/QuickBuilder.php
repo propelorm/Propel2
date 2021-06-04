@@ -10,6 +10,7 @@ namespace Propel\Generator\Util;
 
 use Exception;
 use PDO;
+use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -426,6 +427,10 @@ class QuickBuilder
         foreach ($includes as $tempFile) {
             include($tempFile);
         }
+
+        if (in_array('tablemap', $classes, true)) {
+            $this->registerTableMaps();
+        }
     }
 
     /**
@@ -656,5 +661,24 @@ class QuickBuilder
         $includes[] = $tempFile->url();
 
         return $includes;
+    }
+
+    /**
+     * @return void
+     */
+    protected function registerTableMaps(): void
+    {
+        $serviceContainer = Propel::getServiceContainer();
+        $serviceContainer->initDatabaseMaps();
+        $db = $this->getDatabase();
+        $dbName = $db->getName();
+        $dbMap = $serviceContainer->getDatabaseMap($dbName);
+        $builder = new TableMapBuilder(new Table(''));
+        $builder->setGeneratorConfig($this->config);
+        foreach ($db->getTables() as $table) {
+            $builder->setTable($table);
+            $mapClass = $builder->getFullyQualifiedClassName();
+            $dbMap->addTableFromMapClass($mapClass);
+        }
     }
 }

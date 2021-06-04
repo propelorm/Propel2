@@ -173,8 +173,6 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             $this->addGetTableMap($script);
         }
 
-        $this->addBuildTableMap($script);
-
         $this->addDoDelete($script);
         $this->addDoDeleteAll($script);
 
@@ -496,37 +494,11 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     protected function addClassClose(&$script)
     {
+        $unqualifiedClassName = $this->getUnqualifiedClassName();
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
-// This is the static code needed to register the TableMap for this table with the main Propel class.
-//
-" . $this->getUnqualifiedClassName() . "::buildTableMap();
+} // $unqualifiedClassName
 ";
         $this->applyBehaviorModifier('tableMapFilter', $script, '');
-    }
-
-    /**
-     * Adds the buildTableMap() method.
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addBuildTableMap(&$script)
-    {
-        $this->declareClassFromBuilder($this->getTableMapBuilder());
-        $script .= "
-    /**
-     * Add a TableMap instance to the database for this tableMap class.
-     */
-    public static function buildTableMap()
-    {
-        \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
-            \$dbMap->addTableObject(new " . $this->getTableMapClass() . "());
-        }
-    }
-";
     }
 
     /**

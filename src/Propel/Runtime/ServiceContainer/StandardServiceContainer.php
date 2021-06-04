@@ -18,15 +18,24 @@ use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Map\DatabaseMap;
-use Propel\Runtime\Propel;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class StandardServiceContainer implements ServiceContainerInterface
 {
+    /**
+     * Expected version of the configuration file.
+     *
+     * @see StandardServiceContainer::checkVersion()
+     *
+     * @var int
+     */
+    public const CONFIGURATION_VERSION = 2;
+
     /**
      * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
      */
@@ -50,9 +59,10 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
-     * @var \Propel\Runtime\Map\DatabaseMap[] List of database map instances
+     * @var \Propel\Runtime\Map\DatabaseMap[]|null List of database map instances. Is null if not initialized.
+     * @see StandardServiceContainer::initDatabaseMaps();
      */
-    protected $databaseMaps = [];
+    protected $databaseMaps;
 
     /**
      * @var \Propel\Runtime\Connection\ConnectionManagerInterface[] List of connection managers
@@ -206,24 +216,38 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * check whether the given propel generator version has the same version as
-     * the propel runtime.
+     * Checks if the given propel generator version is outdated.
      *
      * @param string $generatorVersion
+     *
+     * @throws \Propel\Runtime\Exception\PropelException Thrown when the configuration is outdated.
      *
      * @return void
      */
     public function checkVersion($generatorVersion)
     {
-        if ($generatorVersion === Propel::VERSION) {
+        if ($generatorVersion === static::CONFIGURATION_VERSION) {
             return;
         }
 
-        $warning = "Version mismatch: The generated model was build using propel '" . $generatorVersion;
-        $warning .= " while the current runtime is at version '" . Propel::VERSION . "'";
+        throw new PropelException('Your configuration is outdated. Please rebuild it with the config:convert command.');
+    }
 
-        $logger = $this->getLogger();
-        $logger->warning($warning);
+    /**
+     * @param array $databaseNameToTableMapClassNames
+     *
+     * @return void
+     */
+    public function initDatabaseMaps(array $databaseNameToTableMapClassNames = []): void
+    {
+        if ($this->databaseMaps === null) {
+            $this->databaseMaps = [];
+        }
+
+        foreach ($databaseNameToTableMapClassNames as $databaseName => $tableMapClassNames) {
+            $databaseMap = $this->getDatabaseMap($databaseName);
+            array_map([$databaseMap, 'addTableFromMapClass'], $tableMapClassNames);
+        }
     }
 
     /**
@@ -245,12 +269,17 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @param string|null $name The datasource name
      *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
     public function getDatabaseMap($name = null)
     {
-        if ($name === null) {
+        if (!$name) {
             $name = $this->getDefaultDatasource();
+        }
+        if ($this->databaseMaps === null) {
+            throw new PropelException('Database map was not initialized. Please check the database loader script included by your conf');
         }
         if (!isset($this->databaseMaps[$name])) {
             $class = $this->databaseMapClass;
