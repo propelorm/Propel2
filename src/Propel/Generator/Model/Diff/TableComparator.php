@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Model\Diff;
 
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
 
 /**
@@ -45,6 +46,28 @@ class TableComparator
     }
 
     /**
+     * Sets the database the comparator starts from.
+     *
+     * @param \Propel\Generator\Model\Database $fromDatabase
+     *
+     * @return void
+     */
+    public function setFromDatabase(Database $fromDatabase)
+    {
+        $this->tableDiff->setFromDatabase($fromDatabase);
+    }
+
+    /**
+     * Returns the database the comparator starts from.
+     *
+     * @return \Propel\Generator\Model\Database
+     */
+    public function getFromDatabase()
+    {
+        return $this->tableDiff->getFromDatabase();
+    }
+
+    /**
      * Sets the table the comparator starts from.
      *
      * @param \Propel\Generator\Model\Table $fromTable
@@ -64,6 +87,28 @@ class TableComparator
     public function getFromTable()
     {
         return $this->tableDiff->getFromTable();
+    }
+
+    /**
+     * Sets the database the comparator goes to.
+     *
+     * @param \Propel\Generator\Model\Database $toDatabase
+     *
+     * @return void
+     */
+    public function setToDatabase(Database $toDatabase)
+    {
+        $this->tableDiff->setToDatabase($toDatabase);
+    }
+
+    /**
+     * Returns the database the comparator goes to.
+     *
+     * @return \Propel\Generator\Model\Database
+     */
+    public function getToDatabase()
+    {
+        return $this->tableDiff->getToDatabase();
     }
 
     /**
@@ -91,17 +136,21 @@ class TableComparator
     /**
      * Returns the computed difference between two table objects.
      *
+     * @param \Propel\Generator\Model\Database $fromDatabase
      * @param \Propel\Generator\Model\Table $fromTable
+     * @param \Propel\Generator\Model\Database $toDatabase
      * @param \Propel\Generator\Model\Table $toTable
      * @param bool $caseInsensitive
      *
      * @return \Propel\Generator\Model\Diff\TableDiff|bool
      */
-    public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
+    public static function computeDiff(Database $fromDatabase, Table $fromTable, Database $toDatabase, Table $toTable, $caseInsensitive = false)
     {
         $tc = new self();
 
+        $tc->setFromDatabase($fromDatabase);
         $tc->setFromTable($fromTable);
+        $tc->setToDatabase($toDatabase);
         $tc->setToTable($toTable);
 
         $differences = 0;
@@ -305,7 +354,7 @@ class TableComparator
                     strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
                     $fromTableFk->getName() == $toTableFk->getName();
                 if ($sameName && !$toTableFk->isPolymorphic()) {
-                    if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
+                    if (ForeignKeyComparator::computeDiff($this->getFromDatabase(), $fromTableFk, $this->getToDatabase(), $toTableFk, $caseInsensitive) === false) {
                         unset($fromTableFks[$fromTableFkPos]);
                         unset($toTableFks[$toTableFkPos]);
                     } else {

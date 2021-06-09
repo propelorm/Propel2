@@ -262,7 +262,7 @@ class DatabaseComparator
             }
             if ($this->toDatabase->hasTable($fromTable->getName(), $caseInsensitive)) {
                 $toTable = $this->toDatabase->getTable($fromTable->getName(), $caseInsensitive);
-                $databaseDiff = TableComparator::computeDiff($fromTable, $toTable, $caseInsensitive);
+                $databaseDiff = TableComparator::computeDiff($this->fromDatabase, $fromTable, $this->toDatabase, $toTable, $caseInsensitive);
                 if ($databaseDiff) {
                     $this->databaseDiff->addModifiedTable($fromTable->getName(), $databaseDiff);
                     $databaseDifferences++;
@@ -273,7 +273,7 @@ class DatabaseComparator
         // check for table renamings
         foreach ($this->databaseDiff->getAddedTables() as $addedTableName => $addedTable) {
             foreach ($this->databaseDiff->getRemovedTables() as $removedTableName => $removedTable) {
-                if (!TableComparator::computeDiff($addedTable, $removedTable, $caseInsensitive)) {
+                if (!TableComparator::computeDiff($this->toDatabase, $addedTable, $this->fromDatabase, $removedTable, $caseInsensitive)) {
                     // no difference except the name, that's probably a renaming
                     if ($this->getWithRenaming()) {
                         $this->databaseDiff->addRenamedTable($removedTableName, $addedTableName);

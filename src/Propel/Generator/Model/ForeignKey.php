@@ -135,8 +135,8 @@ class ForeignKey extends MappingModel
         $this->refPhpName = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
         $this->interface = $this->getAttribute('interface');
-        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));
-        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'));
+        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'), null);
+        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'), null);
         $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
@@ -168,19 +168,20 @@ class ForeignKey extends MappingModel
      * Returns the normalized input of onDelete and onUpdate behaviors.
      *
      * @param string|null $behavior
+     * @param string|null $default
      *
      * @return string
      */
-    public function normalizeFKey($behavior)
+    public function normalizeFKey($behavior, $default)
     {
         if ($behavior === null) {
-            return self::NONE;
+            return $default ?: self::NONE;
         }
 
         $behavior = strtoupper($behavior);
 
-        if ($behavior === 'NONE') {
-            return self::NONE;
+        if ($behavior === 'NONE' || $behavior === self::NONE) {
+            return $default ?: self::NONE;
         }
 
         if ($behavior === 'SETNULL') {
@@ -251,7 +252,7 @@ class ForeignKey extends MappingModel
      */
     public function setOnDelete($behavior)
     {
-        $this->onDelete = $this->normalizeFKey($behavior);
+        $this->onDelete = $this->normalizeFKey($behavior, null);
     }
 
     /**
@@ -263,7 +264,7 @@ class ForeignKey extends MappingModel
      */
     public function setOnUpdate($behavior)
     {
-        $this->onUpdate = $this->normalizeFKey($behavior);
+        $this->onUpdate = $this->normalizeFKey($behavior, null);
     }
 
     /**

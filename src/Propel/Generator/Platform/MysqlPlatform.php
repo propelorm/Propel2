@@ -953,6 +953,26 @@ ALTER TABLE %s ADD %s %s;
     }
 
     /**
+     * Get the default On Delete behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnDeleteBehavior()
+    {
+        return ForeignKey::RESTRICT;
+    }
+    
+    /**
+     * Get the default On Update behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnUpdateBehavior()
+    {
+        return ForeignKey::RESTRICT;
+    }
+
+    /**
      * @param \Propel\Generator\Model\Column $column
      * @param string $identifier
      * @param string $columnValueAccessor

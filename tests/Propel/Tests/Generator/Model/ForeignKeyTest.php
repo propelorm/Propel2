@@ -540,7 +540,7 @@ class ForeignKeyTest extends ModelTestCase
     {
         $fk = new ForeignKey();
 
-        $this->assertSame($normalized, $fk->normalizeFKey($behavior));
+        $this->assertSame($normalized, $fk->normalizeFKey($behavior, null));
     }
 
     public function provideOnActionBehaviors()

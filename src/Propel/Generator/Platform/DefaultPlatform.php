@@ -1443,6 +1443,26 @@ ALTER TABLE %s ADD
     }
 
     /**
+     * Get the default On Delete behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnDeleteBehavior()
+    {
+        return ForeignKey::NONE;
+    }
+    
+    /**
+     * Get the default On Update behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnUpdateBehavior()
+    {
+        return ForeignKey::NONE;
+    }
+
+    /**
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
