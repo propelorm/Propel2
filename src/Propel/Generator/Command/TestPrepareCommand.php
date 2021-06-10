@@ -98,6 +98,7 @@ class TestPrepareCommand extends AbstractCommand
                 $result = $run;
             }
         }
+        chdir($this->root);
 
         return $result;
     }
@@ -206,8 +207,6 @@ class TestPrepareCommand extends AbstractCommand
             $command = $this->getApplication()->find('sql:insert');
             $command->run($in, $output);
         }
-
-        chdir($this->root);
 
         return static::CODE_SUCCESS;
     }
