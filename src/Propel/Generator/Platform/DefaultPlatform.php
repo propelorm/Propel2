@@ -1451,7 +1451,7 @@ ALTER TABLE %s ADD
     {
         return ForeignKey::NONE;
     }
-    
+
     /**
      * Get the default On Update behavior for foreign keys when not explicity set.
      *

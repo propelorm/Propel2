@@ -961,7 +961,7 @@ ALTER TABLE %s ADD %s %s;
     {
         return ForeignKey::RESTRICT;
     }
-    
+
     /**
      * Get the default On Update behavior for foreign keys when not explicity set.
      *

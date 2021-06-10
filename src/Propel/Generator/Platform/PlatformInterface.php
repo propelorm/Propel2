@@ -296,7 +296,7 @@ interface PlatformInterface
      * @return string
      */
     public function getDefaultForeignKeyOnDeleteBehavior();
-    
+
     /**
      * Get the default On Update behavior for foreign keys when not explicity set.
      *
