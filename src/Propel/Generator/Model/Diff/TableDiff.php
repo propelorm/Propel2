@@ -10,7 +10,6 @@ namespace Propel\Generator\Model\Diff;
 
 use Propel\Generator\Exception\DiffException;
 use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
@@ -23,25 +22,11 @@ use Propel\Generator\Model\Table;
 class TableDiff
 {
     /**
-     * The first Database object.
-     *
-     * @var \Propel\Generator\Model\Database|null
-     */
-    protected $fromDatabase;
-
-    /**
      * The first Table object.
      *
      * @var \Propel\Generator\Model\Table|null
      */
     protected $fromTable;
-
-    /**
-     * The second Database object.
-     *
-     * @var \Propel\Generator\Model\Database|null
-     */
-    protected $toDatabase;
 
     /**
      * The second Table object.
@@ -173,28 +158,6 @@ class TableDiff
     }
 
     /**
-     * Sets the fromDatabase property.
-     *
-     * @param \Propel\Generator\Model\Database $fromDatabase
-     *
-     * @return void
-     */
-    public function setFromDatabase(Database $fromDatabase)
-    {
-        $this->fromDatabase = $fromDatabase;
-    }
-
-    /**
-     * Returns the fromDatabase property.
-     *
-     * @return \Propel\Generator\Model\Database|null
-     */
-    public function getFromDatabase()
-    {
-        return $this->fromDatabase;
-    }
-
-    /**
      * Sets the fromTable property.
      *
      * @param \Propel\Generator\Model\Table $fromTable
@@ -214,28 +177,6 @@ class TableDiff
     public function getFromTable()
     {
         return $this->fromTable;
-    }
-
-    /**
-     * Sets the toDatabase property.
-     *
-     * @param \Propel\Generator\Model\Database $toDatabase
-     *
-     * @return void
-     */
-    public function setToDatabase(Database $toDatabase)
-    {
-        $this->toDatabase = $toDatabase;
-    }
-
-    /**
-     * Returns the toDatabase property.
-     *
-     * @return \Propel\Generator\Model\Database|null
-     */
-    public function getToDatabase()
-    {
-        return $this->toDatabase;
     }
 
     /**

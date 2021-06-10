@@ -8,7 +8,6 @@
 
 namespace Propel\Generator\Model\Diff;
 
-use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 
 /**
@@ -21,16 +20,14 @@ class ForeignKeyComparator
     /**
      * Compute the difference between two Foreign key objects
      *
-     * @param \Propel\Generator\Model\Database $fromDatabase
      * @param \Propel\Generator\Model\ForeignKey $fromFk
-     * @param \Propel\Generator\Model\Database $toDatabase
      * @param \Propel\Generator\Model\ForeignKey $toFk
      * @param bool $caseInsensitive Whether the comparison is case insensitive.
      * False by default.
      *
      * @return bool false if the two fks are similar, true if they have differences
      */
-    public static function computeDiff(Database $fromDatabase, ForeignKey $fromFk, Database $toDatabase, ForeignKey $toFk, $caseInsensitive = false)
+    public static function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false)
     {
         // Check for differences in local and remote table
         $test = $caseInsensitive ?
@@ -66,10 +63,10 @@ class ForeignKeyComparator
         }
 
         // compare on
-        if ($fromFk->normalizeFKey($fromFk->getOnUpdate(), $fromDatabase->getPlatform()->getDefaultForeignKeyOnUpdateBehavior()) !== $toFk->normalizeFKey($toFk->getOnUpdate(), $toDatabase->getPlatform()->getDefaultForeignKeyOnUpdateBehavior())) {
+        if ($fromFk->normalizeFKey($fromFk->getOnUpdate(), $fromFk->getTable()->getDatabase()->getPlatform()->getDefaultForeignKeyOnUpdateBehavior()) !== $toFk->normalizeFKey($toFk->getOnUpdate(), $toFk->getTable()->getDatabase()->getPlatform()->getDefaultForeignKeyOnUpdateBehavior())) {
             return true;
         }
-        if ($fromFk->normalizeFKey($fromFk->getOnDelete(), $fromDatabase->getPlatform()->getDefaultForeignKeyOnDeleteBehavior()) !== $toFk->normalizeFKey($toFk->getOnDelete(), $toDatabase->getPlatform()->getDefaultForeignKeyOnDeleteBehavior())) {
+        if ($fromFk->normalizeFKey($fromFk->getOnDelete(), $fromFk->getTable()->getDatabase()->getPlatform()->getDefaultForeignKeyOnDeleteBehavior()) !== $toFk->normalizeFKey($toFk->getOnDelete(), $toFk->getTable()->getDatabase()->getPlatform()->getDefaultForeignKeyOnDeleteBehavior())) {
             return true;
         }
 
