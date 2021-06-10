@@ -66,7 +66,7 @@ class CollectionIterator extends ArrayIterator
      */
     public function getPosition()
     {
-        if ($this->key() === null) {
+        if (!$this->key()) {
             return 0;
         }
 
@@ -229,24 +229,24 @@ class CollectionIterator extends ArrayIterator
     }
 
     /**
-     * @param int $flags
+     * @param int $flags Not used
      *
      * @return void
      */
     public function asort($flags = SORT_REGULAR)
     {
-        parent::asort($flags);
+        parent::asort();
         $this->refreshPositions();
     }
 
     /**
-     * @param int $flags
+     * @param int $flags Not used
      *
      * @return void
      */
     public function ksort($flags = SORT_REGULAR)
     {
-        parent::ksort($flags);
+        parent::ksort();
         $this->refreshPositions();
     }
 
