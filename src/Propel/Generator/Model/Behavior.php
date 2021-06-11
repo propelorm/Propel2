@@ -235,8 +235,7 @@ class Behavior extends MappingModel
     /**
      * Returns a single parameter by its name.
      *
-     * @param string $name
-     *
+     * @param  string $name
      * @return mixed
      */
     public function getParameter($name)
@@ -298,7 +297,7 @@ class Behavior extends MappingModel
     /**
      * Returns the list of all tables in the same database.
      *
-     * @return \Propel\Generator\Model\Table[] A collection of Table instance
+     * @return Table[] A collection of Table instance
      */
     protected function getTables()
     {

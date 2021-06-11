@@ -37,9 +37,10 @@ class ConcreteInheritanceBehavior extends Behavior
         'extends' => '',
         'descendant_column' => 'descendant_class',
         'copy_data_to_parent' => 'true',
-        'copy_data_to_child' => 'false',
-        'schema' => '',
-        'exclude_behaviors' => '',
+        'copy_data_to_child'  => 'false',
+        'schema'              => '',
+        'exclude_behaviors'   => '',
+        'exclude_indices'     => '',
     ];
 
     /**
@@ -98,18 +99,21 @@ class ConcreteInheritanceBehavior extends Behavior
             $this->getTable()->addForeignKey($copiedFk);
         }
 
-        // add the indices of the parent table
-        foreach ($parentTable->getIndices() as $index) {
-            $copiedIndex = clone $index;
-            $copiedIndex->setName('');
-            $this->getTable()->addIndex($copiedIndex);
-        }
+        $excludeIndices = $this->getParameter('exclude_indices');
+        if ('*' !== $excludeIndices) {
+            // add the indices of the parent table
+            foreach ($parentTable->getIndices() as $index) {
+                $copiedIndex = clone $index;
+                $copiedIndex->setName('');
+                $this->getTable()->addIndex($copiedIndex);
+            }
 
-        // add the unique indices of the parent table
-        foreach ($parentTable->getUnices() as $unique) {
-            $copiedUnique = clone $unique;
-            $copiedUnique->setName('');
-            $this->getTable()->addUnique($copiedUnique);
+            // add the unique indices of the parent table
+            foreach ($parentTable->getUnices() as $unique) {
+                $copiedUnique = clone $unique;
+                $copiedUnique->setName('');
+                $this->getTable()->addUnique($copiedUnique);
+            }
         }
 
         // list of Behaviors to be excluded in child table

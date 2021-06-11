@@ -1,5 +1,5 @@
 {
-    "name": "propel/propel",
+    "name": "ansas/propel",
     "type": "library",
     "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.",
     "keywords": [
@@ -47,21 +47,6 @@
     "bin": [
         "bin/propel"
     ],
-    "scripts": {
-        "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
-        "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
-        "stan": "vendor/bin/phpstan analyze",
-        "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
-        "psalm": "vendor/bin/psalm.phar --show-info=false",
-        "psalm-update-baseline": "vendor/bin/psalm.phar --update-baseline",
-        "psalm-set-baseline": "vendor/bin/psalm.phar --set-baseline=psalm-baseline.xml",
-        "psalm-update-report": "vendor/bin/psalm.phar --report=psalm-report.xml",
-        "test": "phpunit --colors=always",
-        "test:agnostic": "@test -c tests/agnostic.phpunit.xml",
-        "test:mysql": "@test -c tests/mysql.phpunit.xml",
-        "test:sqlite": "@test -c tests/sqlite.phpunit.xml",
-        "test:pgsql": "@test -c tests/pgsql.phpunit.xml"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.0-dev"

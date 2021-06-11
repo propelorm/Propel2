@@ -28,7 +28,11 @@ class MigrationStatusCommand extends AbstractCommand
         $this
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
             ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
-            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption('connection',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Connection to use',
+                [])
             ->setName('migration:status')
             ->setAliases(['status'])
             ->setDescription('Get migration status');
@@ -107,8 +111,8 @@ class MigrationStatusCommand extends AbstractCommand
         }
 
         $output->writeln('Listing Migration files...');
-        $dir = $generatorConfig->getSection('paths')['migrationDir'];
-        $migrationTimestamps = $manager->getMigrationTimestamps();
+        $dir                  = $generatorConfig->getSection('paths')['migrationDir'];
+        $migrationTimestamps  = $manager->getMigrationTimestamps();
         $nbExistingMigrations = count($migrationTimestamps);
 
         if ($migrationTimestamps) {
@@ -143,7 +147,7 @@ class MigrationStatusCommand extends AbstractCommand
             return static::CODE_ERROR;
         }
 
-        $migrationTimestamps = $manager->getValidMigrationTimestamps();
+        $migrationTimestamps        = $manager->getValidMigrationTimestamps();
         $nbNotYetExecutedMigrations = count($migrationTimestamps);
 
         if (!$nbNotYetExecutedMigrations) {

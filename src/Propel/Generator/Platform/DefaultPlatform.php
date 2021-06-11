@@ -1405,7 +1405,7 @@ ALTER TABLE %s ADD
         }
 
         $value = implode(' | ', $values);
-        if (empty($value) || $value === ' | ') {
+        if (empty($value) || ' | ' === $value) {
             return null;
         }
 

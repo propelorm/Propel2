@@ -168,7 +168,7 @@ class MigrationDiffCommand extends AbstractCommand
         $removeTable = !$input->getOption('skip-removed-table');
         $excludedTables = $input->getOption('skip-tables');
         $configManager = new ConfigurationManager($input->getOption('config-dir'));
-        $excludedTables = array_merge((array)$excludedTables, (array)$configManager->getSection('exclude_tables'));
+        $excludedTables = array_merge((array) $excludedTables, (array) $configManager->getSection('exclude_tables'));
 
         foreach ($reversedSchema->getDatabases() as $database) {
             $name = $database->getName();

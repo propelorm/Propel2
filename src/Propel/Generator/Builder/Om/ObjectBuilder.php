@@ -3707,7 +3707,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * If the primary key is not null, return the hashcode of the
      * primary key. Otherwise, return the hash code of the object.
      *
-     * @return int Hashcode
+     * @return string Hashcode
      */
     public function hashCode()
     {
@@ -3721,6 +3721,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= $pkCheck ? implode(" &&\n            ", $pkCheck) : 'false';
 
         $script .= ";\n";
+        $script .= "
+        if (\$validPk) {
+            return md5(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        }
+        ";
 
         /** @var \Propel\Generator\Model\ForeignKey[] $primaryKeyFKs */
         $primaryKeyFKs = [];
@@ -3752,10 +3757,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (\$validPk) {
-            return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
-        } elseif (\$validPrimaryKeyFKs) {
-            return crc32(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        if (\$validPrimaryKeyFKs) {
+            return md5(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
         }
 
         return spl_object_hash(\$this);
