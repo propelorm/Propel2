@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Behavior\AggregateMultipleColumns\AggregateMultipleColumnsBehavior;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -93,6 +94,8 @@ class TestPrepareCommand extends AbstractCommand
     {
         $result = static::CODE_SUCCESS;
         foreach ($this->fixtures as $fixturesDir => $connections) {
+            $this->resetCounters();
+
             $run = $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
             if ($run !== static::CODE_SUCCESS) {
                 $result = $run;
@@ -209,5 +212,15 @@ class TestPrepareCommand extends AbstractCommand
         }
 
         return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Reset static members in builder classes. Necessary when test run commands repeatedly.
+     *
+     * @return void
+     */
+    protected function resetCounters(): void
+    {
+        AggregateMultipleColumnsBehavior::resetInsertedAggregationNames();
     }
 }

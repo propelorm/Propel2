@@ -54,6 +54,16 @@ class AggregateMultipleColumnsBehavior extends Behavior
     private $aggregationName;
 
     /**
+     * Reset the function name memorizer. Needed when running tests.
+     *
+     * @return void
+     */
+    public static function resetInsertedAggregationNames(): void
+    {
+        static::$insertedAggregationNames = [];
+    }
+
+    /**
      * Multiple aggregates on the same table is OK.
      *
      * @return bool
