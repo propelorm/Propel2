@@ -135,8 +135,8 @@ class ForeignKey extends MappingModel
         $this->refPhpName = $this->getAttribute('refPhpName');
         $this->defaultJoin = $this->getAttribute('defaultJoin');
         $this->interface = $this->getAttribute('interface');
-        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'), null);
-        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'), null);
+        $this->onUpdate = $this->normalizeFKey($this->getAttribute('onUpdate'));
+        $this->onDelete = $this->normalizeFKey($this->getAttribute('onDelete'));
         $this->skipSql = $this->booleanValue($this->getAttribute('skipSql'));
     }
 
@@ -172,7 +172,7 @@ class ForeignKey extends MappingModel
      *
      * @return string
      */
-    public function normalizeFKey($behavior, $default)
+    public function normalizeFKey($behavior, $default = null)
     {
         if ($behavior === null) {
             return $default ?: self::NONE;
@@ -252,7 +252,7 @@ class ForeignKey extends MappingModel
      */
     public function setOnDelete($behavior)
     {
-        $this->onDelete = $this->normalizeFKey($behavior, null);
+        $this->onDelete = $this->normalizeFKey($behavior);
     }
 
     /**
@@ -264,7 +264,7 @@ class ForeignKey extends MappingModel
      */
     public function setOnUpdate($behavior)
     {
-        $this->onUpdate = $this->normalizeFKey($behavior, null);
+        $this->onUpdate = $this->normalizeFKey($behavior);
     }
 
     /**
