@@ -957,7 +957,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnDeleteBehavior()
+    public function getDefaultForeignKeyOnDeleteBehavior(): string
     {
         return ForeignKey::RESTRICT;
     }
@@ -967,7 +967,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnUpdateBehavior()
+    public function getDefaultForeignKeyOnUpdateBehavior(): string
     {
         return ForeignKey::RESTRICT;
     }

@@ -1447,7 +1447,7 @@ ALTER TABLE %s ADD
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnDeleteBehavior()
+    public function getDefaultForeignKeyOnDeleteBehavior(): string
     {
         return ForeignKey::NONE;
     }
@@ -1457,7 +1457,7 @@ ALTER TABLE %s ADD
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnUpdateBehavior()
+    public function getDefaultForeignKeyOnUpdateBehavior(): string
     {
         return ForeignKey::NONE;
     }

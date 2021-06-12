@@ -63,12 +63,12 @@ class ForeignKeyComparator
         }
 
         // compare on
-        $fromPlatform = $fromFk->getTable()->getDatabase()->getPlatform();
-        $toPlatform = $toFk->getTable()->getDatabase()->getPlatform();
-        if ($fromFk->normalizeFKey($fromFk->getOnUpdate(), $fromPlatform->getDefaultForeignKeyOnUpdateBehavior()) !== $toFk->normalizeFKey($toFk->getOnUpdate(), $toPlatform->getDefaultForeignKeyOnUpdateBehavior())) {
+        $fromPlatform = $fromFk->getTable()->getDatabase() ? $fromFk->getTable()->getDatabase()->getPlatform() : null;
+        $toPlatform = $toFk->getTable()->getDatabase() ? $toFk->getTable()->getDatabase()->getPlatform() : null;
+        if ($fromFk->normalizeFKey($fromFk->getOnUpdate(), $fromPlatform ? $fromPlatform->getDefaultForeignKeyOnUpdateBehavior() : null) !== $toFk->normalizeFKey($toFk->getOnUpdate(), $toPlatform ? $toPlatform->getDefaultForeignKeyOnUpdateBehavior() : null)) {
             return true;
         }
-        if ($fromFk->normalizeFKey($fromFk->getOnDelete(), $fromPlatform->getDefaultForeignKeyOnDeleteBehavior()) !== $toFk->normalizeFKey($toFk->getOnDelete(), $toPlatform->getDefaultForeignKeyOnDeleteBehavior())) {
+        if ($fromFk->normalizeFKey($fromFk->getOnDelete(), $fromPlatform ? $fromPlatform->getDefaultForeignKeyOnDeleteBehavior() : null) !== $toFk->normalizeFKey($toFk->getOnDelete(), $toPlatform ? $toPlatform->getDefaultForeignKeyOnDeleteBehavior() : null)) {
             return true;
         }
 

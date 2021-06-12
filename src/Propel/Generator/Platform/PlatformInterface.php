@@ -295,14 +295,14 @@ interface PlatformInterface
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnDeleteBehavior();
+    public function getDefaultForeignKeyOnDeleteBehavior(): string;
 
     /**
      * Get the default On Update behavior for foreign keys when not explicity set.
      *
      * @return string
      */
-    public function getDefaultForeignKeyOnUpdateBehavior();
+    public function getDefaultForeignKeyOnUpdateBehavior(): string;
 
     /**
      * Get the PHP snippet for binding a value to a column.

@@ -172,7 +172,7 @@ class ForeignKey extends MappingModel
      *
      * @return string
      */
-    public function normalizeFKey($behavior, $default = null)
+    public function normalizeFKey($behavior, ?string $default = null)
     {
         if ($behavior === null) {
             return $default ?: self::NONE;
