@@ -31,6 +31,9 @@ tests/Fixtures/reverse/pgsql/propel.yaml
 tests/Fixtures/migration/build/
 tests/Fixtures/migration/propel.yaml
 
+tests/Fixtures/platform/build/
+tests/Fixtures/platform/propel.yaml
+
 tests/Fixtures/quoting/build/
 tests/Fixtures/quoting/propel.yaml
 

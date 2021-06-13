@@ -1,0 +1,31 @@
+# Configuration file for `platform` fixtures
+propel:
+  general:
+    project: platform
+
+  database:
+    connections:
+      platform:
+        adapter: ##DATABASE_VENDOR##
+        classname: \Propel\Runtime\Connection\DebugPDO
+        dsn: ##DATABASE_URL##
+        user: ##DATABASE_USER##
+        password: ##DATABASE_PASSWORD##
+        options:
+          ATTR_PERSISTENT: false
+        attributes:
+          ATTR_EMULATE_PREPARES: true
+        #Propel specific settings
+        settings:
+          charset: utf8
+
+  generator:
+    defaultConnection: platform
+    connections:
+      - platform
+    targetPackage: platform
+
+  runtime:
+    defaultConnection: platform
+    connections:
+      - platform
