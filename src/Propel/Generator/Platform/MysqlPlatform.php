@@ -41,6 +41,11 @@ class MysqlPlatform extends DefaultPlatform
     protected $defaultTableEngine = 'InnoDB';
 
     /**
+     * @var string|null
+     */
+    protected $serverVersion;
+
+    /**
      * Initializes db specific domain mapping.
      *
      * @return void
@@ -953,42 +958,6 @@ ALTER TABLE %s ADD %s %s;
     }
 
     /**
-     * Get the default On Delete behavior for foreign keys when not explicity set.
-     *
-     * @return string
-     */
-    public function getDefaultForeignKeyOnDeleteBehavior(): string
-    {
-        preg_match('/^(\d+)\.(\d+)\.(\d+)-([^-]+)-?(.*)/', $this->con->getAttribute(PDO::ATTR_SERVER_VERSION), $versionComponents);
-        if (isset($versionComponents[4]) && strcasecmp($versionComponents[4], 'mariadb') != 0) {
-            // assume MySQL
-            if ($versionComponents[1] == '8') {
-                return ForeignKey::NOACTION;
-            }
-        }
-
-        return ForeignKey::RESTRICT;
-    }
-
-    /**
-     * Get the default On Update behavior for foreign keys when not explicity set.
-     *
-     * @return string
-     */
-    public function getDefaultForeignKeyOnUpdateBehavior(): string
-    {
-        preg_match('/^(\d+)\.(\d+)\.(\d+)-([^-]+)-?(.*)/', $this->con->getAttribute(PDO::ATTR_SERVER_VERSION), $versionComponents);
-        if (isset($versionComponents[4]) && strcasecmp($versionComponents[4], 'mariadb') != 0) {
-            // assume MySQL
-            if ($versionComponents[1] == '8') {
-                return ForeignKey::NOACTION;
-            }
-        }
-
-        return ForeignKey::RESTRICT;
-    }
-
-    /**
      * @param \Propel\Generator\Model\Column $column
      * @param string $identifier
      * @param string $columnValueAccessor
@@ -1011,5 +980,74 @@ ALTER TABLE %s ADD %s %s;
         }
 
         return parent::getColumnBindingPHP($column, $identifier, $columnValueAccessor, $tab);
+    }
+
+    /**
+     * Get the default On Delete behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnDeleteBehavior(): string
+    {
+        $majorVersion = $this->getMajorServerVersionNumber();
+
+        return ($majorVersion && $majorVersion >= 8 && !$this->isMariaDB()) ? ForeignKey::NOACTION : ForeignKey::RESTRICT;
+    }
+
+    /**
+     * Get the default On Update behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnUpdateBehavior(): string
+    {
+        $majorVersion = $this->getMajorServerVersionNumber();
+
+        return ($majorVersion && $majorVersion >= 8 && !$this->isMariaDB()) ? ForeignKey::NOACTION : ForeignKey::RESTRICT;
+    }
+
+    /**
+     * Get the server version of the platform
+     *
+     * @return string|null
+     */
+    protected function getServerVersion(): ?string
+    {
+        if (!$this->serverVersion && $this->con) {
+            $this->serverVersion = $this->con->getAttribute(PDO::ATTR_SERVER_VERSION);
+        }
+
+        return $this->serverVersion;
+    }
+
+    /**
+     * Get the extracted major server version number
+     *
+     * @return int|null
+     */
+    protected function getMajorServerVersionNumber(): ?int
+    {
+        $serverVersion = $this->getServerVersion();
+        if (!$serverVersion) {
+            return null;
+        }
+        $dotPos = strpos($serverVersion, '.');
+        if ($dotPos === false) {
+            return null;
+        }
+
+        return (int)substr($serverVersion, 0, $dotPos - 1);
+    }
+
+    /**
+     * Whether the platform is running on a MariaDB server
+     *
+     * @return bool
+     */
+    protected function isMariaDB(): bool
+    {
+        $serverVersion = $this->getServerVersion() ?? '';
+
+        return (stripos($serverVersion, 'mariadb') !== false);
     }
 }

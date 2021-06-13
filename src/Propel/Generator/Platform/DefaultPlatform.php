@@ -43,7 +43,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * The database connection.
      *
-     * @var \Propel\Runtime\Connection\ConnectionInterface Database connection.
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null Database connection.
      */
     protected $con;
 

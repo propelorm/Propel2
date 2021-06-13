@@ -234,6 +234,20 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns the normalized onUpdate behavior taking into account the default of the platform in case the behavior is implicit
+     *
+     * @return string|null
+     */
+    public function getOnUpdateWithDefault(): ?string
+    {
+        $rawBehavior = $this->getOnUpdate();
+        $platform = $this->getPlatform();
+        $defaultBehavior = ($platform) ? $platform->getDefaultForeignKeyOnUpdateBehavior() : null;
+
+        return $this->normalizeFKey($rawBehavior, $defaultBehavior);
+    }
+
+    /**
      * Returns the onDelete behavior.
      *
      * @return string
@@ -241,6 +255,20 @@ class ForeignKey extends MappingModel
     public function getOnDelete()
     {
         return $this->onDelete;
+    }
+
+    /**
+     * Returns the normalized onDelete behavior taking into account the default of the platform in case the behavior is implicit
+     *
+     * @return string|null
+     */
+    public function getOnDeleteWithDefault(): ?string
+    {
+        $rawBehavior = $this->getOnDelete();
+        $platform = $this->getPlatform();
+        $defaultBehavior = ($platform) ? $platform->getDefaultForeignKeyOnDeleteBehavior() : null;
+
+        return $this->normalizeFKey($rawBehavior, $defaultBehavior);
     }
 
     /**

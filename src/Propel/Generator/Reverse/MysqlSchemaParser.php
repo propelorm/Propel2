@@ -415,11 +415,15 @@ EOT;
                     'ON UPDATE' => null,
                 ];
 
+                $availableActions = [ForeignKey::CASCADE, ForeignKey::SETNULL, ForeignKey::RESTRICT, ForeignKey::NOACTION];
+                $pipedActionsString = implode('|', $availableActions);
+
                 if ($fkey) {
                     // split foreign key information -> search for ON DELETE and afterwards for ON UPDATE action
                     foreach (array_keys($fkactions) as $fkaction) {
                         $result = null;
-                        preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . '|' . ForeignKey::RESTRICT . '|' . ForeignKey::NOACTION . ')/', $fkey, $result);
+                        $regex = sprintf('/ %s (%s)/', $fkaction, $pipedActionsString);
+                        preg_match($regex, $fkey, $result);
                         if ($result && is_array($result) && isset($result[1])) {
                             $fkactions[$fkaction] = $result[1];
                         }
