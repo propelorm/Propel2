@@ -410,19 +410,27 @@ EOT;
                     $fcols[] = trim($piece, '` ');
                 }
 
+                // typical for mysql is RESTRICT
                 $fkactions = [
-                    'ON DELETE' => null,
-                    'ON UPDATE' => null,
+                    'ON DELETE' => ForeignKey::RESTRICT,
+                    'ON UPDATE' => ForeignKey::RESTRICT,
                 ];
 
                 if ($fkey) {
-                    // split foreign key information -> search for ON DELETE and afterwards for ON UPDATE action
+                    // split foreign key information -> search for ON DELETE and afterwords for ON UPDATE action
                     foreach (array_keys($fkactions) as $fkaction) {
                         $result = null;
-                        preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . '|' . ForeignKey::RESTRICT . ')/', $fkey, $result);
+                        preg_match('/' . $fkaction . ' (' . ForeignKey::CASCADE . '|' . ForeignKey::SETNULL . ')/', $fkey, $result);
                         if ($result && is_array($result) && isset($result[1])) {
                             $fkactions[$fkaction] = $result[1];
                         }
+                    }
+                }
+
+                // restrict is the default
+                foreach ($fkactions as $key => $action) {
+                    if ($action === ForeignKey::RESTRICT) {
+                        $fkactions[$key] = null;
                     }
                 }
 

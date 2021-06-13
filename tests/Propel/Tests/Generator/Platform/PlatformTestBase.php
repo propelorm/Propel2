@@ -9,20 +9,16 @@
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Builder\Util\SchemaReader;
-use Propel\Runtime\Propel;
-use Propel\Tests\TestCaseFixturesDatabase;
+use Propel\Tests\TestCase;
 
 /**
  * Base class for all Platform tests
  */
-abstract class PlatformTestBase extends TestCaseFixturesDatabase
+abstract class PlatformTestBase extends TestCase
 {
     protected function getDatabaseFromSchema($schema)
     {
-        $platform = $this->getPlatform();
-        require_once __DIR__ . '/../../../../Fixtures/platform/build/conf/platform-conf.php';
-        $platform->setConnection(Propel::getConnection('platform'));
-        $xtad = new SchemaReader($platform);
+        $xtad = new SchemaReader($this->getPlatform());
         $appData = $xtad->parseString($schema);
 
         return $appData->getDatabase();

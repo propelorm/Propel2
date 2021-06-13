@@ -959,14 +959,6 @@ ALTER TABLE %s ADD %s %s;
      */
     public function getDefaultForeignKeyOnDeleteBehavior(): string
     {
-        preg_match('/^(\d+)\.(\d+)\.(\d+)-([^-]+)-?(.*)/', $this->con->getAttribute(PDO::ATTR_SERVER_VERSION), $versionComponents);
-        if (isset($versionComponents[4]) && strcasecmp($versionComponents[4], 'mariadb') != 0) {
-            // assume MySQL
-            if ($versionComponents[1] == '8') {
-                return ForeignKey::NOACTION;
-            }
-        }
-
         return ForeignKey::RESTRICT;
     }
 
@@ -977,14 +969,6 @@ ALTER TABLE %s ADD %s %s;
      */
     public function getDefaultForeignKeyOnUpdateBehavior(): string
     {
-        preg_match('/^(\d+)\.(\d+)\.(\d+)-([^-]+)-?(.*)/', $this->con->getAttribute(PDO::ATTR_SERVER_VERSION), $versionComponents);
-        if (isset($versionComponents[4]) && strcasecmp($versionComponents[4], 'mariadb') != 0) {
-            // assume MySQL
-            if ($versionComponents[1] == '8') {
-                return ForeignKey::NOACTION;
-            }
-        }
-
         return ForeignKey::RESTRICT;
     }
 
