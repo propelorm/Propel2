@@ -123,6 +123,8 @@ class MigrationDiffCommand extends AbstractCommand
             $conn = $manager->getAdapterConnection($name);
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
 
+            $appDatabase->setPlatform($platform);
+
             if ($platform && !$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
 
