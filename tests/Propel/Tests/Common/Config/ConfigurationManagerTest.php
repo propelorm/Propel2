@@ -863,15 +863,15 @@ EOF;
 
 class TestableConfigurationManager extends ConfigurationManager
 {
-    public function __construct($filename = 'propel', $extraConf = null)
+    public function __construct($filename = 'propel', ?array $extraConf = [])
     {
-        $this->load($filename, $extraConf);
+        $this->load($filename, $extraConf ?? []);
     }
 }
 
 class NotLoadingConfigurationManager extends ConfigurationManager
 {
-    public function __construct($configs = null)
+    public function __construct(array $configs = null)
     {
         $this->process($configs);
     }

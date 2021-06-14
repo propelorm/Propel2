@@ -297,8 +297,8 @@ class FileLoaderTest extends TestCase
      */
     public function testResourceNameIsNotStringReturnsFalse()
     {
-        $this->assertFalse($this->loader->checkSupports('ini', null));
-        $this->assertFalse($this->loader->checkSupports('yaml', false));
+        $this->assertFalse(TestableFileLoader::checkSupports('ini', null));
+        $this->assertFalse(TestableFileLoader::checkSupports('yaml', false));
     }
 
     /**
@@ -306,8 +306,8 @@ class FileLoaderTest extends TestCase
      */
     public function testExtensionIsNotStringOrArrayReturnsFalse()
     {
-        $this->assertFalse($this->loader->checkSupports('', '/tmp/propel.yaml'));
-        $this->assertFalse($this->loader->checkSupports('12', '/tmp/propel.yaml'));
+        $this->assertFalse(TestableFileLoader::checkSupports('', '/tmp/propel.yaml'));
+        $this->assertFalse(TestableFileLoader::checkSupports('12', '/tmp/propel.yaml'));
     }
 
     /**
@@ -365,24 +365,24 @@ class TestableFileLoader extends BaseFileLoader
     /**
      * @return void
      */
-    public function load($resource, $type = null)
+    public function load($resource, string $type = null)
     {
     }
 
     /**
      * @return void
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, string $type = null)
     {
     }
 
     /**
      * @param string|string[] $ext
-     * @param string|false $resource
+     * @param mixed $resource
      *
      * @return bool
      */
-    public function checkSupports($ext, $resource)
+    public static function checkSupports($ext, $resource): bool
     {
         return parent::checkSupports($ext, $resource);
     }
