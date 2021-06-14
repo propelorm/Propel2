@@ -20,6 +20,8 @@ class XmlToArrayConverter
     /**
      * Create a PHP array from the XML file
      *
+     * @psalm-return array<scalar, mixed>
+     *
      * @param string $xmlToParse The XML file or a string containing xml to parse
      *
      * @throws \Propel\Common\Config\Exception\XmlParseException if parse errors occur
@@ -77,6 +79,8 @@ class XmlToArrayConverter
      * Recursive function that converts an SimpleXML object into an array.
      *
      * @author Christophe VG (based on code form php.net manual comment)
+     *
+     * @psalm-return array<scalar, mixed>
      *
      * @param \SimpleXMLElement $xml SimpleXML object.
      *
