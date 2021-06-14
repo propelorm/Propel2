@@ -25,7 +25,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $isBeforeSymfony5 = method_exists(TreeBuilder::class, 'root');
 
