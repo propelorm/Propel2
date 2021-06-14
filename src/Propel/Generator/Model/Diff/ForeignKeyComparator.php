@@ -68,7 +68,7 @@ class ForeignKeyComparator
         if ($onUpdateBehaviorInFrom !== $onUpdateBehaviorInTo) {
             return true;
         }
-        $onDeleteBehaviorInFrom = $fromFk->getOnUpdateWithDefault();
+        $onDeleteBehaviorInFrom = $fromFk->getOnDeleteWithDefault();
         $onDeleteBehaviorInTo = $toFk->getOnDeleteWithDefault();
         if ($onDeleteBehaviorInFrom !== $onDeleteBehaviorInTo) {
             return true;
