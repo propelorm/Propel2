@@ -42,9 +42,9 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
      * @param string $tableName
      * @param string[] $qualifiedTableColumnNames
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public function build(string $tableName, array $qualifiedTableColumnNames): array
+    public function build(string $tableName, array $qualifiedTableColumnNames): PreparedStatementDto
     {
         [$tableName, $updateTable] = $this->getTableNameWithAlias($tableName);
         $tableColumnNames = $this->updateTablesColumns[$tableName];
@@ -66,7 +66,7 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
         }
         $updateSql = implode(' ', $updateSql);
 
-        return [$updateSql, $params];
+        return new PreparedStatementDto($updateSql, $params);
     }
 
     /**

@@ -13,10 +13,6 @@ use Propel\Runtime\ActiveQuery\SqlBuilder\CountQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class CountQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -37,10 +33,10 @@ class CountQueryExecutor extends AbstractQueryExecutor
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function runCount(): DataFetcherInterface
+    protected function runCount(): DataFetcherInterface
     {
-        [$sql, $params] = CountQuerySqlBuilder::createCountSql($this->criteria);
-        $stmt = $this->executeStatement($sql, $params);
+        $preparedStatementDto = CountQuerySqlBuilder::createCountSql($this->criteria);
+        $stmt = $this->executeStatement($preparedStatementDto);
 
         return $this->con->getDataFetcher($stmt);
     }

@@ -18,13 +18,14 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param string $tableName
      *
-     * @return string
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public static function createDeleteAllSql(Criteria $criteria, string $tableName): string
+    public static function createDeleteAllSql(Criteria $criteria, string $tableName): PreparedStatementDto
     {
         $builder = new DeleteQuerySqlBuilder($criteria);
+        $sqlStatement = $builder->buildDeleteFromClause($tableName);
 
-        return $builder->buildDeleteFromClause($tableName);
+        return new PreparedStatementDto($sqlStatement);
     }
 
     /**
@@ -33,15 +34,17 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      * @param string $tableName
      * @param array $columnNames
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public function build(string $tableName, array $columnNames): array
+    public function build(string $tableName, array $columnNames): PreparedStatementDto
     {
         $deleteFrom = $this->buildDeleteFromClause($tableName);
-        [$where, $params] = $this->buildWhereClause($columnNames);
+        $whereDto = $this->buildWhereClause($columnNames);
+        $where = $whereDto->getSqlStatement();
         $deleteStatement = "$deleteFrom $where";
+        $params = $whereDto->getParameters();
 
-        return [$deleteStatement, $params];
+        return new PreparedStatementDto($deleteStatement, $params);
     }
 
     /**
@@ -76,9 +79,9 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      *
      * @param array $columnNames
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    protected function buildWhereClause(array $columnNames): array
+    protected function buildWhereClause(array $columnNames): PreparedStatementDto
     {
         $whereClause = [];
         $params = [];
@@ -88,6 +91,6 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
         }
         $whereStatement = 'WHERE ' . implode(' AND ', $whereClause);
 
-        return [$whereStatement, $params];
+        return new PreparedStatementDto($whereStatement, $params);
     }
 }

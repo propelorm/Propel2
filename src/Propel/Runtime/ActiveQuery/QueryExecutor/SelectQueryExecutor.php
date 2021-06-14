@@ -13,10 +13,6 @@ use Propel\Runtime\ActiveQuery\SqlBuilder\SelectQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class SelectQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -46,11 +42,11 @@ class SelectQueryExecutor extends AbstractQueryExecutor
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface A dataFetcher using the connection, ready to be fetched
      */
-    public function runSelect(): DataFetcherInterface
+    protected function runSelect(): DataFetcherInterface
     {
         $params = [];
-        [$sql, $params] = SelectQuerySqlBuilder::createSelectSql($this->criteria, $params);
-        $stmt = $this->executeStatement($sql, $params);
+        $preparedStatementDto = SelectQuerySqlBuilder::createSelectSql($this->criteria, $params);
+        $stmt = $this->executeStatement($preparedStatementDto);
 
         return $this->con->getDataFetcher($stmt);
     }

@@ -12,10 +12,6 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\SqlBuilder\UpdateQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class UpdateQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -49,7 +45,7 @@ class UpdateQueryExecutor extends AbstractQueryExecutor
      *             Note that the return value does require that this information is returned
      *             (supported) by the Propel db driver.
      */
-    public function runUpdate(Criteria $updateValues): int
+    protected function runUpdate(Criteria $updateValues): int
     {
         $updateTablesColumns = $updateValues->getTablesColumns();
 
@@ -67,8 +63,8 @@ class UpdateQueryExecutor extends AbstractQueryExecutor
 
         $affectedRows = 0;
         foreach ($tablesColumns as $tableName => $columns) {
-            [$sql, $params] = $builder->build($tableName, $columns);
-            $stmt = $this->executeStatement($sql, $params);
+            $preparedStatementDto = $builder->build($tableName, $columns);
+            $stmt = $this->executeStatement($preparedStatementDto);
             $affectedRows += $stmt->rowCount();
         }
 

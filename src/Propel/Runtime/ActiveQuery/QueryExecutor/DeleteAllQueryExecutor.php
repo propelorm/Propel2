@@ -13,10 +13,6 @@ use Propel\Runtime\ActiveQuery\SqlBuilder\DeleteQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class DeleteAllQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -39,7 +35,7 @@ class DeleteAllQueryExecutor extends AbstractQueryExecutor
      *
      * @return int the number of deleted rows
      */
-    public function runDeleteAll(): int
+    protected function runDeleteAll(): int
     {
         if ($this->criteria->getJoins()) {
             throw new PropelException('Delete does not support join');
@@ -50,8 +46,8 @@ class DeleteAllQueryExecutor extends AbstractQueryExecutor
             throw new PropelException('No table name available');
         }
 
-        $sql = DeleteQuerySqlBuilder::createDeleteAllSql($this->criteria, $tableName);
-        $stmt = $this->executeStatement($sql);
+        $preparedStatementDto = DeleteQuerySqlBuilder::createDeleteAllSql($this->criteria, $tableName);
+        $stmt = $this->executeStatement($preparedStatementDto);
 
         return $stmt->rowCount();
     }

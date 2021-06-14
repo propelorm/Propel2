@@ -13,10 +13,6 @@ use Propel\Runtime\ActiveQuery\SqlBuilder\DeleteQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class DeleteQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -39,7 +35,7 @@ class DeleteQueryExecutor extends AbstractQueryExecutor
      *
      * @return int the number of deleted rows
      */
-    public function runDelete(): int
+    protected function runDelete(): int
     {
         if ($this->criteria->getJoins()) {
             throw new PropelException('Delete does not support join');
@@ -53,8 +49,8 @@ class DeleteQueryExecutor extends AbstractQueryExecutor
         $affectedRows = 0;
         $builder = new DeleteQuerySqlBuilder($this->criteria);
         foreach ($tables as $tableName => $columnNames) {
-            [$sql, $params] = $builder->build($tableName, $columnNames);
-            $stmt = $this->executeStatement($sql, $params);
+            $preparedStatementDto = $builder->build($tableName, $columnNames);
+            $stmt = $this->executeStatement($preparedStatementDto);
             $affectedRows += $stmt->rowCount();
         }
 

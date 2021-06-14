@@ -8,18 +8,15 @@
 
 namespace Propel\Runtime\ActiveQuery\QueryExecutor;
 
-use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\StatementWrapper;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
+use Throwable;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 abstract class AbstractQueryExecutor
 {
     /**
@@ -61,15 +58,15 @@ abstract class AbstractQueryExecutor
         $this->criteria = $criteria;
 
         $dbName = $criteria->getDbName();
-        $sc = Propel::getServiceContainer();
+        $serviceContainer = Propel::getServiceContainer();
 
-        $this->con = ($con) ? $con : $this->getConnection($sc, $dbName, static::NEEDS_WRITE_CONNECTION);
+        $this->con = ($con) ? $con : $this->getConnection($serviceContainer, $dbName, static::NEEDS_WRITE_CONNECTION);
 
         /** @var \Propel\Runtime\Adapter\SqlAdapterInterface $adapter */
-        $adapter = $sc->getAdapter($dbName);
+        $adapter = $serviceContainer->getAdapter($dbName);
         $this->adapter = $adapter;
 
-        $this->dbMap = $sc->getDatabaseMap($dbName);
+        $this->dbMap = $serviceContainer->getDatabaseMap($dbName);
     }
 
     /**
@@ -87,13 +84,14 @@ abstract class AbstractQueryExecutor
     }
 
     /**
-     * @param string $sql
-     * @param mixed[] $params
+     * @param \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto $preparedStatementDto
      *
      * @return \PDOStatement|\Propel\Runtime\Connection\StatementInterface|bool|null
      */
-    protected function executeStatement(string $sql, array $params = [])
+    protected function executeStatement(PreparedStatementDto $preparedStatementDto)
     {
+        $sql = $preparedStatementDto->getSqlStatement();
+        $params = $preparedStatementDto->getParameters();
         $this->adapter->cleanupSQL($sql, $params, $this->criteria, $this->dbMap);
 
         $stmt = null;
@@ -103,7 +101,7 @@ abstract class AbstractQueryExecutor
                 $this->adapter->bindValues($stmt, $params, $this->dbMap);
             }
             $stmt->execute();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->handleStatementException($e, $sql, $stmt);
         }
 
@@ -113,7 +111,7 @@ abstract class AbstractQueryExecutor
     /**
      * Logs an exception and adds the complete SQL statement to the exception.
      *
-     * @param \Exception $e The initial exception.
+     * @param \Throwable $e The initial exception.
      * @param string|null $sql The SQL statement which triggered the exception.
      * @param \Propel\Runtime\Connection\StatementInterface|\PDOStatement|null $stmt The prepared statement.
      *
@@ -121,7 +119,7 @@ abstract class AbstractQueryExecutor
      *
      * @return void
      */
-    protected function handleStatementException(Exception $e, ?string $sql, $stmt = null): void
+    protected function handleStatementException(Throwable $e, ?string $sql, $stmt = null): void
     {
         $internalMessage = $e->getMessage();
         Propel::log($internalMessage, Propel::LOG_ERR);
@@ -132,7 +130,7 @@ abstract class AbstractQueryExecutor
         }
         $publicMessage = "Unable to execute statement [$sql]";
         if ($isDebugMode) {
-            $publicMessage .= "\nReason: [$internalMessage]";
+            $publicMessage .= PHP_EOL . "Reason: [$internalMessage]";
         }
 
         throw new QueryExecutionException($publicMessage, 0, $e);

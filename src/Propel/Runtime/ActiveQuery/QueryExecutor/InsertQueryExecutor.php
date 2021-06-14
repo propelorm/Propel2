@@ -8,16 +8,12 @@
 
 namespace Propel\Runtime\ActiveQuery\QueryExecutor;
 
-use Exception;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\SqlBuilder\InsertQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
+use Throwable;
 
-/**
- * This class produces the base object class (e.g. BaseMyTable) which contains
- * all the custom-built accessor and setter methods.
- */
 class InsertQueryExecutor extends AbstractQueryExecutor
 {
     /**
@@ -29,7 +25,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
      */
-    public function __construct(Criteria $criteria, ?ConnectionInterface $con = null)
+    protected function __construct(Criteria $criteria, ?ConnectionInterface $con = null)
     {
         parent::__construct($criteria, $con);
 
@@ -70,13 +66,13 @@ class InsertQueryExecutor extends AbstractQueryExecutor
      *
      * @return mixed|null The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
      */
-    public function runInsert()
+    protected function runInsert()
     {
         $this->setIdFromSequence();
 
-        [$sqlStatement, $params] = InsertQuerySqlBuilder::createInsertSql($this->criteria);
+        $preparedStatementDto = InsertQuerySqlBuilder::createInsertSql($this->criteria);
 
-        $this->executeStatement($sqlStatement, $params);
+        $this->executeStatement($preparedStatementDto);
 
         return $this->retrieveLastInsertedId();
     }
@@ -101,7 +97,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
         $id = null;
         try {
             $id = $this->adapter->getId($this->con, $keyInfo);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new PropelException('Unable to get sequence id.', 0, $e);
         }
         $this->criteria->add($pkFullName, $id);
@@ -120,7 +116,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
         $keyInfo = $this->primaryKeyColumn->getTable()->getPrimaryKeyMethodInfo();
         try {
             return $this->adapter->getId($this->con, $keyInfo);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
     }

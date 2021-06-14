@@ -18,9 +18,9 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public static function createInsertSql(Criteria $criteria): array
+    public static function createInsertSql(Criteria $criteria): PreparedStatementDto
     {
         $builder = new InsertQuerySqlBuilder($criteria);
 
@@ -30,9 +30,9 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public function build(): array
+    public function build(): PreparedStatementDto
     {
         $qualifiedColumnNames = $this->criteria->keys();
         if (empty($qualifiedColumnNames)) {
@@ -50,7 +50,7 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
         $insertStatement = "INSERT INTO $tableName ($columnCsv) VALUES ($parameterPlaceholdersCsv)";
         $params = $this->buildParams($qualifiedColumnNames);
 
-        return [$insertStatement, $params];
+        return new PreparedStatementDto($insertStatement, $params);
     }
 
     /**

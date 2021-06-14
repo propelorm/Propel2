@@ -2046,9 +2046,10 @@ class Criteria
      */
     public function createSelectSql(&$params)
     {
-        [$sql, $params] = SelectQuerySqlBuilder::createSelectSql($this, $params);
+        $preparedStatementDto = SelectQuerySqlBuilder::createSelectSql($this, $params);
+        $params = $preparedStatementDto->getParameters();
 
-        return $sql;
+        return $preparedStatementDto->getSqlStatement();
     }
 
     /**

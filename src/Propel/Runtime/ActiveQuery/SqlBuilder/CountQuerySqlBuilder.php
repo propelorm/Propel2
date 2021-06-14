@@ -16,9 +16,9 @@ class CountQuerySqlBuilder extends AbstractSqlQueryBuilder
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public static function createCountSql(Criteria $criteria): array
+    public static function createCountSql(Criteria $criteria): PreparedStatementDto
     {
         $builder = new CountQuerySqlBuilder($criteria);
 
@@ -30,9 +30,9 @@ class CountQuerySqlBuilder extends AbstractSqlQueryBuilder
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public function build(): array
+    public function build(): PreparedStatementDto
     {
         $needsComplexCount = $this->criteria->getGroupByColumns()
             || $this->criteria->getOffset()
@@ -58,10 +58,12 @@ class CountQuerySqlBuilder extends AbstractSqlQueryBuilder
 
             $this->adapter->turnSelectColumnsToAliases($this->criteria);
         }
-        [$baseSelectSql, $params] = SelectQuerySqlBuilder::createSelectSql($this->criteria);
+        $preparedStatementDto = SelectQuerySqlBuilder::createSelectSql($this->criteria);
+        $baseSelectSql = $preparedStatementDto->getSqlStatement();
+        $params = $preparedStatementDto->getParameters();
 
         $countStatment = "SELECT COUNT(*) FROM ($baseSelectSql) propelmatch4cnt";
 
-        return [$countStatment, $params];
+        return new PreparedStatementDto($countStatment, $params);
     }
 }

@@ -21,9 +21,9 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param mixed[] $params
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public static function createSelectSql(Criteria $criteria, array &$params = []): array
+    public static function createSelectSql(Criteria $criteria, array &$params = []): PreparedStatementDto
     {
         $builder = new SelectQuerySqlBuilder($criteria);
 
@@ -40,9 +40,9 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
      *
      * @param mixed[] $params
      *
-     * @return array
+     * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
-    public function build(array &$params): array
+    public function build(array &$params): PreparedStatementDto
     {
         $sourceTableNamesCollector = [];
 
@@ -88,7 +88,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
             $this->adapter->applyLock($sql, $lock);
         }
 
-        return [$sql, $params];
+        return new PreparedStatementDto($sql, $params);
     }
 
     /**
@@ -160,9 +160,9 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
             return;
         }
 
-        foreach ($sourceTableNames as $index => $ftable) {
-            $spacePos = strpos($ftable, ' ');
-            $tableName = ($spacePos !== false) ? substr($ftable, $spacePos + 1) : $ftable;
+        foreach ($sourceTableNames as $index => $rawTableName) {
+            $spacePos = strpos($rawTableName, ' ');
+            $tableName = ($spacePos !== false) ? substr($rawTableName, $spacePos + 1) : $rawTableName;
 
             if ($this->criteria->hasSelectQuery($tableName)) {
                 unset($sourceTableNames[$index]);
