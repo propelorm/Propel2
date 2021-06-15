@@ -58,6 +58,6 @@ class YamlFileLoader extends FileLoader
      */
     public function supports($resource, string $type = null): bool
     {
-        return self::checkSupports(['yaml', 'yml'], $resource);
+        return static::checkSupports(['yaml', 'yml'], $resource);
     }
 }

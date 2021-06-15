@@ -66,7 +66,7 @@ class XmlToArrayConverter
             throw new XmlParseException($errors);
         }
 
-        return self::simpleXmlToArray($xml);
+        return static::simpleXmlToArray($xml);
     }
 
     /**
@@ -83,11 +83,11 @@ class XmlToArrayConverter
         $ar = [];
         foreach ($xml->children() as $k => $v) {
             // recurse the child
-            $child = self::simpleXmlToArray($v);
+            $child = static::simpleXmlToArray($v);
 
             // if it's not an array, then it was empty, thus a value/string
             if ($child === []) {
-                $child = self::getConvertedXmlValue($v);
+                $child = static::getConvertedXmlValue($v);
             }
 
             // add the children attributes as if they where children
@@ -95,13 +95,13 @@ class XmlToArrayConverter
                 if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
-                    $k = self::getConvertedXmlValue($av);
+                    $k = static::getConvertedXmlValue($av);
                 } else {
                     // otherwise, just add the attribute like a child element
                     if (is_string($child)) {
                         $child = [];
                     }
-                    $child[$ak] = self::getConvertedXmlValue($av);
+                    $child[$ak] = static::getConvertedXmlValue($av);
                 }
             }
 

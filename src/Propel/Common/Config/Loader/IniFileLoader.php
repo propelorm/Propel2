@@ -38,7 +38,7 @@ class IniFileLoader extends FileLoader
      */
     public function supports($resource, string $type = null): bool
     {
-        return self::checkSupports(['ini', 'properties'], $resource);
+        return static::checkSupports(['ini', 'properties'], $resource);
     }
 
     /**

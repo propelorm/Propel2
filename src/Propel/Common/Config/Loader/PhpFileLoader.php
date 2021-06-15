@@ -65,6 +65,6 @@ class PhpFileLoader extends FileLoader
      */
     public function supports($resource, string $type = null): bool
     {
-        return self::checkSupports(['php', 'inc'], $resource);
+        return static::checkSupports(['php', 'inc'], $resource);
     }
 }

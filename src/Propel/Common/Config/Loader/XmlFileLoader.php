@@ -42,6 +42,6 @@ class XmlFileLoader extends FileLoader
      */
     public function supports($resource, string $type = null): bool
     {
-        return self::checkSupports('xml', $resource);
+        return static::checkSupports('xml', $resource);
     }
 }

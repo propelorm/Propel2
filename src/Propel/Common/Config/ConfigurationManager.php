@@ -143,10 +143,10 @@ class ConfigurationManager
      */
     protected function load(?string $fileName, array $extraConf = []): void
     {
-        $dirs = self::getDirs($fileName);
+        $dirs = static::getDirs($fileName);
 
         if (!$fileName || is_dir($fileName)) {
-            $fileName = self::CONFIG_FILE_NAME;
+            $fileName = static::CONFIG_FILE_NAME;
         }
 
         if ($fileName === static::CONFIG_FILE_NAME) {

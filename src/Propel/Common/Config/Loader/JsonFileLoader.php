@@ -55,6 +55,6 @@ class JsonFileLoader extends FileLoader
      */
     public function supports($resource, string $type = null): bool
     {
-        return self::checkSupports('json', $resource);
+        return static::checkSupports('json', $resource);
     }
 }
