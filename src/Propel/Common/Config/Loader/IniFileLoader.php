@@ -135,14 +135,14 @@ class IniFileLoader extends FileLoader
      * Process a key.
      *
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
      *
      * @return void
      */
-    private function parseKey(string $key, string $value, array &$config): void
+    private function parseKey(string $key, $value, array &$config): void
     {
         if (strpos($key, $this->nestSeparator) !== false) {
             [$subKey, $restKey] = explode($this->nestSeparator, $key, 2);
@@ -164,13 +164,16 @@ class IniFileLoader extends FileLoader
             }
 
             $this->parseKey($restKey, $value, $config[$subKey]);
-        } elseif (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
-            $config[$key] = (strtolower($value) === 'true');
-        } elseif ($value === (string)(int)$value) {
-            $config[$key] = (int)$value;
-        } elseif ($value === (string)(float)$value) {
-            $config[$key] = (float)$value;
         } else {
+            if (is_string($value)) {
+                if (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
+                    $value = (strtolower($value) === 'true');
+                } elseif ($value === (string)(int)$value) {
+                    $value = (int)$value;
+                } elseif ($value === (string)(float)$value) {
+                    $value = (float)$value;
+                }
+            }
             $config[$key] = $value;
         }
     }
