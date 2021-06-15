@@ -108,8 +108,9 @@ class IniFileLoader extends FileLoader
         }
 
         $first = array_shift($sections);
+        $section = $this->buildNestedSection($sections, $value);
 
-        return [$first => $this->buildNestedSection($sections, $value)];
+        return [$first => $section];
     }
 
     /**

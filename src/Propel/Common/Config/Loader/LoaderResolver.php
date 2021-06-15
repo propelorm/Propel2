@@ -22,12 +22,16 @@ class LoaderResolver extends BaseLoaderResolver
      */
     public function __construct(?array $loaders = null)
     {
-        parent::__construct($loaders ?? [
+        if ($loaders === null) {
+            $loaders = [
                 new IniFileLoader(),
                 new PhpFileLoader(),
                 new XmlFileLoader(),
                 new YamlFileLoader(),
                 new JsonFileLoader(),
-            ]);
+            ];
+        }
+
+        parent::__construct($loaders);
     }
 }

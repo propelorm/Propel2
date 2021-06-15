@@ -25,10 +25,14 @@ class FileLocator extends BaseFileLocator
      */
     public function __construct($configDirectories = null)
     {
-        parent::__construct($configDirectories ?? [
+        if ($configDirectories === null) {
+            $configDirectories = [
                 getcwd(),
                 'config',
                 'conf',
-            ]);
+            ];
+        }
+
+        parent::__construct($configDirectories);
     }
 }
