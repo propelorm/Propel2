@@ -302,7 +302,7 @@ class ConfigurationManager
     {
         $databaseConnections = $this->config['database']['connections'];
         foreach (['runtime', 'generator'] as $section) {
-            if (($this->config[$section]['connections'] ?? []) === []) {
+            if (empty($this->config[$section]['connections'])) {
                 $this->config[$section]['connections'] = array_keys($databaseConnections);
             }
 
