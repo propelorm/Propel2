@@ -267,15 +267,12 @@ class ConfigurationManager
             $currentDir = $fileName;
         }
 
-        $dirs = [$currentDir];
-        if (is_dir($dir = $currentDir . '/conf')) {
-            $dirs[] = $dir;
-        }
-        if (is_dir($dir = $currentDir . '/config')) {
-            $dirs[] = $dir;
-        }
-
-        return $dirs;
+        $dirs = [
+            $currentDir,
+            $currentDir . '/conf',
+            $currentDir . '/config'
+        ];
+        return array_values(array_filter($dirs, 'is_dir'));
     }
 
     /**
