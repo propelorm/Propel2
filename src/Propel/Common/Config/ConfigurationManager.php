@@ -25,6 +25,8 @@ use Symfony\Component\Finder\Finder;
 class ConfigurationManager
 {
     public const CONFIG_FILE_NAME = 'propel';
+    private const PRECEDENCE_DIST = 0;
+    private const PRECEDENCE_NORMAL = 1;
 
     /**
      * Array of configuration values
@@ -36,13 +38,13 @@ class ConfigurationManager
     /**
      * Load and validate configuration values from a file.
      *
-     * @param string|null $filename Configuration file name or directory in which resides the configuration file.
+     * @param string|null $path Configuration file name or directory in which resides the configuration file.
      * @param array|null $extraConf Array of configuration properties, to be merged with those loaded from file.
      *                              It's useful when passing configuration parameters from command line.
      */
-    public function __construct(?string $filename = null, ?array $extraConf = [])
+    public function __construct(?string $path = null, ?array $extraConf = [])
     {
-        $this->load($filename, $extraConf ?? []);
+        $this->load($path, $extraConf ?? []);
         $this->process();
     }
 
@@ -136,34 +138,45 @@ class ConfigurationManager
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     * @param string|null $fileName Configuration file name or directory in which resides the configuration file.
+     * @param string|null $path Configuration file name or directory in which resides the configuration file.
      * @param array $extraConf Array of configuration properties, to be merged with those loaded from file.
      *
      * @return void
      */
-    protected function load(?string $fileName, array $extraConf = []): void
+    protected function load(?string $path, array $extraConf = []): void
     {
-        $dirs = static::getDirs($fileName);
+        $this->config = $this->loadConfig($path, $extraConf);
+    }
 
-        if (!$fileName || is_dir($fileName)) {
-            $fileName = static::CONFIG_FILE_NAME;
-        }
-
-        if ($fileName === static::CONFIG_FILE_NAME) {
-            $files = $this->getFiles($dirs, $fileName);
-            $distFiles = $this->getFiles($dirs, $fileName, true);
-
-            $files = $files ?: $distFiles;
-            if ($files === []) {
-                $this->config = $extraConf;
-
-                return;
+    /**
+     * Search for config files and read them into an array
+     *
+     * @param string|null $path
+     * @param array $extraConf
+     *
+     * @return array
+     */
+    protected function loadConfig(?string $path, array $extraConf = []): array
+    {
+        if ($path && !is_dir($path)) {
+            $precedenceToFiles = [
+                self::PRECEDENCE_DIST => $path . '.dist',
+                self::PRECEDENCE_NORMAL => $path,
+            ];
+        } else {
+            if (!$path) {
+                $path = getcwd();
             }
-
-            $fileName = current($files)->getPathName();
+            $precedenceToFiles = $this->getConfigFileNamesFromDirectory($path);
         }
 
-        $this->config = array_replace_recursive($this->loadFile($fileName . '.dist'), $this->loadFile($fileName), $extraConf);
+        $configs = [];
+        foreach ($precedenceToFiles as $file) {
+            $configs[] = $this->loadFile($file);
+        }
+        $configs[] = $extraConf;
+
+        return array_replace_recursive(...$configs);
     }
 
     /**
@@ -201,33 +214,40 @@ class ConfigurationManager
     }
 
     /**
-     * Return an array of configuration files in the $dirs directories
+     * Return an array of configuration files
      *
-     * @param string[] $dirs The directories where to find the configuration files
-     * @param string $fileName The name of the file
-     * @param bool $dist If search .dist files
+     * @param string $path The directories where to find the configuration files
      *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      *
-     * @return \SplFileInfo[]
+     * @return string[]
      */
-    private function getFiles(array $dirs, string $fileName, bool $dist = false): array
+    private function getConfigFileNamesFromDirectory(string $path): array
     {
+        $dirs = [
+            $path,
+            $path . '/conf',
+            $path . '/config',
+        ];
+        $dirs = array_filter($dirs, 'is_dir');
+
+        $fileName = self::CONFIG_FILE_NAME . '.{php,inc,ini,properties,yaml,yml,xml,json}{,.dist}';
         $finder = new Finder();
-        $fileName .= '.{php,inc,ini,properties,yaml,yml,xml,json}';
-
-        if ($dist) {
-            $fileName .= '.dist';
-        }
-
         $finder->in($dirs)->depth(0)->files()->name($fileName);
-        $files = iterator_to_array($finder);
-
-        if (count($files) > 1) {
-            throw new InvalidArgumentException('Propel expects only one configuration file');
+        $result = [];
+        foreach ($finder as $file) {
+            if ($file->getExtension() === 'dist') {
+                $precedence = self::PRECEDENCE_DIST;
+            } else {
+                $precedence = self::PRECEDENCE_NORMAL;
+            }
+            if (isset($result[$precedence])) {
+                throw new InvalidArgumentException('Propel expects only one configuration file');
+            }
+            $result[$precedence] = $file->getPathname();
         }
 
-        return $files;
+        return $result;
     }
 
     /**
@@ -246,33 +266,6 @@ class ConfigurationManager
         $delegatingLoader = new DelegatingLoader();
 
         return $delegatingLoader->load($fileName);
-    }
-
-    /**
-     * Return the directories where to find the configuration file.
-     *
-     * @param string|null $fileName
-     *
-     * @return string[]
-     */
-    private static function getDirs(?string $fileName): array
-    {
-        if ($fileName && is_file($fileName)) {
-            return [];
-        }
-
-        $currentDir = getcwd();
-
-        if ($fileName && is_dir($fileName)) {
-            $currentDir = $fileName;
-        }
-
-        $dirs = [
-            $currentDir,
-            $currentDir . '/conf',
-            $currentDir . '/config'
-        ];
-        return array_values(array_filter($dirs, 'is_dir'));
     }
 
     /**
