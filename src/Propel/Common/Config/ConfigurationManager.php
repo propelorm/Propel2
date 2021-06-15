@@ -298,6 +298,12 @@ class ConfigurationManager
     private function cleanupConnections(): void
     {
         $databaseConnections = $this->config['database']['connections'];
+        $checkExistence = static function (string $connection, string $section, string $childSection) use ($databaseConnections): void {
+            if (!array_key_exists($connection, $databaseConnections)) {
+                throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.$childSection). " .
+                    'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
+            }
+        };
         foreach (['runtime', 'generator'] as $section) {
             $configSection = &$this->config[$section];
 
@@ -309,18 +315,11 @@ class ConfigurationManager
                 $configSection['defaultConnection'] = array_key_first($databaseConnections);
             }
 
-            $checkExistence = static function (string $connection, string $childSection) use ($databaseConnections, $section): void {
-                if (!array_key_exists($connection, $databaseConnections)) {
-                    throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.$childSection). " .
-                        'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
-                }
-            };
-
             foreach ($configSection['connections'] as $connection) {
-                $checkExistence($connection, 'connections');
+                $checkExistence($connection, $section, 'connections');
             }
 
-            $checkExistence($configSection['defaultConnection'], 'defaultConnection');
+            $checkExistence($configSection['defaultConnection'], $section, 'defaultConnection');
         }
     }
 }
