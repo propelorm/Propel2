@@ -240,13 +240,13 @@ abstract class FileLoader extends BaseFileLoader
      */
     private function get($propertyKey)
     {
-        $ret = $this->findValue($propertyKey, $this->config);
+        $value = $this->findValue($propertyKey, $this->config);
 
-        if (!$ret->valid()) {
+        if (!$value->valid()) {
             throw new InvalidArgumentException("Parameter '$propertyKey' not found in configuration file.");
         }
 
-        return $ret->current();
+        return $value->current();
     }
 
     /**
