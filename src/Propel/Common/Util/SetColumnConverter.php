@@ -37,11 +37,11 @@ class SetColumnConverter
         }
         $bitValue = str_repeat('0', count($valueSet));
         foreach ($val as $value) {
-            $i = array_search($value, $valueSet);
-            if ($i === false) {
+            $index = array_search($value, $valueSet);
+            if ($index === false) {
                 throw new SetColumnConverterException(sprintf('Value "%s" is not among the valueSet', $value), $value);
             }
-            $bitValue[$i] = '1';
+            $bitValue[$index] = '1';
         }
 
         return base_convert(strrev($bitValue), 2, 10);
