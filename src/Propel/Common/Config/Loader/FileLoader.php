@@ -170,15 +170,21 @@ abstract class FileLoader extends BaseFileLoader
      */
     private function resolveString(string $value, array $resolving = []): string
     {
-        return preg_replace_callback('/%([^%\s]*)%/', function ($match) use ($resolving, $value) {
+        /*
+         * %%: to be unescaped
+         * %[^%\s]++%: a parameter
+         *         ^ backtracking is turned off
+         */
+        return preg_replace_callback('/%([^%\s]*+)%/', function ($match) use ($resolving, $value) {
             $key = $match[1];
             // skip %%
             if ($key === '') {
                 return '%%';
             }
 
-            if (null !== $ret = $this->parseEnvironmentParams($key)) {
-                return $ret;
+            $env = $this->parseEnvironmentParams($key);
+            if (null !== $env) {
+                return $env;
             }
 
             if (isset($resolving[$key])) {
