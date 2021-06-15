@@ -220,24 +220,15 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return string
      */
-    public function getExecutedQueryString($inputParameters = null)
+    public function getExecutedQueryString(?array $inputParameters = null): string
     {
-        $sql = $this->statement->queryString;
-        $matches = [];
-        if (preg_match_all('/(:p[0-9]+\b)/', $sql, $matches)) {
-            $size = count($matches[1]);
-            for ($i = $size - 1; $i >= 0; $i--) {
-                $pos = $matches[1][$i];
-                if (isset($this->boundValues[$pos])) {
-                    $sql = str_replace($pos, $this->boundValues[$pos], $sql);
-                }
-                if ($inputParameters && isset($inputParameters[$pos])) {
-                    $sql = str_replace($pos, $inputParameters[$pos], $sql);
-                }
-            }
-        }
+        return preg_replace_callback('/:p\d++\b/', function (array $matches) use ($inputParameters): string {
+            $pos = $matches[0];
 
-        return $sql;
+            return $this->boundValues[$pos]
+                ?? $inputParameters[$pos]
+                ?? $pos;
+        }, $this->statement->queryString);
     }
 
     /**
