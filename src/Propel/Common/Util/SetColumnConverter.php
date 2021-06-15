@@ -64,7 +64,7 @@ class SetColumnConverter
         }
         $bitValueStr = strrev(base_convert($val, 10, 2));
         $valueArr = [];
-        for ($bit = 0, $bitlen = strlen($bitValueStr); $bit < $bitlen; ++$bit) {
+        for ($bit = 0, $bitlen = strlen($bitValueStr); $bit < $bitlen; $bit++) {
             if (!isset($valueSet[$bit])) {
                 throw new SetColumnConverterException(sprintf('Unknown value key: "%s"', $bit), $bit);
             }
