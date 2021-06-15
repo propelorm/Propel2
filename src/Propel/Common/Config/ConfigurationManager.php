@@ -299,12 +299,14 @@ class ConfigurationManager
     {
         $databaseConnections = $this->config['database']['connections'];
         foreach (['runtime', 'generator'] as $section) {
-            if (empty($this->config[$section]['connections'])) {
-                $this->config[$section]['connections'] = array_keys($databaseConnections);
+            $configSection = &$this->config[$section];
+
+            if (empty($configSection['connections'])) {
+                $configSection['connections'] = array_keys($databaseConnections);
             }
 
-            if (!isset($this->config[$section]['defaultConnection'])) {
-                $this->config[$section]['defaultConnection'] = array_key_first($databaseConnections);
+            if (!isset($configSection['defaultConnection'])) {
+                $configSection['defaultConnection'] = array_key_first($databaseConnections);
             }
 
             $checkExistence = static function (string $connection, string $childSection) use ($databaseConnections, $section): void {
@@ -314,11 +316,11 @@ class ConfigurationManager
                 }
             };
 
-            foreach ($this->config[$section]['connections'] as $connection) {
+            foreach ($configSection['connections'] as $connection) {
                 $checkExistence($connection, 'connections');
             }
 
-            $checkExistence($this->config[$section]['defaultConnection'], 'defaultConnection');
+            $checkExistence($configSection['defaultConnection'], 'defaultConnection');
         }
     }
 }
