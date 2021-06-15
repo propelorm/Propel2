@@ -36,7 +36,7 @@ class IniFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, ?string $type = null): bool
+    public function supports($resource, string $type = null): bool
     {
         return self::checkSupports(['ini', 'properties'], $resource);
     }
@@ -52,7 +52,7 @@ class IniFileLoader extends FileLoader
      *
      * @return array The configuration array
      */
-    public function load($resource, ?string $type = null): array
+    public function load($resource, string $type = null): array
     {
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
