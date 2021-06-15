@@ -276,15 +276,15 @@ abstract class FileLoader extends BaseFileLoader
     {
         // env.variable is an environment variable
         [$prefix, $env] = explode('.', $value, 2);
-        if ($prefix === 'env') {
-            $envParam = getenv($env);
-            if ($envParam === false) {
-                throw new InvalidArgumentException("Environment variable '$env' is not defined.");
-            }
-
-            return $envParam;
+        if ($prefix !== 'env') {
+            return null;
         }
 
-        return null;
+        $envParam = getenv($env);
+        if ($envParam === false) {
+            throw new InvalidArgumentException("Environment variable '$env' is not defined.");
+        }
+
+        return $envParam;
     }
 }
