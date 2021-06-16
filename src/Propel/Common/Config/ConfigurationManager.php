@@ -158,15 +158,15 @@ class ConfigurationManager
      */
     protected function loadConfig(?string $path, array $extraConf = []): array
     {
-        if ($path && !is_dir($path)) {
+        if (!$path) {
+            $path = getcwd();
+        }
+        if (!is_dir($path)) {
             $precedenceToFiles = [
                 self::PRECEDENCE_DIST => $path . '.dist',
                 self::PRECEDENCE_NORMAL => $path,
             ];
         } else {
-            if (!$path) {
-                $path = getcwd();
-            }
             $precedenceToFiles = $this->getConfigFileNamesFromDirectory($path);
         }
 
@@ -246,6 +246,7 @@ class ConfigurationManager
             }
             $result[$precedence] = $file->getPathname();
         }
+        ksort($result);
 
         return $result;
     }
