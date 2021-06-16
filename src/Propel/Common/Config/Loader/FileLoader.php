@@ -196,6 +196,7 @@ abstract class FileLoader extends BaseFileLoader
 
             if ($value === $match[0]) {
                 $onlyKey = $key;
+
                 return $match[0];
             }
 
@@ -216,6 +217,7 @@ abstract class FileLoader extends BaseFileLoader
         }
 
         $resolving[$onlyKey] = true;
+
         return $this->resolveValue($this->get($onlyKey), $resolving);
     }
 
