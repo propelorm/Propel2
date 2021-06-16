@@ -863,7 +863,7 @@ EOF;
 
 class TestableConfigurationManager extends ConfigurationManager
 {
-    protected function process(?array $extraConf = null): void
+    protected function process(array $extraConf = []): void
     {
     }
 }
