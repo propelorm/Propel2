@@ -27,6 +27,7 @@ use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
@@ -165,7 +166,10 @@ class ModelCriteria extends BaseModelCriteria
     public function filterByArray($conditions)
     {
         foreach ($conditions as $column => $args) {
-            call_user_func_array([$this, 'filterBy' . $column], is_array($args) ? $args : [$args]);
+            if (!is_array($args)) {
+                $args = [$args];
+            }
+            $this->{"filterBy$column"}(...$args);
         }
 
         return $this;
@@ -1955,8 +1959,12 @@ class ModelCriteria extends BaseModelCriteria
                 // this criteria updates only one object defined by a concrete primary key,
                 // therefore there's no need to remove anything from the pool
             } else {
-                call_user_func([$this->modelTableMapName, 'clearInstancePool']);
-                call_user_func([$this->modelTableMapName, 'clearRelatedInstancePool']);
+                $modelTableMapName = $this->modelTableMapName;
+                if (!isset($modelTableMapName)) {
+                    throw new LogicException('modelTableMapName is not set');
+                }
+                $modelTableMapName::clearInstancePool();
+                $modelTableMapName::clearRelatedInstancePool();
             }
         }
 
@@ -2400,7 +2408,7 @@ class ModelCriteria extends BaseModelCriteria
                     array_unshift($arguments, $columns);
                 }
 
-                return call_user_func_array([$this, $method], $arguments);
+                return $this->$method(...$arguments);
             }
         }
 
@@ -2433,10 +2441,10 @@ class ModelCriteria extends BaseModelCriteria
                 if (!isset($arguments[0])) {
                     $arguments[0] = null;
                 }
-                array_push($arguments, $joinType);
+                $arguments[] = $joinType;
                 $method = lcfirst(substr($name, $pos));
 
-                return call_user_func_array([$this, $method], $arguments);
+                return $this->$method(...$arguments);
             }
         }
 

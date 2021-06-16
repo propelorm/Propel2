@@ -407,7 +407,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
             case 3:
                 return $this->statement->setFetchMode($mode, $classNameObject, $ctorarfg);
             default:
-                return call_user_func_array([$this->statement, 'setFetchMode'], func_get_args());
+                return $this->statement->setFetchMode(...func_get_args());
         }
     }
 
@@ -435,6 +435,6 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function __call(string $method, $args)
     {
-        return call_user_func_array([$this->statement, $method], $args);
+        return $this->statement->$method(...$args);
     }
 }

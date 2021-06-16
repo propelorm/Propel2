@@ -857,9 +857,7 @@ class TableMap
      */
     public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
     {
-        $callable = [$classname::TABLE_MAP, 'getFieldnames'];
-
-        return call_user_func($callable, $type);
+        return ($classname::TABLE_MAP)::getFieldnames($type);
     }
 
     /**
@@ -872,10 +870,7 @@ class TableMap
      */
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
     {
-        $callable = [$classname::TABLE_MAP, 'translateFieldname'];
-        $args = [$fieldname, $fromType, $toType];
-
-        return call_user_func_array($callable, $args);
+        return ($classname::TABLE_MAP)::translateFieldname($fieldname, $fromType, $toType);
     }
 
     /**

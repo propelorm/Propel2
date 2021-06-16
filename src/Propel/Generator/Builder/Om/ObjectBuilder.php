@@ -5652,7 +5652,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 if (\$partial && \$this->{$collVarName}) {
                     //make sure that already added objects gets added to the list of the database.
                     foreach (\$this->{$collVarName} as \$obj) {
-                        if (!call_user_func_array([\${$collVarName}, 'contains'], \$obj)) {
+                        if (!\${$collVarName}->contains(...\$obj)) {
                             \${$collVarName}[] = \$obj;
                         }
                     }
@@ -5811,7 +5811,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$scheduledForDeletionVarName} as \$toDelete) {";
         if ($multi) {
             $script .= "
-            call_user_func_array([\$this, 'remove{$relatedName}'], \$toDelete);";
+            \$this->remove{$relatedName}(...\$toDelete);";
         } else {
             $script .= "
             \$this->remove{$relatedName}(\$toDelete);";
@@ -5822,8 +5822,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$inputCollection} as \${$foreachItem}) {";
         if ($multi) {
             $script .= "
-            if (!call_user_func_array([\$current{$relatedNamePlural}, 'contains'], \${$foreachItem})) {
-                call_user_func_array([\$this, 'doAdd{$relatedName}'], \${$foreachItem});
+            if (!\$current{$relatedNamePlural}->contains(...\${$foreachItem})) {
+                \$this->doAdd{$relatedName}(...\${$foreachItem});
             }";
         } else {
             $script .= "

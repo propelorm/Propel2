@@ -287,7 +287,7 @@ protected function processNestedSetQueries(ConnectionInterface \$con)
 {
     foreach (\$this->nestedSetQueries as \$query) {
         \$query['arguments'][] = \$con;
-        call_user_func_array(\$query['callable'], \$query['arguments']);
+        \$query['callable'](...\$query['arguments']);
     }
     \$this->nestedSetQueries = array();
 }
