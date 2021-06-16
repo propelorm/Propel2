@@ -132,7 +132,14 @@ class StandardEnglishPluralizer implements PluralizerInterface
         foreach ($this->irregular as $pattern => $result) {
             $searchPattern = '/' . $pattern . '$/i';
             if (preg_match($searchPattern, $root)) {
-                return preg_replace($searchPattern, $result, $root);
+                $replacement = preg_replace($searchPattern, $result, $root);
+                // look at the first char and see if it's upper case
+                // I know it won't handle more than one upper case char here (but I'm OK with that)
+                if (ctype_upper($root[0])) {
+                    $replacement = ucfirst($replacement);
+                }
+
+                return $replacement;
             }
         }
 
