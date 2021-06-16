@@ -21,7 +21,7 @@ class SetColumnConverter
      * Converts set column values to the corresponding integer.
      *
      * @param mixed $val
-     * @param string[] $valueSet
+     * @param array<int, string> $valueSet
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
