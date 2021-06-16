@@ -166,16 +166,19 @@ abstract class FileLoader extends BaseFileLoader
      * @param string $value The string to resolve
      * @param array $resolving An array of keys that are being resolved (used internally to detect circular references)
      *
-     * @return string The resolved string
+     * @return mixed The resolved value
      */
-    private function resolveString(string $value, array $resolving = []): string
+    private function resolveString(string $value, array $resolving = [])
     {
         /*
          * %%: to be unescaped
          * %[^%\s]++%: a parameter
          *         ^ backtracking is turned off
+         * when it matches the entire $value, it can resolve to any value.
+         * otherwise, it is replaced with the resolved string or number.
          */
-        return preg_replace_callback('/%([^%\s]*+)%/', function ($match) use ($resolving, $value) {
+        $onlyKey = null;
+        $replaced = preg_replace_callback('/%([^%\s]*+)%/', function ($match) use ($resolving, $value, &$onlyKey) {
             $key = $match[1];
             // skip %%
             if ($key === '') {
@@ -191,17 +194,29 @@ abstract class FileLoader extends BaseFileLoader
                 throw new RuntimeException(sprintf("Circular reference detected for parameter '%s'.", $key));
             }
 
+            if ($value === $match[0]) {
+                $onlyKey = $key;
+                return $match[0];
+            }
+
             $resolved = $this->get($key);
 
             if (!is_string($resolved) && !is_int($resolved) && !is_float($resolved)) {
                 throw new RuntimeException(sprintf('A string value must be composed of strings and/or numbers, but found parameter "%s" of type %s inside string value "%s".', $key, gettype($resolved), $value));
             }
 
-            $resolved = (string)$resolved;
             $resolving[$key] = true;
+            $resolved = (string)$resolved;
 
             return $this->resolveString($resolved, $resolving);
         }, $value);
+
+        if (!isset($onlyKey)) {
+            return $replaced;
+        }
+
+        $resolving[$onlyKey] = true;
+        return $this->resolveValue($this->get($onlyKey), $resolving);
     }
 
     /**
