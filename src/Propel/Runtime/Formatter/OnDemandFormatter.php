@@ -70,6 +70,7 @@ class OnDemandFormatter extends ObjectFormatter
 
     /**
      * @return string|null
+     * @psalm-return class-string<\Propel\Runtime\Collection\OnDemandCollection>
      */
     public function getCollectionClassName()
     {
@@ -104,12 +105,12 @@ class OnDemandFormatter extends ObjectFormatter
         $col = 0;
 
         // main object
-        $class = $this->isSingleTableInheritance ? call_user_func([$this->tableMap, 'getOMClass'], $row, $col, false) : $this->class;
+        $class = $this->isSingleTableInheritance ? $this->tableMap::getOMClass($row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
+                $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');

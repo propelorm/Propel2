@@ -169,7 +169,7 @@ class ArrayFormatter extends AbstractFormatter
         foreach ($this->getWith() as $relAlias => $modelWith) {
             // determine class to use
             if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
+                $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
                     $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
@@ -181,8 +181,7 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             // hydrate related object or take it from registry
-            $key = call_user_func(
-                [$modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'],
+            $key = $modelWith->getTableMap()::getPrimaryKeyHashFromRow(
                 $row,
                 $col,
                 $this->getDataFetcher()->getIndexType()

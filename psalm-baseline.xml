@@ -627,8 +627,10 @@
     <UndefinedClass occurrences="1">
       <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
     </UndefinedClass>
-    <UndefinedMethod occurrences="1">
+    <UndefinedMethod occurrences="3">
       <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
+      <code>getOMClass</code>
+      <code>getPrimaryKeyHashFromRow</code>
     </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/Formatter/ObjectFormatter.php">
@@ -638,9 +640,10 @@
     </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/Formatter/OnDemandFormatter.php">
-    <UndefinedClass occurrences="1">
-      <code>new $class()</code>
-    </UndefinedClass>
+    <UndefinedMethod occurrences="2">
+      <code>getOMClass</code>
+      <code>getOMClass</code>
+    </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/Map/RelationMap.php">
     <InvalidReturnStatement occurrences="1">
