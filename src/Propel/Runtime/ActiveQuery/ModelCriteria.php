@@ -829,6 +829,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string $relationName Relation name or alias
      * @param string|null $secondaryCriteriaClass ClassName for the ModelCriteria to be used
+     * @psalm-param class-string<self>|null $secondaryCriteriaClass
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
@@ -843,7 +844,6 @@ class ModelCriteria extends BaseModelCriteria
         /** @var \Propel\Runtime\ActiveQuery\ModelJoin $modelJoin */
         $modelJoin = $this->joins[$relationName];
         $className = $modelJoin->getTableMap()->getClassName();
-        /** @var self $secondaryCriteriaClass */
         if ($secondaryCriteriaClass === null) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
