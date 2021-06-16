@@ -144,7 +144,6 @@ class ConfigurationManager
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     *
      * @param string $path Configuration file name or directory in which resides the configuration file.
      * @param array $extraConf Array of configuration properties, to be merged with those loaded from file.
      *
@@ -174,7 +173,7 @@ class ConfigurationManager
      * Validate the configuration array via Propel\Common\Config\PropelConfiguration class
      * and add default values.
      *
-     * @param array|null $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
+     * @param array $extraConf Extra configuration to merge before processing. It's useful when a child class overwrite
      *                         the constructor to pass a built-in array of configuration, without load it from file. I.e.
      *                         Propel\Generator\Config\QuickGeneratorConfig class.
      *
