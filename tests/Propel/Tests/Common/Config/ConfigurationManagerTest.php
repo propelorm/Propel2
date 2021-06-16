@@ -734,7 +734,7 @@ EOF;
             ],
         ];
 
-        $manager = new NotLoadingConfigurationManager($configs);
+        $manager = new NotLoadingConfigurationManager(null, $configs);
         $actual = $manager->GetSection('database')['connections'];
 
         $this->assertEquals($configs['propel']['database']['connections'], $actual);
@@ -745,7 +745,7 @@ EOF;
      */
     public function testProcessWrongParameter()
     {
-        $manager = new NotLoadingConfigurationManager(null);
+        $manager = new NotLoadingConfigurationManager(null, null);
 
         $this->assertEmpty($manager->get());
     }
@@ -863,16 +863,15 @@ EOF;
 
 class TestableConfigurationManager extends ConfigurationManager
 {
-    public function __construct($path = 'propel', ?array $extraConf = [])
+    protected function process(?array $extraConf = null): void
     {
-        $this->load($path, $extraConf ?? []);
     }
 }
 
 class NotLoadingConfigurationManager extends ConfigurationManager
 {
-    public function __construct(array $configs = null)
+    protected function loadConfig(string $path, array $extraConf = []): array
     {
-        $this->process($configs);
+        return $extraConf;
     }
 }

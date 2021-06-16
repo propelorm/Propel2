@@ -44,7 +44,13 @@ class ConfigurationManager
      */
     public function __construct(?string $path = null, ?array $extraConf = [])
     {
-        $this->load($path, $extraConf ?? []);
+        if (!$path) {
+            $path = getcwd();
+        }
+        if (!isset($extraConf)) {
+            $extraConf = [];
+        }
+        $this->config = $this->loadConfig($path, $extraConf);
         $this->process();
     }
 
@@ -131,36 +137,21 @@ class ConfigurationManager
     }
 
     /**
-     * Find a configuration file and loads it.
+     * Find a configuration file and loads it into an array.
      * Default configuration file is named 'propel' and is expected to be found in the current directory
      * or a subdirectory named '/conf' or '/config'. It can have one of the supported extensions (.ini, .properties,
      * .json, .yaml, .yml, .xml, .php, .inc).
      * Only one configuration file is supposed to be found.
      * This method also looks for a '.dist' configuration file and loads it.
      *
-     * @param string|null $path Configuration file name or directory in which resides the configuration file.
+     *
+     * @param string $path Configuration file name or directory in which resides the configuration file.
      * @param array $extraConf Array of configuration properties, to be merged with those loaded from file.
-     *
-     * @return void
-     */
-    protected function load(?string $path, array $extraConf = []): void
-    {
-        $this->config = $this->loadConfig($path, $extraConf);
-    }
-
-    /**
-     * Search for config files and read them into an array
-     *
-     * @param string|null $path
-     * @param array $extraConf
      *
      * @return array
      */
-    protected function loadConfig(?string $path, array $extraConf = []): array
+    protected function loadConfig(string $path, array $extraConf = []): array
     {
-        if (!$path) {
-            $path = getcwd();
-        }
         if (!is_dir($path)) {
             $precedenceToFiles = [
                 self::PRECEDENCE_DIST => $path . '.dist',
@@ -191,16 +182,16 @@ class ConfigurationManager
      *
      * @return void
      */
-    protected function process(?array $extraConf = null): void
+    protected function process(array $extraConf = []): void
     {
-        if ($extraConf === null && count($this->config) <= 0) {
+        if (empty($extraConf) && count($this->config) <= 0) {
             return;
         }
 
         $processor = new Processor();
         $configuration = new PropelConfiguration();
 
-        if (is_array($extraConf)) {
+        if (!empty($extraConf)) {
             $this->config = array_replace_recursive($this->config, $extraConf);
         }
 
