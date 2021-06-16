@@ -281,10 +281,10 @@ abstract class FileLoader extends BaseFileLoader
     private function parseEnvironmentParams(string $value): ?string
     {
         // env.variable is an environment variable
-        [$prefix, $env] = explode('.', $value, 2);
-        if ($prefix !== 'env') {
+        if (strpos($value, 'env.') !== 0) {
             return null;
         }
+        $env = substr($value, 4);
 
         $envParam = getenv($env);
         if ($envParam === false) {
