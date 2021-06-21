@@ -37,6 +37,13 @@ class StandardServiceContainer implements ServiceContainerInterface
     public const CONFIGURATION_VERSION = 2;
 
     /**
+     * Used in exception when the configuration is outdated.
+     *
+     * @var string
+     */
+    public const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
+
+    /**
      * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
      */
     protected $adapters = [];
@@ -218,7 +225,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Checks if the given propel generator version is outdated.
      *
-     * @param string $generatorVersion
+     * @param string|int $generatorVersion
      *
      * @throws \Propel\Runtime\Exception\PropelException Thrown when the configuration is outdated.
      *
@@ -230,7 +237,12 @@ class StandardServiceContainer implements ServiceContainerInterface
             return;
         }
 
-        throw new PropelException('Your configuration is outdated. Please rebuild it with the config:convert command.');
+        $message = 'Your configuration is outdated. Please rebuild it with the config:convert command.';
+        if (!is_int($generatorVersion) || $generatorVersion < 2) {
+            $message .= ' Visist ' . self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL . ' for information on how to fix this.';
+        }
+
+        throw new PropelException($message);
     }
 
     /**
@@ -279,7 +291,8 @@ class StandardServiceContainer implements ServiceContainerInterface
             $name = $this->getDefaultDatasource();
         }
         if ($this->databaseMaps === null) {
-            throw new PropelException('Database map was not initialized. Please check the database loader script included by your conf');
+            throw new PropelException('Database map was not initialized. Please check the database loader script included by your conf.' .
+                ' Visist ' . self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL . ' for information on how to fix this.');
         }
         if (!isset($this->databaseMaps[$name])) {
             $class = $this->databaseMapClass;
