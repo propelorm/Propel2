@@ -15,7 +15,7 @@ jobs:
             fail-fast: false
             matrix:
                 php-version: [ '7.2', '7.4', '8.0' ]
-                db-type: [ sqlite, mysql, pgsql, agnostic ]
+                db-type: [ sqlite, pgsql, agnostic ]
                 symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
                 exclude:
                   - php-version: '8.0'
@@ -120,45 +120,3 @@ jobs:
               with:
                   flags: ${{ matrix.php-version }}, ${{ matrix.db-type }}, ${{ matrix.symfony-version }}
                   file: tests/coverage.xml
-
-    code-style-and-static-analysis:
-        runs-on: ubuntu-18.04
-        steps:
-            - name: Setup PHP 7.4
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 7.4
-                  extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
-                  coverage: pcov
-
-            - uses: actions/checkout@v1
-              with:
-                  fetch-depth: 1
-
-            - name: Composer get cache directory
-              id: composer-cache
-              run: |
-                  echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Composer cache
-              uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composer-cache.outputs.dir }}
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-composer-
-
-            - name: Composer validate
-              run: composer validate
-
-            - name: Composer install
-              run: composer install --prefer-dist --no-interaction
-
-            - name: Code Style
-              run: composer cs-check
-
-            - name: PHPStan
-              run: composer stan
-
-            - name: Psalm
-              run: composer psalm
