@@ -113,7 +113,8 @@ class OnDemandFormatter extends ObjectFormatter
                 $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+                    $tableMapClass = "Map\\{$class}TableMap";
+                    $col += $tableMapClass::NUM_COLUMNS;
 
                     continue;
                 }

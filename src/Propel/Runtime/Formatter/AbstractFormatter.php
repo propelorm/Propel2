@@ -145,7 +145,7 @@ abstract class AbstractFormatter
     public function setClass($class)
     {
         $this->class = $class;
-        $this->tableMap = constant($this->class . '::TABLE_MAP');
+        $this->tableMap = $class::TABLE_MAP;
     }
 
     /**
