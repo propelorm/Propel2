@@ -39,9 +39,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Used in exception when the configuration is outdated.
      *
+     * @see StandardServiceContainer::checkVersion()
+     * @see StandardServiceContainer::getDatabaseMap()
+     *
      * @var string
      */
-    public const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
+    protected const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
 
     /**
      * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
@@ -239,7 +242,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
         $message = 'Your configuration is outdated. Please rebuild it with the config:convert command.';
         if (!is_int($generatorVersion) || $generatorVersion < 2) {
-            $message .= ' Visist ' . self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL . ' for information on how to fix this.';
+            $message .= sprintf(' Visist %s for information on how to fix this.', self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
         }
 
         throw new PropelException($message);
@@ -291,8 +294,11 @@ class StandardServiceContainer implements ServiceContainerInterface
             $name = $this->getDefaultDatasource();
         }
         if ($this->databaseMaps === null) {
-            throw new PropelException('Database map was not initialized. Please check the database loader script included by your conf.' .
-                ' Visist ' . self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL . ' for information on how to fix this.');
+            $messageFormat = 'Database map was not initialized. Please check the database loader script included by your conf. '
+                . 'Visist %s for information on how to fix this.';
+            $message = sprintf($messageFormat, self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
+
+            throw new PropelException($message);
         }
         if (!isset($this->databaseMaps[$name])) {
             $class = $this->databaseMapClass;
