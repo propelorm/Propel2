@@ -24,6 +24,18 @@ DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
 
 "$mysql" --version;
 
+
+"$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e 'exit'
+if [ $? -ne 0 ]; then
+    echo "Failed to connect"
+    
+    sleep 10s
+    
+    "$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e 'exit'
+
+    exit 2;
+fi
+
 "$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e '
 SET FOREIGN_KEY_CHECKS = 0;
 DROP DATABASE IF EXISTS test;
@@ -34,6 +46,11 @@ DROP SCHEMA IF EXISTS migration;
 SET FOREIGN_KEY_CHECKS = 1;
 '
 
+if [ $? -ne 0 ]; then
+    echo "Failed to drop old schemas"
+    exit 2;
+fi
+
 "$mysql" --host="$DB_HOSTNAME" -u"$DB_USER" $pw_option -e "
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 CREATE DATABASE test;
@@ -43,6 +60,10 @@ CREATE SCHEMA second_hand_books;
 CREATE SCHEMA migration;
 ";
 
+if [ $? -ne 0 ]; then
+    echo "Failed to create schemas"
+    exit 2;
+fi
 
 
 DIR=`dirname $0`;
