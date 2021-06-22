@@ -242,7 +242,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
         $message = 'Your configuration is outdated. Please rebuild it with the config:convert command.';
         if (!is_int($generatorVersion) || $generatorVersion < 2) {
-            $message .= sprintf(' Visist %s for information on how to fix this.', self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
+            $message .= sprintf(' Visit %s for information on how to fix this.', self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
         }
 
         throw new PropelException($message);
@@ -295,7 +295,7 @@ class StandardServiceContainer implements ServiceContainerInterface
         }
         if ($this->databaseMaps === null) {
             $messageFormat = 'Database map was not initialized. Please check the database loader script included by your conf. '
-                . 'Visist %s for information on how to fix this.';
+                . 'Visit %s for information on how to fix this.';
             $message = sprintf($messageFormat, self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
 
             throw new PropelException($message);
