@@ -152,6 +152,8 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
+        $this->checkInit();
+        /** @var \Propel\Runtime\Map\TableMap $tableMap */
         $tableMap = $this->tableMap;
         $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
         // we hydrate the main object even in case of a one-to-many relationship

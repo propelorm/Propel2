@@ -105,7 +105,10 @@ class OnDemandFormatter extends ObjectFormatter
         $col = 0;
 
         // main object
-        $class = $this->isSingleTableInheritance ? $this->tableMap::getOMClass($row, $col, false) : $this->class;
+        $this->checkInit();
+        /** @var \Propel\Runtime\Map\TableMap $tableMap */
+        $tableMap = $this->tableMap;
+        $class = $this->isSingleTableInheritance ? $tableMap::getOMClass($row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
