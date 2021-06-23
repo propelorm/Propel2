@@ -103,14 +103,12 @@ class IniFileLoader extends FileLoader
      */
     private function buildNestedSection(array $sections, $value): array
     {
-        if ($sections === []) {
-            return $this->parseSection($value);
+        $parsedSection = $this->parseSection($value);
+        foreach (array_reverse($sections) as $section) {
+            $parsedSection = [$section => $parsedSection];
         }
 
-        $first = array_shift($sections);
-        $section = $this->buildNestedSection($sections, $value);
-
-        return [$first => $section];
+        return $parsedSection;
     }
 
     /**
