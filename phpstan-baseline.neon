@@ -526,6 +526,16 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearRelatedInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Result of \\|\\| is always false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php
@@ -567,6 +577,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
@@ -642,6 +657,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
@@ -659,6 +679,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:populateObject\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"

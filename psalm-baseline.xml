@@ -577,7 +577,9 @@
     </InvalidReturnType>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
-    <UndefinedMethod occurrences="10">
+    <UndefinedMethod occurrences="12">
+      <code>$modelTableMapName::clearInstancePool()</code>
+      <code>$modelTableMapName::clearRelatedInstancePool()</code>
       <code>addSelectColumns</code>
       <code>addSelfSelectColumns</code>
       <code>getRelationMap</code>
@@ -609,6 +611,11 @@
       <code>PDO::SQLSRV_ENCODING_UTF8</code>
     </UndefinedConstant>
   </file>
+  <file src="src/Propel/Runtime/Collection/ArrayCollection.php">
+    <UndefinedMethod occurrences="1">
+      <code>$tableMapClass::getPrimaryKeyFromRow(array_values($element))</code>
+    </UndefinedMethod>
+  </file>
   <file src="src/Propel/Runtime/Collection/CollectionIterator.php">
     <InvalidArgument occurrences="2">
       <code>$callback</code>
@@ -624,13 +631,9 @@
     </InvalidReturnType>
   </file>
   <file src="src/Propel/Runtime/Formatter/ArrayFormatter.php">
-    <UndefinedClass occurrences="1">
-      <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
-    </UndefinedClass>
     <UndefinedMethod occurrences="3">
+      <code>$modelWith-&gt;getTableMap()::getOMClass($row, $col, false)</code>
       <code>$tableMap::getPrimaryKeyHashFromRow($row, 0, $this-&gt;getDataFetcher()-&gt;getIndexType())</code>
-      <code>getOMClass</code>
-      <code>getPrimaryKeyHashFromRow</code>
     </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/Formatter/ObjectFormatter.php">
@@ -641,8 +644,8 @@
   </file>
   <file src="src/Propel/Runtime/Formatter/OnDemandFormatter.php">
     <UndefinedMethod occurrences="2">
-      <code>getOMClass</code>
-      <code>getOMClass</code>
+      <code>$modelWith-&gt;getTableMap()::getOMClass($row, $col, false)</code>
+      <code>$tableMap::getOMClass($row, $col, false)</code>
     </UndefinedMethod>
   </file>
   <file src="src/Propel/Runtime/Map/RelationMap.php">
