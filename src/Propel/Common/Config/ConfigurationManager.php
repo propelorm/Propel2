@@ -282,7 +282,7 @@ class ConfigurationManager
     private function cleanupConnections(): void
     {
         $databaseConnections = $this->config['database']['connections'];
-        $checkExistence = static function (string $connection, string $section, string $childSection) use ($databaseConnections): void {
+        $assertConnectionExists = static function (string $connection, string $section, string $childSection) use ($databaseConnections): void {
             if (!array_key_exists($connection, $databaseConnections)) {
                 throw new InvalidConfigurationException("`$connection` isn't a valid configured connection (Section: propel.$section.$childSection). " .
                     'Please, check your configured connections in `propel.database.connections` section of your configuration file.');
@@ -300,10 +300,10 @@ class ConfigurationManager
             }
 
             foreach ($configSection['connections'] as $connection) {
-                $checkExistence($connection, $section, 'connections');
+                $assertConnectionExists($connection, $section, 'connections');
             }
 
-            $checkExistence($configSection['defaultConnection'], $section, 'defaultConnection');
+            $assertConnectionExists($configSection['defaultConnection'], $section, 'defaultConnection');
         }
     }
 }
