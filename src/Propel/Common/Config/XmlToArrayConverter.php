@@ -99,9 +99,9 @@ class XmlToArrayConverter
                 if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
-                    $k = self::getConvertedXmlValue($av);
-                    if (!is_string($k) && !is_int($k)) {
-                        $k = (string)$k;
+                    $k = (string)$av;
+                    if (ctype_digit($k)) {
+                        $k = (int)$k;
                     }
                 } else {
                     // otherwise, just add the attribute like a child element
