@@ -471,10 +471,11 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
+     *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
      * @return string
-     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
      */
     public function getTableMapClass()
     {

@@ -47,7 +47,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
+     * @return \Propel\Runtime\Collection\OnDemandCollection
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
@@ -69,8 +69,9 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @return string|null
      * @psalm-return class-string<\Propel\Runtime\Collection\OnDemandCollection>
+     *
+     * @return string
      */
     public function getCollectionClassName()
     {

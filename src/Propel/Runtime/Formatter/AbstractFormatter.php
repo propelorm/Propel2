@@ -231,6 +231,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Collection\Collection>|null
+     *
      * @return string|null
      */
     public function getCollectionClassName()

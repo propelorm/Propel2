@@ -825,11 +825,12 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Initializes a secondary ModelCriteria object, to be later merged with the current object
      *
+     * @psalm-param class-string<self>|null $secondaryCriteriaClass
+     *
      * @see ModelCriteria::endUse()
      *
      * @param string $relationName Relation name or alias
      * @param string|null $secondaryCriteriaClass ClassName for the ModelCriteria to be used
-     * @psalm-param class-string<self>|null $secondaryCriteriaClass
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
@@ -1927,6 +1928,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param array|\Propel\Runtime\ActiveQuery\Criteria $updateValues Associative array of keys and values to replace
      * @param \Propel\Runtime\Connection\ConnectionInterface $con a connection object
      * @param bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
      *
      * @return int Number of updated rows
      */
