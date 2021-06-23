@@ -137,7 +137,8 @@ class OnDemandFormatter extends ObjectFormatter
             // in which case it should not be related to the previous object
             if ($endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
-                    $startObject->{$modelWith->getInitMethod()}(false);
+                    $initMethod = $modelWith->getInitMethod();
+                    $startObject->$initMethod(false);
                 }
 
                 continue;
@@ -147,7 +148,8 @@ class OnDemandFormatter extends ObjectFormatter
             } else {
                 $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
             }
-            $startObject->{$modelWith->getRelationMethod()}($endObject);
+            $relationMethod = $modelWith->getRelationMethod();
+            $startObject->$relationMethod($endObject);
         }
         foreach ($this->getAsColumns() as $alias => $clause) {
             $obj->setVirtualColumn($alias, $row[$col]);

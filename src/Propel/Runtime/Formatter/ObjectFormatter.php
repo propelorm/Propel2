@@ -156,7 +156,8 @@ class ObjectFormatter extends AbstractFormatter
             // in which case it should not be related to the previous object
             if ($endObject === null || $endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
-                    $startObject->{$modelWith->getInitMethod()}(false);
+                    $initMethod = $modelWith->getInitMethod();
+                    $startObject->$initMethod(false);
                 }
 
                 continue;
@@ -167,10 +168,12 @@ class ObjectFormatter extends AbstractFormatter
                 $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
             }
 
-            $startObject->{$modelWith->getRelationMethod()}($endObject);
+            $relationMethod = $modelWith->getRelationMethod();
+            $startObject->$relationMethod($endObject);
 
             if ($modelWith->isAdd()) {
-                $startObject->{$modelWith->getResetPartialMethod()}(false);
+                $resetPartialMethod = $modelWith->getResetPartialMethod();
+                $startObject->$resetPartialMethod(false);
             }
         }
 
