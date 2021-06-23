@@ -285,9 +285,9 @@ if (\$this->isInTree()) {
  */
 protected function processNestedSetQueries(ConnectionInterface \$con)
 {
-    foreach (\$this->nestedSetQueries as \$query) {
-        \$query['arguments'][] = \$con;
-        \$query['callable'](...\$query['arguments']);
+    foreach (\$this->nestedSetQueries as ['callable' => \$callable, 'arguments' => \$arguments]) {
+        \$arguments[] = \$con;
+        \$callable(...\$arguments);
     }
     \$this->nestedSetQueries = array();
 }

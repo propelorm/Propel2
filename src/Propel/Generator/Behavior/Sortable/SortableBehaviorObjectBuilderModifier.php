@@ -940,9 +940,9 @@ public function removeFromList()
  */
 protected function processSortableQueries(\$con)
 {
-    foreach (\$this->sortableQueries as \$query) {
-        \$query['arguments'][] = \$con;
-        \$query['callable'](...\$query['arguments']);
+    foreach (\$this->sortableQueries as ['callable' => \$callable, 'arguments' => \$arguments]) {
+        \$arguments[] = \$con;
+        \$callable(...\$arguments);
     }
     \$this->sortableQueries = array();
 }
