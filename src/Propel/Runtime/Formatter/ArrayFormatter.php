@@ -155,7 +155,8 @@ class ArrayFormatter extends AbstractFormatter
         $this->checkInit();
         /** @var \Propel\Runtime\Map\TableMap $tableMap */
         $tableMap = $this->tableMap;
-        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
+        $indexType = $this->getDataFetcher()->getIndexType();
+        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $indexType);
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
@@ -184,11 +185,7 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             // hydrate related object or take it from registry
-            $key = $modelWith->getTableMap()::getPrimaryKeyHashFromRow(
-                $row,
-                $col,
-                $this->getDataFetcher()->getIndexType()
-            );
+            $key = $modelWith->getTableMap()::getPrimaryKeyHashFromRow($row, $col, $indexType);
             // we hydrate the main object even in case of a one-to-many relationship
             // in order to get the $col variable increased anyway
             $secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
