@@ -184,7 +184,7 @@ class ConfigurationManager
      */
     protected function process(array $extraConf = []): void
     {
-        if (empty($extraConf) && count($this->config) <= 0) {
+        if (!$extraConf && !$this->config) {
             return;
         }
 
@@ -222,23 +222,27 @@ class ConfigurationManager
         ];
         $dirs = array_filter($dirs, 'is_dir');
 
-        $fileName = self::CONFIG_FILE_NAME . '.{php,inc,ini,properties,yaml,yml,xml,json}{,.dist}';
+        $fileGlob = self::CONFIG_FILE_NAME . '.{php,inc,ini,properties,yaml,yml,xml,json}{,.dist}';
         $finder = new Finder();
-        $finder->in($dirs)->depth(0)->files()->name($fileName);
-        $result = [];
+        $finder->in($dirs)->depth(0)->files()->name($fileGlob);
+        $orderedConfigFileNames = [];
         foreach ($finder as $file) {
-            if ($file->getExtension() === 'dist') {
-                $precedence = self::PRECEDENCE_DIST;
-            } else {
-                $precedence = self::PRECEDENCE_NORMAL;
+            $precedence = ($file->getExtension() === 'dist') ? self::PRECEDENCE_DIST : self::PRECEDENCE_NORMAL;
+            if (isset($orderedConfigFileNames[$precedence])) {
+                $messageSplits = [
+                    'Propel expects only one configuration file, but found two:',
+                    $orderedConfigFileNames[$precedence],
+                    $file->getPathname(),
+                    'Please specify the correct folder using the --config-dir parameter.',
+                ];
+                $message = implode(PHP_EOL, $messageSplits);
+
+                throw new InvalidArgumentException($message);
             }
-            if (isset($result[$precedence])) {
-                throw new InvalidArgumentException('Propel expects only one configuration file');
-            }
-            $result[$precedence] = $file->getPathname();
+            $orderedConfigFileNames[$precedence] = $file->getPathname();
         }
 
-        return $result;
+        return $orderedConfigFileNames;
     }
 
     /**
