@@ -142,6 +142,15 @@ class IniFileLoader extends FileLoader
      */
     private function parseKey(string $key, $value, array &$config): void
     {
+        if (is_string($value)) {
+            if (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
+                $value = (strtolower($value) === 'true');
+            } elseif ($value === (string)(int)$value) {
+                $value = (int)$value;
+            } elseif ($value === (string)(float)$value) {
+                $value = (float)$value;
+            }
+        }
         if (strpos($key, $this->nestSeparator) !== false) {
             [$subKey, $restKey] = explode($this->nestSeparator, $key, 2);
 
@@ -163,15 +172,6 @@ class IniFileLoader extends FileLoader
 
             $this->parseKey($restKey, $value, $config[$subKey]);
         } else {
-            if (is_string($value)) {
-                if (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
-                    $value = (strtolower($value) === 'true');
-                } elseif ($value === (string)(int)$value) {
-                    $value = (int)$value;
-                } elseif ($value === (string)(float)$value) {
-                    $value = (float)$value;
-                }
-            }
             $config[$key] = $value;
         }
     }
