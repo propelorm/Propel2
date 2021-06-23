@@ -152,16 +152,17 @@ class ConfigurationManager
     protected function loadConfig(string $path, array $extraConf = []): array
     {
         if (!is_dir($path)) {
-            $precedenceToFiles = [
+            $filesOrderedByPrecedence = [
                 self::PRECEDENCE_DIST => $path . '.dist',
                 self::PRECEDENCE_NORMAL => $path,
             ];
         } else {
-            $precedenceToFiles = $this->getConfigFileNamesFromDirectory($path);
+            $filesOrderedByPrecedence = $this->getConfigFileNamesFromDirectory($path);
         }
+        ksort($filesOrderedByPrecedence);
 
         $configs = [];
-        foreach ($precedenceToFiles as $file) {
+        foreach ($filesOrderedByPrecedence as $file) {
             $configs[] = $this->loadFile($file);
         }
         $configs[] = $extraConf;
@@ -236,7 +237,6 @@ class ConfigurationManager
             }
             $result[$precedence] = $file->getPathname();
         }
-        ksort($result);
 
         return $result;
     }
