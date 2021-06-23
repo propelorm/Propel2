@@ -79,12 +79,8 @@ class IniFileLoader extends FileLoader
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
-                if (strpos($section, $this->nestSeparator) !== false) {
-                    $sections = explode($this->nestSeparator, $section);
-                    $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
-                } else {
-                    $config[$section] = $this->parseSection($value);
-                }
+                $sections = explode($this->nestSeparator, $section);
+                $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
             } else {
                 $this->parseKey($section, $value, $config);
             }
