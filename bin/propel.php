@@ -1,12 +1,12 @@
 <?php
 
 if (!class_exists(\Symfony\Component\Console\Application::class)) {
-    $autoloadFiles = [
+    $autoloadFileCandidates = [
         __DIR__ . '/../../../autoload.php',
         __DIR__ . '/../autoload.php',
         __DIR__ . '/../autoload.php.dist',
     ];
-    foreach ($autoloadFiles as $file) {
+    foreach ($autoloadFileCandidates as $file) {
         if (file_exists($file)) {
             require_once $file;
 
