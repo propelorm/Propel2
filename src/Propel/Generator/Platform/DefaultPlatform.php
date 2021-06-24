@@ -1457,7 +1457,9 @@ ALTER TABLE %s ADD
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         $script = '';
-        if ($column->isTemporalType()) {
+        if ($column->getType() === PropelTypes::DATE) {
+            $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getDateFormatter() . '") : null';
+        } elseif ($column->isTemporalType()) {
             $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getTimeStampFormatter() . '") : null';
         } elseif ($column->isLobType()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will
