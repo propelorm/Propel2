@@ -455,7 +455,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function callUserFunctionWithLogging(callable $callback, ?array $args, string $sqlForLog)
     {
-        if (!isset($args)) {
+        if ($args === null) {
             $args = [];
         }
         $pdoException = null;

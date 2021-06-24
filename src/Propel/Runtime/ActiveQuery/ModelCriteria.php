@@ -1963,7 +1963,7 @@ class ModelCriteria extends BaseModelCriteria
                 // therefore there's no need to remove anything from the pool
             } else {
                 $modelTableMapName = $this->modelTableMapName;
-                if (!isset($modelTableMapName)) {
+                if ($modelTableMapName === null) {
                     throw new LogicException('modelTableMapName is not set');
                 }
                 $modelTableMapName::clearInstancePool();
