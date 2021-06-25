@@ -439,8 +439,8 @@ class TableMap
      * @param bool $isNotNull Whether column does not allow NULL values.
      * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue
-     * @param bool|null $pk True if column is a primary key.
-     * @param string|bool|null $fkTable A String with the foreign key table name.
+     * @param bool $pk True if column is a primary key.
+     * @param string|null $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
