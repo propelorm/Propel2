@@ -163,7 +163,7 @@ class DatabaseComparator
      * @param bool $removeTable
      * @param array $excludedTables
      *
-     * @return \Propel\Generator\Model\Diff\DatabaseDiff|bool
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff|false
      */
     public static function computeDiff(
         Database $fromDatabase,

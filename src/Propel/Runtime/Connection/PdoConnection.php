@@ -127,7 +127,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      *
-     * @return \PDOStatement|bool
+     * @return \PDOStatement|false
      */
     public function query($statement)
     {
@@ -176,7 +176,7 @@ class PdoConnection implements ConnectionInterface
      * @param string $statement
      * @param array $driverOptions
      *
-     * @return \PDOStatement|bool
+     * @return \PDOStatement|false
      */
     public function prepare(string $statement, array $driverOptions = [])
     {

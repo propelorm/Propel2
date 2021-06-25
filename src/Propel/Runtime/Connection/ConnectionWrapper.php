@@ -381,7 +381,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @param array $driverOptions One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface|bool
+     * @return \Propel\Runtime\Connection\StatementInterface|false
      */
     public function prepare(string $statement, array $driverOptions = [])
     {
