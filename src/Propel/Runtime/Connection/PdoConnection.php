@@ -39,7 +39,7 @@ class PdoConnection implements ConnectionInterface
      */
     public function __call(string $method, $args)
     {
-        return call_user_func_array([$this->pdo, $method], $args);
+        return $this->pdo->$method(...$args);
     }
 
     /**

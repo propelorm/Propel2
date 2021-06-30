@@ -48,7 +48,7 @@ class TestableQueryBuilder extends QueryBuilder
     public function buildScript(string $scriptBuilderFunctionName): string
     {
         $script = '';
-        call_user_func_array([$this, $scriptBuilderFunctionName], [&$script]);
+        $this->$scriptBuilderFunctionName($script);
 
         return $script;
     }

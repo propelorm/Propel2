@@ -27,6 +27,7 @@ use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
@@ -165,7 +166,10 @@ class ModelCriteria extends BaseModelCriteria
     public function filterByArray($conditions)
     {
         foreach ($conditions as $column => $args) {
-            call_user_func_array([$this, 'filterBy' . $column], is_array($args) ? $args : [$args]);
+            if (!is_array($args)) {
+                $args = [$args];
+            }
+            $this->{"filterBy$column"}(...$args);
         }
 
         return $this;
@@ -821,6 +825,8 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Initializes a secondary ModelCriteria object, to be later merged with the current object
      *
+     * @psalm-param class-string<self>|null $secondaryCriteriaClass
+     *
      * @see ModelCriteria::endUse()
      *
      * @param string $relationName Relation name or alias
@@ -839,7 +845,6 @@ class ModelCriteria extends BaseModelCriteria
         /** @var \Propel\Runtime\ActiveQuery\ModelJoin $modelJoin */
         $modelJoin = $this->joins[$relationName];
         $className = $modelJoin->getTableMap()->getClassName();
-        /** @var self $secondaryCriteriaClass */
         if ($secondaryCriteriaClass === null) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
@@ -1924,6 +1929,8 @@ class ModelCriteria extends BaseModelCriteria
      * @param \Propel\Runtime\Connection\ConnectionInterface $con a connection object
      * @param bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
      * @return int Number of updated rows
      */
     public function doUpdate($updateValues, ConnectionInterface $con, $forceIndividualSaves = false)
@@ -1955,8 +1962,12 @@ class ModelCriteria extends BaseModelCriteria
                 // this criteria updates only one object defined by a concrete primary key,
                 // therefore there's no need to remove anything from the pool
             } else {
-                call_user_func([$this->modelTableMapName, 'clearInstancePool']);
-                call_user_func([$this->modelTableMapName, 'clearRelatedInstancePool']);
+                $modelTableMapName = $this->modelTableMapName;
+                if ($modelTableMapName === null) {
+                    throw new LogicException('modelTableMapName is not set');
+                }
+                $modelTableMapName::clearInstancePool();
+                $modelTableMapName::clearRelatedInstancePool();
             }
         }
 
@@ -2400,7 +2411,7 @@ class ModelCriteria extends BaseModelCriteria
                     array_unshift($arguments, $columns);
                 }
 
-                return call_user_func_array([$this, $method], $arguments);
+                return $this->$method(...$arguments);
             }
         }
 
@@ -2433,10 +2444,10 @@ class ModelCriteria extends BaseModelCriteria
                 if (!isset($arguments[0])) {
                     $arguments[0] = null;
                 }
-                array_push($arguments, $joinType);
+                $arguments[] = $joinType;
                 $method = lcfirst(substr($name, $pos));
 
-                return call_user_func_array([$this, $method], $arguments);
+                return $this->$method(...$arguments);
             }
         }
 

@@ -166,7 +166,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         \$this->set$relationName(\$delegate);
     }
 
-    return call_user_func_array(array(\$delegate, \$name), \$params);
+    return \$delegate->\$name(...\$params);
 }";
         }
 

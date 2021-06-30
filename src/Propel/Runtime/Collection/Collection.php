@@ -471,6 +471,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
+     *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
      * @return string
@@ -483,7 +485,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
-        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
+        return $this->getFullyQualifiedModel()::TABLE_MAP;
     }
 
     /**
@@ -511,7 +513,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function getWriteConnection()
     {
-        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
+        $databaseName = $this->getTableMapClass()::DATABASE_NAME;
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
@@ -612,7 +614,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function __toString()
     {
-        return (string)$this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'), false);
+        return (string)$this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
     }
 
     /**

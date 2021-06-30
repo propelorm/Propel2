@@ -145,7 +145,7 @@ abstract class AbstractFormatter
     public function setClass($class)
     {
         $this->class = $class;
-        $this->tableMap = constant($this->class . '::TABLE_MAP');
+        $this->tableMap = $class::TABLE_MAP;
     }
 
     /**
@@ -231,6 +231,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Collection\Collection>|null
+     *
      * @return string|null
      */
     public function getCollectionClassName()

@@ -152,8 +152,11 @@ class ArrayFormatter extends AbstractFormatter
 
         // hydrate main object or take it from registry
         $mainObjectIsNew = false;
+        $this->checkInit();
+        /** @var \Propel\Runtime\Map\TableMap $tableMap */
         $tableMap = $this->tableMap;
-        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $this->getDataFetcher()->getIndexType());
+        $indexType = $this->getDataFetcher()->getIndexType();
+        $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $indexType);
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
         $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
@@ -169,10 +172,11 @@ class ArrayFormatter extends AbstractFormatter
         foreach ($this->getWith() as $relAlias => $modelWith) {
             // determine class to use
             if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
+                $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
                 $refl = new ReflectionClass($class);
                 if ($refl->isAbstract()) {
-                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+                    $tableMapClass = "Map\\{$class}TableMap";
+                    $col += $tableMapClass::NUM_COLUMNS;
 
                     continue;
                 }
@@ -181,12 +185,7 @@ class ArrayFormatter extends AbstractFormatter
             }
 
             // hydrate related object or take it from registry
-            $key = call_user_func(
-                [$modelWith->getTableMap(), 'getPrimaryKeyHashFromRow'],
-                $row,
-                $col,
-                $this->getDataFetcher()->getIndexType()
-            );
+            $key = $modelWith->getTableMap()::getPrimaryKeyHashFromRow($row, $col, $indexType);
             // we hydrate the main object even in case of a one-to-many relationship
             // in order to get the $col variable increased anyway
             $secondaryObject = $this->getSingleObjectFromRow($row, $class, $col);
