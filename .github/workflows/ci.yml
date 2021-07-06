@@ -14,9 +14,9 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.2', '8.1' ]
-                db-type: [ sqlite, mysql, pgsql, agnostic ]
-                symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
+                php-version: ['8.0', '8.1']
+                db-type: [sqlite, mysql, pgsql, agnostic]
+                symfony-version: ['3-min', '3-max', '4-min', '4-max', '5-min', '5-max']
                 exclude:
                   - php-version: '8.0'
                     symfony-version: '4-min'
