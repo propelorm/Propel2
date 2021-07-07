@@ -1004,7 +1004,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= "
         if (\$format === null) {
-            return \$this->$clo;
+            return \$this->$clo instanceof \DateTime ? clone \$this->{$clo} : null;
         } else {
             return \$this->$clo instanceof \DateTimeInterface ? \$this->{$clo}->format(\$format) : null;
         }";
