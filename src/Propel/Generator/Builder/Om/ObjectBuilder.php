@@ -4340,6 +4340,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<$className}> List of $className objects
      */
     public function get" . $relCol . 'Join' . $relCol2 . "(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {";
@@ -4379,6 +4380,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Collection to store aggregation of $className objects.
      */
     protected $" . $this->getRefFKCollVarName($refFK) . ";
     protected $" . $this->getRefFKCollVarName($refFK) . "Partial;
@@ -4659,6 +4661,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<{$className}> List of $className objects
      * @throws PropelException
      */
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
@@ -4977,6 +4980,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Cross Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Cross Collection to store aggregation of $className objects.
      */
     protected \$coll" . $this->getFKPhpNameAffix($fk, true) . ";
 
@@ -5014,6 +5018,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \$$name = null;
 ";
@@ -5052,6 +5057,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5072,6 +5078,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5692,6 +5699,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param ConnectionInterface \$con
      *
      * @return {$relatedObjectClassName}[]|ObjectCollection
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}>
      */
     public function get{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
@@ -5724,6 +5732,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con Optional connection object
      *
      * @return ObjectCollection|{$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}> List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
