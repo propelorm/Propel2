@@ -36,9 +36,9 @@ class IniFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports(['ini', 'properties'], $resource);
+        return static::checkSupports(['ini', 'properties'], $resource);
     }
 
     /**
@@ -52,7 +52,7 @@ class IniFileLoader extends FileLoader
      *
      * @return array The configuration array
      */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): array
     {
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
@@ -61,9 +61,8 @@ class IniFileLoader extends FileLoader
         }
 
         $ini = $this->parse($ini); //Parse for nested sections
-        $ini = $this->resolveParams($ini); //Resolve parameter placeholders (%name%)
 
-        return $ini;
+        return $this->resolveParams($ini); //Resolve parameter placeholders (%name%)
     }
 
     /**
@@ -74,18 +73,14 @@ class IniFileLoader extends FileLoader
      *
      * @return array
      */
-    private function parse(array $data)
+    private function parse(array $data): array
     {
         $config = [];
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
-                if (strpos($section, $this->nestSeparator) !== false) {
-                    $sections = explode($this->nestSeparator, $section);
-                    $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
-                } else {
-                    $config[$section] = $this->parseSection($value);
-                }
+                $sections = explode($this->nestSeparator, $section);
+                $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
             } else {
                 $this->parseKey($section, $value, $config);
             }
@@ -102,18 +97,14 @@ class IniFileLoader extends FileLoader
      *
      * @return array
      */
-    private function buildNestedSection($sections, $value)
+    private function buildNestedSection(array $sections, $value): array
     {
-        if (count($sections) == 0) {
-            return $this->parseSection($value);
+        $parsedSection = $this->parseSection($value);
+        foreach (array_reverse($sections) as $section) {
+            $parsedSection = [$section => $parsedSection];
         }
 
-        $nestedSection = [];
-
-        $first = array_shift($sections);
-        $nestedSection[$first] = $this->buildNestedSection($sections, $value);
-
-        return $nestedSection;
+        return $parsedSection;
     }
 
     /**
@@ -123,7 +114,7 @@ class IniFileLoader extends FileLoader
      *
      * @return array
      */
-    private function parseSection(array $section)
+    private function parseSection(array $section): array
     {
         $config = [];
 
@@ -138,43 +129,49 @@ class IniFileLoader extends FileLoader
      * Process a key.
      *
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
      *
      * @return void
      */
-    private function parseKey($key, $value, array &$config)
+    private function parseKey(string $key, $value, array &$config): void
     {
-        if (strpos($key, $this->nestSeparator) !== false) {
-            $pieces = explode($this->nestSeparator, $key, 2);
-
-            if (!strlen($pieces[0]) || !strlen($pieces[1])) {
+        if (is_string($value)) {
+            if (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
+                $value = (strtolower($value) === 'true');
+            } elseif ($value === (string)(int)$value) {
+                $value = (int)$value;
+            } elseif ($value === (string)(float)$value) {
+                $value = (float)$value;
+            }
+        }
+        $subKeys = explode($this->nestSeparator, $key);
+        $subConfig = &$config;
+        $lastIndex = count($subKeys) - 1;
+        foreach ($subKeys as $index => $subKey) {
+            if ($subKey === '') {
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
             }
-            if (!isset($config[$pieces[0]])) {
-                if ($pieces[0] === '0' && !empty($config)) {
-                    $config = [$pieces[0] => $config];
+            if ($index === $lastIndex) {
+                $subConfig[$subKey] = $value;
+
+                break;
+            }
+            if (!isset($subConfig[$subKey])) {
+                if ($subKey === '0' && !empty($subConfig)) {
+                    $subConfig = [$subKey => $subConfig];
                 } else {
-                    $config[$pieces[0]] = [];
+                    $subConfig[$subKey] = [];
                 }
-            } elseif (!is_array($config[$pieces[0]])) {
+            } elseif (!is_array($subConfig[$subKey])) {
                 throw new IniParseException(sprintf(
                     'Cannot create sub-key for "%s", as key already exists',
-                    $pieces[0]
+                    $subKey
                 ));
             }
-
-            $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
-        } elseif (is_string($value) && in_array(strtolower($value), ['true', 'false'], true)) {
-            $config[$key] = (strtolower($value) === 'true');
-        } elseif ($value === (string)(int)$value) {
-            $config[$key] = (int)$value;
-        } elseif ($value === (string)(float)$value) {
-            $config[$key] = (float)$value;
-        } else {
-            $config[$key] = $value;
+            $subConfig = &$subConfig[$subKey];
         }
     }
 }

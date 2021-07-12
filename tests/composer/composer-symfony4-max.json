@@ -24,6 +24,7 @@
         "symfony/finder": "^4.0.0",
         "symfony/translation": "^4.0.0",
         "symfony/validator": "^4.0.0",
+        "symfony/polyfill-php73": "^1.8",
         "psr/log": "^1.0"
     },
     "require-dev": {

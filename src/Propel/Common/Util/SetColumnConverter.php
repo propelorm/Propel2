@@ -21,7 +21,7 @@ class SetColumnConverter
      * Converts set column values to the corresponding integer.
      *
      * @param mixed $val
-     * @param array $valueSet
+     * @param array<int, string> $valueSet
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
@@ -35,39 +35,40 @@ class SetColumnConverter
         if (!is_array($val)) {
             $val = [$val];
         }
-        $bitValueArr = array_pad([], count($valueSet), '0');
+        $bitValue = str_repeat('0', count($valueSet));
         foreach ($val as $value) {
-            if (!in_array($value, $valueSet)) {
+            $index = array_search($value, $valueSet);
+            if ($index === false) {
                 throw new SetColumnConverterException(sprintf('Value "%s" is not among the valueSet', $value), $value);
             }
-            $bitValueArr[array_search($value, $valueSet)] = '1';
+            $bitValue[$index] = '1';
         }
 
-        return base_convert(implode('', array_reverse($bitValueArr)), 2, 10);
+        return base_convert(strrev($bitValue), 2, 10);
     }
 
     /**
      * Converts set column integer value to corresponding array.
      *
-     * @param mixed $val
-     * @param array $valueSet
+     * @param string|null $val
+     * @param string[] $valueSet
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
-     * @return array
+     * @return string[]
      */
-    public static function convertIntToArray($val, array $valueSet)
+    public static function convertIntToArray(?string $val, array $valueSet): array
     {
         if ($val === null) {
             return [];
         }
-        $bitValueArr = array_reverse(str_split(base_convert($val, 10, 2)));
+        $bitValueStr = strrev(base_convert($val, 10, 2));
         $valueArr = [];
-        foreach ($bitValueArr as $bit => $bitValue) {
+        for ($bit = 0, $bitlen = strlen($bitValueStr); $bit < $bitlen; $bit++) {
             if (!isset($valueSet[$bit])) {
                 throw new SetColumnConverterException(sprintf('Unknown value key: "%s"', $bit), $bit);
             }
-            if ($bitValue === '1') {
+            if ($bitValueStr[$bit] === '1') {
                 $valueArr[] = $valueSet[$bit];
             }
         }

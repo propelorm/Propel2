@@ -23,7 +23,7 @@ class SimpleEnglishPluralizer implements PluralizerInterface
      *
      * @return string The plural form of $root (e.g. Authors).
      */
-    public function getPluralForm($root)
+    public function getPluralForm(string $root): string
     {
         return $root . 's';
     }

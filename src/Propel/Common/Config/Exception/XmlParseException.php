@@ -22,7 +22,7 @@ class XmlParseException extends RuntimeException implements ExceptionInterface
         $numErrors = count($errors);
 
         $message = '';
-        if ($numErrors == 1) {
+        if ($numErrors === 1) {
             $message = 'An error occurred ';
         } elseif ($numErrors > 1) {
             $message = 'Some errors occurred ';
