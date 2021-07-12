@@ -218,14 +218,17 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= "
  *
- * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
+ * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
+ * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column';
+ * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column' . "
+ * @psalm-method ObjectCollection&\Traversable<{$modelClass}> findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column';
         }
 
         $script .= "
  * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @psalm-method \\Propel\\Runtime\\Util\\PropelModelPager&\Traversable<{$modelClass}> paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass . "
