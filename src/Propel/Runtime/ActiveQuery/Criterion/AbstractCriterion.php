@@ -171,7 +171,7 @@ abstract class AbstractCriterion
     /**
      * Get the table name.
      *
-     * @return string A String with the table name.
+     * @return string|null A String with the table name.
      */
     public function getTable()
     {

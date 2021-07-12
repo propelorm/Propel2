@@ -97,7 +97,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::bindValue()
+     * @see SqlAdapterInterface::bindValue()
      *
      * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param string $parameter

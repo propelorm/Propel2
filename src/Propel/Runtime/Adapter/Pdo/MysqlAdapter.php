@@ -90,7 +90,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifier()
+     * @see SqlAdapterInterface::quoteIdentifier()
      *
      * @param string $text
      *
@@ -102,7 +102,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see SqlAdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      *
@@ -115,15 +115,16 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::applyLimit()
+     * @see SqlAdapterInterface::applyLimit()
      *
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         $offset = (int)$offset;
         $limit = (int)$limit;
@@ -136,7 +137,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::random()
+     * @see SqlAdapterInterface::random()
      *
      * @param string|null $seed
      *
@@ -148,7 +149,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::bindValue()
+     * @see SqlAdapterInterface::bindValue()
      *
      * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param string $parameter
@@ -204,7 +205,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::applyLock()
+     * @see SqlAdapterInterface::applyLock()
      *
      * @param string $sql
      * @param \Propel\Runtime\ActiveQuery\Lock $lock

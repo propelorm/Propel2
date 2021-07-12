@@ -431,51 +431,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:createSelectSqlPart\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLimit\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLock\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:cleanupSQL\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:bindValues\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Runtime/ActiveQuery/Criterion/LikeCriterion.php

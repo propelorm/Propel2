@@ -55,10 +55,11 @@ interface SqlAdapterInterface extends AdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit);
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null);
 
     /**
      * Modifies the passed-in SQL to add locking capabilities
@@ -78,16 +79,6 @@ interface SqlAdapterInterface extends AdapterInterface
      * @return string
      */
     public function random($seed = null);
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -150,4 +141,12 @@ interface SqlAdapterInterface extends AdapterInterface
      * @return bool
      */
     public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+
+    /**
+     * Indicates if the database system can process DELETE statements with
+     * aliases like 'DELETE t FROM my_table t JOIN my_other_table o ON ...'
+     *
+     * @return bool
+     */
+    public function supportsAliasesInDelete(): bool;
 }

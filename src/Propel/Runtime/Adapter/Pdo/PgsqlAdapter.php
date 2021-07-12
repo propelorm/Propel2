@@ -25,6 +25,13 @@ use Propel\Runtime\Propel;
 class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
+     * @see PdoAdapter::SUPPORTS_ALIASES_IN_DELETE
+     *
+     * @var bool
+     */
+    protected const SUPPORTS_ALIASES_IN_DELETE = false;
+
+    /**
      * Returns SQL which concatenates the second string to the first.
      *
      * @param string $s1 String to concatenate.
@@ -127,10 +134,11 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
@@ -168,7 +176,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         if ($groupBy) {
-            return ' GROUP BY ' . implode(',', $groupBy);
+            return 'GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -184,31 +192,6 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function random($seed = null)
     {
         return 'random()';
-    }
-
-    /**
-     * @see PdoAdapter::getDeleteFromClause()
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
-    {
-        $sql = 'DELETE ';
-        if ($queryComment = $criteria->getComment()) {
-            $sql .= '/* ' . $queryComment . ' */ ';
-        }
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= 'FROM ' . $realTableName . ' AS ' . $tableName;
-        } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
-        }
-
-        return $sql;
     }
 
     /**

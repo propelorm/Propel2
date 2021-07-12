@@ -28,6 +28,16 @@ use Propel\Runtime\Util\PropelDateTime;
 abstract class PdoAdapter
 {
     /**
+     * Indicates if the database system can process DELETE statements with
+     * aliases like 'DELETE t FROM my_table t JOIN my_other_table o ON ...'
+     *
+     * @see PdoAdapter::supportsAliasesInDelete()
+     *
+     * @var bool
+     */
+    protected const SUPPORTS_ALIASES_IN_DELETE = true;
+
+    /**
      * Build database connection
      *
      * @param array $conparams connection parameters
@@ -357,7 +367,7 @@ abstract class PdoAdapter
     {
         $groupBy = $criteria->getGroupByColumns();
         if ($groupBy) {
-            return ' GROUP BY ' . implode(',', $groupBy);
+            return 'GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -398,32 +408,6 @@ abstract class PdoAdapter
     }
 
     /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
-    {
-        $sql = 'DELETE ';
-        if ($queryComment = $criteria->getComment()) {
-            $sql .= '/* ' . $queryComment . ' */ ';
-        }
-
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
-        } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
-        }
-
-        return $sql;
-    }
-
-    /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      *
@@ -451,26 +435,28 @@ abstract class PdoAdapter
                 $parenPos = strrpos($columnName, '(');
                 $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
 
-                if ($dotPos !== false) {
-                    if ($parenPos === false) { // table.column
-                        $tableName = substr($columnName, 0, $dotPos);
-                    } else { // FUNC(table.column)
-                        // functions may contain qualifiers so only take the last
-                        // word as the table name.
-                        // COUNT(DISTINCT books.price)
-                        $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
-                        $lastSpace = strrpos($tableName, ' ');
-                        if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
-                            $tableName = substr($tableName, $lastSpace + 1);
-                        }
+                if ($dotPos === false) {
+                    continue;
+                }
+
+                if ($parenPos === false) { // table.column
+                    $tableName = substr($columnName, 0, $dotPos);
+                } else { // FUNC(table.column)
+                    // functions may contain qualifiers so only take the last
+                    // word as the table name.
+                    // COUNT(DISTINCT books.price)
+                    $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
+                    $lastSpace = strrpos($tableName, ' ');
+                    if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
+                        $tableName = substr($tableName, $lastSpace + 1);
                     }
-                    // is it a table alias?
-                    $tableName2 = $criteria->getTableForAlias($tableName);
-                    if ($tableName2 !== null) {
-                        $fromClause[] = $tableName2 . ' ' . $tableName;
-                    } else {
-                        $fromClause[] = $tableName;
-                    }
+                }
+                // is it a table alias?
+                $tableName2 = $criteria->getTableForAlias($tableName);
+                if ($tableName2 !== null) {
+                    $fromClause[] = $tableName2 . ' ' . $tableName;
+                } else {
+                    $fromClause[] = $tableName;
                 }
             }
         }
@@ -626,5 +612,15 @@ abstract class PdoAdapter
         }
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
+    }
+
+    /**
+     * @see \Propel\Runtime\Adapter\SqlAdapterInterface::supportsAliasesInDelete()
+     *
+     * @return bool
+     */
+    public function supportsAliasesInDelete(): bool
+    {
+        return static::SUPPORTS_ALIASES_IN_DELETE;
     }
 }
