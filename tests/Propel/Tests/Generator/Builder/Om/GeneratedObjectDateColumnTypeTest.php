@@ -49,12 +49,12 @@ XML;
 
     public function testInsertDateColumn(): void
     {
-        assert(class_exists(GeneratedObjectDateColumnTypeEntity::class));
-        $e = new GeneratedObjectDateColumnTypeEntity();
-        $this->assertTrue(method_exists($e, 'setDatecolumn'));
-        $this->assertTrue(\method_exists($e, 'save'));
+        assert(\class_exists(GeneratedObjectDateColumnTypeEntity::class));
+        $entity = new GeneratedObjectDateColumnTypeEntity();
+        $this->assertTrue(\method_exists($entity, 'setDatecolumn'));
+        $this->assertTrue(\method_exists($entity, 'save'));
         $dateValue = new DateTimeImmutable('2021-06-25 12:26');
-        $e->setDatecolumn($dateValue);
+        $entity->setDatecolumn($dateValue);
 
         $insertStatement = $this->createMockInsertStatement();
         $insertStatement
@@ -76,7 +76,7 @@ XML;
                 );
                 return $insertStatement;
             });
-        $e->save($con);
+        $entity->save($con);
     }
 
     /**
