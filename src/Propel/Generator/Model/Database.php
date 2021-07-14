@@ -484,6 +484,18 @@ class Database extends ScopedMappingModel
             && strpos($name, $this->getPlatform()->getSchemaDelimiter()) === false
         ) {
             $name = $this->getSchema() . $this->getPlatform()->getSchemaDelimiter() . $name;
+        } else if (strpos($name, '.') !== false){
+            /*
+            For pgSql and other dbs which support schemas, getSchema will work exactly as expected.
+            For other dbs, the <foreign-key foreignSchema="" > attribute can be used to link to databases within the same propel projec
+             */
+            $db = explode(".", $name)[0];
+            $name = explode(".", $name)[1];
+            
+            $sc = $this->getParentSchema();
+            $db = $sc->getDatabase($db, false);
+            
+            return $db->getTable($name);
         }
 
         if (!$this->hasTable($name, $caseInsensitive)) {
