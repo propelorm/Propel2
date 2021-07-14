@@ -349,18 +349,19 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     if (!\$alreadyExists) {
         \$slug2 = \$slug;
     } else {
-        \$slug2 = \$slug . \$separator;";
+        \$slug2 = \$slug . \$separator;
+        \$filterSlug = (\$this->$getter()) ? \$this->$getter() : \$slug;";
 
         if ($this->getParameter('slug_pattern') == null) {
             $script .= "
 
         \$count = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create()
-            ->filterBySlug(\$this->$getter())
+            ->filterBySlug(\$filterSlug)
             ->filterByPrimaryKey(\$this->getPrimaryKey())
         ->count();
 
         if (1 == \$count) {
-            return \$this->$getter();
+            return \$filterSlug;
         }";
         }
 
