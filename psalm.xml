@@ -26,5 +26,10 @@
         <ImplementedReturnTypeMismatch errorLevel="suppress"/>
         <ImplicitToStringCast errorLevel="suppress"/>
         <UndefinedMagicMethod errorLevel="suppress"/>
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <referencedMethod name="Symfony\Component\Config\Definition\Builder\TreeBuilder::root"/>
+            </errorLevel>
+        </UndefinedMethod>
     </issueHandlers>
 </psalm>
