@@ -21,6 +21,19 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class DatabaseReverseTest extends TestCaseFixturesDatabase
 {
+    protected $configDir;
+    protected $outputDir;
+
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->configDir = __DIR__ . '/../../../../Fixtures/bookstore';
+        $this->outputDir = __DIR__ . '/../../../../reversecommand';
+    }
+
     /**
      * @return void
      */
@@ -31,14 +44,13 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $app->add($command);
 
         $currentDir = getcwd();
-        $outputDir = __DIR__ . '/../../../../reversecommand';
 
         chdir(__DIR__ . '/../../../../Fixtures/bookstore');
 
         $input = new ArrayInput([
             'command' => 'database:reverse',
             '--database-name' => 'reverse-test',
-            '--output-dir' => $outputDir,
+            '--output-dir' => $this->outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             'connection' => $this->getConnectionDsn('bookstore-schemas', true),
@@ -56,7 +68,7 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         }
         $this->assertSame(AbstractCommand::CODE_SUCCESS, $result, 'database:reverse tests exited successfully');
 
-        $databaseXml = simplexml_load_file($outputDir . '/schema.xml');
+        $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
         $this->assertEquals('reverse-test', $databaseXml['name']);
 
         $this->assertGreaterThan(20, $databaseXml->xpath('table'));
@@ -79,7 +91,6 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $app->add($command);
 
         $currentDir = getcwd();
-        $outputDir = __DIR__ . '/../../../../reversecommand';
         $testNamespace = '\ReverseVendor\ReversePackage';
 
         chdir(__DIR__ . '/../../../../Fixtures/bookstore');
@@ -87,7 +98,7 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         $input = new ArrayInput([
             'command' => 'database:reverse',
             '--database-name' => 'reverse-test',
-            '--output-dir' => $outputDir,
+            '--output-dir' => $this->outputDir,
             '--verbose' => true,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--namespace' => $testNamespace,
@@ -106,7 +117,79 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
         }
         $this->assertEquals(0, $result, 'database:reverse tests exited successfully');
 
-        $databaseXml = simplexml_load_file($outputDir . '/schema.xml');
+        $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
+        $this->assertEquals($testNamespace, $databaseXml['namespace']);
+    }
+
+    public function testCommandWithConfigDirAndAllParams()
+    {
+        $app = new Application('Propel', Propel::VERSION);
+        $command = new DatabaseReverseCommand();
+        $app->add($command);
+
+        $currentDir = getcwd();
+        $testNamespace = '\ReverseVendor\ReversePackage';
+
+        chdir(__DIR__ . '/../../../../Fixtures/bookstore');
+
+        $input = new \Symfony\Component\Console\Input\ArrayInput([
+            'command' => 'database:reverse',
+            '--config-dir' => $this->configDir,
+            '--database-name' => 'reverse-test',
+            '--output-dir' => $this->outputDir,
+            '--verbose' => true,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform',
+            '--namespace' => $testNamespace,
+            'connection' => $this->getConnectionDsn('bookstore-schemas', true)
+        ]);
+
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $app->setAutoExit(false);
+        $result = $app->run($input, $output);
+
+        chdir($currentDir);
+
+        if (0 !== $result) {
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
+        }
+        $this->assertEquals(0, $result, 'database:reverse tests exited successfully');
+
+        $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
+        $this->assertEquals($testNamespace, $databaseXml['namespace']);
+    }
+
+    public function testCommandWithConfigDirAndNoParams()
+    {
+        $app = new Application('Propel', Propel::VERSION);
+        $command = new DatabaseReverseCommand();
+        $app->add($command);
+
+        $currentDir = getcwd();
+        $testNamespace = '\ReverseVendor\ReversePackageWithConfDir';
+
+        chdir(__DIR__ . '/../../../../Fixtures/bookstore');
+
+        $input = new \Symfony\Component\Console\Input\ArrayInput([
+            'command' => 'database:reverse',
+            '--config-dir' => $this->configDir,
+            '--verbose' => true,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform'
+        ]);
+
+        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
+        $app->setAutoExit(false);
+        $result = $app->run($input, $output);
+
+        chdir($currentDir);
+
+        if (0 !== $result) {
+            rewind($output->getStream());
+            echo stream_get_contents($output->getStream());
+        }
+        $this->assertEquals(0, $result, 'database:reverse tests exited successfully');
+
+        $databaseXml = simplexml_load_file($this->outputDir . '/schema.xml');
         $this->assertEquals($testNamespace, $databaseXml['namespace']);
     }
 }

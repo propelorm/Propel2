@@ -40,7 +40,7 @@ class DatabaseReverseCommand extends AbstractCommand
                 'connection',
                 InputArgument::OPTIONAL,
                 'Connection name or dsn to use. Example: \'mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' (don\'t forget the quote for dsn)',
-                'default'
+                NULL
             )
             ->setName('database:reverse')
             ->setAliases(['reverse'])
@@ -54,14 +54,14 @@ class DatabaseReverseCommand extends AbstractCommand
     {
         $configOptions = [];
 
-        $connection = (string)$input->getArgument('connection');
-        if (strpos($connection, ':') === false) {
+        $connection = (string) $input->getArgument('connection');
+        if ($connection !== NULL && false === strpos($connection, ':')) {
             //treat it as connection name
             $configOptions['propel']['reverse']['connection'] = $connection;
             if (!$input->getOption('database-name')) {
                 $input->setOption('database-name', $connection);
             }
-        } else {
+        } else if ($connection !== NULL) {
             //probably a dsn
             $configOptions += $this->connectionToProperties('reverseconnection=' . $connection, 'reverse');
             $configOptions['propel']['reverse']['parserClass'] = sprintf(
@@ -73,9 +73,46 @@ class DatabaseReverseCommand extends AbstractCommand
                 $input->setOption('database-name', self::DEFAULT_DATABASE_NAME);
             }
         }
+
+        if ($input->getOption('namespace')) {
+            $configOptions['propel']['reverse']['namespace'] = $input->getOption('namespace');
+        }
+        if ($input->getOption('output-dir') !== self::DEFAULT_OUTPUT_DIRECTORY) {
+            $configOptions['propel']['paths']['schemaDir'] = $input->getOption('output-dir');
+        }
+
+        if ($input->getOption('schema-name') !== self::DEFAULT_SCHEMA_NAME) {
+            $configOptions['propel']['generator']['schema']['basename'] = $input->getOption('schema-name');
+        }
+
         $generatorConfig = $this->getGeneratorConfig($configOptions, $input);
 
-        $this->createDirectory($input->getOption('output-dir'));
+        $outputDir = $generatorConfig->getConfigProperty('paths.schemaDir');
+        $shemaName = $generatorConfig->getConfigProperty('generator.schema.basename');
+        if (empty($outputDir) || empty($shemaName)) {
+            // if output dir or shema name is still empty, we have to set them
+            // to his default values, in order to keep the previous
+            // behaviour of the script
+            if (empty($outputDir)) {
+                $configOptions['propel']['paths']['schemaDir'] = $input->getOption('output-dir');
+            }
+            if (empty($shemaName)) {
+                $configOptions['propel']['generator']['schema']['basename'] = $input->getOption('schema-name');
+            }
+
+            // regenerate config with the new options
+            $generatorConfig = $this->getGeneratorConfig($configOptions, $input);exit(1);
+        }
+
+        if (!$connection) {
+            $connection = $generatorConfig->getConfigProperty('reverse.connection');
+            if ($connection && !$input->getOption('database-name')) {
+                $input->setOption('database-name', $connection);
+            }
+        }
+
+        $this->createDirectory(
+            $generatorConfig->getConfigProperty('paths.schemaDir'));
 
         $manager = new ReverseManager(new XmlDumper());
         $manager->setGeneratorConfig($generatorConfig);
@@ -84,9 +121,13 @@ class DatabaseReverseCommand extends AbstractCommand
                 $output->writeln($message);
             }
         });
-        $manager->setWorkingDirectory($input->getOption('output-dir'));
+        $manager->setWorkingDirectory(
+            $generatorConfig->getConfigProperty('paths.schemaDir'));
         $manager->setDatabaseName($input->getOption('database-name'));
-        $manager->setSchemaName($input->getOption('schema-name'));
+        $manager->setSchemaName(
+            $generatorConfig->getConfigProperty('generator.schema.basename'));
+
+        $namespace = $generatorConfig->getConfigProperty('reverse.namespace');
 
         $namespace = $input->getOption('namespace');
 
