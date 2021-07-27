@@ -474,7 +474,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     protected function addTableVendorInfo(Table $table)
     {
-        $sql  = sprintf("SHOW TABLE STATUS FROM %s LIKE '%s'", $table->guessSchemaName(), $table->getCommonName());
+        if ($table->guessSchemaName()) {
+            $sql = sprintf("SHOW TABLE STATUS FROM %s LIKE '%s'", $table->guessSchemaName(), $table->getCommonName());
+        } else {
+            $sql = sprintf("SHOW TABLE STATUS LIKE '%s'", $table->getName());
+        }
         $stmt = $this->dbh->query($sql);
         $row  = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
