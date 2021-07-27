@@ -234,6 +234,26 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testPrimaryTableNameQuoting()
+    {
+        $tableName = 'myTable1';
+        $this->c->setPrimaryTableName($tableName);
+        $countSelect = 'COUNT(*)';
+        $this->c->addSelectColumn($countSelect);
+        $adapter = Propel::getServiceContainer()->getAdapter('bookstore');
+        $escapedTableName = $adapter->quoteIdentifierTable($tableName);
+
+        $this->c->setIdentifierQuoting(true);
+        $params = [];
+        $this->assertEquals(
+            "SELECT {$countSelect} FROM {$escapedTableName}",
+            $this->c->createSelectSql($params)
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testAddOrDistinctColumns()
     {
         $table1 = 'myTable1';

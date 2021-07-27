@@ -2207,7 +2207,7 @@ class Criteria
         }
 
         if (empty($fromClause) && $this->getPrimaryTableName()) {
-            $fromClause[] = $this->getPrimaryTableName();
+            $fromClause[] = $this->quoteIdentifierTable($this->getPrimaryTableName());
         }
 
         // build from-clause
