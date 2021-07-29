@@ -37,6 +37,16 @@ class StandardServiceContainer implements ServiceContainerInterface
     public const CONFIGURATION_VERSION = 2;
 
     /**
+     * Used in exception when the configuration is outdated.
+     *
+     * @see StandardServiceContainer::checkVersion()
+     * @see StandardServiceContainer::getDatabaseMap()
+     *
+     * @var string
+     */
+    protected const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
+
+    /**
      * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
      */
     protected $adapters = [];
@@ -218,7 +228,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Checks if the given propel generator version is outdated.
      *
-     * @param string $generatorVersion
+     * @param string|int $generatorVersion
      *
      * @throws \Propel\Runtime\Exception\PropelException Thrown when the configuration is outdated.
      *
@@ -230,7 +240,12 @@ class StandardServiceContainer implements ServiceContainerInterface
             return;
         }
 
-        throw new PropelException('Your configuration is outdated. Please rebuild it with the config:convert command.');
+        $message = 'Your configuration is outdated. Please rebuild it with the config:convert command.';
+        if (!is_int($generatorVersion) || $generatorVersion < 2) {
+            $message .= sprintf(' Visit %s for information on how to fix this.', self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
+        }
+
+        throw new PropelException($message);
     }
 
     /**
@@ -279,7 +294,11 @@ class StandardServiceContainer implements ServiceContainerInterface
             $name = $this->getDefaultDatasource();
         }
         if ($this->databaseMaps === null) {
-            throw new PropelException('Database map was not initialized. Please check the database loader script included by your conf');
+            $messageFormat = 'Database map was not initialized. Please check the database loader script included by your conf. '
+                . 'Visit %s for information on how to fix this.';
+            $message = sprintf($messageFormat, self::HOWTO_FIX_MISSING_LOADER_SCRIPT_URL);
+
+            throw new PropelException($message);
         }
         if (!isset($this->databaseMaps[$name])) {
             $class = $this->databaseMapClass;

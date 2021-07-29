@@ -208,7 +208,7 @@ class StandardServiceContainerTest extends BaseTestCase
         try {
             $this->sc->checkVersion(StandardServiceContainer::CONFIGURATION_VERSION);
         } catch (PropelException $e) {
-            $this->fail('The current configuration version should pass a check');
+            $this->fail('The current configuration version should pass a check, but failed with message: ' . $e->getMessage());
         }
     }
 
@@ -218,13 +218,10 @@ class StandardServiceContainerTest extends BaseTestCase
     public function testUninitializedDatabaseMapThrowsException(): void
     {
         $sc = new StandardServiceContainer();
-        try {
-            $sc->getDatabaseMap('a database name');
-            $this->fail('Accessing database map before initialization should throw exception.');
-        } catch (PropelException $e) {
-            $expectedMessage = 'Database map was not initialized. Please check the database loader script included by your conf';
-            $this->assertSame($expectedMessage, $e->getMessage());
-        }
+        $this->expectException(PropelException::class);
+        $this->expectExceptionMessage('Database map was not initialized. Please check the database loader script included by your conf.');
+
+        $sc->getDatabaseMap('a database name');
     }
 
     /**
