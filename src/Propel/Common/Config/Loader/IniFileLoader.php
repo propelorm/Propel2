@@ -54,6 +54,7 @@ class IniFileLoader extends FileLoader
      */
     public function load($resource, $type = null): array
     {
+        /** @var false|array<array-key,string|array<array-key,string|array<array-key,string>>> $ini */
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
         if ($ini === false) {
@@ -69,7 +70,7 @@ class IniFileLoader extends FileLoader
      * Parse data from the configuration array, to transform nested sections into associative arrays
      * and to fix int/float/bool typing
      *
-     * @param array $data
+     * @param array<array-key, string|array<array-key, string|array<array-key, string>>> $data
      *
      * @return array
      */
@@ -93,11 +94,11 @@ class IniFileLoader extends FileLoader
      * Process a nested section
      *
      * @param array $sections
-     * @param mixed $value
+     * @param array<array-key, string|array<array-key, string>> $value
      *
      * @return array
      */
-    private function buildNestedSection(array $sections, $value): array
+    private function buildNestedSection(array $sections, array $value): array
     {
         $parsedSection = $this->parseSection($value);
         foreach (array_reverse($sections) as $section) {
@@ -110,7 +111,7 @@ class IniFileLoader extends FileLoader
     /**
      * Parse a section.
      *
-     * @param array $section
+     * @param array<array-key, string|array<array-key, string>> $section
      *
      * @return array
      */
@@ -129,22 +130,23 @@ class IniFileLoader extends FileLoader
      * Process a key.
      *
      * @param string $key
-     * @param mixed $value
+     * @param string|array<array-key, string> $rawValue
      * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
      *
      * @return void
      */
-    private function parseKey(string $key, $value, array &$config): void
+    private function parseKey(string $key, $rawValue, array &$config): void
     {
-        if (is_string($value)) {
-            if (strlen($value) <= 5 && in_array(strtolower($value), ['true', 'false'], true)) {
-                $value = (strtolower($value) === 'true');
-            } elseif ($value === (string)(int)$value) {
-                $value = (int)$value;
-            } elseif ($value === (string)(float)$value) {
-                $value = (float)$value;
+        $value = $rawValue;
+        if (is_string($rawValue)) {
+            if (strlen($rawValue) <= 5 && in_array(strtolower($rawValue), ['true', 'false'], true)) {
+                $value = (strtolower($rawValue) === 'true');
+            } elseif ($rawValue === (string)(int)$rawValue) {
+                $value = (int)$rawValue;
+            } elseif ($rawValue === (string)(float)$rawValue) {
+                $value = (float)$rawValue;
             }
         }
         $subKeys = explode($this->nestSeparator, $key);
