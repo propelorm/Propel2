@@ -160,7 +160,7 @@ class IniFileLoader extends FileLoader
                 break;
             }
             if (!isset($subConfig[$subKey])) {
-                if ($subKey === '0' && !empty($subConfig)) {
+                if ($subKey === '0' && $subConfig) {
                     $subConfig = [$subKey => $subConfig];
                 } else {
                     $subConfig[$subKey] = [];

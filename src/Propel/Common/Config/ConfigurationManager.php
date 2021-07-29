@@ -191,7 +191,7 @@ class ConfigurationManager
         $processor = new Processor();
         $configuration = new PropelConfiguration();
 
-        if (!empty($extraConf)) {
+        if ($extraConf) {
             $this->config = array_replace_recursive($this->config, $extraConf);
         }
 
