@@ -12,6 +12,7 @@ use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
@@ -444,5 +445,69 @@ class TableMapBuilderTest extends BookstoreTestBase
         eval("\$restoredData = $stringifiedData;");
 
         $this->assertSame($scalarData, $restoredData, $message);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetOMClassDefaultInstantiable()
+    {
+        $databaseXml = <<<XML
+<database namespace="ExampleNamespace\Greens" package="Greens">
+    <table name="green_thing">
+        <column name="id" type="integer"/>
+        <column
+            name="type"
+            type="enum"
+            required="true"
+            default="default"
+            valueSet="default,grass"
+            inheritance="single"
+        >
+            <inheritance key="default" class="GreenThing"/>
+            <inheritance key="grass" class="Grass" extends="GreenThing" />
+        </column>
+    </table>
+</database>
+XML;
+        $builder = new QuickBuilder();
+        $builder->setSchema($databaseXml);
+        $builder->build();
+
+        $this->assertTrue(\class_exists('\\ExampleNamespace\\Greens\\Map\\GreenThingTableMap'));
+        $this->assertTrue(\class_exists('\\ExampleNamespace\\Greens\\Grass'));
+
+        $unexpectedClassName = \ExampleNamespace\Greens\Map\GreenThingTableMap::getOMClass(
+            array(
+                2, // random 'ID' value
+                'othervalue', // enable the 'default' case in getOMClass
+            ),
+            0, // somehow the offset is calculated within the getOMClass function (?)
+            false
+        );
+        $this->assertInstanceOf('\\ExampleNamespace\\Greens\\GreenThing', new $unexpectedClassName());
+
+
+        $grassClass = \ExampleNamespace\Greens\Map\GreenThingTableMap::getOMClass(
+            array(
+                2, // random 'ID' value
+                // enable the 'grass' case
+                \ExampleNamespace\Greens\Map\GreenThingTableMap::COL_TYPE_GRASS,
+            ),
+            0, // somehow the offset is calculated within the getOMClass function (?)
+            false
+        );
+        $this->assertInstanceOf('\\ExampleNamespace\\Greens\\Grass', new $grassClass());
+
+        $greenClass = \ExampleNamespace\Greens\Map\GreenThingTableMap::getOMClass(
+            array(
+                2, // random 'ID' value
+                // enable the 'default' case
+                \ExampleNamespace\Greens\Map\GreenThingTableMap::COL_TYPE_DEFAULT,
+            ),
+            0, // somehow the offset is calculated within the getOMClass function (?)
+            false
+        );
+        $this->assertInstanceOf('\\ExampleNamespace\\Greens\\GreenThing', new $greenClass());
     }
 }
