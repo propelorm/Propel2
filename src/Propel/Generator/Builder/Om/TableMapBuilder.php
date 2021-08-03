@@ -1051,7 +1051,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             } /* foreach */
             $script .= "
                 default:
-                    \$omClass = {$this->getTableMapClassName()}::CLASS_DEFAULT;
+                    \$omClass = \$withPrefix
+                        ? {$this->getTableMapClassName()}::CLASS_DEFAULT
+                        : {$this->getTableMapClassName()}::OM_CLASS;
 ";
             $script .= "
             } // switch
@@ -1067,7 +1069,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         }
         $script .= "
         } catch (\Exception \$e) {
-            throw new PropelException('Unable to get OM class.', \$e);
+            throw new PropelException('Unable to get OM class.', 0, \$e);
         }
 
         return \$omClass;
