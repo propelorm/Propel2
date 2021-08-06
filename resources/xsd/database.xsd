@@ -96,6 +96,8 @@
             <xs:enumeration value="SETNULL"/>
             <xs:enumeration value="restrict"/>
             <xs:enumeration value="RESTRICT"/>
+            <xs:enumeration value="no action"/>
+            <xs:enumeration value="NO ACTION"/>
             <xs:enumeration value="none"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value=""/>
@@ -112,6 +114,8 @@
             <xs:enumeration value="SETNULL"/>
             <xs:enumeration value="restrict"/>
             <xs:enumeration value="RESTRICT"/>
+            <xs:enumeration value="no action"/>
+            <xs:enumeration value="NO ACTION"/>
             <xs:enumeration value="none"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value=""/>
