@@ -553,6 +553,7 @@ class ForeignKeyTest extends ModelTestCase
             ['SETNULL', 'SET NULL'],
             ['cascade', 'CASCADE'],
             ['CASCADE', 'CASCADE'],
+            ['NOACTION', 'NO ACTION'],
         ];
     }
 
@@ -578,6 +579,7 @@ class ForeignKeyTest extends ModelTestCase
             ['SETNULL', 'RESTRICT', 'SET NULL'],
             ['cascade', 'RESTRICT', 'CASCADE'],
             ['CASCADE', 'RESTRICT', 'CASCADE'],
+            [ForeignKey::NOACTION, ForeignKey::RESTRICT, ForeignKey::NOACTION],
             [null, null, ''],
         ];
     }
