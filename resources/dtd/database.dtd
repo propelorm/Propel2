@@ -126,8 +126,8 @@ PHP class or method name.
   phpName CDATA #IMPLIED
   refPhpName CDATA #IMPLIED
   interface CDATA #IMPLIED
-  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NO ACTION|NONE|none) "none"
-  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NO_ACTION|NONE|none) "none"
+  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NOACTION|noaction|NONE|none) "none"
+  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NOACTION|noaction|NONE|none) "none"
   skipSql (true|false) "false"
 >
 

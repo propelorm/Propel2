@@ -116,6 +116,8 @@
             <xs:enumeration value="RESTRICT"/>
             <xs:enumeration value="no action"/>
             <xs:enumeration value="NO ACTION"/>
+            <xs:enumeration value="noaction"/>
+            <xs:enumeration value="NOACTION"/>
             <xs:enumeration value="none"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value=""/>
