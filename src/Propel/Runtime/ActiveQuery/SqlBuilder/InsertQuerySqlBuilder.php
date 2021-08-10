@@ -54,7 +54,7 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param array $qualifiedColumnNames
+     * @param string[] $qualifiedColumnNames
      *
      * @return string
      */

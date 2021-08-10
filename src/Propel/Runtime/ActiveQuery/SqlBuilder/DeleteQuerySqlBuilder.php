@@ -32,7 +32,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      * Create a Sql DELETE statement.
      *
      * @param string $tableName
-     * @param array $columnNames
+     * @param string[] $columnNames
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -77,7 +77,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
     /**
      * Build WHERE clause from the given column names.
      *
-     * @param array $columnNames
+     * @param string[] $columnNames
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
