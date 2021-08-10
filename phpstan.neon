@@ -22,7 +22,6 @@ parameters:
         - '%rootDir%/../../../src/Propel/Generator/Command/InitCommand.php'
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'
-        - '#Class .+TreeBuilder constructor invoked with 0 parameters, 1-3 required#'
         -
         	message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder\\:\\:root\\(\\)\\.$#"
         	path: src/Propel/Common/Config/PropelConfiguration.php

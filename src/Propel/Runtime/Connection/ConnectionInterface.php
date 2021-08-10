@@ -168,7 +168,7 @@ interface ConnectionInterface
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|bool
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|false
      */
     public function prepare(string $statement, array $driverOptions = []);
 
@@ -180,7 +180,7 @@ interface ConnectionInterface
      *
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|bool
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|false
      */
     public function query($statement);
 

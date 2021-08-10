@@ -23,7 +23,7 @@ class ColumnComparator
      * @param \Propel\Generator\Model\Column $fromColumn
      * @param \Propel\Generator\Model\Column $toColumn
      *
-     * @return \Propel\Generator\Model\Diff\ColumnDiff|bool return false if the two columns are similar
+     * @return \Propel\Generator\Model\Diff\ColumnDiff|false return false if the two columns are similar
      */
     public static function computeDiff(Column $fromColumn, Column $toColumn)
     {

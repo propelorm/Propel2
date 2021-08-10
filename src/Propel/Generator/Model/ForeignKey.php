@@ -188,6 +188,10 @@ class ForeignKey extends MappingModel
             return self::SETNULL;
         }
 
+        if ($behavior === 'NOACTION') {
+            return self::NOACTION;
+        }
+
         return $behavior;
     }
 

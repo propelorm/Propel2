@@ -84,7 +84,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'goose' => 'geese',
         'genus' => 'genera',
         'sex' => 'sexes',
-        'ox' => 'oxen',
+        '^ox' => 'oxen',
         'child' => 'children',
         'man' => 'men',
         'tooth' => 'teeth',

@@ -109,7 +109,8 @@ class ObjectCombinationCollection extends ObjectCollection
      */
     public function removeObject($element)
     {
-        if (($pos = call_user_func_array([$this, 'search'], func_get_args())) !== false) {
+        $pos = $this->search(...func_get_args());
+        if ($pos !== false) {
             $this->remove($pos);
         }
     }
@@ -119,6 +120,6 @@ class ObjectCombinationCollection extends ObjectCollection
      */
     public function contains($element)
     {
-        return call_user_func_array([$this, 'search'], func_get_args()) !== false;
+        return $this->search(...func_get_args()) !== false;
     }
 }

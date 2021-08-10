@@ -998,12 +998,12 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     {
         $table = $this->getTable();
         if ($table->getChildrenColumn()) {
-            $this->addGetOMClass_Inheritance($script);
+            $this->addGetOMClassInheritance($script);
         } else {
             if ($table->isAbstract()) {
-                $this->addGetOMClass_NoInheritance_Abstract($script);
+                $this->addGetOMClassNoInheritanceAbstract($script);
             } else {
-                $this->addGetOMClass_NoInheritance($script);
+                $this->addGetOMClassNoInheritance($script);
             }
         }
     }
@@ -1015,7 +1015,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_Inheritance(&$script)
+    protected function addGetOMClassInheritance(&$script)
     {
         $col = $this->getTable()->getChildrenColumn();
         $script .= "
@@ -1051,7 +1051,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             } /* foreach */
             $script .= "
                 default:
-                    \$omClass = {$this->getTableMapClassName()}::CLASS_DEFAULT;
+                    \$omClass = \$withPrefix
+                        ? {$this->getTableMapClassName()}::CLASS_DEFAULT
+                        : {$this->getTableMapClassName()}::OM_CLASS;
 ";
             $script .= "
             } // switch
@@ -1067,7 +1069,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         }
         $script .= "
         } catch (\Exception \$e) {
-            throw new PropelException('Unable to get OM class.', \$e);
+            throw new PropelException('Unable to get OM class.', 0, \$e);
         }
 
         return \$omClass;
@@ -1082,7 +1084,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_NoInheritance(&$script)
+    protected function addGetOMClassNoInheritance(&$script)
     {
         $script .= "
     /**
@@ -1110,7 +1112,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_NoInheritance_Abstract(&$script)
+    protected function addGetOMClassNoInheritanceAbstract(&$script)
     {
         $objectClassName = $this->getObjectClassName();
 

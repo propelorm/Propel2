@@ -25,6 +25,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
 
     /**
      * @var string|null
+     * @phpstan-var class-string<\Propel\Runtime\Map\TableMap>|null
      */
     protected $modelTableMapName;
 
@@ -179,11 +180,11 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
 
         $this->modelName = $modelName;
         if (!$this->modelTableMapName) {
-            $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
+            $this->modelTableMapName = $modelName::TABLE_MAP;
         }
         $dbName = $this->getDbName();
         $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($dbName)->getTableByPhpName($modelName);
-        $this->setPrimaryTableName(constant($this->modelTableMapName . '::TABLE_NAME'));
+        $this->setPrimaryTableName($this->modelTableMapName::TABLE_NAME);
 
         return $this;
     }

@@ -381,7 +381,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @param array $driverOptions One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
-     * @return \Propel\Runtime\Connection\StatementInterface|bool
+     * @return \Propel\Runtime\Connection\StatementInterface|false
      */
     public function prepare(string $statement, array $driverOptions = [])
     {
@@ -428,17 +428,15 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
+     * @param mixed ...$args
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function query($statement)
+    public function query($statement, ...$args)
     {
-        $args = func_get_args();
-        $sql = array_shift($args);
-        $statementWrapper = $this->createStatementWrapper($sql);
-        $callback = [$statementWrapper, 'query'];
+        $statementWrapper = $this->createStatementWrapper($statement);
 
-        return call_user_func_array($callback, $args);
+        return $statementWrapper->query(...$args);
     }
 
     /**
@@ -457,11 +455,14 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function callUserFunctionWithLogging(callable $callback, ?array $args, string $sqlForLog)
     {
+        if ($args === null) {
+            $args = [];
+        }
         $pdoException = null;
         $return = null;
 
         try {
-            $return = call_user_func_array($callback, $args ?? []);
+            $return = $callback(...$args);
         } catch (PDOException $e) {
             $pdoException = $e;
         }
@@ -712,8 +713,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, $args)
     {
-        return call_user_func_array([$this->connection, $method], $args);
+        return $this->connection->$method(...$args);
     }
 }

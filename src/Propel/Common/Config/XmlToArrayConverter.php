@@ -20,8 +20,6 @@ class XmlToArrayConverter
     /**
      * Create a PHP array from the XML file
      *
-     * @psalm-return array<scalar, mixed>
-     *
      * @param string $xmlToParse The XML file or a string containing xml to parse
      *
      * @throws \Propel\Common\Config\Exception\XmlParseException if parse errors occur
@@ -80,8 +78,6 @@ class XmlToArrayConverter
      *
      * @author Christophe VG (based on code form php.net manual comment)
      *
-     * @psalm-return array<scalar, mixed>
-     *
      * @param \SimpleXMLElement $xml SimpleXML object.
      *
      * @return array Array representation of SimpleXML object.
@@ -103,7 +99,10 @@ class XmlToArrayConverter
                 if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
-                    $k = self::getConvertedXmlValue($av);
+                    $k = (string)$av;
+                    if (ctype_digit($k)) {
+                        $k = (int)$k;
+                    }
                 } else {
                     // otherwise, just add the attribute like a child element
                     if (is_string($child)) {

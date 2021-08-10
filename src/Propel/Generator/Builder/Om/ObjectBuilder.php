@@ -3778,12 +3778,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         if (count($pkeys) == 1) {
-            $this->addGetPrimaryKey_SinglePK($script);
+            $this->addGetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
-            $this->addGetPrimaryKey_MultiPK($script);
+            $this->addGetPrimaryKeyMultiPK($script);
         } else {
             // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addGetPrimaryKey_NoPK($script);
+            $this->addGetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3794,7 +3794,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_SinglePK(&$script)
+    protected function addGetPrimaryKeySinglePK(&$script)
     {
         $table = $this->getTable();
         $pkeys = $table->getPrimaryKey();
@@ -3819,7 +3819,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_MultiPK(&$script)
+    protected function addGetPrimaryKeyMultiPK(&$script)
     {
         $script .= "
     /**
@@ -3855,7 +3855,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_NoPK(&$script)
+    protected function addGetPrimaryKeyNoPK(&$script)
     {
         $script .= "
     /**
@@ -3881,12 +3881,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         if (count($pkeys) == 1) {
-            $this->addSetPrimaryKey_SinglePK($script);
+            $this->addSetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
-            $this->addSetPrimaryKey_MultiPK($script);
+            $this->addSetPrimaryKeyMultiPK($script);
         } else {
             // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addSetPrimaryKey_NoPK($script);
+            $this->addSetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3897,7 +3897,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_SinglePK(&$script)
+    protected function addSetPrimaryKeySinglePK(&$script)
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         $col = $pkeys[0];
@@ -3925,7 +3925,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_MultiPK(&$script)
+    protected function addSetPrimaryKeyMultiPK(&$script)
     {
         $script .= "
     /**
@@ -3959,7 +3959,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_NoPK(&$script)
+    protected function addSetPrimaryKeyNoPK(&$script)
     {
         $script .= "
     /**
@@ -4340,6 +4340,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<$className}> List of $className objects
      */
     public function get" . $relCol . 'Join' . $relCol2 . "(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {";
@@ -4379,6 +4380,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Collection to store aggregation of $className objects.
      */
     protected $" . $this->getRefFKCollVarName($refFK) . ";
     protected $" . $this->getRefFKCollVarName($refFK) . "Partial;
@@ -4659,6 +4661,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<{$className}> List of $className objects
      * @throws PropelException
      */
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
@@ -4977,6 +4980,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Cross Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Cross Collection to store aggregation of $className objects.
      */
     protected \$coll" . $this->getFKPhpNameAffix($fk, true) . ";
 
@@ -5014,6 +5018,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \$$name = null;
 ";
@@ -5052,6 +5057,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5072,6 +5078,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5652,7 +5659,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 if (\$partial && \$this->{$collVarName}) {
                     //make sure that already added objects gets added to the list of the database.
                     foreach (\$this->{$collVarName} as \$obj) {
-                        if (!call_user_func_array([\${$collVarName}, 'contains'], \$obj)) {
+                        if (!\${$collVarName}->contains(...\$obj)) {
                             \${$collVarName}[] = \$obj;
                         }
                     }
@@ -5692,6 +5699,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param ConnectionInterface \$con
      *
      * @return {$relatedObjectClassName}[]|ObjectCollection
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}>
      */
     public function get{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
@@ -5724,6 +5732,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con Optional connection object
      *
      * @return ObjectCollection|{$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}> List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
@@ -5811,7 +5820,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$scheduledForDeletionVarName} as \$toDelete) {";
         if ($multi) {
             $script .= "
-            call_user_func_array([\$this, 'remove{$relatedName}'], \$toDelete);";
+            \$this->remove{$relatedName}(...\$toDelete);";
         } else {
             $script .= "
             \$this->remove{$relatedName}(\$toDelete);";
@@ -5822,8 +5831,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$inputCollection} as \${$foreachItem}) {";
         if ($multi) {
             $script .= "
-            if (!call_user_func_array([\$current{$relatedNamePlural}, 'contains'], \${$foreachItem})) {
-                call_user_func_array([\$this, 'doAdd{$relatedName}'], \${$foreachItem});
+            if (!\$current{$relatedNamePlural}->contains(...\${$foreachItem})) {
+                \$this->doAdd{$relatedName}(...\${$foreachItem});
             }";
         } else {
             $script .= "

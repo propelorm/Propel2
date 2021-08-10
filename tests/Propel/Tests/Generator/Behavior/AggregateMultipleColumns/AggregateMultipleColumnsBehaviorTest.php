@@ -242,7 +242,7 @@ EOF;
     {
         $this->clearTables();
         $group = $this->insertScoreGroup();
-        $computedResult = call_user_func([$group, 'computeAggregatedColumnsFromAggregateMultipleScore'], $this->con);
+        $computedResult = $group->computeAggregatedColumnsFromAggregateMultipleScore($this->con);
 
         $this->assertIsArray($computedResult, 'compute function did not return array');
         $this->assertCount(count(self::AGGREGATION_COLUMN_NAMES), $computedResult, 'Number of computed values does not match number of aggregate columns');

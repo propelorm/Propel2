@@ -75,7 +75,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      *
      * @throws \Propel\Generator\Exception\BuildException
      *
-     * @return \Propel\Generator\Model\Database|bool
+     * @return \Propel\Generator\Model\Database|false
      */
     public function applyXml($xml, $changeRequired = false)
     {

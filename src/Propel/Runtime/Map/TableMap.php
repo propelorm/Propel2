@@ -439,8 +439,8 @@ class TableMap
      * @param bool $isNotNull Whether column does not allow NULL values.
      * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue
-     * @param bool|null $pk True if column is a primary key.
-     * @param string|bool|null $fkTable A String with the foreign key table name.
+     * @param bool $pk True if column is a primary key.
+     * @param string|null $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
@@ -857,9 +857,7 @@ class TableMap
      */
     public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
     {
-        $callable = [$classname::TABLE_MAP, 'getFieldnames'];
-
-        return call_user_func($callable, $type);
+        return ($classname::TABLE_MAP)::getFieldnames($type);
     }
 
     /**
@@ -872,10 +870,7 @@ class TableMap
      */
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
     {
-        $callable = [$classname::TABLE_MAP, 'translateFieldname'];
-        $args = [$fieldname, $fromType, $toType];
-
-        return call_user_func_array($callable, $args);
+        return ($classname::TABLE_MAP)::translateFieldname($fieldname, $fromType, $toType);
     }
 
     /**

@@ -39,7 +39,7 @@ class PdoConnection implements ConnectionInterface
      */
     public function __call(string $method, $args)
     {
-        return call_user_func_array([$this->pdo, $method], $args);
+        return $this->pdo->$method(...$args);
     }
 
     /**
@@ -127,7 +127,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      *
-     * @return \PDOStatement|bool
+     * @return \PDOStatement|false
      */
     public function query($statement)
     {
@@ -176,7 +176,7 @@ class PdoConnection implements ConnectionInterface
      * @param string $statement
      * @param array $driverOptions
      *
-     * @return \PDOStatement|bool
+     * @return \PDOStatement|false
      */
     public function prepare(string $statement, array $driverOptions = [])
     {
