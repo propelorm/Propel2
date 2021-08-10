@@ -43,7 +43,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * The database connection.
      *
-     * @var \Propel\Runtime\Connection\ConnectionInterface Database connection.
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null Database connection.
      */
     protected $con;
 
@@ -1440,6 +1440,26 @@ ALTER TABLE %s ADD
     public function getDateFormatter()
     {
         return 'Y-m-d';
+    }
+
+    /**
+     * Get the default On Delete behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnDeleteBehavior(): string
+    {
+        return ForeignKey::NONE;
+    }
+
+    /**
+     * Get the default On Update behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnUpdateBehavior(): string
+    {
+        return ForeignKey::NONE;
     }
 
     /**

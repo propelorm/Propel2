@@ -63,10 +63,14 @@ class ForeignKeyComparator
         }
 
         // compare on
-        if ($fromFk->normalizeFKey($fromFk->getOnUpdate()) !== $toFk->normalizeFKey($toFk->getOnUpdate())) {
+        $onUpdateBehaviorInFrom = $fromFk->getOnUpdateWithDefault();
+        $onUpdateBehaviorInTo = $toFk->getOnUpdateWithDefault();
+        if ($onUpdateBehaviorInFrom !== $onUpdateBehaviorInTo) {
             return true;
         }
-        if ($fromFk->normalizeFKey($fromFk->getOnDelete()) !== $toFk->normalizeFKey($toFk->getOnDelete())) {
+        $onDeleteBehaviorInFrom = $fromFk->getOnDeleteWithDefault();
+        $onDeleteBehaviorInTo = $toFk->getOnDeleteWithDefault();
+        if ($onDeleteBehaviorInFrom !== $onDeleteBehaviorInTo) {
             return true;
         }
 

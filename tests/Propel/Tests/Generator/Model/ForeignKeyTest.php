@@ -555,4 +555,30 @@ class ForeignKeyTest extends ModelTestCase
             ['CASCADE', 'CASCADE'],
         ];
     }
+
+    /**
+     * @dataProvider provideOnActionBehaviorsWithDefault
+     *
+     * @return void
+     */
+    public function testNormalizeForeignKeyWithDefault($behavior, $default, $normalized)
+    {
+        $fk = new ForeignKey();
+
+        $this->assertSame($normalized, $fk->normalizeFKey($behavior, $default));
+    }
+
+    public function provideOnActionBehaviorsWithDefault()
+    {
+        return [
+            [null, 'RESTRICT', 'RESTRICT'],
+            ['none', 'RESTRICT', 'RESTRICT'],
+            ['NONE', 'RESTRICT', 'RESTRICT'],
+            ['setnull', 'RESTRICT', 'SET NULL'],
+            ['SETNULL', 'RESTRICT', 'SET NULL'],
+            ['cascade', 'RESTRICT', 'CASCADE'],
+            ['CASCADE', 'RESTRICT', 'CASCADE'],
+            [null, null, ''],
+        ];
+    }
 }
