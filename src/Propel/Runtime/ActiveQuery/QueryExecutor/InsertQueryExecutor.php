@@ -38,7 +38,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
      *
-     * @return mixed|null
+     * @return string|int|null
      */
     public static function execute(Criteria $criteria, ?ConnectionInterface $con = null)
     {
@@ -64,7 +64,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
      * If no primary key is defined for the table the values will be
      * inserted as specified in Criteria and null will be returned.
      *
-     * @return mixed|null The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
+     * @return string|int|null The primary key for the new row if the primary key is auto-generated. Otherwise will return null.
      */
     protected function runInsert()
     {
@@ -106,7 +106,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return mixed|null
+     * @return string|int|null
      */
     protected function retrieveLastInsertedId()
     {

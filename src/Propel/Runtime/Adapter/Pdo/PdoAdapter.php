@@ -451,13 +451,9 @@ abstract class PdoAdapter
                         $tableName = substr($tableName, $lastSpace + 1);
                     }
                 }
-                // is it a table alias?
-                $tableName2 = $criteria->getTableForAlias($tableName);
-                if ($tableName2 !== null) {
-                    $fromClause[] = $tableName2 . ' ' . $tableName;
-                } else {
-                    $fromClause[] = $tableName;
-                }
+                // resolve table alias
+                $sourceTableName = $criteria->getTableForAlias($tableName);
+                $fromClause[] = ($sourceTableName) ? $sourceTableName . ' ' . $tableName : $tableName;
             }
         }
 

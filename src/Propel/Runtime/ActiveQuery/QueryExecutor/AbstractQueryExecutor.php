@@ -60,7 +60,7 @@ abstract class AbstractQueryExecutor
         $dbName = $criteria->getDbName();
         $serviceContainer = Propel::getServiceContainer();
 
-        $this->con = ($con) ? $con : $this->getConnection($serviceContainer, $dbName, static::NEEDS_WRITE_CONNECTION);
+        $this->con = $con ?: $this->retrieveConnection($serviceContainer, $dbName, static::NEEDS_WRITE_CONNECTION);
 
         /** @var \Propel\Runtime\Adapter\SqlAdapterInterface $adapter */
         $adapter = $serviceContainer->getAdapter($dbName);
@@ -78,7 +78,7 @@ abstract class AbstractQueryExecutor
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnection(ServiceContainerInterface $sc, string $dbName, bool $getWritableConnection = true): ConnectionInterface
+    protected function retrieveConnection(ServiceContainerInterface $sc, string $dbName, bool $getWritableConnection = true): ConnectionInterface
     {
         return ($getWritableConnection) ? $sc->getWriteConnection($dbName) : $sc->getReadConnection($dbName);
     }

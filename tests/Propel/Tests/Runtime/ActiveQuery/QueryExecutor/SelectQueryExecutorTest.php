@@ -28,11 +28,11 @@ class SelectQueryExecutorTest extends BookstoreTestBase
         $executor = new class ($query) extends SelectQueryExecutor{
             public $isWriteConnection;
 
-            protected function getConnection(ServiceContainerInterface $sc, string $dbName, bool $getWritableConnection = false): ConnectionInterface
+            protected function retrieveConnection(ServiceContainerInterface $sc, string $dbName, bool $getWritableConnection = false): ConnectionInterface
             {
                 $this->isWriteConnection = $getWritableConnection;
 
-                return parent::getConnection($sc, $dbName, $getWritableConnection);
+                return parent::retrieveConnection($sc, $dbName, $getWritableConnection);
             }
         };
 

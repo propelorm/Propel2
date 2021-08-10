@@ -149,7 +149,7 @@ interface AdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param string|null $name
      *
-     * @return mixed
+     * @return string|int|null
      */
     public function getId(ConnectionInterface $con, $name = null);
 
