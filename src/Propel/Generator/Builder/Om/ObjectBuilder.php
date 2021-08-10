@@ -2535,8 +2535,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 $fmt = $this->getTemporalFormatter($col);
                 $accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
             }
+            $notEquals = '!==';
+            $defaultValueString = $this->getDefaultValueString($col);
+            if (strpos($defaultValueString, 'new ') === 0) {
+                $notEquals = '!='; // allow object-comparison for custom PHP types
+            }
             $script .= "
-            if ($accessor !== " . $this->getDefaultValueString($col) . ") {
+            if ($accessor $notEquals $defaultValueString) {
                 return false;
             }
 ";
