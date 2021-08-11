@@ -59,6 +59,7 @@ use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
+use Propel\Tests\Common\BoxedString;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
@@ -699,6 +700,37 @@ class GeneratedObjectTest extends BookstoreTestBase
         $r = new Review();
         $r->setReviewDate(new DateTime('now'));
         $this->assertFalse($r->hasOnlyDefaultValues());
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasOnlyDefaultValuesObjectType()
+    {
+        $databaseXml = <<<XML
+        <database namespace="ExampleNamespace" package="Things">
+            <table name="thing">
+                <column name="id" type="integer"/>
+                <column
+                    name="boxedstring"
+                    type="VARCHAR"
+                    phpType="\Propel\Tests\Common\BoxedString"
+                    default="asdf"
+                    required="true"
+                />
+            </table>
+        </database>
+XML;
+        $builder = new QuickBuilder();
+        $builder->setSchema($databaseXml);
+        $builder->build();
+
+        $t = new \ExampleNamespace\Thing();
+        $this->assertEquals(new BoxedString('asdf'), $t->getBoxedstring());
+        $this->assertTrue(
+            $t->hasOnlyDefaultValues(),
+            'default boxed string should be reported as Object has only default values'
+        );
     }
 
     /**
