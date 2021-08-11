@@ -170,7 +170,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'setModelAlias() allows the definition of a true SQL alias after construction');
     }
-    
+
     /**
      * @return void
      */
@@ -181,9 +181,9 @@ class ModelCriteriaTest extends BookstoreTestBase
         $c->where('b.title = ?', 'foo');
         $c->join('b.Author a');
         $c->where('a.first_name = ?', 'john');
-        
+
         $sql = $this->getSql('SELECT  FROM book b INNER JOIN author a ON (b.author_id=a.id) WHERE b.title = :p1 AND a.first_name = :p2');
-        
+
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
             ['table' => 'author', 'column' => 'first_name', 'value' => 'john'],
@@ -583,7 +583,7 @@ class ModelCriteriaTest extends BookstoreTestBase
         $sql = $this->getSql('SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id, SUBSTRING(book.title, 1, 4) AS title_start FROM book HAVING title_start = :p1');
 
         $params = [
-            ['table' => null, 'type' => 2, 'value' => 'foo'],
+            ['table' => null, 'type' => PDO::PARAM_STR, 'value' => 'foo'],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'having() accepts a string clause');
         $c->find($this->con);
