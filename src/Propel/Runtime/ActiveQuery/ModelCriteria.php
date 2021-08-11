@@ -8,7 +8,6 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
-use Exception;
 use Propel\Common\Exception\SetColumnConverterException;
 use Propel\Common\Util\SetColumnConverter;
 use Propel\Generator\Model\PropelTypes;
@@ -29,7 +28,6 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\ClassNotFoundException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\SimpleArrayFormatter;
 use Propel\Runtime\Map\ColumnMap;
@@ -1025,15 +1023,25 @@ class ModelCriteria extends BaseModelCriteria
 
         parent::addSelectQuery($subQueryCriteria, $alias);
 
-        if ($addAliasAndSelectColumns) {
-            // give this query-model same alias as subquery
-            if ($alias === null) {
-                end($this->selectQueries);
-                $alias = key($this->selectQueries);
+        if (!$addAliasAndSelectColumns) {
+            return $this;
+        }
+
+        if ($alias === null) {
+            // get the default alias set in parent::addSelectQuery()
+            end($this->selectQueries);
+            $alias = key($this->selectQueries);
+        }
+
+        if ($subQueryCriteria instanceof BaseModelCriteria) {
+            if ($subQueryCriteria->modelTableMapName === $this->modelTableMapName) {
+                // this is necessary for backwards compatibility. It allows referencing columns from the subquery by the outer table alias (which is just weird behavior, who does that?)
+                $this->setModelAlias($alias, true);
+                $this->addSelfSelectColumns(true);
+            } else {
+                $tableMapClassName = $subQueryCriteria->modelTableMapName;
+                $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
             }
-            $this->setModelAlias($alias, true);
-            // so we can add selfSelectColumns
-            $this->addSelfSelectColumns(true);
         }
 
         return $this;
@@ -1044,7 +1052,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      *
-     * @return $this The current object, for fluid interface
+     * @return $this|\Propel\Runtime\ActiveQuery\ModelCriteria
      */
     public function addSelfSelectColumns($force = false)
     {
@@ -1052,9 +1060,24 @@ class ModelCriteria extends BaseModelCriteria
             return $this;
         }
 
-        /** @var string $tableMap */
-        $tableMap = $this->modelTableMapName;
-        $tableMap::addSelectColumns($this, $this->useAliasInSQL ? $this->modelAlias : null);
+        /** @var string $tableMapClassName */
+        $tableMapClassName = $this->modelTableMapName;
+        $alias = ($this->useAliasInSQL) ? $this->modelAlias : null;
+
+        return $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
+    }
+
+    /**
+     * Adds the select columns for the given table.
+     *
+     * @param string $tableMapClassName
+     * @param string|null $alias
+     *
+     * @return $this
+     */
+    public function addSelfSelectColumnsFromTableMapClass(string $tableMapClassName, ?string $alias = null)
+    {
+        $tableMapClassName::addSelectColumns($this, $alias);
         $this->isSelfSelected = true;
 
         return $this;
@@ -1785,51 +1808,6 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Issue a DELETE query based on the current ModelCriteria deleting all rows in the table
-     * This method is called by ModelCriteria::deleteAll() inside a transaction
-     *
-     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
-     *
-     * @throws \Propel\Runtime\Exception\RuntimeException
-     *
-     * @return int the number of deleted rows
-     */
-    public function doDeleteAll(?ConnectionInterface $con = null)
-    {
-        $databaseName = $this->getDbName();
-
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection($databaseName);
-        }
-
-        // join are not supported with DELETE statement
-        if (count($this->getJoins())) {
-            throw new RuntimeException('Delete does not support join');
-        }
-
-        $tableName = $this->getPrimaryTableName();
-
-        $affectedRows = 0; // initialize this in case the next loop has no iterations.
-
-        $tableName = $this->quoteIdentifierTable($tableName);
-        $sql = 'DELETE FROM ' . $tableName;
-
-        try {
-            $stmt = $con->prepare($sql);
-
-            $stmt->execute();
-
-            $affectedRows += $stmt->rowCount();
-        } catch (Exception $e) {
-            Propel::log($e->getMessage(), Propel::LOG_ERR);
-
-            throw new RuntimeException(sprintf('Unable to execute DELETE ALL statement [%s]', $sql), 0, $e);
-        }
-
-        return $affectedRows;
-    }
-
-    /**
      * Code to execute before every UPDATE statement
      *
      * @param array $values The associative array of columns and values for the update
@@ -2226,10 +2204,6 @@ class ModelCriteria extends BaseModelCriteria
     public function doSelect(?ConnectionInterface $con = null)
     {
         $this->addSelfSelectColumns();
-
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
 
         return parent::doSelect($con);
     }
