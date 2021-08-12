@@ -3447,8 +3447,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }";
         } /* foreach */
         $script .= "
-
-        return \$this;
     }
 ";
     }
