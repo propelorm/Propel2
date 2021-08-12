@@ -8,8 +8,9 @@
 
 namespace Propel\Runtime\Adapter;
 
-use PDOStatement;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 
@@ -54,10 +55,21 @@ interface SqlAdapterInterface extends AdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit);
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null);
+
+    /**
+     * Modifies the passed-in SQL to add locking capabilities
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void;
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
@@ -67,16 +79,6 @@ interface SqlAdapterInterface extends AdapterInterface
      * @return string
      */
     public function random($seed = null);
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -118,19 +120,19 @@ interface SqlAdapterInterface extends AdapterInterface
      * $stmt->execute();
      * </code>
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param \Propel\Runtime\Map\DatabaseMap $dbMap
      *
      * @return void
      */
-    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
 
     /**
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt The statement to bind
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt The statement to bind
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
@@ -138,5 +140,13 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+
+    /**
+     * Indicates if the database system can process DELETE statements with
+     * aliases like 'DELETE t FROM my_table t JOIN my_other_table o ON ...'
+     *
+     * @return bool
+     */
+    public function supportsAliasesInDelete(): bool;
 }

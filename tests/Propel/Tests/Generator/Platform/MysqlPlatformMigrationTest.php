@@ -11,9 +11,12 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Util\VfsTrait;
 
 class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
+    use VfsTrait;
+
     /**
      * @var \Propel\Generator\Platform\PlatformInterface|null
      */
@@ -53,9 +56,8 @@ propel:
       - bookstore
 EOF;
 
-            $configFile = sys_get_temp_dir() . '/propel.yaml';
-            file_put_contents($configFile, $configFileContent);
-            $config = new GeneratorConfig($configFile);
+            $configFile = $this->newFile('propel.yaml', $configFileContent);
+            $config = new GeneratorConfig($configFile->url());
 
             $this->platform->setGeneratorConfig($config);
         }

@@ -22,20 +22,20 @@ class YamlFileLoader extends FileLoader
     /**
      * Loads a Yaml file.
      *
-     * @param string $file The resource
+     * @param string $resource The resource
      * @param string|null $type The resource type
      *
-     * @throws \Symfony\Component\Yaml\Exception\ParseException if something goes wrong in parsing file
      * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
+     * @throws \Symfony\Component\Yaml\Exception\ParseException if something goes wrong in parsing file
      *
      * @return array
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null)
     {
-        $path = $this->locator->locate($file);
+        $path = $this->locator->locate($resource);
 
         if (!is_readable($path)) {
-            throw new InputOutputException("You don't have permissions to access configuration file $file.");
+            throw new InputOutputException("You don't have permissions to access configuration file $resource.");
         }
 
         $content = Yaml::parse(file_get_contents($path));

@@ -12,6 +12,7 @@ use ComplexColumnTypeEntity3;
 use ComplexColumnTypeEntity3Query;
 use Map\ComplexColumnTypeEntity3TableMap;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 use PublicComplexColumnTypeEntity3;
 
@@ -67,12 +68,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetterThrowsExceptionOnUnknownKey()
     {
+        $this->expectException(PropelException::class);
+
         $e = new PublicComplexColumnTypeEntity3();
         $e->bar = 156;
         $e->getBar();
@@ -105,12 +106,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testSetterThrowsExceptionOnUnknownValue()
     {
+        $this->expectException(PropelException::class);
+
         $e = new ComplexColumnTypeEntity3();
         $e->setBar('bazz');
     }

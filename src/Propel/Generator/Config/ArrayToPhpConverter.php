@@ -8,8 +8,6 @@
 
 namespace Propel\Generator\Config;
 
-use Propel\Runtime\Propel;
-
 /**
  * Runtime configuration converter
  * From array to PHP string
@@ -25,12 +23,7 @@ class ArrayToPhpConverter
      */
     public static function convert($c)
     {
-        $runtimeVersion = Propel::VERSION;
-
-        $conf = '';
-        $conf .= "\$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();";
-        $conf .= "
-\$serviceContainer->checkVersion('{$runtimeVersion}');";
+        $conf = [];
         // set datasources
         if (isset($c['connections'])) {
             foreach ($c['connections'] as $name => $params) {
@@ -40,18 +33,15 @@ class ArrayToPhpConverter
 
                 // set adapters
                 if (isset($params['adapter'])) {
-                    $conf .= "
-\$serviceContainer->setAdapterClass('{$name}', '{$params['adapter']}');";
+                    $conf[] = "\$serviceContainer->setAdapterClass('{$name}', '{$params['adapter']}');";
                 }
 
                 // set connection settings
                 if (isset($params['slaves'])) {
-                    $conf .= "
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
-\$manager->setReadConfiguration(" . var_export($params['slaves'], true) . ');';
+                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();";
+                    $conf[] = '$manager->setReadConfiguration(' . var_export($params['slaves'], true) . ');';
                 } elseif (isset($params['dsn'])) {
-                    $conf .= "
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
+                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
                 } else {
                     continue;
                 }
@@ -61,13 +51,11 @@ class ArrayToPhpConverter
                     $connection = $params;
                     unset($connection['adapter']);
                     unset($connection['slaves']);
-                    $conf .= "
-\$manager->{$masterConfigurationSetter}(" . var_export($connection, true) . ');';
+                    $conf[] = "\$manager->{$masterConfigurationSetter}(" . var_export($connection, true) . ');';
                 }
 
-                $conf .= "
-\$manager->setName('{$name}');
-\$serviceContainer->setConnectionManager('{$name}', \$manager);";
+                $conf[] = "\$manager->setName('{$name}');";
+                $conf[] = "\$serviceContainer->setConnectionManager('{$name}', \$manager);";
             }
 
             // set default datasource
@@ -79,22 +67,19 @@ class ArrayToPhpConverter
                 $defaultDatasource = $datasourceNames[0];
             }
 
-            $conf .= "
-\$serviceContainer->setDefaultDatasource('{$defaultDatasource}');";
+            $conf[] = "\$serviceContainer->setDefaultDatasource('{$defaultDatasource}');";
         }
 
         // set profiler
         if (isset($c['profiler'])) {
             $profilerConf = $c['profiler'];
             if (isset($profilerConf['classname'])) {
-                $conf .= "
-\$serviceContainer->setProfilerClass('{$profilerConf['classname']}');";
+                $conf[] = "\$serviceContainer->setProfilerClass('{$profilerConf['classname']}');";
                 unset($profilerConf['classname']);
             }
 
             if ($profilerConf) {
-                $conf .= "
-\$serviceContainer->setProfilerConfiguration(" . var_export($profilerConf, true) . ');';
+                $conf[] = '$serviceContainer->setProfilerConfiguration(' . var_export($profilerConf, true) . ');';
             }
             unset($c['profiler']);
         }
@@ -102,11 +87,12 @@ class ArrayToPhpConverter
         // set logger
         if (isset($c['log']) && count($c['log']) > 0) {
             foreach ($c['log'] as $key => $logger) {
-                $conf .= "
-\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ');';
+                $conf[] = "\$serviceContainer->setLoggerConfiguration('{$key}', " . var_export($logger, true) . ');';
             }
             unset($c['log']);
         }
+
+        $conf = implode(PHP_EOL, $conf);
 
         return preg_replace('/[ \t]*$/m', '', $conf);
     }

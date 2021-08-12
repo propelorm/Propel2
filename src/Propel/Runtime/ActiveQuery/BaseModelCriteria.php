@@ -25,8 +25,14 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
 
     /**
      * @var string|null
+     * @phpstan-var class-string<\Propel\Runtime\Map\TableMap>|null
      */
     protected $modelTableMapName;
+
+    /**
+     * @var bool
+     */
+    protected $useAliasInSQL = false;
 
     /**
      * @var string|null
@@ -65,8 +71,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     public function __construct($dbName = null, $modelName = null, $modelAlias = null)
     {
-        $this->setDbName($dbName);
-        $this->originalDbName = $dbName;
+        parent::__construct($dbName);
         $this->setModelName($modelName);
         $this->modelAlias = $modelAlias;
     }
@@ -158,23 +163,28 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * Sets the model name.
      * This also sets `this->modelTableMapName` and `this->tableMap`.
      *
-     * @param string $modelName
+     * @param string|null $modelName
      *
      * @return $this The current object, for fluid interface
      */
     public function setModelName($modelName)
     {
+        if (empty($modelName)) {
+            $this->modelName = null;
+
+            return $this;
+        }
         if (strpos($modelName, '\\') === 0) {
-            $this->modelName = substr($modelName, 1);
-        } else {
-            $this->modelName = $modelName;
+            $modelName = substr($modelName, 1);
         }
-        if ($this->modelName && !$this->modelTableMapName) {
-            $this->modelTableMapName = constant($this->modelName . '::TABLE_MAP');
+
+        $this->modelName = $modelName;
+        if (!$this->modelTableMapName) {
+            $this->modelTableMapName = $modelName::TABLE_MAP;
         }
-        if ($this->modelName) {
-            $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
-        }
+        $dbName = $this->getDbName();
+        $this->tableMap = Propel::getServiceContainer()->getDatabaseMap($dbName)->getTableByPhpName($modelName);
+        $this->setPrimaryTableName($this->modelTableMapName::TABLE_NAME);
 
         return $this;
     }
@@ -238,6 +248,20 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     }
 
     /**
+     * Return the short ClassName for class with namespace
+     *
+     * @param string $fullyQualifiedClassName The fully qualified class name
+     *
+     * @return string The short class name
+     */
+    public static function getShortName($fullyQualifiedClassName)
+    {
+        $namespaceParts = explode('\\', $fullyQualifiedClassName);
+
+        return array_pop($namespaceParts);
+    }
+
+    /**
      * Returns the TableMap object for this Criteria
      *
      * @return \Propel\Runtime\Map\TableMap
@@ -245,6 +269,22 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     public function getTableMap()
     {
         return $this->tableMap;
+    }
+
+    /**
+     * Returns the name of the table as used in the query.
+     *
+     * Either the SQL name or an alias.
+     *
+     * @return string
+     */
+    public function getTableNameInQuery()
+    {
+        if ($this->useAliasInSQL && $this->modelAlias) {
+            return $this->modelAlias;
+        }
+
+        return $this->getTableMap()->getName();
     }
 
     /**

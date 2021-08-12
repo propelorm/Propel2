@@ -163,7 +163,7 @@ class DatabaseComparator
      * @param bool $removeTable
      * @param array $excludedTables
      *
-     * @return \Propel\Generator\Model\Diff\DatabaseDiff|bool
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff|false
      */
     public static function computeDiff(
         Database $fromDatabase,
@@ -300,13 +300,13 @@ class DatabaseComparator
      */
     protected function isTableExcluded(Table $table)
     {
-        $tablename = $table->getName();
-        if (in_array($tablename, $this->excludedTables)) {
+        $tableName = $table->getName();
+        if (in_array($tableName, $this->excludedTables)) {
             return true;
         }
 
-        foreach ($this->excludedTables as $exclude_tablename) {
-            if (preg_match('/^' . str_replace('*', '.*', $exclude_tablename) . '$/', $tablename)) {
+        foreach ($this->excludedTables as $excludedTableName) {
+            if (preg_match('/^' . str_replace('*', '.*', $excludedTableName) . '$/', $tableName)) {
                 return true;
             }
         }

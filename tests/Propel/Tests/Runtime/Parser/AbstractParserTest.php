@@ -8,9 +8,11 @@
 
 namespace Propel\Tests\Runtime\Parser;
 
+use Propel\Runtime\Exception\FileNotFoundException;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Parser\XmlParser;
 use Propel\Tests\TestCase;
+use Propel\Generator\Util\VfsTrait;
 
 /**
  * Test for JsonParser class
@@ -19,6 +21,8 @@ use Propel\Tests\TestCase;
  */
 class AbstractParserTest extends TestCase
 {
+    use VfsTrait;
+
     /**
      * @return void
      */
@@ -29,12 +33,12 @@ class AbstractParserTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\FileNotFoundException
-     *
      * @return void
      */
     public function testGetParserThrowsExceptionOnWrongParser()
     {
+        $this->expectException(FileNotFoundException::class);
+
         $parser = AbstractParser::getParser('Foo');
     }
 
@@ -43,9 +47,18 @@ class AbstractParserTest extends TestCase
      */
     public function testLoad()
     {
-        $fixtureFile = __DIR__ . '/fixtures/test_data.xml';
+        $file = $this->newFile('test_data.xml', <<<XML
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>' . "\\n" ?>
+<foo>
+<?php for(\$i=0;\$i<2;\$i++): ?>
+  <bar prop="<?php echo \$i ?>"/>
+<?php endfor ?>
+</foo>
+
+XML
+);
         $parser = AbstractParser::getParser('XML');
-        $content = $parser->load($fixtureFile);
+        $content = $parser->load($file->url());
         $expectedContent = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <foo>
@@ -63,11 +76,11 @@ EOF;
     public function testDump()
     {
         $testContent = 'Foo Content';
-        $testFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'propel_test_' . microtime();
+
+        $testFile = $this->newFile('propel_test');
         $parser = AbstractParser::getParser('XML');
-        $parser->dump($testContent, $testFile);
-        $content = file_get_contents($testFile);
+        $parser->dump($testContent, $testFile->url());
+        $content = file_get_contents($testFile->url());
         $this->assertEquals($testContent, $content);
-        unlink($testFile);
     }
 }

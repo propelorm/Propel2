@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Connection;
 
+use PDOException;
 use Propel\Runtime\Connection\Exception\RollbackException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
@@ -123,9 +124,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
-        if ($this->useDebug) {
-            $this->log('Opening connection');
-        }
     }
 
     /**
@@ -231,7 +229,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0) {
+        if ($opcount > 0 && $this->inTransaction()) {
             if ($opcount === 1) {
                 if ($this->isUncommitable) {
                     throw new RollbackException('Cannot commit because a nested transaction was rolled back');
@@ -260,7 +258,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         $opcount = $this->nestedTransactionCount;
 
-        if ($opcount > 0) {
+        if ($opcount > 0 && $this->inTransaction()) {
             if ($opcount === 1) {
                 $return = $this->connection->rollBack();
                 if ($this->useDebug) {
@@ -310,19 +308,19 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function inTransaction()
     {
-        return $this->connection->inTransaction();
+        return (bool)$this->connection->inTransaction();
     }
 
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string $attribute The name of the attribute to retrieve,
+     * @param int $attribute The name of the attribute to retrieve,
      *                          e.g. PDO::ATTR_AUTOCOMMIT
      *
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute)
+    public function getAttribute(int $attribute)
     {
         switch ($attribute) {
             case self::PROPEL_ATTR_CACHE_PREPARES:
@@ -335,7 +333,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set an attribute.
      *
-     * @param string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed $value
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
@@ -380,12 +378,12 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *  - Add query caching support if the PropelPDO::PROPEL_ATTR_CACHE_PREPARES was set to true.
      *
      * @param string $statement This must be a valid SQL statement for the target database server.
-     * @param array|null $driver_options One $array or more key => value pairs to set attribute values
+     * @param array $driverOptions One $array or more key => value pairs to set attribute values
      *                               for the PDOStatement object that this method returns.
      *
-     * @return \PDOStatement
+     * @return \Propel\Runtime\Connection\StatementInterface|false
      */
-    public function prepare($statement, $driver_options = null)
+    public function prepare(string $statement, array $driverOptions = [])
     {
         $statementWrapper = null;
 
@@ -393,7 +391,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             $statementWrapper = $this->cachedPreparedStatements[$statement];
         } else {
             $statementWrapper = $this->createStatementWrapper($statement);
-            $statementWrapper->prepare($driver_options);
+            $statementWrapper->prepare($driverOptions);
             if ($this->isCachePreparedStatements) {
                 $this->cachedPreparedStatements[$statement] = $statementWrapper;
             }
@@ -407,24 +405,17 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * Execute an SQL statement and return the number of affected rows.
-     * Overrides PDO::exec() to log queries when required
-     *
-     * @param string $sql
-     *
-     * @return int
+     * @inheritDoc
      */
-    public function exec($sql)
+    public function exec($statement)
     {
-        $return = $this->connection->exec($sql);
-
         if ($this->useDebug) {
-            $this->log($sql);
-            $this->setLastExecutedQuery($sql);
-            $this->incrementQueryCount();
+            $callback = [$this->connection, 'exec'];
+
+            return $this->callUserFunctionWithLogging($callback, [$statement], $statement);
         }
 
-        return $return;
+        return $this->connection->exec($statement);
     }
 
     /**
@@ -437,20 +428,52 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
+     * @param mixed ...$args
      *
-     * @return \PDOStatement
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function query($statement)
+    public function query($statement, ...$args)
     {
-        $args = func_get_args();
-        $sql = array_shift($args);
-        $statementWrapper = $this->createStatementWrapper($sql);
-        $return = call_user_func_array([$statementWrapper, 'query'], $args);
+        $statementWrapper = $this->createStatementWrapper($statement);
 
-        if ($this->useDebug) {
-            $this->log($sql);
-            $this->setLastExecutedQuery($sql);
-            $this->incrementQueryCount();
+        return $statementWrapper->query(...$args);
+    }
+
+    /**
+     * Run a query callback and log the SQL statement.
+     *
+     * This method ensures, that the statement is logged, even if an error occures, and that the
+     * query is logged after it was run. The latter is necessary for profiling to work.
+     *
+     * @param callable $callback
+     * @param array|null $args
+     * @param string $sqlForLog Logged SQL query
+     *
+     * @throws \PDOException
+     *
+     * @return mixed
+     */
+    public function callUserFunctionWithLogging(callable $callback, ?array $args, string $sqlForLog)
+    {
+        if ($args === null) {
+            $args = [];
+        }
+        $pdoException = null;
+        $return = null;
+
+        try {
+            $return = $callback(...$args);
+        } catch (PDOException $e) {
+            $pdoException = $e;
+        }
+
+        // For profiling to work, $this->log() needs to be run after the query was executed
+        $this->log($sqlForLog);
+        $this->setLastExecutedQuery($sqlForLog);
+        $this->incrementQueryCount();
+
+        if ($pdoException !== null) {
+            throw $pdoException;
         }
 
         return $return;
@@ -464,16 +487,16 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * the underlying driver.
      *
      * @param string $string The string to be quoted.
-     * @param int $parameter_type Provides a data type hint for drivers that
+     * @param int $parameterType Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
      * @return string A quoted string that is theoretically safe to pass into an
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = 2)
+    public function quote($string, $parameterType = 2)
     {
-        return $this->connection->quote($string, $parameter_type);
+        return $this->connection->quote($string, $parameterType);
     }
 
     /**
@@ -673,7 +696,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         do {
             $callingMethod = $backtrace[$i]['function'];
             $i++;
-        } while ($callingMethod === 'log' && $i < $stackSize);
+        } while (in_array($callingMethod, ['log', 'callUserFunctionWithLogging'], true) && $i < $stackSize);
 
         if (!$msg || !$this->isLogEnabledForMethod($callingMethod)) {
             return;
@@ -690,21 +713,8 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, $args)
     {
-        return call_user_func_array([$this->connection, $method], $args);
-    }
-
-    /**
-     * If so configured, makes an entry to the log of the state of this object just prior to its destruction.
-     *
-     * @see self::log()
-     */
-    public function __destruct()
-    {
-        if ($this->useDebug) {
-            $this->log('Closing connection');
-        }
-        $this->connection = null;
+        return $this->connection->$method(...$args);
     }
 }

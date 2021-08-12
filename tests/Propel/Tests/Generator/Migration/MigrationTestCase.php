@@ -60,6 +60,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
             $this->platform = new $platformClass();
             $this->platform->setIdentifierQuoting(true);
             $generatorConfig = new QuickGeneratorConfig();
+            $this->platform->setConnection($this->con);
             $this->platform->setGeneratorConfig($generatorConfig);
 
             $this->parser->setGeneratorConfig(new QuickGeneratorConfig());
@@ -74,7 +75,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      *
      * @throws \Propel\Generator\Exception\BuildException
      *
-     * @return \Propel\Generator\Model\Database|bool
+     * @return \Propel\Generator\Model\Database|false
      */
     public function applyXml($xml, $changeRequired = false)
     {
@@ -160,13 +161,13 @@ class MigrationTestCase extends TestCaseFixturesDatabase
         try {
             $this->applyXmlAndTest($originXml);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in applying the first(origin) schema', 0, $e);
+            $this->fail("Failed to apply the first/original schema:\n\n" . $e->getMessage());
         }
 
         try {
             $this->applyXmlAndTest($targetXml, true);
         } catch (BuildException $e) {
-            throw new BuildException('There was a exception in applying the second(target) schema', 0, $e);
+            $this->fail("Failed to apply the second/target schema:\n\n" . $e->getMessage());
         }
     }
 

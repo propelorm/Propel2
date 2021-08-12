@@ -462,10 +462,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     public function __call($name, $params)
     {
         try {
-            /** @var callable $callback */
-            $callback = [$this->getResults(), $name];
-
-            return call_user_func_array($callback, $params);
+            return $this->getResults()->$name(...$params);
         } catch (BadMethodCallException $exception) {
             throw new BadMethodCallException('Call to undefined method: ' . $name);
         }

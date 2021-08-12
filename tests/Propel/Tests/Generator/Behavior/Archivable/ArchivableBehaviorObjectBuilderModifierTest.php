@@ -25,6 +25,7 @@ use ArchivableTest30;
 use ArchivableTest40;
 use MyOldArchivableTest30Query;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 
 /**
@@ -220,12 +221,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testArchiveThrowsExceptionOnNewObjects()
     {
+        $this->expectException(PropelException::class);
+        
         $a = new ArchivableTest10();
         $a->archive();
     }
@@ -239,12 +240,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testRestoreFromArchiveThrowsExceptionOnUnarchivedObjects()
     {
+        $this->expectException(PropelException::class);
+        
         $a = new ArchivableTest10();
         $a->setTitle('foo');
         $a->setAge(12);

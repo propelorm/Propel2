@@ -174,17 +174,19 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         // reload and verify that the types are the same
         $r2 = ReviewQuery::create()->findPk($id);
 
-        $this->assertInternalType('integer', $r2->getId(), 'Expected getId() to return an integer.');
-        $this->assertInternalType('string', $r2->getReviewedBy(), 'Expected getReviewedBy() to return a string.');
-        $this->assertInternalType('boolean', $r2->getRecommended(), 'Expected getRecommended() to return a boolean.');
+        $this->assertIsInt($r2->getId(), 'Expected getId() to return an integer.');
+        $this->assertIsString($r2->getReviewedBy(), 'Expected getReviewedBy() to return a string.');
+        $this->assertIsBool($r2->getRecommended(), 'Expected getRecommended() to return a boolean.');
         $this->assertInstanceOf('\Propel\Tests\Bookstore\Book', $r2->getBook(), 'Expected getBook() to return a Book.');
-        $this->assertInternalType('float', $r2->getBook()->getPrice(), 'Expected Book->getPrice() to return a float.');
+        $this->assertIsFloat($r2->getBook()->getPrice(), 'Expected Book->getPrice() to return a float.');
         $this->assertInstanceOf('\DateTime', $r2->getReviewDate(null), 'Expected Book->getReviewDate() to return a DateTime.');
     }
 
     /**
      * This is a test for expected exceptions when saving UNIQUE.
      * See http://propel.phpdb.org/trac/ticket/2
+     *
+     * @doesNotPerformAssertions
      *
      * @return void
      */
@@ -318,7 +320,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
 
         $arr1 = $m->toArray(TableMap::TYPE_COLNAME);
         $this->assertNotNull($arr1[MediaTableMap::COL_COVER_IMAGE]);
-        $this->assertInternalType('resource', $arr1[MediaTableMap::COL_COVER_IMAGE]);
+        $this->assertIsResource($arr1[MediaTableMap::COL_COVER_IMAGE]);
 
         $arr2 = $m->toArray(TableMap::TYPE_COLNAME, false);
         $this->assertNull($arr2[MediaTableMap::COL_COVER_IMAGE]);

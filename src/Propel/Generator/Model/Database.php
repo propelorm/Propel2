@@ -261,7 +261,7 @@ class Database extends ScopedMappingModel
      */
     public function setBaseClass($class)
     {
-        $this->baseClass = $class;
+        $this->baseClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**
@@ -274,7 +274,7 @@ class Database extends ScopedMappingModel
      */
     public function setBaseQueryClass($class)
     {
-        $this->baseQueryClass = $class;
+        $this->baseQueryClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**
@@ -590,7 +590,10 @@ class Database extends ScopedMappingModel
         $this->tablesByLowercaseName[strtolower($table->getName())] = $table;
         $this->tablesByPhpName[$table->getPhpName()] = $table;
 
-        $this->computeTableNamespace($table);
+        $newTableNamespace = $this->getCombinedNamespace($table);
+        if ($newTableNamespace !== null) {
+            $table->setNamespace($newTableNamespace);
+        }
 
         if ($table->getPackage() === null) {
             $table->setPackage($this->getPackage());
@@ -704,27 +707,29 @@ class Database extends ScopedMappingModel
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    private function computeTableNamespace(Table $table)
+    private function getCombinedNamespace(Table $table): ?string
     {
-        $namespace = $table->getNamespace();
-        if ($this->isAbsoluteNamespace($namespace)) {
-            $namespace = ltrim($namespace, '\\');
-            $table->setNamespace($namespace);
+        $tableNamespace = $table->getNamespace();
 
-            return $namespace;
+        if ($this->isAbsoluteNamespace($tableNamespace)) {
+            return ltrim($tableNamespace, '\\');
         }
 
-        if ($namespace = $this->getNamespace()) {
-            if ($table->getNamespace()) {
-                $namespace .= '\\' . $table->getNamespace();
-            }
-
-            $table->setNamespace($namespace);
+        $databaseNamespace = $this->getNamespace();
+        if ($this->isAbsoluteNamespace($databaseNamespace)) {
+            $databaseNamespace = ltrim($databaseNamespace, '\\');
         }
 
-        return $namespace;
+        if (empty($tableNamespace)) {
+            return $databaseNamespace;
+        }
+        if (!empty($databaseNamespace)) {
+            return "$databaseNamespace\\$tableNamespace";
+        }
+
+        return $tableNamespace;
     }
 
     /**

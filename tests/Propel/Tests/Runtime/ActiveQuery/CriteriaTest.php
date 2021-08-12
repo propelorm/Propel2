@@ -11,6 +11,7 @@ namespace Propel\Tests\Runtime\ActiveQuery;
 use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
@@ -228,6 +229,26 @@ class CriteriaTest extends BookstoreTestBase
 
         $this->assertEquals($expect, $result, 'addOr() called on an existing column creates a combined criterion');
         $this->assertEquals($expect_params, $params, 'addOr() called on an existing column creates a combined criterion');
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrimaryTableNameQuoting()
+    {
+        $tableName = 'myTable1';
+        $this->c->setPrimaryTableName($tableName);
+        $countSelect = 'COUNT(*)';
+        $this->c->addSelectColumn($countSelect);
+        $adapter = Propel::getServiceContainer()->getAdapter('bookstore');
+        $escapedTableName = $adapter->quoteIdentifierTable($tableName);
+
+        $this->c->setIdentifierQuoting(true);
+        $params = [];
+        $this->assertEquals(
+            "SELECT {$countSelect} FROM {$escapedTableName}",
+            $this->c->createSelectSql($params)
+        );
     }
 
     /**
@@ -510,42 +531,6 @@ class CriteriaTest extends BookstoreTestBase
             ['table' => null, 'type' => PDO::PARAM_STR, 'value' => 123],
         ];
         $this->assertEquals($expected, $params);
-    }
-
-    /**
-     * @return void
-     */
-    public function testJoinObject()
-    {
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_2');
-        $this->assertEquals('INNER JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_A', $j->getLeftTableName());
-        $this->assertEquals('COL_1', $j->getLeftColumnName());
-        $this->assertEquals('TABLE_B.COL_2', $j->getRightColumn());
-        $this->assertEquals('TABLE_B', $j->getRightTableName());
-        $this->assertEquals('COL_2', $j->getRightColumnName());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::LEFT_JOIN);
-        $this->assertEquals('LEFT JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::RIGHT_JOIN);
-        $this->assertEquals('RIGHT JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join('TABLE_A.COL_1', 'TABLE_B.COL_1', Criteria::INNER_JOIN);
-        $this->assertEquals('INNER JOIN', $j->getJoinType());
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn());
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn());
-
-        $j = new Join(['TABLE_A.COL_1', 'TABLE_A.COL_2'], ['TABLE_B.COL_1', 'TABLE_B.COL_2'], Criteria::INNER_JOIN);
-        $this->assertEquals('TABLE_A.COL_1', $j->getLeftColumn(0));
-        $this->assertEquals('TABLE_A.COL_2', $j->getLeftColumn(1));
-        $this->assertEquals('TABLE_B.COL_1', $j->getRightColumn(0));
-        $this->assertEquals('TABLE_B.COL_2', $j->getRightColumn(1));
     }
 
     /**
@@ -1117,6 +1102,44 @@ class CriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testWithSimpleLock()
+    {
+        $c = new Criteria();
+        $c->lockForShare();
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForShare() adds a shared read lock to the Criteria');
+        $this->assertSame(Lock::SHARED, $c->getLock()->getType());
+        $this->assertEmpty($c->getLock()->getTableNames());
+        $this->assertFalse($c->getLock()->isNoWait());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithComplexLock()
+    {
+        $c = new Criteria();
+        $c->lockForUpdate(['tableA', 'tableB'], true);
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForUpdate() adds an exclusive read lock to the Criteria');
+        $this->assertSame(Lock::EXCLUSIVE, $c->getLock()->getType());
+        $this->assertSame(['tableA', 'tableB'], $c->getLock()->getTableNames());
+        $this->assertTrue($c->getLock()->isNoWait());
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithoutLock()
+    {
+        $c = new Criteria();
+        $c->lockForShare();
+        $this->assertInstanceOf(Lock::class, $c->getLock(), 'lockForShare() adds a shared read lock to the Criteria');
+        $c->withoutLock();
+        $this->assertNull($c->getLock(), 'withoutLock() removes read lock from the Criteria');
+    }
+
+    /**
+     * @return void
+     */
     public function testClone()
     {
         $c1 = new Criteria();
@@ -1192,6 +1215,8 @@ class CriteriaTest extends BookstoreTestBase
         $this->assertEquals(0, count($c->getAliases()), 'aliases is empty by default');
 
         $this->assertFalse($c->getUseTransaction(), 'useTransaction is false by default');
+
+        $this->assertNull($c->getLock(), 'lock is null by default');
     }
 
     /**

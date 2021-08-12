@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Builder\Util;
 
 use Propel\Generator\Builder\Util\SchemaReader;
+use Propel\Generator\Exception\SchemaException;
 use Propel\Tests\TestCase;
 
 class SchemaReaderTest extends TestCase
@@ -58,12 +59,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\SchemaException
-     *
      * @return void
      */
     public function testParseStringIncorrectSchema()
     {
+        $this->expectException(SchemaException::class);
+
         $this->reader->parseString('<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><foo/>');
     }
 
@@ -146,6 +147,68 @@ EOF;
 </app-data>
 EOF;
         $this->assertEquals($expectedSchema, $schema->toString());
+    }
+
+    /**
+     * @return void
+     */
+    public function testXmlErrorReporting()
+    {
+        $brokenSchema = 'lorem ipsum';
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($brokenSchema);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('XML error: Not well-formed', $message);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testMissingAttributeError()
+    {
+        $schemaWithMissingColumnName = <<<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<database name="leDatabase">
+  <table name="leTable">
+    <behavior name="timestampable">
+      <parameter-list>
+      </parameter-list>
+    </behavior>
+  </table>
+</database>
+EOF;
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($schemaWithMissingColumnName);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('Parameter misses expected attribute "name"', $message);
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testExceptionContainsFilename()
+    {
+        $schemaWithoutDatabase = '<table name="leTable"></table>';
+        $xmlFileName = 'LeSchema.xml';
+        $this->expectException(SchemaException::class);
+        try {
+            $this->reader->parseString($schemaWithoutDatabase, $xmlFileName);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString($xmlFileName, $message);
+
+            throw $e;
+        }
     }
 
     /**

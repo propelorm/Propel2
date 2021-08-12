@@ -35,18 +35,18 @@ class XmlToArrayConverter
 
         $isFile = file_exists($xmlToParse);
 
+        if ($isFile) {
+            $xmlPrefix = file_get_contents($xmlToParse, false, null, 0, 1);
+        } else {
+            $xmlPrefix = $xmlToParse[0] ?? '';
+        }
+
         //Empty xml file returns empty array
-        if (
-            ($isFile && filesize($xmlToParse) === 0)
-            || (!$isFile && $xmlToParse === '')
-        ) {
+        if ($xmlPrefix === '') {
             return [];
         }
 
-        if (
-            ($isFile && file_get_contents($xmlToParse, false, null, 0, 1) !== '<')
-            || (!$isFile && $xmlToParse[0] !== '<')
-        ) {
+        if ($xmlPrefix !== '<') {
             throw new InvalidArgumentException('Invalid xml content');
         }
 
@@ -70,9 +70,7 @@ class XmlToArrayConverter
             throw new XmlParseException($errors);
         }
 
-        $conf = self::simpleXmlToArray($xml);
-
-        return $conf;
+        return self::simpleXmlToArray($xml);
     }
 
     /**
@@ -101,7 +99,10 @@ class XmlToArrayConverter
                 if ($ak === 'id') {
                     // special exception: if there is a key named 'id'
                     // then we will name the current key after that id
-                    $k = self::getConvertedXmlValue($av);
+                    $k = (string)$av;
+                    if (ctype_digit($k)) {
+                        $k = (int)$k;
+                    }
                 } else {
                     // otherwise, just add the attribute like a child element
                     if (is_string($child)) {
@@ -136,30 +137,31 @@ class XmlToArrayConverter
     /**
      * Process XML value, handling boolean, if appropriate.
      *
-     * @param \SimpleXMLElement $value The simplexml value object.
+     * @param \SimpleXMLElement $valueElement The simplexml value object.
      *
-     * @return mixed string or boolean value
+     * @return bool|float|int|string string or boolean value
      */
-    private static function getConvertedXmlValue($value)
+    private static function getConvertedXmlValue(SimpleXMLElement $valueElement)
     {
-        $value = (string)$value; // convert from simplexml to string
+        $value = (string)$valueElement; // convert from simplexml to string
 
         //handle numeric values
         if (is_numeric($value)) {
             if (ctype_digit($value)) {
-                $value = (int)$value;
-            } else {
-                $value = (float)$value;
+                return (int)$value;
             }
+
+            return (float)$value;
         }
 
         // handle booleans specially
-        $lwr = strtolower($value);
-        if ($lwr === 'false') {
-            return false;
-        }
-        if ($lwr === 'true') {
-            return true;
+        if (strlen($value) <= 5) {
+            switch (strtolower($value)) {
+                case 'false':
+                    return false;
+                case 'true':
+                    return true;
+            }
         }
 
         return $value;

@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Command;
 
+use Propel\Generator\Command\AbstractCommand;
 use Propel\Generator\Command\MigrationCreateCommand;
 use Propel\Generator\Command\MigrationDiffCommand;
 use Propel\Generator\Command\MigrationDownCommand;
@@ -24,301 +25,212 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class MigrationTest extends TestCaseFixturesDatabase
 {
-    protected static $output = '/../../../../migrationdiff';
-
-    protected $connectionOption;
-
-    protected $configDir;
-
-    protected $schemaDir;
-
-    protected $outputDir;
+    private const MIGRATE_DOWN_AFTERWARDS = true;
+    private const SCHEMA_DIR = __DIR__ . '/../../../../Fixtures/migration-command';
+    private const OUTPUT_DIR = __DIR__ . '/../../../../migrationdiff';
 
     /**
      * @return void
      */
-    public function setUp(): void
+    public function testDiffCommandCreatesFiles()
     {
-        parent::setUp();
-        $this->connectionOption = ['migration_command=' . $this->getConnectionDsn('bookstore', true)];
-        $this->connectionOption = str_replace('dbname=test', 'dbname=migration', $this->connectionOption);
-        $this->configDir = __DIR__ . '/../../../../Fixtures/migration-command';
-        $this->schemaDir = __DIR__ . '/../../../../Fixtures/migration-command';
-        $this->outputDir = __DIR__ . self::$output;
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, 'PropelMigration_*.php');
     }
 
     /**
      * @return void
      */
-    public function testDiffCommand()
+    public function testDiffCommandCreatesSuffixedFiles()
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDiffCommand();
-        $app->add($command);
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, "PropelMigration_*_$suffix.php");
+    }
 
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesFiles()
+    {
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, 'PropelMigration_*.php');
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesSuffixedFiles()
+    {
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, "PropelMigration_*_$suffix.php");
+    }
+
+    /**
+     * @return void
+     */
+    public function testUpCommandPerformsUpMigration()
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:up', new MigrationUpCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDownCommandPerformsDownMigration()
+    {
+        $this->migrateUp();
+        $outputString = $this->runCommandAndAssertSuccess('migration:down', new MigrationDownCommand());
+        $this->assertStringContainsString('Reverse migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandPerformsUpMigration()
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:migrate', new MigrationMigrateCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    private function deleteMigrationFiles(): void
+    {
+        $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . 'PropelMigration_*.php');
         foreach ($files as $file) {
             unlink($file);
         }
+    }
 
-        $input = new ArrayInput([
-            'command' => 'migration:diff',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true,
-        ]);
+    /**
+     * Runs the supplied command and returns its output.
+     *
+     * @param string $commandName
+     * @param \Propel\Generator\Command\AbstractCommand $commandInstance
+     * @param array $additionalArguments
+     * @param bool $migrateDownAfterwards
+     *
+     * @return \Symfony\Component\Console\Output\StreamOutput
+     */
+    private function runCommandAndAssertSuccess(
+        string $commandName,
+        AbstractCommand $commandInstance,
+        array $additionalArguments = [],
+        bool $migrateDownAfterwards = false
+    ): string {
+        $outputCapturer = new StreamOutput(fopen('php://temp', 'r+'));
+        $exitCode = $this->runCommand($commandName, $commandInstance, $additionalArguments, $outputCapturer);
 
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
+        if ($migrateDownAfterwards) {
+            $this->migrateDown();
         }
 
-        $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
+        $streamedOutput = $outputCapturer->getStream();
+        rewind($streamedOutput);
+        $outputString = stream_get_contents($streamedOutput);
 
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
+        $msg = "$commandName should exit successfully, but failed with message '$outputString'";
+        $this->assertEquals(0, $exitCode, $msg);
+
+        return $outputString;
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateUp()
+    {
+        $this->runCommand('migration:up', new MigrationUpCommand());
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateDown()
+    {
+        $this->runCommand('migration:down', new MigrationDownCommand());
+    }
+
+    /**
+     * Create application and run it
+     *
+     * @param string $commandName
+     * @param \Propel\Generator\Command\AbstractCommand $commandInstance
+     * @param array $additionalArguments
+     * @param \Symfony\Component\Console\Output\StreamOutput|null $outputCapturer
+     *
+     * @return int
+     */
+    private function runCommand(
+        string $commandName,
+        AbstractCommand $commandInstance,
+        array $additionalArguments = [],
+        ?StreamOutput $outputCapturer = null
+    ): int {
+        $applicationInputArguments = $this->buildApplicationInputArguments($commandName, $additionalArguments);
+
+        if ($outputCapturer === null) {
+            $outputCapturer = new StreamOutput(fopen('php://temp', 'r+'));
+        }
+
+        $app = new Application('Propel', Propel::VERSION);
+        $app->add($commandInstance);
+        $app->setAutoExit(false);
+
+        return $app->run($applicationInputArguments, $outputCapturer);
+    }
+
+    /**
+     * @param string $commandName
+     * @param array $additionalArguments
+     *
+     * @return \Symfony\Component\Console\Input\ArrayInput
+     */
+    private function buildApplicationInputArguments(string $commandName, array $additionalArguments): ArrayInput
+    {
+        $additionalArguments['command'] = $commandName;
+
+        $dsn = $this->getConnectionDsn('bookstore', true);
+        $connectionOption = ['migration_command=' . $dsn];
+
+        $defaultAppArguments = [
+            '--config-dir' => self::SCHEMA_DIR,
+            '--output-dir' => self::OUTPUT_DIR,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform',
+            '--connection' => $connectionOption,
+            '--verbose' => true,
+        ];
+        $args = array_merge($additionalArguments, $defaultAppArguments);
+
+        return new ArrayInput($args);
+    }
+
+    /**
+     * @param bool $containsCreateTable
+     * @param string $fileGlobPattern
+     *
+     * @return void
+     */
+    private function assertGeneratedFileContainsCreateTableStatement(bool $containsCreateTable, string $fileGlobPattern): void
+    {
+        $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . $fileGlobPattern);
+        $this->assertCount(1, $files, 'Exactly one file should have been created');
+
         $file = $files[0];
-
         $content = file_get_contents($file);
-        $this->assertGreaterThanOrEqual(2, substr_count($content, 'CREATE TABLE '));
-        $this->assertContains('CREATE TABLE ', $content);
-    }
-
-    /**
-     * @return void
-     */
-    public function testDiffCommandUsingSuffix()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDiffCommand();
-        $app->add($command);
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
+        if ($containsCreateTable) {
+            // unfortunatelly, the number of CREATE TABLE statements differs when running the tests alone or as part of the suite
+            $this->assertStringContainsString('CREATE TABLE ', $content);
+        } else {
+            $this->assertStringNotContainsString('CREATE TABLE ', $content);
         }
-
-        $input = new ArrayInput([
-            'command' => 'migration:diff',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--suffix' => 'an_explanatory_filename_suffix',
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertGreaterThanOrEqual(2, substr_count($content, 'CREATE TABLE '));
-        $this->assertContains('CREATE TABLE ', $content);
-    }
-
-    /**
-     * @return void
-     */
-    public function testUpCommand()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationUpCommand();
-        $app->add($command);
-
-        $input = new ArrayInput([
-            'command' => 'migration:up',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:up tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
-    }
-
-    /**
-     * @return void
-     */
-    public function testDownCommand()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDownCommand();
-        $app->add($command);
-
-        $input = new ArrayInput([
-            'command' => 'migration:down',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Reverse migration complete.', $outputString);
-    }
-
-    /**
-     * @return void
-     */
-    public function testMigrateCommand()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationMigrateCommand();
-        $app->add($command);
-
-        $input = new ArrayInput([
-            'command' => 'migration:migrate',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
-
-        //revert this migration change so we have the same database structure as before this test
-        $this->testDownCommand();
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateCommand()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationCreateCommand();
-        $app->add($command);
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
-        }
-
-        $input = new ArrayInput([
-            'command' => 'migration:create',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:create tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateCommandUsingSuffix()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationCreateCommand();
-        $app->add($command);
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
-        }
-
-        $input = new ArrayInput([
-            'command' => 'migration:create',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--suffix' => 'an_explanatory_filename_suffix',
-            '--verbose' => true,
-        ]);
-
-        $output = new StreamOutput(fopen('php://temp', 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:create tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
     }
 }

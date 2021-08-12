@@ -230,7 +230,6 @@ public function doSelect(ConnectionInterface \$con = null)
     if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
         \$this->addSelfSelectColumns();
     }
-    \$this->configureSelectColumns();
 
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->tableClassName . "::DATABASE_NAME);
     \$db = Propel::getServiceContainer()->getAdapter(" . $this->tableClassName . "::DATABASE_NAME);
@@ -284,8 +283,6 @@ public function doCount(ConnectionInterface \$con = null)
         if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
             \$this->addSelfSelectColumns();
         }
-
-        \$this->configureSelectColumns();
 
         \$needsComplexCount = \$this->getGroupByColumns()
             || \$this->getOffset()

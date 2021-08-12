@@ -40,6 +40,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
+        $className = $this->getUnqualifiedClassName();
         $baseClassName = $this->getClassNameFromBuilder($this->getQueryBuilder());
 
         if ($this->getBuildProperty('generator.objectModel.addClassLevelComment')) {
@@ -64,7 +65,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  */";
         }
         $script .= "
-class " . $this->getUnqualifiedClassName() . " extends $baseClassName
+class $className extends $baseClassName
 {
 ";
     }

@@ -9,6 +9,7 @@
 namespace Propel\Generator\Manager;
 
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Builder\Om\TableMapLoaderScriptBuilder;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -143,6 +144,7 @@ class ModelManager extends AbstractManager
                 }
             }
         }
+        $totalNbFiles += $this->createTableMapLoaderScript();
 
         if ($totalNbFiles) {
             $this->log(sprintf('Object model generation complete - %d files written', $totalNbFiles));
@@ -191,6 +193,35 @@ class ModelManager extends AbstractManager
         $action = $file->isFile() ? 'Updating' : 'Creating';
         $this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
         file_put_contents($file->getPathname(), $script);
+
+        return 1;
+    }
+
+    /**
+     * Create script to import all table map files into database map.
+     *
+     * @return int Number of changed files
+     */
+    protected function createTableMapLoaderScript(): int
+    {
+        $schemas = $this->getDataModels();
+        $builder = new TableMapLoaderScriptBuilder($this->getGeneratorConfig());
+        $fileContent = $builder->build($schemas);
+
+        $file = $builder->getFile();
+        $filePath = $file->getPathname();
+
+        $action = $file->isFile() ? 'Updating' : 'Creating';
+        $this->log("\t-> $action $filePath");
+
+        if ($file->isFile() && file_get_contents($filePath) === $fileContent) {
+            $this->log("\t\t(no change)");
+
+            return 0;
+        }
+        $this->log('Generating script for loading table maps at ' . $file->getRealPath());
+        $this->filesystem->mkdir($file->getPath());
+        file_put_contents($filePath, $fileContent);
 
         return 1;
     }

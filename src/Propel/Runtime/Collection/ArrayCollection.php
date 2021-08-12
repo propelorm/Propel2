@@ -88,11 +88,11 @@ class ArrayCollection extends Collection
     public function getPrimaryKeys($usePrefix = true)
     {
         $ret = [];
-        $callable = [$this->getTableMapClass(), 'getPrimaryKeyFromRow'];
+        $tableMapClass = $this->getTableMapClass();
 
         foreach ($this as $key => $element) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = call_user_func($callable, array_values($element));
+            $ret[$key] = $tableMapClass::getPrimaryKeyFromRow(array_values($element));
         }
 
         return $ret;

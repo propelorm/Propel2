@@ -1,9 +1,11 @@
+.DS_Store
 .idea/
 vendor/
 composer.phar
 /composer.lock
 autoload.php
 phpunit.xml
+.phpunit.result.cache
 pom.xml
 php-cs-fixer.phar
 
@@ -15,9 +17,6 @@ tests/Fixtures/schemas/build/
 
 tests/Fixtures/bookstore/build/
 tests/Fixtures/bookstore/propel.yaml
-
-tests/Fixtures/bookstore-packaged/build/
-tests/Fixtures/bookstore-packaged/propel.yaml
 
 tests/Fixtures/namespaced/propel.yaml
 
@@ -41,3 +40,4 @@ tests/Fixtures/fixtures_built
 tests/graphviztest/
 tests/migrationdiff/
 tests/reversecommand/
+tests/test.sq3

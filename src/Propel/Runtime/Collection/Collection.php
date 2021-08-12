@@ -471,6 +471,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
+     *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
      * @return string
@@ -483,7 +485,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
-        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
+        return $this->getFullyQualifiedModel()::TABLE_MAP;
     }
 
     /**
@@ -511,7 +513,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function getWriteConnection()
     {
-        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
+        $databaseName = $this->getTableMapClass()::DATABASE_NAME;
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
@@ -556,16 +558,17 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param bool $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * Not supported by ArrayCollection, as ArrayFormatter has
      * already included lazy-load columns in the array used here.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      *
      * @return string The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns);
+        $array = $this->toArray(null, $usePrefix, $keyType, $includeLazyLoadColumns);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }
@@ -592,10 +595,11 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
         }
         if (strpos($name, 'to') === 0) {
             $format = substr($name, 2);
-            $usePrefix = isset($params[0]) ? $params[0] : false;
-            $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
+            $usePrefix = $params[0] ?? false;
+            $includeLazyLoadColumns = $params[1] ?? true;
+            $keyType = $params[2] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
+            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns, $keyType);
         }
 
         throw new BadMethodCallException('Call to undefined method: ' . $name);
@@ -610,7 +614,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function __toString()
     {
-        return (string)$this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'), false);
+        return (string)$this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
     }
 
     /**
@@ -628,7 +632,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @return \Propel\Common\Pluralizer\PluralizerInterface|null
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
     protected function getPluralizer()
     {

@@ -144,22 +144,12 @@ interface AdapterInterface
     public function isGetIdAfterInsert();
 
     /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
-
-    /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param string|null $name
      *
-     * @return mixed
+     * @return string|int|null
      */
     public function getId(ConnectionInterface $con, $name = null);
 

@@ -46,21 +46,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Variable \\$paramsDoc might not be defined\\.$#"
-			count: 4
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$methodSignature might not be defined\\.$#"
-			count: 10
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
-			message: "#^Variable \\$buildScope might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorQueryBuilderModifier.php
-
-		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
@@ -256,9 +241,44 @@ parameters:
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Right side of && is always false\\.$#"
+			message: "#^Variable \\$timestamp might not be defined\\.$#"
 			count: 1
-			path: src/Propel/Generator/Manager/ReverseManager.php
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationAuthor might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$timeInWords might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationClassName might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$commentString might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationsUp might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$connectionToVariableName might not be defined\\.$#"
+			count: 2
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationsDown might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
@@ -391,11 +411,6 @@ parameters:
 			path: src/Propel/Generator/Util/BehaviorLocator.php
 
 		-
-			message: "#^Parameter \\#1 \\$attribute of method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:setAttribute\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Util/QuickBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
@@ -411,84 +426,9 @@ parameters:
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:\\$useAliasInSQL\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
-
-		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:getShortName\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:find\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:createSelectSqlPart\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:applyLimit\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$currentAlias\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Access to an undefined property Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:\\$foundMatch\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:cleanupSQL\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:bindValues\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 3
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Parameter \\#2 \\$code of class Propel\\\\Runtime\\\\Exception\\\\PropelException constructor expects int, null given\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criteria.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractCriterion.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/Criterion/AbstractModelCriterion.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
@@ -506,11 +446,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getRelationMap\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -522,21 +457,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:addSelectColumns\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Variable \\$sql might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Parameter \\#1 \\$values \\(array\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:doUpdate\\(\\) should be compatible with parameter \\$updateValues \\(Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\) of method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:doUpdate\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Instanceof between array and Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
@@ -561,19 +481,19 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearRelatedInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
 			message: "#^Result of \\|\\| is always false\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php
-
-		-
-			message: "#^Variable \\$dbMap might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
-
-		-
-			message: "#^Variable \\$params might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionInterface\\:\\:sqliteCreateFunction\\(\\)\\.$#"
@@ -612,6 +532,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
@@ -687,6 +612,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
@@ -704,6 +634,11 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:populateObject\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"

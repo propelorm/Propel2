@@ -27,14 +27,13 @@ class PropelConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $isBeforeSymfony5 = method_exists(TreeBuilder::class, 'root');
+        $treeBuilder = new TreeBuilder('propel');
 
-        if ($isBeforeSymfony5) {
-            $treeBuilder = new TreeBuilder();
-            $rootNode = $treeBuilder->root('propel');
-        } else {
-            $treeBuilder = new TreeBuilder('propel');
+        if (method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // BC layer for symfony/config 4.1 and older
+            $rootNode = $treeBuilder->root('propel');
         }
 
         $this->addGeneralSection($rootNode);
@@ -85,6 +84,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('outputDir')->defaultValue(getcwd())->end()
                         ->scalarNode('phpDir')->defaultValue(getcwd() . '/generated-classes')->end()
                         ->scalarNode('phpConfDir')->defaultValue(getcwd() . '/generated-conf')->end()
+                        ->scalarNode('loaderScriptDir')->end()
                         ->scalarNode('sqlDir')->defaultValue(getcwd() . '/generated-sql')->end()
                         ->scalarNode('migrationDir')->defaultValue(getcwd() . '/generated-migrations')->end()
                         ->scalarNode('composerDir')->defaultNull()->end()
@@ -95,8 +95,6 @@ class PropelConfiguration implements ConfigurationInterface
 
     /**
      * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
-     *
-     * @throws \InvalidArgumentException
      *
      * @return void
      */

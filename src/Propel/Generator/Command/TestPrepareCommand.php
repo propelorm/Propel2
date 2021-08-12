@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Behavior\AggregateMultipleColumns\AggregateMultipleColumnsBehavior;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,7 +50,6 @@ class TestPrepareCommand extends AbstractCommand
     protected $fixtures = [
         //directory - array of connections
         'bookstore' => ['bookstore', 'bookstore-cms', 'bookstore-behavior'],
-        'bookstore-packaged' => ['bookstore-packaged', 'bookstore-log'],
         'namespaced' => ['bookstore_namespaced'],
         'reverse/mysql' => ['reverse-bookstore'],
         'reverse/pgsql' => ['reverse-bookstore'],
@@ -94,11 +94,14 @@ class TestPrepareCommand extends AbstractCommand
     {
         $result = static::CODE_SUCCESS;
         foreach ($this->fixtures as $fixturesDir => $connections) {
+            $this->resetCounters();
+
             $run = $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
             if ($run !== static::CODE_SUCCESS) {
                 $result = $run;
             }
         }
+        chdir($this->root);
 
         return $result;
     }
@@ -141,6 +144,7 @@ class TestPrepareCommand extends AbstractCommand
                 'command' => 'config:convert',
                 '--output-dir' => './build/conf',
                 '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
+                '--loader-script-dir' => './build/conf',
             ]);
 
             $command = $this->getApplication()->find('config:convert');
@@ -152,6 +156,7 @@ class TestPrepareCommand extends AbstractCommand
                 'command' => 'model:build',
                 '--schema-dir' => '.',
                 '--output-dir' => 'build/classes/',
+                '--loader-script-dir' => './build/conf',
                 '--platform' => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose' => $input->getOption('verbose'),
             ]);
@@ -206,8 +211,16 @@ class TestPrepareCommand extends AbstractCommand
             $command->run($in, $output);
         }
 
-        chdir($this->root);
-
         return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Reset static members in builder classes. Necessary when test run commands repeatedly.
+     *
+     * @return void
+     */
+    protected function resetCounters(): void
+    {
+        AggregateMultipleColumnsBehavior::resetInsertedAggregationNames();
     }
 }

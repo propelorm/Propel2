@@ -9,6 +9,8 @@
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
+use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\TestCaseFixtures;
 
 /**
@@ -34,6 +36,14 @@ class MysqlAdapterTest extends TestCaseFixtures
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDriver()
+    {
+        return 'mysql';
     }
 
     /**
@@ -94,6 +104,73 @@ class MysqlAdapterTest extends TestCaseFixtures
             ->method('exec');
 
         return $con;
+    }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testSimpleLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForShare();
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book LOCK IN SHARE MODE';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test `applyLock`
+     *
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testComplexLock(): void
+    {
+        $c = new BookQuery();
+        $c->addSelectColumn(BookTableMap::COL_ID);
+        $c->lockForUpdate([BookTableMap::TABLE_NAME], true);
+
+        $params = [];
+        $result = $c->createSelectSql($params);
+
+        $expected = 'SELECT book.id FROM book FOR UPDATE';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return void
+     *
+     * @group mysql
+     */
+    public function testSubQueryWithSharedLock()
+    {
+        $subquery = BookQuery::create()
+            ->addSelectColumn(BookTableMap::COL_ID)
+            ->lockForShare([BookTableMap::TABLE_NAME])
+        ;
+
+        $query = BookQuery::create()
+            ->addSelectColumn('subCriteriaAlias.id')
+            ->addSelectQuery($subquery, 'subCriteriaAlias', false)
+            ->lockForShare([BookTableMap::TABLE_NAME], true)
+        ;
+
+        $expectedSql ='SELECT subCriteriaAlias.id FROM (SELECT book.id FROM book LOCK IN SHARE MODE) AS subCriteriaAlias LOCK IN SHARE MODE';
+
+        $params = [];
+        $generatedSql = $query->createSelectSql($params);
+        $this->assertSame($expectedSql, $generatedSql, 'Subquery should contain shared read lock');
     }
 }
 

@@ -10,6 +10,7 @@ namespace Propel\Tests\Generator\Behavior\Versionable;
 
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\PropelException;
 use VersionableBehaviorTest1;
 use VersionableBehaviorTest10;
 use VersionableBehaviorTest11;
@@ -587,12 +588,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testToVersionThrowsExceptionOnIncorrectVersion()
     {
+        $this->expectException(PropelException::class);
+
         $o = new VersionableBehaviorTest1();
         $o->setBar(123); // version 1
         $o->save();

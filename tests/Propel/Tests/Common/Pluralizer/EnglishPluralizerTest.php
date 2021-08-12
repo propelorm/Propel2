@@ -87,6 +87,8 @@ class EnglishPluralizerTest extends TestCase
             ['Tooth', 'Teeth'],
             ['tooth', 'teeth'],
             ['Foot', 'Feet'],
+            ['Box', 'Boxes'],
+            ['ox', 'oxen'],
         ];
     }
 

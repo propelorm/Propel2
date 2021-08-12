@@ -9,6 +9,8 @@
 namespace Propel\Runtime\Map;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Propel;
@@ -66,6 +68,13 @@ class TableMap
      * @var \Propel\Runtime\Map\ColumnMap[]
      */
     protected $columnsByPhpName = [];
+
+    /**
+     * Map of normalized column names
+     *
+     * @var string[]
+     */
+    protected $normalizedColumnNameMap = [];
 
     /**
      * The database this table belongs to
@@ -289,12 +298,12 @@ class TableMap
      */
     public function getCollectionClassName()
     {
-        $collectionClass = $this->getClassName() . 'Collection';
-        if (class_exists($collectionClass)) {
-            return $collectionClass;
+        $collectionClassName = $this->getClassName() . 'Collection';
+        if (class_exists($collectionClassName) && is_subclass_of($collectionClassName, Collection::class)) {
+            return $collectionClassName;
         }
 
-        return '\Propel\Runtime\Collection\ObjectCollection';
+        return ObjectCollection::class;
     }
 
     /**
@@ -415,6 +424,16 @@ class TableMap
     }
 
     /**
+     * @param string $columnName
+     *
+     * @return string
+     */
+    protected function getNormalizedColumnName(string $columnName): string
+    {
+        return $this->normalizedColumnNameMap[$columnName] ?? ColumnMap::normalizeName($columnName);
+    }
+
+    /**
      * Add a column to the table.
      *
      * @param string $name A String with the column name.
@@ -423,8 +442,8 @@ class TableMap
      * @param bool $isNotNull Whether column does not allow NULL values.
      * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue
-     * @param bool|null $pk True if column is a primary key.
-     * @param string|bool|null $fkTable A String with the foreign key table name.
+     * @param bool $pk True if column is a primary key.
+     * @param string|null $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
@@ -448,7 +467,7 @@ class TableMap
             $this->foreignKeys[$name] = $col;
         }
 
-        $this->columns[ColumnMap::normalizeName($name)] = $col;
+        $this->columns[$this->getNormalizedColumnName($name)] = $col;
         $this->columnsByPhpName[$phpName] = $col;
 
         return $col;
@@ -482,7 +501,7 @@ class TableMap
         if ($name instanceof ColumnMap) {
             $name = $name->getName();
         } elseif ($normalize) {
-            $name = ColumnMap::normalizeName($name);
+            $name = $this->getNormalizedColumnName($name);
         }
 
         return isset($this->columns[$name]);
@@ -501,7 +520,7 @@ class TableMap
     public function getColumn($name, $normalize = true)
     {
         if ($normalize) {
-            $name = ColumnMap::normalizeName($name);
+            $name = $this->getNormalizedColumnName($name);
         }
         if (!$this->hasColumn($name, false)) {
             throw new ColumnNotFoundException(sprintf('Cannot fetch ColumnMap for undefined column: %s in table %s.', $name, $this->getName()));
@@ -538,6 +557,28 @@ class TableMap
         }
 
         return $this->columnsByPhpName[$phpName];
+    }
+
+    /**
+     * Tries to find a column by name.
+     *
+     * @param string $name
+     *
+     * @return \Propel\Runtime\Map\ColumnMap|null
+     */
+    public function findColumnByName(string $name): ?ColumnMap
+    {
+        if (isset($this->columnsByPhpName[$name])) {
+            return $this->getColumnByPhpName($name);
+        }
+        if ($this->hasColumn($name, false)) {
+            return $this->getColumn($name, false);
+        }
+        if ($this->hasColumn($name, true)) {
+            return $this->getColumn($name, true);
+        }
+
+        return null;
     }
 
     /**
@@ -819,9 +860,7 @@ class TableMap
      */
     public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
     {
-        $callable = [$classname::TABLE_MAP, 'getFieldnames'];
-
-        return call_user_func($callable, $type);
+        return ($classname::TABLE_MAP)::getFieldnames($type);
     }
 
     /**
@@ -834,10 +873,7 @@ class TableMap
      */
     public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
     {
-        $callable = [$classname::TABLE_MAP, 'translateFieldname'];
-        $args = [$fieldname, $fromType, $toType];
-
-        return call_user_func_array($callable, $args);
+        return ($classname::TABLE_MAP)::translateFieldname($fieldname, $fromType, $toType);
     }
 
     /**

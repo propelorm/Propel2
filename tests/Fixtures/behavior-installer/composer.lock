@@ -521,7 +521,14 @@
         }
     ],
     "packages-dev": [
-
+        {
+            "name": "leVendor/leProject",
+            "type": "propel-behavior",
+            "extra": {
+                "name": "le-dev-behavior",
+                "class": "\\LeNamespace\\of\\LeClass"
+            }
+        }
     ],
     "aliases": [
 

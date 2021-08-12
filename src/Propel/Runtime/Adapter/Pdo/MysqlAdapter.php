@@ -9,8 +9,9 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
-use PDOStatement;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -89,7 +90,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifier()
+     * @see SqlAdapterInterface::quoteIdentifier()
      *
      * @param string $text
      *
@@ -101,7 +102,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see SqlAdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      *
@@ -114,15 +115,16 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::applyLimit()
+     * @see SqlAdapterInterface::applyLimit()
      *
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         $offset = (int)$offset;
         $limit = (int)$limit;
@@ -135,7 +137,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::random()
+     * @see SqlAdapterInterface::random()
      *
      * @param string|null $seed
      *
@@ -147,9 +149,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::bindValue()
+     * @see SqlAdapterInterface::bindValue()
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param string $parameter
      * @param mixed $value
      * @param \Propel\Runtime\Map\ColumnMap $cMap
@@ -157,7 +159,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
@@ -200,5 +202,24 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         return parent::prepareParams($params);
+    }
+
+    /**
+     * @see SqlAdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' LOCK IN SHARE MODE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
     }
 }

@@ -95,7 +95,7 @@ class TableComparator
      * @param \Propel\Generator\Model\Table $toTable
      * @param bool $caseInsensitive
      *
-     * @return \Propel\Generator\Model\Diff\TableDiff|bool
+     * @return \Propel\Generator\Model\Diff\TableDiff|false
      */
     public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
     {

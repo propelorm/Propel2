@@ -10,13 +10,13 @@ namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
 use PDOException;
-use PDOStatement;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
@@ -27,6 +27,16 @@ use Propel\Runtime\Util\PropelDateTime;
  */
 abstract class PdoAdapter
 {
+    /**
+     * Indicates if the database system can process DELETE statements with
+     * aliases like 'DELETE t FROM my_table t JOIN my_other_table o ON ...'
+     *
+     * @see PdoAdapter::supportsAliasesInDelete()
+     *
+     * @var bool
+     */
+    protected const SUPPORTS_ALIASES_IN_DELETE = true;
+
     /**
      * Build database connection
      *
@@ -51,7 +61,7 @@ abstract class PdoAdapter
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
-        $driver_options = [];
+        $driverOptions = [];
         if (isset($conparams['options']) && is_array($conparams['options'])) {
             foreach ($conparams['options'] as $option => $optiondata) {
                 $value = $optiondata;
@@ -61,12 +71,12 @@ abstract class PdoAdapter
                     }
                     $value = constant($value);
                 }
-                $driver_options[$option] = $value;
+                $driverOptions[$option] = $value;
             }
         }
 
         try {
-            $con = new PdoConnection($dsn, $user, $password, $driver_options);
+            $con = new PdoConnection($dsn, $user, $password, $driverOptions);
             $this->initConnection($con, isset($conparams['settings']) && is_array($conparams['settings']) ? $conparams['settings'] : []);
         } catch (PDOException $e) {
             throw new AdapterException('Unable to open PDO connection', 0, $e);
@@ -357,7 +367,7 @@ abstract class PdoAdapter
     {
         $groupBy = $criteria->getGroupByColumns();
         if ($groupBy) {
-            return ' GROUP BY ' . implode(',', $groupBy);
+            return 'GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -398,32 +408,6 @@ abstract class PdoAdapter
     }
 
     /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
-    {
-        $sql = 'DELETE ';
-        if ($queryComment = $criteria->getComment()) {
-            $sql .= '/* ' . $queryComment . ' */ ';
-        }
-
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= $tableName . ' FROM ' . $realTableName . ' AS ' . $tableName;
-        } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
-        }
-
-        return $sql;
-    }
-
-    /**
      * Builds the SELECT part of a SQL statement based on a Criteria
      * taking into account select columns and 'as' columns (i.e. columns aliases)
      *
@@ -451,27 +435,25 @@ abstract class PdoAdapter
                 $parenPos = strrpos($columnName, '(');
                 $dotPos = strrpos($columnName, '.', ($parenPos !== false ? $parenPos : 0));
 
-                if ($dotPos !== false) {
-                    if ($parenPos === false) { // table.column
-                        $tableName = substr($columnName, 0, $dotPos);
-                    } else { // FUNC(table.column)
-                        // functions may contain qualifiers so only take the last
-                        // word as the table name.
-                        // COUNT(DISTINCT books.price)
-                        $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
-                        $lastSpace = strrpos($tableName, ' ');
-                        if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
-                            $tableName = substr($tableName, $lastSpace + 1);
-                        }
-                    }
-                    // is it a table alias?
-                    $tableName2 = $criteria->getTableForAlias($tableName);
-                    if ($tableName2 !== null) {
-                        $fromClause[] = $tableName2 . ' ' . $tableName;
-                    } else {
-                        $fromClause[] = $tableName;
+                if ($dotPos === false) {
+                    continue;
+                }
+
+                if ($parenPos === false) { // table.column
+                    $tableName = substr($columnName, 0, $dotPos);
+                } else { // FUNC(table.column)
+                    // functions may contain qualifiers so only take the last
+                    // word as the table name.
+                    // COUNT(DISTINCT books.price)
+                    $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
+                    $lastSpace = strrpos($tableName, ' ');
+                    if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
+                        $tableName = substr($tableName, $lastSpace + 1);
                     }
                 }
+                // resolve table alias
+                $sourceTableName = $criteria->getTableForAlias($tableName);
+                $fromClause[] = ($sourceTableName) ? $sourceTableName . ' ' . $tableName : $tableName;
             }
         }
 
@@ -573,13 +555,13 @@ abstract class PdoAdapter
      * $stmt->execute();
      * </code>
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param \Propel\Runtime\Map\DatabaseMap $dbMap
      *
      * @return void
      */
-    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
     {
         $position = 0;
         foreach ($params as $param) {
@@ -607,7 +589,7 @@ abstract class PdoAdapter
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt The statement to bind
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt The statement to bind
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
@@ -615,7 +597,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
@@ -626,5 +608,15 @@ abstract class PdoAdapter
         }
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());
+    }
+
+    /**
+     * @see \Propel\Runtime\Adapter\SqlAdapterInterface::supportsAliasesInDelete()
+     *
+     * @return bool
+     */
+    public function supportsAliasesInDelete(): bool
+    {
+        return static::SUPPORTS_ALIASES_IN_DELETE;
     }
 }

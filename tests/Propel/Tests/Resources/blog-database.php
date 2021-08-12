@@ -75,6 +75,14 @@ $column64 = new Column('is_published', 'boolean');
 $column64->setNotNull();
 $column64->setDefaultValue('false');
 
+$column71 = new Column('id', 'integer');
+$column71->setNotNull();
+$column71->setPrimaryKey();
+
+$column81 = new Column('id', 'integer');
+$column81->setNotNull();
+$column81->setPrimaryKey();
+
 /* Foreign Keys */
 $fkAuthorPost = new ForeignKey('fk_post_has_author');
 $fkAuthorPost->addReference('author_id', 'id');
@@ -151,11 +159,12 @@ $table4->setPackage('Acme.Blog');
 $table4->addColumns([ $column41, $column42 ]);
 
 $table5 = new Table('blog_post_tag');
-$table5->setNamespace('Blog');
+$table5->setNamespace('\Acme\Model\Blog');
 $table5->setPackage('Acme.Blog');
 $table5->setCrossRef();
 $table5->addColumns([ $column51, $column52 ]);
 $table5->addForeignKeys([ $fkPostTag, $fkTagPost ]);
+$table5->setDescription('This table was given with an absolute namespace');
 
 $table6 = new Table('cms_page');
 $table6->setPhpName('Page');
@@ -166,6 +175,16 @@ $table6->addColumns([ $column61, $column62, $column63, $column64 ]);
 $table6->addIndex($pageContentFulltextIdx);
 $table6->addVendorInfo(new VendorInfo('mysql', ['Engine' => 'MyISAM']));
 
+$table7 = new Table('external_table');
+$table7->setNamespace('\\External');
+$table7->addColumns([ $column71 ]);
+$table7->setDescription('A table in the \\External namespace');
+
+$table8 = new Table('acme_base');
+$table8->setNamespace('\\Acme\\Model');
+$table8->addColumns([ $column81 ]);
+$table8->setDescription('A table in the \\Acme\\Model namespace should not have a namespace declaration');
+
 /* Database */
 $database = new Database('acme_blog', new MysqlPlatform());
 $database->setSchema('acme');
@@ -175,6 +194,6 @@ $database->setBaseClass('Acme\\Model\\ActiveRecord');
 $database->setPackage('Acme');
 $database->setHeavyIndexing();
 $database->addVendorInfo(new VendorInfo('mysql', [ 'Engine' => 'InnoDB', 'Charset' => 'utf8' ]));
-$database->addTables([ $table1, $table2, $table3, $table4, $table5, $table6 ]);
+$database->addTables([ $table1, $table2, $table3, $table4, $table5, $table6, $table7, $table8 ]);
 
 return $database;

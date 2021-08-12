@@ -10,9 +10,12 @@ namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Country;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
@@ -47,12 +50,12 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
@@ -61,12 +64,12 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
@@ -173,17 +176,41 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
-     * @expectedExceptionMessage Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection
-     *
      * @return void
      */
     public function testPopulateRelationWhenInstancePoolingIsDisabled()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection');
+
         $coll = new ObjectCollection();
 
         Propel::disableInstancePooling();
         $coll->populateRelation('Book');
+    }
+
+    /**
+     * @return void
+     */
+    public function testPopulateRelationResetsPartialFlag()
+    {
+        Propel::enableInstancePooling();
+        $partialAccessor = new class extends Author{
+            public static function getIsPartial(Author $a)
+            {
+                return $a->collBooksPartial;
+            }
+        };
+        $authors = AuthorQuery::create()->limit(1)->find($this->con);
+
+        $author = $authors[0];
+        $author->resetPartialBooks(true);
+        $isPartial = $partialAccessor::getIsPartial($author);
+        $this->assertTrue($isPartial);
+
+        $authors->populateRelation('Book', null, $this->con);
+        $isPartial = $partialAccessor::getIsPartial($author);
+        $this->assertFalse($isPartial, 'Populating a relation should reset it');
     }
 
     /**

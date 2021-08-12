@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+<database package="core.author" name="bookstore" defaultIdMethod="native">
+
+  <table name="author" description="Author Table">
+        <behavior name="auto_add_pk"/>
+    <column
+      name="first_name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+      description="First Name"/>
+    <column
+      name="last_name"
+      required="true"
+      type="VARCHAR"
+      size="128"
+      description="Last Name"/>
+    <column
+      name="email"
+      type="VARCHAR"
+      size="128"
+      description="E-Mail Address"/>
+    <column
+      name="age"
+      type="INTEGER"
+      description="The authors age"/>
+
+  </table>
+
+</database>

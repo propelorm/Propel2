@@ -168,23 +168,28 @@ class ForeignKey extends MappingModel
      * Returns the normalized input of onDelete and onUpdate behaviors.
      *
      * @param string|null $behavior
+     * @param string|null $default
      *
      * @return string
      */
-    public function normalizeFKey($behavior)
+    public function normalizeFKey($behavior, ?string $default = null)
     {
         if ($behavior === null) {
-            return self::NONE;
+            return $default ?: self::NONE;
         }
 
         $behavior = strtoupper($behavior);
 
-        if ($behavior === 'NONE') {
-            return self::NONE;
+        if ($behavior === 'NONE' || $behavior === self::NONE) {
+            return $default ?: self::NONE;
         }
 
         if ($behavior === 'SETNULL') {
             return self::SETNULL;
+        }
+
+        if ($behavior === 'NOACTION') {
+            return self::NOACTION;
         }
 
         return $behavior;
@@ -233,6 +238,20 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns the normalized onUpdate behavior taking into account the default of the platform in case the behavior is implicit
+     *
+     * @return string|null
+     */
+    public function getOnUpdateWithDefault(): ?string
+    {
+        $rawBehavior = $this->getOnUpdate();
+        $platform = $this->getPlatform();
+        $defaultBehavior = ($platform) ? $platform->getDefaultForeignKeyOnUpdateBehavior() : null;
+
+        return $this->normalizeFKey($rawBehavior, $defaultBehavior);
+    }
+
+    /**
      * Returns the onDelete behavior.
      *
      * @return string
@@ -240,6 +259,20 @@ class ForeignKey extends MappingModel
     public function getOnDelete()
     {
         return $this->onDelete;
+    }
+
+    /**
+     * Returns the normalized onDelete behavior taking into account the default of the platform in case the behavior is implicit
+     *
+     * @return string|null
+     */
+    public function getOnDeleteWithDefault(): ?string
+    {
+        $rawBehavior = $this->getOnDelete();
+        $platform = $this->getPlatform();
+        $defaultBehavior = ($platform) ? $platform->getDefaultForeignKeyOnDeleteBehavior() : null;
+
+        return $this->normalizeFKey($rawBehavior, $defaultBehavior);
     }
 
     /**
@@ -833,6 +866,31 @@ class ForeignKey extends MappingModel
 
         return ((count($foreignPKCols) === count($foreignCols))
             && !array_diff($foreignPKCols, $foreignCols));
+    }
+
+    /**
+     * Returns whether this foreign key is not the primary key of the foreign
+     * table.
+     *
+     * @return bool Returns true if all columns inside this foreign key are not primary keys of the foreign table
+     */
+    public function isForeignNonPrimaryKey(): bool
+    {
+        $foreignTable = $this->getForeignTable();
+
+        $foreignPKCols = [];
+        foreach ($foreignTable->getPrimaryKey() as $fPKCol) {
+            $foreignPKCols[] = $fPKCol->getName();
+        }
+
+        $foreignCols = [];
+        foreach ($this->localColumns as $idx => $colName) {
+            if ($this->foreignColumns[$idx]) {
+                $foreignCols[] = $foreignTable->getColumn($this->foreignColumns[$idx])->getName();
+            }
+        }
+
+        return (bool)array_diff($foreignCols, $foreignPKCols);
     }
 
     /**

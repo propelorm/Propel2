@@ -13,6 +13,7 @@ use Propel\Runtime\ActiveQuery\Join;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Propel;
 use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Adapter\AdapterInterface;
 
 /**
  * Test class for Join.
@@ -25,7 +26,7 @@ class JoinTest extends BaseTestCase
     /**
      * DB adapter saved for later.
      *
-     * @var AbstractAdapter
+     * @var AdapterInterface
      */
     private $savedAdapter;
 
@@ -34,7 +35,7 @@ class JoinTest extends BaseTestCase
      */
     protected function setUp(): void
     {
-        Propel::init(dirname(__FILE__) . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
+        require_once __DIR__ . '/../../../../Fixtures/bookstore/build/conf/bookstore-conf.php';
         parent::setUp();
 
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter(null);
@@ -186,7 +187,7 @@ class JoinTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testEmptyJoinType()
+    public function testJoinDefaultsToInnerJoin()
     {
         $j = new Join();
         $this->assertEquals(Join::INNER_JOIN, $j->getJoinType());
@@ -195,11 +196,20 @@ class JoinTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testSetJoinType()
+    public function testSetJoinTypeThroughSetter()
     {
         $j = new Join();
         $j->setJoinType('foo');
         $this->assertEquals('foo', $j->getJoinType());
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetJoinTypeThroughConstructor()
+    {
+        $j = new Join('aCol', 'bCol', 'fooJoin');
+        $this->assertEquals('fooJoin', $j->getJoinType());
     }
 
     /**
@@ -262,5 +272,33 @@ class JoinTest extends BaseTestCase
         $j5 = new Join('foo', 'bar');
         $j6 = new Join('foo', 'bar');
         $this->assertTrue($j5->equals($j6), 'Joins without specified join type should be equal as they fallback to default join type');
+    }
+
+    /**
+     * @return void
+     */
+    public function testJoinResovesQualifiedColumnNames()
+    {
+        $j = new Join('a.colA', 'b.colB');
+
+        $this->assertEquals('a.colA', $j->getLeftColumn());
+        $this->assertEquals('a', $j->getLeftTableName());
+        $this->assertEquals('colA', $j->getLeftColumnName());
+
+        $this->assertEquals('b.colB', $j->getRightColumn());
+        $this->assertEquals('b', $j->getRightTableName());
+        $this->assertEquals('colB', $j->getRightColumnName());
+    }
+
+    /**
+     * @return void
+     */
+    public function testJoinObject()
+    {
+        $j = new Join(['a.colA0', 'a.colA1'], ['b.colB0', 'b.colB1'], Criteria::INNER_JOIN);
+        $this->assertEquals('a.colA0', $j->getLeftColumn(0));
+        $this->assertEquals('a.colA1', $j->getLeftColumn(1));
+        $this->assertEquals('b.colB0', $j->getRightColumn(0));
+        $this->assertEquals('b.colB1', $j->getRightColumn(1));
     }
 }

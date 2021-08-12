@@ -152,4 +152,13 @@ interface ServiceContainerInterface
      * @return \Psr\Log\LoggerInterface
      */
     public function getLogger($name = 'defaultLogger');
+
+    /**
+     * Initialize the internal database maps array
+     *
+     * @param array $databaseNameToTableMapClassNames
+     *
+     * @return void
+     */
+    public function initDatabaseMaps(array $databaseNameToTableMapClassNames = []): void;
 }

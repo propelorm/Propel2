@@ -13,6 +13,7 @@ use ComplexColumnTypeEntitySet2Query;
 use PHPUnit\Framework\TestCase;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * Tests the generated queries for array column types filters
@@ -110,12 +111,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testWhereInvalidValueThrowsException()
     {
+        $this->expectException(PropelException::class);
+
         ComplexColumnTypeEntitySet2Query::create()
             ->where('ComplexColumnTypeEntitySet2.Tags LIKE ?', 'bar231')
             ->find();

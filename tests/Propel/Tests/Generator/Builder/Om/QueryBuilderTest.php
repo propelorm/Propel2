@@ -9,10 +9,13 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\AcctAuditLogQuery;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookClubListQuery;
@@ -22,6 +25,7 @@ use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\BookstoreEmployeeAccountQuery;
 use Propel\Tests\Bookstore\BookSummaryQuery;
 use Propel\Tests\Bookstore\EssayQuery;
+use Propel\Tests\Bookstore\Map\AcctAuditLogTableMap;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
 use Propel\Tests\Bookstore\Map\BookListRelTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeAccountTableMap;
@@ -54,6 +58,7 @@ class QueryBuilderTest extends BookstoreTestBase
     {
         parent::setUp();
         include_once(__DIR__ . '/QueryBuilderTestClasses.php');
+        include_once(__DIR__ . '/TestableQueryBuilder.php');
     }
 
     /**
@@ -307,7 +312,7 @@ class QueryBuilderTest extends BookstoreTestBase
         $b->save($this->con);
 
         $book = BookQuery::create()->select(['Book.Title', 'Book.ISBN'])->findPk($b->getId(), $this->con);
-        $this->assertInternalType('array', $book);
+        $this->assertIsArray($book);
 
         $book = BookQuery::create()->filterByTitle('bar')->findPk($b->getId(), $this->con);
         $this->assertNull($book);
@@ -863,12 +868,12 @@ class QueryBuilderTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testFilterUsingCollectionByRelationNameCompositePk()
     {
+        $this->expectException(PropelException::class);
+
         BookstoreDataPopulator::depopulate();
         BookstoreDataPopulator::populate();
 
@@ -882,6 +887,26 @@ class QueryBuilderTest extends BookstoreTestBase
             ->find($this->con);
 
         $this->fail('Expected PropelException : filterBy{RelationName}() only accepts arguments of type {RelationName}');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFilterByRefNonPrimaryFKey()
+    {
+        BookstoreDataPopulator::depopulate();
+        BookstoreDataPopulator::populate();
+
+        $testBookstoreEmployeeAccount = BookstoreEmployeeAccountQuery::create()
+            ->findOne();
+        $testAccAuditLog = $testBookstoreEmployeeAccount->getAcctAuditLogs();
+
+        $result = AcctAuditLogQuery::create()
+            ->addJoin(AcctAuditLogTableMap::COL_UID, BookstoreEmployeeAccountTableMap::COL_LOGIN)
+            ->filterByBookstoreEmployeeAccount($testBookstoreEmployeeAccount)
+            ->find($this->con);
+
+        $this->assertEquals($testAccAuditLog, $result, 'Generated query handles filterByRefFk() methods correctly for non primary fkeys');
     }
 
     /**
@@ -1067,6 +1092,36 @@ class QueryBuilderTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testUseFkQueryWith()
+    {
+        $q = BookQuery::create()
+            ->withAuthorQuery(
+                function (AuthorQuery $q) {
+                    return $q->filterByFirstName('Leo');
+                }
+            );
+        $q1 = BookQuery::create()
+            ->useAuthorQuery()
+            ->filterByFirstName('Leo')
+            ->endUse();
+        $this->assertTrue($q->equals($q1), 'useFkQuery() translates to a condition on a left join on non-required columns');
+
+        $q = BookSummaryQuery::create()
+            ->withSummarizedBookQuery(
+                function (BookQuery $q) {
+                    return $q->filterByTitle('War and Peace');
+                }
+            );
+        $q1 = BookSummaryQuery::create()
+            ->useSummarizedBookQuery()
+            ->filterByTitle('War and Peace')
+            ->endUse();
+        $this->assertEquals($q1, $q, 'useFkQuery() translates to a condition on an inner join on required columns');
+    }
+
+    /**
+     * @return void
+     */
     public function testUseFkQueryJoinType()
     {
         $q = BookQuery::create()
@@ -1237,6 +1292,58 @@ class QueryBuilderTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testUseRelationExistsQuery()
+    {
+        $expected = BookQuery::create()
+        ->useExistsQuery('Author')
+        ->filterByFirstName('Leo')
+        ->endUse();
+        $actual = BookQuery::create()
+        ->useAuthorExistsQuery()
+        ->filterByFirstName('Leo')
+        ->endUse();
+
+        $this->assertEquals($expected, $actual, 'useExistsQuery() is available and calls correct parent method');
+    }
+
+    /**
+     * @return void
+     */
+    public function testUseRelationNotExistsQuery()
+    {
+        $expected = BookQuery::create()
+        ->useExistsQuery('Author', null, null, ExistsCriterion::TYPE_NOT_EXISTS)
+        ->filterByFirstName('Leo')
+        ->endUse();
+        $actual = BookQuery::create()
+        ->useAuthorNotExistsQuery()
+        ->filterByFirstName('Leo')
+        ->endUse();
+
+        $this->assertEquals($expected, $actual, 'useNotExistsQuery() is available and calls correct parent method');
+    }
+
+    /**
+     * @return void
+     */
+    public function testUseRelationExistsQueryWithCustomQueryClass()
+    {
+        $query = BookQuery::create()->useAuthorExistsQuery(null, BookClubListQuery::class, false);
+        $this->assertInstanceOf(BookClubListQuery::class, $query, 'useExistsQuery() passes on given query class');
+    }
+
+    /**
+     * @return void
+     */
+    public function testUseRelationNotExistsQueryWithCustomQueryClass()
+    {
+        $query = BookQuery::create()->useAuthorNotExistsQuery(null, BookClubListQuery::class);
+        $this->assertInstanceOf(BookClubListQuery::class, $query, 'useNotExistsQuery() passes on given query class');
+    }
+
+    /**
+     * @return void
+     */
     public function testPrune()
     {
         $q = BookQuery::create()->prune();
@@ -1282,5 +1389,45 @@ class QueryBuilderTest extends BookstoreTestBase
         $testBookListRel = BookListRelQuery::create()->findOne();
         $nbBookListRel = BookListRelQuery::create()->prune($testBookListRel)->count();
         $this->assertEquals(1, $nbBookListRel, 'prune() removes an object from the result');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFindPkSimpleThrowsExceptionWhenTableIsAbstract(): void
+    {
+        $databaseXml = '
+<database>
+    <table name="my_table" abstract="true">
+        <column name="id" type="integer" primaryKey="true"/>
+    </table>
+</database>
+';
+        $script = TestableQueryBuilder::forTableFromXml($databaseXml, 'my_table')->buildScript('addFindPkSimple');
+        $throwStatement = 'throw new PropelException(\'MyTable is declared abstract, you cannot query it.\');';
+        $msg = 'Query class for abstract table should throw exception when calling findPkSimple()';
+        $this->assertStringContainsString($throwStatement, $script, $msg);
+    }
+
+    /**
+     * @return void
+     */
+    public function testFindPkSimpleThrowsNoExceptionWhenTableIsAbstractWithInheritance(): void
+    {
+        $databaseXml = '
+<database>
+    <table name="my_table" abstract="true">
+        <column name="id" type="integer" primaryKey="true"/>
+        <column name="class_key" type="integer" inheritance="single">
+            <inheritance key="1" class="class1"/>
+            <inheritance key="2" class="class2" extends="my_table"/>
+        </column>
+    </table>
+</database>
+';
+        $script = TestableQueryBuilder::forTableFromXml($databaseXml, 'my_table')->buildScript('addFindPkSimple');
+        $throwStatement = 'throw new PropelException(\'MyTable is declared abstract, you cannot query it.\');';
+        $msg = 'Query class for abstract table should not have abstract findPkSimple() method if table uses inheritance';
+        $this->assertStringNotContainsString($throwStatement, $script, $msg);
     }
 }

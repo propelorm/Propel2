@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\Formatter;
 
+use PDO;
 use Propel\Runtime\DataFetcher\ArrayDataFetcher;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
@@ -94,6 +95,42 @@ class DataFetcherTest extends BookstoreEmptyTestBase
         }
         $this->assertCount(4, $rows);
         $this->assertEquals('The Tin Drum', $last[1]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testPDODataFetcherFetchAllReturnsAllRowsAsArray()
+    {
+        $query = 'SELECT id, title FROM book';
+        $fetcher = $this->con->query($query);
+        $rows = $fetcher->fetchAll();
+
+        $this->assertIsArray($rows, 'PDODataFetcher::fetchAll() should return an array');
+        $this->assertCount($fetcher->count(), $rows, 'Expected number of rows should be returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testPDODataFetcherFetchAllUsesFetchStyle()
+    {
+        $query = 'SELECT id, title FROM book';
+        $keyOptions = [
+            PDO::FETCH_BOTH => ['id', 0, 'title', 1],
+            PDO::FETCH_NUM => [0, 1],
+            PDO::FETCH_ASSOC => ['id', 'title'],
+        ];
+
+        foreach ($keyOptions as $fetchStyle => $expectedKeys) {
+            $fetcher = $this->con->query($query);
+            $rows = $fetcher->fetchAll($fetchStyle);
+            $this->assertNotEmpty($rows);
+            foreach ($rows as $row) {
+                $keys = array_keys($row);
+                $this->assertEquals($expectedKeys, $keys);
+            }
+        }
     }
 
     /**

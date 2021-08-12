@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Manager;
 
 use Propel\Generator\Config\GeneratorConfig;
+use Propel\Generator\Manager\MigrationManager;
 use Propel\Tests\TestCase;
 
 /**
@@ -25,7 +26,7 @@ class MigrationManagerTest extends TestCase
 
         $connections = $generatorConfig->getBuildConnections();
 
-        $migrationManager = $this->getMockBuilder('Propel\Generator\Manager\MigrationManager')
+        $migrationManager = $this->getMockBuilder(MigrationManager::class)
             ->setMethods(['getMigrationTimestamps'])
             ->getMock();
         $migrationManager->setGeneratorConfig($generatorConfig);
@@ -195,8 +196,36 @@ class MigrationManagerTest extends TestCase
     {
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
 
-        $body = $migrationManager->getMigrationClassBody('foo', 'bar', 4, 'migration comment');
+        $body = $migrationManager->getMigrationClassBody(['foo' => ''], ['foo' => ''], 4, 'migration comment');
 
-        $this->assertContains('public $comment = \'migration comment\';', $body);
+        $this->assertStringContainsString('public $comment = \'migration comment\';', $body);
+    }
+
+    /**
+     * @return void
+     */
+    public function testBuildVariableNamesFromConnectionNames()
+    {
+        $manager = new class() extends MigrationManager{
+            public function build(array $migrationsUp, array $migrationsDown): array
+            {
+                return static::buildConnectionToVariableNameMap($migrationsUp, $migrationsDown);
+            }
+        };
+        
+        $migrationsUp = array_fill_keys(['default', 'with space', '\/', '123'], '');
+        $migrationsDown = array_fill_keys(['default', 'connection$', 'connection&', 'connection%'], '');
+        
+        $expectedResult = [
+            'default' => '$connection_default',
+            'with space' => '$connection_withspace',
+            '\/' => '$connection_2',
+            '123' => '$connection_123',
+            'connection$' => '$connection_connection',
+            'connection&' => '$connection_connectionI',
+            'connection%' => '$connection_connectionII',
+        ];
+        $result = $manager->build($migrationsUp, $migrationsDown);
+        $this->assertEquals($expectedResult, $result);
     }
 }

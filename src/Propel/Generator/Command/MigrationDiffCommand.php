@@ -100,7 +100,10 @@ class MigrationDiffCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if ($manager->hasPendingMigrations()) {
-            throw new RuntimeException('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
+            throw new RuntimeException(sprintf(
+                'Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task. %s',
+                "\n" . implode("\n", $manager->getValidMigrationTimestamps())
+            ));
         }
 
         $totalNbTables = 0;
@@ -119,6 +122,8 @@ class MigrationDiffCommand extends AbstractCommand
 
             $conn = $manager->getAdapterConnection($name);
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
+
+            $appDatabase->setPlatform($platform);
 
             if ($platform && !$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));

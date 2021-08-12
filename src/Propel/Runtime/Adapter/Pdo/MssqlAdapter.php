@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
@@ -26,7 +27,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * MS SQL Server does not support SET NAMES
      *
-     * @see AdapterInterface::setCharset()
+     * @see \Propel\Runtime\Adapter\AdapterInterface::setCharset()
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param string $charset
@@ -85,7 +86,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifier()
+     * @see \Propel\Runtime\Adapter\AdapterInterface::quoteIdentifier()
      *
      * @param string $text
      *
@@ -97,7 +98,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see \Propel\Runtime\Adapter\AdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      *
@@ -110,7 +111,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::random()
+     * @see SqlAdapterInterface::random()
      *
      * @param string|null $seed
      *
@@ -129,11 +130,12 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @author Benjamin Runnels <kraven@kraven.org>
      *
-     * @see AdapterInterface::applyLimit()
+     * @see SqlAdapterInterface::applyLimit()
      *
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
      * @throws \Propel\Runtime\Adapter\Exception\ColumnNotFoundException
@@ -141,7 +143,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         // make sure offset and limit are numeric
         if (!is_numeric($offset) || !is_numeric($limit)) {
@@ -327,5 +329,17 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                 $sql = str_replace($match, ':p' . ($key + 1), $sql);
             }
         }
+    }
+
+    /**
+     * @see SqlAdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
     }
 }

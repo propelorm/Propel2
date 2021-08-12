@@ -146,6 +146,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         $this->addAttributes($script);
 
         $script .= $this->addFieldsAttributes();
+        $this->addNormalizedColumnNameMap($script);
 
         if ($table->hasValueSetColumns()) {
             $this->addValueSetColumnAttributes($script);
@@ -172,8 +173,6 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             $this->addGetTableMap($script);
         }
 
-        $this->addBuildTableMap($script);
-
         $this->addDoDelete($script);
         $this->addDoDeleteAll($script);
 
@@ -190,6 +189,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addSelectMethods(&$script)
     {
         $this->addAddSelectColumns($script);
+        $this->addRemoveSelectColumns($script);
     }
 
     /**
@@ -445,6 +445,47 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     }
 
     /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addNormalizedColumnNameMap(&$script): void
+    {
+        $table = $this->getTable();
+        $tableColumns = $table->getColumns();
+
+        $arrayString = '';
+        foreach ($tableColumns as $column) {
+            $variants = [
+                $column->getPhpName(),                                    // ColumnName => COLUMN_NAME
+                $table->getPhpName() . '.' . $column->getPhpName(),       // TableName.ColumnName => COLUMN_NAME
+                $column->getCamelCaseName(),                              // columnName => COLUMN_NAME
+                $table->getCamelCaseName() . '.' . $column->getCamelCaseName(), // tableName.columnName => COLUMN_NAME
+                $this->getColumnConstant($column, $this->getTableMapClass()),   // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
+                $column->getConstantName(),                               // COL_COLUMN_NAME => COLUMN_NAME
+                $column->getName(),                                       // column_name => COLUMN_NAME
+                $table->getName() . '.' . $column->getName(),             // table_name.column_name => COLUMN_NAME
+            ];
+
+            $variants = array_unique($variants);
+
+            $normalizedName = strtoupper($column->getName());
+            array_walk($variants, static function ($variant) use (&$arrayString, $normalizedName) {
+                $arrayString .= PHP_EOL . "        '{$variant}' => '{$normalizedName}',";
+            });
+        }
+
+        $script .= '
+    /**
+     * Holds a list of column names and their normalized version.
+     *
+     * @var string[]
+     */
+    protected $normalizedColumnNameMap = [' . $arrayString . PHP_EOL
+            . '    ];' . PHP_EOL;
+    }
+
+    /**
      * Closes class.
      *
      * @param string $script The script will be modified in this method.
@@ -453,37 +494,11 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     protected function addClassClose(&$script)
     {
+        $unqualifiedClassName = $this->getUnqualifiedClassName();
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
-// This is the static code needed to register the TableMap for this table with the main Propel class.
-//
-" . $this->getUnqualifiedClassName() . "::buildTableMap();
+} // $unqualifiedClassName
 ";
         $this->applyBehaviorModifier('tableMapFilter', $script, '');
-    }
-
-    /**
-     * Adds the buildTableMap() method.
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addBuildTableMap(&$script)
-    {
-        $this->declareClassFromBuilder($this->getTableMapBuilder());
-        $script .= "
-    /**
-     * Add a TableMap instance to the database for this tableMap class.
-     */
-    public static function buildTableMap()
-    {
-        \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
-            \$dbMap->addTableObject(new " . $this->getTableMapClass() . "());
-        }
-    }
-";
     }
 
     /**
@@ -657,8 +672,19 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addGetBehaviors(&$script)
     {
         $behaviors = $this->getTable()->getBehaviors();
-        if ($behaviors) {
-            $script .= "
+        if (!$behaviors) {
+            return;
+        }
+
+        $stringifiedBehaviors = [];
+        foreach ($behaviors as $behavior) {
+            $id = $behavior->getId();
+            $params = $this->stringify($behavior->getParameters());
+            $stringifiedBehaviors[] = "'$id' => $params,";
+        }
+        $itemsString = implode(PHP_EOL . '            ', $stringifiedBehaviors);
+
+        $script .= "
     /**
      *
      * Gets the list of behaviors registered for this table
@@ -667,28 +693,33 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     public function getBehaviors()
     {
-        return array(";
-            foreach ($behaviors as $behavior) {
-                $script .= "
-            '{$behavior->getId()}' => array(";
-                foreach ($behavior->getParameters() as $key => $value) {
-                    $script .= "'$key' => ";
-                    if (is_array($value)) {
-                        $string = var_export($value, true);
-                        $string = str_replace("\n", '', $string);
-                        $string = str_replace('  ', '', $string);
-                        $script .= $string . ', ';
-                    } else {
-                        $script .= "'$value', ";
-                    }
-                }
-                $script .= '),';
-            }
-            $script .= "
+        return array(
+            $itemsString
         );
     } // getBehaviors()
 ";
+    }
+
+    /**
+     * @param bool|int|float|string|array|null $value
+     *
+     * @return string
+     */
+    protected function stringify($value): string
+    {
+        if (!is_array($value)) {
+            return var_export($value, true);
         }
+
+        $items = [];
+        foreach ($value as $key => $value) {
+            $keyString = var_export($key, true);
+            $valString = $this->stringify($value);
+            $items[] = "$keyString => $valString";
+        }
+        $itemsCsv = implode(', ', $items);
+
+        return "[$itemsCsv]";
     }
 
     /**
@@ -915,7 +946,6 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             \$pks = [];
             ";
 
-            $pks = [];
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
@@ -968,12 +998,12 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     {
         $table = $this->getTable();
         if ($table->getChildrenColumn()) {
-            $this->addGetOMClass_Inheritance($script);
+            $this->addGetOMClassInheritance($script);
         } else {
             if ($table->isAbstract()) {
-                $this->addGetOMClass_NoInheritance_Abstract($script);
+                $this->addGetOMClassNoInheritanceAbstract($script);
             } else {
-                $this->addGetOMClass_NoInheritance($script);
+                $this->addGetOMClassNoInheritance($script);
             }
         }
     }
@@ -985,7 +1015,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_Inheritance(&$script)
+    protected function addGetOMClassInheritance(&$script)
     {
         $col = $this->getTable()->getChildrenColumn();
         $script .= "
@@ -1021,7 +1051,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             } /* foreach */
             $script .= "
                 default:
-                    \$omClass = {$this->getTableMapClassName()}::CLASS_DEFAULT;
+                    \$omClass = \$withPrefix
+                        ? {$this->getTableMapClassName()}::CLASS_DEFAULT
+                        : {$this->getTableMapClassName()}::OM_CLASS;
 ";
             $script .= "
             } // switch
@@ -1037,7 +1069,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         }
         $script .= "
         } catch (\Exception \$e) {
-            throw new PropelException('Unable to get OM class.', \$e);
+            throw new PropelException('Unable to get OM class.', 0, \$e);
         }
 
         return \$omClass;
@@ -1052,7 +1084,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_NoInheritance(&$script)
+    protected function addGetOMClassNoInheritance(&$script)
     {
         $script .= "
     /**
@@ -1080,18 +1112,23 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClass_NoInheritance_Abstract(&$script)
+    protected function addGetOMClassNoInheritanceAbstract(&$script)
     {
+        $objectClassName = $this->getObjectClassName();
+
         $script .= "
     /**
      * The class that the tableMap will make instances of.
      *
      * This method must be overridden by the stub subclass, because
-     * " . $this->getObjectClassName() . " is declared abstract in the schema.
+     * $objectClassName is declared abstract in the schema.
      *
      * @param boolean \$withPrefix
      */
-    abstract public static function getOMClass(\$withPrefix = true);
+    public static function getOMClass(\$withPrefix = true)
+    {
+        throw new PropelException('$objectClassName is declared abstract, it cannot be instantiated.');
+    }
 ";
     }
 
@@ -1270,6 +1307,53 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     }
 
  // addAddSelectColumns()
+
+    /**
+     * Adds the removeSelectColumns() method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
+    protected function addRemoveSelectColumns(&$script)
+    {
+        $script .= "
+    /**
+     * Remove all the columns needed to create a new object.
+     *
+     * Note: any columns that were marked with lazyLoad=\"true\" in the
+     * XML schema will not be removed as they are only loaded on demand.
+     *
+     * @param Criteria \$criteria object containing the columns to remove.
+     * @param string   \$alias    optional table alias
+     * @throws PropelException Any exceptions caught during processing will be
+     *                         rethrown wrapped into a PropelException.
+     */
+    public static function removeSelectColumns(Criteria \$criteria, \$alias = null)
+    {
+        if (null === \$alias) {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->removeSelectColumn({$col->getFQConstantName()});";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        } else {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->removeSelectColumn(\$alias . '." . $col->getName() . "');";
+            } // if !col->isLazyLoad
+        } // foreach
+        $script .= "
+        }";
+        $script .= "
+    }
+";
+    }
+
+ // addRemoveSelectColumns()
 
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.

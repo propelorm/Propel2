@@ -8,7 +8,7 @@
 
 namespace Propel\Runtime\Connection;
 
-use Exception;
+use Throwable;
 
 /**
  * Transaction helper trait
@@ -19,11 +19,11 @@ trait TransactionTrait
      * Executes the given callable within a transaction.
      * This helper method takes care to commit or rollback the transaction.
      *
-     * In case you want the transaction to rollback just throw an Exception of any type.
+     * In case you want the transaction to rollback just throw an Throwable of any type.
      *
      * @param callable $callable A callable to be wrapped in a transaction
      *
-     * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
+     * @throws \Throwable Re-throws a possible <code>Throwable</code> triggered by the callable.
      *
      * @return mixed Returns the result of the callable.
      */
@@ -32,12 +32,12 @@ trait TransactionTrait
         $this->beginTransaction();
 
         try {
-            $result = call_user_func($callable);
+            $result = $callable();
 
             $this->commit();
 
             return $result;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->rollBack();
 
             throw $e;

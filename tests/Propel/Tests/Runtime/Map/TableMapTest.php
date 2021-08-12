@@ -8,10 +8,12 @@
 
 namespace Propel\Tests\Runtime\Map;
 
+use Exception;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
+use Propel\Runtime\Map\Exception\RelationNotFoundException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Tests\TestCase;
@@ -140,6 +142,18 @@ class TableMapTest extends TestCase
     /**
      * @return void
      */
+    public function testFindColumnsByName()
+    {
+        $this->assertNull($this->tmap->findColumnByName('LeName'), 'findColumnByName() should return null on empty map');
+        $column = $this->tmap->addColumn('BAR', 'Bar', 'INTEGER');
+        $this->assertEquals($column, $this->tmap->findColumnByName('BAR'), 'findColumnByName() should find column if regular name matches');
+        $this->assertEquals($column, $this->tmap->findColumnByName('Bar'), 'findColumnByName() should find column if phpName matches');
+        $this->assertEquals($column, $this->tmap->findColumnByName('table.bar'), 'findColumnByName() should try normalizing input name');
+    }
+
+    /**
+     * @return void
+     */
     public function testAddPrimaryKey()
     {
         $column1 = $this->tmap->addPrimaryKey('BAR', 'Bar', 'INTEGER');
@@ -196,12 +210,12 @@ class TableMapTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Map\Exception\RelationNotFoundException
-     *
      * @return void
      */
     public function testLoadWrongRelations()
     {
+        $this->expectException(RelationNotFoundException::class);
+
         $this->tmap->getRelation('Bar');
     }
 
@@ -283,16 +297,37 @@ class TableMapTest extends TestCase
     /**
      * @return void
      */
-    public function testGetCollectionClassName()
+    public function testGetCollectionClassNameReturnsObjectCollection()
     {
-        $this->assertEquals('\Propel\Runtime\Collection\ObjectCollection', $this->tmap->getCollectionClassName());
-
-        $this->tmap->setClassName('Propel\Tests\Runtime\Map\Test');
-        $this->assertEquals('Propel\Tests\Runtime\Map\TestCollection', $this->tmap->getCollectionClassName());
+        $this->assertEquals(ObjectCollection::class, $this->tmap->getCollectionClassName());
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetCollectionClassNameReturnsCustomCollection()
+    {
+        $classWithCollection = __NAMESPACE__ . '\ExtendingTest';
+        $this->tmap->setClassName($classWithCollection);
+        $this->assertEquals(ExtendingTestCollection::class, $this->tmap->getCollectionClassName());
+    }
+        
+    /**
+     * @return void
+     */
+    public function testGetCollectionClassNameReturnsOnlyCollections()
+    {
+        $classWithUnrelatedCollection = __NAMESPACE__ . '\NonExtendingTest';
+        $this->tmap->setClassName($classWithUnrelatedCollection);
+        $this->assertEquals(ObjectCollection::class, $this->tmap->getCollectionClassName());
     }
 }
 
-class TestCollection extends ObjectCollection
+class ExtendingTestCollection extends ObjectCollection
+{
+}
+
+class NonExtendingTestCollection
 {
 }
 

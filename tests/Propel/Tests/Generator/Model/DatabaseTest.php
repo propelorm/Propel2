@@ -17,7 +17,7 @@ use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PgsqlPlatform;
-use Symfony\Component\Filesystem\Filesystem;
+use Propel\Generator\Util\VfsTrait;
 
 /**
  * Unit test suite for Database model class.
@@ -26,6 +26,8 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class DatabaseTest extends ModelTestCase
 {
+    use VfsTrait;
+
     /**
      * @return void
      */
@@ -456,25 +458,41 @@ class DatabaseTest extends ModelTestCase
     }
 
     /**
-     * @return void
+     * return array
      */
-    public function testSetBaseClasses()
+    public function baseClassDataProvider(): array
     {
-        $database = new Database();
-        $database->setBaseClass('CustomBaseObject');
-
-        $this->assertSame('CustomBaseObject', $database->getBaseClass());
+        return [
+            // [<Class name>, <Expected class name>, <message>]]
+            ['\CustomBaseQueryObject', '\CustomBaseQueryObject', 'Setter should set base query class'],
+            ['CustomBaseQueryObject', '\CustomBaseQueryObject', 'Setter should set absolute namespace of base query class'],
+        ];
     }
 
     /**
+     * @dataProvider baseClassDataProvider
+     *
      * @return void
      */
-    public function testSetBaseQueryClasses()
+    public function testSetBaseClass(string $className, string $expectedClassName, string $message)
     {
         $database = new Database();
-        $database->setBaseQueryClass('CustomBaseQueryObject');
+        $database->setBaseClass($className);
 
-        $this->assertSame('CustomBaseQueryObject', $database->getBaseQueryClass());
+        $this->assertSame($expectedClassName, $database->getBaseClass(), $message);
+    }
+
+    /**
+     * @dataProvider baseClassDataProvider
+     *
+     * @return void
+     */
+    public function testSetBaseQueryClass(string $className, string $expectedClassName, string $message)
+    {
+        $database = new Database();
+        $database->setBaseQueryClass($className);
+
+        $this->assertSame($expectedClassName, $database->getBaseQueryClass(), $message);
     }
 
     /**
@@ -537,13 +555,10 @@ propel:
           autoNamespace: true
 EOF;
 
-        $configFilename = sys_get_temp_dir() . '/propel.yml';
-
-        $filesystem = new Filesystem();
-        $filesystem->dumpFile($configFilename, $yamlConf);
+        $configFile = $this->newFile('propel.yml', $yamlConf);
 
         $schema = 'TestSchema';
-        $config = new GeneratorConfig($configFilename);
+        $config = new GeneratorConfig($configFile->url());
         $platform = new MysqlPlatform();
         $parentSchema = new Schema($platform);
         $parentSchema->setGeneratorConfig($config);
@@ -554,5 +569,51 @@ EOF;
         $db->setSchema($schema);
 
         $this->assertEquals($schema, $db->getNamespace());
+    }
+
+    /**
+     * @return array
+     */
+    public function combinedNamespaceDataProvider(): array
+    {
+        // [<Database namespace>, <Table namespace>, <Combined namespace>, <Message>]
+        return [
+            [null, null, null, 'No namespaces should leave table namespace empty'],
+            ['Le\\Database', null, 'Le\\Database', 'No table namespace should use database namespace'],
+            [null, 'Il\\Table', 'Il\\Table', 'No database namespace should result in unchanged table namespace'],
+            ['Le\\Database', '\\Il\\Table', 'Il\\Table', 'Absolute table namespace should superseed database namespace'],
+            ['Le\\Database', 'Il\\Table', 'Le\\Database\\Il\\Table', 'Relative table namespace should be apended to database namespace'],
+            ['Le\\Database', 'Le\\Database', 'Le\\Database\\Le\\Database', 'Same relative namespace on database and table should be doubled'],
+            ['Le\\Database', '\\Le\\Database', 'Le\\Database', 'Same absolute namespace on database and table should be used only once (as all absolute namespaces)'],
+        ];
+    }
+
+    /**
+     * @dataProvider combinedNamespaceDataProvider
+     *
+     * @param string|null $databaseNamespace
+     * @param string|null $tableNamespace
+     * @param string|null $expectedNamespace
+     * @param string $message
+     *
+     * @return void
+     */
+    public function testCombineNamespace($databaseNamespace, $tableNamespace, $expectedNamespace, $message)
+    {
+        $database = new Database();
+
+        if ($databaseNamespace !== null) {
+            $database->setNamespace($databaseNamespace);
+        }
+
+        $table = new Table();
+        if ($tableNamespace !== null) {
+            $table->setNamespace($tableNamespace);
+        }
+
+        $database->addTable($table);
+        $combinedNamespace = $table->getNamespace();
+
+        $this->assertEquals($expectedNamespace, $combinedNamespace, $message);
     }
 }

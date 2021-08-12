@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * MIT License. This file is part of the Propel package.
@@ -10,7 +10,7 @@ namespace Propel\Generator\Util;
 
 use Exception;
 use PDO;
-use PDOStatement;
+use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Config\QuickGeneratorConfig;
@@ -18,46 +18,52 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
+use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Propel;
 
 class QuickBuilder
 {
+    use VfsTrait;
+
     /**
      * The Xml.
      *
      * @var string
      */
-    protected $schema;
+    protected $schema = '';
 
     /**
      * The Database Schema.
      *
      * @var string
      */
-    protected $schemaName;
+    protected $schemaName = '';
 
     /**
-     * @var \Propel\Generator\Platform\PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface|null
      */
     protected $platform;
 
     /**
-     * @var \Propel\Generator\Config\GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface|null
      */
     protected $config;
 
     /**
-     * @var \Propel\Generator\Model\Database
+     * @var \Propel\Generator\Model\Database|null
      */
     protected $database;
 
     /**
-     * @var \Propel\Generator\Reverse\SchemaParserInterface
+     * @var \Propel\Generator\Reverse\SchemaParserInterface|null
      */
     protected $parser;
 
@@ -74,11 +80,19 @@ class QuickBuilder
     protected $identifierQuoting = false;
 
     /**
+     * If use the virtual or physical filesystem.
+     * Default to virtual.
+     *
+     * @var bool
+     */
+    protected $vfs = true;
+
+    /**
      * @param string $schema
      *
      * @return void
      */
-    public function setSchema($schema)
+    public function setSchema(string $schema): void
     {
         $this->schema = $schema;
     }
@@ -86,7 +100,7 @@ class QuickBuilder
     /**
      * @return string
      */
-    public function getSchema()
+    public function getSchema(): string
     {
         return $this->schema;
     }
@@ -96,7 +110,7 @@ class QuickBuilder
      *
      * @return void
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName(string $schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -104,7 +118,7 @@ class QuickBuilder
     /**
      * @return string
      */
-    public function getSchemaName()
+    public function getSchemaName(): string
     {
         return $this->schemaName;
     }
@@ -114,15 +128,15 @@ class QuickBuilder
      *
      * @return void
      */
-    public function setParser($parser)
+    public function setParser(SchemaParserInterface $parser): void
     {
         $this->parser = $parser;
     }
 
     /**
-     * @return \Propel\Generator\Reverse\SchemaParserInterface
+     * @return \Propel\Generator\Reverse\SchemaParserInterface|null
      */
-    public function getParser()
+    public function getParser(): ?SchemaParserInterface
     {
         return $this->parser;
     }
@@ -134,7 +148,7 @@ class QuickBuilder
      *
      * @return void
      */
-    public function setPlatform($platform)
+    public function setPlatform(PlatformInterface $platform): void
     {
         $this->platform = $platform;
     }
@@ -144,7 +158,7 @@ class QuickBuilder
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    public function getPlatform()
+    public function getPlatform(): PlatformInterface
     {
         if ($this->platform === null) {
             $this->platform = new SqlitePlatform();
@@ -162,7 +176,7 @@ class QuickBuilder
      *
      * @return void
      */
-    public function setConfig(GeneratorConfigInterface $config)
+    public function setConfig(GeneratorConfigInterface $config): void
     {
         $this->config = $config;
     }
@@ -182,18 +196,44 @@ class QuickBuilder
     }
 
     /**
+     * @return bool
+     */
+    public function isVfs(): bool
+    {
+        return $this->vfs;
+    }
+
+    /**
+     * @param bool $vfs
+     *
+     * @return void
+     */
+    public function setVfs(bool $vfs): void
+    {
+        $this->vfs = $vfs;
+    }
+
+    /**
      * @param string $schema
      * @param string|null $dsn
      * @param string|null $user
      * @param string|null $pass
      * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     * @param bool $vfs
      *
      * @return \Propel\Runtime\Connection\ConnectionWrapper
      */
-    public static function buildSchema($schema, $dsn = null, $user = null, $pass = null, $adapter = null)
-    {
+    public static function buildSchema(
+        string $schema,
+        ?string $dsn = null,
+        ?string $user = null,
+        ?string $pass = null,
+        ?AdapterInterface $adapter = null,
+        bool $vfs = true
+    ): ConnectionWrapper {
         $builder = new self();
         $builder->setSchema($schema);
+        $builder->setVfs($vfs);
 
         return $builder->build($dsn, $user, $pass, $adapter);
     }
@@ -207,17 +247,17 @@ class QuickBuilder
      *
      * @return \Propel\Runtime\Connection\ConnectionWrapper
      */
-    public function build($dsn = null, $user = null, $pass = null, $adapter = null, ?array $classTargets = null)
-    {
-        if ($dsn === null) {
-            $dsn = 'sqlite::memory:';
-        }
-        if ($adapter === null) {
-            $adapter = new SqliteAdapter();
-        }
-        if ($classTargets === null) {
-            $classTargets = $this->classTargets;
-        }
+    public function build(
+        ?string $dsn = null,
+        ?string $user = null,
+        ?string $pass = null,
+        ?AdapterInterface $adapter = null,
+        ?array $classTargets = null
+    ): ConnectionWrapper {
+        $dsn = $dsn ?? 'sqlite::memory:';
+        $adapter = $adapter ?? new SqliteAdapter();
+        $classTargets = $classTargets ?? $this->classTargets;
+
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
@@ -235,7 +275,7 @@ class QuickBuilder
     /**
      * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase()
+    public function getDatabase(): ?Database
     {
         if ($this->database === null) {
             $xtad = new SchemaReader($this->getPlatform());
@@ -252,9 +292,9 @@ class QuickBuilder
      *
      * @throws \Exception
      *
-     * @return int
+     * @return int the number of statements executed
      */
-    public function buildSQL(ConnectionInterface $con)
+    public function buildSQL(ConnectionInterface $con): int
     {
         $sql = $this->getSQL();
         $statements = SqlParser::parseString($sql);
@@ -265,7 +305,7 @@ class QuickBuilder
             }
             try {
                 $stmt = $con->prepare($statement);
-                if ($stmt instanceof PDOStatement) {
+                if ($stmt instanceof StatementInterface) {
                     // only execute if has no error
                     $stmt->execute();
                 }
@@ -284,7 +324,7 @@ class QuickBuilder
      *
      * @return \Propel\Generator\Model\Database|null
      */
-    public function updateDB(ConnectionInterface $con)
+    public function updateDB(ConnectionInterface $con): ?Database
     {
         $database = $this->readConnectedDatabase();
         $diff = DatabaseComparator::computeDiff($database, $this->database);
@@ -319,7 +359,7 @@ class QuickBuilder
     /**
      * @return \Propel\Generator\Model\Database
      */
-    public function readConnectedDatabase()
+    public function readConnectedDatabase(): Database
     {
         $this->getDatabase();
         $database = new Database();
@@ -334,7 +374,7 @@ class QuickBuilder
     /**
      * @return string
      */
-    public function getSQL()
+    public function getSQL(): string
     {
         /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform();
@@ -343,11 +383,11 @@ class QuickBuilder
     }
 
     /**
-     * @param string[]|null $classTargets
+     * @param array|null $classTargets
      *
      * @return string
      */
-    public function getBuildName($classTargets = null)
+    public function getBuildName(?array $classTargets = null): string
     {
         $tables = [];
         foreach ($this->getDatabase()->getTables() as $table) {
@@ -367,53 +407,29 @@ class QuickBuilder
     }
 
     /**
+     * Build the classes files and include them.
+     *
+     * When generated to virtual filesystem, the classes reside in a unique file. When they're are built to
+     * physical filesystem, which is supposed to be for debugging purpose, the classes reside on separate file,
+     * for easier debug.
+     *
      * @param string[]|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
-     * @param bool $separate pass true to get for each class a own file. better for debugging.
      *
      * @return void
      */
-    public function buildClasses(?array $classTargets = null, $separate = false)
+    public function buildClasses(?array $classTargets = null): void
     {
-        $classes = $classTargets === null ? ['tablemap', 'object', 'query', 'objectstub', 'querystub'] : $classTargets;
+        $classes = $classTargets ?? ['tablemap', 'object', 'query', 'objectstub', 'querystub'];
 
-        $dirHash = substr(sha1(getcwd()), 0, 10);
-        $dir = sys_get_temp_dir() . '/propelQuickBuild-' . Propel::VERSION . "-$dirHash/";
+        $includes = $this->isVfs() ? $this->buildClassesToVirtual($classes, $this->getDatabase()->getTables())
+            : $this->buildClassesToPhysical($classes, $this->getDatabase()->getTables());
 
-        if (!is_dir($dir)) {
-            mkdir($dir);
-        }
-
-        $includes = [];
-        $allCode = '';
-        $allCodeName = [];
-        foreach ($this->getDatabase()->getTables() as $table) {
-            if (5 > count($allCodeName)) {
-                $allCodeName[] = $table->getPhpName();
-            }
-
-            if ($separate) {
-                foreach ($classes as $class) {
-                    $code = $this->getClassesForTable($table, [$class]);
-                        $tempFile = $dir
-                            . str_replace('\\', '-', $table->getPhpName())
-                            . "-$class"
-                            . '.php';
-                        file_put_contents($tempFile, "<?php\n" . $code);
-                        $includes[] = $tempFile;
-                }
-            } else {
-                $code = $this->getClassesForTable($table, $classes);
-                $allCode .= $code;
-            }
-        }
-        if ($separate) {
-            foreach ($includes as $tempFile) {
-                include($tempFile);
-            }
-        } else {
-            $tempFile = $dir . implode('_', $allCodeName) . '.php';
-            file_put_contents($tempFile, "<?php\n" . $allCode);
+        foreach ($includes as $tempFile) {
             include($tempFile);
+        }
+
+        if (in_array('tablemap', $classes, true)) {
+            $this->registerTableMaps();
         }
     }
 
@@ -422,7 +438,7 @@ class QuickBuilder
      *
      * @return string
      */
-    public function getClasses(?array $classTargets = null)
+    public function getClasses(?array $classTargets = null): string
     {
         $script = '';
         foreach ($this->getDatabase()->getTables() as $table) {
@@ -438,12 +454,9 @@ class QuickBuilder
      *
      * @return string
      */
-    public function getClassesForTable(Table $table, ?array $classTargets = null)
+    public function getClassesForTable(Table $table, ?array $classTargets = null): string
     {
-        if ($classTargets === null) {
-            $classTargets = $this->classTargets;
-        }
-
+        $classTargets = $classTargets ?? $this->classTargets;
         $script = '';
 
         foreach ($classTargets as $target) {
@@ -494,31 +507,20 @@ class QuickBuilder
     }
 
     /**
-     * @param string $schema
-     * @param string $tableName
-     *
-     * @return void
-     */
-    public static function debugClassesForTable($schema, $tableName)
-    {
-        $builder = new self();
-        $builder->setSchema($schema);
-        foreach ($builder->getDatabase()->getTables() as $table) {
-            if ($table->getName() == $tableName) {
-                echo $builder->getClassesForTable($table);
-            }
-        }
-    }
-
-    /**
      * @see https://github.com/symfony/symfony/blob/master/src/Symfony/Component/ClassLoader/ClassCollectionLoader.php
      *
      * @param string $source
      *
      * @return string
      */
-    public function fixNamespaceDeclarations($source)
+    public function fixNamespaceDeclarations(string $source): string
     {
+        $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING];
+
+        if (PHP_VERSION_ID >= 80000) {
+            $cooperativeLexems = array_merge($cooperativeLexems, [T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED]);
+        }
+
         $source = $this->forceNamespace($source);
 
         if (!function_exists('token_get_all')) {
@@ -543,7 +545,7 @@ class QuickBuilder
                 $output .= $token[1];
 
                 // namespace name and whitespaces
-                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], [T_WHITESPACE, T_NS_SEPARATOR, T_STRING])) {
+                while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], $cooperativeLexems)) {
                     $output .= $t[1];
                 }
                 if (is_string($t) && $t === '{') {
@@ -572,7 +574,7 @@ class QuickBuilder
      *
      * @return string
      */
-    protected function forceNamespace($code)
+    protected function forceNamespace(string $code): string
     {
         if (preg_match('/\nnamespace/', $code) === 0) {
             $use = array_filter(explode(PHP_EOL, $code), function ($string) {
@@ -590,7 +592,7 @@ class QuickBuilder
     /**
      * @return bool
      */
-    public function isIdentifierQuotingEnabled()
+    public function isIdentifierQuotingEnabled(): bool
     {
         return $this->identifierQuoting;
     }
@@ -600,8 +602,83 @@ class QuickBuilder
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting)
+    public function setIdentifierQuoting(bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * Create separate classes to write to physical filesystem.
+     *
+     * @param string[] $classes
+     * @param \Propel\Generator\Model\Table[] $tables Array of Table objects
+     *
+     * @return string[] The files to include
+     */
+    private function buildClassesToPhysical(array $classes, array $tables): array
+    {
+        $includes = [];
+        $dirName = sys_get_temp_dir()
+            . '/propelQuickBuild-' . Propel::VERSION . '-' . substr(sha1(getcwd()), 0, 10) . '/';
+        if (!is_dir($dirName)) {
+            mkdir($dirName);
+        }
+        foreach ($tables as $table) {
+            foreach ($classes as $class) {
+                $code = $this->getClassesForTable($table, [$class]);
+                $tempFile = $dirName . str_replace('\\', '-', $table->getPhpName()) . "-$class.php";
+                file_put_contents($tempFile, "<?php\n" . $code);
+                $includes[] = $tempFile;
+            }
+        }
+
+        return $includes;
+    }
+
+    /**
+     * Create an all-classes file to write to virtual filesystem.
+     *
+     * @param string[] $classes
+     * @param \Propel\Generator\Model\Table[] $tables Array of Table objects
+     *
+     * @return string[] The one element array, containing the file to include
+     */
+    private function buildClassesToVirtual(array $classes, array $tables): array
+    {
+        $allCode = '';
+        $allCodeName = [];
+        $includes = [];
+
+        foreach ($tables as $table) {
+            if (5 > count($allCodeName)) {
+                $allCodeName[] = $table->getPhpName();
+            }
+            $allCode .= $this->getClassesForTable($table, $classes);
+        }
+
+        $tempFile = $this->newFile('propelQuickBuild/' . implode('_', $allCodeName) . '.php');
+        file_put_contents($tempFile->url(), "<?php\n" . $allCode);
+        $includes[] = $tempFile->url();
+
+        return $includes;
+    }
+
+    /**
+     * @return void
+     */
+    protected function registerTableMaps(): void
+    {
+        $serviceContainer = Propel::getServiceContainer();
+        $serviceContainer->initDatabaseMaps();
+        $db = $this->getDatabase();
+        $dbName = $db->getName();
+        $dbMap = $serviceContainer->getDatabaseMap($dbName);
+        $builder = new TableMapBuilder(new Table(''));
+        $builder->setGeneratorConfig($this->config);
+        foreach ($db->getTables() as $table) {
+            $builder->setTable($table);
+            $mapClass = $builder->getFullyQualifiedClassName();
+            $dbMap->addTableFromMapClass($mapClass);
+        }
     }
 }

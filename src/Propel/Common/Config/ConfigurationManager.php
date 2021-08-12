@@ -11,6 +11,7 @@ namespace Propel\Common\Config;
 use Propel\Common\Config\Exception\InvalidArgumentException;
 use Propel\Common\Config\Exception\InvalidConfigurationException;
 use Propel\Common\Config\Loader\DelegatingLoader;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException as SymfonyInvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Finder\Finder;
 
@@ -185,6 +186,8 @@ class ConfigurationManager
      *                         the constructor to pass a built-in array of configuration, without load it from file. I.e.
      *                         Propel\Generator\Config\QuickGeneratorConfig class.
      *
+     * @throws \Propel\Common\Config\Exception\InvalidConfigurationException
+     *
      * @return void
      */
     protected function process($extraConf = null)
@@ -200,8 +203,11 @@ class ConfigurationManager
             $this->config = array_replace_recursive($this->config, $extraConf);
         }
 
-        $this->config = $processor->processConfiguration($configuration, $this->config);
-
+        try {
+            $this->config = $processor->processConfiguration($configuration, $this->config);
+        } catch (SymfonyInvalidConfigurationException $e) {
+            throw new InvalidConfigurationException('Could not process configuration. Please check the property in error message: ' . $e->getMessage());
+        }
         $this->cleanupSlaveConnections();
         $this->cleanupConnections();
     }

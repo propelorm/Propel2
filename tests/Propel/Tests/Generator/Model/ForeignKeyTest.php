@@ -88,6 +88,61 @@ class ForeignKeyTest extends ModelTestCase
     /**
      * @return void
      */
+    public function testForeignKeyIsForeignNonPrimaryKey()
+    {
+        $database = $this->getDatabaseMock('bookstore');
+        $platform = $this->getPlatformMock();
+        $foreignTable = $this->getTableMock('bookstore_employee_account');
+
+        $localTable = $this->getTableMock('acct_audit_log', [
+            'platform' => $platform,
+            'database' => $database,
+        ]);
+
+        $idColumn = $this->getColumnMock('id');
+        $secondaryColumn = $this->getColumnMock('secondary');
+        $loginColumn = $this->getColumnMock('login');
+        $uidColumn = $this->getColumnMock('uid');
+
+        $database
+            ->expects($this->any())
+            ->method('getTable')
+            ->with($this->equalTo('bookstore_employee_account'))
+            ->will($this->returnValue($foreignTable));
+
+        $foreignTable
+            ->expects($this->any())
+            ->method('getPrimaryKey')
+            ->will($this->returnValue([$idColumn, $secondaryColumn]));
+
+        $foreignTable
+            ->expects($this->any())
+            ->method('getColumn')
+            ->with($this->equalTo('login'))
+            ->will($this->returnValue($loginColumn));
+
+        $localTable
+            ->expects($this->any())
+            ->method('getColumn')
+            ->with($this->equalTo('uid'))
+            ->will($this->returnValue($uidColumn));
+
+        $fk = new ForeignKey();
+        $fk->setTable($localTable);
+        $fk->setForeignTableCommonName('bookstore_employee_account');
+        $fk->addReference('uid', 'login');
+
+        $fkMapping = $fk->getColumnObjectsMapping();
+        $this->assertFalse($fk->isForeignPrimaryKey());
+        $this->assertTrue($fk->isForeignNonPrimaryKey());
+        $this->assertCount(1, $fk->getForeignColumnObjects());
+        $this->assertSame($uidColumn, $fkMapping[0]['local']);
+        $this->assertSame($loginColumn, $fkMapping[0]['foreign']);
+        $this->assertSame($loginColumn, $fk->getForeignColumn(0));
+    }
+    /**
+     * @return void
+     */
     public function testForeignKeyDoesNotUseRequiredColumns()
     {
         $column = $this->getColumnMock('author_id');
@@ -498,6 +553,34 @@ class ForeignKeyTest extends ModelTestCase
             ['SETNULL', 'SET NULL'],
             ['cascade', 'CASCADE'],
             ['CASCADE', 'CASCADE'],
+            ['NOACTION', 'NO ACTION'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideOnActionBehaviorsWithDefault
+     *
+     * @return void
+     */
+    public function testNormalizeForeignKeyWithDefault($behavior, $default, $normalized)
+    {
+        $fk = new ForeignKey();
+
+        $this->assertSame($normalized, $fk->normalizeFKey($behavior, $default));
+    }
+
+    public function provideOnActionBehaviorsWithDefault()
+    {
+        return [
+            [null, 'RESTRICT', 'RESTRICT'],
+            ['none', 'RESTRICT', 'RESTRICT'],
+            ['NONE', 'RESTRICT', 'RESTRICT'],
+            ['setnull', 'RESTRICT', 'SET NULL'],
+            ['SETNULL', 'RESTRICT', 'SET NULL'],
+            ['cascade', 'RESTRICT', 'CASCADE'],
+            ['CASCADE', 'RESTRICT', 'CASCADE'],
+            [ForeignKey::NOACTION, ForeignKey::RESTRICT, ForeignKey::NOACTION],
+            [null, null, ''],
         ];
     }
 }

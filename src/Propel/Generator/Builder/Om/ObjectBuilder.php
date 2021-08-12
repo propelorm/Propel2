@@ -501,6 +501,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * The value for the $clo field.
@@ -515,7 +517,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
         }
         $script .= "
-     * @var        $cptype
+     * @var        $cptype{$orNull}
      */";
     }
 
@@ -879,17 +881,21 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             // 00:00:00 is a valid time, so no need to check for that.
         }
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [optionally formatted] temporal [$clo] column value.
      * {$column->getDescription()}
      *
-     * @param      string|null \$format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw $dateTimeClass object will be returned.
+     * @param string|null \$format The date/time format string (either date()-style or strftime()-style).
+     *   If format is NULL, then the raw $dateTimeClass object will be returned.
      *
-     * @return string|$dateTimeClass Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
+     * @return string|{$dateTimeClass}{$orNull} Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
+     *
+     * @psalm-return (\$format is null ? {$dateTimeClass}{$orNull} : string{$orNull})
      */";
     }
 
@@ -921,8 +927,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $defaultfmt = null;
         }
 
+        $format = var_export($defaultfmt, true);
+        if ($format === 'NULL') {
+            $format = 'null';
+        }
+
         $script .= "
-    " . $visibility . " function get$cfc(\$format = " . var_export($defaultfmt, true) . '';
+    " . $visibility . " function get$cfc(\$format = " . $format . '';
         if ($column->isLazyLoad()) {
             $script .= ', $con = null';
         }
@@ -1081,6 +1092,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1092,7 +1105,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return object
+     * @return object|array{$orNull}
      */";
     }
 
@@ -1292,6 +1305,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1301,7 +1316,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return string
+     * @return string{$orNull}
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
@@ -1483,6 +1498,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1492,7 +1509,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return " . ($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed')) . "
+     * @return " . ($column->getTypeHint() ?: ($column->getPhpType() ?: 'mixed')) . $orNull . "
      */";
     }
 
@@ -1748,11 +1765,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addJsonMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param string|array|object \$v new value
+     * @param string|array|object{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
@@ -2053,11 +2073,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $col->getLowercasedName();
 
+        $orNull = $col->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Sets the value of [$clo] column to a normalized version of the date/time value specified.
      * " . $col->getDescription() . "
-     * @param  mixed \$v string, integer (timestamp), or \DateTimeInterface value.
+     * @param  string|integer|\DateTimeInterface{$orNull} \$v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
@@ -2291,11 +2313,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addEnumMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param  string \$v new value
+     * @param  string{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
@@ -2353,11 +2378,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function addSetMutatorComment(&$script, Column $column)
     {
         $clo = $column->getLowercasedName();
+
+        $orNull = $column->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Set the value of [$clo] column.
      * " . $column->getDescription() . "
-     * @param  array \$v new value
+     * @param  array{$orNull} \$v new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
@@ -2400,6 +2428,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $col->getLowercasedName();
 
+        $orNull = $col->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Sets the value of the [$clo] column.
@@ -2408,7 +2438,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * " . $col->getDescription() . "
-     * @param  boolean|integer|string \$v The new value
+     * @param  boolean|integer|string{$orNull} \$v The new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
@@ -2529,8 +2559,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 $fmt = $this->getTemporalFormatter($col);
                 $accessor = "\$this->$clo && \$this->{$clo}->format('$fmt')";
             }
+            $notEquals = '!==';
+            $defaultValueString = $this->getDefaultValueString($col);
+            if (strpos($defaultValueString, 'new ') === 0) {
+                $notEquals = '!='; // allow object-comparison for custom PHP types
+            }
             $script .= "
-            if ($accessor !== " . $this->getDefaultValueString($col) . ") {
+            if ($accessor $notEquals $defaultValueString) {
                 return false;
             }
 ";
@@ -3000,7 +3035,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if ($col->isTemporalType()) {
                 $script .= "
         if (\$result[\$keys[$num]] instanceof \DateTimeInterface) {
-            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('c');
+            \$result[\$keys[$num]] = \$result[\$keys[$num]]->format('" . $this->getTemporalFormatter($col) . "');
         }
         ";
             }
@@ -3398,7 +3433,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @param      array  \$arr     An array to populate the object from.
      * @param      string \$keyType The type of keys the array uses.
-     * @return void
+     * @return     \$this|" . $this->getObjectClassName(true) . "
      */
     public function fromArray(array \$arr, string \$keyType = TableMap::$defaultKeyType) : void
     {
@@ -3412,6 +3447,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }";
         } /* foreach */
         $script .= "
+
+        return \$this;
     }
 ";
     }
@@ -3770,12 +3807,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         if (count($pkeys) == 1) {
-            $this->addGetPrimaryKey_SinglePK($script);
+            $this->addGetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
-            $this->addGetPrimaryKey_MultiPK($script);
+            $this->addGetPrimaryKeyMultiPK($script);
         } else {
             // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addGetPrimaryKey_NoPK($script);
+            $this->addGetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3786,7 +3823,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_SinglePK(&$script)
+    protected function addGetPrimaryKeySinglePK(&$script)
     {
         $table = $this->getTable();
         $pkeys = $table->getPrimaryKey();
@@ -3811,7 +3848,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_MultiPK(&$script)
+    protected function addGetPrimaryKeyMultiPK(&$script)
     {
         $script .= "
     /**
@@ -3847,7 +3884,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addGetPrimaryKey_NoPK(&$script)
+    protected function addGetPrimaryKeyNoPK(&$script)
     {
         $script .= "
     /**
@@ -3873,12 +3910,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         if (count($pkeys) == 1) {
-            $this->addSetPrimaryKey_SinglePK($script);
+            $this->addSetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
-            $this->addSetPrimaryKey_MultiPK($script);
+            $this->addSetPrimaryKeyMultiPK($script);
         } else {
             // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addSetPrimaryKey_NoPK($script);
+            $this->addSetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3889,7 +3926,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_SinglePK(&$script)
+    protected function addSetPrimaryKeySinglePK(&$script)
     {
         $pkeys = $this->getTable()->getPrimaryKey();
         $col = $pkeys[0];
@@ -3917,7 +3954,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_MultiPK(&$script)
+    protected function addSetPrimaryKeyMultiPK(&$script)
     {
         $script .= "
     /**
@@ -3951,7 +3988,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return void
      */
-    protected function addSetPrimaryKey_NoPK(&$script)
+    protected function addSetPrimaryKeyNoPK(&$script)
     {
         $script .= "
     /**
@@ -4101,11 +4138,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $varName = $this->getFKVarName($fk);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
     /**
      * Declares an association between this object and a $className object.
      *
-     * @param  $className \$v
+     * @param  {$className}{$orNull} \$v
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      * @throws PropelException
      */
@@ -4227,13 +4266,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $localColumns = count($localColumns) > 1 ?
             ('array(' . implode(', ', $localColumns) . ')') : reset($localColumns);
 
+        $orNull = $fk->getLocalColumn()->isNotNull() ? '' : '|null';
+
         $script .= "
 
     /**
      * Get the associated $className object
      *
      * @param  ConnectionInterface \$con Optional Connection object.
-     * @return $className $returnDesc
+     * @return {$className}{$orNull} $returnDesc
      * @throws PropelException
      */
     public function get" . $this->getFKPhpNameAffix($fk, false) . "(ConnectionInterface \$con = null)
@@ -4328,6 +4369,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con optional connection object
      * @param      string \$joinBehavior optional join type to use (defaults to $joinBehavior)
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<$className}> List of $className objects
      */
     public function get" . $relCol . 'Join' . $relCol2 . "(Criteria \$criteria = null, ConnectionInterface \$con = null, \$joinBehavior = $joinBehavior)
     {";
@@ -4367,6 +4409,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Collection to store aggregation of $className objects.
      */
     protected $" . $this->getRefFKCollVarName($refFK) . ";
     protected $" . $this->getRefFKCollVarName($refFK) . "Partial;
@@ -4647,6 +4690,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      Criteria \$criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface \$con optional connection object
      * @return ObjectCollection|{$className}[] List of $className objects
+     * @phpstan-return ObjectCollection&\Traversable<{$className}> List of $className objects
      * @throws PropelException
      */
     public function get$relCol(Criteria \$criteria = null, ConnectionInterface \$con = null)
@@ -4965,6 +5009,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
     /**
      * @var        ObjectCollection|{$className}[] Cross Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}> Cross Collection to store aggregation of $className objects.
      */
     protected \$coll" . $this->getFKPhpNameAffix($fk, true) . ";
 
@@ -5002,6 +5047,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \$$name = null;
 ";
@@ -5040,6 +5086,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5060,6 +5107,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|{$className}[]
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>
      */
     protected \${$fkName}ScheduledForDeletion = null;
 ";
@@ -5640,7 +5688,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 if (\$partial && \$this->{$collVarName}) {
                     //make sure that already added objects gets added to the list of the database.
                     foreach (\$this->{$collVarName} as \$obj) {
-                        if (!call_user_func_array([\${$collVarName}, 'contains'], \$obj)) {
+                        if (!\${$collVarName}->contains(...\$obj)) {
                             \${$collVarName}[] = \$obj;
                         }
                     }
@@ -5680,6 +5728,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param ConnectionInterface \$con
      *
      * @return {$relatedObjectClassName}[]|ObjectCollection
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}>
      */
     public function get{$firstFkName}($signature, Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
@@ -5712,6 +5761,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con Optional connection object
      *
      * @return ObjectCollection|{$relatedObjectClassName}[] List of {$relatedObjectClassName} objects
+     * @phpstan-return ObjectCollection&\Traversable<{$relatedObjectClassName}> List of {$relatedObjectClassName} objects
      */
     public function get{$relatedName}(Criteria \$criteria = null, ConnectionInterface \$con = null)
     {
@@ -5799,7 +5849,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$scheduledForDeletionVarName} as \$toDelete) {";
         if ($multi) {
             $script .= "
-            call_user_func_array([\$this, 'remove{$relatedName}'], \$toDelete);";
+            \$this->remove{$relatedName}(...\$toDelete);";
         } else {
             $script .= "
             \$this->remove{$relatedName}(\$toDelete);";
@@ -5810,8 +5860,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach (\${$inputCollection} as \${$foreachItem}) {";
         if ($multi) {
             $script .= "
-            if (!call_user_func_array([\$current{$relatedNamePlural}, 'contains'], \${$foreachItem})) {
-                call_user_func_array([\$this, 'doAdd{$relatedName}'], \${$foreachItem});
+            if (!\$current{$relatedNamePlural}->contains(...\${$foreachItem})) {
+                \$this->doAdd{$relatedName}(...\${$foreachItem});
             }";
         } else {
             $script .= "

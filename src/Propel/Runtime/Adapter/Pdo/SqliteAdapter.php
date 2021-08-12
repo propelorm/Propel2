@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -90,7 +91,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifier()
+     * @see \Propel\Runtime\Adapter\AdapterInterface::quoteIdentifier()
      *
      * @param string $text
      *
@@ -102,15 +103,16 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::applyLimit()
+     * @see SqlAdapterInterface::applyLimit()
      *
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . $limit . ($offset > 0 ? ' OFFSET ' . $offset : '');
@@ -127,5 +129,17 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
     public function random($seed = null)
     {
         return 'random()';
+    }
+
+    /**
+     * @see SqlAdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
     }
 }

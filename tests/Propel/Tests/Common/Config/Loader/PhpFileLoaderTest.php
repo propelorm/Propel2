@@ -8,12 +8,19 @@
 
 namespace Propel\Tests\Common\Config\Loader;
 
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\InvalidArgumentException as PropelInvalidArgumentException;
 use Propel\Common\Config\FileLocator;
 use Propel\Common\Config\Loader\PhpFileLoader;
-use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Tests\TestCase;
+use Propel\Generator\Util\VfsTrait;
 
-class PhpFileLoaderTest extends ConfigTestCase
+class PhpFileLoaderTest extends TestCase
 {
+    use VfsTrait;
+
+    /** @var PhpFileLoader */
     protected $loader;
 
     /**
@@ -21,7 +28,7 @@ class PhpFileLoaderTest extends ConfigTestCase
      */
     protected function setUp(): void
     {
-        $this->loader = new PhpFileLoader(new FileLocator(sys_get_temp_dir()));
+        $this->loader = new PhpFileLoader(new FileLocator($this->getRoot()->url()));
     }
 
     /**
@@ -48,64 +55,63 @@ class PhpFileLoaderTest extends ConfigTestCase
     return array('foo' => 'bar', 'bar' => 'baz');
 
 EOF;
-        $this->dumpTempFile('parameters.php', $content);
+        $this->newFile('parameters.php', $content);
         $test = $this->loader->load('parameters.php');
         $this->assertEquals('bar', $test['foo']);
         $this->assertEquals('baz', $test['bar']);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.php" does not exist (in:
-     *
      * @return void
      */
     public function testPhpFileDoesNotExist()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.php" does not exist (in:');
+
         $this->loader->load('inexistent.php');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The configuration file 'nonvalid.php' has invalid content.
-     *
      * @return void
      */
     public function testPhpFileHasInvalidContent()
     {
+        $this->expectException(PropelInvalidArgumentException::class);
+        $this->expectExceptionMessage("The configuration file 'nonvalid.php' has invalid content.");
+
         $content = <<<EOF
 not php content
 only plain
 text
 EOF;
-        $this->dumpTempFile('nonvalid.php', $content);
+        $this->newFile('nonvalid.php', $content);
         $this->loader->load('nonvalid.php');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The configuration file 'empty.php' has invalid content.
-     *
      * @return void
      */
     public function testPhpFileIsEmpty()
     {
-        $content = '';
-        $this->dumpTempFile('empty.php', $content);
+        $this->expectException(PropelInvalidArgumentException::class);
+        $this->expectExceptionMessage("The configuration file 'empty.php' has invalid content.");
+
+        $this->newFile('empty.php');
 
         $this->loader->load('empty.php');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.php.
-     *
      * @requires OS ^(?!Win.*)
      *
      * @return void
      */
     public function testConfigFileNotReadableThrowsException()
     {
+        $this->expectException(InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.php.");
+
         $content = <<<EOF
 <?php
 
@@ -113,8 +119,7 @@ EOF;
 
 EOF;
 
-        $this->dumpTempFile('notreadable.php', $content);
-        $this->getFilesystem()->chmod(sys_get_temp_dir() . '/notreadable.php', 0200);
+        $this->newFile('notreadable.php', $content)->chmod(200);
 
         $actual = $this->loader->load('notreadable.php');
         $this->assertEquals('bar', $actual['foo']);

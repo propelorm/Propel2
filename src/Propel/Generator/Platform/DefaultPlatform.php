@@ -43,7 +43,7 @@ class DefaultPlatform implements PlatformInterface
     /**
      * The database connection.
      *
-     * @var \Propel\Runtime\Connection\ConnectionInterface Database connection.
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null Database connection.
      */
     protected $con;
 
@@ -1443,6 +1443,26 @@ ALTER TABLE %s ADD
     }
 
     /**
+     * Get the default On Delete behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnDeleteBehavior(): string
+    {
+        return ForeignKey::NONE;
+    }
+
+    /**
+     * Get the default On Update behavior for foreign keys when not explicity set.
+     *
+     * @return string
+     */
+    public function getDefaultForeignKeyOnUpdateBehavior(): string
+    {
+        return ForeignKey::NONE;
+    }
+
+    /**
      * Get the PHP snippet for binding a value to a column.
      * Warning: duplicates logic from AdapterInterface::bindValue().
      * Any code modification here must be ported there.
@@ -1457,7 +1477,9 @@ ALTER TABLE %s ADD
     public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
     {
         $script = '';
-        if ($column->isTemporalType()) {
+        if ($column->getType() === PropelTypes::DATE) {
+            $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getDateFormatter() . '") : null';
+        } elseif ($column->isTemporalType()) {
             $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getTimeStampFormatter() . '") : null';
         } elseif ($column->isLobType()) {
             // we always need to make sure that the stream is rewound, otherwise nothing will

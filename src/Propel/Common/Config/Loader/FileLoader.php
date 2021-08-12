@@ -82,7 +82,7 @@ abstract class FileLoader extends BaseFileLoader
     }
 
     /**
-     * Get the pathof a given resource
+     * Get the path of a given resource
      *
      * @param string $file The resource
      *
@@ -268,20 +268,20 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Return the value correspondent to a given key.
      *
-     * @param mixed $property_key The key, in the configuration values array, to return the respective value
+     * @param mixed $propertyKey The key, in the configuration values array, to return the respective value
      *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException when non-existent key in configuration array
      *
      * @return mixed
      */
-    private function get($property_key)
+    private function get($propertyKey)
     {
         $found = false;
 
-        $ret = $this->getValue($property_key, null, $found);
+        $ret = $this->getValue($propertyKey, null, $found);
 
         if ($found === false) {
-            throw new InvalidArgumentException("Parameter '$property_key' not found in configuration file.");
+            throw new InvalidArgumentException("Parameter '$propertyKey' not found in configuration file.");
         }
 
         return $ret;
@@ -290,26 +290,26 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Scan recursively an array to find a value of a given key.
      *
-     * @param string $property_key The array key
+     * @param string $propertyKey The array key
      * @param array|null $config The array to scan
      * @param bool $found if the key was found
      *
      * @return mixed The value or null if not found
      */
-    private function getValue($property_key, $config, &$found)
+    private function getValue($propertyKey, $config, &$found)
     {
         if ($config === null) {
             $config = $this->config;
         }
 
         foreach ($config as $key => $value) {
-            if ($key === $property_key) {
+            if ($key === $propertyKey) {
                 $found = true;
 
                 return $value;
             }
             if (is_array($value)) {
-                $ret = $this->getValue($property_key, $value, $found);
+                $ret = $this->getValue($propertyKey, $value, $found);
 
                 if ($ret !== null) {
                     return $ret;

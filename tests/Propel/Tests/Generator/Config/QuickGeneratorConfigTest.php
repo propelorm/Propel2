@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Config;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Tests\TestCase;
 
 class QuickGeneratorConfigTest extends TestCase
@@ -35,13 +36,13 @@ class QuickGeneratorConfigTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Generator\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid data model builder type `bad_type`
-     *
      * @return void
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid data model builder type `bad_type`');
+
         $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
     }

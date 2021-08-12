@@ -12,10 +12,12 @@ use DateTime;
 use Exception;
 use MyNameSpace\TestKeyTypeTable;
 use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Tests\Bookstore\BookClubList;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\AcctAuditLog;
@@ -57,6 +59,7 @@ use Propel\Tests\Bookstore\Map\ReviewTableMap;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
+use Propel\Tests\Common\BoxedString;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthor;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorDeleteFalse;
 use Propel\Tests\Helpers\Bookstore\Behavior\TestAuthorSaveFalse;
@@ -702,6 +705,37 @@ class GeneratedObjectTest extends BookstoreTestBase
     /**
      * @return void
      */
+    public function testHasOnlyDefaultValuesObjectType()
+    {
+        $databaseXml = <<<XML
+        <database namespace="ExampleNamespace" package="Things">
+            <table name="thing">
+                <column name="id" type="integer"/>
+                <column
+                    name="boxedstring"
+                    type="VARCHAR"
+                    phpType="\Propel\Tests\Common\BoxedString"
+                    default="asdf"
+                    required="true"
+                />
+            </table>
+        </database>
+XML;
+        $builder = new QuickBuilder();
+        $builder->setSchema($databaseXml);
+        $builder->build();
+
+        $t = new \ExampleNamespace\Thing();
+        $this->assertEquals(new BoxedString('asdf'), $t->getBoxedstring());
+        $this->assertTrue(
+            $t->hasOnlyDefaultValues(),
+            'default boxed string should be reported as Object has only default values'
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testCountRefFk()
     {
         $book = new Book();
@@ -815,7 +849,15 @@ class GeneratedObjectTest extends BookstoreTestBase
         $review = new Review();
         $review->setReviewDate($date);
 
-        $this->assertEquals('2015-01-04T16:00:02+00:00', $review->toArray()['ReviewDate'], 'toArray() format temporal colums as ISO8601');
+        $bookstore = new Bookstore();
+        $bookstore->setStoreOpenTime($date);
+
+        $bookClubList = new BookClubList();
+        $bookClubList->setCreatedAt($date);
+
+        $this->assertEquals('2015-01-04', $review->toArray()['ReviewDate'], 'toArray() format colums of type DATE as Y-m-d');
+        $this->assertEquals('16:00:02.000000', $bookstore->toArray()['StoreOpenTime'], 'toArray() format toArray() colums of type TIME as H:i:s.u');
+        $this->assertEquals('2015-01-04 16:00:02.000000', $bookClubList->toArray()['CreatedAt'], 'toArray() format toArray() colums of type TIMESTAMP as Y-m-d H:i:s.u');
     }
 
     /**
@@ -1200,12 +1242,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
-     *
      * @return void
      */
     public function testMagicCallUndefined()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $book = new Book();
         $book->fooMethodName();
     }

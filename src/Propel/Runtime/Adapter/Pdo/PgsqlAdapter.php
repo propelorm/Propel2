@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -23,6 +24,13 @@ use Propel\Runtime\Propel;
  */
 class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
+    /**
+     * @see PdoAdapter::SUPPORTS_ALIASES_IN_DELETE
+     *
+     * @var bool
+     */
+    protected const SUPPORTS_ALIASES_IN_DELETE = false;
+
     /**
      * Returns SQL which concatenates the second string to the first.
      *
@@ -126,10 +134,11 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
     {
         if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
@@ -167,7 +176,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         if ($groupBy) {
-            return ' GROUP BY ' . implode(',', $groupBy);
+            return 'GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -183,31 +192,6 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function random($seed = null)
     {
         return 'random()';
-    }
-
-    /**
-     * @see PdoAdapter::getDeleteFromClause()
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
-    {
-        $sql = 'DELETE ';
-        if ($queryComment = $criteria->getComment()) {
-            $sql .= '/* ' . $queryComment . ' */ ';
-        }
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= 'FROM ' . $realTableName . ' AS ' . $tableName;
-        } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
-        }
-
-        return $sql;
     }
 
     /**
@@ -229,7 +213,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con propel connection
      * @param \Propel\Runtime\ActiveQuery\Criteria|string $query query the criteria or the query string
      *
-     * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|false A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
     {
@@ -262,5 +246,34 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function getExplainPlanQuery($query)
     {
         return 'EXPLAIN ' . $query;
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(&$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if (Lock::SHARED === $type) {
+            $sql .= ' FOR SHARE';
+        } elseif (Lock::EXCLUSIVE === $type) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $tableNames = $lock->getTableNames();
+        if (!empty($tableNames)) {
+            $tableNames = array_map([$this, 'quoteIdentifier'], array_unique($tableNames));
+            $sql .= ' OF ' . implode(', ', $tableNames);
+        }
+
+        if ($lock->isNoWait()) {
+            $sql .= ' NOWAIT';
+        }
     }
 }

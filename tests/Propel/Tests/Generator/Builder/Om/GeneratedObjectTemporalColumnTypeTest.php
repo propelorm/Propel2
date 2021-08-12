@@ -15,6 +15,7 @@ use DateTime;
 use Map\ComplexColumnTypeEntity5TableMap;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 
 /**
@@ -85,12 +86,12 @@ EOF;
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testInvalidValueThrowsPropelException()
     {
+        $this->expectException(PropelException::class);
+
         $r = new ComplexColumnTypeEntity5();
         $r->setBar1('Invalid Date');
     }

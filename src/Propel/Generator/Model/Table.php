@@ -545,7 +545,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns a delimiter-delimited string list of column names.
      *
-     * @see Platform::getColumnList() if quoting is required
+     * @see \Propel\Generator\Platform\PlatformInterface::getColumnListDDL() if quoting is required
      *
      * @param array $columns
      * @param string $delimiter
@@ -608,7 +608,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setBaseClass($class)
     {
-        $this->baseClass = $class;
+        $this->baseClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**
@@ -620,7 +620,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setBaseQueryClass($class)
     {
-        $this->baseQueryClass = $class;
+        $this->baseQueryClass = $this->makeNamespaceAbsolute($class);
     }
 
     /**
@@ -802,6 +802,16 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Checks whether the table uses concrete inheritance
+     *
+     * @return bool
+     */
+    public function usesConcreteInheritance(): bool
+    {
+        return ($this->inheritanceColumn !== null);
+    }
+
+    /**
      * Returns the subclasses that can be created from this table.
      *
      * @return array|null
@@ -921,7 +931,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
             // check for incomplete foreign key references when foreign table
             // has a composite primary key
-            if ($foreignTable->hasCompositePrimaryKey()) {
+            if ($foreignTable->hasCompositePrimaryKey() && !$foreignKey->isForeignNonPrimaryKey()) {
                 // get composite foreign key's keys
                 $foreignPrimaryKeys = $foreignTable->getPrimaryKey();
                 // check all keys are referenced in foreign key

@@ -9,6 +9,7 @@
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
@@ -58,12 +59,12 @@ class LikeModelCriterionTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException
-     *
      * @return void
      */
     public function testAppendPsToWithACaseInsensitiveLikeConditionThrowsAnException()
     {
+        $this->expectException(InvalidClauseException::class);
+
         $cton = new LikeModelCriterion(new Criteria(), 'A.COL LIKE ?', 'A.COL', 'foo%');
         $cton->setAdapter(new SqliteAdapter());
         $cton->setIgnoreCase(true);

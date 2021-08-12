@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
+use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\TestCase;
 
 /**
@@ -51,12 +52,12 @@ class ActiveRecordTest extends TestCase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\PropelException
-     *
      * @return void
      */
     public function testGetVirtualColumnWrongKey()
     {
+        $this->expectException(PropelException::class);
+
         $b = new TestableActiveRecord();
         $b->getVirtualColumn('foo');
     }
