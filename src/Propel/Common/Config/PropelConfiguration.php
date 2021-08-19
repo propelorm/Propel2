@@ -239,6 +239,7 @@ class PropelConfiguration implements ConfigurationInterface
                 ->arrayNode('reverse')
                     ->children()
                         ->scalarNode('connection')->end()
+                        ->scalarNode('namespace')->defaultNull()->end()
                         ->scalarNode('parserClass')->end()
                     ->end()
                 ->end() //reverse
