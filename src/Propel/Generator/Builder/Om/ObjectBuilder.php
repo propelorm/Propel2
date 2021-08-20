@@ -218,12 +218,13 @@ class ObjectBuilder extends AbstractObjectBuilder
      *
      * @return string|null
      */
-    protected function getParentClass()
+    protected function getParentClass(): ?string
     {
         $parentClass = $this->getBehaviorContent('parentClass');
         if ($parentClass !== null) {
             return $parentClass;
         }
+
         return ClassTools::classname($this->getBaseClass());
     }
 
@@ -240,7 +241,8 @@ class ObjectBuilder extends AbstractObjectBuilder
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
 
-        if (($parentClass = $this->getParentClass()) !== null) {
+        $parentClass = $this->getParentClass();
+        if ($parentClass !== null) {
             $parentClass = ' extends ' . $parentClass;
         }
 
@@ -645,9 +647,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $this->addConstructorComment($script);
         $this->addConstructorOpen($script);
-        if ($this->hasDefaultValues()) {
-            $this->addConstructorBody($script);
-        }
+        $this->addConstructorBody($script);
         $this->addConstructorClose($script);
     }
 
@@ -694,8 +694,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addConstructorBody(&$script)
     {
-        $script .= "
+        if ($this->getParentClass() !== null) {
+            $script .= "
+        parent::__construct();";
+        }
+        if ($this->hasDefaultValues()) {
+            $script .= "
         \$this->applyDefaultValues();";
+        }
     }
 
     /**
