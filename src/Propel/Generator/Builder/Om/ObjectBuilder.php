@@ -214,6 +214,20 @@ class ObjectBuilder extends AbstractObjectBuilder
     }
 
     /**
+     * Return the parent class name, or null.
+     *
+     * @return string|null
+     */
+    protected function getParentClass()
+    {
+        $parentClass = $this->getBehaviorContent('parentClass');
+        if ($parentClass !== null) {
+            return $parentClass;
+        }
+        return ClassTools::classname($this->getBaseClass());
+    }
+
+    /**
      * Adds class phpdoc comment and opening of class.
      *
      * @param string $script The script will be modified in this method.
@@ -226,10 +240,7 @@ class ObjectBuilder extends AbstractObjectBuilder
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
 
-        if (
-            ($parentClass = $this->getBehaviorContent('parentClass')) !== null ||
-            ($parentClass = ClassTools::classname($this->getBaseClass())) !== null
-        ) {
+        if (($parentClass = $this->getParentClass()) !== null) {
             $parentClass = ' extends ' . $parentClass;
         }
 
@@ -729,10 +740,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
         }
 
-        if (
-            $this->getBehaviorContent('parentClass') !== null ||
-            ClassTools::classname($this->getBaseClass()) !== null
-        ) {
+        if ($this->getParentClass() !== null) {
             $hooks['hasBaseClass'] = true;
         } else {
             $hooks['hasBaseClass'] = false;
