@@ -3110,15 +3110,13 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
-    public function testCloneCopiesAsColumns()
+    public function testCloneCopiesSelect()
     {
         $bookQuery1 = BookQuery::create();
         $bookQuery1->select(['Id', 'Title']);
         $bookQuery2 = clone $bookQuery1;
         $bookQuery2->select(['ISBN', 'Price']);
-        $this->assertCount(2, $bookQuery1->getAsColumns());
-        $this->assertArrayHasKey('"Id"', $bookQuery1->getAsColumns());
-        $this->assertArrayHasKey('"Title"', $bookQuery1->getAsColumns());
+        $this->assertEquals(['Id', 'Title'], $bookQuery1->getSelect());
     }
 
     /**

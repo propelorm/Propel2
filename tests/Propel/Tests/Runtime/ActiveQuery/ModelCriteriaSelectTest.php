@@ -452,35 +452,40 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
     /**
      * @return void
      */
-    public function testGetSelectAddsToAsColumns()
+    public function testGetSelectReturnsNullByDefault()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->select('Title');
-
-        $this->assertIsArray($c->getAsColumns());
-        $this->assertCount(1, $c->getAsColumns());
-        $this->assertArrayHasKey('"Title"', $c->getAsColumns());
-        $clause = $c->getAsColumns()['"Title"'];
-        $this->assertEquals('book.title', $clause);
+        $this->assertNull($c->getSelect());
     }
 
     /**
      * @return void
      */
-    public function testGetSelectAddsArrayToAsColumns()
+    public function testGetSelectReturnsArrayWhenSelectingASingleColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $columns = ['Id', 'Title'];
-        $c->select($columns);
+        $c->select('Title');
+        $this->assertEquals(['Title'], $c->getSelect());
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetSelectReturnsArrayWhenSelectingSeveralColumns()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->select(['Id', 'Title']);
+        $this->assertEquals(['Id', 'Title'], $c->getSelect());
+    }
 
-        $this->assertIsArray($c->getAsColumns());
-        $this->assertCount(2, $c->getAsColumns());
-        foreach ($columns as $columnName) {
-            $quotedName = "\"$columnName\"";
-            $this->assertArrayHasKey($quotedName, $c->getAsColumns());
-            $clause = $c->getAsColumns()[$quotedName];
-            $this->assertEquals('book.' . strtolower($columnName), $clause);
-        }
+    /**
+     * @return void
+     */
+    public function testGetSelectReturnsArrayWhenSelectingASingleColumnAsArray()
+    {
+        $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
+        $c->select(['Title']);
+        $this->assertEquals(['Title'], $c->getSelect());
     }
 
     /**
@@ -490,17 +495,14 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select('*');
-        $tableColumns = BookTableMap::getTableMap()->getColumns();
-
-        $this->assertIsArray($c->getAsColumns());
-        $this->assertCount(count($tableColumns), $c->getAsColumns());
-        foreach ($tableColumns as $columnMap) {
-            $columnName = $c->getModelName() . '.' . $columnMap->getPhpName();
-            $quotedName = "\"$columnName\"";
-            $this->assertArrayHasKey($quotedName, $c->getAsColumns());
-            $clause = $c->getAsColumns()[$quotedName];
-            $this->assertEquals($columnMap->getFullyQualifiedName(), $clause);
-        }
+        $this->assertEquals([
+            'Propel\Tests\Bookstore\Book.Id',
+            'Propel\Tests\Bookstore\Book.Title',
+            'Propel\Tests\Bookstore\Book.ISBN',
+            'Propel\Tests\Bookstore\Book.Price',
+            'Propel\Tests\Bookstore\Book.PublisherId',
+            'Propel\Tests\Bookstore\Book.AuthorId',
+        ], $c->getSelect());
     }
 
     /**
@@ -525,5 +527,6 @@ class ModelCriteriaSelectTest extends BookstoreTestBase
         $this->expectException(PropelException::class);
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->select(['Id', 'LeUnknonwColumn']);
+        $c->configureSelectColumns();
     }
 }
