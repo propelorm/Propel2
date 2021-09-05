@@ -654,7 +654,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         \$this->basePreSelect(\$con);
 
         if (
-            \$this->formatter || \$this->modelAlias || \$this->with
+            \$this->formatter || \$this->modelAlias || \$this->with || \$this->select
             || \$this->selectColumns || \$this->asColumns || \$this->selectModifiers
             || \$this->map || \$this->having || \$this->joins
         ) {

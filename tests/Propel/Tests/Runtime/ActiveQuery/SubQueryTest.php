@@ -283,6 +283,7 @@ class SubQueryTest extends BookstoreTestBase
         $c = new BookQuery();
         $c->addSelectQuery($subCriteria, 'alias1', false);
         $c->select(['alias1.Id']);
+        $c->configureSelectColumns();
 
         $sql = $this->getSql('SELECT alias1.id AS "alias1.Id" FROM (SELECT book.id, book.title, book.isbn, book.price, book.publisher_id, book.author_id FROM book) AS alias1');
 

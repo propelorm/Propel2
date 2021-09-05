@@ -82,6 +82,12 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected $isKeepQuery = true;
 
+    // this is for the select method
+    /**
+     * @var string|array|null
+     */
+    protected $select;
+
     /**
      * Used to memorize whether we added self-select columns before.
      *
@@ -466,42 +472,34 @@ class ModelCriteria extends BaseModelCriteria
         if (empty($columnArray)) {
             throw new PropelException('You must ask for at least one column');
         }
-        $this->isSelfSelected = true;
-        if ($this->formatter === null) {
-            $this->setFormatter(SimpleArrayFormatter::class);
-        }
 
         if ($columnArray === '*') {
-            $columnArray = [];
-            foreach ($this->getTableMap()->getColumns() as $columnMap) {
-                $columnArray[] = $this->modelName . '.' . $columnMap->getPhpName();
-            }
+            $columnArray = $this->resolveSelectAll();
         }
         if (!is_array($columnArray)) {
             $columnArray = [$columnArray];
         }
-
-        $this->selectColumns = [];
-
-        foreach ($columnArray as $columnName) {
-            if (array_key_exists($columnName, $this->asColumns)) {
-                continue;
-            }
-            [$columnMap, $realColumnName] = $this->getColumnFromName($columnName);
-            if ($realColumnName === null) {
-                throw new PropelException("Cannot find selected column '$columnName'");
-            }
-            // always put quotes around the columnName to be safe, we strip them in the formatter
-            $this->addAsColumn('"' . $columnName . '"', $realColumnName);
-        }
+        $this->select = $columnArray;
+        $this->isSelfSelected = true;
 
         return $this;
     }
 
     /**
+     * @return string[]
+     */
+    protected function resolveSelectAll(): array
+    {
+        $columnArray = [];
+        foreach ($this->getTableMap()->getColumns() as $columnMap) {
+            $columnArray[] = $this->modelName . '.' . $columnMap->getPhpName();
+        }
+
+        return $columnArray;
+    }
+
+    /**
      * Retrieves the columns defined by a previous call to select().
-     *
-     * @deprecated Not needed anymore, selected columns are part of {@link Criteria::$asColumns}
      *
      * @see select()
      *
@@ -509,7 +507,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function getSelect()
     {
-        return array_values($this->asColumns);
+        return $this->select;
     }
 
     /**
@@ -976,6 +974,7 @@ class ModelCriteria extends BaseModelCriteria
         $this->with = [];
         $this->primaryCriteria = null;
         $this->formatter = null;
+        $this->select = null;
 
         return $this;
     }
@@ -1637,6 +1636,8 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function doCount(?ConnectionInterface $con = null)
     {
+        $this->configureSelectColumns();
+
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
             $this->addSelfSelectColumns();
@@ -2203,19 +2204,56 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function doSelect(?ConnectionInterface $con = null)
     {
+        $this->configureSelectColumns();
+
         $this->addSelfSelectColumns();
 
         return parent::doSelect($con);
     }
 
     /**
-     * @deprecated This method was used to add columns from {@link select()} during query generation, but that is handled
-     * right away now.
+     * {@inheritDoc}
+     *
+     * @see \Propel\Runtime\ActiveQuery\Criteria::createSelectSql()
+     *
+     * @param array $params Parameters that are to be replaced in prepared statement.
+     *
+     * @return string
+     */
+    public function createSelectSql(&$params)
+    {
+        $this->configureSelectColumns();
+
+        return parent::createSelectSql($params);
+    }
+
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return void
      */
     public function configureSelectColumns()
     {
+        if (!$this->select) {
+            return;
+        }
+
+        if ($this->formatter === null) {
+            $this->setFormatter(SimpleArrayFormatter::class);
+        }
+        $this->selectColumns = [];
+
+        foreach ($this->select as $columnName) {
+            if (array_key_exists($columnName, $this->asColumns)) {
+                continue;
+            }
+            [$columnMap, $realColumnName] = $this->getColumnFromName($columnName);
+            if ($realColumnName === null) {
+                throw new PropelException("Cannot find selected column '$columnName'");
+            }
+            // always put quotes around the columnName to be safe, we strip them in the formatter
+            $this->addAsColumn('"' . $columnName . '"', $realColumnName);
+        }
     }
 
     /**
