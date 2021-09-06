@@ -34,13 +34,14 @@ class ConcreteInheritanceBehavior extends Behavior
      * @var string[]
      */
     protected $parameters = [
-        'extends' => '',
-        'descendant_column' => 'descendant_class',
-        'copy_data_to_parent' => 'true',
-        'copy_data_to_child'  => 'false',
-        'schema'              => '',
-        'exclude_behaviors'   => '',
-        'exclude_indices'     => '',
+        'extends'              => '',
+        'descendant_column'    => 'descendant_class',
+        'copy_data_to_parent'  => 'true',
+        'copy_data_to_child'   => 'false',
+        'schema'               => '',
+        'exclude_behaviors'    => '',
+        'exclude_indices'      => '',
+        'exclude_foreign_keys' => '',
     ];
 
     /**
@@ -92,11 +93,15 @@ class ConcreteInheritanceBehavior extends Behavior
         }
 
         // add the foreign keys of the parent table
-        foreach ($parentTable->getForeignKeys() as $fk) {
-            $copiedFk = clone $fk;
-            $copiedFk->setName('');
-            $copiedFk->setRefPhpName('');
-            $this->getTable()->addForeignKey($copiedFk);
+        $excludeForeignKeys = $this->getParameter('exclude_foreign_keys');
+        if ('*' !== $excludeForeignKeys) {
+            foreach ($parentTable->getForeignKeys() as $fk) {
+                $copiedFk = clone $fk;
+                $copiedFk->setName('');
+                $copiedFk->setRefPhpName('');
+                $this->getTable()->addForeignKey($copiedFk)
+                ;
+            }
         }
 
         $excludeIndices = $this->getParameter('exclude_indices');
