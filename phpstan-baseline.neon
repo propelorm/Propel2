@@ -181,11 +181,6 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
-			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
-
-		-
 			message: "#^Variable \\$mysqlInvalidDateString might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
