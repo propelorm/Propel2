@@ -36,9 +36,9 @@ class IniFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports(['ini', 'properties'], $resource);
+        return static::checkSupports(['ini', 'properties'], $resource);
     }
 
     /**
@@ -52,8 +52,9 @@ class IniFileLoader extends FileLoader
      *
      * @return array The configuration array
      */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): array
     {
+        /** @var false|array<array-key,string|array<array-key,string|array<array-key,string>>> $ini */
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
         if ($ini === false) {
@@ -61,31 +62,26 @@ class IniFileLoader extends FileLoader
         }
 
         $ini = $this->parse($ini); //Parse for nested sections
-        $ini = $this->resolveParams($ini); //Resolve parameter placeholders (%name%)
 
-        return $ini;
+        return $this->resolveParams($ini); //Resolve parameter placeholders (%name%)
     }
 
     /**
      * Parse data from the configuration array, to transform nested sections into associative arrays
      * and to fix int/float/bool typing
      *
-     * @param array $data
+     * @param array<array-key, string|array<array-key, string|array<array-key, string>>> $data
      *
      * @return array
      */
-    private function parse(array $data)
+    private function parse(array $data): array
     {
         $config = [];
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
-                if (strpos($section, $this->nestSeparator) !== false) {
-                    $sections = explode($this->nestSeparator, $section);
-                    $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
-                } else {
-                    $config[$section] = $this->parseSection($value);
-                }
+                $sections = explode($this->nestSeparator, $section);
+                $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
             } else {
                 $this->parseKey($section, $value, $config);
             }
@@ -98,32 +94,28 @@ class IniFileLoader extends FileLoader
      * Process a nested section
      *
      * @param array $sections
-     * @param mixed $value
+     * @param array<array-key, string|array<array-key, string>> $value
      *
      * @return array
      */
-    private function buildNestedSection($sections, $value)
+    private function buildNestedSection(array $sections, array $value): array
     {
-        if (count($sections) == 0) {
-            return $this->parseSection($value);
+        $parsedSection = $this->parseSection($value);
+        foreach (array_reverse($sections) as $section) {
+            $parsedSection = [$section => $parsedSection];
         }
 
-        $nestedSection = [];
-
-        $first = array_shift($sections);
-        $nestedSection[$first] = $this->buildNestedSection($sections, $value);
-
-        return $nestedSection;
+        return $parsedSection;
     }
 
     /**
      * Parse a section.
      *
-     * @param array $section
+     * @param array<array-key, string|array<array-key, string>> $section
      *
      * @return array
      */
-    private function parseSection(array $section)
+    private function parseSection(array $section): array
     {
         $config = [];
 
@@ -138,43 +130,50 @@ class IniFileLoader extends FileLoader
      * Process a key.
      *
      * @param string $key
-     * @param string $value
+     * @param string|array<array-key, string> $rawValue
      * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
      *
      * @return void
      */
-    private function parseKey($key, $value, array &$config)
+    private function parseKey(string $key, $rawValue, array &$config): void
     {
-        if (strpos($key, $this->nestSeparator) !== false) {
-            $pieces = explode($this->nestSeparator, $key, 2);
-
-            if (!strlen($pieces[0]) || !strlen($pieces[1])) {
+        $value = $rawValue;
+        if (is_string($rawValue)) {
+            if (strlen($rawValue) <= 5 && in_array(strtolower($rawValue), ['true', 'false'], true)) {
+                $value = (strtolower($rawValue) === 'true');
+            } elseif ($rawValue === (string)(int)$rawValue) {
+                $value = (int)$rawValue;
+            } elseif ($rawValue === (string)(float)$rawValue) {
+                $value = (float)$rawValue;
+            }
+        }
+        $subKeys = explode($this->nestSeparator, $key);
+        $subConfig = &$config;
+        $lastIndex = count($subKeys) - 1;
+        foreach ($subKeys as $index => $subKey) {
+            if ($subKey === '') {
                 throw new IniParseException(sprintf('Invalid key "%s"', $key));
             }
-            if (!isset($config[$pieces[0]])) {
-                if ($pieces[0] === '0' && !empty($config)) {
-                    $config = [$pieces[0] => $config];
+            if ($index === $lastIndex) {
+                $subConfig[$subKey] = $value;
+
+                break;
+            }
+            if (!isset($subConfig[$subKey])) {
+                if ($subKey === '0' && $subConfig) {
+                    $subConfig = [$subKey => $subConfig];
                 } else {
-                    $config[$pieces[0]] = [];
+                    $subConfig[$subKey] = [];
                 }
-            } elseif (!is_array($config[$pieces[0]])) {
+            } elseif (!is_array($subConfig[$subKey])) {
                 throw new IniParseException(sprintf(
                     'Cannot create sub-key for "%s", as key already exists',
-                    $pieces[0]
+                    $subKey
                 ));
             }
-
-            $this->parseKey($pieces[1], $value, $config[$pieces[0]]);
-        } elseif (is_string($value) && in_array(strtolower($value), ['true', 'false'], true)) {
-            $config[$key] = (strtolower($value) === 'true');
-        } elseif ($value === (string)(int)$value) {
-            $config[$key] = (int)$value;
-        } elseif ($value === (string)(float)$value) {
-            $config[$key] = (float)$value;
-        } else {
-            $config[$key] = $value;
+            $subConfig = &$subConfig[$subKey];
         }
     }
 }
