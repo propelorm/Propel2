@@ -193,7 +193,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see Criteria::add()
      *
-     * @param mixed $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+     * @param literal-string|array $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *   Or an array of condition names
      * @param mixed $value A value for the condition
      * @param int|null $bindingType
