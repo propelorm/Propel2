@@ -193,12 +193,15 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see Criteria::add()
      *
-     * @param literal-string|array $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+     * @param string|array $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *   Or an array of condition names
      * @param mixed $value A value for the condition
      * @param int|null $bindingType
      *
      * @return $this The current object, for fluid interface
+     *
+     * @phpstan-param literal-string|array $clause
+     * @psalm-param literal-string|array $clause
      */
     public function where($clause, $value = null, $bindingType = null)
     {
