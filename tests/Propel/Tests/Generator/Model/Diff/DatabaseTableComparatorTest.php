@@ -176,6 +176,52 @@ class DatabaseTableComparatorTest extends TestCase
     /**
      * @return void
      */
+    public function testCompareModifiedTableSkipSql()
+    {
+        $d1 = new Database();
+        $t1 = new Table('Foo_Table');
+        $c1 = new Column('Foo');
+        $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c1->getDomain()->replaceScale(2);
+        $c1->getDomain()->replaceSize(3);
+        $c1->setNotNull(true);
+        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $t1->addColumn($c1);
+        $d1->addTable($t1);
+
+        $d2 = new Database();
+        $t2 = new Table('Foo_Table');
+        $t2->setSkipSql(true);
+
+        $c2 = (new Column('Foo'));
+        $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c2->getDomain()->replaceScale(2);
+        $c2->getDomain()->replaceSize(3);
+        $c2->setNotNull(true);
+        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+
+        $c3 = (new Column('Bar'));
+        $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c3->getDomain()->replaceScale(2);
+        $c3->getDomain()->replaceSize(3);
+        $c3->setNotNull(true);
+        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+
+        $t2->addColumn($c2);
+        $t2->addColumn($c3);
+        $d2->addTable($t2);
+
+        $dc = new DatabaseComparator();
+        $dc->setFromDatabase($d1);
+        $dc->setToDatabase($d2);
+        $nbDiffs = $dc->compareTables();
+
+        $this->assertEquals(0, $nbDiffs);
+    }
+
+    /**
+     * @return void
+     */
     public function testCompareRemovedTable()
     {
         $d1 = new Database();

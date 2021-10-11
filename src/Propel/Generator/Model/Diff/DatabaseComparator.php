@@ -262,6 +262,10 @@ class DatabaseComparator
             }
             if ($this->toDatabase->hasTable($fromTable->getName(), $caseInsensitive)) {
                 $toTable = $this->toDatabase->getTable($fromTable->getName(), $caseInsensitive);
+                if ($toTable->isSkipSql()) {
+                    continue;
+                }
+
                 $databaseDiff = TableComparator::computeDiff($fromTable, $toTable, $caseInsensitive);
                 if ($databaseDiff) {
                     $this->databaseDiff->addModifiedTable($fromTable->getName(), $databaseDiff);
