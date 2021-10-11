@@ -192,6 +192,7 @@ class ModelCriteria extends BaseModelCriteria
      * </code>
      *
      * @phpstan-param literal-string|array $clause
+     *
      * @psalm-param literal-string|array $clause
      *
      * @see Criteria::add()
