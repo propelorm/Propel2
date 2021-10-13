@@ -194,21 +194,9 @@ class DatabaseTableComparatorTest extends TestCase
         $t2->setSkipSql(true);
 
         $c2 = (new Column('Foo'));
-        $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
-        $c2->getDomain()->replaceScale(2);
-        $c2->getDomain()->replaceSize(3);
-        $c2->setNotNull(true);
-        $c2->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
-
-        $c3 = (new Column('Bar'));
-        $c3->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
-        $c3->getDomain()->replaceScale(2);
-        $c3->getDomain()->replaceSize(3);
-        $c3->setNotNull(true);
-        $c3->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $c2->setNotNull(false);
 
         $t2->addColumn($c2);
-        $t2->addColumn($c3);
         $d2->addTable($t2);
 
         $dc = new DatabaseComparator();
