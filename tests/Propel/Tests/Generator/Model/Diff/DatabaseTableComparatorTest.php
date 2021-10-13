@@ -204,7 +204,7 @@ class DatabaseTableComparatorTest extends TestCase
         $dc->setToDatabase($d2);
         $nbDiffs = $dc->compareTables();
 
-        $this->assertEquals(0, $nbDiffs);
+        $this->assertSame(0, $nbDiffs);
     }
 
     /**
