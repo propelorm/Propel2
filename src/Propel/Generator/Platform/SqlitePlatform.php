@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Platform;
 
+use PDO;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
@@ -19,6 +20,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Runtime\Connection\PdoConnection;
 use SQLite3;
 
 /**
@@ -53,8 +55,7 @@ class SqlitePlatform extends DefaultPlatform
     {
         parent::initialize();
 
-        $version = SQLite3::version();
-        $version = $version['versionString'];
+        $version = $this->getVersion();
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
 
@@ -608,5 +609,20 @@ PRAGMA foreign_keys = ON;
     public function supportsNativeDeleteTrigger()
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getVersion(): string
+    {
+        if (class_exists(SQLite3::class)) {
+            return SQLite3::version()['versionString'];
+        }
+
+        //if php_sqlite3 extension is not installed, we need to query the database
+        $connection = new PdoConnection('sqlite::memory:');
+
+        return (string)$connection->query('SELECT sqlite_version()')->fetch(PDO::FETCH_NUM)[0];
     }
 }

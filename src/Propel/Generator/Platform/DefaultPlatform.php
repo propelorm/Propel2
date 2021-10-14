@@ -212,19 +212,19 @@ class DefaultPlatform implements PlatformInterface
     /**
      * Returns the database specific domain for a mapping type.
      *
-     * @param string $mappingType
+     * @param string $propelType
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
      * @return \Propel\Generator\Model\Domain
      */
-    public function getDomainForType($mappingType)
+    public function getDomainForType($propelType)
     {
-        if (!isset($this->schemaDomainMap[$mappingType])) {
-            throw new EngineException(sprintf('Cannot map unknown Propel type %s to native database type.', var_export($mappingType, true)));
+        if (!isset($this->schemaDomainMap[$propelType])) {
+            throw new EngineException(sprintf('Cannot map unknown Propel type %s to native database type.', var_export($propelType, true)));
         }
 
-        return $this->schemaDomainMap[$mappingType];
+        return $this->schemaDomainMap[$propelType];
     }
 
     /**
@@ -1363,23 +1363,23 @@ ALTER TABLE %s ADD
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param bool|int|string $b A Boolean or string representation of Boolean ('y', 'true').
+     * @param bool|int|string $value A Boolean or string representation of Boolean ('y', 'true').
      *
      * @return string
      */
-    public function getBooleanString($b)
+    public function getBooleanString($value)
     {
-        if (is_bool($b) && $b === true) {
+        if (is_bool($value) && $value === true) {
             return '1';
         }
 
-        if (is_int($b) && $b === 1) {
+        if (is_int($value) && $value === 1) {
             return '1';
         }
 
         if (
-            is_string($b)
-            && in_array(strtolower($b), ['1', 'true', 'y', 'yes'])
+            is_string($value)
+            && in_array(strtolower($value), ['1', 'true', 'y', 'yes'])
         ) {
             return '1';
         }

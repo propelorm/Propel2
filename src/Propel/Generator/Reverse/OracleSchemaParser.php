@@ -252,7 +252,7 @@ class OracleSchemaParser extends AbstractSchemaParser
             $stmt3 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '" . $row['R_CONSTRAINT_NAME'] . "'");
             $foreignReferenceInfo = $stmt3->fetch(PDO::FETCH_ASSOC);
 
-            if (!isset($foreignKeys[$row['CONSTRAINT_NAME']])) {
+            if (!isset($foreignKeys[(string)$row['CONSTRAINT_NAME']])) {
                 $fk = new ForeignKey($row['CONSTRAINT_NAME']);
                 $fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
                 $onDelete = ($row['DELETE_RULE'] === 'NO ACTION') ? 'NONE' : $row['DELETE_RULE'];

@@ -103,17 +103,17 @@ class PgsqlPlatform extends DefaultPlatform
     }
 
     /**
-     * @param mixed $b
+     * @param mixed $value
      *
      * @return string
      */
-    public function getBooleanString($b)
+    public function getBooleanString($value)
     {
         // parent method does the checking for allows string
         // representations & returns integer
-        $b = parent::getBooleanString($b);
+        $value = parent::getBooleanString($value);
 
-        return ($b ? "'t'" : "'f'");
+        return ($value ? "'t'" : "'f'");
     }
 
     /**
