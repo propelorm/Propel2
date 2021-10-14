@@ -130,11 +130,11 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param string|null $seqname
+     * @param string|null $name
      *
      * @return int
      */
-    public function lastInsertId($seqname = null)
+    public function lastInsertId($name = null)
     {
         $result = $this->query('SELECT SCOPE_IDENTITY()');
 

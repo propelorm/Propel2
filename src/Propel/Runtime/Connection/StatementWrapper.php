@@ -273,7 +273,9 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function fetchColumn($columnIndex = 0)
     {
-        return $this->statement->fetchColumn($columnIndex);
+        $output = $this->statement->fetchColumn($columnIndex);
+
+        return $output === null ? null : (string)$output;
     }
 
     /**

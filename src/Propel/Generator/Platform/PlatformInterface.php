@@ -239,11 +239,11 @@ interface PlatformInterface
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @param mixed $value A boolean or string representation of boolean ('y', 'true').
      *
      * @return string
      */
-    public function getBooleanString($tf);
+    public function getBooleanString($value);
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).

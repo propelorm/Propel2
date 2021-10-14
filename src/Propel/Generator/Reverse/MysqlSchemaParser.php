@@ -489,7 +489,7 @@ EOT;
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $colName = $row['Column_name'];
             $colSize = $row['Sub_part'];
-            $name = $row['Key_name'];
+            $name = (string)$row['Key_name'];
 
             if ($name === 'PRIMARY') {
                 continue;
