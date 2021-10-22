@@ -1076,9 +1076,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * <code>
      * \$query->filterBy$colPhpName('fooValue');   // WHERE $colName = 'fooValue'
      * \$query->filterBy$colPhpName('%fooValue%', Criteria::LIKE); // WHERE $colName LIKE '%fooValue%'
+     * \$query->filterBy$colPhpName(['foo', 'bar']); // WHERE $colName IN ('foo', 'bar')
      * </code>
      *
-     * @param     string \$$variableName The value to use as filter.";
+     * @param     string|string[] \$$variableName The value to use as filter.";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
