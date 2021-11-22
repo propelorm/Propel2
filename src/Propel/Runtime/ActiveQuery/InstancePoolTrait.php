@@ -30,8 +30,9 @@ trait InstancePoolTrait
             if ($key === null) {
                 $key = static::getInstanceKey($object);
             }
-
-            self::$instances[$key] = $object;
+            if (!empty($key)) {
+                self::$instances[$key] = $object;
+            }
         }
     }
 
