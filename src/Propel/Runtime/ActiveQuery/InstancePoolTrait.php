@@ -26,14 +26,17 @@ trait InstancePoolTrait
      */
     public static function addInstanceToPool($object, $key = null)
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if ($key === null) {
-                $key = static::getInstanceKey($object);
-            }
-            if (!empty($key)) {
-                self::$instances[$key] = $object;
-            }
+        if (!Propel::isInstancePoolingEnabled()) {
+            return;
         }
+        if ($key === null) {
+            $key = static::getInstanceKey($object);
+        }
+        if (empty($key)) {
+            return;
+        }
+        
+        self::$instances[$key] = $object;  
     }
 
     /**
