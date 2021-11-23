@@ -36,7 +36,7 @@ trait InstancePoolTrait
             return;
         }
         
-        self::$instances[$key] = $object;  
+        self::$instances[$key] = $object;
     }
 
     /**
