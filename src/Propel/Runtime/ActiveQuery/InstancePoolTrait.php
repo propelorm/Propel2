@@ -35,7 +35,6 @@ trait InstancePoolTrait
         if (empty($key)) {
             return;
         }
-        
         self::$instances[$key] = $object;
     }
 
