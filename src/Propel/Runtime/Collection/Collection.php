@@ -174,7 +174,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return \Propel\Runtime\Collection\CollectionIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new CollectionIterator($this);
     }

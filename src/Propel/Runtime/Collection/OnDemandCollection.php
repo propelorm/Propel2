@@ -13,6 +13,7 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Map\TableMap;
+use Traversable;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -112,7 +113,7 @@ class OnDemandCollection extends Collection
     /**
      * @return \Propel\Runtime\Collection\OnDemandIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->lastIterator;
     }

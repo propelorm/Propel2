@@ -298,7 +298,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $res = $this->find(null); // use the default connection
         if ($res instanceof IteratorAggregate) {
