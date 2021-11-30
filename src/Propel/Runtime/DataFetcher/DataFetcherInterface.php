@@ -39,7 +39,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return mixed Can return any type.
      */
-    public function current();
+    public function current(): mixed;
 
     /**
      * Move forward to next element
@@ -48,7 +48,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return void Any returned value is ignored.
      */
-    public function next();
+    public function next(): void;
 
     /**
      * Return the key of the current element
@@ -57,7 +57,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return mixed scalar on success, or null on failure.
      */
-    public function key();
+    public function key(): mixed;
 
     /**
      * Checks if current position is valid
@@ -67,7 +67,7 @@ interface DataFetcherInterface extends Iterator, Countable
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid();
+    public function valid();: bool
 
     /**
      * Rewind the Iterator to the first element
@@ -76,7 +76,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return void Any returned value is ignored.
      */
-    public function rewind();
+    public function rewind(): void;
 
     /**
      * Returns the data of the first column of the next row,
