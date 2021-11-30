@@ -20,6 +20,7 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Propel;
 use Serializable;
+use Traversable;
 
 /**
  * Class for iterating over a list of Propel elements
