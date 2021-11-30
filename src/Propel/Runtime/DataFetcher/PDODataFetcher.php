@@ -104,7 +104,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         if ($this->dataObject !== null) {
             $this->current = $this->dataObject->fetch($this->style);
@@ -117,7 +117,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->current;
     }
@@ -125,7 +125,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }
@@ -133,7 +133,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->current !== null && $this->current !== false;
     }
@@ -145,7 +145,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->dataObject) {
             $this->current = $this->dataObject->fetch($this->style);
@@ -166,7 +166,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         if ($this->dataObject && $this->dataObject->getConnection()->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             $lastQuery = $this->dataObject->getStatement()->queryString;
