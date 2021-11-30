@@ -165,7 +165,7 @@ class PropelDateTime extends DateTime
      *
      * @return void
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         // @TODO I don't think we can call the constructor from within this method
         parent::__construct($this->dateString, new DateTimeZone($this->tzString));
