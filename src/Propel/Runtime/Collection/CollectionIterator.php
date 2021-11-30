@@ -53,7 +53,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
@@ -221,7 +221,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         $this->collection->append($value);
         parent::append($value);
@@ -230,64 +230,62 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param int $flags Not used
-     *
-     * @return void
      */
-    public function asort($flags = SORT_REGULAR)
+    public function asort($flags = SORT_REGULAR): bool
     {
         parent::asort();
         $this->refreshPositions();
+
+        return true;
     }
 
     /**
      * @param int $flags Not used
-     *
-     * @return void
      */
-    public function ksort($flags = SORT_REGULAR)
+    public function ksort($flags = SORT_REGULAR): bool
     {
         parent::ksort();
         $this->refreshPositions();
+
+        return true;
     }
 
     /**
      * @param string $callback
-     *
-     * @return void
      */
-    public function uasort($callback)
+    public function uasort($callback): bool
     {
         parent::uasort($callback);
         $this->refreshPositions();
+
+        return true;
     }
 
     /**
      * @param string $callback
-     *
-     * @return void
      */
-    public function uksort($callback)
+    public function uksort($callback): bool
     {
         parent::uksort($callback);
         $this->refreshPositions();
+
+        return true;
     }
 
-    /**
-     * @return void
-     */
-    public function natsort()
+    public function natsort(): bool
     {
         parent::natsort();
         $this->refreshPositions();
+
+        return true;
     }
 
-    /**
-     * @return void
-     */
-    public function natcasesort()
+    public function natcasesort(): bool
     {
         parent::natcasesort();
         $this->refreshPositions();
+
+        return true;
     }
 
     /**
