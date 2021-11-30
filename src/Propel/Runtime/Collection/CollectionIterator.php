@@ -197,7 +197,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return void
      */
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value): void
     {
         $this->collection->offsetSet($index, $value);
         parent::offsetSet($index, $value);
@@ -209,7 +209,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return void
      */
-    public function offsetUnset($index)
+    public function offsetUnset($index): void
     {
         $this->collection->offsetUnset($index);
         parent::offsetUnset($index);

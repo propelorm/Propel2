@@ -80,7 +80,7 @@ class OnDemandIterator implements Iterator
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->dataFetcher->count();
     }
@@ -95,7 +95,7 @@ class OnDemandIterator implements Iterator
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
     }
@@ -105,7 +105,7 @@ class OnDemandIterator implements Iterator
      *
      * @return int
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->currentKey;
     }
@@ -116,7 +116,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
@@ -134,7 +134,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         // check that the hydration can begin
         if ($this->formatter === null) {
@@ -154,7 +154,7 @@ class OnDemandIterator implements Iterator
     /**
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return (bool)$this->isValid;
     }
