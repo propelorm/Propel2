@@ -67,7 +67,7 @@ interface DataFetcherInterface extends Iterator, Countable
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid();: bool
+    public function valid(): bool
 
     /**
      * Rewind the Iterator to the first element
