@@ -74,6 +74,16 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
         $this->data = $data;
     }
 
+    public function __serialize(): array
+    {
+        return [$this->serialize()];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->unserialize($data[0]);
+    }
+
     /**
      * @param mixed $value
      *
