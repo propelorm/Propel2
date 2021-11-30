@@ -89,7 +89,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
@@ -99,7 +99,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return mixed
      */
-    public function &offsetGet($offset)
+    public function &offsetGet($offset): mixed
     {
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
@@ -112,7 +112,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->data[] = $value;
@@ -126,7 +126,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
@@ -184,7 +184,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
@@ -407,7 +407,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return string
      */
-    public function serialize()
+    public function serialize(): ?string
     {
         $repr = [
             'data' => $this->getArrayCopy(),
@@ -423,7 +423,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);

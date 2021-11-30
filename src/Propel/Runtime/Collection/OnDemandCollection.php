@@ -175,7 +175,7 @@ class OnDemandCollection extends Collection
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): ?string
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -187,7 +187,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -199,7 +199,7 @@ class OnDemandCollection extends Collection
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->getIterator()->count();
     }

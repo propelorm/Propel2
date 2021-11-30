@@ -108,7 +108,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Returns the TableMap::TYPE_*

@@ -446,7 +446,7 @@ class PropelModelPager implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->getResults());
     }
