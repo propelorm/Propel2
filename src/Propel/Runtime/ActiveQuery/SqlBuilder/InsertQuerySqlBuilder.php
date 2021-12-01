@@ -22,7 +22,7 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
      */
     public static function createInsertSql(Criteria $criteria): PreparedStatementDto
     {
-        $builder = new InsertQuerySqlBuilder($criteria);
+        $builder = new self($criteria);
 
         return $builder->build();
     }
@@ -54,7 +54,7 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param string[] $qualifiedColumnNames
+     * @param array<string> $qualifiedColumnNames
      *
      * @return string
      */

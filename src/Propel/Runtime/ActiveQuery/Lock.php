@@ -17,8 +17,14 @@ namespace Propel\Runtime\ActiveQuery;
  */
 class Lock
 {
+    /**
+     * @var string
+     */
     public const SHARED = 'SHARED';
 
+    /**
+     * @var string
+     */
     public const EXCLUSIVE = 'EXCLUSIVE';
 
     /**
@@ -34,7 +40,7 @@ class Lock
     /**
      * Table names to lock
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $tableNames;
 
@@ -73,7 +79,7 @@ class Lock
     /**
      * Returns table names to lock
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getTableNames(): array
     {

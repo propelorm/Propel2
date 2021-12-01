@@ -83,7 +83,8 @@ class MigrationCreateCommand extends AbstractCommand
 
         $output->writeln(sprintf('"%s" file successfully created.', $file));
 
-        if (null !== $editorCmd = $input->getOption('editor')) {
+        $editorCmd = $input->getOption('editor');
+        if ($editorCmd !== null) {
             $output->writeln(sprintf('Using "%s" as text editor', $editorCmd));
             shell_exec($editorCmd . ' ' . escapeshellarg($file));
         } else {

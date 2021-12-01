@@ -107,7 +107,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
             $default,
             $attempts,
             $errorMessage,
-            $multiselect
+            $multiselect,
         );
     }
 

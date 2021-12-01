@@ -99,7 +99,7 @@ class SortableBehaviorQueryBuilderModifier
         $this->setBuilder($builder);
         $this->builder->declareClasses(
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Connection\ConnectionInterface'
+            '\Propel\Runtime\Connection\ConnectionInterface',
         );
         $script = '';
 

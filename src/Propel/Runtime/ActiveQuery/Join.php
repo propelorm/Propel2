@@ -31,7 +31,14 @@ use Propel\Runtime\Exception\LogicException;
 class Join
 {
     // default comparison type
+    /**
+     * @var string
+     */
     public const EQUAL = '=';
+
+    /**
+     * @var string
+     */
     public const INNER_JOIN = 'INNER JOIN';
 
     /**
@@ -61,7 +68,7 @@ class Join
     /**
      * The comparison operators for each pair of columns in the join condition
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $operators = [];
 
@@ -119,9 +126,9 @@ class Join
      * Use it preferably with no arguments, and then use addCondition() and setJoinType()
      * Syntax with arguments used mainly for backwards compatibility
      *
-     * @param string|array|null $leftColumn The left column of the join condition
+     * @param array|string|null $leftColumn The left column of the join condition
      *                            (may contain an alias name)
-     * @param string|array|null $rightColumn The right column of the join condition
+     * @param array|string|null $rightColumn The right column of the join condition
      *                            (may contain an alias name)
      * @param string|null $joinType The type of the join. Valid join types are null (implicit join),
      *                            Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
@@ -158,7 +165,7 @@ class Join
     public function addCondition($left, $right, $operator = self::EQUAL)
     {
         if (strrpos($left, '.')) {
-            [$this->leftTableName,  $this->left[]] = explode('.', $left);
+            [$this->leftTableName, $this->left[]] = explode('.', $left);
         } else {
             $this->left[] = $left;
         }
@@ -180,7 +187,7 @@ class Join
      *
      * @param array $lefts The left columns of the join condition
      * @param array $rights The right columns of the join condition
-     * @param string[] $operators The comparison operators of the join condition, default Join::EQUAL
+     * @param array<string> $operators The comparison operators of the join condition, default Join::EQUAL
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
@@ -193,7 +200,7 @@ class Join
         }
 
         foreach ($lefts as $key => $left) {
-            $this->addCondition($left, $rights[$key], isset($operators[$key]) ? $operators[$key] : self::EQUAL);
+            $this->addCondition($left, $rights[$key], $operators[$key] ?? self::EQUAL);
         }
     }
 
@@ -332,7 +339,7 @@ class Join
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getOperators()
     {
@@ -361,7 +368,7 @@ class Join
      */
     public function getJoinType()
     {
-        return $this->joinType === null ? self::INNER_JOIN : $this->joinType;
+        return $this->joinType ?? self::INNER_JOIN;
     }
 
     /**
@@ -500,7 +507,7 @@ class Join
      */
     public function getLeftTableAliasOrName()
     {
-        return $this->leftTableAlias ? $this->leftTableAlias : $this->leftTableName;
+        return $this->leftTableAlias ?: $this->leftTableName;
     }
 
     /**
@@ -633,7 +640,7 @@ class Join
      */
     public function getRightTableAliasOrName()
     {
-        return $this->rightTableAlias ? $this->rightTableAlias : $this->rightTableName;
+        return $this->rightTableAlias ?: $this->rightTableName;
     }
 
     /**
@@ -709,19 +716,19 @@ class Join
                 $criterion = $c->getNewCriterion(
                     $this->getLeftColumn($i),
                     $this->leftValues[$i],
-                    self::EQUAL
+                    self::EQUAL,
                 );
             } elseif ($this->rightValues[$i]) {
                 $criterion = $c->getNewCriterion(
                     $this->getRightColumn($i),
                     $this->rightValues[$i],
-                    self::EQUAL
+                    self::EQUAL,
                 );
             } else {
                 $criterion = $c->getNewCriterion(
                     $this->getLeftColumn($i),
                     $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
-                    Criteria::CUSTOM
+                    Criteria::CUSTOM,
                 );
             }
             if ($joinCondition === null) {
@@ -780,7 +787,7 @@ class Join
             '%s %s ON %s',
             $this->getJoinType(),
             $rightTableName,
-            $joinCondition
+            $joinCondition,
         );
     }
 

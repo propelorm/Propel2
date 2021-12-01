@@ -16,8 +16,14 @@ use Propel\Runtime\Map\RelationMap;
  */
 class ExistsCriterion extends AbstractCriterion
 {
+    /**
+     * @var string
+     */
     public const TYPE_EXISTS = 'EXISTS';
 
+    /**
+     * @var string
+     */
     public const TYPE_NOT_EXISTS = 'NOT EXISTS';
 
     /**
@@ -30,14 +36,14 @@ class ExistsCriterion extends AbstractCriterion
     /**
      * Build NOT EXISTS instead of EXISTS
      *
-     * @var string $keyword Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
+     * @var string Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
      *
-     * @phpstan-var ExistsCriterion::TYPE_*
+     * @phpstan-var \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_*
      */
     private $typeOfExists = self::TYPE_EXISTS;
 
     /**
-     * @phpstan-param ExistsCriterion::TYPE_*|null $typeOfExists
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_*|null $typeOfExists
      *
      * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
      * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQuery

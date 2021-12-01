@@ -31,37 +31,37 @@ class Table extends ScopedMappingModel implements IdMethod
     use BehaviorableTrait;
 
     /**
-     * @var \Propel\Generator\Model\Column[]
+     * @var array<\Propel\Generator\Model\Column>
      */
     private $columns = [];
 
     /**
-     * @var \Propel\Generator\Model\ForeignKey[]
+     * @var array<\Propel\Generator\Model\ForeignKey>
      */
     private $foreignKeys = [];
 
     /**
-     * @var \Propel\Generator\Model\ForeignKey[]
+     * @var array<\Propel\Generator\Model\ForeignKey>
      */
     private $foreignKeysByName = [];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $foreignTableNames = [];
 
     /**
-     * @var \Propel\Generator\Model\Index[]
+     * @var array<\Propel\Generator\Model\Index>
      */
     private $indices = [];
 
     /**
-     * @var \Propel\Generator\Model\Unique[]
+     * @var array<\Propel\Generator\Model\Unique>
      */
     private $unices = [];
 
     /**
-     * @var \Propel\Generator\Model\IdMethodParameter[]
+     * @var array<\Propel\Generator\Model\IdMethodParameter>
      */
     private $idMethodParameters = [];
 
@@ -106,7 +106,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private $database;
 
     /**
-     * @var \Propel\Generator\Model\ForeignKey[]
+     * @var array<\Propel\Generator\Model\ForeignKey>
      */
     private $referrers = [];
 
@@ -427,13 +427,14 @@ class Table extends ScopedMappingModel implements IdMethod
     public function addExtraIndices()
     {
         /**
-         * A collection of indexed columns. The keys is the column name
+         * A collection of indexed columns. The key is the column name
          * (concatenated with a comma in the case of multi-col index), the value is
          * an array with the names of the indexes that index these columns. We use
          * it to determine which additional indexes must be created for foreign
          * keys. It could also be used to detect duplicate indexes, but this is not
          * implemented yet.
-         * @var array
+         *
+         * @var array<string, array<string>> $_indices
          */
         $_indices = [];
 
@@ -668,7 +669,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds several columns at once.
      *
-     * @param \Propel\Generator\Model\Column[] $columns An array of Column instance
+     * @param array<\Propel\Generator\Model\Column> $columns An array of Column instance
      *
      * @return void
      */
@@ -769,7 +770,7 @@ class Table extends ScopedMappingModel implements IdMethod
             return $fk;
         }
 
-        $fk = new ForeignKey(isset($foreignKey['name']) ? $foreignKey['name'] : null);
+        $fk = new ForeignKey($foreignKey['name'] ?? null);
         $fk->setTable($this);
         $fk->loadMapping($foreignKey);
 
@@ -779,7 +780,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Adds several foreign keys at once.
      *
-     * @param \Propel\Generator\Model\ForeignKey[] $foreignKeys An array of ForeignKey objects
+     * @param array<\Propel\Generator\Model\ForeignKey> $foreignKeys An array of ForeignKey objects
      *
      * @return void
      */
@@ -848,7 +849,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of references to this table.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getReferrers()
     {
@@ -882,7 +883,7 @@ class Table extends ScopedMappingModel implements IdMethod
                 throw new BuildException(sprintf(
                     'Table "%s" contains a foreign key to nonexistent table "%s"',
                     $this->getName(),
-                    $foreignKey->getForeignTableName()
+                    $foreignKey->getForeignTableName(),
                 ));
             }
 
@@ -901,7 +902,7 @@ class Table extends ScopedMappingModel implements IdMethod
                     throw new BuildException(sprintf(
                         'Table "%s" contains a foreign key with nonexistent local column "%s"',
                         $this->getName(),
-                        $localColumnName
+                        $localColumnName,
                     ));
                 }
             }
@@ -924,7 +925,7 @@ class Table extends ScopedMappingModel implements IdMethod
                         'Table "%s" contains a foreign key to table "%s" with nonexistent column "%s"',
                         $this->getName(),
                         $foreignTable->getName(),
-                        $foreignColumnName
+                        $foreignColumnName,
                     ));
                 }
             }
@@ -942,7 +943,7 @@ class Table extends ScopedMappingModel implements IdMethod
                             'Table "%s" contains a foreign key to table "%s" but does not have a reference to foreign primary key "%s"',
                             $this->getName(),
                             $foreignTable->getName(),
-                            $foreignPrimaryKey->getName()
+                            $foreignPrimaryKey->getName(),
                         ));
                     }
                 }
@@ -957,7 +958,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of cross foreign keys.
      *
-     * @return \Propel\Generator\Model\CrossForeignKeys[]
+     * @return array<\Propel\Generator\Model\CrossForeignKeys>
      */
     public function getCrossFks()
     {
@@ -985,9 +986,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns all required(notNull && no defaultValue) primary keys which are not in $primaryKeys.
      *
-     * @param \Propel\Generator\Model\Column[] $primaryKeys
+     * @param array<\Propel\Generator\Model\Column> $primaryKeys
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getOtherRequiredPrimaryKeys(array $primaryKeys)
     {
@@ -1107,8 +1108,6 @@ class Table extends ScopedMappingModel implements IdMethod
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
-     * @throw InvalidArgumentException
-     *
      * @param \Propel\Generator\Model\Index|array $index
      *
      * @throws \Propel\Generator\Exception\InvalidArgumentException
@@ -1176,7 +1175,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not the table behaviors offer additional builders.
+     * Returns whether the table behaviors offer additional builders.
      *
      * @return bool
      */
@@ -1196,7 +1195,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @deprecated Unused (no isEarly() method available).
      *
-     * @return \Propel\Generator\Model\Behavior[] Array of Behavior objects
+     * @return array<\Propel\Generator\Model\Behavior> Array of Behavior objects
      */
     public function getEarlyBehaviors()
     {
@@ -1332,7 +1331,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private function buildPhpName($name)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $this->phpNamingMethod ]);
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $this->phpNamingMethod]);
     }
 
     /**
@@ -1630,7 +1629,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns an array containing all Column objects in the table.
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getColumns()
     {
@@ -1683,7 +1682,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all foreign keys.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getForeignKeys()
     {
@@ -1694,7 +1693,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns a Collection of parameters relevant for the chosen
      * id generation method.
      *
-     * @return \Propel\Generator\Model\IdMethodParameter[]
+     * @return array<\Propel\Generator\Model\IdMethodParameter>
      */
     public function getIdMethodParameters()
     {
@@ -1704,7 +1703,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all indices of this table.
      *
-     * @return \Propel\Generator\Model\Index[]
+     * @return array<\Propel\Generator\Model\Index>
      */
     public function getIndices()
     {
@@ -1714,7 +1713,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the list of all unique indices of this table.
      *
-     * @return \Propel\Generator\Model\Unique[]
+     * @return array<\Propel\Generator\Model\Unique>
      */
     public function getUnices()
     {
@@ -1725,7 +1724,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if $keys are a unique constraint in the table.
      * (through primaryKey, through a regular unices constraints or for single keys when it has isUnique=true)
      *
-     * @param \Propel\Generator\Model\Column[]|string[] $keys
+     * @param array<\Propel\Generator\Model\Column>|array<string> $keys
      *
      * @return bool
      */
@@ -1887,7 +1886,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param string $tableName
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getForeignKeysReferencingTable($tableName)
     {
@@ -1910,7 +1909,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param string $column Name of the column
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getColumnForeignKeys($column)
     {
@@ -2009,7 +2008,7 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the collection of Columns which make up the single primary
      * key for this table.
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getPrimaryKey()
     {

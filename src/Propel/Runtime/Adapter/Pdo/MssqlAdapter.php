@@ -196,6 +196,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         // get the ORDER BY clause if present
         $orderStatement = stristr($fromStatement, 'ORDER BY');
         $orders = '';
+        $orderArr = [];
 
         if ($orderStatement !== false) {
             // remove order statement from the from statement

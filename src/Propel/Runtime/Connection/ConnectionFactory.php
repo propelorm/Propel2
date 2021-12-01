@@ -15,6 +15,9 @@ use Propel\Runtime\Exception\InvalidArgumentException;
 
 class ConnectionFactory
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_CONNECTION_CLASS = '\Propel\Runtime\Connection\ConnectionWrapper';
 
     /**
@@ -25,7 +28,7 @@ class ConnectionFactory
      * @param string $defaultConnectionClass
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
-     * @throws Exception\ConnectionException
+     * @throws \Propel\Runtime\Connection\Exception\ConnectionException
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */

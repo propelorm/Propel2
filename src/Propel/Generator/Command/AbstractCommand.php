@@ -22,9 +22,19 @@ use Symfony\Component\Finder\Finder;
  */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_CONFIG_DIRECTORY = '.';
 
+    /**
+     * @var int
+     */
     public const CODE_SUCCESS = 0;
+
+    /**
+     * @var int
+     */
     public const CODE_ERROR = 1;
 
     /**
@@ -74,7 +84,7 @@ abstract class AbstractCommand extends Command
     /**
      * Find every schema files.
      *
-     * @param string|string[] $directory Path to the input directory
+     * @param array<string>|string $directory Path to the input directory
      * @param bool $recursive Search for file inside the input directory and all subdirectories
      *
      * @return array List of schema files
@@ -172,7 +182,7 @@ abstract class AbstractCommand extends Command
         $config['propel']['database']['connections'][$name]['adapter'] = strtolower($infos['adapter']);
         $config['propel']['database']['connections'][$name]['dsn'] = $dsn;
         $config['propel']['database']['connections'][$name]['user'] = isset($infos['user']) && $infos['user'] ? $infos['user'] : null;
-        $config['propel']['database']['connections'][$name]['password'] = isset($infos['password']) ? $infos['password'] : null;
+        $config['propel']['database']['connections'][$name]['password'] = $infos['password'] ?? null;
 
         if ($section === null) {
             $section = 'generator';

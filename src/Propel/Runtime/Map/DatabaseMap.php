@@ -37,14 +37,14 @@ class DatabaseMap
     /**
      * Tables in the database, using table name as key
      *
-     * @var \Propel\Runtime\Map\TableMap[]
+     * @var array<\Propel\Runtime\Map\TableMap>
      */
     protected $tables = [];
 
     /**
      * Tables in the database, using table phpName as key
      *
-     * @var \Propel\Runtime\Map\TableMap[]
+     * @var array<\Propel\Runtime\Map\TableMap>
      */
     protected $tablesByPhpName = [];
 
@@ -155,7 +155,7 @@ class DatabaseMap
     /**
      * Get a TableMap[] of all of the tables in the database.
      *
-     * @return \Propel\Runtime\Map\TableMap[]
+     * @return array<\Propel\Runtime\Map\TableMap>
      */
     public function getTables()
     {

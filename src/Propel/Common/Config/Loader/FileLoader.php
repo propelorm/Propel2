@@ -104,7 +104,7 @@ abstract class FileLoader extends BaseFileLoader
     /**
      * Check if a resource has a given extension
      *
-     * @param string|string[] $ext An extension or an array of extensions
+     * @param array<string>|string $ext An extension or an array of extensions
      * @param mixed $resource A resource
      *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
@@ -226,7 +226,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param mixed $value The variable to unescape
      *
-     * @return array|mixed
+     * @return mixed|array
      */
     private function unescapeValue($value)
     {

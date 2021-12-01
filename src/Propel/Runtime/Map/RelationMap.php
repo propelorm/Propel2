@@ -23,17 +23,35 @@ namespace Propel\Runtime\Map;
 class RelationMap
 {
     // types
+    /**
+     * @var int
+     */
     public const MANY_TO_ONE = 1;
 
+    /**
+     * @var int
+     */
     public const ONE_TO_MANY = 2;
 
+    /**
+     * @var int
+     */
     public const ONE_TO_ONE = 3;
 
+    /**
+     * @var int
+     */
     public const MANY_TO_MANY = 4;
 
     // representations
+    /**
+     * @var int
+     */
     public const LOCAL_TO_FOREIGN = 0;
 
+    /**
+     * @var int
+     */
     public const LEFT_TO_RIGHT = 1;
 
     /**
@@ -42,7 +60,7 @@ class RelationMap
     protected $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $pluralName;
 
@@ -67,7 +85,7 @@ class RelationMap
     protected $polymorphic = false;
 
     /**
-     * @var \Propel\Runtime\Map\ColumnMap[]
+     * @var array<\Propel\Runtime\Map\ColumnMap>
      */
     protected $localColumns = [];
 
@@ -79,7 +97,7 @@ class RelationMap
     protected $localValues = [];
 
     /**
-     * @var (\Propel\Runtime\Map\ColumnMap|null)[]
+     * @var array<(\Propel\Runtime\Map\ColumnMap|null)>
      */
     protected $foreignColumns = [];
 
@@ -146,7 +164,7 @@ class RelationMap
      */
     public function getPluralName()
     {
-        return $this->pluralName !== null ? $this->pluralName : ($this->name . 's');
+        return $this->pluralName ?? ($this->name . 's');
     }
 
     /**
@@ -222,7 +240,7 @@ class RelationMap
      */
     public function getLeftTable()
     {
-        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getLocalTable() : $this->getForeignTable();
+        return $this->getType() === self::MANY_TO_ONE ? $this->getLocalTable() : $this->getForeignTable();
     }
 
     /**
@@ -232,7 +250,7 @@ class RelationMap
      */
     public function getRightTable()
     {
-        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
+        return $this->getType() === self::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
     }
 
     /**
@@ -266,18 +284,18 @@ class RelationMap
      *
      * @return array Associative array (local => foreign) of fully qualified column names
      */
-    public function getColumnMappings($direction = RelationMap::LOCAL_TO_FOREIGN)
+    public function getColumnMappings($direction = self::LOCAL_TO_FOREIGN)
     {
         $h = [];
         if (
-            $direction === RelationMap::LEFT_TO_RIGHT
-            && $this->getType() === RelationMap::MANY_TO_ONE
+            $direction === self::LEFT_TO_RIGHT
+            && $this->getType() === self::MANY_TO_ONE
         ) {
-            $direction = RelationMap::LOCAL_TO_FOREIGN;
+            $direction = self::LOCAL_TO_FOREIGN;
         }
 
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            if ($direction === RelationMap::LOCAL_TO_FOREIGN) {
+            if ($direction === self::LOCAL_TO_FOREIGN) {
                 $h[$this->localColumns[$i]->getFullyQualifiedName()] = $this->foreignColumns[$i]->getFullyQualifiedName();
             } else {
                 $h[$this->foreignColumns[$i]->getFullyQualifiedName()] = $this->localColumns[$i]->getFullyQualifiedName();
@@ -310,7 +328,7 @@ class RelationMap
     /**
      * Get the local columns
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getLocalColumns()
     {
@@ -320,7 +338,7 @@ class RelationMap
     /**
      * Get the foreign columns
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getForeignColumns()
     {
@@ -330,21 +348,21 @@ class RelationMap
     /**
      * Get the left columns of the relation
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getLeftColumns()
     {
-        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getLocalColumns() : $this->getForeignColumns();
+        return $this->getType() === self::MANY_TO_ONE ? $this->getLocalColumns() : $this->getForeignColumns();
     }
 
     /**
      * Get the right columns of the relation
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getRightColumns()
     {
-        return $this->getType() === RelationMap::MANY_TO_ONE ? $this->getForeignColumns() : $this->getLocalColumns();
+        return $this->getType() === self::MANY_TO_ONE ? $this->getForeignColumns() : $this->getLocalColumns();
     }
 
     /**

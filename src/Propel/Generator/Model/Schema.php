@@ -25,7 +25,7 @@ use Propel\Generator\Schema\Dumper\XmlDumper;
 class Schema
 {
     /**
-     * @var \Propel\Generator\Model\Database[]
+     * @var array<\Propel\Generator\Model\Database>
      */
     private $databases;
 
@@ -150,7 +150,7 @@ class Schema
      *
      * @param bool $doFinalInitialization
      *
-     * @return \Propel\Generator\Model\Database[]
+     * @return array<\Propel\Generator\Model\Database>
      */
     public function getDatabases($doFinalInitialization = true)
     {
@@ -243,7 +243,7 @@ class Schema
                     $platform = $config->getConfiguredPlatform(null, $database->getName());
                 }
 
-                $database->setPlatform($platform ? $platform : $this->platform);
+                $database->setPlatform($platform ?: $this->platform);
             }
             $this->databases[] = $database;
 
@@ -276,7 +276,7 @@ class Schema
     /**
      * Merge other Schema objects together into this Schema object.
      *
-     * @param \Propel\Generator\Model\Schema[] $schemas
+     * @param array<\Propel\Generator\Model\Schema> $schemas
      *
      * @throws \Propel\Generator\Exception\EngineException
      *

@@ -21,6 +21,8 @@ interface NameGeneratorInterface
     /**
      * The character used by most implementations as the separator
      * between name elements.
+     *
+     * @var string
      */
     public const STD_SEPARATOR_CHAR = '_';
 
@@ -31,6 +33,8 @@ interface NameGeneratorInterface
      * will be converted to PHP source names.
      *
      * @see PhpNameGenerator::underscoreMethod()
+     *
+     * @var string
      */
     public const CONV_METHOD_UNDERSCORE = 'underscore';
 
@@ -42,6 +46,8 @@ interface NameGeneratorInterface
      * inside the string to be converted. The <code>CONV_METHOD_XXX</code>
      * constants define how names for columns and tales in the
      * database schema will be converted to PHP source names.
+     *
+     * @var string
      */
     public const CONV_METHOD_CLEAN = 'clean';
 
@@ -50,12 +56,16 @@ interface NameGeneratorInterface
      * converted to lowercase.
      *
      * @see PhpNameGenerator::phpnameMethod()
+     *
+     * @var string
      */
     public const CONV_METHOD_PHPNAME = 'phpname';
 
     /**
      * Specifies no modification when converting from a schema column
      * or table name to a PHP name.
+     *
+     * @var string
      */
     public const CONV_METHOD_NOCHANGE = 'nochange';
 
@@ -63,7 +73,7 @@ interface NameGeneratorInterface
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param string[] $inputs Inputs used to generate a name.
+     * @param array<string> $inputs Inputs used to generate a name.
      *
      * @throws \Propel\Generator\Exception\EngineException
      *

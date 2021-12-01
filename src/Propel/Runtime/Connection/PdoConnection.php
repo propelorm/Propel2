@@ -88,7 +88,7 @@ class PdoConnection implements ConnectionInterface
      *
      * This is overridden here to allow names corresponding to PDO constant names.
      *
-     * @param int|string $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
+     * @param string|int $attribute The attribute to set (e.g. 'PDO::ATTR_CASE', or more simply 'ATTR_CASE').
      * @param mixed $value The attribute value.
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException

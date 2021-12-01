@@ -29,7 +29,7 @@ class ObjectFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection
+     * @return \Propel\Runtime\Collection\Collection|array
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
@@ -136,6 +136,10 @@ class ObjectFormatter extends AbstractFormatter
             $obj = $this->objects[$serializedPk];
         }
 
+        //TODO: is this var even useable? populateObject() also seems dead.
+        /** @var array<string, object> $hydrationChain */
+        $hydrationChain = [];
+
         // related objects added using with()
         foreach ($this->getWith() as $modelWith) {
             [$endObject, $col] = $modelWith->getTableMap()->populateObject($row, $col, $this->getDataFetcher()->getIndexType());
@@ -146,7 +150,7 @@ class ObjectFormatter extends AbstractFormatter
 
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
-            } elseif (isset($hydrationChain)) {
+            } elseif ($hydrationChain && !empty($hydrationChain[$modelWith->getLeftPhpName()])) {
                 $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
             } else {
                 continue;
@@ -162,11 +166,8 @@ class ObjectFormatter extends AbstractFormatter
 
                 continue;
             }
-            if (isset($hydrationChain)) {
-                $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
-            } else {
-                $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
-            }
+
+            $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
 
             $relationMethod = $modelWith->getRelationMethod();
             $startObject->$relationMethod($endObject);

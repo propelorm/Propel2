@@ -20,7 +20,7 @@ class CountQuerySqlBuilder extends AbstractSqlQueryBuilder
      */
     public static function createCountSql(Criteria $criteria): PreparedStatementDto
     {
-        $builder = new CountQuerySqlBuilder($criteria);
+        $builder = new self($criteria);
 
         return $builder->build();
     }

@@ -19,11 +19,15 @@ class NameFactory
 {
     /**
      * The class name of the PHP name generator.
+     *
+     * @var string
      */
     public const PHP_GENERATOR = '\Propel\Generator\Model\PhpNameGenerator';
 
     /**
      * The fully qualified class name of the constraint name generator.
+     *
+     * @var string
      */
     public const CONSTRAINT_GENERATOR = '\Propel\Generator\Model\ConstraintNameGenerator';
 
@@ -31,7 +35,7 @@ class NameFactory
      * The cache of <code>NameGeneratorInterface</code> algorithms in use for
      * name generation, keyed by fully qualified class name.
      *
-     * @var \Propel\Generator\Model\NameGeneratorInterface[]
+     * @var array<\Propel\Generator\Model\NameGeneratorInterface>
      */
     private static $algorithms = [];
 
@@ -58,7 +62,7 @@ class NameFactory
      *
      * @param string $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
      *                                        implementation to use to generate names.
-     * @param string[] $inputs Inputs used to generate a name.
+     * @param array<string> $inputs Inputs used to generate a name.
      *
      * @return string The generated name.
      */

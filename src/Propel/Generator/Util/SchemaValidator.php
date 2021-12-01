@@ -34,7 +34,7 @@ class SchemaValidator
     protected $schema;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $errors = [];
 

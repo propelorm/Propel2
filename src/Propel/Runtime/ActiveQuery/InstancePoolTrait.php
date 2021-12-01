@@ -14,7 +14,7 @@ use Propel\Runtime\Propel;
 trait InstancePoolTrait
 {
     /**
-     * @var object[]
+     * @var array<object>
      */
     public static $instances = [];
 

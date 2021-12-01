@@ -19,27 +19,27 @@ use Propel\Generator\Model\Table;
 class DatabaseDiff
 {
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     protected $addedTables;
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     protected $removedTables;
 
     /**
-     * @var \Propel\Generator\Model\Diff\TableDiff[]
+     * @var array<\Propel\Generator\Model\Diff\TableDiff>
      */
     protected $modifiedTables;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $renamedTables;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $possibleRenamedTables;
 
@@ -90,7 +90,7 @@ class DatabaseDiff
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getPossibleRenamedTables()
     {
@@ -113,7 +113,7 @@ class DatabaseDiff
     /**
      * Returns the list of added tables.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
     public function getAddedTables()
     {
@@ -145,7 +145,7 @@ class DatabaseDiff
     /**
      * Sets the removes tables.
      *
-     * @param \Propel\Generator\Model\Table[] $tables
+     * @param array<\Propel\Generator\Model\Table> $tables
      *
      * @return void
      */
@@ -182,7 +182,7 @@ class DatabaseDiff
     /**
      * Returns the list of removed tables.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
     public function getRemovedTables()
     {
@@ -214,7 +214,7 @@ class DatabaseDiff
     /**
      * Sets the modified tables
      *
-     * @param \Propel\Generator\Model\Diff\TableDiff[] $tables
+     * @param array<\Propel\Generator\Model\Diff\TableDiff> $tables
      *
      * @return void
      */
@@ -249,7 +249,7 @@ class DatabaseDiff
     /**
      * Returns the modified tables.
      *
-     * @return \Propel\Generator\Model\Diff\TableDiff[]
+     * @return array<\Propel\Generator\Model\Diff\TableDiff>
      */
     public function getModifiedTables()
     {
@@ -259,7 +259,7 @@ class DatabaseDiff
     /**
      * Sets the renamed tables.
      *
-     * @param string[] $tables
+     * @param array<string> $tables
      *
      * @return void
      */
@@ -284,7 +284,7 @@ class DatabaseDiff
     /**
      * Returns the list of renamed tables.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getRenamedTables()
     {

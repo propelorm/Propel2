@@ -261,7 +261,7 @@ class QuickBuilder
         $pdo = new PdoConnection($dsn, $user, $pass);
         $con = new ConnectionWrapper($pdo);
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-        /** @var \Propel\Runtime\Adapter\Pdo\SqliteAdapter $adapter */
+        /** @phpstan-var \Propel\Runtime\Adapter\Pdo\SqliteAdapter $adapter */
         $adapter->initConnection($con, []);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
@@ -348,7 +348,7 @@ class QuickBuilder
                     $statement,
                     $this->database,
                     $database,
-                    $diff
+                    $diff,
                 ), null, $e);
             }
         }
@@ -413,7 +413,7 @@ class QuickBuilder
      * physical filesystem, which is supposed to be for debugging purpose, the classes reside on separate file,
      * for easier debug.
      *
-     * @param string[]|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
+     * @param array<string>|null $classTargets array('tablemap', 'object', 'query', 'objectstub', 'querystub')
      *
      * @return void
      */
@@ -434,7 +434,7 @@ class QuickBuilder
     }
 
     /**
-     * @param string[]|null $classTargets
+     * @param array<string>|null $classTargets
      *
      * @return string
      */
@@ -450,7 +450,7 @@ class QuickBuilder
 
     /**
      * @param \Propel\Generator\Model\Table $table
-     * @param string[]|null $classTargets
+     * @param array<string>|null $classTargets
      *
      * @return string
      */
@@ -610,10 +610,10 @@ class QuickBuilder
     /**
      * Create separate classes to write to physical filesystem.
      *
-     * @param string[] $classes
-     * @param \Propel\Generator\Model\Table[] $tables Array of Table objects
+     * @param array<string> $classes
+     * @param array<\Propel\Generator\Model\Table> $tables Array of Table objects
      *
-     * @return string[] The files to include
+     * @return array<string> The files to include
      */
     private function buildClassesToPhysical(array $classes, array $tables): array
     {
@@ -638,10 +638,10 @@ class QuickBuilder
     /**
      * Create an all-classes file to write to virtual filesystem.
      *
-     * @param string[] $classes
-     * @param \Propel\Generator\Model\Table[] $tables Array of Table objects
+     * @param array<string> $classes
+     * @param array<\Propel\Generator\Model\Table> $tables Array of Table objects
      *
-     * @return string[] The one element array, containing the file to include
+     * @return array<string> The one element array, containing the file to include
      */
     private function buildClassesToVirtual(array $classes, array $tables): array
     {

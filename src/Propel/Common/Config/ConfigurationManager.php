@@ -24,8 +24,19 @@ use Symfony\Component\Finder\Finder;
  */
 class ConfigurationManager
 {
+    /**
+     * @var string
+     */
     public const CONFIG_FILE_NAME = 'propel';
+
+    /**
+     * @var int
+     */
     private const PRECEDENCE_DIST = 0;
+
+    /**
+     * @var int
+     */
     private const PRECEDENCE_NORMAL = 1;
 
     /**
@@ -211,7 +222,7 @@ class ConfigurationManager
      *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      *
-     * @return string[]
+     * @return array<string>
      */
     private function getConfigFileNamesFromDirectory(string $path): array
     {

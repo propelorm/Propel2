@@ -34,7 +34,7 @@ abstract class AbstractManager
     protected $dataModels = [];
 
     /**
-     * @var \Propel\Generator\Model\Database[]
+     * @var array<\Propel\Generator\Model\Database>
      */
     protected $databases;
 
@@ -159,7 +159,7 @@ abstract class AbstractManager
      * Returns the data models that have been
      * processed.
      *
-     * @return \Propel\Generator\Model\Schema[]
+     * @return array<\Propel\Generator\Model\Schema>
      */
     public function getDataModels()
     {
@@ -185,7 +185,7 @@ abstract class AbstractManager
     }
 
     /**
-     * @return \Propel\Generator\Model\Database[]
+     * @return array<\Propel\Generator\Model\Database>
      */
     public function getDatabases()
     {
@@ -500,7 +500,7 @@ abstract class AbstractManager
      *
      * @throws \Exception
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getProperties($file)
     {

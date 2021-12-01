@@ -167,7 +167,7 @@ interface StatementInterface
      * Set the default fetch mode for this statement.
      *
      * @param int $mode The fetch mode must be one of the PDO::FETCH_* constants.
-     * @param string|object|null $classNameObject Class name or object.
+     * @param object|string|null $classNameObject Class name or object.
      * @param array $ctorarfg Constructor arguments.
      *
      * @return bool TRUE on success or FALSE on failure.

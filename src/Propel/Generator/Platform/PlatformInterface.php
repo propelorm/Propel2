@@ -23,16 +23,22 @@ interface PlatformInterface
 {
     /**
      * Constant for auto-increment id method.
+     *
+     * @var string
      */
     public const IDENTITY = 'identity';
 
     /**
      * Constant for sequence id method.
+     *
+     * @var string
      */
     public const SEQUENCE = 'sequence';
 
     /**
      * Constant for serial id method (postgresql).
+     *
+     * @var string
      */
     public const SERIAL = 'serial';
 
@@ -274,6 +280,8 @@ interface PlatformInterface
     public function getTimeFormatter();
 
     /**
+     * @phpstan-return non-empty-string
+     *
      * @return string
      */
     public function getSchemaDelimiter();

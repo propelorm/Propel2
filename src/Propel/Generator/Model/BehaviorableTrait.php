@@ -17,7 +17,7 @@ use Propel\Generator\Util\BehaviorLocator;
 trait BehaviorableTrait
 {
     /**
-     * @var \Propel\Generator\Model\Behavior[]
+     * @var array<\Propel\Generator\Model\Behavior>
      */
     protected $behaviors = [];
 
@@ -56,7 +56,7 @@ trait BehaviorableTrait
     /**
      * Adds a new Behavior
      *
-     * @param array|\Propel\Generator\Model\Behavior $bdata
+     * @param \Propel\Generator\Model\Behavior|array $bdata
      *
      * @throws \Propel\Generator\Exception\BuildException when the added behavior is not an instance of \Propel\Generator\Model\Behavior
      *
@@ -92,7 +92,7 @@ trait BehaviorableTrait
                 'Behavior [%s: %s] not instance of %s',
                 $bdata['name'],
                 $class,
-                '\Propel\Generator\Model\Behavior'
+                '\Propel\Generator\Model\Behavior',
             ));
         }
         $behavior->loadMapping($bdata);
@@ -110,7 +110,7 @@ trait BehaviorableTrait
     /**
      * Returns the list of behaviors.
      *
-     * @return \Propel\Generator\Model\Behavior[]
+     * @return array<\Propel\Generator\Model\Behavior>
      */
     public function getBehaviors()
     {

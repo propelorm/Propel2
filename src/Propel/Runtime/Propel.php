@@ -30,51 +30,71 @@ class Propel
 {
     /**
      * The Propel version.
+     *
+     * @var string
      */
     public const VERSION = '2.0.0-dev';
 
     /**
      * A constant for <code>default</code>.
+     *
+     * @var string
      */
     public const DEFAULT_NAME = 'default';
 
     /**
      * A constant defining 'System is unusable' logging level
+     *
+     * @var int
      */
     public const LOG_EMERG = 550;
 
     /**
      * A constant defining 'Immediate action required' logging level
+     *
+     * @var int
      */
     public const LOG_ALERT = 550;
 
     /**
      * A constant defining 'Critical conditions' logging level
+     *
+     * @var int
      */
     public const LOG_CRIT = 500;
 
     /**
      * A constant defining 'Error conditions' logging level
+     *
+     * @var int
      */
     public const LOG_ERR = 400;
 
     /**
      * A constant defining 'Warning conditions' logging level
+     *
+     * @var int
      */
     public const LOG_WARNING = 300;
 
     /**
      * A constant defining 'Normal but significant' logging level
+     *
+     * @var int
      */
     public const LOG_NOTICE = 200;
 
     /**
      * A constant defining 'Informational' logging level
+     *
+     * @var int
      */
     public const LOG_INFO = 200;
 
     /**
      * A constant defining 'Debug-level messages' logging level
+     *
+     * @var int
      */
     public const LOG_DEBUG = 100;
 

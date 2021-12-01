@@ -23,7 +23,7 @@ class DeleteQueryExecutor extends AbstractQueryExecutor
      */
     public static function execute(Criteria $criteria, ?ConnectionInterface $con = null): int
     {
-        $executor = new DeleteQueryExecutor($criteria, $con);
+        $executor = new self($criteria, $con);
 
         return $executor->runDelete();
     }

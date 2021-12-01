@@ -55,7 +55,7 @@ abstract class AbstractSqlQueryBuilder
      *
      * @param string|null $tableName
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTableNameWithAlias(?string $tableName): array
     {
@@ -96,7 +96,7 @@ abstract class AbstractSqlQueryBuilder
     }
 
     /**
-     * @param string[] $columnNames
+     * @param array<string> $columnNames
      * @param \Propel\Runtime\ActiveQuery\Criteria|null $values
      *
      * @return array
@@ -127,7 +127,7 @@ abstract class AbstractSqlQueryBuilder
      * Build sql statement from a criteria and add it to the given statement collector.
      *
      * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $criterion
-     * @param mixed[]|null $params
+     * @param array<mixed>|null $params
      *
      * @return string
      */

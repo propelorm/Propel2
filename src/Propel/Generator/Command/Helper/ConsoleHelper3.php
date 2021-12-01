@@ -18,12 +18,12 @@ use Symfony\Component\Console\Question\Question;
 class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
 {
     /**
-     * @var \Symfony\Component\Console\Input\InputInterface $input
+     * @var \Symfony\Component\Console\Input\InputInterface
      */
     protected $input;
 
     /**
-     * @var \Symfony\Component\Console\Output\OutputInterface $output
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     protected $output;
 

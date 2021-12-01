@@ -42,7 +42,7 @@ class InsertQueryExecutor extends AbstractQueryExecutor
      */
     public static function execute(Criteria $criteria, ?ConnectionInterface $con = null)
     {
-        $executor = new InsertQueryExecutor($criteria, $con);
+        $executor = new self($criteria, $con);
 
         return $executor->runInsert();
     }

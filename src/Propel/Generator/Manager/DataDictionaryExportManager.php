@@ -19,6 +19,9 @@ use Propel\Generator\Model\Table;
  */
 class DataDictionaryExportManager extends AbstractManager
 {
+    /**
+     * @var array
+     */
     public const COLUMN_TABLE_HEADERS = ['Column Name', 'PHP Name', 'Type', 'Length', 'PK', 'NN', 'UQ', 'AI', 'FK', 'Default', 'Description'];
 
     /**
@@ -62,7 +65,7 @@ EOT;
     /**
      * @param \Propel\Generator\Model\Database $database
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
     protected function getOrderedTables(Database $database): array
     {
@@ -232,7 +235,7 @@ EOT;
      */
     protected function getFlagSymbol(bool $val): string
     {
-        return ($val) ? '*' :  '';
+        return ($val) ? '*' : '';
     }
 
     /**

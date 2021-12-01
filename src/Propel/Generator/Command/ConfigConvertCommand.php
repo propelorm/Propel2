@@ -20,7 +20,14 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ConfigConvertCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_CONFIG_DIRECTORY = '.';
+
+    /**
+     * @var string
+     */
     public const DEFAULT_OUTPUT_FILE = 'config.php';
 
     /**

@@ -24,12 +24,34 @@ class ForeignKey extends MappingModel
     /**
      * These constants are the uppercase equivalents of the onDelete / onUpdate
      * values in the schema definition.
+     *
+     * @var string
      */
-    public const NONE = '';           // No 'ON [ DELETE | UPDATE]' behavior
+    public const NONE = ''; // No 'ON [ DELETE | UPDATE]' behavior
+
+    /**
+     * @var string
+     */
     public const NOACTION = 'NO ACTION';
+
+    /**
+     * @var string
+     */
     public const CASCADE = 'CASCADE';
+
+    /**
+     * @var string
+     */
     public const RESTRICT = 'RESTRICT';
+
+    /**
+     * @var string
+     */
     public const SETDEFAULT = 'SET DEFAULT';
+
+    /**
+     * @var string
+     */
     public const SETNULL = 'SET NULL';
 
     /**
@@ -78,17 +100,17 @@ class ForeignKey extends MappingModel
     private $parentTable;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $localColumns = [];
 
     /**
-     * @var (string|null)[]
+     * @var array<(string|null)>
      */
     private $foreignColumns = [];
 
     /**
-     * @var (string|null)[]
+     * @var array<(string|null)>
      */
     private $localValues = [];
 
@@ -564,9 +586,9 @@ class ForeignKey extends MappingModel
     public function addReference($ref1, $ref2 = null)
     {
         if (is_array($ref1)) {
-            $this->localColumns[] = isset($ref1['local']) ? $ref1['local'] : null;
-            $this->foreignColumns[] = isset($ref1['foreign']) ? $ref1['foreign'] : null;
-            $this->localValues[] = isset($ref1['value']) ? $ref1['value'] : null;
+            $this->localColumns[] = $ref1['local'] ?? null;
+            $this->foreignColumns[] = $ref1['foreign'] ?? null;
+            $this->localValues[] = $ref1['value'] ?? null;
 
             return;
         }
@@ -623,7 +645,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of local column objects.
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getLocalColumnObjects()
     {
@@ -1043,7 +1065,7 @@ class ForeignKey extends MappingModel
      * Returns the list of other foreign keys starting on the same table.
      * Used in many-to-many relationships.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getOtherFks()
     {
@@ -1060,7 +1082,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns all local columns which are also a primary key of the local table.
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getLocalPrimaryKeys()
     {
