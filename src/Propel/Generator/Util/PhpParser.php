@@ -43,7 +43,7 @@ class PhpParser
     /**
      * methodName => methodCode
      *
-     * @var array<(string|false)>
+     * @var array<string, string|false>
      */
     private $knownMethodCache = [];
 

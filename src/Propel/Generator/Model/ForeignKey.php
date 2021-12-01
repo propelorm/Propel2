@@ -105,12 +105,12 @@ class ForeignKey extends MappingModel
     private $localColumns = [];
 
     /**
-     * @var array<(string|null)>
+     * @var array<string|null>
      */
     private $foreignColumns = [];
 
     /**
-     * @var array<(string|null)>
+     * @var array<string|null>
      */
     private $localValues = [];
 
@@ -651,7 +651,9 @@ class ForeignKey extends MappingModel
     {
         $columns = [];
         foreach ($this->localColumns as $columnName) {
-            $columns[] = $this->parentTable->getColumn($columnName);
+            /** @var \Propel\Generator\Model\Column $column */
+            $column = $this->parentTable->getColumn($columnName);
+            $columns[] = $column;
         }
 
         return $columns;

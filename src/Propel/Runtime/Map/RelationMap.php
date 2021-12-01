@@ -97,7 +97,7 @@ class RelationMap
     protected $localValues = [];
 
     /**
-     * @var array<(\Propel\Runtime\Map\ColumnMap|null)>
+     * @var array<\Propel\Runtime\Map\ColumnMap|null>
      */
     protected $foreignColumns = [];
 
@@ -342,6 +342,7 @@ class RelationMap
      */
     public function getForeignColumns()
     {
+        /** @phpstan-var array<\Propel\Runtime\Map\ColumnMap> */
         return $this->foreignColumns;
     }
 

@@ -196,11 +196,6 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/TableMapBuilder.php
 
 		-
-			message: "#^Parameter \\#1 \\$flag of function ob_implicit_flush expects int, false given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Util/PropelTemplate.php
-
-		-
 			message: "#^Parameter \\#2 \\$shdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'startElement' given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Util/SchemaReader.php

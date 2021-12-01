@@ -1687,7 +1687,7 @@ class Column extends MappingModel
      */
     public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $phpNamingMethod, $namePrefix]);
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $phpNamingMethod, (string)$namePrefix]);
     }
 
     /**

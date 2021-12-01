@@ -145,6 +145,7 @@ class MigrationManager extends AbstractManager
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
+        /** @var array<int> $migrationTimestamps */
         $migrationTimestamps = [];
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
@@ -160,6 +161,7 @@ class MigrationManager extends AbstractManager
                 $stmt->execute();
 
                 while ($migrationTimestamp = $stmt->fetchColumn()) {
+                    /** @phpstan-var int $migrationTimestamp */
                     $migrationTimestamps[] = $migrationTimestamp;
                 }
             } catch (PDOException $e) {

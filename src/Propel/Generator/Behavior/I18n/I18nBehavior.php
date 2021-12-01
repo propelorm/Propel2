@@ -131,7 +131,9 @@ class I18nBehavior extends Behavior
         if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
             // Strategy 1: use the i18n_columns parameter
             foreach ($columnNames as $columnName) {
-                $columns[] = $i18nTable->getColumn($columnName);
+                /** @var \Propel\Generator\Model\Column $column */
+                $column = $i18nTable->getColumn($columnName);
+                $columns[] = $column;
             }
         } else {
             // strategy 2: use the columns of the i18n table

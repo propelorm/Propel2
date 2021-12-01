@@ -85,7 +85,7 @@ class PropelTemplate
 
         extract($vars);
         ob_start();
-        ob_implicit_flush(false);
+        ob_implicit_flush(0);
 
         try {
             if ($this->templateFile !== null) {

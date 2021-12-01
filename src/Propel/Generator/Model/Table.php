@@ -992,10 +992,11 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getOtherRequiredPrimaryKeys(array $primaryKeys)
     {
+        /** @var array<\Propel\Generator\Model\Column> $pks */
         $pks = [];
         foreach ($this->getPrimaryKey() as $primaryKey) {
             if ($primaryKey->isNotNull() && !$primaryKey->hasDefaultValue() && !in_array($primaryKey, $primaryKeys, true)) {
-                $pks = $primaryKey;
+                $pks[] = $primaryKey;
             }
         }
 
@@ -1331,7 +1332,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private function buildPhpName($name)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $this->phpNamingMethod]);
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, (string)$this->phpNamingMethod]);
     }
 
     /**
