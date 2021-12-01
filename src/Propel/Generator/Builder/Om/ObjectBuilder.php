@@ -4917,7 +4917,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Gets a single $className object, which is related to this object by a one-to-one relationship.
      *
      * @param  ConnectionInterface \$con optional connection object
-     * @return $className
+     * @return $className|null
      * @throws PropelException
      */
     public function get" . $this->getRefFKPhpNameAffix($refFK, false) . "(ConnectionInterface \$con = null)
