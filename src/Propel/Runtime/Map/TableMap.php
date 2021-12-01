@@ -13,7 +13,6 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
-use Propel\Runtime\Propel;
 
 /**
  * TableMap is used to model a table in a database.

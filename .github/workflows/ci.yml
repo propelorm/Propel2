@@ -14,9 +14,9 @@ jobs:
             matrix:
                 php-version: [ '7.3', '7.4', '8.1' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
-                symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
+                symfony-version: [ '4-min', '4-max', '5-min', '5-max' ]
                 exclude:
-                  - php-version: '8.0'
+                  - php-version: '8.1'
                     symfony-version: '4-min'
         steps:
             - name: Install PostgreSQL latest
@@ -148,11 +148,11 @@ jobs:
             - name: Composer install
               run: composer install --prefer-dist --no-interaction
 
-            - name: Code Style
-              run: composer cs-check
-
             - name: PHPStan
               run: composer stan
 
             - name: Psalm
               run: composer psalm
+
+            - name: Code Style
+              run: composer cs-check

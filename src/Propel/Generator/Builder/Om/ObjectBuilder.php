@@ -3972,7 +3972,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * by the Persistent interface (or used by the templates). Hence, this method is also
      * deprecated.
      *
-     * @deprecated
+     * @deprecated Not needed anymore.
      *
      * @param string $script The script will be modified in this method.
      *
