@@ -618,6 +618,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         $script .= "
     /**
      * Build the RelationMap objects for this table relationships
+     *
+     * @return void
      */
     public function buildRelations()
     {";
