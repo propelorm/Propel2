@@ -16,7 +16,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.2', '7.4', '8.0', '8.1' ]
+                php-version: [ '8.0', '8.1' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '3-min', '3-max', '4-min', '4-max', '5-min', '5-max' ]
                 exclude:
@@ -123,7 +123,7 @@ jobs:
     code-style-and-static-analysis:
         runs-on: ubuntu-18.04
         steps:
-            - name: Setup PHP 7.4
+            - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: 8.1
