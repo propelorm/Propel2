@@ -115,6 +115,8 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
     public function current(): mixed
@@ -123,6 +125,8 @@ class PDODataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
     public function key(): mixed

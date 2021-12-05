@@ -91,6 +91,8 @@ class OnDemandIterator implements Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
+     * @psalm-suppress ReservedWord
+     *
      * @see ObjectFormatter::getAllObjectsFromRow()
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
@@ -102,6 +104,8 @@ class OnDemandIterator implements Iterator
 
     /**
      * Gets the current key in the iterator
+     *
+     * @psalm-suppress ReservedWord
      *
      * @return int
      */

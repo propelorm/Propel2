@@ -33,6 +33,8 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
     public function current(): mixed
@@ -43,7 +45,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function fetch()
+    public function fetch(): ?array
     {
         $row = $this->valid() ? $this->current() : null;
         $this->next();
@@ -52,6 +54,8 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
     public function key(): mixed

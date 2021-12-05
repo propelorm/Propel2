@@ -133,6 +133,8 @@ class OnDemandCollection extends Collection
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @param int $offset
      *
      * @throws \Propel\Runtime\Exception\PropelException

@@ -180,6 +180,7 @@ class SchemaReader
         $this->currentXmlFile = $xmlFile;
 
         $parserStash = $this->parser;
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
         xml_set_object($this->parser, $this);
@@ -458,7 +459,9 @@ class SchemaReader
             $location .= sprintf('file %s,', $this->currentXmlFile);
         }
 
+        /** @psalm-suppress InvalidArgument */
         $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
+        /** @psalm-suppress InvalidArgument */
         if ($col = xml_get_current_column_number($this->parser)) {
             $location .= sprintf(', column %d', $col);
         }

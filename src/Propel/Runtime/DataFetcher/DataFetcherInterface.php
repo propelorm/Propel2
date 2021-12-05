@@ -35,6 +35,8 @@ interface DataFetcherInterface extends Iterator, Countable
     /**
      * Return the current element
      *
+     * @psalm-suppress ReservedWord
+     *
      * @link http://php.net/manual/en/iterator.current.php
      *
      * @return mixed Can return any type.
@@ -52,6 +54,8 @@ interface DataFetcherInterface extends Iterator, Countable
 
     /**
      * Return the key of the current element
+     *
+     * @psalm-suppress ReservedWord
      *
      * @link http://php.net/manual/en/iterator.key.php
      *

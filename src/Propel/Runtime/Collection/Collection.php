@@ -114,6 +114,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @param mixed $offset
      *
      * @return mixed

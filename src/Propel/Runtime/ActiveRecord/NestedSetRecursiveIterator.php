@@ -53,6 +53,8 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @return mixed
      */
     public function current(): mixed
@@ -61,6 +63,8 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @return string
      */
     public function key(): mixed

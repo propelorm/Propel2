@@ -77,6 +77,8 @@ class CollectionIterator extends ArrayIterator
      * Move the internal pointer to the beginning of the list
      * And get the first element in the collection
      *
+     * @psalm-suppress ReservedWord
+     *
      * @return mixed
      */
     public function getFirst(): mixed
@@ -103,6 +105,8 @@ class CollectionIterator extends ArrayIterator
      * Move the internal pointer backward
      * And get the previous element in the collection
      *
+     * @psalm-suppress ReservedWord
+     *
      * @return mixed
      */
     public function getPrevious(): mixed
@@ -119,6 +123,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Get the current element in the collection
      *
+     * @psalm-suppress ReservedWord
+     *
      * @return mixed
      */
     public function getCurrent(): mixed
@@ -129,6 +135,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Move the internal pointer forward
      * And get the next element in the collection
+     *
+     * @psalm-suppress ReservedWord
      *
      * @return mixed
      */
@@ -142,6 +150,8 @@ class CollectionIterator extends ArrayIterator
     /**
      * Move the internal pointer to the end of the list
      * And get the last element in the collection
+     *
+     * @psalm-suppress ReservedWord
      *
      * @return mixed
      */
