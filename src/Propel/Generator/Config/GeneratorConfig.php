@@ -280,9 +280,9 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      *
      * @return object
      */
-    private function getInstance($className, $arguments = null, $interfaceName = null)
+    private function getInstance(?string $className, $arguments = null, $interfaceName = null)
     {
-        if (!class_exists($className)) {
+        if (!$className || !class_exists($className)) {
             throw new ClassNotFoundException("Class $className not found.");
         }
 

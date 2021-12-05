@@ -22,10 +22,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     protected $indexType = TableMap::TYPE_PHPNAME;
 
-    /**
-     * @return void
-     */
-    public function next()
+    public function next(): void
     {
         if ($this->dataObject !== null) {
             next($this->dataObject);
@@ -35,7 +32,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->dataObject === null ? null : current($this->dataObject);
     }
@@ -54,7 +51,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->dataObject === null ? null : key($this->dataObject);
     }
@@ -62,7 +59,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
@@ -70,7 +67,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->dataObject === null) {
             return;
@@ -90,7 +87,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         return $this->dataObject === null ? null : count($this->dataObject);
     }

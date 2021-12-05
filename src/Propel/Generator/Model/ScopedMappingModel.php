@@ -98,7 +98,9 @@ abstract class ScopedMappingModel extends MappingModel
      */
     public function setNamespace($namespace)
     {
-        $namespace = rtrim(trim($namespace), '\\');
+        $namespace = $namespace === null
+            ? ''
+            : rtrim(trim($namespace), '\\');
 
         if ($namespace === $this->namespace) {
             return;

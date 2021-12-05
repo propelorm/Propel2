@@ -64,7 +64,10 @@ class ColumnComparator
             $changedProperties['size'] = [ $fromDomain->getSize(), $toDomain->getSize() ];
         }
 
-        if (strtoupper($fromDomain->getSqlType()) !== strtoupper($toDomain->getSqlType())) {
+        $fromSqlType = $fromDomain->getSqlType() === null ?: strtoupper($fromDomain->getSqlType());
+        $toSqlType = $toDomain->getSqlType() === null ?: strtoupper($toDomain->getSqlType());
+
+        if ($fromSqlType !== $toSqlType) {
             $changedProperties['sqlType'] = [ $fromDomain->getSqlType(), $toDomain->getSqlType() ];
 
             if ($fromDomain->getType() !== $toDomain->getType()) {

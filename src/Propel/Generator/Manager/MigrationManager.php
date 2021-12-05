@@ -363,7 +363,7 @@ class MigrationManager extends AbstractManager
     {
         $suffix = '';
         $path = $this->getWorkingDirectory();
-        if (is_dir($path)) {
+        if ($path && is_dir($path)) {
             $files = scandir($path);
             foreach ($files as $file) {
                 if (preg_match('/^PropelMigration_' . $timestamp . '(_)?(.*)\.php$/', $file, $matches)) {

@@ -111,7 +111,10 @@ class Domain extends MappingModel
      */
     protected function setupObject()
     {
-        $schemaType = strtoupper($this->getAttribute('type'));
+        $schemaType = !$this->getAttribute('type')
+            ? ''
+            : strtoupper($this->getAttribute('type'));
+
         $this->copy($this->database->getPlatform()->getDomainForType($schemaType));
 
         // Name
@@ -270,12 +273,12 @@ class Domain extends MappingModel
 
     /**
      * Returns the mapping type.
-     *
-     * @return string
      */
-    public function getType()
+    public function getType(): string
     {
-        return $this->mappingType;
+        // For some reason we're supporting null, but there are many functions that rely on the
+        // return value being a string.
+        return $this->mappingType ?: '';
     }
 
     /**
@@ -285,7 +288,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setType($mappingType)
+    public function setType(?string $mappingType)
     {
         $this->mappingType = $mappingType;
     }

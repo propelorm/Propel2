@@ -317,7 +317,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         );
 
         $baseClass = $this->getBaseClass();
-        if (strrpos($baseClass, '\\') !== false) {
+        if ($baseClass && strrpos($baseClass, '\\') !== false) {
             $this->declareClasses($baseClass);
         }
 

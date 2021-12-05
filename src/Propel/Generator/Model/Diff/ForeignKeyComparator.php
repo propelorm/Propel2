@@ -38,8 +38,16 @@ class ForeignKeyComparator
             return true;
         }
 
+        $fromFkForeignTableName = !$fromFk->getForeignTableName()
+            ? ''
+            : strtolower($fromFk->getForeignTableName());
+
+        $toFkForeignTableName = !$toFk->getForeignTableName()
+            ? ''
+            : strtolower($toFk->getForeignTableName());
+
         $test = $caseInsensitive ?
-            strtolower($fromFk->getForeignTableName()) !== strtolower($toFk->getForeignTableName()) :
+            $fromFkForeignTableName !== $toFkForeignTableName :
             $fromFk->getForeignTableName() !== $toFk->getForeignTableName();
 
         if ($test) {

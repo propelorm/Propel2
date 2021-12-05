@@ -26,6 +26,10 @@ class ClassTools
      */
     public static function classname($qualifiedName)
     {
+        if ($qualifiedName === null) {
+            return null;
+        }
+
         if (false !== $pos = strrpos($qualifiedName, '.')) {
             return substr($qualifiedName, $pos + 1); // start just after '.'
         } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {

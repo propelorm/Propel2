@@ -271,8 +271,8 @@ class Column extends MappingModel
             if ($dom) {
                 $domain->copy($database->getDomain($dom));
             } else {
-                $type = strtoupper($this->getAttribute('type'));
-                if ($type) {
+                if ($this->getAttribute('type')) {
+                    $type = strtoupper($this->getAttribute('type'));
                     if ($platform) {
                         $domain->copy($platform->getDomainForType($type));
                     } else {
@@ -308,12 +308,12 @@ class Column extends MappingModel
                 $this->parentTable->getAttribute('columnPrefix')
             );
 
-            // Accessor visibility
-            $visibility = $this->getMethodVisibility('accessorVisibility', 'defaultAccessorVisibility');
+            // Accessor visibility - no idea why this returns null, or the use case for that
+            $visibility = $this->getMethodVisibility('accessorVisibility', 'defaultAccessorVisibility') ?: '';
             $this->setAccessorVisibility($visibility);
 
             // Mutator visibility
-            $visibility = $this->getMethodVisibility('mutatorVisibility', 'defaultMutatorVisibility');
+            $visibility = $this->getMethodVisibility('mutatorVisibility', 'defaultMutatorVisibility') ?: '';
             $this->setMutatorVisibility($visibility);
 
             $this->isPrimaryString = $this->booleanValue($this->getAttribute('primaryString'));
@@ -646,7 +646,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setAccessorVisibility($visibility)
+    public function setAccessorVisibility(string $visibility)
     {
         $visibility = strtolower($visibility);
         if (!in_array($visibility, self::$validVisibilities)) {
@@ -677,7 +677,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setMutatorVisibility($visibility)
+    public function setMutatorVisibility(string $visibility)
     {
         $visibility = strtolower($visibility);
         if (!in_array($visibility, self::$validVisibilities)) {
@@ -1229,7 +1229,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->getDomain()->getType();
     }
