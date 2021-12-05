@@ -60,6 +60,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      */
     public static function resetInsertedAggregationNames(): void
     {
+        // @phpstan-ignore-next-line
         static::$insertedAggregationNames = [];
     }
 
@@ -93,10 +94,13 @@ class AggregateMultipleColumnsBehavior extends Behavior
         $foreignTableName = $this->getForeignTable()->getPhpName();
         $baseAggregationName = 'AggregatedColumnsFrom' . $foreignTableName;
         $tableName = $this->getTable()->getPhpName();
+        // @phpstan-ignore-next-line
         if (!array_key_exists($tableName, static::$insertedAggregationNames)) {
+            // @phpstan-ignore-next-line
             static::$insertedAggregationNames[$tableName] = [];
         }
 
+        // @phpstan-ignore-next-line
         $existingNames = &static::$insertedAggregationNames[$tableName];
         if (!in_array($baseAggregationName, $existingNames)) {
             $existingNames[] = $baseAggregationName;

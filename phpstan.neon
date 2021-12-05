@@ -6,7 +6,7 @@ parameters:
     checkMissingIterableValueType: false
     paths:
         - '%rootDir%/../../../src/'
-    excludes_analyse:
+    excludePaths:
         - '%rootDir%/../../../src/Propel/Generator/Command/templates/*'
         - '%rootDir%/../../../src/Propel/Generator/Behavior/AggregateColumn/templates/*'
         - '%rootDir%/../../../src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/*'

@@ -1,4 +1,5 @@
 parameters:
+	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:scalarNode\\(\\)\\.$#"
@@ -669,4 +670,3 @@ parameters:
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
 			count: 2
 			path: src/Propel/Runtime/Validator/Constraints/UniqueValidator.php
-

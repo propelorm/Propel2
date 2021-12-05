@@ -36,13 +36,13 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @see NameGenerator
      *
-     * @param string[] $inputs List expected to contain two (optional: three) parameters,
+     * @param (string|null)[] $inputs List expected to contain two (optional: three) parameters,
      *                          element 0 contains name to convert, element 1 contains method for conversion,
      *                          optional element 2 contains prefix to be striped from name
      *
-     * @return string The generated name.
+     * @return string|null The generated name.
      */
-    public function generateName($inputs)
+    public function generateName($inputs): ?string
     {
         $schemaName = $inputs[0];
         $method = $inputs[1];

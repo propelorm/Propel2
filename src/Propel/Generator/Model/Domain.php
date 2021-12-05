@@ -379,7 +379,7 @@ class Domain extends MappingModel
     /**
      * Returns the SQL type.
      *
-     * @return string
+     * @return string|null
      */
     public function getSqlType()
     {

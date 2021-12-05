@@ -118,11 +118,13 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return mixed
      */
-    public function &offsetGet($offset): mixed
+    public function &offsetGet(mixed $offset): mixed
     {
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }
+
+        return null;
     }
 
     /**

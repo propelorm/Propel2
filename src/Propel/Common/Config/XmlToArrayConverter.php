@@ -87,6 +87,7 @@ class XmlToArrayConverter
 
             // if it's not an array, then it was empty, thus a value/string
             if ($child === []) {
+                // @phpstan-ignore-next-line
                 $child = static::getConvertedXmlValue($v);
             }
 
@@ -104,6 +105,7 @@ class XmlToArrayConverter
                     if (is_string($child)) {
                         $child = [];
                     }
+                    // @phpstan-ignore-next-line
                     $child[$ak] = static::getConvertedXmlValue($av);
                 }
             }

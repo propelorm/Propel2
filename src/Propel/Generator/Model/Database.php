@@ -688,6 +688,7 @@ class Database extends ScopedMappingModel
                         }
                     } elseif ($oldSchema) {
                         if (strpos($k, $schemaDelimiter) !== false) {
+                            // @phpstan-ignore-next-line
                             $array[explode($schemaDelimiter, $k)[1]] = $v;
                             unset($array[$k]);
                         }
@@ -891,6 +892,7 @@ class Database extends ScopedMappingModel
         }
 
         // execute table behaviors (may add new tables and new behaviors)
+        // @phpstan-ignore-next-line
         while ($behavior = $this->getNextTableBehavior()) {
             $behavior->getTableModifier()->modifyTable();
             $behavior->setTableModified(true);

@@ -26,7 +26,7 @@ class IniFileLoader extends FileLoader
      *
      * @var string
      */
-    private $nestSeparator = '.';
+    private string $nestSeparator = '.';
 
     /**
      * Returns true if this class supports the given resource.
@@ -80,6 +80,7 @@ class IniFileLoader extends FileLoader
 
         foreach ($data as $section => $value) {
             if (is_array($value)) {
+                // @phpstan-ignore-next-line
                 $sections = explode($this->nestSeparator, $section);
                 $config = array_merge_recursive($config, $this->buildNestedSection($sections, $value));
             } else {
@@ -149,6 +150,7 @@ class IniFileLoader extends FileLoader
                 $value = (float)$rawValue;
             }
         }
+        // @phpstan-ignore-next-line
         $subKeys = explode($this->nestSeparator, $key);
         $subConfig = &$config;
         $lastIndex = count($subKeys) - 1;

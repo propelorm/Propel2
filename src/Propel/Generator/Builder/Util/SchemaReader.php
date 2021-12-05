@@ -14,6 +14,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\PlatformInterface;
+use XMLParser;
 
 /**
  * A class that is used to parse an input xml schema file and creates a Schema
@@ -36,9 +37,9 @@ class SchemaReader
     private $schema;
 
     /**
-     * @var resource
+     * @var \XMLParser|null
      */
-    private $parser;
+    private ?XMLParser $parser = null;
 
     /**
      * @var \Propel\Generator\Model\Database
@@ -106,13 +107,6 @@ class SchemaReader
     private $currParameterListCollector;
 
     /**
-     * @deprecated Unused.
-     *
-     * @var string
-     */
-    private $encoding;
-
-    /**
      * Two-dimensional array,
      * first dimension is for schemas(key is the path to the schema file),
      * second is for tags within the schema.
@@ -126,13 +120,11 @@ class SchemaReader
      *
      * @param \Propel\Generator\Platform\PlatformInterface|null $defaultPlatform The default database platform for the application.
      * @param string|null $defaultPackage the default PHP package used for the om
-     * @param string $encoding The database encoding.
      */
-    public function __construct(?PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
+    public function __construct(?PlatformInterface $defaultPlatform = null, $defaultPackage = null)
     {
         $this->schema = new Schema($defaultPlatform);
         $this->defaultPackage = $defaultPackage;
-        $this->encoding = $encoding;
     }
 
     /**
@@ -191,7 +183,7 @@ class SchemaReader
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
         xml_set_object($this->parser, $this);
-        xml_set_element_handler($this->parser, 'startElement', 'endElement');
+        xml_set_element_handler($this->parser, [$this, 'startElement'], [$this, 'endElement']);
         if (!xml_parse($this->parser, $xmlString)) {
             throw new SchemaException(
                 sprintf(

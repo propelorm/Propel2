@@ -25,22 +25,22 @@ class CsvParser extends AbstractParser
     /**
      * @var string
      */
-    public $delimiter = ',';
+    public string $delimiter = ',';
 
     /**
      * @var string
      */
-    public $lineTerminator = "\r\n";
+    public string $lineTerminator = "\r\n";
 
     /**
      * @var string
      */
-    public $quotechar = '"';
+    public string $quotechar = '"';
 
     /**
      * @var string
      */
-    public $escapechar = '\\';
+    public string $escapechar = '\\';
 
     /**
      * @var int
@@ -215,10 +215,10 @@ class CsvParser extends AbstractParser
      */
     public function toArray($data, $rootKey = null, $isList = false, $includeHeading = true)
     {
-        $rows = explode($this->lineTerminator, $data);
+        $rows = explode($this->lineTerminator, $data); // @phpstan-ignore-line
         if ($includeHeading) {
             $heading = array_shift($rows);
-            $keys = explode($this->delimiter, $heading);
+            $keys = explode($this->delimiter, $heading); // @phpstan-ignore-line
         } else {
             $keys = range(0, count($this->getColumns($rows[0])) - 1);
         }

@@ -35,20 +35,12 @@ class BehaviorLocator
     private $composerDir;
 
     /**
-     * @deprecated Unused.
-     *
-     * @var \Propel\Generator\Config\GeneratorConfigInterface
-     */
-    private $generatorConfig;
-
-    /**
      * Creates the composer finder
      *
      * @param \Propel\Generator\Config\GeneratorConfigInterface|null $config build config
      */
     public function __construct(?GeneratorConfigInterface $config = null)
     {
-        $this->generatorConfig = $config;
         if ($config !== null) {
             $this->composerDir = $config->get()['paths']['composerDir'];
         }

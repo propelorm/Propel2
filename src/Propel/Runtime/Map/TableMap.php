@@ -13,7 +13,6 @@ use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
-use Propel\Runtime\Propel;
 
 /**
  * TableMap is used to model a table in a database.
@@ -389,35 +388,6 @@ class TableMap
     public function getPrimaryKeyMethodInfo()
     {
         return $this->pkInfo;
-    }
-
-    /**
-     * Helper method which returns the primary key contained
-     * in the given Criteria object.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria A Criteria.
-     *
-     * @return \Propel\Runtime\Map\ColumnMap If the Criteria object contains a primary key, or null if it doesn't.
-     */
-    private static function getPrimaryKey(Criteria $criteria)
-    {
-        // Assume all the keys are for the same table.
-        $keys = $criteria->keys();
-        $key = $keys[0];
-        $table = $criteria->getTableName($key);
-
-        $pk = null;
-
-        if (!empty($table)) {
-            $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
-
-            $pks = $dbMap->getTable($table)->getPrimaryKeys();
-            if (!empty($pks)) {
-                $pk = array_shift($pks);
-            }
-        }
-
-        return $pk;
     }
 
     /**

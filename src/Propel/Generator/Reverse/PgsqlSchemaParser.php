@@ -176,7 +176,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = implode(', ', $searchPath);
             $sql .= "
             AND n.nspname IN ($searchPath)";
-        } elseif ($database->getSchema()) {
+        } else {
             $sql .= "
             AND n.nspname = ?";
             $params[] = $database->getSchema();

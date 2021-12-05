@@ -20,11 +20,11 @@ class ClassTools
     /**
      * Gets just classname, given a dot-path to class.
      *
-     * @param string $qualifiedName
+     * @param string|null $qualifiedName
      *
-     * @return string
+     * @return string|null
      */
-    public static function classname($qualifiedName)
+    public static function classname(?string $qualifiedName): ?string
     {
         if ($qualifiedName === null) {
             return null;
