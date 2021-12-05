@@ -171,7 +171,7 @@ ALTER TABLE %s ADD %s;
                         $column->getDefaultValue(),
                         ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP']
                     ) !== false
-                    || substr(trim($column->getDefaultValue()->getValue()), 0, 1) === '('
+                    || substr(trim($column->getDefaultValue() ? $column->getDefaultValue()->getValue() : ''), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
                     || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL');
