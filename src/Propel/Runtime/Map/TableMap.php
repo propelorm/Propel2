@@ -172,6 +172,9 @@ class TableMap
 
     /**
      * Construct a new TableMap.
+     *
+     * @param string|null $name
+     * @param \Propel\Runtime\Map\DatabaseMap|null $dbMap
      */
     public function __construct(?string $name = null, ?DatabaseMap $dbMap = null)
     {

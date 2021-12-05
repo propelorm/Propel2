@@ -394,6 +394,8 @@ class PropelTypes
      * Convenience method to indicate whether a passed-in PHP type is an array.
      *
      * @param string $phpType The PHP type to check
+     *
+     * @return bool
      */
     public static function isPhpArrayType(string $phpType): bool
     {

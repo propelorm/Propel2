@@ -22,6 +22,9 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     protected $indexType = TableMap::TYPE_PHPNAME;
 
+    /**
+     * @return void
+     */
     public function next(): void
     {
         if ($this->dataObject !== null) {

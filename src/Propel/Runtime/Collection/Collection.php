@@ -75,11 +75,19 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
         $this->data = $data;
     }
 
+    /**
+     * @return array
+     */
     public function __serialize(): array
     {
         return [$this->serialize()];
     }
 
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
     public function __unserialize(array $data): void
     {
         $this->unserialize($data[0]);
@@ -416,7 +424,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     // Serializable interface
 
     /**
-     * @return string
+     * @return string|null
      */
     public function serialize(): ?string
     {
@@ -434,7 +442,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function unserialize($data): void
+    public function unserialize(string $data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);

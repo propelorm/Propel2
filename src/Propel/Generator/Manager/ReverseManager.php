@@ -97,9 +97,9 @@ class ReverseManager extends AbstractManager
     /**
      * Gets the (optional) php namespace to use.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         return $this->namespace;
     }

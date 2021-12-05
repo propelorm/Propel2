@@ -50,9 +50,9 @@ class ObjectBuilder extends AbstractObjectBuilder
      *
      * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         if ($namespace = parent::getNamespace()) {
             return $namespace . '\\Base';

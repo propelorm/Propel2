@@ -18,12 +18,12 @@ class CollectionIterator extends ArrayIterator
     /**
      * @var \Propel\Runtime\Collection\Collection
      */
-    protected $collection;
+    protected Collection $collection;
 
     /**
      * @var array
      */
-    protected $positions = [];
+    protected array $positions = [];
 
     /**
      * Constructor
@@ -64,7 +64,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return int
      */
-    public function getPosition()
+    public function getPosition(): int
     {
         if (!$this->key()) {
             return 0;
@@ -79,7 +79,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getFirst()
+    public function getFirst(): mixed
     {
         if ($this->isEmpty()) {
             return null;
@@ -94,7 +94,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return bool
      */
-    public function isFirst()
+    public function isFirst(): bool
     {
         return $this->getPosition() === 0;
     }
@@ -105,7 +105,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getPrevious()
+    public function getPrevious(): mixed
     {
         if ($this->isFirst()) {
             return null;
@@ -121,7 +121,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getCurrent()
+    public function getCurrent(): mixed
     {
         return $this->current();
     }
@@ -132,7 +132,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getNext()
+    public function getNext(): mixed
     {
         $this->next();
 
@@ -145,7 +145,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getLast()
+    public function getLast(): mixed
     {
         if ($this->isEmpty()) {
             return null;
@@ -161,7 +161,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return bool
      */
-    public function isLast()
+    public function isLast(): bool
     {
         if ($this->isEmpty()) {
             // empty list... so yes, this is the last
@@ -176,7 +176,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return bool
      */
-    public function isOdd()
+    public function isOdd(): bool
     {
         return (bool)($this->getPosition() % 2);
     }
@@ -186,7 +186,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return bool
      */
-    public function isEven()
+    public function isEven(): bool
     {
         return !$this->isOdd();
     }
@@ -230,6 +230,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param int $flags Not used
+     *
+     * @return bool
      */
     public function asort($flags = SORT_REGULAR): bool
     {
@@ -241,6 +243,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param int $flags Not used
+     *
+     * @return bool
      */
     public function ksort($flags = SORT_REGULAR): bool
     {
@@ -252,6 +256,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param string $callback
+     *
+     * @return bool
      */
     public function uasort($callback): bool
     {
@@ -263,6 +269,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * @param string $callback
+     *
+     * @return bool
      */
     public function uksort($callback): bool
     {
@@ -272,6 +280,9 @@ class CollectionIterator extends ArrayIterator
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function natsort(): bool
     {
         parent::natsort();
@@ -280,6 +291,9 @@ class CollectionIterator extends ArrayIterator
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function natcasesort(): bool
     {
         parent::natcasesort();
@@ -291,7 +305,7 @@ class CollectionIterator extends ArrayIterator
     /**
      * @return void
      */
-    private function refreshPositions()
+    private function refreshPositions(): void
     {
         $this->positions = array_flip(array_keys($this->getArrayCopy()));
     }

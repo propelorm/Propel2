@@ -174,7 +174,7 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return string
+     * @return string|null
      */
     public function serialize(): ?string
     {

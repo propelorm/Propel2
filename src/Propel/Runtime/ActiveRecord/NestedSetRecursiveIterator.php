@@ -97,13 +97,16 @@ class NestedSetRecursiveIterator implements RecursiveIterator
         }
     }
 
+    /**
+     * @return bool
+     */
     public function hasChildren(): bool
     {
         return $this->curNode->hasChildren();
     }
 
     /**
-     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator|null
      */
     public function getChildren(): ?RecursiveIterator
     {

@@ -270,7 +270,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
     /**
      * Return an instance of $className
      *
-     * @param string $className The name of the class to return an instance
+     * @param string|null $className The name of the class to return an instance
      * @param mixed|null $arguments
      * @param string|null $interfaceName The name of the interface to be implemented by the returned class
      *

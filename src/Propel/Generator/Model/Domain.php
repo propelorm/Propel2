@@ -273,6 +273,8 @@ class Domain extends MappingModel
 
     /**
      * Returns the mapping type.
+     *
+     * @return string
      */
     public function getType(): string
     {
@@ -284,7 +286,7 @@ class Domain extends MappingModel
     /**
      * Sets the mapping type.
      *
-     * @param string $mappingType
+     * @param string|null $mappingType
      *
      * @return void
      */
