@@ -31,7 +31,7 @@ class ClassTools
         } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {
             return substr($qualifiedName, $pos + 1);
         } else {
-            return $qualifiedName;  // there is no '.' in the qualified name
+            return $qualifiedName; // there is no '.' in the qualified name
         }
     }
 
@@ -86,7 +86,7 @@ class ClassTools
     /**
      * Gets a list of PHP reserved words.
      *
-     * @return string[]
+     * @return array<string>
      */
     public static function getPhpReservedWords()
     {
@@ -105,7 +105,7 @@ class ClassTools
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public static function getPropelReservedMethods()
     {

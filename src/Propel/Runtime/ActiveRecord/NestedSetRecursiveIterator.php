@@ -112,6 +112,6 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     {
         $method = method_exists($this->curNode, 'retrieveFirstChild') ? 'retrieveFirstChild' : 'getFirstChild';
 
-        return new NestedSetRecursiveIterator($this->curNode->$method());
+        return new self($this->curNode->$method());
     }
 }

@@ -47,7 +47,7 @@ class DatabaseComparator
     protected $removeTable = true;
 
     /**
-     * @var string[] list of excluded tables
+     * @var array<string> list of excluded tables
      */
     protected $excludedTables = [];
 
@@ -134,7 +134,7 @@ class DatabaseComparator
     /**
      * Set the list of tables excluded from the comparison
      *
-     * @param string[] $excludedTables set the list of table name
+     * @param array<string> $excludedTables set the list of table name
      *
      * @return void
      */
@@ -146,7 +146,7 @@ class DatabaseComparator
     /**
      * Returns the list of tables excluded from the comparison
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getExcludedTables()
     {
@@ -305,7 +305,7 @@ class DatabaseComparator
     protected function isTableExcluded(Table $table)
     {
         $tableName = $table->getName();
-        if (in_array($tableName, $this->excludedTables)) {
+        if (in_array($tableName, $this->excludedTables, true)) {
             return true;
         }
 

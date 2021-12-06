@@ -22,6 +22,9 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class BehaviorLocator
 {
+    /**
+     * @var string
+     */
     public const BEHAVIOR_PACKAGE_TYPE = 'propel-behavior';
 
     /**
@@ -35,20 +38,12 @@ class BehaviorLocator
     private $composerDir;
 
     /**
-     * @deprecated Unused.
-     *
-     * @var \Propel\Generator\Config\GeneratorConfigInterface
-     */
-    private $generatorConfig;
-
-    /**
      * Creates the composer finder
      *
      * @param \Propel\Generator\Config\GeneratorConfigInterface|null $config build config
      */
     public function __construct(?GeneratorConfigInterface $config = null)
     {
-        $this->generatorConfig = $config;
         if ($config !== null) {
             $this->composerDir = $config->get()['paths']['composerDir'];
         }
@@ -106,15 +101,15 @@ class BehaviorLocator
     /**
      * Returns the directories to search the composer lock file in
      *
-     * @return string[]
+     * @return array<string>
      */
     private function getSearchDirs(): array
     {
         return [
             getcwd(),
-            getcwd() . '/../',                   // cwd is a subfolder
-            __DIR__ . '/../../../../../../../',  // vendor/propel/propel
-            __DIR__ . '/../../../../',            // propel development environment
+            getcwd() . '/../', // cwd is a subfolder
+            __DIR__ . '/../../../../../../../', // vendor/propel/propel
+            __DIR__ . '/../../../../', // propel development environment
         ];
     }
 

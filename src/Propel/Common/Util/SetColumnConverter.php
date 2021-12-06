@@ -51,11 +51,11 @@ class SetColumnConverter
      * Converts set column integer value to corresponding array.
      *
      * @param string|null $val
-     * @param string[] $valueSet
+     * @param array<string> $valueSet
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
-     * @return string[]
+     * @return array<string>
      */
     public static function convertIntToArray(?string $val, array $valueSet): array
     {

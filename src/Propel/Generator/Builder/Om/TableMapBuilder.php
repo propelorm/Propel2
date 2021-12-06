@@ -128,7 +128,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\DataFetcher\DataFetcherInterface',
-            '\Propel\Runtime\Propel'
+            '\Propel\Runtime\Propel',
         );
 
         $script .= $this->addConstants();
@@ -457,14 +457,14 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         $arrayString = '';
         foreach ($tableColumns as $column) {
             $variants = [
-                $column->getPhpName(),                                    // ColumnName => COLUMN_NAME
-                $table->getPhpName() . '.' . $column->getPhpName(),       // TableName.ColumnName => COLUMN_NAME
-                $column->getCamelCaseName(),                              // columnName => COLUMN_NAME
+                $column->getPhpName(), // ColumnName => COLUMN_NAME
+                $table->getPhpName() . '.' . $column->getPhpName(), // TableName.ColumnName => COLUMN_NAME
+                $column->getCamelCaseName(), // columnName => COLUMN_NAME
                 $table->getCamelCaseName() . '.' . $column->getCamelCaseName(), // tableName.columnName => COLUMN_NAME
-                $this->getColumnConstant($column, $this->getTableMapClass()),   // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
-                $column->getConstantName(),                               // COL_COLUMN_NAME => COLUMN_NAME
-                $column->getName(),                                       // column_name => COLUMN_NAME
-                $table->getName() . '.' . $column->getName(),             // table_name.column_name => COLUMN_NAME
+                $this->getColumnConstant($column, $this->getTableMapClass()), // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
+                $column->getConstantName(), // COL_COLUMN_NAME => COLUMN_NAME
+                $column->getName(), // column_name => COLUMN_NAME
+                $table->getName() . '.' . $column->getName(), // table_name.column_name => COLUMN_NAME
             ];
 
             $variants = array_unique($variants);
@@ -703,7 +703,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     }
 
     /**
-     * @param bool|int|float|string|array|null $value
+     * @param array|string|float|int|bool|null $value
      *
      * @return string
      */
@@ -727,7 +727,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
-     * @param string[]|string $pkphp An array of PHP var names / method calls representing complete pk.
+     * @param array<string>|string $pkphp An array of PHP var names / method calls representing complete pk.
      *
      * @return string
      */

@@ -74,6 +74,8 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
+     * @phpstan-return non-empty-string
+     *
      * @return string
      */
     public function getSchemaDelimiter()
@@ -82,7 +84,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getDefaultTypeSizes()
     {
@@ -114,7 +116,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @param \Propel\Generator\Model\Column[] $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      *
      * @return string
      */
@@ -129,7 +131,7 @@ ALTER TABLE %s ADD %s;
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($tableName),
-                $this->getColumnDDL($column)
+                $this->getColumnDDL($column),
             );
         }
 
@@ -169,7 +171,7 @@ ALTER TABLE %s ADD %s;
                     //or an expression in parentheses.
                     || array_search(
                         $column->getDefaultValue(),
-                        ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP']
+                        ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'],
                     ) !== false
                     || substr(trim($column->getDefaultValue()), 0, 1) === '('
 
@@ -250,7 +252,7 @@ DROP TABLE %s;
             implode(', ', $fieldMap), //(%s)
             implode(', ', array_keys($fieldMap)), //select %s
             $this->quoteIdentifier($tempTableName), //from %s
-            $this->quoteIdentifier($tempTableName) //drop table %s
+            $this->quoteIdentifier($tempTableName), //drop table %s
         );
 
         return $sql;
@@ -479,7 +481,7 @@ PRAGMA foreign_keys = ON;
             //sqlite use CURRENT_TIMESTAMP different than mysql/pgsql etc
             //we set it to the more common behavior
             $col->setDefaultValue(
-                new ColumnDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", ColumnDefaultValue::TYPE_EXPR)
+                new ColumnDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", ColumnDefaultValue::TYPE_EXPR),
             );
         }
 
@@ -535,7 +537,7 @@ PRAGMA foreign_keys = ON;
             $pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
-            implode($sep, $lines)
+            implode($sep, $lines),
         );
     }
 
@@ -556,7 +558,7 @@ PRAGMA foreign_keys = ON;
             $pattern,
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
 
         if ($fk->hasOnUpdate()) {

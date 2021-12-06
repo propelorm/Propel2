@@ -23,7 +23,7 @@ class SortableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'rank_column' => 'sortable_rank',
@@ -76,7 +76,7 @@ class SortableBehavior extends Behavior
             if (count($scopes) === 0) {
                 throw new InvalidArgumentException(sprintf(
                     'The sortable behavior in `%s` needs a `scope_column` parameter.',
-                    $this->getTable()->getName()
+                    $this->getTable()->getName(),
                 ));
             }
         }
@@ -216,7 +216,7 @@ class SortableBehavior extends Behavior
     /**
      * Returns all scope columns as array.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getScopes()
     {

@@ -140,7 +140,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets array of warning messages.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getWarnings()
     {
@@ -172,7 +172,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a type mapping from native type to Propel type.
      *
-     * @return string[] The mapped Propel type.
+     * @return array<string> The mapped Propel type.
      */
     abstract protected function getTypeMapping();
 
@@ -209,7 +209,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
         }
 
-        return isset($this->reverseTypeMap[$propelType]) ? $this->reverseTypeMap[$propelType] : null;
+        return $this->reverseTypeMap[$propelType] ?? null;
     }
 
     /**

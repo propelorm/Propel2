@@ -47,12 +47,12 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
 
     /**
-     * @var \Propel\Runtime\Adapter\AdapterInterface[] List of database adapter instances
+     * @var array<\Propel\Runtime\Adapter\AdapterInterface> List of database adapter instances
      */
     protected $adapters = [];
 
     /**
-     * @var string[] List of database adapter classes
+     * @var array<string> List of database adapter classes
      */
     protected $adapterClasses = [];
 
@@ -69,13 +69,13 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $databaseMapClass = ServiceContainerInterface::DEFAULT_DATABASE_MAP_CLASS;
 
     /**
-     * @var \Propel\Runtime\Map\DatabaseMap[]|null List of database map instances. Is null if not initialized.
+     * @var array<\Propel\Runtime\Map\DatabaseMap>|null List of database map instances. Is null if not initialized.
      * @see StandardServiceContainer::initDatabaseMaps();
      */
     protected $databaseMaps;
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionManagerInterface[] List of connection managers
+     * @var array<\Propel\Runtime\Connection\ConnectionManagerInterface> List of connection managers
      */
     protected $connectionManagers = [];
 
@@ -97,7 +97,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $profiler;
 
     /**
-     * @var \Psr\Log\LoggerInterface[] List of loggers
+     * @var array<\Psr\Log\LoggerInterface> List of loggers
      */
     protected $loggers = [];
 
@@ -159,7 +159,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param string[] $adapterClasses A list of adapters
+     * @param array<string> $adapterClasses A list of adapters
      *
      * @return void
      */
@@ -365,7 +365,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @return \Propel\Runtime\Connection\ConnectionManagerInterface[]
+     * @return array<\Propel\Runtime\Connection\ConnectionManagerInterface>
      */
     public function getConnectionManagers()
     {
@@ -572,33 +572,33 @@ class StandardServiceContainer implements ServiceContainerInterface
             case 'stream':
                 $handler = new StreamHandler(
                     $configuration['path'],
-                    isset($configuration['level']) ? $configuration['level'] : null,
-                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                    $configuration['level'] ?? null,
+                    $configuration['bubble'] ?? null,
                 );
 
                 break;
             case 'rotating_file':
                 $handler = new RotatingFileHandler(
                     $configuration['path'],
-                    isset($configuration['max_files']) ? $configuration['max_files'] : null,
-                    isset($configuration['level']) ? $configuration['level'] : null,
-                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                    $configuration['max_files'] ?? null,
+                    $configuration['level'] ?? null,
+                    $configuration['bubble'] ?? null,
                 );
 
                 break;
             case 'syslog':
                 $handler = new SyslogHandler(
                     $configuration['ident'],
-                    isset($configuration['facility']) ? $configuration['facility'] : null,
-                    isset($configuration['level']) ? $configuration['level'] : null,
-                    isset($configuration['bubble']) ? $configuration['bubble'] : null
+                    $configuration['facility'] ?? null,
+                    $configuration['level'] ?? null,
+                    $configuration['bubble'] ?? null,
                 );
 
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
                     'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
-                    $configuration['type']
+                    $configuration['type'],
                 ));
         }
         $logger->pushHandler($handler);

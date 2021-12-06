@@ -12,26 +12,36 @@ interface ServiceContainerInterface
 {
     /**
      * Constant used to request a READ connection (applies to replication).
+     *
+     * @var string
      */
     public const CONNECTION_READ = 'read';
 
     /**
      * Constant used to request a WRITE connection (applies to replication).
+     *
+     * @var string
      */
     public const CONNECTION_WRITE = 'write';
 
     /**
      * The default DatabaseMap class created by getDatabaseMap()
+     *
+     * @var string
      */
     public const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
 
     /**
      * The name of the default datasource.
+     *
+     * @var string
      */
     public const DEFAULT_DATASOURCE_NAME = 'default';
 
     /**
      * The name of the default Profiler class created by getProfiler()
+     *
+     * @var string
      */
     public const DEFAULT_PROFILER_CLASS = '\Propel\Runtime\Util\Profiler';
 

@@ -18,10 +18,13 @@ use SplFileInfo;
  */
 class TableMapLoaderScriptBuilder
 {
+    /**
+     * @var string
+     */
     public const FILENAME = 'loadDatabase.php';
 
     /**
-     * @var \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     protected $generatorConfig;
 
@@ -46,7 +49,7 @@ class TableMapLoaderScriptBuilder
     }
 
     /**
-     * @param \Propel\Generator\Model\Schema[] $schemas
+     * @param array<\Propel\Generator\Model\Schema> $schemas
      *
      * @return array
      */

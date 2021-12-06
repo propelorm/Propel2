@@ -294,7 +294,7 @@ class Profiler
     /**
      * Format a byte count into a human-readable representation.
      *
-     * @param int|float $bytes Byte count to convert. Can be negative.
+     * @param float|int $bytes Byte count to convert. Can be negative.
      * @param int $precision How many decimals to include.
      *
      * @return string

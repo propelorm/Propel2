@@ -41,7 +41,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $oracleTypeMap = [
         'BLOB' => PropelTypes::BLOB,
@@ -64,7 +64,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {
@@ -75,7 +75,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Searches for tables in the database. Maybe we want to search also the views.
      *
      * @param \Propel\Generator\Model\Database $database The Database model class to add tables to.
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
@@ -147,7 +147,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 // this is an Oracle internal column - prune
                 continue;
             }
-            $size = $row['DATA_PRECISION'] ? $row['DATA_PRECISION'] : $row['DATA_LENGTH'];
+            $size = $row['DATA_PRECISION'] ?: $row['DATA_LENGTH'];
             $scale = $row['DATA_SCALE'];
             $default = $row['DATA_DEFAULT'];
             $type = $row['DATA_TYPE'];

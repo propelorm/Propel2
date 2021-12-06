@@ -88,7 +88,7 @@ class MigrationDownCommand extends AbstractCommand
 
         $output->writeln(sprintf(
             'Executing migration %s down',
-            $manager->getMigrationClassName($nextMigrationTimestamp)
+            $manager->getMigrationClassName($nextMigrationTimestamp),
         ));
 
         $nbPreviousTimestamps = count($previousTimestamps);
@@ -119,7 +119,7 @@ class MigrationDownCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Connecting to database "%s" using DSN "%s"',
                     $datasource,
-                    $connection['dsn']
+                    $connection['dsn'],
                 ));
             }
 
@@ -140,13 +140,13 @@ class MigrationDownCommand extends AbstractCommand
                         if ($input->getOption('force')) {
                             //continue, but print error message
                             $output->writeln(
-                                sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement)
+                                sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement),
                             );
                         } else {
                             throw new RuntimeException(
                                 sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement),
                                 0,
-                                $e
+                                $e,
                             );
                         }
                     }
@@ -156,7 +156,7 @@ class MigrationDownCommand extends AbstractCommand
                     '%d of %d SQL statements executed successfully on datasource "%s"',
                     $res,
                     count($statements),
-                    $datasource
+                    $datasource,
                 ));
             }
 
@@ -166,7 +166,7 @@ class MigrationDownCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Downgraded migration date to %d for datasource "%s"',
                     $previousTimestamp,
-                    $datasource
+                    $datasource,
                 ));
             }
         }

@@ -70,7 +70,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     public function getDefaultKeyType()
     {
-        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ? $this->getBuildProperty('generator.objectModel.defaultKeyType') : 'phpName';
+        $defaultKeyType = $this->getBuildProperty('generator.objectModel.defaultKeyType') ?: 'phpName';
 
         return 'TYPE_' . strtoupper($defaultKeyType);
     }
@@ -313,7 +313,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             '\Propel\Runtime\ActiveRecord\ActiveRecordInterface',
             '\Propel\Runtime\Parser\AbstractParser',
             '\Propel\Runtime\Propel',
-            '\Propel\Runtime\Map\TableMap'
+            '\Propel\Runtime\Map\TableMap',
         );
 
         $baseClass = $this->getBaseClass();
@@ -1214,7 +1214,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addBooleanAccessor(&$script, Column $column)
     {
         $name = self::getBooleanAccessorName($column);
-        if (in_array($name, ClassTools::getPropelReservedMethods())) {
+        if (in_array($name, ClassTools::getPropelReservedMethods(), true)) {
             //TODO: Issue a warning telling the user to use default accessors
             return; // Skip boolean accessors for reserved names
         }
@@ -1416,7 +1416,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
         $this->declareClasses(
             'Propel\Common\Util\SetColumnConverter',
-            'Propel\Common\Exception\SetColumnConverterException'
+            'Propel\Common\Exception\SetColumnConverterException',
         );
 
         $script .= "
@@ -2328,7 +2328,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $this->declareClasses(
             'Propel\Common\Util\SetColumnConverter',
-            'Propel\Common\Exception\SetColumnConverterException'
+            'Propel\Common\Exception\SetColumnConverterException',
         );
 
         $script .= "
@@ -3367,7 +3367,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             } elseif ($col->isSetType()) {
                 $this->declareClasses(
                     'Propel\Common\Util\SetColumnConverter',
-                    'Propel\Common\Exception\SetColumnConverterException'
+                    'Propel\Common\Exception\SetColumnConverterException',
                 );
                 $script .= "
                 \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
@@ -3745,7 +3745,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= ";\n";
 
-        /** @var \Propel\Generator\Model\ForeignKey[] $primaryKeyFKs */
+        /** @var array<\Propel\Generator\Model\ForeignKey> $primaryKeyFKs */
         $primaryKeyFKs = [];
         $foreignKeyPKCount = 0;
         foreach ($this->getTable()->getForeignKeys() as $foreignKey) {
@@ -3868,7 +3868,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * by the Persistent interface (or used by the templates). Hence, this method is also
      * deprecated.
      *
-     * @deprecated
+     * @deprecated Not needed anymore.
      *
      * @param string $script The script will be modified in this method.
      *
@@ -3972,7 +3972,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * by the Persistent interface (or used by the templates). Hence, this method is also
      * deprecated.
      *
-     * @deprecated
+     * @deprecated Not needed anymore.
      *
      * @param string $script The script will be modified in this method.
      *
@@ -4443,7 +4443,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
     /**
      * @param string $script
-     * @param \Propel\Generator\Model\ForeignKey[] $referrers
+     * @param array<\Propel\Generator\Model\ForeignKey> $referrers
      *
      * @return void
      */
@@ -5405,7 +5405,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 $collName = $this->getCrossFKVarName($crossFK);
                 $relatedObjectClassName = $this->getClassNameFromBuilder(
                     $this->getNewStubObjectBuilder($crossFK->getForeignTable()),
-                    true
+                    true,
                 );
 
                 $foreignTableMapName = $this->getClassNameFromBuilder($this->getNewTableMapBuilder($crossFK->getTable()));
@@ -6528,7 +6528,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $this->declareClasses(
             '\Propel\Runtime\Propel',
-            '\PDO'
+            '\PDO',
         );
         $table = $this->getTable();
         /** @var \Propel\Generator\Platform\DefaultPlatform $platform */

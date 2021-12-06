@@ -202,7 +202,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getPackage()
     {
-        $pkg = ($this->getTable()->getPackage() ? $this->getTable()->getPackage() : $this->getDatabase()->getPackage());
+        $pkg = ($this->getTable()->getPackage() ?: $this->getDatabase()->getPackage());
         if (!$pkg) {
             $pkg = $this->getBuildProperty('generator.targetPackage');
         }
@@ -353,7 +353,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         throw new LogicException(sprintf(
             'The class %s duplicates the class %s and can\'t be used without alias',
             $namespace . '\\' . $class,
-            $this->declaredShortClassesOrAlias[$aliasWanted]
+            $this->declaredShortClassesOrAlias[$aliasWanted],
         ));
     }
 
@@ -445,7 +445,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * @param self $builder
-     * @param bool|string $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
+     * @param string|bool $aliasPrefix the prefix for the Alias or True for auto generation of the Alias
      *
      * @return string
      */
@@ -773,12 +773,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
     /**
      * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
-     * @param array|\Propel\Generator\Model\ForeignKey|null $crossFK will be the first variable defined
+     * @param \Propel\Generator\Model\ForeignKey|array|null $crossFK will be the first variable defined
      *
-     * @return array
+     * @return array<string>
      */
     protected function getCrossFKAddMethodInformation(CrossForeignKeys $crossFKs, $crossFK = null)
     {
+        $signature = $shortSignature = $normalizedShortSignature = $phpDoc = [];
         if ($crossFK instanceof ForeignKey) {
             $crossObjectName = '$' . lcfirst($this->getFKPhpNameAffix($crossFK));
             $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTable());
@@ -803,7 +804,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Extracts some useful information from a CrossForeignKeys object.
      *
      * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
-     * @param array|\Propel\Generator\Model\ForeignKey $crossFKToIgnore
+     * @param \Propel\Generator\Model\ForeignKey|array $crossFKToIgnore
      * @param array $signature
      * @param array $shortSignature
      * @param array $normalizedShortSignature

@@ -18,6 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GraphvizGenerateCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_OUTPUT_DIRECTORY = 'generated-graphviz';
 
     /**

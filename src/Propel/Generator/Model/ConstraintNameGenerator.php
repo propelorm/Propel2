@@ -23,6 +23,8 @@ class ConstraintNameGenerator implements NameGeneratorInterface
 {
     /**
      * Conditional compilation flag.
+     *
+     * @var bool
      */
     public const DEBUG = false;
 

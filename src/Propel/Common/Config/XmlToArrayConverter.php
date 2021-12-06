@@ -135,9 +135,9 @@ class XmlToArrayConverter
      *
      * @param \SimpleXMLElement $valueElement The simplexml value object.
      *
-     * @return bool|float|int|string string or boolean value
+     * @return string|float|int|bool string or boolean value
      */
-    private static function getConvertedXmlValue(SimpleXMLElement $valueElement)
+    protected static function getConvertedXmlValue(SimpleXMLElement $valueElement)
     {
         $value = (string)$valueElement; // convert from simplexml to string
 

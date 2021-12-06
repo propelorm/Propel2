@@ -31,7 +31,7 @@ class ConcreteInheritanceBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'extends' => '',
@@ -168,7 +168,7 @@ class ConcreteInheritanceBehavior extends Behavior
     }
 
     /**
-     * @return string[]|bool
+     * @return array<string>|bool
      */
     protected function getCopyToChild()
     {

@@ -138,7 +138,7 @@ abstract class ScopedMappingModel extends MappingModel
     {
         $prependBackslash = ($namespace && !$this->isAbsoluteNamespace($namespace));
 
-        return ($prependBackslash) ?  "\\$namespace" : $namespace;
+        return ($prependBackslash) ? "\\$namespace" : $namespace;
     }
 
     /**

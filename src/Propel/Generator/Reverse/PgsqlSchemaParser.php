@@ -29,7 +29,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Map PostgreSQL native types to Propel types.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $pgsqlTypeMap = [
         'bool' => PropelTypes::BOOLEAN,
@@ -76,7 +76,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     ];
 
     /**
-     * @var int[]
+     * @var array<int>
      */
     protected static $defaultTypeSizes = [
         'char' => 1,
@@ -90,7 +90,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {
@@ -101,7 +101,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * Parses a database schema.
      *
      * @param \Propel\Generator\Model\Database $database
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
@@ -176,7 +176,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             $searchPath = implode(', ', $searchPath);
             $sql .= "
             AND n.nspname IN ($searchPath)";
-        } elseif ($database->getSchema()) {
+        } else {
             $sql .= "
             AND n.nspname = ?";
             $params[] = $database->getSchema();
@@ -482,7 +482,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             for ($i = 0; $i < $max; $i++) {
                 $foreignKeys[$name]->addReference(
                     $localTable->getColumn($localColumns[$i]),
-                    $foreignTable->getColumn($foreignColumns[$i])
+                    $foreignTable->getColumn($foreignColumns[$i]),
                 );
             }
         }

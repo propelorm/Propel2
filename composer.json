@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "symfony/yaml": "^3.4.0||^4.0.0||^5.0.0",
         "symfony/config": "^3.4.0||^4.0.0||^5.0.0",
         "symfony/console": "^3.4.0||^4.0.0||^5.0.0",
@@ -31,9 +31,9 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "monolog/monolog": "^1.3",
-        "phpstan/phpstan": "^0.12.97",
-        "phpunit/phpunit": "^8.0.0||^9.0.0",
-        "spryker/code-sniffer": "^0.15.6",
+        "phpstan/phpstan": "^1.0.0",
+        "phpunit/phpunit": "^9.5.0",
+        "spryker/code-sniffer": "^0.17.2",
         "psalm/phar": "4.9.3",
         "mikey179/vfsstream": "^1.6"
     },
@@ -49,8 +49,8 @@
         "bin/propel"
     ],
     "scripts": {
-        "cs-check": "phpcs -p -s --standard=config/phpcs.xml src/",
-        "cs-fix": "phpcbf -p --standard=config/phpcs.xml src/",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
         "stan": "vendor/bin/phpstan analyze",
         "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
         "psalm": "vendor/bin/psalm.phar --show-info=false",

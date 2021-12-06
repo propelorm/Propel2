@@ -58,46 +58,46 @@ class ColumnComparator
         $toDomain = $toColumn->getDomain();
 
         if ($fromDomain->getScale() !== $toDomain->getScale()) {
-            $changedProperties['scale'] = [ $fromDomain->getScale(), $toDomain->getScale() ];
+            $changedProperties['scale'] = [$fromDomain->getScale(), $toDomain->getScale()];
         }
         if ($fromDomain->getSize() !== $toDomain->getSize()) {
-            $changedProperties['size'] = [ $fromDomain->getSize(), $toDomain->getSize() ];
+            $changedProperties['size'] = [$fromDomain->getSize(), $toDomain->getSize()];
         }
 
         if (strtoupper($fromDomain->getSqlType()) !== strtoupper($toDomain->getSqlType())) {
-            $changedProperties['sqlType'] = [ $fromDomain->getSqlType(), $toDomain->getSqlType() ];
+            $changedProperties['sqlType'] = [$fromDomain->getSqlType(), $toDomain->getSqlType()];
 
             if ($fromDomain->getType() !== $toDomain->getType()) {
-                $changedProperties['type'] = [ $fromDomain->getType(), $toDomain->getType() ];
+                $changedProperties['type'] = [$fromDomain->getType(), $toDomain->getType()];
             }
         }
 
         if ($fromColumn->isNotNull() !== $toColumn->isNotNull()) {
-            $changedProperties['notNull'] = [ $fromColumn->isNotNull(), $toColumn->isNotNull() ];
+            $changedProperties['notNull'] = [$fromColumn->isNotNull(), $toColumn->isNotNull()];
         }
 
         // compare column default value
         $fromDefaultValue = $fromColumn->getDefaultValue();
         $toDefaultValue = $toColumn->getDefaultValue();
         if ($fromDefaultValue && !$toDefaultValue) {
-            $changedProperties['defaultValueType'] = [ $fromDefaultValue->getType(), null ];
-            $changedProperties['defaultValueValue'] = [ $fromDefaultValue->getValue(), null ];
+            $changedProperties['defaultValueType'] = [$fromDefaultValue->getType(), null];
+            $changedProperties['defaultValueValue'] = [$fromDefaultValue->getValue(), null];
         } elseif (!$fromDefaultValue && $toDefaultValue) {
-            $changedProperties['defaultValueType'] = [ null, $toDefaultValue->getType() ];
-            $changedProperties['defaultValueValue'] = [ null, $toDefaultValue->getValue() ];
+            $changedProperties['defaultValueType'] = [null, $toDefaultValue->getType()];
+            $changedProperties['defaultValueValue'] = [null, $toDefaultValue->getValue()];
         } elseif ($fromDefaultValue && $toDefaultValue) {
             if (!$fromDefaultValue->equals($toDefaultValue)) {
                 if ($fromDefaultValue->getType() !== $toDefaultValue->getType()) {
-                    $changedProperties['defaultValueType'] = [ $fromDefaultValue->getType(), $toDefaultValue->getType() ];
+                    $changedProperties['defaultValueType'] = [$fromDefaultValue->getType(), $toDefaultValue->getType()];
                 }
                 if ($fromDefaultValue->getValue() !== $toDefaultValue->getValue()) {
-                    $changedProperties['defaultValueValue'] = [ $fromDefaultValue->getValue(), $toDefaultValue->getValue() ];
+                    $changedProperties['defaultValueValue'] = [$fromDefaultValue->getValue(), $toDefaultValue->getValue()];
                 }
             }
         }
 
         if ($fromColumn->isAutoIncrement() !== $toColumn->isAutoIncrement()) {
-            $changedProperties['autoIncrement'] = [ $fromColumn->isAutoIncrement(), $toColumn->isAutoIncrement() ];
+            $changedProperties['autoIncrement'] = [$fromColumn->isAutoIncrement(), $toColumn->isAutoIncrement()];
         }
 
         return $changedProperties;

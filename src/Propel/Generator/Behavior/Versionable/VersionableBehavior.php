@@ -21,7 +21,7 @@ class VersionableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'version_column' => 'version',
@@ -136,7 +136,7 @@ class VersionableBehavior extends Behavior
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
-        $versionTableName = $this->getParameter('version_table') ? $this->getParameter('version_table') : ($table->getOriginCommonName() . '_version');
+        $versionTableName = $this->getParameter('version_table') ?: ($table->getOriginCommonName() . '_version');
         if (!$database->hasTable($versionTableName)) {
             // create the version table
             $versionTable = $database->addTable([
@@ -248,7 +248,7 @@ class VersionableBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getVersionableFks()
     {
@@ -265,7 +265,7 @@ class VersionableBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getVersionableReferrers()
     {

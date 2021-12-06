@@ -58,7 +58,7 @@ class CrossForeignKeys
     /**
      * All other outgoing relations from the middle-table to other tables.
      *
-     * @var \Propel\Generator\Model\ForeignKey[]
+     * @var array<\Propel\Generator\Model\ForeignKey>
      */
     protected $crossForeignKeys = [];
 
@@ -154,7 +154,7 @@ class CrossForeignKeys
     /**
      * Returns all primary keys of middle-table which are not already covered by at least on of our cross foreignKey collection.
      *
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getUnclassifiedPrimaryKeys()
     {
@@ -201,7 +201,7 @@ class CrossForeignKeys
     }
 
     /**
-     * @param \Propel\Generator\Model\ForeignKey[] $foreignKeys
+     * @param array<\Propel\Generator\Model\ForeignKey> $foreignKeys
      *
      * @return void
      */
@@ -213,7 +213,7 @@ class CrossForeignKeys
     /**
      * All other outgoing relations from the middle-table to other tables.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getCrossForeignKeys()
     {

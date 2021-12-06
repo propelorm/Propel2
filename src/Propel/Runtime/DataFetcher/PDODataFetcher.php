@@ -87,7 +87,7 @@ class PDODataFetcher extends AbstractDataFetcher
      * @see \PDOStatement::fetchAll()
      *
      * @param int|null $style
-     * @param int|string|object|null $fetch_argument
+     * @param object|string|int|null $fetch_argument
      * @param array|null $ctor_args
      *
      * @return array

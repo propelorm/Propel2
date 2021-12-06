@@ -129,7 +129,7 @@ abstract class DataModelBuilder
      */
     public function getPluralizer()
     {
-        if (!isset($this->pluralizer)) {
+        if ($this->pluralizer === null) {
             $this->pluralizer = $this->getGeneratorConfig()->getConfiguredPluralizer();
         }
 
@@ -143,7 +143,7 @@ abstract class DataModelBuilder
      */
     public function getObjectBuilder()
     {
-        if (!isset($this->objectBuilder)) {
+        if ($this->objectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'object');
             $this->objectBuilder = $builder;
@@ -159,7 +159,7 @@ abstract class DataModelBuilder
      */
     public function getStubObjectBuilder()
     {
-        if (!isset($this->stubObjectBuilder)) {
+        if ($this->stubObjectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectstub');
             $this->stubObjectBuilder = $builder;
@@ -175,7 +175,7 @@ abstract class DataModelBuilder
      */
     public function getQueryBuilder()
     {
-        if (!isset($this->queryBuilder)) {
+        if ($this->queryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'query');
             $this->queryBuilder = $builder;
@@ -191,7 +191,7 @@ abstract class DataModelBuilder
      */
     public function getStubQueryBuilder()
     {
-        if (!isset($this->stubQueryBuilder)) {
+        if ($this->stubQueryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'querystub');
             $this->stubQueryBuilder = $builder;
@@ -207,7 +207,7 @@ abstract class DataModelBuilder
      */
     public function getTableMapBuilder()
     {
-        if (!isset($this->tablemapBuilder)) {
+        if ($this->tablemapBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\TableMapBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'tablemap');
             $this->tablemapBuilder = $builder;
@@ -223,7 +223,7 @@ abstract class DataModelBuilder
      */
     public function getInterfaceBuilder()
     {
-        if (!isset($this->interfaceBuilder)) {
+        if ($this->interfaceBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'interface');
             $this->interfaceBuilder = $builder;
@@ -239,7 +239,7 @@ abstract class DataModelBuilder
      */
     public function getMultiExtendObjectBuilder()
     {
-        if (!isset($this->multiExtendObjectBuilder)) {
+        if ($this->multiExtendObjectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
             $builder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'objectmultiextend');
             $this->multiExtendObjectBuilder = $builder;
@@ -527,7 +527,7 @@ abstract class DataModelBuilder
     /**
      * Gets array of warning messages.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getWarnings()
     {

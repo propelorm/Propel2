@@ -37,7 +37,7 @@ abstract class AbstractFormatter
     protected $tableMap;
 
     /**
-     * @var \Propel\Runtime\ActiveQuery\ModelWith[] $with
+     * @var array<\Propel\Runtime\ActiveQuery\ModelWith>
      */
     protected $with = [];
 
@@ -52,7 +52,7 @@ abstract class AbstractFormatter
     protected $hasLimit = false;
 
     /**
-     * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface[]
+     * @var array<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
      */
     protected $currentObjects = [];
 
@@ -167,7 +167,7 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @return \Propel\Runtime\ActiveQuery\ModelWith[]
+     * @return array<\Propel\Runtime\ActiveQuery\ModelWith>
      */
     public function getWith()
     {
