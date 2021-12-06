@@ -132,7 +132,7 @@ class XmlParser extends AbstractParser
                 $element->appendChild($child);
             } elseif ($value instanceof DateTimeInterface) {
                 $element->setAttribute('type', 'xsd:dateTime');
-                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ISO8601));
+                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ATOM));
                 $element->appendChild($child);
             } else {
                 $child = $element->ownerDocument->createTextNode((string)$value);

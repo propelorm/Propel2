@@ -76,9 +76,9 @@ class XmlParserTest extends TestCase
   <b2>2</b2>
 </data>
 ", 'keys with numbers'],
-            [['time' => new DateTime('2014-07-23T22:27:17+0200')], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+            [['time' => new DateTime('2014-07-23T22:27:17+02:00')], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <data>
-  <time type=\"xsd:dateTime\">2014-07-23T22:27:17+0200</time>
+  <time type=\"xsd:dateTime\">2014-07-23T22:27:17+02:00</time>
 </data>
 ", '\\DateTime objects'],
         ];
