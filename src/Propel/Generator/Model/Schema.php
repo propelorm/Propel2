@@ -145,7 +145,7 @@ class Schema
     /**
      * Returns an array of all databases.
      *
-     * The first boolean parameter tells whether or not to run the
+     * The first boolean parameter tells whether to run the
      * final initialization process.
      *
      * @param bool $doFinalInitialization
@@ -164,7 +164,7 @@ class Schema
     }
 
     /**
-     * Returns whether or not this schema has multiple databases.
+     * Returns whether this schema has multiple databases.
      *
      * @return bool
      */
@@ -206,7 +206,7 @@ class Schema
     }
 
     /**
-     * Returns whether or not a database with the specified name exists in this
+     * Returns whether a database with the specified name exists in this
      * schema.
      *
      * @param string $name

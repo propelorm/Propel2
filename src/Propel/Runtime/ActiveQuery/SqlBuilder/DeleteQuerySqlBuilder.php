@@ -13,7 +13,7 @@ use Propel\Runtime\ActiveQuery\Criteria;
 class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
 {
     /**
-     * Build a Sql DELETE statment which deletes all data
+     * Build a Sql DELETE statement which deletes all data
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param string $tableName

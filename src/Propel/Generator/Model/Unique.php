@@ -23,7 +23,7 @@ namespace Propel\Generator\Model;
 class Unique extends Index
 {
     /**
-     * Returns whether or not this index is unique.
+     * Returns whether this index is unique.
      *
      * @return bool
      */

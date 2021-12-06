@@ -26,7 +26,7 @@ interface DumperInterface
      * Dumps a single Schema model into an XML formatted version.
      *
      * @param \Propel\Generator\Model\Schema $schema The schema model
-     * @param bool $doFinalInitialization Whether or not to validate the schema
+     * @param bool $doFinalInitialization Whether to validate the schema
      *
      * @return string The dumped formatted output (XML, YAML, CSV...)
      */

@@ -83,7 +83,7 @@ abstract class FileLoader extends BaseFileLoader
      *
      * @param string $file The resource
      *
-     * @throws \Propel\Common\Config\Exception\InputOutputException If the path isnot readable
+     * @throws \Propel\Common\Config\Exception\InputOutputException If the path is not readable
      *
      * @return string
      */

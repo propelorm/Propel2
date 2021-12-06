@@ -103,7 +103,7 @@ EOF;
         $conf = [
         'profiler' => [
             'classname' => '\Propel\Runtime\Util\Profiler',
-            'slowTreshold' => 0.2,
+            'slowThreshold' => 0.2,
             'time' => ['precision' => 3, 'pad' => '8'],
             'memory' => ['precision' => 3, 'pad' => '8'],
             'innerGlue' => ': ',
@@ -112,7 +112,7 @@ EOF;
         $expected = <<<'EOF'
 $serviceContainer->setProfilerClass('\Propel\Runtime\Util\Profiler');
 $serviceContainer->setProfilerConfiguration(array (
-  'slowTreshold' => 0.2,
+  'slowThreshold' => 0.2,
   'time' =>
   array (
     'precision' => 3,

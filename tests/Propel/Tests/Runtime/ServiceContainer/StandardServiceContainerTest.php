@@ -567,7 +567,7 @@ class StandardServiceContainerTest extends BaseTestCase
             ],
             'innerGlue' => ': ',
             'outerGlue' => ' | ',
-            'slowTreshold' => 0.1,
+            'slowThreshold' => 0.1,
         ];
         $this->assertEquals($expected, $config);
     }
@@ -578,10 +578,10 @@ class StandardServiceContainerTest extends BaseTestCase
     public function testGetProfilerUsesProfilerConfigurationWhenGiven()
     {
         $this->sc->setProfilerConfiguration([
-            'slowTreshold' => 22,
+            'slowThreshold' => 22,
         ]);
         $config = $this->sc->getProfiler()->getConfiguration();
-        $this->assertEquals(22, $config['slowTreshold']);
+        $this->assertEquals(22, $config['slowThreshold']);
     }
 
     /**

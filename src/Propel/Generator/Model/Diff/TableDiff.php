@@ -826,7 +826,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some modified foreign keys.
      *
      * @return bool
@@ -837,7 +837,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some modified indices.
      *
      * @return bool
@@ -848,7 +848,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some modified columns.
      *
      * @return bool
@@ -859,7 +859,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some removed foreign keys.
      *
      * @return bool
@@ -870,7 +870,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some removed indices.
      *
      * @return bool
@@ -881,7 +881,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some renamed columns.
      *
      * @return bool
@@ -892,7 +892,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some removed columns.
      *
      * @return bool
@@ -903,7 +903,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some added columns.
      *
      * @return bool
@@ -914,7 +914,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some added indices.
      *
      * @return bool
@@ -925,7 +925,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some added foreign keys.
      *
      * @return bool
@@ -936,7 +936,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some added primary key columns.
      *
      * @return bool
@@ -947,7 +947,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some removed primary key columns.
      *
      * @return bool
@@ -958,7 +958,7 @@ class TableDiff
     }
 
     /**
-     * Returns whether or not there are
+     * Returns whether there are
      * some renamed primary key columns.
      *
      * @return bool

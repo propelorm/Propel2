@@ -248,7 +248,7 @@ EOF;
 <?xml version="1.0" encoding="utf-8"?>
 <config>
   <profiler class="\Runtime\Runtime\Util\Profiler">
-    <slowTreshold>0.2</slowTreshold>
+    <slowThreshold>0.2</slowThreshold>
     <details>
       <time name="Time" precision="3" pad="8"/>
       <mem name="Memory" precision="3" pad="8"/>
@@ -314,7 +314,7 @@ EOF;
                 $profilerXml, [
                 'profiler' => [
                     'class' => '\Runtime\Runtime\Util\Profiler',
-                    'slowTreshold' => 0.2,
+                    'slowThreshold' => 0.2,
                     'details' => [
                         'time' => ['name' => 'Time', 'precision' => 3, 'pad' => '8'],
                         'mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => '8'],
