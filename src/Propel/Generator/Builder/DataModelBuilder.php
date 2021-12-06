@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Builder;
 
+use BadMethodCallException;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Table;
@@ -503,13 +504,17 @@ abstract class DataModelBuilder
     /**
      * Convenience method to returns the database for current table.
      *
+     * @throws \BadMethodCallException
+     *
      * @return \Propel\Generator\Model\Database
      */
     public function getDatabase()
     {
-        if ($this->getTable()) {
-            return $this->getTable()->getDatabase();
+        if (!$this->getTable()) {
+            throw new BadMethodCallException('No table set to call getDatabase() on');
         }
+
+        return $this->getTable()->getDatabase();
     }
 
     /**

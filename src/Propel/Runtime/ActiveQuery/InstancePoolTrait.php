@@ -41,7 +41,7 @@ trait InstancePoolTrait
     /**
      * @param mixed $value
      *
-     * @return string
+     * @return string|null
      */
     public static function getInstanceKey($value)
     {
@@ -61,6 +61,8 @@ trait InstancePoolTrait
             // assume we've been passed a primary key
             return (string)$value;
         }
+
+        return null;
     }
 
     /**
