@@ -712,9 +712,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
         }
 
         $items = [];
-        foreach ($value as $key => $value) {
+        foreach ($value as $key => $arrayValue) {
             $keyString = var_export($key, true);
-            $valString = $this->stringify($value);
+            $valString = $this->stringify($arrayValue);
             $items[] = "$keyString => $valString";
         }
         $itemsCsv = implode(', ', $items);
