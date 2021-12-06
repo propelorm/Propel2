@@ -23,7 +23,7 @@ class CountQueryExecutor extends AbstractQueryExecutor
      */
     public static function execute(Criteria $criteria, ?ConnectionInterface $con = null): DataFetcherInterface
     {
-        $executor = new CountQueryExecutor($criteria, $con);
+        $executor = new self($criteria, $con);
 
         return $executor->runCount();
     }

@@ -20,7 +20,7 @@ class AggregateColumnRelationBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'foreign_table' => '',
@@ -212,7 +212,7 @@ protected \$old{$relationName}{$aggregateName};
 
         $builder->declareClassNamespace(
             $foreignKey->getForeignTable()->getPhpName() . 'Query',
-            $foreignKey->getForeignTable()->getNamespace()
+            $foreignKey->getForeignTable()->getNamespace(),
         );
 
         return $this->renderTemplate('queryFindRelated', [

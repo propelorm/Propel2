@@ -36,7 +36,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      * There really aren't any SQLite native types, so we're just
      * using the MySQL ones here.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $sqliteTypeMap = [
         'tinyint' => PropelTypes::TINYINT,
@@ -73,7 +73,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {
@@ -82,7 +82,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * @param \Propel\Generator\Model\Database $database
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */

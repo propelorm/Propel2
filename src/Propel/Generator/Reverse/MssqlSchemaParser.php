@@ -30,7 +30,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * Map MSSQL native types to Propel types.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $mssqlTypeMap = [
         'binary' => PropelTypes::BINARY,
@@ -75,7 +75,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * @see AbstractSchemaParser::getTypeMapping()
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {

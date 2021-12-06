@@ -262,7 +262,7 @@ if (\$this->isInTree()) {
         $this->addDeleteDescendants($script);
 
         $this->builder->declareClass(
-            '\Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator'
+            '\Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator',
         );
 
         $script .= $this->addGetIterator();

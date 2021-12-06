@@ -28,6 +28,9 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class SchemaReader
 {
+    /**
+     * @var bool
+     */
     public const DEBUG = false;
 
     /**
@@ -106,13 +109,6 @@ class SchemaReader
     private $currParameterListCollector;
 
     /**
-     * @deprecated Unused.
-     *
-     * @var string
-     */
-    private $encoding;
-
-    /**
      * Two-dimensional array,
      * first dimension is for schemas(key is the path to the schema file),
      * second is for tags within the schema.
@@ -126,13 +122,11 @@ class SchemaReader
      *
      * @param \Propel\Generator\Platform\PlatformInterface|null $defaultPlatform The default database platform for the application.
      * @param string|null $defaultPackage the default PHP package used for the om
-     * @param string $encoding The database encoding.
      */
-    public function __construct(?PlatformInterface $defaultPlatform = null, $defaultPackage = null, $encoding = 'iso-8859-1')
+    public function __construct(?PlatformInterface $defaultPlatform = null, $defaultPackage = null)
     {
         $this->schema = new Schema($defaultPlatform);
         $this->defaultPackage = $defaultPackage;
-        $this->encoding = $encoding;
     }
 
     /**
@@ -197,8 +191,8 @@ class SchemaReader
                 sprintf(
                     'XML error: %s at line %d',
                     xml_error_string(xml_get_error_code($this->parser)),
-                    xml_get_current_line_number($this->parser)
-                )
+                    xml_get_current_line_number($this->parser),
+                ),
             );
         }
         xml_parser_free($this->parser);
@@ -225,7 +219,7 @@ class SchemaReader
             switch ($tagName) {
                 case 'database':
                     if ($this->isExternalSchema()) {
-                        $this->currentPackage = isset($attributes['package']) ? $attributes['package'] : null;
+                        $this->currentPackage = $attributes['package'] ?? null;
                         if ($this->currentPackage === null) {
                             $this->currentPackage = $this->defaultPackage;
                         }
@@ -240,12 +234,12 @@ class SchemaReader
         } elseif ($parentTag === 'database') {
             switch ($tagName) {
                 case 'external-schema':
-                    $xmlFile = isset($attributes['filename']) ? $attributes['filename'] : null;
+                    $xmlFile = $attributes['filename'] ?? null;
 
                     // 'referenceOnly' attribute is valid in the main schema XML file only,
                     // and it's ignored in the nested external-schemas
                     if (!$this->isExternalSchema()) {
-                        $isForRefOnly = isset($attributes['referenceOnly']) ? $attributes['referenceOnly'] : null;
+                        $isForRefOnly = $attributes['referenceOnly'] ?? null;
                         $this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower($isForRefOnly) === 'true') : true); // defaults to TRUE
                     }
 

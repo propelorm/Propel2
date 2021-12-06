@@ -17,18 +17,29 @@ use Propel\Runtime\Map\ColumnMap;
  */
 interface AdapterInterface
 {
+    /**
+     * @var int
+     */
     public const ID_METHOD_NONE = 0;
+
+    /**
+     * @var int
+     */
     public const ID_METHOD_AUTOINCREMENT = 1;
+
+    /**
+     * @var int
+     */
     public const ID_METHOD_SEQUENCE = 2;
 
     /**
      * Build database connection
      *
-     * @param array $conparams connection parameters
+     * @param array $params connection parameters
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($conparams);
+    public function getConnection($params);
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.

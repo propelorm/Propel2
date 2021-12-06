@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Platform;
 
+use PDO;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
@@ -19,6 +20,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Runtime\Connection\PdoConnection;
 use SQLite3;
 
 /**
@@ -53,8 +55,7 @@ class SqlitePlatform extends DefaultPlatform
     {
         parent::initialize();
 
-        $version = SQLite3::version();
-        $version = $version['versionString'];
+        $version = $this->getVersion();
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
 
@@ -73,6 +74,8 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
+     * @phpstan-return non-empty-string
+     *
      * @return string
      */
     public function getSchemaDelimiter()
@@ -81,7 +84,7 @@ class SqlitePlatform extends DefaultPlatform
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getDefaultTypeSizes()
     {
@@ -113,7 +116,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * Builds the DDL SQL to remove a list of columns
      *
-     * @param \Propel\Generator\Model\Column[] $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      *
      * @return string
      */
@@ -128,7 +131,7 @@ ALTER TABLE %s ADD %s;
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($tableName),
-                $this->getColumnDDL($column)
+                $this->getColumnDDL($column),
             );
         }
 
@@ -168,7 +171,7 @@ ALTER TABLE %s ADD %s;
                     //or an expression in parentheses.
                     || array_search(
                         $column->getDefaultValue(),
-                        ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP']
+                        ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'],
                     ) !== false
                     || substr(trim($column->getDefaultValue()), 0, 1) === '('
 
@@ -249,7 +252,7 @@ DROP TABLE %s;
             implode(', ', $fieldMap), //(%s)
             implode(', ', array_keys($fieldMap)), //select %s
             $this->quoteIdentifier($tempTableName), //from %s
-            $this->quoteIdentifier($tempTableName) //drop table %s
+            $this->quoteIdentifier($tempTableName), //drop table %s
         );
 
         return $sql;
@@ -478,7 +481,7 @@ PRAGMA foreign_keys = ON;
             //sqlite use CURRENT_TIMESTAMP different than mysql/pgsql etc
             //we set it to the more common behavior
             $col->setDefaultValue(
-                new ColumnDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", ColumnDefaultValue::TYPE_EXPR)
+                new ColumnDefaultValue("(datetime(CURRENT_TIMESTAMP, 'localtime'))", ColumnDefaultValue::TYPE_EXPR),
             );
         }
 
@@ -534,7 +537,7 @@ PRAGMA foreign_keys = ON;
             $pattern,
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
-            implode($sep, $lines)
+            implode($sep, $lines),
         );
     }
 
@@ -555,7 +558,7 @@ PRAGMA foreign_keys = ON;
             $pattern,
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
 
         if ($fk->hasOnUpdate()) {
@@ -608,5 +611,20 @@ PRAGMA foreign_keys = ON;
     public function supportsNativeDeleteTrigger()
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getVersion(): string
+    {
+        if (class_exists(SQLite3::class)) {
+            return SQLite3::version()['versionString'];
+        }
+
+        //if php_sqlite3 extension is not installed, we need to query the database
+        $connection = new PdoConnection('sqlite::memory:');
+
+        return (string)$connection->query('SELECT sqlite_version()')->fetch(PDO::FETCH_NUM)[0];
     }
 }

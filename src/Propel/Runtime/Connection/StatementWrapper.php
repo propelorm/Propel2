@@ -38,7 +38,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @see self::bindValue()
      *
-     * @var string[]
+     * @var array<string>
      */
     protected static $typeMap = [
         0 => 'PDO::PARAM_NULL',
@@ -118,7 +118,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     {
         $return = $this->statement->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = $length > 100 ? '[Large value]' : var_export($variable, true);
             $this->boundValues[$parameter] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
@@ -142,7 +142,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     {
         $return = $this->statement->bindValue($parameter, $value, $dataType);
         if ($this->connection->useDebug) {
-            $typestr = isset(self::$typeMap[$dataType]) ? self::$typeMap[$dataType] : '(default)';
+            $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = $dataType == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
             $this->boundValues[$parameter] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
@@ -273,7 +273,9 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function fetchColumn($columnIndex = 0)
     {
-        return $this->statement->fetchColumn($columnIndex);
+        $output = $this->statement->fetchColumn($columnIndex);
+
+        return $output === null ? null : (string)$output;
     }
 
     /**

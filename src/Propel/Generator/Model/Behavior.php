@@ -298,7 +298,7 @@ class Behavior extends MappingModel
     /**
      * Returns the list of all tables in the same database.
      *
-     * @return \Propel\Generator\Model\Table[] A collection of Table instance
+     * @return array<\Propel\Generator\Model\Table> A collection of Table instance
      */
     protected function getTables()
     {
@@ -361,13 +361,13 @@ class Behavior extends MappingModel
                 throw new InvalidArgumentException(sprintf(
                     'Template "%s" not found in "%s" directory',
                     $filename,
-                    $this->getDirname() . $templateDir
+                    $this->getDirname() . $templateDir,
                 ));
             }
         }
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, [ 'behavior' => $this ]);
+        $vars = array_merge($vars, ['behavior' => $this]);
 
         return $template->render($vars);
     }

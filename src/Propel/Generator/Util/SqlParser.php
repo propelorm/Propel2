@@ -202,8 +202,8 @@ class SqlParser
     public function stripSQLCommentLines()
     {
         $this->setSQL(preg_replace([
-            '#^\s*(//|--|\#).*(\n|$)#m',    // //, --, or # style comments
-            '#^\s*/\*.*?\*/#s',              // c-style comments
+            '#^\s*(//|--|\#).*(\n|$)#m', // //, --, or # style comments
+            '#^\s*/\*.*?\*/#s', // c-style comments
         ], '', $this->sql));
     }
 
@@ -237,7 +237,7 @@ class SqlParser
         $parsedString = '';
         $lowercaseString = ''; // helper variable for performance sake
         while ($this->pos <= $this->len) {
-            $char = isset($this->sql[$this->pos]) ? $this->sql[$this->pos] : '';
+            $char = $this->sql[$this->pos] ?? '';
             // check flags for strings or escaper
             switch ($char) {
                 case '\\':

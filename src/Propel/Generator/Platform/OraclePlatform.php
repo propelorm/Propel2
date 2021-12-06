@@ -163,7 +163,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines),
-            $this->generateBlockStorage($table)
+            $this->generateBlockStorage($table),
         );
 
         $ret .= $this->getAddPrimaryKeyDDL($table);
@@ -201,7 +201,7 @@ CREATE SEQUENCE %s
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier($this->getSequenceName($table))
+                $this->quoteIdentifier($this->getSequenceName($table)),
             );
         }
 
@@ -255,7 +255,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
                 $pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
                 $this->getColumnListDDL($table->getPrimaryKey()),
-                $this->generateBlockStorage($table, true)
+                $this->generateBlockStorage($table, true),
             );
         }
 
@@ -272,7 +272,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
         return sprintf(
             'CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -294,7 +294,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
         if ($fk->hasOnDelete()) {
             $script .= "
@@ -427,7 +427,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->getColumnListDDL($index->getColumnObjects()),
-            $this->generateBlockStorage($index)
+            $this->generateBlockStorage($index),
         );
     }
 
@@ -453,7 +453,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
                 $identifier,
                 $columnValueAccessor,
                 PropelTypes::getPdoTypeString($column->getType()),
-                $columnValueAccessor
+                $columnValueAccessor,
             );
         }
 
@@ -473,7 +473,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|string[]|null
+     * @return array<string>|string|null
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
@@ -488,7 +488,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
             $connectionVariableName,
             $sequenceName,
             $columnValueMutator,
-            $phpType ? '(' . $phpType . ') ' : ''
+            $phpType ? '(' . $phpType . ') ' : '',
         );
 
         return preg_replace('/^/m', $tab, $script);

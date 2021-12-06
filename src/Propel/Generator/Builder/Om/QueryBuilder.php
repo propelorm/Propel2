@@ -259,7 +259,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             '\Propel\Runtime\ActiveQuery\Criteria',
             '\Propel\Runtime\ActiveQuery\ModelJoin',
             '\Exception',
-            '\Propel\Runtime\Exception\PropelException'
+            '\Propel\Runtime\Exception\PropelException',
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getTableMapBuilder());
@@ -717,7 +717,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             'SELECT %s FROM %s WHERE %s',
             implode(', ', $selectColumns),
             $this->quoteIdentifier($table->getName()),
-            implode(' AND ', $conditions)
+            implode(' AND ', $conditions),
         );
         $pks = [];
         if ($table->hasCompositePrimaryKey()) {
@@ -837,7 +837,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Connection\ConnectionInterface',
-            '\Propel\Runtime\Propel'
+            '\Propel\Runtime\Propel',
         );
         $table = $this->getTable();
         $pks = $table->getPrimaryKey();
@@ -1076,9 +1076,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * <code>
      * \$query->filterBy$colPhpName('fooValue');   // WHERE $colName = 'fooValue'
      * \$query->filterBy$colPhpName('%fooValue%', Criteria::LIKE); // WHERE $colName LIKE '%fooValue%'
+     * \$query->filterBy$colPhpName(['foo', 'bar']); // WHERE $colName IN ('foo', 'bar')
      * </code>
      *
-     * @param     string \$$variableName The value to use as filter.";
+     * @param     string|string[] \$$variableName The value to use as filter.";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
@@ -1168,7 +1169,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         } elseif ($col->isSetType()) {
             $this->declareClasses(
                 'Propel\Common\Util\SetColumnConverter',
-                'Propel\Common\Exception\SetColumnConverterException'
+                'Propel\Common\Exception\SetColumnConverterException',
             );
             $script .= "
         \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($col) . ");
@@ -1326,7 +1327,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
-            '\Propel\Runtime\Exception\PropelException'
+            '\Propel\Runtime\Exception\PropelException',
         );
         $queryClass = $this->getQueryClassName();
         $fkTable = $fk->getForeignTable();
@@ -1411,7 +1412,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
-            '\Propel\Runtime\Exception\PropelException'
+            '\Propel\Runtime\Exception\PropelException',
         );
         $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());

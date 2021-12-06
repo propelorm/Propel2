@@ -89,7 +89,7 @@ class VendorInfo extends MappingModel
      */
     public function getParameter($name)
     {
-        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
+        return $this->parameters[$name] ?? null;
     }
 
     /**
@@ -148,7 +148,7 @@ class VendorInfo extends MappingModel
     {
         $params = array_merge($this->parameters, $info->getParameters());
 
-        $newInfo = new VendorInfo($this->type);
+        $newInfo = new self($this->type);
         $newInfo->setParameters($params);
 
         return $newInfo;

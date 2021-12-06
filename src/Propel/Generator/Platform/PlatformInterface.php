@@ -23,16 +23,22 @@ interface PlatformInterface
 {
     /**
      * Constant for auto-increment id method.
+     *
+     * @var string
      */
     public const IDENTITY = 'identity';
 
     /**
      * Constant for sequence id method.
+     *
+     * @var string
      */
     public const SEQUENCE = 'sequence';
 
     /**
      * Constant for serial id method (postgresql).
+     *
+     * @var string
      */
     public const SERIAL = 'serial';
 
@@ -239,11 +245,11 @@ interface PlatformInterface
      * This function is used to set default column values when building
      * SQL.
      *
-     * @param mixed $tf A boolean or string representation of boolean ('y', 'true').
+     * @param mixed $value A boolean or string representation of boolean ('y', 'true').
      *
      * @return string
      */
-    public function getBooleanString($tf);
+    public function getBooleanString($value);
 
     /**
      * Whether the underlying PDO driver for this platform returns BLOB columns as streams (instead of strings).
@@ -274,6 +280,8 @@ interface PlatformInterface
     public function getTimeFormatter();
 
     /**
+     * @phpstan-return non-empty-string
+     *
      * @return string
      */
     public function getSchemaDelimiter();

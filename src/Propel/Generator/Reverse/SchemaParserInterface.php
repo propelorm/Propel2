@@ -47,7 +47,7 @@ interface SchemaParserInterface
     /**
      * Gets array of warning messages.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getWarnings();
 
@@ -67,7 +67,7 @@ interface SchemaParserInterface
      * Parse the schema and populate passed-in Database model object.
      *
      * @param \Propel\Generator\Model\Database $database
-     * @param \Propel\Generator\Model\Table[] $additionalTables additional tables to parse and add to $database
+     * @param array<\Propel\Generator\Model\Table> $additionalTables additional tables to parse and add to $database
      *
      * @return int Number of generated tables
      */

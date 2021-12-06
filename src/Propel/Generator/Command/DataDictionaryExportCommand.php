@@ -19,9 +19,19 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DataDictionaryExportCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_OUTPUT_DIRECTORY = 'generated-datadictionary';
 
+    /**
+     * @var string
+     */
     protected const OPTION_OUTPUT_DIR = 'output-dir';
+
+    /**
+     * @var string
+     */
     protected const OPTION_SCHEMA_DIR = 'schema-dir';
 
     /**

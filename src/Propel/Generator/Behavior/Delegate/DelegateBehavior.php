@@ -23,20 +23,27 @@ use Propel\Generator\Util\PhpParser;
  */
 class DelegateBehavior extends Behavior
 {
+    /**
+     * @var int
+     */
     public const ONE_TO_ONE = 1;
+
+    /**
+     * @var int
+     */
     public const MANY_TO_ONE = 2;
 
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'to' => '',
     ];
 
     /**
-     * @var int[]
+     * @var array<int>
      */
     protected $delegates = [];
 
@@ -64,16 +71,16 @@ class DelegateBehavior extends Behavior
                 throw new InvalidArgumentException(sprintf(
                     'No delegate table "%s" found for table "%s"',
                     $delegate,
-                    $table->getName()
+                    $table->getName(),
                 ));
             }
-            if (in_array($delegate, $table->getForeignTableNames())) {
+            if (in_array($delegate, $table->getForeignTableNames(), true)) {
                 // existing many-to-one relationship
                 $type = self::MANY_TO_ONE;
             } else {
                 // one_to_one relationship
                 $delegateTable = $this->getDelegateTable($delegate);
-                if (in_array($table->getName(), $delegateTable->getForeignTableNames())) {
+                if (in_array($table->getName(), $delegateTable->getForeignTableNames(), true)) {
                     // existing one-to-one relationship
                     $fks = $delegateTable->getForeignKeysReferencingTable($this->getTable()->getName());
                     $fk = $fks[0];
@@ -81,7 +88,7 @@ class DelegateBehavior extends Behavior
                         throw new InvalidArgumentException(sprintf(
                             'Delegate table "%s" has a relationship with table "%s", but it\'s a one-to-many relationship. The `delegate` behavior only supports one-to-one relationships in this case.',
                             $delegate,
-                            $table->getName()
+                            $table->getName(),
                         ));
                     }
                 } else {
@@ -248,7 +255,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
             $fks[] = $fk->getForeignColumnName();
         }
 
-        if (in_array($column->getName(), $fks) || $table->hasColumn($column->getName())) {
+        if (in_array($column->getName(), $fks, true) || $table->hasColumn($column->getName())) {
             return true;
         }
 

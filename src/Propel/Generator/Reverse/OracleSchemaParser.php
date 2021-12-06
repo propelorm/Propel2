@@ -41,7 +41,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $oracleTypeMap = [
         'BLOB' => PropelTypes::BLOB,
@@ -64,7 +64,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {
@@ -75,7 +75,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Searches for tables in the database. Maybe we want to search also the views.
      *
      * @param \Propel\Generator\Model\Database $database The Database model class to add tables to.
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
@@ -147,7 +147,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 // this is an Oracle internal column - prune
                 continue;
             }
-            $size = $row['DATA_PRECISION'] ? $row['DATA_PRECISION'] : $row['DATA_LENGTH'];
+            $size = $row['DATA_PRECISION'] ?: $row['DATA_LENGTH'];
             $scale = $row['DATA_SCALE'];
             $default = $row['DATA_DEFAULT'];
             $type = $row['DATA_TYPE'];
@@ -252,7 +252,7 @@ class OracleSchemaParser extends AbstractSchemaParser
             $stmt3 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '" . $row['R_CONSTRAINT_NAME'] . "'");
             $foreignReferenceInfo = $stmt3->fetch(PDO::FETCH_ASSOC);
 
-            if (!isset($foreignKeys[$row['CONSTRAINT_NAME']])) {
+            if (!isset($foreignKeys[(string)$row['CONSTRAINT_NAME']])) {
                 $fk = new ForeignKey($row['CONSTRAINT_NAME']);
                 $fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
                 $onDelete = ($row['DELETE_RULE'] === 'NO ACTION') ? 'NONE' : $row['DELETE_RULE'];

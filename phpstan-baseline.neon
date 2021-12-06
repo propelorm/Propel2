@@ -1,12 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:scalarNode\\(\\)\\.$#"
-			count: 4
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:requiresAtLeastOneElement\\(\\)\\.$#"
+			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:requiresAtLeastOneElement\\(\\)\\.$#"
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:arrayNode\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
@@ -21,8 +21,8 @@ parameters:
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:arrayNode\\(\\)\\.$#"
-			count: 1
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:scalarNode\\(\\)\\.$#"
+			count: 4
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
@@ -56,18 +56,8 @@ parameters:
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/DataModelBuilder.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 2
-			path: src/Propel/Generator/Builder/DataModelBuilder.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-
@@ -76,17 +66,57 @@ parameters:
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalAccessor\\(\\)\\.$#"
+			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
 			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectAccessor\\(\\)\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
+			path: src/Propel/Generator/Builder/DataModelBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addAddArrayElement\\(\\)\\.$#"
+			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultAccessor\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultMutator\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumAccessor\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumMutator\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
@@ -101,22 +131,7 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumAccessor\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetAccessor\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultAccessor\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanAccessor\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonMutator\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
@@ -126,28 +141,18 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectMutator\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addLobMutator\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalMutator\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectAccessor\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayMutator\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectMutator\\(\\)\\.$#"
 			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addAddArrayElement\\(\\)\\.$#"
-			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
@@ -156,12 +161,7 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonMutator\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumMutator\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetAccessor\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
@@ -171,27 +171,22 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanMutator\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalAccessor\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultMutator\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalMutator\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 2
+			message: "#^Variable \\$crossFK might not be defined\\.$#"
+			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
 			message: "#^Variable \\$mysqlInvalidDateString might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
-
-		-
-			message: "#^Variable \\$crossFK might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
@@ -241,32 +236,7 @@ parameters:
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Variable \\$timestamp might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationAuthor might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$timeInWords might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationClassName might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
 			message: "#^Variable \\$commentString might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationsUp might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Manager/templates/migration_template.php
 
@@ -276,7 +246,32 @@ parameters:
 			path: src/Propel/Generator/Manager/templates/migration_template.php
 
 		-
+			message: "#^Variable \\$migrationAuthor might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationClassName might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
 			message: "#^Variable \\$migrationsDown might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$migrationsUp might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$timeInWords might not be defined\\.$#"
+			count: 1
+			path: src/Propel/Generator/Manager/templates/migration_template.php
+
+		-
+			message: "#^Variable \\$timestamp might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Manager/templates/migration_template.php
 
@@ -286,18 +281,18 @@ parameters:
 			path: src/Propel/Generator/Model/Column.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Database.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Database.php
 
 		-
+			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Generator/Model/Database.php
+
+		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Model/Database.php
 
 		-
@@ -316,12 +311,12 @@ parameters:
 			path: src/Propel/Generator/Model/Schema.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isEarly\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Table.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isEarly\\(\\)\\.$#"
+			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Table.php
 
@@ -386,12 +381,12 @@ parameters:
 			path: src/Propel/Generator/Reverse/PgsqlSchemaParser.php
 
 		-
-			message: "#^If condition is always true\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
 
@@ -436,37 +431,7 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/Criterion/LikeCriterion.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getTableMap\\(\\)\\.$#"
-			count: 5
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Parameter \\#1 \\$join of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\:\\:setPreviousJoin\\(\\) expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getRelationMap\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:addSelfSelectColumns\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:addSelectColumns\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Call to function is_array\\(\\) with object will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
@@ -481,12 +446,42 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearInstancePool\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getRelationMap\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::clearRelatedInstancePool\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getTableMap\\(\\)\\.$#"
+			count: 5
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:addSelectColumns\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:clearInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:clearRelatedInstancePool\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with object will always evaluate to false\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: "#^Parameter \\#1 \\$join of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\:\\:setPreviousJoin\\(\\) expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
@@ -506,17 +501,17 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:fromArray\\(\\)\\.$#"
 			count: 3
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/ArrayCollection.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setNew\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
@@ -531,12 +526,7 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/ArrayCollection.php
-
-		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setNew\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
@@ -546,12 +536,17 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/ArrayCollection.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:fromArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
@@ -561,7 +556,7 @@ parameters:
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:fromArray\\(\\)\\.$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
@@ -586,12 +581,12 @@ parameters:
 			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
 		-
-			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
+			message: "#^Method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should return Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator but returns Iterator\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
 		-
-			message: "#^Method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should return Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator but returns Iterator\\.$#"
+			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
@@ -601,7 +596,7 @@ parameters:
 			path: src/Propel/Runtime/Connection/ProfilerStatementWrapper.php
 
 		-
-			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\ArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
@@ -611,17 +606,17 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getOMClass\\(\\)\\.$#"
+			count: 1
+			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
+
+		-
 			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
 			count: 2
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
+			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\ArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
@@ -636,11 +631,6 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap::getOMClass\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
@@ -651,12 +641,17 @@ parameters:
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 
 		-
-			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\SimpleArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
+			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getOMClass\\(\\)\\.$#"
+			count: 2
+			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
+
+		-
+			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
+			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\SimpleArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
 

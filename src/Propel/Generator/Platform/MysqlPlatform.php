@@ -320,14 +320,14 @@ CREATE TABLE %s
             implode($sep, $lines),
             $this->getTableEngineKeyword(),
             $mysqlTableType,
-            $tableOptions
+            $tableOptions,
         );
     }
 
     /**
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTableOptions(Table $table)
     {
@@ -530,7 +530,7 @@ ALTER TABLE %s DROP PRIMARY KEY;
 
         return sprintf(
             $pattern,
-            $this->quoteIdentifier($table->getName())
+            $this->quoteIdentifier($table->getName()),
         );
     }
 
@@ -552,7 +552,7 @@ CREATE %sINDEX %s ON %s (%s);
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
-            $this->getIndexColumnListDDL($index)
+            $this->getIndexColumnListDDL($index),
         );
     }
 
@@ -572,7 +572,7 @@ DROP INDEX %s ON %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($index->getName()),
-            $this->quoteIdentifier($index->getTable()->getName())
+            $this->quoteIdentifier($index->getTable()->getName()),
         );
     }
 
@@ -589,7 +589,7 @@ DROP INDEX %s ON %s;
             '%sINDEX %s (%s)',
             $this->getIndexType($index),
             $this->quoteIdentifier($index->getName()),
-            $this->getIndexColumnListDDL($index)
+            $this->getIndexColumnListDDL($index),
         );
     }
 
@@ -621,7 +621,7 @@ DROP INDEX %s ON %s;
         return sprintf(
             'UNIQUE INDEX %s (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getIndexColumnListDDL($unique)
+            $this->getIndexColumnListDDL($unique),
         );
     }
 
@@ -675,7 +675,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
-            $this->quoteIdentifier($fk->getName())
+            $this->quoteIdentifier($fk->getName()),
         );
     }
 
@@ -747,7 +747,7 @@ RENAME TABLE %s TO %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fromTableName),
-            $this->quoteIdentifier($toTableName)
+            $this->quoteIdentifier($toTableName),
         );
     }
 
@@ -767,7 +767,7 @@ ALTER TABLE %s DROP %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
-            $this->quoteIdentifier($column->getName())
+            $this->quoteIdentifier($column->getName()),
         );
     }
 
@@ -814,14 +814,14 @@ ALTER TABLE %s CHANGE %s %s;
             $pattern,
             $this->quoteIdentifier($fromColumn->getTable()->getName()),
             $this->quoteIdentifier($fromColumn->getName()),
-            $this->getColumnDDL($toColumn)
+            $this->getColumnDDL($toColumn),
         );
     }
 
     /**
      * Builds the DDL SQL to modify a list of columns
      *
-     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
+     * @param array<\Propel\Generator\Model\Diff\ColumnDiff> $columnDiffs
      *
      * @return string
      */
@@ -867,14 +867,14 @@ ALTER TABLE %s ADD %s %s;
             $pattern,
             $this->quoteIdentifier($column->getTable()->getName()),
             $this->getColumnDDL($column),
-            $insertPositionDDL
+            $insertPositionDDL,
         );
     }
 
     /**
      * Builds the DDL SQL to add a list of columns
      *
-     * @param \Propel\Generator\Model\Column[] $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      *
      * @return string
      */
@@ -915,7 +915,7 @@ ALTER TABLE %s ADD %s %s;
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getDefaultTypeSizes()
     {
@@ -975,7 +975,7 @@ ALTER TABLE %s ADD %s %s;
 %s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",
                 $tab,
                 $identifier,
-                $columnValueAccessor
+                $columnValueAccessor,
             );
         }
 

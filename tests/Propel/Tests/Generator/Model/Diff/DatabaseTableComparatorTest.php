@@ -176,6 +176,40 @@ class DatabaseTableComparatorTest extends TestCase
     /**
      * @return void
      */
+    public function testCompareModifiedTableSkipSql()
+    {
+        $d1 = new Database();
+        $t1 = new Table('Foo_Table');
+        $c1 = new Column('Foo');
+        $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
+        $c1->getDomain()->replaceScale(2);
+        $c1->getDomain()->replaceSize(3);
+        $c1->setNotNull(true);
+        $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
+        $t1->addColumn($c1);
+        $d1->addTable($t1);
+
+        $d2 = new Database();
+        $t2 = new Table('Foo_Table');
+        $t2->setSkipSql(true);
+
+        $c2 = (new Column('Foo'));
+        $c2->setNotNull(false);
+
+        $t2->addColumn($c2);
+        $d2->addTable($t2);
+
+        $dc = new DatabaseComparator();
+        $dc->setFromDatabase($d1);
+        $dc->setToDatabase($d2);
+        $nbDiffs = $dc->compareTables();
+
+        $this->assertSame(0, $nbDiffs);
+    }
+
+    /**
+     * @return void
+     */
     public function testCompareRemovedTable()
     {
         $d1 = new Database();

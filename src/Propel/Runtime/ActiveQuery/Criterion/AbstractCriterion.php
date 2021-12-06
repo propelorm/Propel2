@@ -23,7 +23,14 @@ use Propel\Runtime\Propel;
  */
 abstract class AbstractCriterion
 {
+    /**
+     * @var string
+     */
     public const UND = ' AND ';
+
+    /**
+     * @var string
+     */
     public const ODER = ' OR ';
 
     /**
@@ -70,7 +77,7 @@ abstract class AbstractCriterion
     /**
      * Other connected criterions
      *
-     * @var \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion[]
+     * @var array<\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
      */
     protected $clauses = [];
 
@@ -78,7 +85,7 @@ abstract class AbstractCriterion
      * Operators for connected criterions
      * Only self::UND and self::ODER are accepted
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $conjunctions = [];
 
@@ -118,7 +125,7 @@ abstract class AbstractCriterion
 
         // init $this->realtable
         $realtable = $criteria->getTableForAlias($this->table);
-        $this->realtable = $realtable ? $realtable : $this->table;
+        $this->realtable = $realtable ?: $this->table;
     }
 
     /**
@@ -231,7 +238,7 @@ abstract class AbstractCriterion
     /**
      * Get the list of clauses in this Criterion.
      *
-     * @return self[]
+     * @return array<self>
      */
     public function getClauses()
     {
@@ -410,7 +417,7 @@ abstract class AbstractCriterion
      * get an array of all criterion attached to this
      * recursing through all sub criterion
      *
-     * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion[]
+     * @return array<\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
      */
     public function getAttachedCriterion()
     {

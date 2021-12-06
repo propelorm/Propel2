@@ -32,7 +32,7 @@ class SelectQueryExecutor extends AbstractQueryExecutor
      */
     public static function execute(Criteria $criteria, ?ConnectionInterface $con = null): DataFetcherInterface
     {
-        $executor = new SelectQueryExecutor($criteria, $con);
+        $executor = new self($criteria, $con);
 
         return $executor->runSelect();
     }

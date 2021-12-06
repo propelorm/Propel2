@@ -134,7 +134,7 @@ class AggregateColumnBehavior extends Behavior
             'SELECT %s FROM %s WHERE %s',
             $this->getParameter('expression'),
             $builder->getTable()->quoteIdentifier($tableName),
-            implode(' AND ', $conditions)
+            implode(' AND ', $conditions),
         );
 
         return $this->renderTemplate('objectCompute', [

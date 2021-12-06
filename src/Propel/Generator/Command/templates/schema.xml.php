@@ -1,7 +1,7 @@
 <!--
     Awesome, your propel set up is nearly done! You just have to describe how you want your database to look like.
 
-    You can let propel set up your <?php echo $rdbms ?> database by running `vendor/bin/propel database:create && vendor/bin/propel database:insert-sql`.
+    You can let propel set up your <?php echo $rdbms ?> database by running `vendor/bin/propel sql:build && vendor/bin/propel sql:insert`.
     This will create your database including all the tables.
 -->
 

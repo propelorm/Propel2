@@ -18,6 +18,8 @@ tests/Fixtures/schemas/build/
 tests/Fixtures/bookstore/build/
 tests/Fixtures/bookstore/propel.yaml
 
+tests/Fixtures/bookstore-packaged/
+
 tests/Fixtures/namespaced/propel.yaml
 
 tests/Fixtures/schemas/propel.yaml
