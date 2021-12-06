@@ -102,7 +102,7 @@ class MigrationDiffCommand extends AbstractCommand
         if ($manager->hasPendingMigrations()) {
             throw new RuntimeException(sprintf(
                 'Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task. %s',
-                "\n" . implode("\n", $manager->getValidMigrationTimestamps())
+                "\n" . implode("\n", $manager->getValidMigrationTimestamps()),
             ));
         }
 
@@ -182,7 +182,8 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('Comparing database "%s"', $name));
             }
 
-            if (!$appDataDatabase = $manager->getDatabase($name)) {
+            $appDataDatabase = $manager->getDatabase($name);
+            if (!$appDataDatabase) {
                 $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
 
                 continue;
@@ -204,7 +205,7 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     '<info>Possible table renaming detected: "%s" to "%s". It will be deleted and recreated. Use --table-renaming to only rename it.</info>',
                     $fromTableName,
-                    $toTableName
+                    $toTableName,
                 ));
             }
 
@@ -233,7 +234,8 @@ class MigrationDiffCommand extends AbstractCommand
 
         $output->writeln(sprintf('"%s" file successfully created.', $file));
 
-        if (null !== $editorCmd = $input->getOption('editor')) {
+        $editorCmd = $input->getOption('editor');
+        if ($editorCmd !== null) {
             $output->writeln(sprintf('Using "%s" as text editor', $editorCmd));
             shell_exec($editorCmd . ' ' . escapeshellarg($file));
         } else {

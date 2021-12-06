@@ -26,7 +26,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection
+     * @return \Propel\Runtime\Collection\Collection|array
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {

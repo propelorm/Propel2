@@ -22,7 +22,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      */
     public static function createDeleteAllSql(Criteria $criteria, string $tableName): PreparedStatementDto
     {
-        $builder = new DeleteQuerySqlBuilder($criteria);
+        $builder = new self($criteria);
         $sqlStatement = $builder->buildDeleteFromClause($tableName);
 
         return new PreparedStatementDto($sqlStatement);
@@ -32,7 +32,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      * Create a Sql DELETE statement.
      *
      * @param string $tableName
-     * @param string[] $columnNames
+     * @param array<string> $columnNames
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -77,7 +77,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
     /**
      * Build WHERE clause from the given column names.
      *
-     * @param string[] $columnNames
+     * @param array<string> $columnNames
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */

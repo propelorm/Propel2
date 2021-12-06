@@ -19,7 +19,7 @@ use Propel\Generator\Model\Behavior;
 class TimestampableBehavior extends Behavior
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'create_column' => 'created_at',

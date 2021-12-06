@@ -20,7 +20,7 @@ class AutoAddPkBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'name' => 'id',

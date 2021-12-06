@@ -53,9 +53,24 @@ use Propel\Runtime\Util\PropelModelPager;
  */
 class ModelCriteria extends BaseModelCriteria
 {
+    /**
+     * @var string
+     */
     public const FORMAT_STATEMENT = '\Propel\Runtime\Formatter\StatementFormatter';
+
+    /**
+     * @var string
+     */
     public const FORMAT_ARRAY = '\Propel\Runtime\Formatter\ArrayFormatter';
+
+    /**
+     * @var string
+     */
     public const FORMAT_OBJECT = '\Propel\Runtime\Formatter\ObjectFormatter';
+
+    /**
+     * @var string
+     */
     public const FORMAT_ON_DEMAND = '\Propel\Runtime\Formatter\OnDemandFormatter';
 
     /**
@@ -84,7 +99,7 @@ class ModelCriteria extends BaseModelCriteria
 
     // this is for the select method
     /**
-     * @var string|array|null
+     * @var array|string|null
      */
     protected $select;
 
@@ -197,7 +212,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see Criteria::add()
      *
-     * @param string|array $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
+     * @param array|string $clause A string representing the pseudo SQL clause, e.g. 'Book.AuthorId = ?'
      *   Or an array of condition names
      * @param mixed $value A value for the condition
      * @param int|null $bindingType
@@ -229,7 +244,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @example MyOuterQuery::create()->whereExists(MyDataQuery::create()->where('MyData.MyField = MyOuter.MyField'))
      *
-     * @phpstan-param ExistsCriterion::TYPE_* $type
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_* $type
      *
      * @see ModelCriteria::useExistsQuery() can be used
      *
@@ -490,7 +505,7 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     protected function resolveSelectAll(): array
     {
@@ -886,7 +901,7 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Adds and returns an internal query to be used in an EXISTS-clause.
      *
-     * @phpstan-param ExistsCriterion::TYPE_* $type
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_* $type
      *
      * @param string $relationName name of the relation
      * @param string|null $modelAlias sets an alias for the nested query
@@ -1908,7 +1923,7 @@ class ModelCriteria extends BaseModelCriteria
      * Issue an UPDATE query based the current ModelCriteria and a list of changes.
      * This method is called by ModelCriteria::update() inside a transaction.
      *
-     * @param array|\Propel\Runtime\ActiveQuery\Criteria $updateValues Associative array of keys and values to replace
+     * @param \Propel\Runtime\ActiveQuery\Criteria|array $updateValues Associative array of keys and values to replace
      * @param \Propel\Runtime\Connection\ConnectionInterface $con a connection object
      * @param bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
@@ -1920,7 +1935,7 @@ class ModelCriteria extends BaseModelCriteria
     {
         if ($forceIndividualSaves) {
             // Update rows one by one
-            $objects = $this->setFormatter(ModelCriteria::FORMAT_OBJECT)->find($con);
+            $objects = $this->setFormatter(self::FORMAT_OBJECT)->find($con);
             foreach ($objects as $object) {
                 foreach ($updateValues as $key => $value) {
                     $object->setByName($key, $value);
@@ -2443,9 +2458,9 @@ class ModelCriteria extends BaseModelCriteria
             $relation = substr($name, $pos + 8);
             if (!$relation) {
                 $relation = $arguments[0];
-                $joinType = isset($arguments[1]) ? $arguments[1] : $joinType;
+                $joinType = $arguments[1] ?? $joinType;
             } else {
-                $joinType = isset($arguments[0]) ? $arguments[0] : $joinType;
+                $joinType = $arguments[0] ?? $joinType;
             }
 
             return $this->joinWith($relation, $joinType);

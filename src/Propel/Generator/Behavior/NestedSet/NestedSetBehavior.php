@@ -20,7 +20,7 @@ class NestedSetBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $parameters = [
         'left_column' => 'tree_left',

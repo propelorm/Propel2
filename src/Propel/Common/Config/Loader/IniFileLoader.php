@@ -24,6 +24,8 @@ class IniFileLoader extends FileLoader
     /**
      * Separator for nesting levels of configuration data identifiers.
      *
+     * @phpstan-var non-empty-string
+     *
      * @var string
      */
     private string $nestSeparator = '.';
@@ -54,7 +56,7 @@ class IniFileLoader extends FileLoader
      */
     public function load($resource, $type = null): array
     {
-        /** @var false|array<array-key,string|array<array-key,string|array<array-key,string>>> $ini */
+        /** @var array<array-key, string|array<array-key, string|array<array-key, string>>>|false $ini */
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);
 
         if ($ini === false) {
@@ -131,7 +133,7 @@ class IniFileLoader extends FileLoader
      * Process a key.
      *
      * @param string $key
-     * @param string|array<array-key, string> $rawValue
+     * @param array<array-key, string>|string $rawValue
      * @param array $config
      *
      * @throws \Propel\Common\Config\Exception\IniParseException
@@ -172,7 +174,7 @@ class IniFileLoader extends FileLoader
             } elseif (!is_array($subConfig[$subKey])) {
                 throw new IniParseException(sprintf(
                     'Cannot create sub-key for "%s", as key already exists',
-                    $subKey
+                    $subKey,
                 ));
             }
             $subConfig = &$subConfig[$subKey];

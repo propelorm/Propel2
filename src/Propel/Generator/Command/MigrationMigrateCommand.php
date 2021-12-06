@@ -92,11 +92,11 @@ class MigrationMigrateCommand extends AbstractCommand
         foreach ($timestamps as $timestamp) {
             if ($input->getOption('fake')) {
                 $output->writeln(
-                    sprintf('Faking migration %s up', $manager->getMigrationClassName($timestamp))
+                    sprintf('Faking migration %s up', $manager->getMigrationClassName($timestamp)),
                 );
             } else {
                 $output->writeln(
-                    sprintf('Executing migration %s up', $manager->getMigrationClassName($timestamp))
+                    sprintf('Executing migration %s up', $manager->getMigrationClassName($timestamp)),
                 );
             }
 
@@ -123,8 +123,8 @@ class MigrationMigrateCommand extends AbstractCommand
                             sprintf(
                                 'Connecting to database "%s" using DSN "%s"',
                                 $datasource,
-                                $connection['dsn']
-                            )
+                                $connection['dsn'],
+                            ),
                         );
                     }
 
@@ -143,13 +143,13 @@ class MigrationMigrateCommand extends AbstractCommand
                             if ($input->getOption('force')) {
                                 //continue, but print error message
                                 $output->writeln(
-                                    sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement)
+                                    sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement),
                                 );
                             } else {
                                 throw new RuntimeException(
                                     sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement),
                                     0,
-                                    $e
+                                    $e,
                                 );
                             }
                         }
@@ -160,8 +160,8 @@ class MigrationMigrateCommand extends AbstractCommand
                             '%d of %d SQL statements executed successfully on datasource "%s"',
                             $res,
                             count($statements),
-                            $datasource
-                        )
+                            $datasource,
+                        ),
                     );
                 }
             }
@@ -174,7 +174,7 @@ class MigrationMigrateCommand extends AbstractCommand
                     $output->writeln(sprintf(
                         'Updated latest migration date to %d for datasource "%s"',
                         $timestamp,
-                        $datasource
+                        $datasource,
                     ));
                 }
             }

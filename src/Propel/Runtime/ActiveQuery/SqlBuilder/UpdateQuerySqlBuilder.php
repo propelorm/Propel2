@@ -22,8 +22,8 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
     protected $updateValues;
 
     /**
-     * @psalm-var array<string, string[]>
-     * @var string[]
+     * @psalm-var array<string, array<string>>
+     * @var array<string>
      */
     protected $updateTablesColumns;
 
@@ -40,7 +40,7 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
 
     /**
      * @param string $tableName
-     * @param string[] $qualifiedTableColumnNames
+     * @param array<string> $qualifiedTableColumnNames
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -73,7 +73,7 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
      * @psalm-param array<string, string> $qualifiedTableColumnNames
      *
      * @param string $tableName
-     * @param string[] $qualifiedTableColumnNames
+     * @param array<string> $qualifiedTableColumnNames
      *
      * @return string
      */
@@ -143,8 +143,8 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param string[] $qualifiedTableColumnNames
-     * @param mixed[]|null $params
+     * @param array<string> $qualifiedTableColumnNames
+     * @param array<mixed>|null $params
      *
      * @return string|null
      */

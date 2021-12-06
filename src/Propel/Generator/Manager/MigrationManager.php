@@ -33,7 +33,7 @@ class MigrationManager extends AbstractManager
     protected $connections = [];
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface[]
+     * @var array<\Propel\Runtime\Connection\ConnectionInterface>
      */
     protected $adapterConnections = [];
 
@@ -136,7 +136,7 @@ class MigrationManager extends AbstractManager
     /**
      * @throws \Exception
      *
-     * @return int[]
+     * @return array<int>
      */
     public function getAllDatabaseVersions()
     {
@@ -145,6 +145,7 @@ class MigrationManager extends AbstractManager
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
+        /** @var array<int> $migrationTimestamps */
         $migrationTimestamps = [];
         foreach ($connections as $name => $params) {
             $conn = $this->getAdapterConnection($name);
@@ -160,6 +161,7 @@ class MigrationManager extends AbstractManager
                 $stmt->execute();
 
                 while ($migrationTimestamp = $stmt->fetchColumn()) {
+                    /** @phpstan-var int $migrationTimestamp */
                     $migrationTimestamps[] = $migrationTimestamp;
                 }
             } catch (PDOException $e) {
@@ -239,7 +241,7 @@ class MigrationManager extends AbstractManager
             $sql = sprintf(
                 'DELETE FROM %s WHERE %s = ?',
                 $this->getMigrationTable(),
-                $platform->doQuoting('version')
+                $platform->doQuoting('version'),
             );
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
@@ -260,7 +262,7 @@ class MigrationManager extends AbstractManager
         $sql = sprintf(
             'INSERT INTO %s (%s) VALUES (?)',
             $this->getMigrationTable(),
-            $platform->doQuoting('version')
+            $platform->doQuoting('version'),
         );
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
@@ -268,7 +270,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getMigrationTimestamps()
     {
@@ -288,7 +290,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getValidMigrationTimestamps()
     {
@@ -307,7 +309,7 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getAlreadyExecutedMigrationTimestamps()
     {
@@ -386,7 +388,7 @@ class MigrationManager extends AbstractManager
         $filename = sprintf(
             '%s/%s.php',
             $this->getWorkingDirectory(),
-            $className
+            $className,
         );
         require_once $filename;
 
@@ -394,8 +396,8 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @param string[] $migrationsUp
-     * @param string[] $migrationsDown
+     * @param array<string> $migrationsUp
+     * @param array<string> $migrationsDown
      * @param int $timestamp
      * @param string $comment
      * @param string $suffix

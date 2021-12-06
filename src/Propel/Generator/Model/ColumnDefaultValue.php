@@ -16,7 +16,14 @@ namespace Propel\Generator\Model;
  */
 class ColumnDefaultValue
 {
+    /**
+     * @var string
+     */
     public const TYPE_VALUE = 'value';
+
+    /**
+     * @var string
+     */
     public const TYPE_EXPR = 'expr';
 
     /**
@@ -27,7 +34,7 @@ class ColumnDefaultValue
     /**
      * @var string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
      */
-    private $type = ColumnDefaultValue::TYPE_VALUE;
+    private $type = self::TYPE_VALUE;
 
     /**
      * Creates a new DefaultValue object.
@@ -110,7 +117,7 @@ class ColumnDefaultValue
         }
 
         // special case for current timestamp
-        $equivalents = [ 'CURRENT_TIMESTAMP', 'NOW()' ];
+        $equivalents = ['CURRENT_TIMESTAMP', 'NOW()'];
         if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
             return true;
         }

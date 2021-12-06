@@ -56,8 +56,8 @@ abstract class PdoAdapter
         }
 
         $dsn = $params['dsn'];
-        $user = isset($params['user']) ? $params['user'] : null;
-        $password = isset($params['password']) ? $params['password'] : null;
+        $user = $params['user'] ?? null;
+        $password = $params['password'] ?? null;
 
         // load any driver options from the config file
         // driver options are those PDO settings that have to be passed during the connection construction
@@ -241,7 +241,8 @@ abstract class PdoAdapter
      */
     public function quote($text)
     {
-        if (($pos = strrpos($text, '.')) !== false) {
+        $pos = strrpos($text, '.');
+        if ($pos !== false) {
             $table = substr($text, 0, $pos);
             $column = substr($text, $pos + 1);
         } else {
@@ -251,9 +252,9 @@ abstract class PdoAdapter
 
         if ($table) {
             return $this->quoteIdentifierTable($table) . '.' . $this->quoteIdentifier($column);
-        } else {
-            return $this->quoteIdentifier($column);
         }
+
+        return $this->quoteIdentifier($column);
     }
 
     /**
@@ -479,7 +480,7 @@ abstract class PdoAdapter
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getPlainSelectedColumns(Criteria $criteria)
     {
@@ -575,7 +576,7 @@ abstract class PdoAdapter
             }
             $tableName = $param['table'];
             if ($tableName === null) {
-                $type = isset($param['type']) ? $param['type'] : PDO::PARAM_STR;
+                $type = $param['type'] ?? PDO::PARAM_STR;
                 $stmt->bindValue($parameter, $value, $type);
 
                 continue;

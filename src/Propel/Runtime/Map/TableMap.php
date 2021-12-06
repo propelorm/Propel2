@@ -27,51 +27,61 @@ class TableMap
     /**
      * phpname type
      * e.g. 'AuthorId'
+     *
+     * @var string
      */
     public const TYPE_PHPNAME = 'phpName';
 
     /**
      * camelCase type
      * e.g. 'authorId'
+     *
+     * @var string
      */
     public const TYPE_CAMELNAME = 'camelName';
 
     /**
      * column (tableMap) name type
      * e.g. 'book.AUTHOR_ID'
+     *
+     * @var string
      */
     public const TYPE_COLNAME = 'colName';
 
     /**
      * column fieldname type
      * e.g. 'author_id'
+     *
+     * @var string
      */
     public const TYPE_FIELDNAME = 'fieldName';
 
     /**
      * num type
      * simply the numerical array index, e.g. 4
+     *
+     * @var string
      */
     public const TYPE_NUM = 'num';
 
     /**
      * Columns in the table
      *
-     * @var \Propel\Runtime\Map\ColumnMap[]
+     * @var array<\Propel\Runtime\Map\ColumnMap>
      */
     protected $columns = [];
 
     /**
      * Columns in the table, using table phpName as key
      *
-     * @var \Propel\Runtime\Map\ColumnMap[]
+     * @var array<\Propel\Runtime\Map\ColumnMap>
      */
     protected $columnsByPhpName = [];
 
     /**
      * Map of normalized column names
      *
-     * @var string[]
+     * @var array<string>
      */
     protected $normalizedColumnNameMap = [];
 
@@ -132,21 +142,21 @@ class TableMap
     /**
      * The primary key columns in the table
      *
-     * @var \Propel\Runtime\Map\ColumnMap[]
+     * @var array<\Propel\Runtime\Map\ColumnMap>
      */
     protected $primaryKeys = [];
 
     /**
      * The foreign key columns in the table
      *
-     * @var \Propel\Runtime\Map\ColumnMap[]
+     * @var array<\Propel\Runtime\Map\ColumnMap>
      */
     protected $foreignKeys = [];
 
     /**
      *  The relationships in the table
      *
-     * @var \Propel\Runtime\Map\RelationMap[]
+     * @var array<\Propel\Runtime\Map\RelationMap>
      */
     protected $relations = [];
 
@@ -551,7 +561,7 @@ class TableMap
     /**
      * Get a ColumnMap[] of the columns in this table.
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getColumns()
     {
@@ -636,7 +646,7 @@ class TableMap
     /**
      * Returns array of ColumnMap objects that make up the primary key for this table
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getPrimaryKeys()
     {
@@ -646,7 +656,7 @@ class TableMap
     /**
      * Returns array of ColumnMap objects that are foreign keys for this table
      *
-     * @return \Propel\Runtime\Map\ColumnMap[]
+     * @return array<\Propel\Runtime\Map\ColumnMap>
      */
     public function getForeignKeys()
     {
@@ -712,7 +722,7 @@ class TableMap
             [$local, $foreign] = $map;
             $relation->addColumnMapping(
                 $this->getColumnOrValue($local, $relation->getLocalTable()),
-                $this->getColumnOrValue($foreign, $relation->getForeignTable())
+                $this->getColumnOrValue($foreign, $relation->getForeignTable()),
             );
         }
         $this->relations[$name] = $relation;
@@ -771,7 +781,7 @@ class TableMap
      * Gets the RelationMap objects of the table
      * This method will build the relations if they are not built yet
      *
-     * @return \Propel\Runtime\Map\RelationMap[] list of RelationMap objects
+     * @return array<\Propel\Runtime\Map\RelationMap> list of RelationMap objects
      */
     public function getRelations()
     {
@@ -825,7 +835,7 @@ class TableMap
      *
      * @return mixed
      */
-    public static function getFieldnamesForClass($classname, $type = TableMap::TYPE_PHPNAME)
+    public static function getFieldnamesForClass($classname, $type = self::TYPE_PHPNAME)
     {
         return ($classname::TABLE_MAP)::getFieldnames($type);
     }

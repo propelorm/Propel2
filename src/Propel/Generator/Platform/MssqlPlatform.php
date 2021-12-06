@@ -182,7 +182,7 @@ END
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
-                $this->getColumnListDDL($table->getPrimaryKey())
+                $this->getColumnListDDL($table->getPrimaryKey()),
             );
         }
 
@@ -210,7 +210,7 @@ END
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
-            $this->getForeignKeyDDL($fk)
+            $this->getForeignKeyDDL($fk),
         );
     }
 
@@ -228,7 +228,7 @@ END
         return sprintf(
             $pattern,
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -249,7 +249,7 @@ END
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
         if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) {
             $script .= ' ON UPDATE ' . $fk->getOnUpdate();

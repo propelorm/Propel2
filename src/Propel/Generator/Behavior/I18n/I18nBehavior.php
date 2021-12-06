@@ -22,6 +22,9 @@ use Propel\Generator\Model\PropelTypes;
  */
 class I18nBehavior extends Behavior
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
@@ -119,7 +122,7 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
     public function getI18nColumns()
     {
@@ -128,7 +131,9 @@ class I18nBehavior extends Behavior
         if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
             // Strategy 1: use the i18n_columns parameter
             foreach ($columnNames as $columnName) {
-                $columns[] = $i18nTable->getColumn($columnName);
+                /** @var \Propel\Generator\Model\Column $column */
+                $column = $i18nTable->getColumn($columnName);
+                $columns[] = $column;
             }
         } else {
             // strategy 2: use the columns of the i18n table
@@ -256,7 +261,7 @@ class I18nBehavior extends Behavior
         if ($this->getParameter('i18n_pk_column')) {
             // custom i18n table pk name
             $i18nColumn->setName($this->getParameter('i18n_pk_column'));
-        } elseif (in_array($table->getName(), $i18nTable->getForeignTableNames())) {
+        } elseif (in_array($table->getName(), $i18nTable->getForeignTableNames(), true)) {
             // custom i18n table pk name not set, but some fk already exists
             return;
         }
@@ -372,7 +377,7 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     protected function getI18nColumnNamesFromConfig()
     {

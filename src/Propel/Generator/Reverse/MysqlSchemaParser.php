@@ -35,7 +35,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Map MySQL native types to Propel types.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $mysqlTypeMap = [
         'tinyint' => PropelTypes::TINYINT,
@@ -70,7 +70,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     ];
 
     /**
-     * @var int[]
+     * @var array<int>
      */
     protected static $defaultTypeSizes = [
         'char' => 1,
@@ -84,7 +84,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function getTypeMapping()
     {
@@ -103,7 +103,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
     /**
      * @param \Propel\Generator\Model\Database $database
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
@@ -346,7 +346,7 @@ WHERE table_schema=DATABASE()
   AND table_name=($tableName)
 EOT;
 
-        /** @var string|null */
+        /** @phpstan-var string|null */
         return $this->dbh->query($query)->fetchColumn();
     }
 
@@ -369,7 +369,7 @@ WHERE table_schema=DATABASE()
   AND column_name=($columnName)
 EOT;
 
-        /** @var string|null */
+        /** @phpstan-var string|null */
         return $this->dbh->query($query)->fetchColumn();
     }
 
@@ -484,7 +484,7 @@ EOT;
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
 
-        /** @var \Propel\Generator\Model\Index[] $indexes */
+        /** @var array<\Propel\Generator\Model\Index> $indexes */
         $indexes = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $colName = $row['Column_name'];

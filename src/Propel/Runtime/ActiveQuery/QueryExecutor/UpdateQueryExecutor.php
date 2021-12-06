@@ -23,7 +23,7 @@ class UpdateQueryExecutor extends AbstractQueryExecutor
      */
     public static function execute(Criteria $criteria, Criteria $updateValues, ?ConnectionInterface $con = null): int
     {
-        $executor = new UpdateQueryExecutor($criteria, $con);
+        $executor = new self($criteria, $con);
 
         return $executor->runUpdate($updateValues);
     }

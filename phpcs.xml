@@ -6,18 +6,24 @@
         Extends Spryker+Slevomatik Coding Standard.
     </description>
 
-    <rule ref="vendor/spryker/code-sniffer/Spryker/ruleset.xml"/>
+    <config name="installed_paths" value="../../spryker/code-sniffer"/>
+
+    <arg value="nps"/>
+
+    <file>src/</file>
 
     <exclude-pattern>*/templates/*</exclude-pattern>
+
+    <rule ref="Spryker"/>
 
     <!-- exclude for now -->
     <rule ref="Spryker.ControlStructures.NoInlineAssignment">
         <severity>0</severity>
     </rule>
-    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison">
+    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition">
         <severity>0</severity>
     </rule>
-    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements">
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison">
         <severity>0</severity>
     </rule>
     <rule ref="Generic.PHP.NoSilencedErrors">

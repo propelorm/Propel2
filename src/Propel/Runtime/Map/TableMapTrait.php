@@ -47,7 +47,7 @@ trait TableMapTrait
     public static function translateFieldName($name, $fromType, $toType)
     {
         $toNames = static::getFieldNames($toType);
-        $key = isset(static::$fieldKeys[$fromType][$name]) ? static::$fieldKeys[$fromType][$name] : null;
+        $key = static::$fieldKeys[$fromType][$name] ?? null;
         if ($key === null) {
             throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(static::$fieldKeys[$fromType], true));
         }

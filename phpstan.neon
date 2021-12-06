@@ -22,6 +22,7 @@ parameters:
         - '%rootDir%/../../../src/Propel/Generator/Command/InitCommand.php'
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'
+        - '#Return type \(void\) of method .+CollectionIterator::.+\(\) should be compatible with return type \(bool\) of method ArrayIterator<\(int\|string\),mixed>::.+\(\)#'
         -
         	message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder\\:\\:root\\(\\)\\.$#"
         	path: src/Propel/Common/Config/PropelConfiguration.php

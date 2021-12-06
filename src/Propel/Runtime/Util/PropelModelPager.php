@@ -60,7 +60,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     protected $maxRecordLimit;
 
     /**
-     * @var \Propel\Runtime\Collection\Collection|array|mixed
+     * @var \Propel\Runtime\Collection\Collection|mixed|array
      */
     protected $results;
 
@@ -197,7 +197,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     /**
      * @param int $nbLinks
      *
-     * @return int[]
+     * @return array<int>
      */
     public function getLinks($nbLinks = 5)
     {

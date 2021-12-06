@@ -26,12 +26,23 @@ use Propel\Generator\Platform\PlatformInterface;
  */
 class Column extends MappingModel
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_TYPE = 'VARCHAR';
+
+    /**
+     * @var string
+     */
     public const DEFAULT_VISIBILITY = 'public';
+
+    /**
+     * @var string
+     */
     public const CONSTANT_PREFIX = 'COL_';
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     public static $validVisibilities = [
         'public',
@@ -207,7 +218,7 @@ class Column extends MappingModel
     private $needsTransactionInPostgres = false;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $valueSet = [];
 
@@ -305,7 +316,7 @@ class Column extends MappingModel
 
             $this->namePrefix = $this->getAttribute(
                 'prefix',
-                $this->parentTable->getAttribute('columnPrefix')
+                $this->parentTable->getAttribute('columnPrefix'),
             );
 
             // Accessor visibility - no idea why this returns null, or the use case for that
@@ -374,7 +385,7 @@ class Column extends MappingModel
             throw new EngineException(sprintf(
                 'Error setting up column %s: %s',
                 $this->getAttribute('name'),
-                $e->getMessage()
+                $e->getMessage(),
             ));
         }
     }
@@ -399,9 +410,9 @@ class Column extends MappingModel
                 $parentAttribute,
                 $database->getAttribute(
                     $parentAttribute,
-                    self::DEFAULT_VISIBILITY
-                )
-            )
+                    self::DEFAULT_VISIBILITY,
+                ),
+            ),
         );
 
         return $visibility;
@@ -746,7 +757,7 @@ class Column extends MappingModel
      */
     public function getPhpType()
     {
-        return $this->phpType ? $this->phpType : $this->getPhpNative();
+        return $this->phpType ?: $this->getPhpNative();
     }
 
     /**
@@ -843,7 +854,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance list.
      *
-     * @return \Propel\Generator\Model\Inheritance[]
+     * @return array<\Propel\Generator\Model\Inheritance>
      */
     public function getInheritanceList()
     {
@@ -853,7 +864,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance definitions.
      *
-     * @return \Propel\Generator\Model\Inheritance[]
+     * @return array<\Propel\Generator\Model\Inheritance>
      */
     public function getChildren()
     {
@@ -1117,7 +1128,7 @@ class Column extends MappingModel
      *
      * Only if it is a foreign key or part of a foreign key.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getForeignKeys()
     {
@@ -1139,7 +1150,7 @@ class Column extends MappingModel
     /**
      * Returns the list of references to this column.
      *
-     * @return \Propel\Generator\Model\ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
     public function getReferrers()
     {
@@ -1217,7 +1228,7 @@ class Column extends MappingModel
     {
         $this->getDomain()->setType($mappingType);
 
-        if (in_array($mappingType, [ PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB ])) {
+        if (in_array($mappingType, [PropelTypes::VARBINARY, PropelTypes::LONGVARBINARY, PropelTypes::BLOB], true)) {
             $this->needsTransactionInPostgres = true;
         }
     }
@@ -1357,7 +1368,7 @@ class Column extends MappingModel
     /**
      * Sets the list of possible values for an ENUM or SET column.
      *
-     * @param string|string[] $valueSet
+     * @param array<string>|string $valueSet
      *
      * @return void
      */
@@ -1374,7 +1385,7 @@ class Column extends MappingModel
     /**
      * Returns the list of possible values for an ENUM or SET column.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getValueSet()
     {
@@ -1557,7 +1568,7 @@ class Column extends MappingModel
             throw new EngineException(sprintf(
                 'You have specified autoIncrement for column "%s", but you have not specified idMethod="native" for table "%s".',
                 $this->name,
-                $this->parentTable->getName()
+                $this->parentTable->getName(),
             ));
         }
 
@@ -1676,7 +1687,7 @@ class Column extends MappingModel
      */
     public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
     {
-        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [ $name, $phpNamingMethod, $namePrefix ]);
+        return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $phpNamingMethod, (string)$namePrefix]);
     }
 
     /**

@@ -35,7 +35,7 @@ class Database extends ScopedMappingModel
     private $platform;
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     private $tables = [];
 
@@ -103,22 +103,22 @@ class Database extends ScopedMappingModel
     private $parentSchema;
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     private $tablesByName = [];
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     private $tablesByLowercaseName = [];
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<\Propel\Generator\Model\Table>
      */
     private $tablesByPhpName = [];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $sequences = [];
 
@@ -328,11 +328,11 @@ class Database extends ScopedMappingModel
     /**
      * Returns the list of supported string formats
      *
-     * @return string[]
+     * @return array<string>
      */
     public static function getSupportedStringFormats()
     {
-        return [ 'XML', 'YAML', 'JSON', 'CSV' ];
+        return ['XML', 'YAML', 'JSON', 'CSV'];
     }
 
     /**
@@ -409,7 +409,7 @@ class Database extends ScopedMappingModel
     /**
      * Return the list of all tables.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
     public function getTables()
     {
@@ -438,7 +438,7 @@ class Database extends ScopedMappingModel
     /**
      * Returns the list of all tables that have a SQL representation.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
     public function getTablesForSql()
     {
@@ -529,7 +529,7 @@ class Database extends ScopedMappingModel
     /**
      * Adds several tables at once.
      *
-     * @param \Propel\Generator\Model\Table[] $tables An array of Table instances
+     * @param array<\Propel\Generator\Model\Table> $tables An array of Table instances
      *
      * @return void
      */
@@ -603,7 +603,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * @param string[] $sequences
+     * @param array<string> $sequences
      *
      * @return void
      */
@@ -613,7 +613,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSequences()
     {
@@ -854,7 +854,7 @@ class Database extends ScopedMappingModel
      * Returns the next behavior on all tables, ordered by behavior priority,
      * and skipping the ones that were already executed.
      *
-     * @return \Propel\Generator\Model\Behavior
+     * @return \Propel\Generator\Model\Behavior|null
      */
     public function getNextTableBehavior()
     {
@@ -945,7 +945,7 @@ class Database extends ScopedMappingModel
                     $column->isPrimaryKey() ? 'PK' : '',
                     $column->isNotNull() ? 'NOT NULL' : '',
                     $column->getDefaultValueString() ? "'" . $column->getDefaultValueString() . "'" : '',
-                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : ''
+                    $column->isAutoIncrement() ? 'AUTO_INCREMENT' : '',
                 );
             }
 
@@ -957,7 +957,7 @@ class Database extends ScopedMappingModel
                     $fk->getForeignSchemaName(),
                     $fk->getForeignTableCommonName(),
                     implode(', ', $fk->getLocalColumns()),
-                    implode(', ', $fk->getForeignColumns())
+                    implode(', ', $fk->getForeignColumns()),
                 );
             }
 
@@ -970,7 +970,7 @@ class Database extends ScopedMappingModel
                 $indices[] = sprintf(
                     '      %s (%s)',
                     $index->getName(),
-                    implode(', ', $indexColumns)
+                    implode(', ', $indexColumns),
                 );
             }
 
@@ -979,7 +979,7 @@ class Database extends ScopedMappingModel
                 $unices[] = sprintf(
                     '      %s (%s)',
                     $index->getName(),
-                    implode(', ', $index->getColumns())
+                    implode(', ', $index->getColumns()),
                 );
             }
 
@@ -987,7 +987,7 @@ class Database extends ScopedMappingModel
                 "  %s (%s):\n%s",
                 $table->getName(),
                 $table->getCommonName(),
-                implode("\n", $columns)
+                implode("\n", $columns),
             );
 
             if ($fks) {
@@ -1008,7 +1008,7 @@ class Database extends ScopedMappingModel
         return sprintf(
             "%s:\n%s",
             $this->getName() . ($this->getSchema() ? '.' . $this->getSchema() : ''),
-            implode("\n", $tables)
+            implode("\n", $tables),
         );
     }
 

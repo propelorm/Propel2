@@ -82,7 +82,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @see with()
      *
-     * @return \Propel\Runtime\ActiveQuery\ModelWith[]
+     * @return array<\Propel\Runtime\ActiveQuery\ModelWith>
      */
     public function getWith()
     {
@@ -112,7 +112,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
      * </code>
      *
-     * @param string|\Propel\Runtime\Formatter\AbstractFormatter $formatter a formatter class name, or a formatter instance
+     * @param \Propel\Runtime\Formatter\AbstractFormatter|string $formatter a formatter class name, or a formatter instance
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
      *
@@ -234,7 +234,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     public function getModelAliasOrName()
     {
-        return $this->modelAlias ? $this->modelAlias : $this->modelName;
+        return $this->modelAlias ?: $this->modelName;
     }
 
     /**

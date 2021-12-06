@@ -132,7 +132,7 @@ class ModelManager extends AbstractManager
                             foreach ($table->getAdditionalBuilders() as $builderClass) {
                                 $builder = new $builderClass($table);
                                 $builder->setGeneratorConfig($generatorConfig);
-                                $nbWrittenFiles += $this->doBuild($builder, isset($builder->overwrite) ? $builder->overwrite : true);
+                                $nbWrittenFiles += $this->doBuild($builder, $builder->overwrite ?? true);
                             }
                         }
 

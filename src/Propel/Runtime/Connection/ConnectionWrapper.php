@@ -333,7 +333,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Set an attribute.
      *
-     * @param int|string $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
+     * @param string|int $attribute The attribute name, or the constant name containing the attribute name (e.g. 'PDO::ATTR_CASE')
      * @param mixed $value
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
@@ -353,7 +353,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             if (!defined($attribute)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid connection option/attribute name specified: "%s"',
-                    $attribute
+                    $attribute,
                 ));
             }
             $attribute = constant($attribute);

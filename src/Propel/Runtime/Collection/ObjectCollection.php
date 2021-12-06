@@ -388,7 +388,7 @@ class ObjectCollection extends Collection
             $getMethod = 'get' . $symRelationMap->getName();
             $addMethod = 'add' . $relationName;
             foreach ($relatedObjects as $object) {
-                $mainObj = $object->$getMethod();  // instance pool is used here to avoid a query
+                $mainObj = $object->$getMethod(); // instance pool is used here to avoid a query
                 $mainObj->$addMethod($object);
             }
         } elseif ($relationMap->getType() === RelationMap::MANY_TO_ONE) {

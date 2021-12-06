@@ -85,7 +85,7 @@ class Domain extends MappingModel
             $this->setScale($scale);
         }
 
-        $this->setSqlType($sqlType !== null ? $sqlType : $type);
+        $this->setSqlType($sqlType ?? $type);
     }
 
     /**
@@ -324,7 +324,7 @@ class Domain extends MappingModel
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|array|bool|null
+     * @return array|string|bool|null
      */
     public function getPhpDefaultValue()
     {
@@ -336,7 +336,7 @@ class Domain extends MappingModel
             throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
         }
 
-        if (in_array($this->mappingType, [ PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU ])) {
+        if (in_array($this->mappingType, [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
 

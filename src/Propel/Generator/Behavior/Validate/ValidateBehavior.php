@@ -21,7 +21,7 @@ use Symfony\Component\Yaml\Parser;
 class ValidateBehavior extends Behavior
 {
     /**
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder $builder The current builder
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder
      */
     protected $builder;
 
@@ -48,7 +48,7 @@ class ValidateBehavior extends Behavior
             'Symfony\\Component\\Validator\\DefaultTranslator',
             'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
             'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
-            'Symfony\\Component\\Validator\\ConstraintViolationList'
+            'Symfony\\Component\\Validator\\ConstraintViolationList',
         );
 
         $this->builder->declareClasses(
@@ -57,7 +57,7 @@ class ValidateBehavior extends Behavior
             'Symfony\\Component\\Validator\\Mapping\\Factory\LazyLoadingMetadataFactory',
             'Symfony\\Component\\Validator\\Context\\ExecutionContextInterface',
             'Symfony\\Component\\Validator\\Validator\\ValidatorInterface',
-            'Symfony\\Component\\Translation\\IdentityTranslator'
+            'Symfony\\Component\\Translation\\IdentityTranslator',
         );
 
         $script = $this->addLoadValidatorMetadataMethod();

@@ -56,7 +56,7 @@ class ModelJoin extends Join
                         $rightCols[$i]->getName(),
                         $relationAlias,
                         $leftValues[$i],
-                        Criteria::EQUAL
+                        Criteria::EQUAL,
                     );
                 } else {
                     //many-to-one
@@ -65,7 +65,7 @@ class ModelJoin extends Join
                         $leftCols[$i]->getName(),
                         $leftTableAlias,
                         $leftValues[$i],
-                        Criteria::EQUAL
+                        Criteria::EQUAL,
                     );
                 }
             } else {
@@ -76,7 +76,7 @@ class ModelJoin extends Join
                     $rightCols[$i]->getTableName(),
                     $rightCols[$i]->getName(),
                     $relationAlias,
-                    Criteria::EQUAL
+                    Criteria::EQUAL,
                 );
             }
         }
@@ -217,8 +217,7 @@ class ModelJoin extends Join
      */
     public function equals($join)
     {
-        /** @var ModelJoin $join */
-
+        /** @phpstan-var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         return parent::equals($join)
             && $this->relationMap == $join->getRelationMap()
             && $this->previousJoin == $join->getPreviousJoin()

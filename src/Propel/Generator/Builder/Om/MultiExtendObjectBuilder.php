@@ -25,7 +25,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * The current child "object" we are operating on.
      *
-     * @var \Propel\Generator\Model\Inheritance|null $child
+     * @var \Propel\Generator\Model\Inheritance|null
      */
     private $child;
 

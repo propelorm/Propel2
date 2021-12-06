@@ -88,7 +88,7 @@ interface ConnectionInterface
     /**
      * Set an attribute.
      *
-     * @param int|string $attribute
+     * @param string|int $attribute
      * @param mixed $value
      *
      * @return bool TRUE on success or FALSE on failure.

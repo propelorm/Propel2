@@ -123,7 +123,7 @@ class XmlParser extends AbstractParser
                     $element = $this->arrayToDOM($value, $element, $charset);
                 }
             } elseif (is_string($value)) {
-                $charset = $charset ? $charset : 'utf-8';
+                $charset = $charset ?: 'utf-8';
                 if (function_exists('iconv') && strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
                     $value = iconv($charset, 'UTF-8', $value);
                 }
@@ -132,7 +132,7 @@ class XmlParser extends AbstractParser
                 $element->appendChild($child);
             } elseif ($value instanceof DateTimeInterface) {
                 $element->setAttribute('type', 'xsd:dateTime');
-                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ISO8601));
+                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ATOM));
                 $element->appendChild($child);
             } else {
                 $child = $element->ownerDocument->createTextNode((string)$value);

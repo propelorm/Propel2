@@ -80,7 +80,7 @@ class PgsqlPlatform extends DefaultPlatform
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
     public function getDefaultTypeSizes()
     {
@@ -173,7 +173,7 @@ CREATE SEQUENCE %s;
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($table))),
             );
         }
 
@@ -197,7 +197,7 @@ DROP SEQUENCE %s;
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($table))),
             );
         }
 
@@ -400,7 +400,7 @@ CREATE TABLE %s
         $ret .= sprintf(
             $pattern,
             $this->quoteIdentifier($table->getName()),
-            implode($sep, $lines)
+            implode($sep, $lines),
         );
 
         if ($table->hasDescription()) {
@@ -410,7 +410,7 @@ COMMENT ON TABLE %s IS %s;
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),
-                $this->quote($table->getDescription())
+                $this->quote($table->getDescription()),
             );
         }
 
@@ -450,7 +450,7 @@ COMMENT ON COLUMN %s.%s IS %s;
                 $pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
                 $this->quoteIdentifier($column->getName()),
-                $this->quote($description)
+                $this->quote($description),
             );
         }
 
@@ -539,7 +539,7 @@ DROP TABLE IF EXISTS %s CASCADE;
         return sprintf(
             'CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -562,7 +562,7 @@ ALTER TABLE %s RENAME TO %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fromTableName),
-            $this->quoteIdentifier($toTableName)
+            $this->quoteIdentifier($toTableName),
         );
     }
 
@@ -664,7 +664,7 @@ ALTER TABLE %s ALTER COLUMN %s;
                         "
 CREATE SEQUENCE %s;
 ",
-                        $seqName
+                        $seqName,
                     );
                     $fromTable->getDatabase()->addSequence($seqName);
                 }
@@ -680,7 +680,7 @@ CREATE SEQUENCE %s;
                         "
 DROP SEQUENCE %s CASCADE;
 ",
-                        $seqName
+                        $seqName,
                     );
                     $fromTable->getDatabase()->removeSequence($seqName);
                 }
@@ -706,7 +706,7 @@ DROP SEQUENCE %s CASCADE;
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),
-                $colName . ' TYPE ' . $sqlType
+                $colName . ' TYPE ' . $sqlType,
             );
         }
 
@@ -805,7 +805,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getModifyColumnsDDL
      *
-     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
+     * @param array<\Propel\Generator\Model\Diff\ColumnDiff> $columnDiffs
      *
      * @return string
      */
@@ -826,7 +826,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getAddColumnsDLL
      *
-     * @param \Propel\Generator\Model\Column[] $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      *
      * @return string
      */
@@ -861,7 +861,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
-                $this->quoteIdentifier($index->getName())
+                $this->quoteIdentifier($index->getName()),
             );
         }
 
@@ -881,7 +881,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|string[]|null
+     * @return array<string>|string|null
      */
     public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
     {
@@ -896,7 +896,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             $connectionVariableName,
             $sequenceName,
             $columnValueMutator,
-            $phpType ? '(' . $phpType . ') ' : ''
+            $phpType ? '(' . $phpType . ') ' : '',
         );
 
         return preg_replace('/^/m', $tab, $script);
@@ -921,7 +921,7 @@ ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s);
             $pattern,
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->quoteIdentifier($index->getName()),
-            $this->getColumnListDDL($index->getColumnObjects())
+            $this->getColumnListDDL($index->getColumnObjects()),
         );
     }
 }

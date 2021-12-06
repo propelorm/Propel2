@@ -57,7 +57,7 @@ class MigrationStatusCommand extends AbstractCommand
         $manager->setGeneratorConfig($generatorConfig);
 
         $connections = [];
-        /** @var string[] $optionConnections */
+        /** @var array<string> $optionConnections */
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
@@ -78,7 +78,7 @@ class MigrationStatusCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Connecting to database "%s" using DSN "%s"',
                     $datasource,
-                    $params['dsn']
+                    $params['dsn'],
                 ));
             }
 
@@ -86,7 +86,7 @@ class MigrationStatusCommand extends AbstractCommand
                 if ($input->getOption('verbose')) {
                     $output->writeln(sprintf(
                         'Migration table does not exist in datasource "%s"; creating it.',
-                        $datasource
+                        $datasource,
                     ));
                 }
                 $manager->createMigrationTable($datasource);
@@ -99,7 +99,7 @@ class MigrationStatusCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     'Latest migration was executed on %s (timestamp %d)',
                     date('Y-m-d H:i:s', $oldestMigrationTimestamp),
-                    (string)$oldestMigrationTimestamp
+                    (string)$oldestMigrationTimestamp,
                 ));
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');
@@ -115,13 +115,14 @@ class MigrationStatusCommand extends AbstractCommand
             $output->writeln(sprintf(
                 '%d valid migration classes found in "%s"',
                 $nbExistingMigrations,
-                $dir
+                $dir,
             ));
 
-            if ($validTimestamps = $manager->getValidMigrationTimestamps()) {
+            $validTimestamps = $manager->getValidMigrationTimestamps();
+            if ($validTimestamps) {
                 $countValidTimestamps = count($validTimestamps);
 
-                if ($countValidTimestamps == 1) {
+                if ($countValidTimestamps === 1) {
                     $output->writeln('1 migration needs to be executed:');
                 } else {
                     $output->writeln(sprintf('%d migrations need to be executed:', $countValidTimestamps));
@@ -133,7 +134,7 @@ class MigrationStatusCommand extends AbstractCommand
                         ' %s %s %s',
                         $timestamp == $oldestMigrationTimestamp ? '>' : ' ',
                         $manager->getMigrationClassName($timestamp),
-                        !in_array($timestamp, $validTimestamps) ? '(executed)' : ''
+                        !in_array($timestamp, $validTimestamps) ? '(executed)' : '',
                     ));
                 }
             }
@@ -154,7 +155,7 @@ class MigrationStatusCommand extends AbstractCommand
 
         $output->writeln(sprintf(
             'Call the "migrate" task to execute %s',
-            $countValidTimestamps == 1 ? 'it' : 'them'
+            $countValidTimestamps == 1 ? 'it' : 'them',
         ));
 
         return static::CODE_SUCCESS;
