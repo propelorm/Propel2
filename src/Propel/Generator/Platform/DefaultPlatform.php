@@ -1481,6 +1481,8 @@ ALTER TABLE %s ADD
         $script = '';
         if ($column->getType() === PropelTypes::DATE) {
             $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getDateFormatter() . '") : null';
+        } elseif ($column->getType() === PropelTypes::TIME) {
+            $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getTimeFormatter() . '") : null';
         } elseif ($column->isTemporalType()) {
             $columnValueAccessor = $columnValueAccessor . ' ? ' . $columnValueAccessor . '->format("' . $this->getTimeStampFormatter() . '") : null';
         } elseif ($column->isLobType()) {
