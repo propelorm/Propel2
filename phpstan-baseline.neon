@@ -57,7 +57,7 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-

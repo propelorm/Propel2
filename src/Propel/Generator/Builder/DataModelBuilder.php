@@ -444,10 +444,16 @@ abstract class DataModelBuilder
     /**
      * Returns the current Table object.
      *
+     * @throws \BadMethodCallException
+     *
      * @return \Propel\Generator\Model\Table
      */
     public function getTable()
     {
+        if ($this->table === null) {
+            throw new BadMethodCallException('No $table set to return.');
+        }
+
         return $this->table;
     }
 
@@ -460,7 +466,7 @@ abstract class DataModelBuilder
     {
         if ($this->platform === null) {
             // try to load the platform from the table
-            $table = $this->getTable();
+            $table = $this->table;
             if ($table && $database = $table->getDatabase()) {
                 $this->setPlatform($database->getPlatform());
             }
@@ -504,16 +510,10 @@ abstract class DataModelBuilder
     /**
      * Convenience method to returns the database for current table.
      *
-     * @throws \BadMethodCallException
-     *
      * @return \Propel\Generator\Model\Database
      */
     public function getDatabase()
     {
-        if (!$this->getTable()) {
-            throw new BadMethodCallException('No table set to call getDatabase() on');
-        }
-
         return $this->getTable()->getDatabase();
     }
 
