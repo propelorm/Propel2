@@ -30,11 +30,6 @@ class InitCommandTest extends TestCaseFixtures
     private $dir;
 
     /**
-     * @var string
-     */
-    private $currentDir;
-
-    /**
      * @return void
      */
     public function setUp(): void
@@ -48,7 +43,6 @@ class InitCommandTest extends TestCaseFixtures
         }
         $filesystem->mkdir($this->dir);
 
-        $this->currentDir = getcwd();
         chdir($this->dir);
     }
 
