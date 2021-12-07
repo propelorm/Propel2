@@ -39,7 +39,9 @@ class SchemaReader
     private $schema;
 
     /**
-     * @var resource|null
+     * @psalm-suppress UndefinedDocblockClass
+     * @phpstan-ignore-next-line
+     * @var \XMLParser|resource|null
      */
     private $parser;
 

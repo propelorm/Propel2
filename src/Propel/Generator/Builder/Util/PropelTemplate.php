@@ -85,7 +85,11 @@ class PropelTemplate
 
         extract($vars);
         ob_start();
-        /** @psalm-suppress InvalidArgument */
+
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
         ob_implicit_flush(false);
 
         try {
