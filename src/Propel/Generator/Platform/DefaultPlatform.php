@@ -1445,7 +1445,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * Get the default On Delete behavior for foreign keys when not explicity set.
+     * Get the default On Delete behavior for foreign keys when not explicitly set.
      *
      * @return string
      */
@@ -1455,7 +1455,7 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * Get the default On Update behavior for foreign keys when not explicity set.
+     * Get the default On Update behavior for foreign keys when not explicitly set.
      *
      * @return string
      */
@@ -1583,7 +1583,7 @@ if (is_resource($columnValueAccessor)) {
         }
 
         if (!$this->supportsIndexSize() && $table->getIndices()) {
-            // when the plafform does not support index sizes we reset it
+            // when the platform does not support index sizes we reset it
             foreach ($table->getIndices() as $index) {
                 $index->resetColumnsSize();
             }

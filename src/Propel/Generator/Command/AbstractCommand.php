@@ -136,7 +136,7 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * Parse a connection string and return an array with name, dsn and extra informations
+     * Parses a connection string and returns an array with name, DSN and extra information.
      *
      * @param string $connection The connection string
      *

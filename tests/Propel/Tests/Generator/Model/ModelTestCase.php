@@ -220,7 +220,7 @@ abstract class ModelTestCase extends TestCase
     /**
      * Returns a dummy Platform object.
      *
-     * @param bool $supportsSchemas Whether or not the platform supports schemas
+     * @param bool $supportsSchemas Whether the platform supports schemas
      * @param array $options An array of options
      * @param string $schemaDelimiter
      *

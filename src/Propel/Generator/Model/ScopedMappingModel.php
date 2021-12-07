@@ -45,7 +45,7 @@ abstract class ScopedMappingModel extends MappingModel
     }
 
     /**
-     * Returns whether or not the package has been overriden.
+     * Returns whether the package has been overriden.
      *
      * @return bool
      */
@@ -112,7 +112,7 @@ abstract class ScopedMappingModel extends MappingModel
     }
 
     /**
-     * Returns whether or not the namespace is absolute.
+     * Returns whether the namespace is absolute.
      *
      * A namespace is absolute if it starts with a "\".
      *

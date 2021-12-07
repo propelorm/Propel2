@@ -1004,7 +1004,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets whether or not this table contains a foreign primary key.
+     * Sets whether this table contains a foreign primary key.
      *
      * @param bool $containsForeignPK
      *
@@ -1016,7 +1016,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table contains a foreign primary key.
+     * Returns whether this table contains a foreign primary key.
      *
      * @return bool
      */
@@ -1253,7 +1253,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table is linked to a schema.
+     * Returns whether this table is linked to a schema.
      *
      * @return bool
      */
@@ -1276,7 +1276,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not the table has a description.
+     * Returns whether the table has a description.
      *
      * @return bool
      */
@@ -1454,7 +1454,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not Propel has to skip DDL SQL generation for this
+     * Returns whether Propel has to skip DDL SQL generation for this
      * table (in the event it should not be created from scratch).
      *
      * @return bool
@@ -1465,7 +1465,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets whether or not this table should have its SQL DDL code generated.
+     * Sets whether this table should have its SQL DDL code generated.
      *
      * @param bool $skip
      *
@@ -1477,7 +1477,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table is read-only. If yes, only only
+     * Returns whether this table is read-only. If yes, only only
      * accessors and relationship accessors and mutators will be generated.
      *
      * @return bool
@@ -1522,7 +1522,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not to force object to reload on UPDATE.
+     * Returns whether to force object to reload on UPDATE.
      *
      * @return bool
      */
@@ -1554,7 +1554,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table is specified in the schema or if there
+     * Returns whether this table is specified in the schema or if there
      * is just a foreign key reference to it.
      *
      * @return bool
@@ -1565,7 +1565,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets whether or not this table is specified in the schema or if there is
+     * Sets whether this table is specified in the schema or if there is
      * just a foreign key reference to it.
      *
      * @param string $alias
@@ -1600,7 +1600,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not a table is abstract, it marks the business object
+     * Returns whether a table is abstract, it marks the business object
      * class that is generated as being abstract. If you have a table called
      * "FOO", then the Foo business object class will be declared abstract. This
      * helps support class hierarchies
@@ -1613,7 +1613,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Sets whether or not a table is abstract, it marks the business object
+     * Sets whether a table is abstract, it marks the business object
      * class that is generated as being abstract. If you have a
      * table called "FOO", then the Foo business object class will be
      * declared abstract. This helps support class hierarchies
@@ -1665,7 +1665,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not one of the columns is of type ENUM or SET.
+     * Returns whether one of the columns is of type ENUM or SET.
      *
      * @return bool
      */
@@ -1824,7 +1824,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not the table has a column.
+     * Returns whether the table has a column.
      *
      * @param \Propel\Generator\Model\Column|string $column The Column object or its name
      * @param bool $caseInsensitive Whether the check is case insensitive.
@@ -1981,7 +1981,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not code and SQL must be created for this table.
+     * Returns whether code and SQL must be created for this table.
      *
      * Table will be skipped, if return true.
      *
@@ -1993,7 +1993,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not to determine if code/sql gets created for this table.
+     * Returns whether to determine if code/sql gets created for this table.
      * Table will be skipped, if set to true.
      *
      * @param bool $flag
@@ -2024,7 +2024,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table has a primary key.
+     * Returns whether this table has a primary key.
      *
      * @return bool
      */
@@ -2034,7 +2034,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table has a composite primary key.
+     * Returns whether this table has a composite primary key.
      *
      * @return bool
      */
@@ -2078,7 +2078,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not this table has any auto-increment primary keys.
+     * Returns whether this table has any auto-increment primary keys.
      *
      * @return bool
      */
@@ -2106,7 +2106,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not there is a cross reference status for this foreign
+     * Returns whether there is a cross reference status for this foreign
      * key.
      *
      * @return bool
@@ -2151,7 +2151,7 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Returns whether or not the table has foreign keys.
+     * Returns whether the table has foreign keys.
      *
      * @return bool
      */

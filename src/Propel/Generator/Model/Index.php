@@ -232,7 +232,7 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not there is a size for the specified column.
+     * Returns whether there is a size for the specified column.
      *
      * @param string $name
      *
@@ -279,12 +279,12 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not this index has a given column at a given position.
+     * Returns whether this index has a given column at a given position.
      *
      * @param int $pos Position in the column list
      * @param string $name Column name
      * @param int|null $size Optional size check
-     * @param bool $caseInsensitive Whether or not the comparison is case insensitive (false by default)
+     * @param bool $caseInsensitive Whether the comparison is case insensitive (false by default)
      *
      * @return bool
      */
@@ -312,7 +312,7 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not the index has columns.
+     * Returns whether the index has columns.
      *
      * @return bool
      */

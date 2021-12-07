@@ -17,7 +17,7 @@ use Propel\Runtime\Util\Profiler;
 class ProfilerConnectionWrapper extends ConnectionWrapper
 {
     /**
-     * Whether or not the debug is enabled
+     * Whether the debug is enabled
      *
      * @var bool
      */

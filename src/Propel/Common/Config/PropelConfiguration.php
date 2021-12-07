@@ -292,7 +292,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->arrayNode('profiler')
                             ->children()
                                 ->scalarNode('classname')->defaultValue('\Propel\Runtime\Util\Profiler')->end()
-                                ->floatNode('slowTreshold')->defaultValue(0.1)->end()
+                                ->floatNode('slowThreshold')->defaultValue(0.1)->end()
                                 ->arrayNode('details')
                                     ->children()
                                         ->arrayNode('time')

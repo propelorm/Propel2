@@ -93,7 +93,7 @@ class VendorInfo extends MappingModel
     }
 
     /**
-     * Returns whether or not a parameter exists.
+     * Returns whether a parameter exists.
      *
      * @param string $name
      *
@@ -128,7 +128,7 @@ class VendorInfo extends MappingModel
     }
 
     /**
-     * Returns whether or not this vendor info is empty.
+     * Returns whether this vendor info is empty.
      *
      * @return bool
      */

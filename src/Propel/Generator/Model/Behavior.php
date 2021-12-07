@@ -317,7 +317,7 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Sets whether or not the table has been modified.
+     * Sets whether the table has been modified.
      *
      * @param bool $modified
      *
@@ -329,7 +329,7 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns whether or not the table has been modified.
+     * Returns whether the table has been modified.
      *
      * @return bool
      */
@@ -466,7 +466,7 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns whether or not this behavior has additional builders.
+     * Returns whether this behavior has additional builders.
      *
      * @return bool
      */

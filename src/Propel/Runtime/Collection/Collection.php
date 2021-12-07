@@ -357,7 +357,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * Whether or not this collection contains a specified element
+     * Whether this collection contains a specified element
      *
      * @param mixed $element
      *

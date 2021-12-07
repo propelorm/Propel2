@@ -371,7 +371,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns whether or not heavy indexing is enabled.
+     * Returns whether heavy indexing is enabled.
      *
      * This is an alias for getHeavyIndexing().
      *
@@ -383,7 +383,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns whether or not heavy indexing is enabled.
+     * Returns whether heavy indexing is enabled.
      *
      * This is an alias for isHeavyIndexing().
      *
@@ -395,7 +395,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Sets whether or not heavy indexing is enabled.
+     * Sets whether heavy indexing is enabled.
      *
      * @param bool $flag
      *
@@ -453,7 +453,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns whether or not the database has a table.
+     * Returns whether the database has a table.
      *
      * @param string $name
      * @param bool $caseInsensitive
@@ -498,7 +498,7 @@ class Database extends ScopedMappingModel
     }
 
     /**
-     * Returns whether or not the database has a table identified by its
+     * Returns whether the database has a table identified by its
      * PHP name.
      *
      * @param string $phpName

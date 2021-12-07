@@ -341,7 +341,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
         // let's infer the relation from the foreign table
         $fks = $foreignTable->getForeignKeysReferencingTable($this->getTable()->getName());
         if (!$fks) {
-            $msg = 'You must define a foreign key from the \'%s\' table to the table witht the aggregated columns';
+            $msg = 'You must define a foreign key from the \'%s\' table to the table with the aggregated columns';
             $this->throwInvalidArgumentExceptionWithLocation($msg, $foreignTable->getName());
         }
 

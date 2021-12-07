@@ -514,7 +514,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not the given type is a temporal type.
+     * Returns whether the given type is a temporal type.
      *
      * @param string $type
      *
@@ -532,7 +532,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not the given type is a text type.
+     * Returns whether the given type is a text type.
      *
      * @param string $mappingType
      *
@@ -555,7 +555,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not the given type is a numeric type.
+     * Returns whether the given type is a numeric type.
      *
      * @param string $mappingType
      *
@@ -577,7 +577,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not this column is a boolean type.
+     * Returns whether this column is a boolean type.
      *
      * @param string $mappingType
      *
@@ -589,7 +589,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not this column is a lob/blob type.
+     * Returns whether this column is a lob/blob type.
      *
      * @param string $mappingType
      *
@@ -601,7 +601,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is a primitive type.
+     * Returns whether a passed-in PHP type is a primitive type.
      *
      * @param string $phpType
      *
@@ -613,7 +613,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is a primitive numeric type.
+     * Returns whether a passed-in PHP type is a primitive numeric type.
      *
      * @param string $phpType
      *
@@ -625,7 +625,7 @@ class PropelTypes
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is an object.
+     * Returns whether a passed-in PHP type is an object.
      *
      * @param string $phpType
      *
