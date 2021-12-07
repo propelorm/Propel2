@@ -178,8 +178,8 @@ class DefaultPlatformTest extends TestCase
         return [
             [$this->createColumn(PropelTypes::DATE, '2020-02-03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d") : null, PDO::PARAM_STR);'],
             [$this->createColumn(PropelTypes::TIME, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("H:i:s.u") : null, PDO::PARAM_STR);'],
-            [$this->createColumn(PropelTypes::TIMESTAMP, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);'],
-            [$this->createColumn(PropelTypes::BLOB, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR, PDO::PARAM_LOB);'],
+            [$this->createColumn(PropelTypes::TIMESTAMP, '2020-02-03 11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);'],
+            [$this->createColumn(PropelTypes::BLOB, 'BLOB'), '$stmt->bindValue(ID, ACCESSOR, PDO::PARAM_LOB);'],
         ];
     }
 
