@@ -37,7 +37,8 @@ class ArrayDataFetcher extends AbstractDataFetcher
      *
      * @inheritDoc
      */
-    public function current(): mixed
+    #[\ReturnTypeWillChange]
+    public function current()
     {
         return $this->dataObject === null ? null : current($this->dataObject);
     }
@@ -58,7 +59,8 @@ class ArrayDataFetcher extends AbstractDataFetcher
      *
      * @inheritDoc
      */
-    public function key(): mixed
+    #[\ReturnTypeWillChange]
+    public function key()
     {
         return $this->dataObject === null ? null : key($this->dataObject);
     }

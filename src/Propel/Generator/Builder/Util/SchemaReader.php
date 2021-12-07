@@ -14,7 +14,6 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Schema;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\PlatformInterface;
-use XMLParser;
 
 /**
  * A class that is used to parse an input xml schema file and creates a Schema
@@ -40,9 +39,9 @@ class SchemaReader
     private $schema;
 
     /**
-     * @var \XMLParser|null
+     * @var resource|null
      */
-    private ?XMLParser $parser = null;
+    private $parser;
 
     /**
      * @var \Propel\Generator\Model\Database

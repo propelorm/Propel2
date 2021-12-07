@@ -81,7 +81,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getFirst(): mixed
+    #[\ReturnTypeWillChange]
+    public function getFirst()
     {
         if ($this->isEmpty()) {
             return null;
@@ -109,7 +110,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getPrevious(): mixed
+    #[\ReturnTypeWillChange]
+    public function getPrevious()
     {
         if ($this->isFirst()) {
             return null;
@@ -127,7 +129,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getCurrent(): mixed
+    #[\ReturnTypeWillChange]
+    public function getCurrent()
     {
         return $this->current();
     }
@@ -140,7 +143,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getNext(): mixed
+    #[\ReturnTypeWillChange]
+    public function getNext()
     {
         $this->next();
 
@@ -155,7 +159,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @return mixed
      */
-    public function getLast(): mixed
+    #[\ReturnTypeWillChange]
+    public function getLast()
     {
         if ($this->isEmpty()) {
             return null;

@@ -120,7 +120,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return mixed
      */
-    public function &offsetGet(mixed $offset): mixed
+    #[\ReturnTypeWillChange]
+    public function &offsetGet($offset)
     {
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
@@ -430,7 +431,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return string|null
      */
-    public function serialize(): ?string
+    #[\ReturnTypeWillChange]
+    public function serialize()
     {
         $repr = [
             'data' => $this->getArrayCopy(),
@@ -446,7 +448,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function unserialize(string $data): void
+    #[\ReturnTypeWillChange]
+    public function unserialize($data)
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);

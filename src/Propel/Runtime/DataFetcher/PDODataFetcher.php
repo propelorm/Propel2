@@ -119,7 +119,8 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @inheritDoc
      */
-    public function current(): mixed
+    #[\ReturnTypeWillChange]
+    public function current()
     {
         return $this->current;
     }
@@ -129,7 +130,8 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @inheritDoc
      */
-    public function key(): mixed
+    #[\ReturnTypeWillChange]
+    public function key()
     {
         return $this->index;
     }

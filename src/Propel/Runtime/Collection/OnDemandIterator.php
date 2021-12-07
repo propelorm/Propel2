@@ -97,7 +97,8 @@ class OnDemandIterator implements Iterator
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function current(): mixed
+    #[\ReturnTypeWillChange]
+    public function current()
     {
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
     }
@@ -109,7 +110,8 @@ class OnDemandIterator implements Iterator
      *
      * @return int
      */
-    public function key(): mixed
+    #[\ReturnTypeWillChange]
+    public function key()
     {
         return $this->currentKey;
     }

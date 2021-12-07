@@ -41,7 +41,8 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return mixed Can return any type.
      */
-    public function current(): mixed;
+    #[\ReturnTypeWillChange]
+    public function current();
 
     /**
      * Move forward to next element
@@ -61,7 +62,8 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return mixed scalar on success, or null on failure.
      */
-    public function key(): mixed;
+    #[\ReturnTypeWillChange]
+    public function key();
 
     /**
      * Checks if current position is valid
