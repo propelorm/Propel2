@@ -141,7 +141,7 @@ class DefaultPlatformTest extends TestCase
         return $column;
     }
 
-    public function getColumnDefaultValueDDLDataProvider()
+    public function getColumnDefaultValueDDLDataProvider(): array
     {
         return [
             [$this->createColumn(PropelTypes::INTEGER, 0), 'DEFAULT 0'],
@@ -171,5 +171,25 @@ class DefaultPlatformTest extends TestCase
     public function testGetColumnDefaultValueDDL($column, $default)
     {
         $this->assertEquals($default, $this->getPlatform()->getColumnDefaultValueDDL($column));
+    }
+
+    public function getColumnBindingDataProvider(): array
+    {
+        return [
+            [$this->createColumn(PropelTypes::DATE, '2020-02-03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d") : null, PDO::PARAM_STR);'],
+            [$this->createColumn(PropelTypes::TIME, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("H:i:s.u") : null, PDO::PARAM_STR);'],
+            [$this->createColumn(PropelTypes::TIMESTAMP, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);'],
+            [$this->createColumn(PropelTypes::BLOB, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR, PDO::PARAM_LOB);'],
+        ];
+    }
+
+    /**
+     * @dataProvider getColumnBindingDataProvider
+     *
+     * @return void
+     */
+    public function testGetColumnBindingPHP($column, $default)
+    {
+        $this->assertStringContainsString($default, $this->getPlatform()->getColumnBindingPHP($column, 'ID', 'ACCESSOR'));
     }
 }
