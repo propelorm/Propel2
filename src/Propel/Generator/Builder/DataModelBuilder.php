@@ -8,7 +8,6 @@
 
 namespace Propel\Generator\Builder;
 
-use BadMethodCallException;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\Om\AbstractObjectBuilder;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
