@@ -463,9 +463,7 @@ class SchemaReader
             $location .= sprintf('file %s,', $this->currentXmlFile);
         }
 
-        /** @psalm-suppress InvalidArgument */
         $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
-        /** @psalm-suppress InvalidArgument */
         if ($col = xml_get_current_column_number($this->parser)) {
             $location .= sprintf(', column %d', $col);
         }
