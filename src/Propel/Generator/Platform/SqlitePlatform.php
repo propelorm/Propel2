@@ -143,8 +143,8 @@ ALTER TABLE %s ADD %s;
      */
     public function getModifyTableDDL(TableDiff $tableDiff)
     {
-        $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (false
-            || $tableDiff->hasModifiedFks()
+        $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (
+            $tableDiff->hasModifiedFks()
             || $tableDiff->hasModifiedIndices()
             || $tableDiff->hasModifiedColumns()
             || $tableDiff->hasRenamedColumns()

@@ -58,7 +58,7 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-
@@ -358,7 +358,7 @@ parameters:
 
 		-
 			message: "#^Left side of \\|\\| is always false\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Platform/SqlitePlatform.php
 
 		-
@@ -542,6 +542,26 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
+			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:asort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:asort\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
+			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:ksort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:ksort\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
+			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:natcasesort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:natcasesort\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
+			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:natsort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:natsort\\(\\)$#"
+			count: 1
+			path: src/Propel/Runtime/Collection/CollectionIterator.php
+
+		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
@@ -578,11 +598,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/OnDemandCollection.php
-
-		-
-			message: "#^Method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should return Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator but returns Iterator\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 

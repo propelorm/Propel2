@@ -78,8 +78,6 @@ abstract class AbstractSchemaParserTest extends BookstoreTestBase
         $currentDriverName = $this->con->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($currentDriverName !== $expectedDriverName) {
             $this->markTestSkipped("This test is designed for $expectedDriverName and cannot be run with $currentDriverName");
-
-            return;
         }
 
         if ($this->parser === null) {

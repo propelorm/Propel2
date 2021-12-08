@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Builder;
 
+use BadMethodCallException;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Generator\Builder\Om\AbstractObjectBuilder;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
@@ -449,10 +450,16 @@ abstract class DataModelBuilder
     /**
      * Returns the current Table object.
      *
+     * @throws \BadMethodCallException
+     *
      * @return \Propel\Generator\Model\Table
      */
     public function getTable()
     {
+        if ($this->table === null) {
+            throw new BadMethodCallException('No $table set to return.');
+        }
+
         return $this->table;
     }
 
@@ -465,7 +472,7 @@ abstract class DataModelBuilder
     {
         if ($this->platform === null) {
             // try to load the platform from the table
-            $table = $this->getTable();
+            $table = $this->table;
             if ($table && $database = $table->getDatabase()) {
                 $this->setPlatform($database->getPlatform());
             }
@@ -513,9 +520,7 @@ abstract class DataModelBuilder
      */
     public function getDatabase()
     {
-        if ($this->getTable()) {
-            return $this->getTable()->getDatabase();
-        }
+        return $this->getTable()->getDatabase();
     }
 
     /**

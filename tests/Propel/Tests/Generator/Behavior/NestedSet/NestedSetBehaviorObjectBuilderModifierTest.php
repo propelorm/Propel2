@@ -368,7 +368,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
 
         $count = $con->getQueryCount();
         $parent = $t5->getParent($con);
-        $parent = $t5->getParent($con);
 
         $this->assertEquals($count + 1, $con->getQueryCount(), 'getParent() only issues a query once');
         $this->assertEquals('t3', $parent->getTitle(), 'getParent() returns the parent Node');
@@ -531,7 +530,6 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
         [$t1, $t2, $t3, $t4, $t5, $t6, $t7] = $this->initTree();
         $con = Propel::getServiceContainer()->getReadConnection(NestedSetTable9TableMap::DATABASE_NAME);
         $count = $con->getQueryCount();
-        $children = $t3->getChildren(null, $con);
         $children = $t3->getChildren(null, $con);
         $this->assertEquals($count + 1, $con->getQueryCount(), 'getChildren() only issues a query once');
         $expected = [

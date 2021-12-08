@@ -43,7 +43,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     protected $name;
 
     /**
-     * Whether or not the debug is enabled
+     * Whether the debug is enabled
      *
      * @var bool
      */

@@ -23,7 +23,7 @@ use Traversable;
 class OnDemandCollection extends Collection
 {
     /**
-     * @var \Iterator
+     * @var \Propel\Runtime\Collection\OnDemandIterator
      */
     private $lastIterator;
 

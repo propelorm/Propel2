@@ -335,7 +335,7 @@ class TableMap
     }
 
     /**
-     * Set whether or not to use Id generator for primary key.
+     * Set whether to use Id generator for primary key.
      *
      * @param bool $bit
      *
@@ -357,7 +357,7 @@ class TableMap
     }
 
     /**
-     * Set whether or not to this table uses single table inheritance
+     * Set whether to this table uses single table inheritance
      *
      * @param bool $bit
      *

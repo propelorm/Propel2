@@ -18,7 +18,7 @@ class Profiler
     /**
      * @var float
      */
-    protected $slowTreshold;
+    protected $slowThreshold;
 
     /**
      * @var string
@@ -62,13 +62,13 @@ class Profiler
     ];
 
     /**
-     * @param float $slowTreshold
+     * @param float $slowThreshold
      * @param string $innerGlue
      * @param string $outerGlue
      */
-    public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
+    public function __construct($slowThreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
     {
-        $this->slowTreshold = $slowTreshold;
+        $this->slowThreshold = $slowThreshold;
         $this->innerGlue = $innerGlue;
         $this->outerGlue = $outerGlue;
     }
@@ -76,13 +76,13 @@ class Profiler
     /**
      * Set the duration which triggers the 'slow' label on details.
      *
-     * @param int $slowTreshold duration in seconds
+     * @param int $slowThreshold duration in seconds
      *
      * @return void
      */
-    public function setSlowTreshold($slowTreshold)
+    public function setSlowThreshold($slowThreshold)
     {
-        $this->slowTreshold = $slowTreshold;
+        $this->slowThreshold = $slowThreshold;
     }
 
     /**
@@ -127,7 +127,7 @@ class Profiler
      * @example
      * <code>
      * $profiler->setConfiguration(array(
-     *   'slowTreshold' => 0.1,
+     *   'slowThreshold' => 0.1,
      *   'details' => array(
      *       'time' => array(
      *           'name' => 'Time',
@@ -161,8 +161,8 @@ class Profiler
      */
     public function setConfiguration($profilerConfiguration)
     {
-        if (isset($profilerConfiguration['slowTreshold'])) {
-            $this->setSlowTreshold($profilerConfiguration['slowTreshold']);
+        if (isset($profilerConfiguration['slowThreshold'])) {
+            $this->setSlowThreshold($profilerConfiguration['slowThreshold']);
         }
         if (isset($profilerConfiguration['details'])) {
             $this->setDetails($profilerConfiguration['details']);
@@ -185,7 +185,7 @@ class Profiler
     public function getConfiguration()
     {
         return [
-            'slowTreshold' => $this->slowTreshold,
+            'slowThreshold' => $this->slowThreshold,
             'details' => $this->details,
             'innerGlue' => $this->innerGlue,
             'outerGlue' => $this->outerGlue,
@@ -205,7 +205,7 @@ class Profiler
      */
     public function isSlow()
     {
-        return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
+        return microtime(true) - $this->snapshot['microtime'] > $this->slowThreshold;
     }
 
     /**
@@ -240,8 +240,8 @@ class Profiler
     {
         $profile = '';
 
-        if ($this->slowTreshold) {
-            if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowTreshold) {
+        if ($this->slowThreshold) {
+            if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowThreshold) {
                 $profile .= 'SLOW ';
             } else {
                 $profile .= '     ';

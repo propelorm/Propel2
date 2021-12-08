@@ -65,7 +65,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
-     * @param string|null $dbName The dabase name
+     * @param string|null $dbName The database name
      * @param string|null $modelName The phpName of a model, e.g. 'Book'
      * @param string|null $modelAlias The alias for the model in this query, e.g. 'b'
      */

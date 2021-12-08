@@ -71,7 +71,7 @@ class XmlDumper implements DumperInterface
      * Dumps a single Schema model into an XML formatted version.
      *
      * @param \Propel\Generator\Model\Schema $schema The schema object
-     * @param bool $doFinalInitialization Whether or not to validate the schema
+     * @param bool $doFinalInitialization Whether to validate the schema
      *
      * @return string
      */

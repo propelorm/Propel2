@@ -218,7 +218,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether or not the onUpdate behavior is set.
+     * Returns whether the onUpdate behavior is set.
      *
      * @return bool
      */
@@ -228,7 +228,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether or not the onDelete behavior is set.
+     * Returns whether the onDelete behavior is set.
      *
      * @return bool
      */
@@ -918,7 +918,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether or not this foreign key relies on more than one
+     * Returns whether this foreign key relies on more than one
      * column binding.
      *
      * @return bool
@@ -983,7 +983,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether or not this foreign key is also the primary key of
+     * Returns whether this foreign key is also the primary key of
      * the local table.
      *
      * @return bool True if all local columns are at the same time a primary key
@@ -999,7 +999,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Sets whether or not this foreign key should have its creation SQL
+     * Sets whether this foreign key should have its creation SQL
      * generated.
      *
      * @param bool $skip
@@ -1012,7 +1012,7 @@ class ForeignKey extends MappingModel
     }
 
     /**
-     * Returns whether or not the SQL generation must be skipped for this
+     * Returns whether the SQL generation must be skipped for this
      * foreign key.
      *
      * @return bool

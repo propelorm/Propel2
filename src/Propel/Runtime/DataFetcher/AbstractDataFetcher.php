@@ -51,8 +51,10 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     {
         $next = $this->fetch();
 
-        if ($next) {
-            return $index === null ? current($next) : ($next[$index] ?? null);
+        if (!$next) {
+            return null;
         }
+
+        return $index === null ? current($next) : ($next[$index] ?? null);
     }
 }
