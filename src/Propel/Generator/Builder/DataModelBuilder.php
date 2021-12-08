@@ -450,16 +450,10 @@ abstract class DataModelBuilder
     /**
      * Returns the current Table object.
      *
-     * @throws \BadMethodCallException
-     *
      * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
-        if ($this->table === null) {
-            throw new BadMethodCallException('No $table set to return.');
-        }
-
         return $this->table;
     }
 

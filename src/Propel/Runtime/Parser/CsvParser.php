@@ -234,10 +234,10 @@ class CsvParser extends AbstractParser
      */
     public function toArray($data, $rootKey = null, $isList = false, $includeHeading = true)
     {
-        $rows = explode($this->lineTerminator, $data); // @phpstan-ignore-line
+        $rows = explode($this->lineTerminator, $data);
         if ($includeHeading) {
             $heading = array_shift($rows);
-            $keys = explode($this->delimiter, $heading); // @phpstan-ignore-line
+            $keys = explode($this->delimiter, $heading);
         } else {
             $keys = range(0, count($this->getColumns($rows[0])) - 1);
         }
