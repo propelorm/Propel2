@@ -151,6 +151,8 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      * @param \Propel\Generator\Model\Table $table
      * @param string $type
      *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
      * @return \Propel\Generator\Builder\DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
