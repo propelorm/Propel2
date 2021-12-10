@@ -48,6 +48,7 @@
         "bin/propel"
     ],
     "scripts": {
+        "testsuite": "composer run test && composer run cs-check && composer run stan && composer run psalm",
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "stan": "vendor/bin/phpstan analyze",
