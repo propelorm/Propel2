@@ -233,7 +233,7 @@ class GeneratorConfigTest extends TestCase
      */
     public function testGetConfiguredBuilderWrongTypeThrowsException()
     {
-        $this->expectException(ClassNotFoundException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $stubTable = $this->getMockBuilder('\\Propel\\Generator\\Model\\Table')->getMock();
         $actual = $this->generatorConfig->getConfiguredBuilder($stubTable, 'bad_type');
