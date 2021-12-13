@@ -94,10 +94,8 @@ class TableMap
 
     /**
      * The name of the table
-     *
-     * @var string
      */
-    protected $tableName;
+    protected ?string $tableName = null;
 
     /**
      * The PHP name of the table
@@ -187,14 +185,16 @@ class TableMap
      * @param string|null $name
      * @param \Propel\Runtime\Map\DatabaseMap|null $dbMap
      */
-    public function __construct($name = null, $dbMap = null)
+    public function __construct(?string $name = null, ?DatabaseMap $dbMap = null)
     {
         if ($name !== null) {
             $this->setName($name);
         }
+
         if ($dbMap !== null) {
             $this->setDatabaseMap($dbMap);
         }
+
         $this->initialize();
     }
 
@@ -233,11 +233,11 @@ class TableMap
     /**
      * Set the name of the Table.
      *
-     * @param string $name The name of the table.
+     * @param string|null $name The name of the table.
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(?string $name)
     {
         $this->tableName = $name;
     }
@@ -245,9 +245,9 @@ class TableMap
     /**
      * Get the name of the Table.
      *
-     * @return string A String with the name of the table.
+     * @return string|null A String with the name of the table.
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->tableName;
     }

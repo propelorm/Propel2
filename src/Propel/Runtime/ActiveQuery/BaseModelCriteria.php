@@ -244,7 +244,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     public function getModelShortName()
     {
-        return static::getShortName($this->modelName);
+        return static::getShortName($this->modelName ?: '');
     }
 
     /**
@@ -254,7 +254,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return string The short class name
      */
-    public static function getShortName($fullyQualifiedClassName)
+    public static function getShortName(string $fullyQualifiedClassName)
     {
         $namespaceParts = explode('\\', $fullyQualifiedClassName);
 
@@ -298,7 +298,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return \Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $res = $this->find(null); // use the default connection
         if ($res instanceof IteratorAggregate) {

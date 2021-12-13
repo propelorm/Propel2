@@ -437,7 +437,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         if (isset($this->data[$offset])) {
             if (is_object($this->data[$offset])) {
@@ -488,7 +488,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!is_object($value)) {
             parent::offsetSet($offset, $value);

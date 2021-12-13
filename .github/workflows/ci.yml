@@ -5,19 +5,23 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
 
 jobs:
     testsuite:
+        name: "Test Suite"
         runs-on: ubuntu-18.04
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.3', '7.4', '8.1' ]
+                php-version: [ '7.4', '8.0', '8.1' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '4-min', '4-max', '5-min', '5-max' ]
                 exclude:
-                  - php-version: '8.1'
-                    symfony-version: '4-min'
+                  - symfony-version: '4-min'
+                    php-version: '8.0'
+                  - symfony-version: '4-min'
+                    php-version: '8.1'
         steps:
             - name: Install PostgreSQL latest
               if: matrix.db-type == 'pgsql' && matrix.php-version != '7.3'
@@ -120,10 +124,10 @@ jobs:
     code-style-and-static-analysis:
         runs-on: ubuntu-18.04
         steps:
-            - name: Setup PHP 7.4
+            - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 7.4
+                  php-version: 8.1
                   extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
                   coverage: pcov
 

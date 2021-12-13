@@ -239,9 +239,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Returns the user-defined namespace for this table,
      * or the database namespace otherwise.
      *
-     * @return string
+     * @return string|null Currently returns null in some cases - should be fixed
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         return $this->getTable()->getNamespace();
     }
@@ -367,6 +367,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected function needAliasForClassName($class, $classNamespace)
     {
+        // Should remove this check by not allowing nullable return values in getNamespace
+        if ($this->getNamespace() === null) {
+            return false;
+        }
+
         $builderNamespace = trim($this->getNamespace(), '\\');
 
         if ($classNamespace == $builderNamespace) {

@@ -151,11 +151,17 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      * @param \Propel\Generator\Model\Table $table
      * @param string $type
      *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
      * @return \Propel\Generator\Builder\DataModelBuilder
      */
     public function getConfiguredBuilder(Table $table, $type)
     {
-        $classname = $this->getConfigProperty('generator.objectModel.builders.' . $type);
+        $configProperty = 'generator.objectModel.builders.' . $type;
+        $classname = $this->getConfigProperty($configProperty);
+        if ($classname === null) {
+            throw new InvalidArgumentException(sprintf('Unable to get config property: "%s"', $configProperty));
+        }
 
         /** @var \Propel\Generator\Builder\DataModelBuilder $builder */
         $builder = $this->getInstance($classname, $table);
@@ -280,7 +286,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      *
      * @return object
      */
-    private function getInstance($className, $arguments = null, $interfaceName = null)
+    private function getInstance(string $className, $arguments = null, $interfaceName = null): object
     {
         if (!class_exists($className)) {
             throw new ClassNotFoundException("Class $className not found.");

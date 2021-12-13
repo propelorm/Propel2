@@ -38,9 +38,9 @@ class QueryBuilder extends AbstractOMBuilder
     /**
      * Returns the namepace for the query object classes.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         if ($namespace = parent::getNamespace()) {
                 return $namespace . '\\Base';

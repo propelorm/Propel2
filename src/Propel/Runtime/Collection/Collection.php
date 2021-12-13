@@ -20,6 +20,7 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Propel;
 use Serializable;
+use Traversable;
 
 /**
  * Class for iterating over a list of Propel elements
@@ -75,6 +76,24 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return [$this->serialize()];
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->unserialize($data[0]);
+    }
+
+    /**
      * @param mixed $value
      *
      * @return void
@@ -89,21 +108,26 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @param mixed $offset
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }
+
+        return null;
     }
 
     /**
@@ -112,7 +136,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->data[] = $value;
@@ -126,7 +150,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
@@ -174,7 +198,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return \Propel\Runtime\Collection\CollectionIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new CollectionIterator($this);
     }
@@ -184,7 +208,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
@@ -405,8 +429,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     // Serializable interface
 
     /**
-     * @return string
+     * @return string|null
      */
+    #[\ReturnTypeWillChange]
     public function serialize()
     {
         $repr = [
@@ -423,6 +448,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function unserialize($data)
     {
         $repr = unserialize($data);

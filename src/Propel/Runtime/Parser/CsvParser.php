@@ -42,24 +42,24 @@ class CsvParser extends AbstractParser
      *
      * @var string
      */
-    public $delimiter = ',';
+    public string $delimiter = ',';
 
     /**
      * @phpstan-var non-empty-string
      *
      * @var string
      */
-    public $lineTerminator = "\r\n";
+    public string $lineTerminator = "\r\n";
 
     /**
      * @var string
      */
-    public $quotechar = '"';
+    public string $quotechar = '"';
 
     /**
      * @var string
      */
-    public $escapechar = '\\';
+    public string $escapechar = '\\';
 
     /**
      * @var int

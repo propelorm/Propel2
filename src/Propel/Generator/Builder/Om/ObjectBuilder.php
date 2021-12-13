@@ -50,9 +50,9 @@ class ObjectBuilder extends AbstractObjectBuilder
      *
      * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         if ($namespace = parent::getNamespace()) {
             return $namespace . '\\Base';
@@ -317,7 +317,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         );
 
         $baseClass = $this->getBaseClass();
-        if (strrpos($baseClass, '\\') !== false) {
+        if ($baseClass && strrpos($baseClass, '\\') !== false) {
             $this->declareClasses($baseClass);
         }
 

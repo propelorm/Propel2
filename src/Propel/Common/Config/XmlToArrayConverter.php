@@ -87,7 +87,7 @@ class XmlToArrayConverter
 
             // if it's not an array, then it was empty, thus a value/string
             if ($child === []) {
-                $child = static::getConvertedXmlValue($v);
+                $child = self::getConvertedXmlValue($v);
             }
 
             // add the children attributes as if they where children
@@ -104,7 +104,7 @@ class XmlToArrayConverter
                     if (is_string($child)) {
                         $child = [];
                     }
-                    $child[$ak] = static::getConvertedXmlValue($av);
+                    $child[$ak] = self::getConvertedXmlValue($av);
                 }
             }
 

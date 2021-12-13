@@ -13,6 +13,7 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Map\TableMap;
+use Traversable;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -112,7 +113,7 @@ class OnDemandCollection extends Collection
     /**
      * @return \Propel\Runtime\Collection\OnDemandIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->lastIterator;
     }
@@ -126,18 +127,21 @@ class OnDemandCollection extends Collection
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @param int $offset
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
@@ -151,7 +155,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -163,7 +167,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -173,8 +177,9 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return string
+     * @return string|null
      */
+    #[\ReturnTypeWillChange]
     public function serialize()
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
@@ -187,6 +192,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function unserialize($data)
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
@@ -199,7 +205,7 @@ class OnDemandCollection extends Collection
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->getIterator()->count();
     }

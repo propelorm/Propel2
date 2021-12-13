@@ -28,7 +28,7 @@ class IniFileLoader extends FileLoader
      *
      * @var string
      */
-    private $nestSeparator = '.';
+    private string $nestSeparator = '.';
 
     /**
      * Returns true if this class supports the given resource.

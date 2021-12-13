@@ -32,7 +32,7 @@ class DatabaseMap
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Tables in the database, using table name as key
@@ -61,7 +61,7 @@ class DatabaseMap
      *
      * @return string The name of the database.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -92,7 +92,7 @@ class DatabaseMap
         $table->setDatabaseMap($this);
 
         $tableName = $table->getName();
-        if (!$this->hasTable($tableName)) {
+        if ($tableName && !$this->hasTable($tableName)) {
             $this->tables[$tableName] = $table;
         }
 
@@ -125,7 +125,7 @@ class DatabaseMap
      *
      * @return bool True if the database contains the table.
      */
-    public function hasTable($name)
+    public function hasTable(string $name)
     {
         if (strpos($name, '.') > 0) {
             $name = substr($name, 0, strpos($name, '.'));

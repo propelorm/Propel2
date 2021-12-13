@@ -8,7 +8,12 @@
 
 namespace Propel\Generator\Builder;
 
-use BadMethodCallException;
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\Om\AbstractObjectBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Builder\Om\MultiExtendObjectBuilder;
+use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Table;
@@ -34,84 +39,84 @@ abstract class DataModelBuilder
      *
      * @var \Propel\Generator\Model\Table
      */
-    private $table;
+    private Table $table;
 
     /**
      * The generator config object holding build properties, etc.
      *
-     * @var \Propel\Generator\Config\GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    private $generatorConfig;
+    private ?GeneratorConfigInterface $generatorConfig = null;
 
     /**
      * An array of warning messages that can be retrieved for display.
      *
      * @var array string[]
      */
-    private $warnings = [];
+    private array $warnings = [];
 
     /**
      * Object builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder|null
      */
-    private $objectBuilder;
+    private ?ObjectBuilder $objectBuilder = null;
 
     /**
      * Stub Object builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractObjectBuilder|null
      */
-    private $stubObjectBuilder;
+    private ?AbstractObjectBuilder $stubObjectBuilder = null;
 
     /**
      * Query builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    private $queryBuilder;
+    private ?AbstractOMBuilder $queryBuilder = null;
 
     /**
      * Stub Query builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    private $stubQueryBuilder;
+    private ?AbstractOMBuilder $stubQueryBuilder = null;
 
     /**
      * TableMap builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\TableMapBuilder
+     * @var \Propel\Generator\Builder\Om\TableMapBuilder|null
      */
-    protected $tablemapBuilder;
+    protected ?TableMapBuilder $tablemapBuilder = null;
 
     /**
      * Stub Interface builder class for current table.
      *
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    private $interfaceBuilder;
+    private ?AbstractOMBuilder $interfaceBuilder = null;
 
     /**
      * Stub child object for current table.
      *
-     * @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder
+     * @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder|null
      */
-    private $multiExtendObjectBuilder;
+    private ?MultiExtendObjectBuilder $multiExtendObjectBuilder = null;
 
     /**
      * The Pluralizer class to use.
      *
-     * @var \Propel\Common\Pluralizer\PluralizerInterface
+     * @var \Propel\Common\Pluralizer\PluralizerInterface|null
      */
-    private $pluralizer;
+    private ?PluralizerInterface $pluralizer = null;
 
     /**
      * The platform class
      *
      * @var \Propel\Generator\Platform\PlatformInterface
      */
-    protected $platform;
+    protected ?PlatformInterface $platform = null;
 
     /**
      * Creates new instance of DataModelBuilder subclass.
@@ -156,9 +161,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Object builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\ObjectBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractObjectBuilder|null
      */
-    public function getStubObjectBuilder()
+    public function getStubObjectBuilder(): ?AbstractObjectBuilder
     {
         if ($this->stubObjectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -172,9 +177,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing Query builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\ObjectBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): ?AbstractOMBuilder
     {
         if ($this->queryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -188,9 +193,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Query builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\ObjectBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    public function getStubQueryBuilder()
+    public function getStubQueryBuilder(): ?AbstractOMBuilder
     {
         if ($this->stubQueryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -220,9 +225,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Interface builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\ObjectBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
      */
-    public function getInterfaceBuilder()
+    public function getInterfaceBuilder(): ?AbstractOMBuilder
     {
         if ($this->interfaceBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -444,16 +449,10 @@ abstract class DataModelBuilder
     /**
      * Returns the current Table object.
      *
-     * @throws \BadMethodCallException
-     *
      * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
-        if ($this->table === null) {
-            throw new BadMethodCallException('No $table set to return.');
-        }
-
         return $this->table;
     }
 

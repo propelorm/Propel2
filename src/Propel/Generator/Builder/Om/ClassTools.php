@@ -20,12 +20,16 @@ class ClassTools
     /**
      * Gets just classname, given a dot-path to class.
      *
-     * @param string $qualifiedName
+     * @param string|null $qualifiedName
      *
-     * @return string
+     * @return string|null
      */
-    public static function classname($qualifiedName)
+    public static function classname(?string $qualifiedName): ?string
     {
+        if ($qualifiedName === null) {
+            return null;
+        }
+
         if (false !== $pos = strrpos($qualifiedName, '.')) {
             return substr($qualifiedName, $pos + 1); // start just after '.'
         } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {

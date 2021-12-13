@@ -80,7 +80,7 @@ class OnDemandIterator implements Iterator
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->dataFetcher->count();
     }
@@ -91,10 +91,13 @@ class OnDemandIterator implements Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
+     * @psalm-suppress ReservedWord
+     *
      * @see ObjectFormatter::getAllObjectsFromRow()
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
@@ -103,8 +106,11 @@ class OnDemandIterator implements Iterator
     /**
      * Gets the current key in the iterator
      *
+     * @psalm-suppress ReservedWord
+     *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->currentKey;
@@ -116,7 +122,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
@@ -134,7 +140,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         // check that the hydration can begin
         if ($this->formatter === null) {
@@ -154,7 +160,7 @@ class OnDemandIterator implements Iterator
     /**
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return (bool)$this->isValid;
     }

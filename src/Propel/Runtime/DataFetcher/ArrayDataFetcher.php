@@ -25,7 +25,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         if ($this->dataObject !== null) {
             next($this->dataObject);
@@ -33,8 +33,11 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->dataObject === null ? null : current($this->dataObject);
@@ -43,7 +46,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function fetch()
+    public function fetch(): ?array
     {
         $row = $this->valid() ? $this->current() : null;
         $this->next();
@@ -52,8 +55,11 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->dataObject === null ? null : key($this->dataObject);
@@ -62,7 +68,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
@@ -70,7 +76,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->dataObject === null) {
             return;
@@ -90,7 +96,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
         return $this->dataObject === null ? null : count($this->dataObject);
     }

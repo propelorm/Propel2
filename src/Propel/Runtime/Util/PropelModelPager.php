@@ -13,6 +13,7 @@ use IteratorAggregate;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
+use Traversable;
 
 /**
  * Implements a pager based on a ModelCriteria
@@ -434,7 +435,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     /**
      * @return \Propel\Runtime\Collection\CollectionIterator|\Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->getResults()->getIterator();
     }
@@ -446,7 +447,7 @@ class PropelModelPager implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->getResults());
     }

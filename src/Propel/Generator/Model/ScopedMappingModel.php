@@ -20,22 +20,22 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * @var string|null
      */
-    protected $package;
+    protected ?string $package = null;
 
     /**
      * @var bool
      */
-    protected $packageOverridden = false;
+    protected bool $packageOverridden = false;
 
     /**
      * @var string|null
      */
-    protected $namespace;
+    protected ?string $namespace = null;
 
     /**
      * @var string|null
      */
-    protected $schema;
+    protected ?string $schema = null;
 
     /**
      * Constructs a new scoped model object.
@@ -92,13 +92,15 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Sets the namespace.
      *
-     * @param string $namespace
+     * @param string|null $namespace
      *
      * @return void
      */
-    public function setNamespace($namespace)
+    public function setNamespace(?string $namespace)
     {
-        $namespace = rtrim(trim($namespace), '\\');
+        $namespace = $namespace === null
+            ? ''
+            : rtrim(trim($namespace), '\\');
 
         if ($namespace === $this->namespace) {
             return;
@@ -171,9 +173,9 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns the schema name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchema()
+    public function getSchema(): ?string
     {
         return $this->schema;
     }

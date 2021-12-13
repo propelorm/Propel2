@@ -105,6 +105,10 @@ abstract class MappingModel implements MappingModelInterface
             return (bool)$value;
         }
 
+        if ($value === null) {
+            return false;
+        }
+
         return in_array(strtolower($value), ['true', 't', 'y', 'yes'], true);
     }
 
@@ -113,7 +117,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return string|null
      */
-    protected function getDefaultValueForArray($stringValue)
+    protected function getDefaultValueForArray(string $stringValue)
     {
         $stringValue = trim($stringValue);
 

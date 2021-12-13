@@ -39,7 +39,9 @@ class SchemaReader
     private $schema;
 
     /**
-     * @var resource
+     * @psalm-suppress UndefinedDocblockClass
+     * @phpstan-ignore-next-line
+     * @var \XMLParser|resource|null
      */
     private $parser;
 
@@ -182,10 +184,11 @@ class SchemaReader
         $this->currentXmlFile = $xmlFile;
 
         $parserStash = $this->parser;
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
         xml_set_object($this->parser, $this);
-        xml_set_element_handler($this->parser, 'startElement', 'endElement');
+        xml_set_element_handler($this->parser, [$this, 'startElement'], [$this, 'endElement']);
         if (!xml_parse($this->parser, $xmlString)) {
             throw new SchemaException(
                 sprintf(
