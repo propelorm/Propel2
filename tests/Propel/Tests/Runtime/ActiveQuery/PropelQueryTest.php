@@ -176,4 +176,16 @@ class PropelQueryTest extends BookstoreTestBase
         $object = Table6Query::create()->findPk($key);
         $this->assertSame($object, Table6TableMap::getInstanceFromPool($key));
     }
+
+    /**
+     * @return void
+     */
+    public function testFindShouldNotThrowExceptionWhenSelectAndClearMethodsWereExecuted()
+    {
+        $bookQuery = BookQuery::create();
+
+        $bookQuery->select(['Title'])->find();
+
+        $bookQuery->clear()->find();
+    }
 }
