@@ -994,6 +994,7 @@ class ModelCriteria extends BaseModelCriteria
         $this->primaryCriteria = null;
         $this->formatter = null;
         $this->select = null;
+        $this->isSelfSelected = false;
 
         return $this;
     }
