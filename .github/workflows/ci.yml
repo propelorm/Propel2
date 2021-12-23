@@ -16,12 +16,16 @@ jobs:
             matrix:
                 php-version: [ '7.4', '8.0', '8.1' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
-                symfony-version: [ '4-min', '4-max', '5-min', '5-max' ]
+                symfony-version: [ '4-min', '4-max', '5-min', '5-max', '6-min', '6-max' ]
                 exclude:
                   - symfony-version: '4-min'
                     php-version: '8.0'
                   - symfony-version: '4-min'
                     php-version: '8.1'
+                  - symfony-version: '6-min'
+                    php-version: '7.4'
+                  - symfony-version: '6-max'
+                    php-version: '7.4'
         steps:
             - name: Install PostgreSQL latest
               if: matrix.db-type == 'pgsql' && matrix.php-version != '7.3'
