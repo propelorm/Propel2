@@ -10,7 +10,6 @@ namespace Propel\Generator\Command;
 
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Command\Console\Input\ArrayInput;
-use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Generator\Command\Helper\ConsoleHelper3;
 use Propel\Generator\Command\Helper\ConsoleHelperInterface;
 use Propel\Runtime\Adapter\AdapterFactory;
@@ -411,12 +410,8 @@ class InitCommand extends AbstractCommand
      */
     protected function createConsoleHelper(InputInterface $input, OutputInterface $output)
     {
-        /* Check if it runs in Symfony3 env — than use QuestionHelper, because DialogHelper is absent */
-        if (class_exists('\Symfony\Component\Console\Helper\QuestionHelper')) {
-            $helper = new ConsoleHelper3($input, $output);
-        } else {
-            $helper = new ConsoleHelper($input, $output);
-        }
+        $helper = new ConsoleHelper3($input, $output);
+
         $this->getHelperSet()->set($helper);
 
         return $helper;
