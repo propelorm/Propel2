@@ -443,11 +443,6 @@
       <code>$param[0]</code>
     </InvalidArrayAccess>
   </file>
-  <file src="src/Propel/Generator/Command/Helper/ConsoleHelper.php">
-    <UndefinedClass occurrences="1">
-      <code>Symfony23DialogHelper</code>
-    </UndefinedClass>
-  </file>
   <file src="src/Propel/Generator/Command/Helper/ConsoleHelper3.php">
     <InvalidReturnType occurrences="2">
       <code>writeBlock</code>
@@ -455,15 +450,6 @@
     </InvalidReturnType>
   </file>
   <file src="src/Propel/Generator/Command/InitCommand.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$helper</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>\Propel\Generator\Command\Helper\ConsoleHelperInterface</code>
-    </InvalidReturnType>
-    <MissingDependency occurrences="1">
-      <code>ConsoleHelper</code>
-    </MissingDependency>
     <NullArgument occurrences="1">
       <code>$e</code>
     </NullArgument>
