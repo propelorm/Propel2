@@ -31,5 +31,15 @@
                 <referencedMethod name="Symfony\Component\Config\Definition\Builder\TreeBuilder::root"/>
             </errorLevel>
         </UndefinedMethod>
+        <!-- Workaround for https://github.com/vimeo/psalm/issues/7026 -->
+        <ReservedWord errorLevel="suppress">
+            <errorLevel type="suppress">
+                <file name="src/Propel/Common/Config/ConfigurationManager.php" />
+                <file name="src/Propel/Common/Config/Loader/YamlFileLoader.php" />
+                <file name="src/Propel/Common/Config/PropelConfiguration.php" />
+                <file name="src/Propel/Generator/Behavior/Validate/ValidateBehavior.php" />
+                <file name="src/Propel/Runtime/Parser/YamlParser.php" />
+            </errorLevel>
+        </ReservedWord>
     </issueHandlers>
 </psalm>
