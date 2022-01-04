@@ -9,8 +9,7 @@
 namespace Propel\Generator\Command;
 
 use Propel\Generator\Builder\Util\PropelTemplate;
-use Propel\Generator\Command\Helper\ConsoleHelper3;
-use Propel\Generator\Command\Helper\ConsoleHelperInterface;
+use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\Exception\ConnectionException;
@@ -64,7 +63,9 @@ class InitCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $consoleHelper = $this->createConsoleHelper($input, $output);
+        $consoleHelper = new ConsoleHelper($input, $output);
+        $this->getHelperSet()->set($consoleHelper);
+
         $options = [];
 
         $consoleHelper->writeBlock('Propel 2 Initializer');
@@ -197,11 +198,11 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param \Propel\Generator\Command\Helper\ConsoleHelper $consoleHelper
      *
      * @return string
      */
-    private function initMysql(ConsoleHelperInterface $consoleHelper)
+    private function initMysql(ConsoleHelper $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host', 'localhost');
         $port = $consoleHelper->askQuestion('Please enter your database port', '3306');
@@ -211,11 +212,11 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param \Propel\Generator\Command\Helper\ConsoleHelper $consoleHelper
      *
      * @return string
      */
-    private function initSqlite(ConsoleHelperInterface $consoleHelper)
+    private function initSqlite(ConsoleHelper $consoleHelper)
     {
         $path = $consoleHelper->askQuestion('Where should the sqlite database be stored?', getcwd() . '/my.app.sq3');
 
@@ -223,11 +224,11 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param \Propel\Generator\Command\Helper\ConsoleHelper $consoleHelper
      *
      * @return string
      */
-    private function initPgsql(ConsoleHelperInterface $consoleHelper)
+    private function initPgsql(ConsoleHelper $consoleHelper)
     {
         $host = $consoleHelper->askQuestion('Please enter your database host (without port)', 'localhost');
         $port = $consoleHelper->askQuestion('Please enter your database port', '5432');
@@ -237,12 +238,12 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param \Propel\Generator\Command\Helper\ConsoleHelper $consoleHelper
      * @param string $rdbms
      *
      * @return mixed
      */
-    private function initDsn(ConsoleHelperInterface $consoleHelper, $rdbms)
+    private function initDsn(ConsoleHelper $consoleHelper, $rdbms)
     {
         switch ($rdbms) {
             case 'oracle':
@@ -332,12 +333,12 @@ class InitCommand extends AbstractCommand
     }
 
     /**
-     * @param \Propel\Generator\Command\Helper\ConsoleHelperInterface $consoleHelper
+     * @param \Propel\Generator\Command\Helper\ConsoleHelper $consoleHelper
      * @param array $options
      *
      * @return bool
      */
-    private function testConnection(ConsoleHelperInterface $consoleHelper, array $options)
+    private function testConnection(ConsoleHelper $consoleHelper, array $options)
     {
         $adapter = AdapterFactory::create($options['rdbms']);
 
@@ -400,20 +401,5 @@ class InitCommand extends AbstractCommand
         $this->getApplication()->setAutoExit(true);
 
         return $schema;
-    }
-
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return \Propel\Generator\Command\Helper\ConsoleHelperInterface
-     */
-    protected function createConsoleHelper(InputInterface $input, OutputInterface $output)
-    {
-        $helper = new ConsoleHelper3($input, $output);
-
-        $this->getHelperSet()->set($helper);
-
-        return $helper;
     }
 }

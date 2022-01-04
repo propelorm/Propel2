@@ -15,7 +15,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
-class ConsoleHelper3 extends QuestionHelper implements ConsoleHelperInterface
+class ConsoleHelper extends QuestionHelper
 {
     /**
      * @var \Symfony\Component\Console\Input\InputInterface
