@@ -437,12 +437,6 @@
       <code>'startElement'</code>
     </UndefinedFunction>
   </file>
-  <file src="src/Propel/Generator/Command/Console/Input/ArrayInput.php">
-    <InvalidArrayAccess occurrences="2">
-      <code>$key[0]</code>
-      <code>$param[0]</code>
-    </InvalidArrayAccess>
-  </file>
   <file src="src/Propel/Generator/Command/Helper/ConsoleHelper3.php">
     <InvalidReturnType occurrences="2">
       <code>writeBlock</code>
