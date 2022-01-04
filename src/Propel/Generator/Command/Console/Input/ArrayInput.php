@@ -52,7 +52,7 @@ class ArrayInput extends Input
     /**
      * @inheritDoc
      */
-    public function getFirstArgument()
+    public function getFirstArgument(): ?string
     {
         foreach ($this->parameters as $key => $value) {
             if ($key && $key[0] === '-') {
@@ -68,7 +68,7 @@ class ArrayInput extends Input
     /**
      * @inheritDoc
      */
-    public function hasParameterOption($values, $onlyParams = false)
+    public function hasParameterOption($values, $onlyParams = false): bool
     {
         $values = (array)$values;
 
