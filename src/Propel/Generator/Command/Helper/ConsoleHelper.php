@@ -8,11 +8,14 @@
 
 namespace Propel\Generator\Command\Helper;
 
-use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
-class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterface
+class ConsoleHelper extends QuestionHelper
 {
     /**
      * @var \Symfony\Component\Console\Input\InputInterface
@@ -39,7 +42,10 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function askQuestion($question, $default = null, ?array $autocomplete = null)
     {
-        return parent::ask($this->output, $this->formatQuestion($question, $default), $default, $autocomplete);
+        $question = new Question($this->formatQuestion($question, $default), $default);
+        $question->setAutocompleterValues($autocomplete);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
@@ -47,7 +53,11 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function askHiddenResponse($question, $fallback = true)
     {
-        return parent::askHiddenResponse($this->output, $this->formatQuestion($question), $fallback);
+        $question = new Question($this->formatQuestion($question));
+        $question->setHidden(true);
+        $question->setHiddenFallback($fallback);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
@@ -55,7 +65,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function writeSection($text)
     {
-        $this->writeln([
+        $this->output->writeln([
             '',
             $text,
         ]);
@@ -66,6 +76,7 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function writeBlock($text, $style = 'bg=blue;fg=white')
     {
+        /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
         $formatter = $this->getHelperSet()->get('formatter');
         $block = $formatter->formatBlock($text, $style, true);
 
@@ -77,21 +88,9 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function writeSummary($items)
     {
-        $this->writeln('');
+        $this->output->writeln('');
         foreach ($items as $name => $value) {
-            $this->writeln(sprintf('<info>%s</info>: <comment>%s</comment>', $name, $value));
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    private function formatQuestion($question, $default = null)
-    {
-        if ($default) {
-            return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
-        } else {
-            return sprintf('<info>%s</info>: ', $question);
+            $this->output->writeln(sprintf('<info>%s</info>: <comment>%s</comment>', $name, $value));
         }
     }
 
@@ -100,15 +99,16 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
     {
-        return parent::select(
-            $this->output,
-            $this->formatQuestion($question, $default),
-            $choices,
-            $default,
-            $attempts,
-            $errorMessage,
-            $multiselect,
-        );
+        $choiceQuestion = new ChoiceQuestion($this->formatQuestion($question, $default), $choices, $default);
+
+        if ($attempts) {
+            $choiceQuestion->setMaxAttempts($attempts);
+        }
+
+        $choiceQuestion->setErrorMessage($errorMessage);
+        $choiceQuestion->setMultiselect($multiselect);
+
+        return parent::ask($this->input, $this->output, $choiceQuestion);
     }
 
     /**
@@ -116,7 +116,9 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
      */
     public function askConfirmation($question, $default = true)
     {
-        return parent::askConfirmation($this->output, $this->formatQuestion($question, $default ? 'yes' : 'no'), $default);
+        $question = new ConfirmationQuestion($this->formatQuestion($question, $default ? 'yes' : 'no'), $default);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
@@ -157,5 +159,20 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     public function writeln($messages, $options = 0)
     {
         $this->output->writeln($messages, $options);
+    }
+
+    /**
+     * @param string $question
+     * @param string|null $default
+     *
+     * @return string
+     */
+    private function formatQuestion($question, $default = null)
+    {
+        if ($default) {
+            return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
+        } else {
+            return sprintf('<info>%s</info>: ', $question);
+        }
     }
 }
