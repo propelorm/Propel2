@@ -26,7 +26,7 @@ class SluggableBehavior extends Behavior
     private $builder;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'slug_column' => 'slug',
@@ -44,7 +44,7 @@ class SluggableBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
@@ -69,7 +69,7 @@ class SluggableBehavior extends Behavior
      *
      * @return void
      */
-    protected function addUniqueConstraint(Table $table)
+    protected function addUniqueConstraint(Table $table): void
     {
         $unique = new Unique();
         $unique->setName($table->getCommonName() . '_slug');
@@ -85,7 +85,7 @@ class SluggableBehavior extends Behavior
      *
      * @return string The related getter, e.g. 'getSlug'
      */
-    protected function getColumnGetter()
+    protected function getColumnGetter(): string
     {
         return 'get' . $this->getColumnForParameter('slug_column')->getPhpName();
     }
@@ -95,7 +95,7 @@ class SluggableBehavior extends Behavior
      *
      * @return string The related setter, e.g. 'setSlug'
      */
-    protected function getColumnSetter()
+    protected function getColumnSetter(): string
     {
         return 'set' . $this->getColumnForParameter('slug_column')->getPhpName();
     }
@@ -107,7 +107,7 @@ class SluggableBehavior extends Behavior
      *
      * @return string The code to put at the hook
      */
-    public function preSave($builder)
+    public function preSave($builder): string
     {
         $const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'));
         $script = "
@@ -133,7 +133,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods($builder): string
     {
         $this->builder = $builder;
         $script = '';
@@ -155,7 +155,7 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
      *
      * @return void
      */
-    protected function addSlugSetter(&$script)
+    protected function addSlugSetter(&$script): void
     {
         $script .= "
 /**
@@ -176,7 +176,7 @@ public function setSlug(\$v)
      *
      * @return void
      */
-    protected function addSlugGetter(&$script)
+    protected function addSlugGetter(&$script): void
     {
         $script .= "
 /**
@@ -196,7 +196,7 @@ public function getSlug()
      *
      * @return void
      */
-    protected function addCreateSlug(&$script)
+    protected function addCreateSlug(&$script): void
     {
         $script .= "
 /**
@@ -220,7 +220,7 @@ protected function createSlug()
      *
      * @return void
      */
-    protected function addCreateRawSlug(&$script)
+    protected function addCreateRawSlug(&$script): void
     {
         $pattern = $this->getParameter('slug_pattern');
         $script .= "
@@ -247,7 +247,7 @@ protected function createRawSlug()
      *
      * @return void
      */
-    public function addCleanupSlugPart(&$script)
+    public function addCleanupSlugPart(&$script): void
     {
         $script .= "
 /**
@@ -301,7 +301,7 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
      *
      * @return void
      */
-    public function addLimitSlugSize(&$script)
+    public function addLimitSlugSize(&$script): void
     {
         $size = $this->getColumnForParameter('slug_column')->getSize();
         $script .= "
@@ -330,7 +330,7 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
      *
      * @return void
      */
-    public function addMakeSlugUnique(&$script)
+    public function addMakeSlugUnique(&$script): void
     {
         $script .= "
 
@@ -424,7 +424,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $this->builder = $builder;
         $script = '';
@@ -442,7 +442,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
      *
      * @return void
      */
-    protected function addFilterBySlug(&$script)
+    protected function addFilterBySlug(&$script): void
     {
         $script .= "
 /**
@@ -464,7 +464,7 @@ public function filterBySlug(\$slug)
      *
      * @return void
      */
-    protected function addFindOneBySlug(&$script)
+    protected function addFindOneBySlug(&$script): void
     {
         $script .= "
 /**

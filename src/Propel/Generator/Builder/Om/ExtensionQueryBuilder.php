@@ -23,7 +23,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getTable()->getPhpName() . 'Query';
     }
@@ -35,7 +35,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(&$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -82,7 +82,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(&$script): void
     {
     }
 
@@ -93,7 +93,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
         $script .= "
 }
@@ -109,7 +109,7 @@ class $className extends $baseClassName
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = '')
+    public function hasBehaviorModifier($hookName, $modifier = ''): bool
     {
          return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }
@@ -123,7 +123,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
+    public function applyBehaviorModifier($hookName, &$script, $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
@@ -135,7 +135,7 @@ class $className extends $baseClassName
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName)
+    public function getBehaviorContent($contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }

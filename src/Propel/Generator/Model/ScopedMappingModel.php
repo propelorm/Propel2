@@ -49,7 +49,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return bool
      */
-    public function isPackageOverriden()
+    public function isPackageOverriden(): bool
     {
         return $this->packageOverridden;
     }
@@ -61,12 +61,12 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return string
      */
-    abstract protected function getBuildProperty($name);
+    abstract protected function getBuildProperty($name): string;
 
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->setPackage($this->getAttribute('package', $this->package));
         $this->setSchema($this->getAttribute('schema', $this->schema));
@@ -96,7 +96,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return void
      */
-    public function setNamespace(?string $namespace)
+    public function setNamespace(?string $namespace): void
     {
         $namespace = $namespace === null
             ? ''
@@ -122,7 +122,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return bool
      */
-    public function isAbsoluteNamespace($namespace)
+    public function isAbsoluteNamespace($namespace): bool
     {
         return ($namespace && substr($namespace, 0, 1) === '\\');
     }
@@ -146,9 +146,9 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns the package name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return $this->package;
     }
@@ -160,7 +160,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return void
      */
-    public function setPackage($package)
+    public function setPackage($package): void
     {
         if ($package === $this->package) {
             return;
@@ -187,7 +187,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return void
      */
-    public function setSchema($schema)
+    public function setSchema($schema): void
     {
         if ($schema === $this->schema) {
             return;

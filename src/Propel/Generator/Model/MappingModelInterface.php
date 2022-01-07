@@ -42,5 +42,5 @@ interface MappingModelInterface
      *
      * @return void
      */
-    public function loadMapping(array $attributes);
+    public function loadMapping(array $attributes): void;
 }

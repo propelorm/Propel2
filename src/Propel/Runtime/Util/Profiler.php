@@ -80,7 +80,7 @@ class Profiler
      *
      * @return void
      */
-    public function setSlowThreshold($slowThreshold)
+    public function setSlowThreshold($slowThreshold): void
     {
         $this->slowThreshold = $slowThreshold;
     }
@@ -92,7 +92,7 @@ class Profiler
      *
      * @return void
      */
-    public function setDetails($details)
+    public function setDetails($details): void
     {
         $this->details = $details;
     }
@@ -104,7 +104,7 @@ class Profiler
      *
      * @return void
      */
-    public function setInnerGlue($innerGlue)
+    public function setInnerGlue($innerGlue): void
     {
         $this->innerGlue = $innerGlue;
     }
@@ -116,7 +116,7 @@ class Profiler
      *
      * @return void
      */
-    public function setOuterGlue($outerGlue)
+    public function setOuterGlue($outerGlue): void
     {
         $this->outerGlue = $outerGlue;
     }
@@ -159,7 +159,7 @@ class Profiler
      *
      * @return void
      */
-    public function setConfiguration($profilerConfiguration)
+    public function setConfiguration($profilerConfiguration): void
     {
         if (isset($profilerConfiguration['slowThreshold'])) {
             $this->setSlowThreshold($profilerConfiguration['slowThreshold']);
@@ -182,7 +182,7 @@ class Profiler
      *
      * @return array
      */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return [
             'slowThreshold' => $this->slowThreshold,
@@ -195,7 +195,7 @@ class Profiler
     /**
      * @return void
      */
-    public function start()
+    public function start(): void
     {
         $this->snapshot = self::getSnapshot();
     }
@@ -203,7 +203,7 @@ class Profiler
     /**
      * @return bool
      */
-    public function isSlow()
+    public function isSlow(): bool
     {
         return microtime(true) - $this->snapshot['microtime'] > $this->slowThreshold;
     }
@@ -211,7 +211,7 @@ class Profiler
     /**
      * @return string
      */
-    public function getProfile()
+    public function getProfile(): string
     {
         $endSnapshot = self::getSnapshot();
         $startSnapshot = ($this->snapshot === null) ? $endSnapshot : $this->snapshot;
@@ -236,7 +236,7 @@ class Profiler
      *
      * @return string
      */
-    public function getProfileBetween($startSnapshot, $endSnapshot)
+    public function getProfileBetween($startSnapshot, $endSnapshot): string
     {
         $profile = '';
 
@@ -282,7 +282,7 @@ class Profiler
      *
      * @return array
      */
-    public static function getSnapshot()
+    public static function getSnapshot(): array
     {
         return [
             'microtime' => microtime(true),
@@ -299,7 +299,7 @@ class Profiler
      *
      * @return string
      */
-    public static function formatMemory($bytes, $precision = 3)
+    public static function formatMemory($bytes, $precision = 3): string
     {
         $absBytes = abs($bytes);
         $sign = ($bytes == $absBytes) ? 1 : -1;
@@ -321,7 +321,7 @@ class Profiler
      *
      * @return string
      */
-    public static function formatDuration($duration, $precision = 3)
+    public static function formatDuration($duration, $precision = 3): string
     {
         if ($duration < 1) {
             $duration *= 1000;
@@ -341,7 +341,7 @@ class Profiler
      *
      * @return string
      */
-    public static function toPrecision($number, $significantFigures = 3)
+    public static function toPrecision($number, $significantFigures = 3): string
     {
         if ((float)$number === 0.0) {
             return '0';

@@ -70,7 +70,7 @@ class ConfigurationManager
      *
      * @return array
      */
-    public function get()
+    public function get(): array
     {
         return $this->config;
     }
@@ -83,7 +83,7 @@ class ConfigurationManager
      *
      * @return array|null
      */
-    public function getSection($section)
+    public function getSection($section): ?array
     {
         if (!array_key_exists($section, $this->config)) {
             return null;

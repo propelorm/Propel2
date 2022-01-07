@@ -9,6 +9,8 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
 use ReflectionClass;
@@ -49,7 +51,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return \Propel\Runtime\Collection\OnDemandCollection
      */
-    public function format(?DataFetcherInterface $dataFetcher = null)
+    public function format(?DataFetcherInterface $dataFetcher = null): OnDemandCollection
     {
         $this->checkInit();
         if ($dataFetcher) {
@@ -73,7 +75,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return string
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): string
     {
         return '\Propel\Runtime\Collection\OnDemandCollection';
     }
@@ -81,7 +83,7 @@ class OnDemandFormatter extends ObjectFormatter
     /**
      * @return \Propel\Runtime\Collection\OnDemandCollection
      */
-    public function getCollection()
+    public function getCollection(): OnDemandCollection
     {
         $class = $this->getCollectionClassName();
 
@@ -101,7 +103,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row)
+    public function getAllObjectsFromRow($row): ActiveRecordInterface
     {
         $col = 0;
 

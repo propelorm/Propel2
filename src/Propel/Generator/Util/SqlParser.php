@@ -51,7 +51,7 @@ class SqlParser
      *
      * @return void
      */
-    public function setSQL($sql)
+    public function setSQL($sql): void
     {
         $this->sql = $sql;
         $this->pos = 0;
@@ -63,7 +63,7 @@ class SqlParser
      *
      * @return string The SQL string to parse
      */
-    public function getSQL()
+    public function getSQL(): string
     {
         return $this->sql;
     }
@@ -77,7 +77,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    public static function executeString($input, ConnectionInterface $connection)
+    public static function executeString($input, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseString($input), $connection);
     }
@@ -91,7 +91,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    public static function executeFile($file, ConnectionInterface $connection)
+    public static function executeFile($file, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseFile($file), $connection);
     }
@@ -105,7 +105,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    protected static function executeStatements($statements, ConnectionInterface $connection)
+    protected static function executeStatements($statements, ConnectionInterface $connection): int
     {
         $executed = 0;
 
@@ -148,7 +148,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseString($input)
+    public static function parseString($input): array
     {
         $parser = new self();
         $parser->setSQL($input);
@@ -179,7 +179,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseFile($file)
+    public static function parseFile($file): array
     {
         if (!file_exists($file)) {
             return [];
@@ -191,7 +191,7 @@ class SqlParser
     /**
      * @return void
      */
-    public function convertLineFeedsToUnixStyle()
+    public function convertLineFeedsToUnixStyle(): void
     {
         $this->setSQL(str_replace(["\r\n", "\r"], "\n", $this->sql));
     }
@@ -199,7 +199,7 @@ class SqlParser
     /**
      * @return void
      */
-    public function stripSQLCommentLines()
+    public function stripSQLCommentLines(): void
     {
         $this->setSQL(preg_replace([
             '#^\s*(//|--|\#).*(\n|$)#m', // //, --, or # style comments
@@ -212,7 +212,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public function explodeIntoStatements()
+    public function explodeIntoStatements(): array
     {
         $this->pos = 0;
         $sqlStatements = [];
@@ -229,7 +229,7 @@ class SqlParser
      *
      * @return string A SQL statement
      */
-    public function getNextStatement()
+    public function getNextStatement(): string
     {
         $isAfterBackslash = false;
         $isInString = false;

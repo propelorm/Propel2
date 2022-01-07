@@ -43,7 +43,7 @@ class MappingModelTest extends TestCase
 
 class TestableMappingModel extends MappingModel
 {
-    public function getDefaultValueForArray(string $value)
+    public function getDefaultValueForArray(string $value): ?string
     {
         return parent::getDefaultValueForArray($value);
     }
@@ -58,7 +58,7 @@ class TestableMappingModel extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
     }
 }

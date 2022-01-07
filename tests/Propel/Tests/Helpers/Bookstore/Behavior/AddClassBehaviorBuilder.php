@@ -14,7 +14,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
 {
     public $overwrite = true;
 
-    public function getPackage()
+    public function getPackage(): string
     {
         return parent::getPackage();
     }
@@ -24,7 +24,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getStubObjectBuilder()->getUnprefixedClassName() . 'FooClass';
     }
@@ -36,7 +36,7 @@ class AddClassBehaviorBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(&$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -58,7 +58,7 @@ class " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(&$script): void
     {
         $script .= '  // no code';
     }
@@ -70,10 +70,10 @@ class " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

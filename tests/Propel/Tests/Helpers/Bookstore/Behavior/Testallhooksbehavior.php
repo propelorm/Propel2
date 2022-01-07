@@ -55,7 +55,7 @@ class TestAllHooksTableModifier
     /**
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $this->table->addColumn([
             'name' => 'test',

@@ -186,7 +186,7 @@ class QuickBuilder
      *
      * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
-    public function getConfig()
+    public function getConfig(): GeneratorConfigInterface
     {
         if ($this->config === null) {
             $this->config = new QuickGeneratorConfig();

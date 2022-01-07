@@ -34,7 +34,7 @@ class ModelManager extends AbstractManager
      *
      * @return void
      */
-    public function setFilesystem(Filesystem $filesystem)
+    public function setFilesystem(Filesystem $filesystem): void
     {
         $this->filesystem = $filesystem;
     }
@@ -42,7 +42,7 @@ class ModelManager extends AbstractManager
     /**
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         $this->validate();
 
@@ -163,7 +163,7 @@ class ModelManager extends AbstractManager
      *
      * @return int
      */
-    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
+    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true): int
     {
         $path = $builder->getClassFilePath();
         $file = new SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);

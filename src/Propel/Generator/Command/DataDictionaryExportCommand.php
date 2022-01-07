@@ -79,7 +79,7 @@ class DataDictionaryExportCommand extends AbstractCommand
         $recursive = $generatorConfig->getConfigProperty('generator.recursive');
         $schemas = $this->getSchemas($schemaDir, $recursive);
         $manager->setSchemas($schemas);
-        $manager->setLoggerClosure(function ($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output): void {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

@@ -34,7 +34,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getChild()->getClassName();
     }
@@ -44,7 +44,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    public function getPackage()
+    public function getPackage(): string
     {
         return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
@@ -56,7 +56,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    public function setChild(Inheritance $child)
+    public function setChild(Inheritance $child): void
     {
         $this->child = $child;
     }
@@ -68,7 +68,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return \Propel\Generator\Model\Inheritance
      */
-    public function getChild()
+    public function getChild(): Inheritance
     {
         if (!$this->child) {
             throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
@@ -82,7 +82,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    protected function getParentClasspath()
+    protected function getParentClasspath(): string
     {
         if ($this->getChild()->getAncestor()) {
             return $this->getChild()->getAncestor();
@@ -96,7 +96,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    protected function getParentClassName()
+    protected function getParentClassName(): string
     {
         return ClassTools::classname($this->getParentClasspath());
     }
@@ -108,7 +108,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(&$script): void
     {
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
@@ -164,7 +164,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(&$script): void
     {
         $child = $this->getChild();
         $col = $child->getColumn();
@@ -192,10 +192,10 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

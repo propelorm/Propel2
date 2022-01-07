@@ -23,7 +23,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return ClassTools::classname($this->getInterface());
     }
@@ -35,7 +35,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(&$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -77,7 +77,7 @@ interface " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(&$script): void
     {
         // there is no class body
     }
@@ -89,10 +89,10 @@ interface " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

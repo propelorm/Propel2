@@ -247,7 +247,7 @@ class Column extends MappingModel
     /**
      * @return string|null
      */
-    public function getTypeHint()
+    public function getTypeHint(): ?string
     {
         return $this->typeHint;
     }
@@ -257,7 +257,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTypeHint($typeHint)
+    public function setTypeHint($typeHint): void
     {
         $this->typeHint = $typeHint;
     }
@@ -267,7 +267,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         try {
             $database = $this->getDatabase();
@@ -400,7 +400,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    private function getMethodVisibility($attribute, $parentAttribute)
+    private function getMethodVisibility($attribute, $parentAttribute): string
     {
         $database = $this->getDatabase();
 
@@ -423,7 +423,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Model\Database
      */
-    private function getDatabase()
+    private function getDatabase(): Database
     {
         return $this->parentTable->getDatabase();
     }
@@ -433,7 +433,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Model\Domain
      */
-    public function getDomain()
+    public function getDomain(): Domain
     {
         $domain = $this->domain;
         if ($domain === null) {
@@ -451,7 +451,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDomain(Domain $domain)
+    public function setDomain(Domain $domain): void
     {
         $this->domain = $domain;
     }
@@ -461,7 +461,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getFullyQualifiedName()
+    public function getFullyQualifiedName(): string
     {
         return $this->parentTable->getName() . '.' . strtoupper($this->getName());
     }
@@ -471,7 +471,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -481,7 +481,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getLowercasedName()
+    public function getLowercasedName(): string
     {
         return strtolower($this->name);
     }
@@ -491,7 +491,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getUppercasedName()
+    public function getUppercasedName(): string
     {
         return strtoupper($this->name);
     }
@@ -503,7 +503,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -513,7 +513,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNamePlural()
+    public function isNamePlural(): bool
     {
         return $this->getSingularName() !== $this->name;
     }
@@ -523,7 +523,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getSingularName()
+    public function getSingularName(): string
     {
         if ($this->getAttribute('phpSingularName')) {
             return $this->getAttribute('phpSingularName');
@@ -535,9 +535,9 @@ class Column extends MappingModel
     /**
      * Returns the column description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -549,7 +549,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -560,7 +560,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getPhpName()
+    public function getPhpName(): string
     {
         if ($this->phpName === null) {
             $this->setPhpName();
@@ -576,7 +576,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getPhpSingularName()
+    public function getPhpSingularName(): string
     {
         if ($this->phpSingularName === null) {
             $this->setPhpSingularName();
@@ -595,7 +595,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPhpName($phpName = null)
+    public function setPhpName($phpName = null): void
     {
         if ($phpName === null) {
             $this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
@@ -615,7 +615,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPhpSingularName($phpSingularName = null)
+    public function setPhpSingularName($phpSingularName = null): void
     {
         if ($phpSingularName === null) {
             $this->phpSingularName = self::generatePhpSingularName($this->getPhpName());
@@ -631,7 +631,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getCamelCaseName()
+    public function getCamelCaseName(): string
     {
         return lcfirst($this->getPhpName());
     }
@@ -641,7 +641,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getAccessorVisibility()
+    public function getAccessorVisibility(): string
     {
         if ($this->accessorVisibility !== null) {
             return $this->accessorVisibility;
@@ -657,7 +657,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setAccessorVisibility(string $visibility)
+    public function setAccessorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
         if (!in_array($visibility, self::$validVisibilities)) {
@@ -672,7 +672,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getMutatorVisibility()
+    public function getMutatorVisibility(): string
     {
         if ($this->mutatorVisibility !== null) {
             return $this->mutatorVisibility;
@@ -688,7 +688,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setMutatorVisibility(string $visibility)
+    public function setMutatorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
         if (!in_array($visibility, self::$validVisibilities)) {
@@ -703,7 +703,7 @@ class Column extends MappingModel
      *
      * @return string A column constant name for insertion into PHP code
      */
-    public function getFQConstantName()
+    public function getFQConstantName(): string
     {
         $classname = $this->parentTable->getPhpName() . 'TableMap';
         $const = $this->getConstantName();
@@ -716,7 +716,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getConstantName()
+    public function getConstantName(): string
     {
         // was it overridden in schema.xml ?
         if ($this->getTableMapName()) {
@@ -729,9 +729,9 @@ class Column extends MappingModel
     /**
      * Returns the TableMap constant name that will identify this column.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTableMapName()
+    public function getTableMapName(): ?string
     {
         return $this->tableMapName;
     }
@@ -743,7 +743,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTableMapName($name)
+    public function setTableMapName($name): void
     {
         $this->tableMapName = $name;
     }
@@ -755,7 +755,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getPhpType()
+    public function getPhpType(): string
     {
         return $this->phpType ?: $this->getPhpNative();
     }
@@ -765,7 +765,7 @@ class Column extends MappingModel
      *
      * @return int|null
      */
-    public function getPosition()
+    public function getPosition(): ?int
     {
         return $this->position;
     }
@@ -777,7 +777,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPosition($position)
+    public function setPosition($position): void
     {
         $this->position = (int)$position;
     }
@@ -789,7 +789,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->parentTable = $table;
     }
@@ -799,7 +799,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->parentTable;
     }
@@ -809,7 +809,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->parentTable->getName();
     }
@@ -822,7 +822,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Model\Inheritance
      */
-    public function addInheritance($inheritance)
+    public function addInheritance($inheritance): Inheritance
     {
         if ($inheritance instanceof Inheritance) {
             $inheritance->setColumn($this);
@@ -846,7 +846,7 @@ class Column extends MappingModel
      *
      * @return string|null
      */
-    public function getInheritanceType()
+    public function getInheritanceType(): ?string
     {
         return $this->inheritanceType;
     }
@@ -856,7 +856,7 @@ class Column extends MappingModel
      *
      * @return array<\Propel\Generator\Model\Inheritance>
      */
-    public function getInheritanceList()
+    public function getInheritanceList(): array
     {
         return $this->inheritanceList;
     }
@@ -866,7 +866,7 @@ class Column extends MappingModel
      *
      * @return array<\Propel\Generator\Model\Inheritance>
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->inheritanceList;
     }
@@ -877,7 +877,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isInheritance()
+    public function isInheritance(): bool
     {
         return $this->isInheritance;
     }
@@ -888,7 +888,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isEnumeratedClasses()
+    public function isEnumeratedClasses(): bool
     {
         return $this->isEnumeratedClasses;
     }
@@ -898,7 +898,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNotNull()
+    public function isNotNull(): bool
     {
         return $this->isNotNull;
     }
@@ -910,7 +910,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNotNull($flag = true)
+    public function setNotNull($flag = true): void
     {
         $this->isNotNull = (bool)$flag;
     }
@@ -920,7 +920,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getNotNullString()
+    public function getNotNullString(): string
     {
         return $this->parentTable->getPlatform()->getNullString($this->isNotNull);
     }
@@ -935,7 +935,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPrimaryString($isPrimaryString)
+    public function setPrimaryString($isPrimaryString): void
     {
         $this->isPrimaryString = (bool)$isPrimaryString;
     }
@@ -946,7 +946,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPrimaryString()
+    public function isPrimaryString(): bool
     {
         return $this->isPrimaryString;
     }
@@ -958,7 +958,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPrimaryKey($flag = true)
+    public function setPrimaryKey($flag = true): void
     {
         $this->isPrimaryKey = (bool)$flag;
     }
@@ -968,7 +968,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPrimaryKey()
+    public function isPrimaryKey(): bool
     {
         return $this->isPrimaryKey;
     }
@@ -980,7 +980,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNodeKey($isNodeKey)
+    public function setNodeKey($isNodeKey): void
     {
         $this->isNodeKey = (bool)$isNodeKey;
     }
@@ -990,7 +990,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNodeKey()
+    public function isNodeKey(): bool
     {
         return $this->isNodeKey;
     }
@@ -1002,7 +1002,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNodeKeySep($sep)
+    public function setNodeKeySep($sep): void
     {
         $this->nodeKeySep = (string)$sep;
     }
@@ -1012,7 +1012,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getNodeKeySep()
+    public function getNodeKeySep(): string
     {
         return $this->nodeKeySep;
     }
@@ -1024,7 +1024,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNestedSetLeftKey($isNestedSetLeftKey)
+    public function setNestedSetLeftKey($isNestedSetLeftKey): void
     {
         $this->isNestedSetLeftKey = (bool)$isNestedSetLeftKey;
     }
@@ -1034,7 +1034,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNestedSetLeftKey()
+    public function isNestedSetLeftKey(): bool
     {
         return $this->isNestedSetLeftKey;
     }
@@ -1046,7 +1046,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNestedSetRightKey($isNestedSetRightKey)
+    public function setNestedSetRightKey($isNestedSetRightKey): void
     {
         $this->isNestedSetRightKey = (bool)$isNestedSetRightKey;
     }
@@ -1056,7 +1056,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNestedSetRightKey()
+    public function isNestedSetRightKey(): bool
     {
         return $this->isNestedSetRightKey;
     }
@@ -1068,7 +1068,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTreeScopeKey($isTreeScopeKey)
+    public function setTreeScopeKey($isTreeScopeKey): void
     {
         $this->isTreeScopeKey = (bool)$isTreeScopeKey;
     }
@@ -1078,7 +1078,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isTreeScopeKey()
+    public function isTreeScopeKey(): bool
     {
         return $this->isTreeScopeKey;
     }
@@ -1088,7 +1088,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isUnique()
+    public function isUnique(): bool
     {
         return $this->isUnique;
     }
@@ -1098,7 +1098,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function requiresTransactionInPostgres()
+    public function requiresTransactionInPostgres(): bool
     {
         return $this->needsTransactionInPostgres;
     }
@@ -1108,7 +1108,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isForeignKey()
+    public function isForeignKey(): bool
     {
         return count($this->getForeignKeys()) > 0;
     }
@@ -1118,7 +1118,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function hasMultipleFK()
+    public function hasMultipleFK(): bool
     {
         return count($this->getForeignKeys()) > 1;
     }
@@ -1130,7 +1130,7 @@ class Column extends MappingModel
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getForeignKeys()
+    public function getForeignKeys(): array
     {
         return $this->parentTable->getColumnForeignKeys($this->name);
     }
@@ -1142,7 +1142,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function addReferrer(ForeignKey $fk)
+    public function addReferrer(ForeignKey $fk): void
     {
         $this->referrers[] = $fk;
     }
@@ -1152,7 +1152,7 @@ class Column extends MappingModel
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getReferrers()
+    public function getReferrers(): array
     {
         return $this->referrers;
     }
@@ -1162,7 +1162,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function hasReferrers()
+    public function hasReferrers(): bool
     {
         return count($this->referrers) > 0;
     }
@@ -1175,7 +1175,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function hasReferrer(ForeignKey $fk)
+    public function hasReferrer(ForeignKey $fk): bool
     {
         return $this->referrers && in_array($fk, $this->referrers, true);
     }
@@ -1185,7 +1185,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function clearReferrers()
+    public function clearReferrers(): void
     {
         $this->referrers = [];
     }
@@ -1195,7 +1195,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function clearInheritanceList()
+    public function clearInheritanceList(): void
     {
         $this->inheritanceList = [];
     }
@@ -1210,7 +1210,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDomainForType($mappingType)
+    public function setDomainForType($mappingType): void
     {
         $this->getDomain()->copy($this->getPlatform()->getDomainForType($mappingType));
     }
@@ -1224,7 +1224,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setType($mappingType)
+    public function setType($mappingType): void
     {
         $this->getDomain()->setType($mappingType);
 
@@ -1250,7 +1250,7 @@ class Column extends MappingModel
      *
      * @return int
      */
-    public function getPDOType()
+    public function getPDOType(): int
     {
         return PropelTypes::getPDOType($this->getType());
     }
@@ -1260,7 +1260,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isDefaultSqlType(?PlatformInterface $platform = null)
+    public function isDefaultSqlType(?PlatformInterface $platform = null): bool
     {
         if (
             $this->domain === null
@@ -1280,7 +1280,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isLobType()
+    public function isLobType(): bool
     {
         return PropelTypes::isLobType($this->getType());
     }
@@ -1290,7 +1290,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isTextType()
+    public function isTextType(): bool
     {
         return PropelTypes::isTextType($this->getType());
     }
@@ -1300,7 +1300,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isNumericType()
+    public function isNumericType(): bool
     {
         return PropelTypes::isNumericType($this->getType());
     }
@@ -1310,7 +1310,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isBooleanType()
+    public function isBooleanType(): bool
     {
         return PropelTypes::isBooleanType($this->getType());
     }
@@ -1320,7 +1320,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isTemporalType()
+    public function isTemporalType(): bool
     {
         return PropelTypes::isTemporalType($this->getType());
     }
@@ -1330,7 +1330,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPhpArrayType()
+    public function isPhpArrayType(): bool
     {
         return PropelTypes::isPhpArrayType($this->getType());
     }
@@ -1340,7 +1340,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isValueSetType()
+    public function isValueSetType(): bool
     {
         return ($this->isEnumType() || $this->isSetType());
     }
@@ -1350,7 +1350,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isEnumType()
+    public function isEnumType(): bool
     {
         return $this->getType() === PropelTypes::ENUM;
     }
@@ -1360,7 +1360,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isSetType()
+    public function isSetType(): bool
     {
         return $this->getType() === PropelTypes::SET;
     }
@@ -1372,7 +1372,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setValueSet($valueSet)
+    public function setValueSet($valueSet): void
     {
         if (is_string($valueSet)) {
             $valueSet = explode(',', $valueSet);
@@ -1387,7 +1387,7 @@ class Column extends MappingModel
      *
      * @return array<string>
      */
-    public function getValueSet()
+    public function getValueSet(): array
     {
         return $this->valueSet;
     }
@@ -1395,11 +1395,11 @@ class Column extends MappingModel
     /**
      * Returns the column size.
      *
-     * @return int
+     * @return int|null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
-        return $this->domain ? $this->domain->getSize() : false;
+        return $this->domain ? $this->domain->getSize() : null;
     }
 
     /**
@@ -1409,7 +1409,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setSize($size)
+    public function setSize($size): void
     {
         $this->domain->setSize($size);
     }
@@ -1419,7 +1419,7 @@ class Column extends MappingModel
      *
      * @return int
      */
-    public function getScale()
+    public function getScale(): int
     {
         return $this->domain->getScale();
     }
@@ -1431,7 +1431,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setScale($scale)
+    public function setScale($scale): void
     {
         $this->domain->setScale($scale);
     }
@@ -1443,7 +1443,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getSizeDefinition()
+    public function getSizeDefinition(): string
     {
         return $this->domain->getSizeDefinition();
     }
@@ -1453,7 +1453,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function hasDefaultValue()
+    public function hasDefaultValue(): bool
     {
         return $this->getDefaultValue() !== null;
     }
@@ -1463,7 +1463,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getDefaultValueString()
+    public function getDefaultValueString(): string
     {
         $defaultValue = $this->getDefaultValue();
 
@@ -1493,7 +1493,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue($defaultValue): void
     {
         if (!$defaultValue instanceof ColumnDefaultValue) {
             $defaultValue = new ColumnDefaultValue($defaultValue, ColumnDefaultValue::TYPE_VALUE);
@@ -1509,7 +1509,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Model\ColumnDefaultValue|null
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?ColumnDefaultValue
     {
         return $this->domain->getDefaultValue();
     }
@@ -1533,7 +1533,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isAutoIncrement()
+    public function isAutoIncrement(): bool
     {
         return $this->isAutoIncrement;
     }
@@ -1546,7 +1546,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isLazyLoad()
+    public function isLazyLoad(): bool
     {
         return $this->isLazyLoad;
     }
@@ -1558,7 +1558,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getAutoIncrementString()
+    public function getAutoIncrementString(): string
     {
         if ($this->isAutoIncrement() && $this->parentTable->getIdMethod() === IdMethod::NATIVE) {
             return $this->getPlatform()->getAutoIncrement();
@@ -1584,7 +1584,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setAutoIncrement($flag = true)
+    public function setAutoIncrement($flag = true): void
     {
         $this->isAutoIncrement = (bool)$flag;
     }
@@ -1596,7 +1596,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getPhpNative()
+    public function getPhpNative(): string
     {
         return PropelTypes::getPhpNative($this->getType());
     }
@@ -1609,7 +1609,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPhpPrimitiveType()
+    public function isPhpPrimitiveType(): bool
     {
         return PropelTypes::isPhpPrimitiveType($this->getPhpType());
     }
@@ -1622,7 +1622,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPhpPrimitiveNumericType()
+    public function isPhpPrimitiveNumericType(): bool
     {
         return PropelTypes::isPhpPrimitiveNumericType($this->getPhpType());
     }
@@ -1634,7 +1634,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function isPhpObjectType()
+    public function isPhpObjectType(): bool
     {
         return PropelTypes::isPhpObjectType($this->getPhpType());
     }
@@ -1644,7 +1644,7 @@ class Column extends MappingModel
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
      */
-    public function getPlatform()
+    public function getPlatform(): ?PlatformInterface
     {
         return $this->parentTable->getPlatform();
     }
@@ -1654,7 +1654,7 @@ class Column extends MappingModel
      *
      * @return bool
      */
-    public function hasPlatform()
+    public function hasPlatform(): bool
     {
         if ($this->parentTable === null) {
             return false;
@@ -1685,7 +1685,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null)
+    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null): string
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $phpNamingMethod, (string)$namePrefix]);
     }
@@ -1697,7 +1697,7 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public static function generatePhpSingularName($phpname)
+    public static function generatePhpSingularName($phpname): string
     {
         return rtrim($phpname, 's');
     }

@@ -301,7 +301,7 @@ class TableMapTest extends TestCase
     {
         $this->assertEquals(ObjectCollection::class, $this->tmap->getCollectionClassName());
     }
-    
+
     /**
      * @return void
      */
@@ -311,7 +311,7 @@ class TableMapTest extends TestCase
         $this->tmap->setClassName($classWithCollection);
         $this->assertEquals(ExtendingTestCollection::class, $this->tmap->getCollectionClassName());
     }
-        
+
     /**
      * @return void
      */
@@ -351,7 +351,7 @@ class FooTableMap extends TableMap
     /**
      * @return void
      */
-    public function buildRelations()
+    public function buildRelations(): void
     {
         $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
     }
@@ -362,7 +362,7 @@ class BarTableMap extends TableMap
     /**
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setName('bar');
         $this->setClassName('Bar');

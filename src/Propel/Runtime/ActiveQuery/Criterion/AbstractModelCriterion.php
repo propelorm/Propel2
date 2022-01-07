@@ -45,7 +45,7 @@ abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * @return string
      */
-    public function getClause()
+    public function getClause(): string
     {
         return $this->clause;
     }
@@ -58,7 +58,7 @@ abstract class AbstractModelCriterion extends AbstractCriterion
      *
      * @return bool
      */
-    public function equals($obj)
+    public function equals($obj): bool
     {
         // TODO: optimize me with early outs
         if ($this === $obj) {

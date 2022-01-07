@@ -121,7 +121,7 @@ class OMBuilderMock extends AbstractOMBuilder
         $this->pkg = $pkg;
     }
 
-    public function getPackage()
+    public function getPackage(): string
     {
         return $this->pkg;
     }
@@ -129,28 +129,29 @@ class OMBuilderMock extends AbstractOMBuilder
     /**
      * @return void
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
+    {
+        return '';
+    }
+
+    /**
+     * @return void
+     */
+    protected function addClassOpen(&$script): void
     {
     }
 
     /**
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassBody(&$script): void
     {
     }
 
     /**
      * @return void
      */
-    protected function addClassBody(&$script)
-    {
-    }
-
-    /**
-     * @return void
-     */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
     }
 }

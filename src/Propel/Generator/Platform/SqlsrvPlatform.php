@@ -20,7 +20,7 @@ class SqlsrvPlatform extends MssqlPlatform
      *
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 128;
     }

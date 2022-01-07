@@ -79,5 +79,5 @@ interface NameGeneratorInterface
      *
      * @return string The generated name.
      */
-    public function generateName($inputs);
+    public function generateName(array $inputs): string;
 }

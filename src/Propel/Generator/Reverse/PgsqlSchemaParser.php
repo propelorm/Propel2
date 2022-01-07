@@ -92,7 +92,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$pgsqlTypeMap;
     }
@@ -105,7 +105,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         $tableWraps = [];
 
@@ -138,7 +138,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function parseTables(&$tableWraps, Database $database, ?Table $filterTable = null)
+    protected function parseTables(&$tableWraps, Database $database, ?Table $filterTable = null): void
     {
         $stmt = null;
 
@@ -224,7 +224,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table, $oid)
+    protected function addColumns(Table $table, $oid): void
     {
         // Get the columns, types, etc.
         // Based on code from pgAdmin3 (http://www.pgadmin.org/)
@@ -344,7 +344,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return bool
      */
-    protected function isColumnDefaultExpression($default)
+    protected function isColumnDefaultExpression($default): bool
     {
         $containsFunctionCall = substr($default, 0, 1) !== "'" && strpos($default, '(');
 
@@ -372,7 +372,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table, $oid)
+    protected function addForeignKeys(Table $table, $oid): void
     {
         $database = $table->getDatabase();
         $stmt = $this->dbh->prepare("SELECT
@@ -496,7 +496,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table, $oid)
+    protected function addIndexes(Table $table, $oid): void
     {
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)
@@ -562,7 +562,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addPrimaryKey(Table $table, $oid)
+    protected function addPrimaryKey(Table $table, $oid): void
     {
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)
@@ -605,7 +605,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addSequences(Database $database)
+    protected function addSequences(Database $database): void
     {
         $searchPath = '?';
         $params = [$database->getSchema()];

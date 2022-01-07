@@ -66,7 +66,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$oracleTypeMap;
     }
@@ -79,7 +79,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         $tables = [];
         /** @var \PDOStatement $stmt */
@@ -138,7 +138,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
@@ -201,7 +201,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
@@ -234,7 +234,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table)
+    protected function addForeignKeys(Table $table): void
     {
         // local store to avoid duplicates
         $foreignKeys = [];
@@ -272,7 +272,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addPrimaryKey(Table $table)
+    protected function addPrimaryKey(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '" . $table->getName() . "' AND CONS.CONSTRAINT_TYPE = 'P'");

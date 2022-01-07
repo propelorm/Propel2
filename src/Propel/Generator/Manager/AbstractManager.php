@@ -15,6 +15,8 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Schema;
 use XsltProcessor;
 
 /**
@@ -116,7 +118,7 @@ abstract class AbstractManager
      *
      * @return array
      */
-    public function getSchemas()
+    public function getSchemas(): array
     {
         return $this->schemas;
     }
@@ -128,7 +130,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setSchemas($schemas)
+    public function setSchemas($schemas): void
     {
         $this->schemas = $schemas;
     }
@@ -140,7 +142,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setWorkingDirectory($workingDirectory)
+    public function setWorkingDirectory($workingDirectory): void
     {
         $this->workingDirectory = $workingDirectory;
     }
@@ -150,7 +152,7 @@ abstract class AbstractManager
      *
      * @return string
      */
-    public function getWorkingDirectory()
+    public function getWorkingDirectory(): string
     {
         return $this->workingDirectory;
     }
@@ -161,7 +163,7 @@ abstract class AbstractManager
      *
      * @return array<\Propel\Generator\Model\Schema>
      */
-    public function getDataModels()
+    public function getDataModels(): array
     {
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
@@ -175,7 +177,7 @@ abstract class AbstractManager
      *
      * @return array
      */
-    public function getDataModelDbMap()
+    public function getDataModelDbMap(): array
     {
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
@@ -187,7 +189,7 @@ abstract class AbstractManager
     /**
      * @return array<\Propel\Generator\Model\Database>
      */
-    public function getDatabases()
+    public function getDatabases(): array
     {
         if ($this->databases === null) {
             $databases = [];
@@ -217,7 +219,7 @@ abstract class AbstractManager
      *
      * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase($name)
+    public function getDatabase($name): ?Database
     {
         $dbs = $this->getDatabases();
 
@@ -231,7 +233,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setValidate($validate)
+    public function setValidate($validate): void
     {
         $this->validate = (bool)$validate;
     }
@@ -244,7 +246,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setXsd($xsd)
+    public function setXsd($xsd): void
     {
         $this->xsd = $xsd;
     }
@@ -257,7 +259,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setXsl($xsl)
+    public function setXsl($xsl): void
     {
         $this->xsl = $xsl;
     }
@@ -269,7 +271,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setDbEncoding($encoding)
+    public function setDbEncoding($encoding): void
     {
         $this->dbEncoding = $encoding;
     }
@@ -281,7 +283,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setLoggerClosure(Closure $logger)
+    public function setLoggerClosure(Closure $logger): void
     {
         $this->loggerClosure = $logger;
     }
@@ -295,7 +297,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    protected function loadDataModels()
+    protected function loadDataModels(): void
     {
         $schemas = [];
         $totalNbTables = 0;
@@ -388,7 +390,7 @@ abstract class AbstractManager
      *
      * @return int number of included external schemas
      */
-    protected function includeExternalSchemas(DOMDocument $dom, $srcDir)
+    protected function includeExternalSchemas(DOMDocument $dom, $srcDir): int
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
@@ -435,7 +437,7 @@ abstract class AbstractManager
      *
      * @return \Propel\Generator\Model\Schema
      */
-    protected function joinDataModels(array $schemas)
+    protected function joinDataModels(array $schemas): Schema
     {
         $mainSchema = array_shift($schemas);
         $mainSchema->joinSchemas($schemas);
@@ -449,7 +451,7 @@ abstract class AbstractManager
      *
      * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
-    protected function getGeneratorConfig()
+    protected function getGeneratorConfig(): GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -461,7 +463,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         $this->generatorConfig = $generatorConfig;
     }
@@ -471,7 +473,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    protected function validate()
+    protected function validate(): void
     {
         if ($this->validate) {
             if (!$this->xsd) {
@@ -485,7 +487,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    protected function log($message)
+    protected function log($message): void
     {
         if ($this->loggerClosure !== null) {
             $closure = $this->loggerClosure;
@@ -502,7 +504,7 @@ abstract class AbstractManager
      *
      * @return array<string>
      */
-    protected function getProperties($file)
+    protected function getProperties($file): array
     {
         $properties = [];
 

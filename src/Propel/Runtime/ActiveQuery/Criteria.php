@@ -24,7 +24,9 @@ use Propel\Runtime\ActiveQuery\QueryExecutor\SelectQueryExecutor;
 use Propel\Runtime\ActiveQuery\QueryExecutor\UpdateQueryExecutor;
 use Propel\Runtime\ActiveQuery\SqlBuilder\SelectQuerySqlBuilder;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Util\PropelConditionalProxy;
 
@@ -426,7 +428,7 @@ class Criteria
      *
      * @return array<\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
      */
-    public function getMap()
+    public function getMap(): array
     {
         return $this->map;
     }
@@ -438,7 +440,7 @@ class Criteria
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->map = [];
         $this->namedCriterions = [];
@@ -488,7 +490,7 @@ class Criteria
      * @return array An assoc array which map the column alias names
      *               to the alias clauses.
      */
-    public function getAsColumns()
+    public function getAsColumns(): array
     {
         return $this->asColumns;
     }
@@ -500,7 +502,7 @@ class Criteria
      *
      * @return string|null
      */
-    public function getColumnForAs($as)
+    public function getColumnForAs($as): ?string
     {
         if (isset($this->asColumns[$as])) {
             return $this->asColumns[$as];
@@ -544,7 +546,7 @@ class Criteria
      *
      * @return array
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         return $this->aliases;
     }
@@ -556,7 +558,7 @@ class Criteria
      *
      * @return string|null
      */
-    public function getTableForAlias($alias)
+    public function getTableForAlias($alias): ?string
     {
         if (isset($this->aliases[$alias])) {
             return $this->aliases[$alias];
@@ -576,7 +578,7 @@ class Criteria
      *
      * @return array
      */
-    public function getTableNameAndAlias($tableAliasOrName)
+    public function getTableNameAndAlias($tableAliasOrName): array
     {
         if (isset($this->aliases[$tableAliasOrName])) {
             return [$this->aliases[$tableAliasOrName], $tableAliasOrName];
@@ -594,7 +596,7 @@ class Criteria
      *
      * @return array
      */
-    public function keys()
+    public function keys(): array
     {
         return array_keys($this->map);
     }
@@ -606,7 +608,7 @@ class Criteria
      *
      * @return bool True if this Criteria object contain the specified key.
      */
-    public function containsKey($column)
+    public function containsKey($column): bool
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
@@ -620,7 +622,7 @@ class Criteria
      *
      * @return bool True if this Criteria object contain the specified key and a value for that key
      */
-    public function keyContainsValue($column)
+    public function keyContainsValue($column): bool
     {
         // must use array_key_exists() because the key could
         // exist but have a NULL value (that'd be valid).
@@ -636,7 +638,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasWhereClause()
+    public function hasWhereClause(): bool
     {
         return (bool)$this->map;
     }
@@ -651,7 +653,7 @@ class Criteria
      *
      * @return void
      */
-    public function setUseTransaction($v)
+    public function setUseTransaction($v): void
     {
         $this->useTransaction = (bool)$v;
     }
@@ -662,7 +664,7 @@ class Criteria
      *
      * @return bool
      */
-    public function isUseTransaction()
+    public function isUseTransaction(): bool
     {
         return $this->useTransaction;
     }
@@ -677,7 +679,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion A Criterion object.
      */
-    public function getCriterion($column)
+    public function getCriterion($column): AbstractCriterion
     {
         return $this->map[$column];
     }
@@ -687,7 +689,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null A Criterion or null no Criterion is added.
      */
-    public function getLastCriterion()
+    public function getLastCriterion(): ?AbstractCriterion
     {
         $count = count($this->map);
         if ($count) {
@@ -710,7 +712,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
-    public function getNewCriterion($column, $value = null, $comparison = self::EQUAL)
+    public function getNewCriterion($column, $value = null, $comparison = self::EQUAL): AbstractCriterion
     {
         if (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
@@ -753,7 +755,7 @@ class Criteria
      *
      * @return string|null The value of the object at key.
      */
-    public function getColumnName($name)
+    public function getColumnName($name): ?string
     {
         if (isset($this->map[$name])) {
             return $this->map[$name]->getColumn();
@@ -774,7 +776,7 @@ class Criteria
      *
      * @return array array(table => array(table.column1, table.column2))
      */
-    public function getTablesColumns()
+    public function getTablesColumns(): array
     {
         $tables = [];
         foreach ($this->keys() as $key) {
@@ -792,7 +794,7 @@ class Criteria
      *
      * @return string|null A String with the value of the object at key.
      */
-    public function getComparison($key)
+    public function getComparison($key): ?string
     {
         if (isset($this->map[$key])) {
             return $this->map[$key]->getComparison();
@@ -806,7 +808,7 @@ class Criteria
      *
      * @return string A String with the Database(Map) name.
      */
-    public function getDbName()
+    public function getDbName(): string
     {
         return $this->dbName;
     }
@@ -819,7 +821,7 @@ class Criteria
      *
      * @return void
      */
-    public function setDbName($dbName = null)
+    public function setDbName($dbName = null): void
     {
         $this->dbName = ($dbName ?? Propel::getServiceContainer()->getDefaultDatasource());
     }
@@ -833,7 +835,7 @@ class Criteria
      *
      * @return string
      */
-    public function getPrimaryTableName()
+    public function getPrimaryTableName(): string
     {
         return $this->primaryTableName;
     }
@@ -849,7 +851,7 @@ class Criteria
      *
      * @return void
      */
-    public function setPrimaryTableName($tableName)
+    public function setPrimaryTableName($tableName): void
     {
         $this->primaryTableName = $tableName;
     }
@@ -861,7 +863,7 @@ class Criteria
      *
      * @return string|null The value of table for criterion at key.
      */
-    public function getTableName($name)
+    public function getTableName($name): ?string
     {
         if (isset($this->map[$name])) {
             return $this->map[$name]->getTable();
@@ -932,7 +934,7 @@ class Criteria
      *
      * @return void
      */
-    public function putAll($t)
+    public function putAll($t): void
     {
         if (is_array($t)) {
             foreach ($t as $key => $value) {
@@ -982,7 +984,7 @@ class Criteria
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return implode(', ', $this->map) . "\n";
     }
@@ -1214,7 +1216,7 @@ class Criteria
      *
      * @return array<\Propel\Runtime\ActiveQuery\Join>
      */
-    public function getJoins()
+    public function getJoins(): array
     {
         return $this->joins;
     }
@@ -1226,7 +1228,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Join A join object
      */
-    public function getJoin($name)
+    public function getJoin($name): Join
     {
         return $this->joins[$name];
     }
@@ -1236,7 +1238,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasJoin($name)
+    public function hasJoin($name): bool
     {
         return isset($this->joins[$name]);
     }
@@ -1264,7 +1266,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasSelectQueries()
+    public function hasSelectQueries(): bool
     {
         return (bool)$this->selectQueries;
     }
@@ -1274,7 +1276,7 @@ class Criteria
      *
      * @return array<\Propel\Runtime\ActiveQuery\Criteria>
      */
-    public function getSelectQueries()
+    public function getSelectQueries(): array
     {
         return $this->selectQueries;
     }
@@ -1286,7 +1288,7 @@ class Criteria
      *
      * @return self
      */
-    public function getSelectQuery($alias)
+    public function getSelectQuery($alias): self
     {
         return $this->selectQueries[$alias];
     }
@@ -1298,7 +1300,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasSelectQuery($alias)
+    public function hasSelectQuery($alias): bool
     {
         return isset($this->selectQueries[$alias]);
     }
@@ -1306,7 +1308,7 @@ class Criteria
     /**
      * @return int
      */
-    public function forgeSelectQueryAlias()
+    public function forgeSelectQueryAlias(): int
     {
         $aliasNumber = 0;
         foreach ($this->getSelectQueries() as $c1) {
@@ -1382,7 +1384,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasSelectModifier($modifier)
+    public function hasSelectModifier($modifier): bool
     {
         return in_array($modifier, $this->selectModifiers);
     }
@@ -1475,7 +1477,7 @@ class Criteria
      *
      * @return bool True if case is ignored.
      */
-    public function isIgnoreCase()
+    public function isIgnoreCase(): bool
     {
         return $this->ignoreCase;
     }
@@ -1505,7 +1507,7 @@ class Criteria
      *
      * @return bool True if a single record is being returned.
      */
-    public function isSingleRecord()
+    public function isSingleRecord(): bool
     {
         return $this->singleRecord;
     }
@@ -1529,7 +1531,7 @@ class Criteria
      *
      * @return int An int with the value for limit.
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
@@ -1553,7 +1555,7 @@ class Criteria
      *
      * @return int An int with the value for offset.
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -1605,9 +1607,9 @@ class Criteria
     /**
      * Get the query comment, that appears after the first verb in the SQL query
      *
-     * @return string The comment to add to the query, without comment sign
+     * @return string|null The comment to add to the query, without comment sign
      */
-    public function getComment()
+    public function getComment(): ?string
     {
         return $this->queryComment;
     }
@@ -1622,7 +1624,7 @@ class Criteria
      *
      * @return bool
      */
-    public function hasSelectClause()
+    public function hasSelectClause(): bool
     {
         return (bool)$this->selectColumns || (bool)$this->asColumns;
     }
@@ -1632,7 +1634,7 @@ class Criteria
      *
      * @return array An array with the name of the select columns.
      */
-    public function getSelectColumns()
+    public function getSelectColumns(): array
     {
         return $this->selectColumns;
     }
@@ -1654,7 +1656,7 @@ class Criteria
      *
      * @return array An array with the select modifiers.
      */
-    public function getSelectModifiers()
+    public function getSelectModifiers(): array
     {
         return $this->selectModifiers;
     }
@@ -1706,7 +1708,7 @@ class Criteria
      *
      * @return array<string> An array with the name of the order columns.
      */
-    public function getOrderByColumns()
+    public function getOrderByColumns(): array
     {
         return $this->orderByColumns;
     }
@@ -1740,7 +1742,7 @@ class Criteria
      *
      * @return array<string>
      */
-    public function getGroupByColumns()
+    public function getGroupByColumns(): array
     {
         return $this->groupByColumns;
     }
@@ -1750,7 +1752,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null A Criterion object that is the having clause.
      */
-    public function getHaving()
+    public function getHaving(): ?AbstractCriterion
     {
         return $this->having;
     }
@@ -1783,7 +1785,7 @@ class Criteria
      *
      * @return string A String with the representation of the Criteria.
      */
-    public function toString()
+    public function toString(): string
     {
         $sb = 'Criteria:';
         try {
@@ -1810,7 +1812,7 @@ class Criteria
      *
      * @return int
      */
-    public function size()
+    public function size(): int
     {
         return count($this->map);
     }
@@ -1823,7 +1825,7 @@ class Criteria
      *
      * @return bool
      */
-    public function equals($crit)
+    public function equals($crit): bool
     {
         if ($crit === null || !($crit instanceof Criteria)) {
             return false;
@@ -2034,7 +2036,7 @@ class Criteria
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
-    protected function getCriterionForCondition($p1, $value = null, $comparison = null)
+    protected function getCriterionForCondition($p1, $value = null, $comparison = null): AbstractCriterion
     {
         if ($p1 instanceof AbstractCriterion) {
             // it's already a Criterion, so ignore $value and $comparison
@@ -2158,7 +2160,7 @@ class Criteria
      *
      * @return string
      */
-    public function createSelectSql(&$params)
+    public function createSelectSql(&$params): string
     {
         $preparedStatementDto = SelectQuerySqlBuilder::createSelectSql($this, $params);
         $params = $preparedStatementDto->getParameters();
@@ -2173,7 +2175,7 @@ class Criteria
      *
      * @return string the column name replacement
      */
-    protected function doReplaceNameInExpression($matches)
+    protected function doReplaceNameInExpression($matches): string
     {
         return $this->quoteIdentifier($matches[0]);
     }
@@ -2186,7 +2188,7 @@ class Criteria
      *
      * @return string
      */
-    public function quoteIdentifier($string, $tableName = '')
+    public function quoteIdentifier($string, $tableName = ''): string
     {
         if ($this->isIdentifierQuotingEnabled()) {
             $adapter = Propel::getServiceContainer()->getAdapter($this->getDbName());
@@ -2227,7 +2229,7 @@ class Criteria
      *
      * @return bool Whether the method managed to find and replace at least one column name
      */
-    public function replaceNames(&$sql)
+    public function replaceNames(&$sql): bool
     {
         $this->replacedColumns = [];
         $this->currentAlias = '';
@@ -2316,7 +2318,7 @@ class Criteria
      *
      * @return \Propel\Runtime\Map\ColumnMap|null
      */
-    public function getPrimaryKey(?Criteria $criteria = null)
+    public function getPrimaryKey(?Criteria $criteria = null): ?ColumnMap
     {
         if (!$criteria) {
             $criteria = $this;
@@ -2358,7 +2360,7 @@ class Criteria
      *             Note that the return value does require that this information is returned
      *             (supported) by the Propel db driver.
      */
-    public function doUpdate($updateValues, ConnectionInterface $con)
+    public function doUpdate($updateValues, ConnectionInterface $con): int
     {
         return UpdateQueryExecutor::execute($this, $updateValues, $con);
     }
@@ -2368,7 +2370,7 @@ class Criteria
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function doCount(?ConnectionInterface $con = null)
+    public function doCount(?ConnectionInterface $con = null): DataFetcherInterface
     {
         return CountQueryExecutor::execute($this, $con);
     }
@@ -2380,7 +2382,7 @@ class Criteria
      *
      * @return bool
      */
-    public function needsSelectAliases()
+    public function needsSelectAliases(): bool
     {
         $columnNames = [];
         foreach ($this->getSelectColumns() as $fullyQualifiedColumnName) {
@@ -2406,7 +2408,7 @@ class Criteria
      *
      * @return int the number of deleted rows
      */
-    public function doDelete(?ConnectionInterface $con = null)
+    public function doDelete(?ConnectionInterface $con = null): int
     {
         return DeleteQueryExecutor::execute($this, $con);
     }
@@ -2419,7 +2421,7 @@ class Criteria
      *
      * @return int the number of deleted rows
      */
-    public function doDeleteAll(?ConnectionInterface $con = null)
+    public function doDeleteAll(?ConnectionInterface $con = null): int
     {
         return DeleteAllQueryExecutor::execute($this, $con);
     }
@@ -2431,7 +2433,7 @@ class Criteria
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface A dataFetcher using the connection, ready to be fetched
      */
-    public function doSelect(?ConnectionInterface $con = null)
+    public function doSelect(?ConnectionInterface $con = null): DataFetcherInterface
     {
         return SelectQueryExecutor::execute($this, $con);
     }
@@ -2559,7 +2561,7 @@ class Criteria
     /**
      * @return bool
      */
-    public function isIdentifierQuotingEnabled()
+    public function isIdentifierQuotingEnabled(): bool
     {
         return $this->identifierQuoting;
     }
@@ -2569,7 +2571,7 @@ class Criteria
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting)
+    public function setIdentifierQuoting($identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }

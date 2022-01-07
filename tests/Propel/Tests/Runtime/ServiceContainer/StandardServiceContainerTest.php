@@ -12,7 +12,9 @@ use Monolog\Logger;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Connection\DebugPDO;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
@@ -677,13 +679,13 @@ class TestableConnectionManagerSingle extends ConnectionManagerSingle
 {
     public $connection;
 
-    public function getWriteConnection(?AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
-        return 'write';
+        return new DebugPDO();
     }
 
-    public function getReadConnection(?AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
-        return 'read';
+        return new DebugPDO();
     }
 }

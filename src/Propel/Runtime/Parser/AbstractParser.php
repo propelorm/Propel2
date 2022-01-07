@@ -40,7 +40,7 @@ abstract class AbstractParser
      *
      * @return array Converted data
      */
-    abstract public function toArray($data, $rootKey = 'data');
+    abstract public function toArray($data, $rootKey = 'data'): array;
 
     /**
      * @param array $array
@@ -48,7 +48,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    public function listFromArray($array, $rootKey = 'data')
+    public function listFromArray($array, $rootKey = 'data'): string
     {
         return $this->fromArray($array, $rootKey);
     }
@@ -59,7 +59,7 @@ abstract class AbstractParser
      *
      * @return array
      */
-    public function listToArray($data, $rootKey = 'data')
+    public function listToArray($data, $rootKey = 'data'): array
     {
         return $this->toArray($data, $rootKey);
     }
@@ -73,7 +73,7 @@ abstract class AbstractParser
      *
      * @return string The file content processed by PHP
      */
-    public function load($path)
+    public function load($path): string
     {
         if (!file_exists($path)) {
             throw new FileNotFoundException(sprintf('File "%s" does not exist or is unreadable', $path));
@@ -110,9 +110,9 @@ abstract class AbstractParser
      *
      * @throws \Propel\Runtime\Exception\FileNotFoundException
      *
-     * @return \Propel\Runtime\Parser\AbstractParser A PropelParser subclass instance
+     * @return self A PropelParser subclass instance
      */
-    public static function getParser($type = 'XML')
+    public static function getParser($type = 'XML'): self
     {
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
 

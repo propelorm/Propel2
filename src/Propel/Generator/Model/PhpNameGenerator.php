@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\InvalidArgumentException;
+
 /**
  * A <code>NameGeneratorInterface</code> implementation for PHP-esque names.
  *
@@ -40,9 +42,11 @@ class PhpNameGenerator implements NameGeneratorInterface
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
      *
-     * @return string|null The generated name.
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return string The generated name.
      */
-    public function generateName($inputs): ?string
+    public function generateName(array $inputs): string
     {
         $schemaName = $inputs[0];
         $method = $inputs[1];
@@ -56,10 +60,8 @@ class PhpNameGenerator implements NameGeneratorInterface
 
         // We really shouldn't be getting null here, but we cannot pass a null value further
         if ($schemaName === null) {
-            return null;
+            throw new InvalidArgumentException('No schema name available');
         }
-
-        $phpName = null;
 
         switch ($method) {
             case self::CONV_METHOD_CLEAN:
@@ -99,7 +101,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function underscoreMethod(string $schemaName)
+    protected function underscoreMethod(string $schemaName): string
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
@@ -126,7 +128,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function cleanMethod(string $schemaName)
+    protected function cleanMethod(string $schemaName): string
     {
         $name = '';
         $regexp = '/([a-z0-9]+)/i';
@@ -156,7 +158,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function phpnameMethod(string $schemaName)
+    protected function phpnameMethod(string $schemaName): string
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
@@ -176,7 +178,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string
      */
-    protected function nochangeMethod(string $name)
+    protected function nochangeMethod(string $name): string
     {
         return $name;
     }

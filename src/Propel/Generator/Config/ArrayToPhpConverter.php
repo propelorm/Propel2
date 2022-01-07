@@ -17,11 +17,11 @@ class ArrayToPhpConverter
     /**
      * Create a PHP configuration from an array
      *
-     * @param array $c The array configuration
+     * @param array<string, mixed> $c The array configuration
      *
      * @return string
      */
-    public static function convert($c)
+    public static function convert($c): string
     {
         $conf = [];
         // set datasources

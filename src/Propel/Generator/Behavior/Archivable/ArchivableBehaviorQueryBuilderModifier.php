@@ -49,7 +49,7 @@ class ArchivableBehaviorQueryBuilderModifier
      *
      * @return string
      */
-    public function queryAttributes($builder)
+    public function queryAttributes($builder): string
     {
         $script = '';
         if ($this->behavior->isArchiveOnUpdate()) {
@@ -69,7 +69,7 @@ class ArchivableBehaviorQueryBuilderModifier
      *
      * @return string|null
      */
-    public function preDeleteQuery($builder)
+    public function preDeleteQuery($builder): ?string
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return "
@@ -89,7 +89,7 @@ if (\$this->archiveOnDelete) {
      *
      * @return string|null
      */
-    public function postUpdateQuery($builder)
+    public function postUpdateQuery($builder): ?string
     {
         if ($this->behavior->isArchiveOnUpdate()) {
             return "
@@ -109,7 +109,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $script = '';
         $script .= $this->addArchive($builder);
@@ -130,7 +130,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    protected function addArchive($builder)
+    protected function addArchive($builder): string
     {
         return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
@@ -143,7 +143,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addSetArchiveOnUpdate($builder)
+    public function addSetArchiveOnUpdate($builder): string
     {
         return $this->behavior->renderTemplate('querySetArchiveOnUpdate');
     }
@@ -153,7 +153,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addUpdateWithoutArchive($builder)
+    public function addUpdateWithoutArchive($builder): string
     {
         return $this->behavior->renderTemplate('queryUpdateWithoutArchive');
     }
@@ -163,7 +163,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addSetArchiveOnDelete($builder)
+    public function addSetArchiveOnDelete($builder): string
     {
         return $this->behavior->renderTemplate('querySetArchiveOnDelete');
     }
@@ -173,7 +173,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addDeleteWithoutArchive($builder)
+    public function addDeleteWithoutArchive($builder): string
     {
         return $this->behavior->renderTemplate('queryDeleteWithoutArchive');
     }

@@ -26,7 +26,7 @@ class AdapterFactory
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface An instance of a Propel database adapter.
      */
-    public static function create($driver)
+    public static function create($driver): AdapterInterface
     {
         if (!$driver) {
             $adapterClass = '\Propel\Runtime\Adapter\NoneAdapter';

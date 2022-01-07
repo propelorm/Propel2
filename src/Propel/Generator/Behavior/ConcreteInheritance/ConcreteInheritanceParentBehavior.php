@@ -27,7 +27,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'descendant_column' => 'descendant_class',
@@ -36,7 +36,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
     /**
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         if (!$table->hasColumn($this->getParameter('descendant_column'))) {
@@ -51,7 +51,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
     /**
      * @return string
      */
-    protected function getColumnGetter()
+    protected function getColumnGetter(): string
     {
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
@@ -61,7 +61,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods($builder): string
     {
         $this->builder = $builder;
         $this->builder->declareClasses('Propel\Runtime\ActiveQuery\PropelQuery');
@@ -77,7 +77,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
      *
      * @return void
      */
-    protected function addHasChildObject(&$script)
+    protected function addHasChildObject(&$script): void
     {
         $script .= "
 /**
@@ -85,7 +85,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
  *
  * @return    bool
  */
-public function hasChildObject()
+public function hasChildObject(): bool
 {
     return \$this->" . $this->getColumnGetter() . "() !== null;
 }
@@ -97,7 +97,7 @@ public function hasChildObject()
      *
      * @return void
      */
-    protected function addGetChildObject(&$script)
+    protected function addGetChildObject(&$script): void
     {
         $script .= "
 /**

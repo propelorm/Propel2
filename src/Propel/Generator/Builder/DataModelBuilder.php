@@ -13,8 +13,10 @@ use Propel\Generator\Builder\Om\AbstractObjectBuilder;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Om\MultiExtendObjectBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PlatformInterface;
@@ -133,7 +135,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    public function getPluralizer()
+    public function getPluralizer(): PluralizerInterface
     {
         if ($this->pluralizer === null) {
             $this->pluralizer = $this->getGeneratorConfig()->getConfiguredPluralizer();
@@ -147,7 +149,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\ObjectBuilder
      */
-    public function getObjectBuilder()
+    public function getObjectBuilder(): ObjectBuilder
     {
         if ($this->objectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -211,7 +213,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\TableMapBuilder
      */
-    public function getTableMapBuilder()
+    public function getTableMapBuilder(): TableMapBuilder
     {
         if ($this->tablemapBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\TableMapBuilder $builder */
@@ -243,7 +245,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\MultiExtendObjectBuilder
      */
-    public function getMultiExtendObjectBuilder()
+    public function getMultiExtendObjectBuilder(): MultiExtendObjectBuilder
     {
         if ($this->multiExtendObjectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
@@ -260,9 +262,9 @@ abstract class DataModelBuilder
      * @param \Propel\Generator\Model\Table $table
      * @param string $classname The class of builder
      *
-     * @return \Propel\Generator\Builder\DataModelBuilder
+     * @return self
      */
-    public function getNewBuilder(Table $table, $classname)
+    public function getNewBuilder(Table $table, $classname): self
     {
         /** @var \Propel\Generator\Builder\DataModelBuilder $builder */
         $builder = new $classname($table);
@@ -281,7 +283,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\ObjectBuilder
      */
-    public function getNewObjectBuilder(Table $table)
+    public function getNewObjectBuilder(Table $table): ObjectBuilder
     {
         /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
         $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'object');
@@ -297,11 +299,11 @@ abstract class DataModelBuilder
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return \Propel\Generator\Builder\Om\ObjectBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractObjectBuilder
      */
-    public function getNewStubObjectBuilder(Table $table)
+    public function getNewStubObjectBuilder(Table $table): AbstractObjectBuilder
     {
-        /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
+        /** @var \Propel\Generator\Builder\Om\AbstractObjectBuilder $builder */
         $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'objectstub');
 
         return $builder;
@@ -317,7 +319,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\QueryBuilder
      */
-    public function getNewQueryBuilder(Table $table)
+    public function getNewQueryBuilder(Table $table): QueryBuilder
     {
         /** @var \Propel\Generator\Builder\Om\QueryBuilder $builder */
         $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'query');
@@ -333,11 +335,10 @@ abstract class DataModelBuilder
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return \Propel\Generator\Builder\Om\QueryBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getNewStubQueryBuilder(Table $table)
+    public function getNewStubQueryBuilder(Table $table): AbstractOMBuilder
     {
-        /** @var \Propel\Generator\Builder\Om\QueryBuilder $builder */
         $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'querystub');
 
         return $builder;
@@ -348,9 +349,9 @@ abstract class DataModelBuilder
      *
      * @param \Propel\Generator\Model\Inheritance $child
      *
-     * @return \Propel\Generator\Builder\Om\QueryInheritanceBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getNewQueryInheritanceBuilder(Inheritance $child)
+    public function getNewQueryInheritanceBuilder(Inheritance $child): AbstractOMBuilder
     {
         /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $queryInheritanceBuilder */
         $queryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritance');
@@ -364,9 +365,9 @@ abstract class DataModelBuilder
      *
      * @param \Propel\Generator\Model\Inheritance $child
      *
-     * @return \Propel\Generator\Builder\Om\QueryInheritanceBuilder
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getNewStubQueryInheritanceBuilder(Inheritance $child)
+    public function getNewStubQueryInheritanceBuilder(Inheritance $child): AbstractOMBuilder
     {
         /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $stubQueryInheritanceBuilder */
         $stubQueryInheritanceBuilder = $this->getGeneratorConfig()->getConfiguredBuilder($this->getTable(), 'queryinheritancestub');
@@ -382,7 +383,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Builder\Om\TableMapBuilder
      */
-    public function getNewTableMapBuilder(Table $table)
+    public function getNewTableMapBuilder(Table $table): TableMapBuilder
     {
         /** @var \Propel\Generator\Builder\Om\TableMapBuilder $builder */
         $builder = $this->getGeneratorConfig()->getConfiguredBuilder($table, 'tablemap');
@@ -395,7 +396,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
-    public function getGeneratorConfig()
+    public function getGeneratorConfig(): GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -413,7 +414,7 @@ abstract class DataModelBuilder
      *
      * @return string|null
      */
-    public function getBuildProperty($name)
+    public function getBuildProperty($name): ?string
     {
         if ($this->getGeneratorConfig()) {
             return $this->getGeneratorConfig()->getConfigProperty($name);
@@ -429,7 +430,7 @@ abstract class DataModelBuilder
      *
      * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $v)
+    public function setGeneratorConfig(GeneratorConfigInterface $v): void
     {
         $this->generatorConfig = $v;
     }
@@ -441,7 +442,7 @@ abstract class DataModelBuilder
      *
      * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -461,7 +462,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    public function getPlatform()
+    public function getPlatform(): PlatformInterface
     {
         if ($this->platform === null) {
             // try to load the platform from the table
@@ -485,7 +486,7 @@ abstract class DataModelBuilder
      *
      * @return void
      */
-    public function setPlatform(PlatformInterface $platform)
+    public function setPlatform(PlatformInterface $platform): void
     {
         $this->platform = $platform;
     }
@@ -497,7 +498,7 @@ abstract class DataModelBuilder
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier($text): string
     {
         if ($this->getTable()->isIdentifierQuotingEnabled()) {
             return $this->getPlatform()->doQuoting($text);
@@ -511,7 +512,7 @@ abstract class DataModelBuilder
      *
      * @return \Propel\Generator\Model\Database
      */
-    public function getDatabase()
+    public function getDatabase(): Database
     {
         return $this->getTable()->getDatabase();
     }
@@ -523,7 +524,7 @@ abstract class DataModelBuilder
      *
      * @return void
      */
-    protected function warn($msg)
+    protected function warn($msg): void
     {
         $this->warnings[] = $msg;
     }
@@ -533,7 +534,7 @@ abstract class DataModelBuilder
      *
      * @return array<string>
      */
-    public function getWarnings()
+    public function getWarnings(): array
     {
         return $this->warnings;
     }
@@ -547,7 +548,7 @@ abstract class DataModelBuilder
      *
      * @return string
      */
-    public function prefixClassName($identifier)
+    public function prefixClassName($identifier): string
     {
         return $this->getBuildProperty('generator.objectModel.classPrefix') . $identifier;
     }

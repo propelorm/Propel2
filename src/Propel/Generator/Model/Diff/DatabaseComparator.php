@@ -62,7 +62,7 @@ class DatabaseComparator
     /**
      * @return \Propel\Generator\Model\Diff\DatabaseDiff
      */
-    public function getDatabaseDiff()
+    public function getDatabaseDiff(): DatabaseDiff
     {
         return $this->databaseDiff;
     }
@@ -74,7 +74,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setFromDatabase(Database $fromDatabase)
+    public function setFromDatabase(Database $fromDatabase): void
     {
         $this->fromDatabase = $fromDatabase;
     }
@@ -84,7 +84,7 @@ class DatabaseComparator
      *
      * @return \Propel\Generator\Model\Database
      */
-    public function getFromDatabase()
+    public function getFromDatabase(): Database
     {
         return $this->fromDatabase;
     }
@@ -96,7 +96,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setToDatabase(Database $toDatabase)
+    public function setToDatabase(Database $toDatabase): void
     {
         $this->toDatabase = $toDatabase;
     }
@@ -106,7 +106,7 @@ class DatabaseComparator
      *
      * @return \Propel\Generator\Model\Database
      */
-    public function getToDatabase()
+    public function getToDatabase(): Database
     {
         return $this->toDatabase;
     }
@@ -118,7 +118,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setRemoveTable($removeTable)
+    public function setRemoveTable($removeTable): void
     {
         $this->removeTable = $removeTable;
     }
@@ -126,7 +126,7 @@ class DatabaseComparator
     /**
      * @return bool
      */
-    public function getRemoveTable()
+    public function getRemoveTable(): bool
     {
         return $this->removeTable;
     }
@@ -138,7 +138,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setExcludedTables(array $excludedTables)
+    public function setExcludedTables(array $excludedTables): void
     {
         $this->excludedTables = $excludedTables;
     }
@@ -148,7 +148,7 @@ class DatabaseComparator
      *
      * @return array<string>
      */
-    public function getExcludedTables()
+    public function getExcludedTables(): array
     {
         return $this->excludedTables;
     }
@@ -202,7 +202,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setWithRenaming($withRenaming)
+    public function setWithRenaming($withRenaming): void
     {
         $this->withRenaming = $withRenaming;
     }
@@ -210,7 +210,7 @@ class DatabaseComparator
     /**
      * @return bool
      */
-    public function getWithRenaming()
+    public function getWithRenaming(): bool
     {
         return $this->withRenaming;
     }
@@ -225,7 +225,7 @@ class DatabaseComparator
      *
      * @return int
      */
-    public function compareTables($caseInsensitive = false)
+    public function compareTables($caseInsensitive = false): int
     {
         $fromDatabaseTables = $this->fromDatabase->getTables();
         $toDatabaseTables = $this->toDatabase->getTables();
@@ -302,7 +302,7 @@ class DatabaseComparator
      *
      * @return bool
      */
-    protected function isTableExcluded(Table $table)
+    protected function isTableExcluded(Table $table): bool
     {
         $tableName = $table->getName();
         if (in_array($tableName, $this->excludedTables, true)) {

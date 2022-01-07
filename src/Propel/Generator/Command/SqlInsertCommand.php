@@ -60,7 +60,7 @@ class SqlInsertCommand extends AbstractCommand
         }
 
         $manager->setConnections($connections);
-        $manager->setLoggerClosure(function ($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output): void {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

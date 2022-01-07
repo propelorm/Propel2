@@ -6,7 +6,7 @@
  *
  * @return integer the number of deleted rows
  */
-public function deleteWithoutArchive($con = null)
+public function deleteWithoutArchive($con = null): int
 {
     $this->archiveOnDelete = false;
 
@@ -20,7 +20,7 @@ public function deleteWithoutArchive($con = null)
  *
  * @return integer the number of deleted rows
  */
-public function deleteAllWithoutArchive($con = null)
+public function deleteAllWithoutArchive($con = null): int
 {
     $this->archiveOnDelete = false;
 

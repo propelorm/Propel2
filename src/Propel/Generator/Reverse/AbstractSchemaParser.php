@@ -10,6 +10,7 @@ namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\VendorInfo;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -88,7 +89,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setConnection(ConnectionInterface $dbh)
+    public function setConnection(ConnectionInterface $dbh): void
     {
         $this->dbh = $dbh;
     }
@@ -98,7 +99,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->dbh;
     }
@@ -110,7 +111,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setMigrationTable($migrationTable)
+    public function setMigrationTable($migrationTable): void
     {
         $this->migrationTable = $migrationTable;
     }
@@ -120,7 +121,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string
      */
-    public function getMigrationTable()
+    public function getMigrationTable(): string
     {
         return $this->migrationTable;
     }
@@ -132,7 +133,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    protected function warn($msg)
+    protected function warn($msg): void
     {
         $this->warnings[] = $msg;
     }
@@ -142,7 +143,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return array<string>
      */
-    public function getWarnings()
+    public function getWarnings(): array
     {
         return $this->warnings;
     }
@@ -154,7 +155,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config)
+    public function setGeneratorConfig(GeneratorConfigInterface $config): void
     {
         $this->generatorConfig = $config;
     }
@@ -164,7 +165,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
-    public function getGeneratorConfig()
+    public function getGeneratorConfig(): GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -174,7 +175,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return array<string> The mapped Propel type.
      */
-    abstract protected function getTypeMapping();
+    abstract protected function getTypeMapping(): array;
 
     /**
      * Gets a mapped Propel type for specified native type.
@@ -183,7 +184,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string|null The mapped Propel type.
      */
-    protected function getMappedPropelType($nativeType)
+    protected function getMappedPropelType($nativeType): ?string
     {
         if ($this->nativeToPropelTypeMap === null) {
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
@@ -203,7 +204,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string The native SQL type that best matches the specified Propel type.
      */
-    protected function getMappedNativeType($propelType)
+    protected function getMappedNativeType($propelType): string
     {
         if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
@@ -219,7 +220,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return \Propel\Generator\Model\VendorInfo
      */
-    protected function getNewVendorInfoObject(array $params)
+    protected function getNewVendorInfoObject(array $params): VendorInfo
     {
         $type = $this->getPlatform()->getDatabaseType();
 
@@ -234,7 +235,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setPlatform($platform)
+    public function setPlatform($platform): void
     {
         $this->platform = $platform;
     }
@@ -244,7 +245,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    public function getPlatform()
+    public function getPlatform(): PlatformInterface
     {
         if ($this->platform === null) {
             $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();

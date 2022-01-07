@@ -11,8 +11,10 @@ namespace Propel\Runtime\Collection;
 use ArrayAccess;
 use Countable;
 use IteratorAggregate;
+use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -98,7 +100,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         $this->data[] = $value;
     }
@@ -160,7 +162,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function exchangeArray($input)
+    public function exchangeArray($input): void
     {
         $this->data = $input;
     }
@@ -170,7 +172,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -178,7 +180,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return $this->data;
     }
@@ -190,7 +192,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function setData($data)
+    public function setData($data): void
     {
         $this->data = $data;
     }
@@ -249,7 +251,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
@@ -314,7 +316,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function push($value)
+    public function push($value): void
     {
         $this[] = $value;
     }
@@ -326,7 +328,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return int The number of new elements in the array
      */
-    public function prepend($value)
+    public function prepend($value): int
     {
         // the reindexing is complicated to deal with through the iterator
         // so let's use the simple solution
@@ -346,7 +348,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->offsetSet($key, $value);
     }
@@ -361,7 +363,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function remove($key)
+    public function remove($key): void
     {
         if (!$this->offsetExists($key)) {
             throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
@@ -375,7 +377,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->exchangeArray([]);
     }
@@ -387,7 +389,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return bool
      */
-    public function contains($element)
+    public function contains($element): bool
     {
         return in_array($element, $this->getArrayCopy(), true);
     }
@@ -410,9 +412,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @param \Propel\Runtime\Collection\Collection $collection A Propel collection.
      *
-     * @return \Propel\Runtime\Collection\Collection An array of Propel objects from the collection that are not presents in the given collection.
+     * @return self An array of Propel objects from the collection that are not presents in the given collection.
      */
-    public function diff(Collection $collection)
+    public function diff(Collection $collection): self
     {
         $diff = clone $this;
         $diff->clear();
@@ -432,7 +434,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @return string|null
      */
     #[\ReturnTypeWillChange]
-    public function serialize()
+    public function serialize(): ?string
     {
         $repr = [
             'data' => $this->getArrayCopy(),
@@ -449,7 +451,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);
@@ -466,7 +468,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function setModel($model)
+    public function setModel($model): void
     {
         if (false !== $pos = strrpos($model, '\\')) {
             $this->model = substr($model, $pos + 1);
@@ -481,7 +483,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string Name of the Propel object class stored in the collection
      */
-    public function getModel()
+    public function getModel(): string
     {
         return $this->model;
     }
@@ -491,7 +493,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
-    public function getFullyQualifiedModel()
+    public function getFullyQualifiedModel(): string
     {
         return $this->fullyQualifiedModel;
     }
@@ -503,7 +505,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string
      */
-    public function getTableMapClass()
+    public function getTableMapClass(): string
     {
         $model = $this->getModel();
 
@@ -519,7 +521,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function setFormatter(AbstractFormatter $formatter)
+    public function setFormatter(AbstractFormatter $formatter): void
     {
         $this->formatter = $formatter;
     }
@@ -527,7 +529,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */
-    public function getFormatter()
+    public function getFormatter(): AbstractFormatter
     {
         return $this->formatter;
     }
@@ -537,7 +539,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A ConnectionInterface connection object
      */
-    public function getWriteConnection()
+    public function getWriteConnection(): ConnectionInterface
     {
         $databaseName = $this->getTableMapClass()::DATABASE_NAME;
 
@@ -588,7 +590,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
+    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME): string
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
@@ -638,7 +640,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
     }
@@ -660,7 +662,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    protected function getPluralizer()
+    protected function getPluralizer(): PluralizerInterface
     {
         if ($this->pluralizer === null) {
             $this->pluralizer = $this->createPluralizer();
@@ -674,7 +676,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    protected function createPluralizer()
+    protected function createPluralizer(): PluralizerInterface
     {
         return new StandardEnglishPluralizer();
     }
@@ -682,7 +684,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return string
      */
-    protected function getPluralModelName()
+    protected function getPluralModelName(): string
     {
         return $this->getPluralizer()->getPluralForm($this->getModel());
     }
@@ -690,7 +692,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @return string
      */
-    public function hashCode()
+    public function hashCode(): string
     {
         return spl_object_hash($this);
     }

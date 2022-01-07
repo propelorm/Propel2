@@ -32,7 +32,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function initConnection(ConnectionInterface $con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings): void
     {
         $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
@@ -50,7 +50,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset): void
     {
         switch (strtolower($charset)) {
             case 'utf-8':
@@ -76,7 +76,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
+    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
         $i = 1;
         foreach ($params as $param) {
@@ -107,7 +107,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

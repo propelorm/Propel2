@@ -23,7 +23,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return void
      */
-    public function setDataObject($dataObject);
+    public function setDataObject($dataObject): void;
 
     /**
      * Returns the current data object that holds or references to actual data.
@@ -100,14 +100,14 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return array|null
      */
-    public function fetch();
+    public function fetch(): ?array;
 
     /**
      * Frees the resultSet.
      *
      * @return void
      */
-    public function close();
+    public function close(): void;
 
     /**
      * Returns the count of items in the resultSet.
@@ -123,5 +123,5 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return string one of TableMap::TYPE_*
      */
-    public function getIndexType();
+    public function getIndexType(): string;
 }

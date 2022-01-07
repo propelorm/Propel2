@@ -29,7 +29,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return bool
      */
-    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null)
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null): bool
     {
         $this->connection->getProfiler()->start();
 
@@ -46,7 +46,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return bool
      */
-    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR): bool
     {
         $this->connection->getProfiler()->start();
 
@@ -61,7 +61,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return bool
      */
-    public function execute($inputParameters = null)
+    public function execute($inputParameters = null): bool
     {
         $this->connection->getProfiler()->start();
 

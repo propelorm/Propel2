@@ -24,7 +24,7 @@ trait InstancePoolTrait
      *
      * @return void
      */
-    public static function addInstanceToPool($object, $key = null)
+    public static function addInstanceToPool($object, $key = null): void
     {
         if (!Propel::isInstancePoolingEnabled()) {
             return;
@@ -43,7 +43,7 @@ trait InstancePoolTrait
      *
      * @return string|null
      */
-    public static function getInstanceKey($value)
+    public static function getInstanceKey($value): ?string
     {
         if (!($value instanceof Criteria) && is_object($value)) {
             $pk = $value->getPrimaryKey();
@@ -70,7 +70,7 @@ trait InstancePoolTrait
      *
      * @return void
      */
-    public static function removeInstanceFromPool($value)
+    public static function removeInstanceFromPool($value): void
     {
         if (Propel::isInstancePoolingEnabled() && $value !== null) {
             $key = static::getInstanceKey($value);
@@ -87,7 +87,7 @@ trait InstancePoolTrait
      *
      * @return object|null
      */
-    public static function getInstanceFromPool($key)
+    public static function getInstanceFromPool($key): ?object
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (isset(self::$instances[$key])) {
@@ -101,7 +101,7 @@ trait InstancePoolTrait
     /**
      * @return void
      */
-    public static function clearInstancePool()
+    public static function clearInstancePool(): void
     {
         self::$instances = [];
     }
@@ -109,7 +109,7 @@ trait InstancePoolTrait
     /**
      * @return void
      */
-    public static function clearRelatedInstancePool()
+    public static function clearRelatedInstancePool(): void
     {
     }
 }

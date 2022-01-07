@@ -39,7 +39,7 @@ class TestableComment extends AggregateComment
     /**
      * @return void
      */
-    public function delete(?ConnectionInterface $con = null)
+    public function delete(?ConnectionInterface $con = null): void
     {
         $con->beginTransaction();
         try {
@@ -65,13 +65,13 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
 
     // overrides the parent basePreDelete() to bypass behavior hooks
 
-    protected function basePreDelete(ConnectionInterface $con)
+    protected function basePreDelete(ConnectionInterface $con): ?int
     {
         return $this->preDelete($con);
     }
 
     // overrides the parent basePostDelete() to bypass behavior hooks
-    protected function basePostDelete($affectedRows, ConnectionInterface $con)
+    protected function basePostDelete($affectedRows, ConnectionInterface $con): ?int
     {
         return $this->postDelete($affectedRows, $con);
     }

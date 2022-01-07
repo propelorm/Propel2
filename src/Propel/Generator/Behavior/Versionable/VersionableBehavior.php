@@ -9,7 +9,9 @@
 namespace Propel\Generator\Behavior\Versionable;
 
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Keeps tracks of all the modifications in an ActiveRecord object
@@ -21,7 +23,7 @@ class VersionableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'version_column' => 'version',
@@ -58,7 +60,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getDatabase()->getTables() as $table) {
             if ($table->hasBehavior($this->getId())) {
@@ -77,7 +79,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $this->addVersionColumn();
         $this->addLogColumns();
@@ -88,7 +90,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    protected function addVersionColumn()
+    protected function addVersionColumn(): void
     {
         $table = $this->getTable();
         // add the version column
@@ -104,7 +106,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    protected function addLogColumns()
+    protected function addLogColumns(): void
     {
         $table = $this->getTable();
         if ($this->getParameter('log_created_at') === 'true' && !$table->hasColumn($this->getParameter('version_created_at_column'))) {
@@ -132,7 +134,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    protected function addVersionTable()
+    protected function addVersionTable(): void
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
@@ -197,7 +199,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return void
      */
-    public function addForeignKeyVersionColumns()
+    public function addForeignKeyVersionColumns(): void
     {
         $versionTable = $this->versionTable;
         foreach ($this->getVersionableFks() as $fk) {
@@ -234,7 +236,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Table
      */
-    public function getVersionTable()
+    public function getVersionTable(): Table
     {
         return $this->versionTable;
     }
@@ -242,7 +244,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return string
      */
-    public function getVersionTablePhpName()
+    public function getVersionTablePhpName(): string
     {
         return $this->getTable()->getPhpName() . 'Version';
     }
@@ -250,7 +252,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getVersionableFks()
+    public function getVersionableFks(): array
     {
         $versionableFKs = [];
         if ($fks = $this->getTable()->getForeignKeys()) {
@@ -267,7 +269,7 @@ class VersionableBehavior extends Behavior
     /**
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getVersionableReferrers()
+    public function getVersionableReferrers(): array
     {
         $versionableReferrers = [];
         if ($fks = $this->getTable()->getReferrers()) {
@@ -286,7 +288,7 @@ class VersionableBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getReferrerIdsColumn(ForeignKey $fk)
+    public function getReferrerIdsColumn(ForeignKey $fk): ?Column
     {
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_ids';
@@ -299,7 +301,7 @@ class VersionableBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getReferrerVersionsColumn(ForeignKey $fk)
+    public function getReferrerVersionsColumn(ForeignKey $fk): ?Column
     {
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_versions';

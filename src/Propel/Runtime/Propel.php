@@ -8,8 +8,14 @@
 
 namespace Propel\Runtime;
 
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionManagerInterface;
+use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Propel\Runtime\Util\Profiler;
+use Psr\Log\LoggerInterface;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -117,7 +123,7 @@ class Propel
      *
      * @return void
      */
-    public static function init($configFile)
+    public static function init($configFile): void
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
@@ -130,7 +136,7 @@ class Propel
      *
      * @return \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
-    public static function getServiceContainer()
+    public static function getServiceContainer(): ServiceContainerInterface
     {
         if (self::$serviceContainer === null) {
             self::$serviceContainer = new StandardServiceContainer();
@@ -146,7 +152,7 @@ class Propel
      *
      * @return void
      */
-    public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    public static function setServiceContainer(ServiceContainerInterface $serviceContainer): void
     {
         self::$serviceContainer = $serviceContainer;
     }
@@ -154,7 +160,7 @@ class Propel
     /**
      * @return string
      */
-    public static function getDefaultDatasource()
+    public static function getDefaultDatasource(): string
     {
         return self::$serviceContainer->getDefaultDatasource();
     }
@@ -168,7 +174,7 @@ class Propel
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public static function getAdapter($name = null)
+    public static function getAdapter($name = null): AdapterInterface
     {
         return self::$serviceContainer->getAdapter($name);
     }
@@ -182,7 +188,7 @@ class Propel
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public static function getDatabaseMap($name = null)
+    public static function getDatabaseMap($name = null): DatabaseMap
     {
         return self::$serviceContainer->getDatabaseMap($name);
     }
@@ -192,7 +198,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public static function getConnectionManager($name)
+    public static function getConnectionManager($name): ConnectionManagerInterface
     {
         return self::$serviceContainer->getConnectionManager($name);
     }
@@ -205,7 +211,7 @@ class Propel
      *
      * @return void
      */
-    public static function closeConnections()
+    public static function closeConnections(): void
     {
         self::$serviceContainer->closeConnections();
     }
@@ -221,7 +227,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    public static function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE): ConnectionInterface
     {
         return self::$serviceContainer->getConnection($name, $mode);
     }
@@ -237,7 +243,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getWriteConnection($name)
+    public static function getWriteConnection($name): ConnectionInterface
     {
         return self::$serviceContainer->getWriteConnection($name);
     }
@@ -254,7 +260,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getReadConnection($name)
+    public static function getReadConnection($name): ConnectionInterface
     {
         return self::$serviceContainer->getReadConnection($name);
     }
@@ -264,7 +270,7 @@ class Propel
      *
      * @return \Propel\Runtime\Util\Profiler
      */
-    public static function getProfiler()
+    public static function getProfiler(): Profiler
     {
         return self::$serviceContainer->getProfiler();
     }
@@ -274,7 +280,7 @@ class Propel
      *
      * @return \Psr\Log\LoggerInterface Configured log class
      */
-    public static function getLogger()
+    public static function getLogger(): LoggerInterface
     {
         return self::$serviceContainer->getLogger();
     }
@@ -289,7 +295,7 @@ class Propel
      *
      * @return void
      */
-    public static function log($message, $level = self::LOG_DEBUG)
+    public static function log($message, $level = self::LOG_DEBUG): void
     {
         $logger = self::$serviceContainer->getLogger();
 
@@ -333,7 +339,7 @@ class Propel
      * @return bool true if the method changed the instance pooling state,
      * false if it was already disabled
      */
-    public static function disableInstancePooling()
+    public static function disableInstancePooling(): bool
     {
         if (!self::$isInstancePoolingEnabled) {
             return false;
@@ -349,7 +355,7 @@ class Propel
      * @return bool true if the method changed the instance pooling state,
      * false if it was already enabled
      */
-    public static function enableInstancePooling()
+    public static function enableInstancePooling(): bool
     {
         if (self::$isInstancePoolingEnabled) {
             return false;
@@ -364,7 +370,7 @@ class Propel
      *
      * @return bool Whether the pooling is enabled or not.
      */
-    public static function isInstancePoolingEnabled()
+    public static function isInstancePoolingEnabled(): bool
     {
         return self::$isInstancePoolingEnabled;
     }

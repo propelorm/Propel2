@@ -38,22 +38,29 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param string $questionText
+     * @param string|null $default
+     * @param array|null $autocomplete
+     *
+     * @return mixed
      */
-    public function askQuestion($question, $default = null, ?array $autocomplete = null)
+    public function askQuestion(string $questionText, ?string $default = null, ?array $autocomplete = null)
     {
-        $question = new Question($this->formatQuestion($question, $default), $default);
+        $question = new Question($this->formatQuestion($questionText, $default), $default);
         $question->setAutocompleterValues($autocomplete);
 
         return parent::ask($this->input, $this->output, $question);
     }
 
     /**
-     * @inheritDoc
+     * @param string $questionText
+     * @param bool $fallback
+     *
+     * @return mixed
      */
-    public function askHiddenResponse($question, $fallback = true)
+    public function askHiddenResponse(string $questionText, bool $fallback = true)
     {
-        $question = new Question($this->formatQuestion($question));
+        $question = new Question($this->formatQuestion($questionText));
         $question->setHidden(true);
         $question->setHiddenFallback($fallback);
 
@@ -61,9 +68,11 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param string $text
+     *
+     * @return void
      */
-    public function writeSection($text)
+    public function writeSection(string $text): void
     {
         $this->output->writeln([
             '',
@@ -72,9 +81,12 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param string $text
+     * @param string $style
+     *
+     * @return void
      */
-    public function writeBlock($text, $style = 'bg=blue;fg=white')
+    public function writeBlock(string $text, string $style = 'bg=blue;fg=white'): void
     {
         /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
         $formatter = $this->getHelperSet()->get('formatter');
@@ -84,9 +96,11 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param array<string, string> $items
+     *
+     * @return void
      */
-    public function writeSummary($items)
+    public function writeSummary(array $items): void
     {
         $this->output->writeln('');
         foreach ($items as $name => $value) {
@@ -95,10 +109,23 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param string $question
+     * @param array $choices
+     * @param string|null $default
+     * @param int|null $attempts
+     * @param string $errorMessage
+     * @param bool $multiselect
+     *
+     * @return mixed
      */
-    public function select($question, $choices, $default = null, $attempts = null, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
-    {
+    public function select(
+        string $question,
+        array $choices,
+        ?string $default = null,
+        ?int $attempts = null,
+        string $errorMessage = 'Value "%s" is invalid',
+        bool $multiselect = false
+    ) {
         $choiceQuestion = new ChoiceQuestion($this->formatQuestion($question, $default), $choices, $default);
 
         if ($attempts) {
@@ -112,51 +139,61 @@ class ConsoleHelper extends QuestionHelper
     }
 
     /**
-     * @inheritDoc
+     * @param string $questionText
+     * @param bool $default
+     *
+     * @return mixed
      */
-    public function askConfirmation($question, $default = true)
+    public function askConfirmation(string $questionText, bool $default = true)
     {
-        $question = new ConfirmationQuestion($this->formatQuestion($question, $default ? 'yes' : 'no'), $default);
+        $question = new ConfirmationQuestion($this->formatQuestion($questionText, $default ? 'yes' : 'no'), $default);
 
         return parent::ask($this->input, $this->output, $question);
     }
 
     /**
-     * @inheritDoc
+     * @return \Symfony\Component\Console\Input\InputInterface
      */
-    public function getInput()
+    public function getInput(): InputInterface
     {
         return $this->input;
     }
 
     /**
-     * @inheritDoc
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     *
+     * @return void
      */
-    public function setInput(InputInterface $input)
+    public function setInput(InputInterface $input): void
     {
         $this->input = $input;
     }
 
     /**
-     * @inheritDoc
+     * @return \Symfony\Component\Console\Output\OutputInterface
      */
-    public function getOutput()
+    public function getOutput(): OutputInterface
     {
         return $this->output;
     }
 
     /**
-     * @inheritDoc
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return void
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
 
     /**
-     * @inheritDoc
+     * @param iterable|string $messages
+     * @param int $options
+     *
+     * @return void
      */
-    public function writeln($messages, $options = 0)
+    public function writeln($messages, int $options = 0): void
     {
         $this->output->writeln($messages, $options);
     }
@@ -167,12 +204,12 @@ class ConsoleHelper extends QuestionHelper
      *
      * @return string
      */
-    private function formatQuestion($question, $default = null)
+    protected function formatQuestion(string $question, ?string $default = null): string
     {
         if ($default) {
             return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
-        } else {
-            return sprintf('<info>%s</info>: ', $question);
         }
+
+        return sprintf('<info>%s</info>: ', $question);
     }
 }

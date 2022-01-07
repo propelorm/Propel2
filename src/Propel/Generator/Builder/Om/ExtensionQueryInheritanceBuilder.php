@@ -33,7 +33,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getChild()->getClassName() . 'Query';
     }
@@ -43,7 +43,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getPackage()
+    public function getPackage(): string
     {
         return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
@@ -55,7 +55,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    public function setChild(Inheritance $child)
+    public function setChild(Inheritance $child): void
     {
         $this->child = $child;
     }
@@ -67,7 +67,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return \Propel\Generator\Model\Inheritance
      */
-    public function getChild()
+    public function getChild(): Inheritance
     {
         if (!$this->child) {
             throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
@@ -83,7 +83,7 @@ class ExtensionQueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(&$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -132,7 +132,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(&$script): void
     {
     }
 
@@ -143,10 +143,10 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

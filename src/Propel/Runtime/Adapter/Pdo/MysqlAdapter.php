@@ -32,7 +32,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString($s1, $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
@@ -46,7 +46,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString($s, $pos, $len): string
     {
         return "SUBSTRING($s, $pos, $len)";
     }
@@ -58,7 +58,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s)
+    public function strLength($s): string
     {
         return "CHAR_LENGTH($s)";
     }
@@ -71,7 +71,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function lockTable($con, $table)
+    public function lockTable($con, $table): void
     {
         $con->exec("LOCK TABLE $table WRITE");
     }
@@ -84,7 +84,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function unlockTable($con, $table)
+    public function unlockTable($con, $table): void
     {
         $con->exec('UNLOCK TABLES');
     }
@@ -96,7 +96,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier($text): string
     {
         return '`' . $text . '`';
     }
@@ -108,7 +108,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierTable($table): string
     {
         // e.g. 'database.table alias' should be escaped as '`database`.`table` `alias`'
         return '`' . strtr($table, ['.' => '`.`', ' ' => '` `']) . '`';
@@ -124,7 +124,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
     {
         $offset = (int)$offset;
         $limit = (int)$limit;
@@ -143,7 +143,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null)
+    public function random($seed = null): string
     {
         return 'rand(' . ((int)$seed) . ')';
     }
@@ -159,7 +159,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
@@ -192,7 +192,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return array the modified parameters
      */
-    protected function prepareParams($params)
+    protected function prepareParams($params): array
     {
         if (isset($params['settings']['charset'])) {
             if (strpos($params['dsn'], ';charset=') === false) {

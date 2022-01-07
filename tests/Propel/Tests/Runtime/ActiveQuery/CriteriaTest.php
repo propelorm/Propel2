@@ -1163,7 +1163,7 @@ class CriteriaTest extends BookstoreTestBase
         $c = new Criteria();
         $this->assertNull($c->getComment(), 'Comment is null by default');
         $c2 = $c->setComment('foo');
-        $this->assertEquals('foo', $c->getComment(), 'Comment is set by setComment()');
+        $this->assertSame('foo', $c->getComment(), 'Comment is set by setComment()');
         $this->assertEquals($c, $c2, 'setComment() returns the current Criteria');
         $c->setComment();
         $this->assertNull($c->getComment(), 'Comment is reset by setComment(null)');
@@ -1178,7 +1178,7 @@ class CriteriaTest extends BookstoreTestBase
         $c->clear();
 
         $this->assertTrue(is_array($c->getNamedCriterions()), 'namedCriterions is an array');
-        $this->assertEquals(0, count($c->getNamedCriterions()), 'namedCriterions is empty by default');
+        $this->assertSame(0, count($c->getNamedCriterions()), 'namedCriterions is empty by default');
 
         $this->assertFalse($c->getIgnoreCase(), 'ignoreCase is false by default');
 

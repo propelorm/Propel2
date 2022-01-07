@@ -39,7 +39,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString($s1, $s2): string
     {
         return "($s1 || $s2)";
     }
@@ -47,7 +47,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @inheritDoc
      */
-    public function compareRegex($left, $right)
+    public function compareRegex($left, $right): string
     {
         return sprintf('%s ~* %s', $left, $right);
     }
@@ -61,7 +61,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString($s, $pos, $len): string
     {
         return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
@@ -73,7 +73,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s)
+    public function strLength($s): string
     {
         return "char_length($s)";
     }
@@ -83,7 +83,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    protected function getIdMethod()
+    protected function getIdMethod(): int
     {
         return AdapterInterface::ID_METHOD_SEQUENCE;
     }
@@ -98,7 +98,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null)
+    public function getId(ConnectionInterface $con, $name = null): int
     {
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
@@ -113,7 +113,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s.u O';
     }
@@ -123,7 +123,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimeFormatter()
+    public function getTimeFormatter(): string
     {
         return 'H:i:s.u O';
     }
@@ -138,7 +138,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
     {
         if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
@@ -153,7 +153,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria)
+    public function getGroupBy(Criteria $criteria): string
     {
         $groupBy = $criteria->getGroupByColumns();
 
@@ -190,7 +190,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null)
+    public function random($seed = null): string
     {
         return 'random()';
     }
@@ -202,7 +202,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierTable($table): string
     {
         // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
         return '"' . strtr($table, ['.' => '"."', ' ' => '" "']) . '"';
@@ -244,7 +244,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getExplainPlanQuery($query)
+    public function getExplainPlanQuery($query): string
     {
         return 'EXPLAIN ' . $query;
     }

@@ -62,7 +62,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * Default parameters value.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
         self::PARAMETER_KEY_FOREIGN_TABLE => null,

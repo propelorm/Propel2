@@ -50,7 +50,7 @@ class ClassTools
      *
      * @return string The constructed file path.
      */
-    public static function createFilePath($path, $classname = null, $extension = '.php')
+    public static function createFilePath($path, $classname = null, $extension = '.php'): string
     {
         if ($classname === null) {
             return $path . $extension;
@@ -70,7 +70,7 @@ class ClassTools
      *
      * @return string
      */
-    public static function getBaseClass(Table $table)
+    public static function getBaseClass(Table $table): string
     {
         return $table->getBaseClass();
     }
@@ -82,7 +82,7 @@ class ClassTools
      *
      * @return string
      */
-    public static function getInterface(Table $table)
+    public static function getInterface(Table $table): string
     {
         return $table->getInterface();
     }
@@ -92,7 +92,7 @@ class ClassTools
      *
      * @return array<string>
      */
-    public static function getPhpReservedWords()
+    public static function getPhpReservedWords(): array
     {
         return [
             'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',
@@ -111,7 +111,7 @@ class ClassTools
     /**
      * @return array<string>
      */
-    public static function getPropelReservedMethods()
+    public static function getPropelReservedMethods(): array
     {
         return [
             'isModified', 'isColumnModified', 'isNew', 'isDeleted',

@@ -49,7 +49,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addGeneralSection(ArrayNodeDefinition $node)
+    protected function addGeneralSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -68,7 +68,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addPathsSection(ArrayNodeDefinition $node)
+    protected function addPathsSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -94,7 +94,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addDatabaseSection(ArrayNodeDefinition $node)
+    protected function addDatabaseSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -207,7 +207,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addMigrationsSection(ArrayNodeDefinition $node)
+    protected function addMigrationsSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -228,7 +228,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addReverseSection(ArrayNodeDefinition $node)
+    protected function addReverseSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -246,7 +246,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addExcludeTablesSection(ArrayNodeDefinition $node)
+    protected function addExcludeTablesSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -261,7 +261,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addRuntimeSection(ArrayNodeDefinition $node)
+    protected function addRuntimeSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -339,7 +339,7 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return void
      */
-    protected function addGeneratorSection(ArrayNodeDefinition $node)
+    protected function addGeneratorSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()

@@ -9,6 +9,7 @@
 namespace Propel\Generator\Behavior\NestedSet;
 
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
 
 /**
  * Behavior to adds nested set tree structure columns and abilities
@@ -20,7 +21,7 @@ class NestedSetBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'left_column' => 'tree_left',
@@ -46,7 +47,7 @@ class NestedSetBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
@@ -106,7 +107,7 @@ class NestedSetBehavior extends Behavior
     /**
      * @return bool
      */
-    public function useScope()
+    public function useScope(): bool
     {
         return $this->getParameter('use_scope') === 'true';
     }
@@ -116,7 +117,7 @@ class NestedSetBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnConstant($columnName)
+    public function getColumnConstant($columnName): string
     {
         return $this->getColumn($columnName)->getName();
     }
@@ -126,7 +127,7 @@ class NestedSetBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Column
      */
-    public function getColumn($columnName)
+    public function getColumn($columnName): Column
     {
         return $this->getColumnForParameter($columnName);
     }

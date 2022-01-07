@@ -69,7 +69,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
      * @return string
      */
     #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): string
     {
         $method = method_exists($this->curNode, 'getPath') ? 'getPath' : 'getAncestors';
         $key = [];

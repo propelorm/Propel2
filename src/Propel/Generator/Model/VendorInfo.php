@@ -52,7 +52,7 @@ class VendorInfo extends MappingModel
      *
      * @return void
      */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
     }
@@ -62,7 +62,7 @@ class VendorInfo extends MappingModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -75,7 +75,7 @@ class VendorInfo extends MappingModel
      *
      * @return void
      */
-    public function setParameter($name, $value)
+    public function setParameter($name, $value): void
     {
         $this->parameters[$name] = $value;
     }
@@ -99,7 +99,7 @@ class VendorInfo extends MappingModel
      *
      * @return bool
      */
-    public function hasParameter($name)
+    public function hasParameter($name): bool
     {
         return isset($this->parameters[$name]);
     }
@@ -111,7 +111,7 @@ class VendorInfo extends MappingModel
      *
      * @return void
      */
-    public function setParameters(array $parameters = [])
+    public function setParameters(array $parameters = []): void
     {
         $this->parameters = $parameters;
     }
@@ -122,7 +122,7 @@ class VendorInfo extends MappingModel
      *
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -132,7 +132,7 @@ class VendorInfo extends MappingModel
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !$this->parameters;
     }
@@ -142,9 +142,9 @@ class VendorInfo extends MappingModel
      *
      * @param \Propel\Generator\Model\VendorInfo $info
      *
-     * @return \Propel\Generator\Model\VendorInfo
+     * @return self
      */
-    public function getMergedVendorInfo(VendorInfo $info)
+    public function getMergedVendorInfo(VendorInfo $info): self
     {
         $params = array_merge($this->parameters, $info->getParameters());
 
@@ -157,7 +157,7 @@ class VendorInfo extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->type = $this->getAttribute('type');
     }

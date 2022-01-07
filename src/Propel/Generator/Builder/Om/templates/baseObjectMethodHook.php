@@ -21,7 +21,7 @@
      * Code to be run after persisting the object
      * @param ConnectionInterface $con
      */
-    public function postSave(ConnectionInterface $con = null)
+    public function postSave(ConnectionInterface $con = null): ?int
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postSave')) {
@@ -53,7 +53,7 @@
      * Code to be run after inserting to database
      * @param ConnectionInterface $con
      */
-    public function postInsert(ConnectionInterface $con = null)
+    public function postInsert(ConnectionInterface $con = null): ?int
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postInsert')) {
@@ -85,7 +85,7 @@
      * Code to be run after updating the object in database
      * @param ConnectionInterface $con
      */
-    public function postUpdate(ConnectionInterface $con = null)
+    public function postUpdate(ConnectionInterface $con = null): ?int
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postUpdate')) {
@@ -99,9 +99,9 @@
     /**
      * Code to be run before deleting the object in database
      * @param  ConnectionInterface $con
-     * @return boolean
+     * @return bool
      */
-    public function preDelete(ConnectionInterface $con = null)
+    public function preDelete(ConnectionInterface $con = null): ?int
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preDelete')) {
@@ -117,7 +117,7 @@
      * Code to be run after deleting the object in database
      * @param ConnectionInterface $con
      */
-    public function postDelete(ConnectionInterface $con = null)
+    public function postDelete(ConnectionInterface $con = null): ?int
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postDelete')) {

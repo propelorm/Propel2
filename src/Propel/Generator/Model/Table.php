@@ -8,10 +8,12 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
 
 /**
@@ -76,12 +78,12 @@ class Table extends ScopedMappingModel implements IdMethod
     private $originCommonName;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $phpName;
 
@@ -254,7 +256,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    private function getStdSeparatedName()
+    private function getStdSeparatedName(): string
     {
         if ($this->schema && $this->getBuildProperty('generator.schema.autoPrefix')) {
             return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
@@ -266,7 +268,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @return void
      */
-    public function setupObject()
+    public function setupObject(): void
     {
         parent::setupObject();
 
@@ -322,7 +324,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getBuildProperty($name)
+    public function getBuildProperty($name): string
     {
         return $this->database ? $this->database->getBuildProperty($name) : '';
     }
@@ -332,7 +334,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function applyBehaviors()
+    public function applyBehaviors(): void
     {
         foreach ($this->behaviors as $behavior) {
             if (!$behavior->isTableModified()) {
@@ -347,7 +349,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    protected function registerBehavior(Behavior $behavior)
+    protected function registerBehavior(Behavior $behavior): void
     {
         $behavior->setTable($this);
     }
@@ -362,7 +364,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function doFinalInitialization()
+    public function doFinalInitialization(): void
     {
         // Heavy indexing must wait until after all columns composing
         // a table's primary key have been parsed.
@@ -402,7 +404,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    private function doHeavyIndexing()
+    private function doHeavyIndexing(): void
     {
         $pk = $this->getPrimaryKey();
         $size = count($pk);
@@ -424,7 +426,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function addExtraIndices()
+    public function addExtraIndices(): void
     {
         /**
          * A collection of indexed columns. The key is the column name
@@ -503,7 +505,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Index The created index
      */
-    protected function createIndex($name, array $columns)
+    protected function createIndex($name, array $columns): Index
     {
         $index = new Index($name);
         $index->setColumns($columns);
@@ -523,7 +525,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes)
+    protected function collectIndexedColumns($indexName, $columns, &$collectedIndexes): void
     {
         /**
          * "If the table has a multiple-column index, any leftmost prefix of the
@@ -553,7 +555,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getColumnList($columns, $delimiter = ',')
+    public function getColumnList($columns, $delimiter = ','): string
     {
         $list = [];
         foreach ($columns as $col) {
@@ -570,9 +572,9 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the name of the base class used for superclass of all objects
      * of this table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getBaseClass()
+    public function getBaseClass(): ?string
     {
         if ($this->isAlias() && $this->baseClass === null) {
             return $this->alias;
@@ -589,9 +591,9 @@ class Table extends ScopedMappingModel implements IdMethod
      * Returns the name of the base query class used for superclass of all query objects
      * of this table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getBaseQueryClass()
+    public function getBaseQueryClass(): ?string
     {
         if ($this->baseQueryClass === null) {
             return $this->database->getBaseQueryClass();
@@ -607,7 +609,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setBaseClass($class)
+    public function setBaseClass($class): void
     {
         $this->baseClass = $this->makeNamespaceAbsolute($class);
     }
@@ -619,7 +621,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setBaseQueryClass($class)
+    public function setBaseQueryClass($class): void
     {
         $this->baseQueryClass = $this->makeNamespaceAbsolute($class);
     }
@@ -633,7 +635,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column
      */
-    public function addColumn($col)
+    public function addColumn($col): Column
     {
         if ($col instanceof Column) {
             if (isset($this->columnsByName[$col->getName()])) {
@@ -673,7 +675,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function addColumns(array $columns)
+    public function addColumns(array $columns): void
     {
         foreach ($columns as $column) {
             $this->addColumn($column);
@@ -689,7 +691,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function removeColumn($column)
+    public function removeColumn($column): void
     {
         if (is_string($column)) {
             $column = $this->getColumn($column);
@@ -731,7 +733,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @return void
      */
-    public function adjustColumnPositions()
+    public function adjustColumnPositions(): void
     {
         $this->columns = array_values($this->columns);
         $nbColumns = $this->getNumColumns();
@@ -749,7 +751,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\ForeignKey
      */
-    public function addForeignKey($foreignKey)
+    public function addForeignKey($foreignKey): ForeignKey
     {
         if ($foreignKey instanceof ForeignKey) {
             $fk = $foreignKey;
@@ -784,7 +786,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function addForeignKeys(array $foreignKeys)
+    public function addForeignKeys(array $foreignKeys): void
     {
         foreach ($foreignKeys as $foreignKey) {
             $this->addForeignKey($foreignKey);
@@ -797,7 +799,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getChildrenColumn()
+    public function getChildrenColumn(): ?Column
     {
         return $this->inheritanceColumn;
     }
@@ -817,7 +819,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array|null
      */
-    public function getChildrenNames()
+    public function getChildrenNames(): ?array
     {
         if (
             $this->inheritanceColumn === null
@@ -841,7 +843,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function addReferrer(ForeignKey $fk)
+    public function addReferrer(ForeignKey $fk): void
     {
         $this->referrers[] = $fk;
     }
@@ -851,7 +853,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getReferrers()
+    public function getReferrers(): array
     {
         return $this->referrers;
     }
@@ -868,7 +870,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setupReferrers($throwErrors = false)
+    public function setupReferrers($throwErrors = false): void
     {
         foreach ($this->foreignKeys as $foreignKey) {
             // table referrers
@@ -960,7 +962,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\CrossForeignKeys>
      */
-    public function getCrossFks()
+    public function getCrossFks(): array
     {
         $crossFks = [];
         foreach ($this->referrers as $refFK) {
@@ -990,7 +992,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Column>
      */
-    public function getOtherRequiredPrimaryKeys(array $primaryKeys)
+    public function getOtherRequiredPrimaryKeys(array $primaryKeys): array
     {
         /** @var array<\Propel\Generator\Model\Column> $pks */
         $pks = [];
@@ -1010,7 +1012,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setContainsForeignPK($containsForeignPK)
+    public function setContainsForeignPK($containsForeignPK): void
     {
         $this->containsForeignPK = (bool)$containsForeignPK;
     }
@@ -1020,7 +1022,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function getContainsForeignPK()
+    public function getContainsForeignPK(): bool
     {
         return $this->containsForeignPK;
     }
@@ -1030,7 +1032,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array
      */
-    public function getForeignTableNames()
+    public function getForeignTableNames(): array
     {
         return $this->foreignTableNames;
     }
@@ -1040,7 +1042,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function requiresTransactionInPostgres()
+    public function requiresTransactionInPostgres(): bool
     {
         return $this->needsTransactionInPostgres;
     }
@@ -1052,7 +1054,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\IdMethodParameter
      */
-    public function addIdMethodParameter($idMethodParameter)
+    public function addIdMethodParameter($idMethodParameter): IdMethodParameter
     {
         if ($idMethodParameter instanceof IdMethodParameter) {
             $idMethodParameter->setTable($this);
@@ -1075,7 +1077,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function removeIndex($name)
+    public function removeIndex($name): void
     {
         // check if we have a index with this name already, then delete it
         foreach ($this->indices as $n => $idx) {
@@ -1094,7 +1096,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasIndex($name)
+    public function hasIndex($name): bool
     {
         foreach ($this->indices as $idx) {
             if ($idx->getName() == $name) {
@@ -1115,7 +1117,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Index
      */
-    public function addIndex($index)
+    public function addIndex($index): Index
     {
         if ($index instanceof Index) {
             if ($this->hasIndex($index->getName())) {
@@ -1149,7 +1151,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Unique
      */
-    public function addUnique($unique)
+    public function addUnique($unique): Unique
     {
         if ($unique instanceof Unique) {
             $unique->setTable($this);
@@ -1170,7 +1172,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    public function getGeneratorConfig()
+    public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
         return $this->database->getGeneratorConfig();
     }
@@ -1180,7 +1182,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasAdditionalBuilders()
+    public function hasAdditionalBuilders(): bool
     {
         foreach ($this->behaviors as $behavior) {
             if ($behavior->hasAdditionalBuilders()) {
@@ -1198,7 +1200,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Behavior> Array of Behavior objects
      */
-    public function getEarlyBehaviors()
+    public function getEarlyBehaviors(): array
     {
         $behaviors = [];
         foreach ($this->behaviors as $name => $behavior) {
@@ -1215,7 +1217,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array
      */
-    public function getAdditionalBuilders()
+    public function getAdditionalBuilders(): array
     {
         $additionalBuilders = [];
         foreach ($this->behaviors as $behavior) {
@@ -1230,7 +1232,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $tableName = '';
         if ($this->hasSchema()) {
@@ -1245,9 +1247,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the schema name from this table or from its database.
      *
-     * @return string
+     * @return string|null
      */
-    public function guessSchemaName()
+    public function guessSchemaName(): ?string
     {
         return $this->schema ?: $this->database->getSchema();
     }
@@ -1257,7 +1259,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    private function hasSchema()
+    private function hasSchema(): bool
     {
         return $this->database
             && ($this->schema ?: $this->database->getSchema())
@@ -1268,9 +1270,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the table description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -1280,7 +1282,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasDescription()
+    public function hasDescription(): bool
     {
         return (bool)$this->description;
     }
@@ -1292,7 +1294,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -1302,7 +1304,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getPhpName()
+    public function getPhpName(): string
     {
         if ($this->phpName === null) {
             $this->phpName = $this->buildPhpName($this->getStdSeparatedName());
@@ -1318,7 +1320,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setPhpName($phpName)
+    public function setPhpName($phpName): void
     {
         $this->phpName = $phpName;
     }
@@ -1330,7 +1332,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    private function buildPhpName($name)
+    private function buildPhpName($name): string
     {
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, (string)$this->phpNamingMethod]);
     }
@@ -1342,7 +1344,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getCamelCaseName()
+    public function getCamelCaseName(): string
     {
         return lcfirst($this->getPhpName());
     }
@@ -1352,7 +1354,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getCommonName()
+    public function getCommonName(): string
     {
         return $this->commonName;
     }
@@ -1364,7 +1366,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setCommonName($name)
+    public function setCommonName($name): void
     {
         $this->commonName = $this->originCommonName = $name;
     }
@@ -1374,7 +1376,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getOriginCommonName()
+    public function getOriginCommonName(): string
     {
         return $this->originCommonName;
     }
@@ -1390,7 +1392,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDefaultStringFormat($format)
+    public function setDefaultStringFormat($format): void
     {
         $formats = Database::getSupportedStringFormats();
 
@@ -1408,7 +1410,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getDefaultStringFormat()
+    public function getDefaultStringFormat(): string
     {
         if ($this->defaultStringFormat !== null) {
             return $this->defaultStringFormat;
@@ -1425,7 +1427,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getIdMethod()
+    public function getIdMethod(): string
     {
         return $this->idMethod;
     }
@@ -1436,7 +1438,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isAllowPkInsert()
+    public function isAllowPkInsert(): bool
     {
         return $this->allowPkInsert;
     }
@@ -1448,7 +1450,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setIdMethod($idMethod)
+    public function setIdMethod($idMethod): void
     {
         $this->idMethod = $idMethod;
     }
@@ -1459,7 +1461,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isSkipSql()
+    public function isSkipSql(): bool
     {
         return ($this->skipSql || $this->isAlias() || $this->isForReferenceOnly());
     }
@@ -1471,7 +1473,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setSkipSql($skip)
+    public function setSkipSql($skip): void
     {
         $this->skipSql = (bool)$skip;
     }
@@ -1482,7 +1484,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isReadOnly()
+    public function isReadOnly(): bool
     {
         return $this->readOnly;
     }
@@ -1494,7 +1496,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReadOnly($flag = true)
+    public function setReadOnly($flag = true): void
     {
         $this->readOnly = (bool)$flag;
     }
@@ -1504,7 +1506,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isReloadOnInsert()
+    public function isReloadOnInsert(): bool
     {
         return $this->reloadOnInsert;
     }
@@ -1516,7 +1518,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReloadOnInsert($flag = true)
+    public function setReloadOnInsert($flag = true): void
     {
         $this->reloadOnInsert = (bool)$flag;
     }
@@ -1526,7 +1528,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isReloadOnUpdate()
+    public function isReloadOnUpdate(): bool
     {
         return $this->reloadOnUpdate;
     }
@@ -1538,7 +1540,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReloadOnUpdate($flag = true)
+    public function setReloadOnUpdate($flag = true): void
     {
         $this->reloadOnUpdate = (bool)$flag;
     }
@@ -1548,7 +1550,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
@@ -1559,7 +1561,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isAlias()
+    public function isAlias(): bool
     {
         return $this->alias !== null;
     }
@@ -1572,7 +1574,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setAlias($alias)
+    public function setAlias($alias): void
     {
         $this->alias = $alias;
     }
@@ -1580,9 +1582,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the interface objects of this table will implement.
      *
-     * @return string
+     * @return string|null
      */
-    public function getInterface()
+    public function getInterface(): ?string
     {
         return $this->interface;
     }
@@ -1594,7 +1596,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setInterface($interface)
+    public function setInterface($interface): void
     {
         $this->interface = $interface;
     }
@@ -1607,7 +1609,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isAbstract()
+    public function isAbstract(): bool
     {
         return $this->isAbstract;
     }
@@ -1622,7 +1624,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setAbstract($flag = true)
+    public function setAbstract($flag = true): void
     {
         $this->isAbstract = (bool)$flag;
     }
@@ -1632,7 +1634,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Column>
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -1642,7 +1644,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return int
      */
-    public function getNumColumns()
+    public function getNumColumns(): int
     {
         return count($this->columns);
     }
@@ -1652,7 +1654,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return int
      */
-    public function getNumLazyLoadColumns()
+    public function getNumLazyLoadColumns(): int
     {
         $count = 0;
         foreach ($this->columns as $col) {
@@ -1669,7 +1671,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasValueSetColumns()
+    public function hasValueSetColumns(): bool
     {
         foreach ($this->columns as $col) {
             if ($col->isValueSetType()) {
@@ -1685,7 +1687,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getForeignKeys()
+    public function getForeignKeys(): array
     {
         return $this->foreignKeys;
     }
@@ -1696,7 +1698,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\IdMethodParameter>
      */
-    public function getIdMethodParameters()
+    public function getIdMethodParameters(): array
     {
         return $this->idMethodParameters;
     }
@@ -1706,7 +1708,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Index>
      */
-    public function getIndices()
+    public function getIndices(): array
     {
         return $this->indices;
     }
@@ -1716,7 +1718,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Unique>
      */
-    public function getUnices()
+    public function getUnices(): array
     {
         return $this->unices;
     }
@@ -1729,7 +1731,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isUnique(array $keys)
+    public function isUnique(array $keys): bool
     {
         if (count($keys) === 1) {
             $column = $keys[0] instanceof Column ? $keys[0] : $this->getColumn($keys[0]);
@@ -1800,7 +1802,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isIndex(array $keys)
+    public function isIndex(array $keys): bool
     {
         if ($this->indices) {
             foreach ($this->indices as $index) {
@@ -1831,7 +1833,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasColumn($column, $caseInsensitive = false)
+    public function hasColumn($column, $caseInsensitive = false): bool
     {
         if ($column instanceof Column) {
             $column = $column->getName();
@@ -1852,7 +1854,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumn($name, $caseInsensitive = false)
+    public function getColumn($name, $caseInsensitive = false): ?Column
     {
         if (!$this->hasColumn($name, $caseInsensitive)) {
             return null;
@@ -1872,7 +1874,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnByPhpName($phpName)
+    public function getColumnByPhpName($phpName): ?Column
     {
         if (isset($this->columnsByPhpName[$phpName])) {
             return $this->columnsByPhpName[$phpName];
@@ -1889,7 +1891,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getForeignKeysReferencingTable($tableName)
+    public function getForeignKeysReferencingTable($tableName): array
     {
         $matches = [];
         foreach ($this->foreignKeys as $fk) {
@@ -1912,7 +1914,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getColumnForeignKeys($column)
+    public function getColumnForeignKeys($column): array
     {
         $matches = [];
         foreach ($this->foreignKeys as $fk) {
@@ -1931,7 +1933,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDatabase(Database $database)
+    public function setDatabase(Database $database): void
     {
         $this->database = $database;
     }
@@ -1941,7 +1943,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase()
+    public function getDatabase(): ?Database
     {
         return $this->database;
     }
@@ -1951,7 +1953,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
      */
-    public function getPlatform()
+    public function getPlatform(): ?PlatformInterface
     {
         return $this->database ? $this->database->getPlatform() : null;
     }
@@ -1967,7 +1969,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier($text): string
     {
         if (!$this->getPlatform()) {
             throw new RuntimeException('No platform specified. Can not quote without knowing which platform this table\'s database is using.');
@@ -1987,7 +1989,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool|null
      */
-    public function isForReferenceOnly()
+    public function isForReferenceOnly(): ?bool
     {
         return $this->forReferenceOnly;
     }
@@ -2000,7 +2002,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setForReferenceOnly($flag = true)
+    public function setForReferenceOnly($flag = true): void
     {
         $this->forReferenceOnly = (bool)$flag;
     }
@@ -2011,7 +2013,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return array<\Propel\Generator\Model\Column>
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): array
     {
         $pk = [];
         foreach ($this->columns as $col) {
@@ -2028,7 +2030,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasPrimaryKey()
+    public function hasPrimaryKey(): bool
     {
         return count($this->getPrimaryKey()) > 0;
     }
@@ -2038,7 +2040,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasCompositePrimaryKey()
+    public function hasCompositePrimaryKey(): bool
     {
         return count($this->getPrimaryKey()) > 1;
     }
@@ -2050,7 +2052,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getFirstPrimaryKeyColumn()
+    public function getFirstPrimaryKeyColumn(): ?Column
     {
         foreach ($this->columns as $col) {
             if ($col->isPrimaryKey()) {
@@ -2082,7 +2084,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasAutoIncrementPrimaryKey()
+    public function hasAutoIncrementPrimaryKey(): bool
     {
         return $this->getAutoIncrementPrimaryKey() !== null;
     }
@@ -2092,7 +2094,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getAutoIncrementPrimaryKey()
+    public function getAutoIncrementPrimaryKey(): ?Column
     {
         if ($this->getIdMethod() !== IdMethod::NO_ID_METHOD) {
             foreach ($this->getPrimaryKey() as $pk) {
@@ -2111,7 +2113,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function getIsCrossRef()
+    public function getIsCrossRef(): bool
     {
         return $this->isCrossRef;
     }
@@ -2121,7 +2123,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isCrossRef()
+    public function isCrossRef(): bool
     {
         return $this->isCrossRef;
     }
@@ -2133,7 +2135,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setIsCrossRef($flag = true)
+    public function setIsCrossRef($flag = true): void
     {
         $this->setCrossRef($flag);
     }
@@ -2145,7 +2147,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setCrossRef($flag = true)
+    public function setCrossRef($flag = true): void
     {
         $this->isCrossRef = (bool)$flag;
     }
@@ -2155,7 +2157,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasForeignKeys()
+    public function hasForeignKeys(): bool
     {
         return count($this->foreignKeys) !== 0;
     }
@@ -2165,7 +2167,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function hasCrossForeignKeys()
+    public function hasCrossForeignKeys(): bool
     {
         return count($this->getCrossFks()) !== 0;
     }
@@ -2175,7 +2177,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getPhpNamingMethod()
+    public function getPhpNamingMethod(): string
     {
         return $this->phpNamingMethod;
     }
@@ -2187,7 +2189,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setPhpNamingMethod($phpNamingMethod)
+    public function setPhpNamingMethod($phpNamingMethod): void
     {
         $this->phpNamingMethod = $phpNamingMethod;
     }
@@ -2199,7 +2201,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDefaultAccessorVisibility($defaultAccessorVisibility)
+    public function setDefaultAccessorVisibility($defaultAccessorVisibility): void
     {
         $this->defaultAccessorVisibility = $defaultAccessorVisibility;
     }
@@ -2209,7 +2211,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getDefaultAccessorVisibility()
+    public function getDefaultAccessorVisibility(): string
     {
         return $this->defaultAccessorVisibility;
     }
@@ -2221,7 +2223,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDefaultMutatorVisibility($defaultMutatorVisibility)
+    public function setDefaultMutatorVisibility($defaultMutatorVisibility): void
     {
         $this->defaultMutatorVisibility = $defaultMutatorVisibility;
     }
@@ -2231,7 +2233,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getDefaultMutatorVisibility()
+    public function getDefaultMutatorVisibility(): string
     {
         return $this->defaultMutatorVisibility;
     }
@@ -2244,7 +2246,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return bool
      */
-    public function isIdentifierQuotingEnabled()
+    public function isIdentifierQuotingEnabled(): bool
     {
         return ($this->identifierQuoting !== null || !$this->database) ? $this->identifierQuoting : $this->database->isIdentifierQuotingEnabled();
     }
@@ -2252,7 +2254,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @return bool|null
      */
-    public function getIdentifierQuoting()
+    public function getIdentifierQuoting(): ?bool
     {
         return $this->identifierQuoting;
     }
@@ -2262,7 +2264,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting)
+    public function setIdentifierQuoting($identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }

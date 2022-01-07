@@ -8,7 +8,7 @@
  *
  * @return integer the number of deleted rows
  */
-public function updateWithoutArchive($values, $con = null, $forceIndividualSaves = false)
+public function updateWithoutArchive($values, $con = null, $forceIndividualSaves = false): int
 {
     $this->archiveOnUpdate = false;
 

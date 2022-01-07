@@ -54,7 +54,7 @@ class BasicCriterion extends AbstractCriterion
      *
      * @return bool True if case is ignored.
      */
-    public function isIgnoreCase()
+    public function isIgnoreCase(): bool
     {
         return $this->ignoreStringCase;
     }
@@ -69,7 +69,7 @@ class BasicCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
     {
         $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
         // NULL VALUES need special treatment because the SQL syntax is different

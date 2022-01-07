@@ -25,7 +25,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -51,7 +51,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -80,7 +80,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function rollBack()
+    public function rollBack(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -108,7 +108,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function forceRollBack()
+    public function forceRollBack(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -134,7 +134,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return int
      */
-    public function lastInsertId($name = null)
+    public function lastInsertId($name = null): int
     {
         $result = $this->query('SELECT SCOPE_IDENTITY()');
 
@@ -146,7 +146,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier($text): string
     {
         return '[' . $text . ']';
     }

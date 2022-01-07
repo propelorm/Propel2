@@ -88,7 +88,7 @@ class ModelJoin extends Join
     /**
      * @return \Propel\Runtime\Map\RelationMap
      */
-    public function getRelationMap()
+    public function getRelationMap(): RelationMap
     {
         return $this->relationMap;
     }
@@ -112,7 +112,7 @@ class ModelJoin extends Join
      *
      * @return \Propel\Runtime\Map\TableMap The table map
      */
-    public function getTableMap()
+    public function getTableMap(): TableMap
     {
         if ($this->tableMap === null && $this->relationMap !== null) {
             $this->tableMap = $this->relationMap->getRightTable();
@@ -136,7 +136,7 @@ class ModelJoin extends Join
     /**
      * @return self
      */
-    public function getPreviousJoin()
+    public function getPreviousJoin(): self
     {
         return $this->previousJoin;
     }
@@ -144,7 +144,7 @@ class ModelJoin extends Join
     /**
      * @return bool
      */
-    public function isPrimary()
+    public function isPrimary(): bool
     {
         return $this->previousJoin === null;
     }
@@ -164,7 +164,7 @@ class ModelJoin extends Join
     /**
      * @return string|null
      */
-    public function getRelationAlias()
+    public function getRelationAlias(): ?string
     {
         return $this->getRightTableAlias();
     }
@@ -172,7 +172,7 @@ class ModelJoin extends Join
     /**
      * @return bool
      */
-    public function hasRelationAlias()
+    public function hasRelationAlias(): bool
     {
         return $this->hasRightTableAlias();
     }
@@ -180,7 +180,7 @@ class ModelJoin extends Join
     /**
      * @return bool
      */
-    public function isIdentifierQuotingEnabled()
+    public function isIdentifierQuotingEnabled(): bool
     {
         return $this->getTableMap()->isIdentifierQuotingEnabled();
     }
@@ -197,7 +197,7 @@ class ModelJoin extends Join
      *
      * @return object The base Object of this join
      */
-    public function getObjectToRelate($startObject)
+    public function getObjectToRelate($startObject): object
     {
         if ($this->isPrimary()) {
             return $startObject;
@@ -215,7 +215,7 @@ class ModelJoin extends Join
      *
      * @return bool
      */
-    public function equals($join)
+    public function equals($join): bool
     {
         /** @phpstan-var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         return parent::equals($join)
@@ -227,7 +227,7 @@ class ModelJoin extends Join
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return parent::toString()
             . ' tableMap: ' . ($this->tableMap ? get_class($this->tableMap) : 'null')

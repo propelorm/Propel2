@@ -20,7 +20,7 @@ class QueryCacheBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'backend' => 'apc',
@@ -37,7 +37,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryAttributes($builder)
+    public function queryAttributes($builder): string
     {
         $script = "protected \$queryKey = '';
 ";
@@ -65,7 +65,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $builder->declareClasses('\Propel\Runtime\Propel');
         $this->tableClassName = $builder->getTableMapClassName();
@@ -86,7 +86,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return void
      */
-    protected function addSetQueryKey(&$script)
+    protected function addSetQueryKey(&$script): void
     {
         $script .= "
 public function setQueryKey(\$key)
@@ -103,7 +103,7 @@ public function setQueryKey(\$key)
      *
      * @return void
      */
-    protected function addGetQueryKey(&$script)
+    protected function addGetQueryKey(&$script): void
     {
         $script .= "
 public function getQueryKey()
@@ -118,7 +118,7 @@ public function getQueryKey()
      *
      * @return void
      */
-    protected function addCacheContains(&$script)
+    protected function addCacheContains(&$script): void
     {
         $script .= "
 public function cacheContains(\$key)
@@ -153,7 +153,7 @@ public function cacheContains(\$key)
      *
      * @return void
      */
-    protected function addCacheStore(&$script)
+    protected function addCacheStore(&$script): void
     {
         $script .= "
 public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter('lifetime') . ")
@@ -186,7 +186,7 @@ public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter(
      *
      * @return void
      */
-    protected function addCacheFetch(&$script)
+    protected function addCacheFetch(&$script): void
     {
         $script .= "
 public function cacheFetch(\$key)
@@ -221,10 +221,10 @@ public function cacheFetch(\$key)
      *
      * @return void
      */
-    protected function addDoSelect(&$script)
+    protected function addDoSelect(&$script): void
     {
         $script .= "
-public function doSelect(ConnectionInterface \$con = null)
+public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     // check that the columns of the main class are already added (if this is the primary ModelCriteria)
     if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
@@ -267,10 +267,10 @@ public function doSelect(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addDoCount(&$script)
+    protected function addDoCount(&$script): void
     {
         $script .= "
-public function doCount(ConnectionInterface \$con = null)
+public function doCount(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
     \$db = Propel::getServiceContainer()->getAdapter(\$this->getDbName());

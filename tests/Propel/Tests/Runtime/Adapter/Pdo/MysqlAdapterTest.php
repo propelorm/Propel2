@@ -181,7 +181,7 @@ class TestableMysqlAdapter extends MysqlAdapter
      *
      * @return array
      */
-    public function prepareParams($conparams)
+    public function prepareParams($conparams): array
     {
         return parent::prepareParams($conparams);
     }

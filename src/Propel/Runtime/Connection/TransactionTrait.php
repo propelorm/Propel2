@@ -47,15 +47,15 @@ trait TransactionTrait
     /**
      * @return bool
      */
-    abstract public function beginTransaction();
+    abstract public function beginTransaction(): bool;
 
     /**
      * @return bool
      */
-    abstract public function commit();
+    abstract public function commit(): bool;
 
     /**
      * @return bool
      */
-    abstract public function rollBack();
+    abstract public function rollBack(): bool;
 }
