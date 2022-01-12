@@ -184,10 +184,10 @@ class CsvParser extends AbstractParser
      */
     protected function containsSpecialChars($input)
     {
-        $special_chars = str_split($this->lineTerminator, 1);
-        $special_chars[] = $this->quotechar;
-        $special_chars[] = $this->delimiter;
-        foreach ($special_chars as $char) {
+        $specialChars = str_split($this->lineTerminator);
+        $specialChars[] = $this->quotechar;
+        $specialChars[] = $this->delimiter;
+        foreach ($specialChars as $char) {
             if (strpos($input, $char) !== false) {
                 return true;
             }
