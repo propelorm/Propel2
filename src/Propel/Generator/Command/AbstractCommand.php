@@ -154,8 +154,7 @@ abstract class AbstractCommand extends Command
         $extras = [];
         foreach (explode(';', $dsn) as $element) {
             $parts = explode('=', $element);
-
-            if ($parts && count($parts) === 2) {
+            if (count($parts) === 2) {
                 $extras[strtolower($parts[0])] = urldecode($parts[1]);
             }
         }

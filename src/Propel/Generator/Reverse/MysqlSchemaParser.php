@@ -401,13 +401,13 @@ EOT;
                 $fkey = $matches[5][$curKey];
 
                 $lcols = [];
-                $pieces = explode('`, `', $rawlcol) ?: [];
+                $pieces = explode('`, `', $rawlcol);
                 foreach ($pieces as $piece) {
                     $lcols[] = trim($piece, '` ');
                 }
 
                 $fcols = [];
-                $pieces = explode('`, `', $rawfcol) ?: [];
+                $pieces = explode('`, `', $rawfcol);
                 foreach ($pieces as $piece) {
                     $fcols[] = trim($piece, '` ');
                 }
