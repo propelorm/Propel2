@@ -401,12 +401,14 @@ EOT;
                 $fkey = $matches[5][$curKey];
 
                 $lcols = [];
-                foreach (preg_split('/`, `/', $rawlcol) as $piece) {
+                $pieces = explode('`, `', $rawlcol) ?: [];
+                foreach ($pieces as $piece) {
                     $lcols[] = trim($piece, '` ');
                 }
 
                 $fcols = [];
-                foreach (preg_split('/`, `/', $rawfcol) as $piece) {
+                $pieces = explode('`, `', $rawfcol) ?: [];
+                foreach ($pieces as $piece) {
                     $fcols[] = trim($piece, '` ');
                 }
 
