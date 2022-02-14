@@ -573,16 +573,16 @@ class StandardServiceContainer implements ServiceContainerInterface
                 $handler = new StreamHandler(
                     $configuration['path'],
                     $configuration['level'] ?? null,
-                    $configuration['bubble'] ?? null,
+                    $configuration['bubble'] ?? true,
                 );
 
                 break;
             case 'rotating_file':
                 $handler = new RotatingFileHandler(
                     $configuration['path'],
-                    $configuration['max_files'] ?? null,
+                    $configuration['max_files'] ?? 0,
                     $configuration['level'] ?? null,
-                    $configuration['bubble'] ?? null,
+                    $configuration['bubble'] ?? true,
                 );
 
                 break;
@@ -591,7 +591,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                     $configuration['ident'],
                     $configuration['facility'] ?? null,
                     $configuration['level'] ?? null,
-                    $configuration['bubble'] ?? null,
+                    $configuration['bubble'] ?? true,
                 );
 
                 break;
