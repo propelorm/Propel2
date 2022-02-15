@@ -37,7 +37,7 @@ class ValidateBehavior extends Behavior
     public function objectMethods($builder)
     {
         $array = $this->getParameters();
-        if (empty($array)) {
+        if (!$array) {
             throw new InvalidArgumentException('Please, define your rules for validation.');
         }
         $this->cleanupParameters();

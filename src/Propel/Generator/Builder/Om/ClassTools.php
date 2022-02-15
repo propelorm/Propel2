@@ -56,7 +56,7 @@ class ClassTools
             return $path . $extension;
         }
 
-        if (!empty($path)) {
+        if ($path) {
             $path .= '/';
         }
 

@@ -638,7 +638,7 @@ class Criteria
      */
     public function hasWhereClause()
     {
-        return !empty($this->map);
+        return (bool)$this->map;
     }
 
     /**
@@ -1624,7 +1624,7 @@ class Criteria
      */
     public function hasSelectClause()
     {
-        return !empty($this->selectColumns) || !empty($this->asColumns);
+        return (bool)$this->selectColumns || (bool)$this->asColumns;
     }
 
     /**
@@ -1935,7 +1935,7 @@ class Criteria
 
         // merge as columns
         $commonAsColumns = array_intersect_key($this->getAsColumns(), $criteria->getAsColumns());
-        if (!empty($commonAsColumns)) {
+        if ($commonAsColumns) {
             throw new LogicException('The given criteria contains an AsColumn with an alias already existing in the current object');
         }
         $this->asColumns = array_merge($this->getAsColumns(), $criteria->getAsColumns());
@@ -1977,7 +1977,7 @@ class Criteria
 
         // merge alias
         $commonAliases = array_intersect_key($this->getAliases(), $criteria->getAliases());
-        if (!empty($commonAliases)) {
+        if ($commonAliases) {
             throw new LogicException('The given criteria contains an alias already existing in the current object');
         }
         $this->aliases = array_merge($this->getAliases(), $criteria->getAliases());
@@ -2328,11 +2328,11 @@ class Criteria
 
         $pk = null;
 
-        if (!empty($table)) {
+        if ($table) {
             $dbMap = Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName());
 
             $pks = $dbMap->getTable($table)->getPrimaryKeys();
-            if (!empty($pks)) {
+            if ($pks) {
                 $pk = array_shift($pks);
             }
         }

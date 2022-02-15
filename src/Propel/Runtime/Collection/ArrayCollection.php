@@ -206,7 +206,7 @@ class ArrayCollection extends Collection
     {
         if ($this->workerObject === null) {
             $model = $this->getModel();
-            if (empty($model)) {
+            if (!$model) {
                 throw new PropelException('You must set the collection model before interacting with it');
             }
             $class = $this->getFullyQualifiedModel();

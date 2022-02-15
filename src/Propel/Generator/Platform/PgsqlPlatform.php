@@ -137,7 +137,7 @@ class PgsqlPlatform extends DefaultPlatform
         $result = null;
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
-            if (empty($idMethodParams)) {
+            if (!$idMethodParams) {
                 $result = null;
                 // We're going to ignore a check for max length (mainly
                 // because I'm not sure how Postgres would handle this w/ SERIAL anyway)
@@ -302,7 +302,7 @@ SET search_path TO public;
             $ret .= $this->getAddForeignKeysDDL($table);
         }
 
-        if (!empty($ret)) {
+        if ($ret) {
             $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
         }
 

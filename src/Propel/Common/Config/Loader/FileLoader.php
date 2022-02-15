@@ -212,7 +212,7 @@ abstract class FileLoader extends BaseFileLoader
             return $this->resolveString($resolved, $resolving);
         }, $value);
 
-        if (!isset($onlyKey)) {
+        if ($onlyKey === null) {
             return $replaced;
         }
 

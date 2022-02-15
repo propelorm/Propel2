@@ -118,7 +118,7 @@ class ObjectBuilder extends AbstractObjectBuilder
         }
 
         $intersect = array_intersect($colPhpNames, $fkPhpNames);
-        if (!empty($intersect)) {
+        if ($intersect) {
             throw new EngineException('One or more of your column names for [' . $table->getName() . '] table conflict with foreign key names (' . implode(', ', $intersect) . ')');
         }
 
@@ -937,7 +937,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampFormat');
         }
 
-        if (empty($defaultfmt)) {
+        if (!$defaultfmt) {
             $defaultfmt = null;
         }
 
@@ -1008,7 +1008,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $defaultfmt = $this->getBuildProperty('generator.dateTime.defaultTimeStampFormat');
         }
 
-        if (empty($defaultfmt)) {
+        if (!$defaultfmt) {
             $defaultfmt = null;
         }
 
