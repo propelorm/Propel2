@@ -121,7 +121,7 @@ abstract class MappingModel implements MappingModelInterface
     {
         $stringValue = trim($stringValue);
 
-        if (empty($stringValue)) {
+        if (!$stringValue) {
             return null;
         }
 
@@ -149,7 +149,7 @@ abstract class MappingModel implements MappingModelInterface
     {
         $stringValue = trim($stringValue);
 
-        if (empty($stringValue)) {
+        if (!$stringValue) {
             return null;
         }
 

@@ -833,7 +833,7 @@ class TableDiff
      */
     public function hasModifiedFks()
     {
-        return !empty($this->modifiedFks);
+        return (bool)$this->modifiedFks;
     }
 
     /**
@@ -844,7 +844,7 @@ class TableDiff
      */
     public function hasModifiedIndices()
     {
-        return !empty($this->modifiedIndices);
+        return (bool)$this->modifiedIndices;
     }
 
     /**
@@ -855,7 +855,7 @@ class TableDiff
      */
     public function hasModifiedColumns()
     {
-        return !empty($this->modifiedColumns);
+        return (bool)$this->modifiedColumns;
     }
 
     /**
@@ -866,7 +866,7 @@ class TableDiff
      */
     public function hasRemovedFks()
     {
-        return !empty($this->removedFks);
+        return (bool)$this->removedFks;
     }
 
     /**
@@ -877,7 +877,7 @@ class TableDiff
      */
     public function hasRemovedIndices()
     {
-        return !empty($this->removedIndices);
+        return (bool)$this->removedIndices;
     }
 
     /**
@@ -888,7 +888,7 @@ class TableDiff
      */
     public function hasRenamedColumns()
     {
-        return !empty($this->renamedColumns);
+        return (bool)$this->renamedColumns;
     }
 
     /**
@@ -899,7 +899,7 @@ class TableDiff
      */
     public function hasRemovedColumns()
     {
-        return !empty($this->removedColumns);
+        return (bool)$this->removedColumns;
     }
 
     /**
@@ -910,7 +910,7 @@ class TableDiff
      */
     public function hasAddedColumns()
     {
-        return !empty($this->addedColumns);
+        return (bool)$this->addedColumns;
     }
 
     /**
@@ -921,7 +921,7 @@ class TableDiff
      */
     public function hasAddedIndices()
     {
-        return !empty($this->addedIndices);
+        return (bool)$this->addedIndices;
     }
 
     /**
@@ -932,7 +932,7 @@ class TableDiff
      */
     public function hasAddedFks()
     {
-        return !empty($this->addedFks);
+        return (bool)$this->addedFks;
     }
 
     /**
@@ -943,7 +943,7 @@ class TableDiff
      */
     public function hasAddedPkColumns()
     {
-        return !empty($this->addedPkColumns);
+        return (bool)$this->addedPkColumns;
     }
 
     /**
@@ -954,7 +954,7 @@ class TableDiff
      */
     public function hasRemovedPkColumns()
     {
-        return !empty($this->removedPkColumns);
+        return (bool)$this->removedPkColumns;
     }
 
     /**
@@ -965,7 +965,7 @@ class TableDiff
      */
     public function hasRenamedPkColumns()
     {
-        return !empty($this->renamedPkColumns);
+        return (bool)$this->renamedPkColumns;
     }
 
     /**

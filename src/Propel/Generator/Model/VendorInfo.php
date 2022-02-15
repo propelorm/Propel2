@@ -134,7 +134,7 @@ class VendorInfo extends MappingModel
      */
     public function isEmpty()
     {
-        return empty($this->parameters);
+        return !$this->parameters;
     }
 
     /**

@@ -169,7 +169,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      */
     public function setModelName($modelName)
     {
-        if (empty($modelName)) {
+        if (!$modelName) {
             $this->modelName = null;
 
             return $this;

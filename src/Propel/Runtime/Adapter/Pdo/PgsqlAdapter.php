@@ -268,7 +268,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         $tableNames = $lock->getTableNames();
-        if (!empty($tableNames)) {
+        if ($tableNames) {
             $tableNames = array_map([$this, 'quoteIdentifier'], array_unique($tableNames));
             $sql .= ' OF ' . implode(', ', $tableNames);
         }

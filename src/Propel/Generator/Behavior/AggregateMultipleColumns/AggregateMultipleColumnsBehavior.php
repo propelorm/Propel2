@@ -156,7 +156,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     private function validateColumnParameter(): void
     {
         $columnParameters = $this->getParameter(static::PARAMETER_KEY_COLUMNS);
-        if (empty($columnParameters)) {
+        if (!$columnParameters) {
             $this->throwInvalidArgumentExceptionWithLocation('At least one column is required');
         }
         foreach ($columnParameters as $columnDefinition) {

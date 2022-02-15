@@ -517,7 +517,7 @@ class StandardServiceContainer implements ServiceContainerInterface
             $class = $this->profilerClass;
             /** @var \Propel\Runtime\Util\Profiler $profiler */
             $profiler = new $class();
-            if (!empty($this->profilerConfiguration)) {
+            if ($this->profilerConfiguration) {
                 $profiler->setConfiguration($this->profilerConfiguration);
             }
             $this->profiler = $profiler;

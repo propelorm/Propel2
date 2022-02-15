@@ -382,7 +382,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             return true;
         }
 
-        if (empty($classNamespace) && $builderNamespace === 'Base') {
+        if (!$classNamespace && $builderNamespace === 'Base') {
             if (str_replace(['Query'], '', $class) == str_replace(['Query'], '', $this->getUnqualifiedClassName())) {
                 return true;
             }
@@ -494,7 +494,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function getNamespaceStatement()
     {
         $namespace = $this->getNamespace();
-        if (!empty($namespace)) {
+        if ($namespace) {
             return sprintf("namespace %s;
 
 ", $namespace);
@@ -915,7 +915,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
         }
 
-        if (!empty($relCol)) {
+        if ($relCol) {
             $relCol = 'RelatedBy' . $relCol;
         }
 
@@ -980,7 +980,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             }
         }
 
-        if (!empty($relCol)) {
+        if ($relCol) {
             $relCol = 'RelatedBy' . $relCol;
         }
 
