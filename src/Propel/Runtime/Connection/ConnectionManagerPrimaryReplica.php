@@ -47,6 +47,14 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     */
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $name The datasource name associated to this connection
      *
      * @return void
      */
