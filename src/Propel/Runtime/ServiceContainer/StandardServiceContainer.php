@@ -323,20 +323,17 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
      *
      * @return void
      */
-    public function setConnectionManager($name, ConnectionManagerInterface $manager): void
+    public function setConnectionManager(ConnectionManagerInterface $manager): void
     {
-        if (isset($this->connectionManagers[$name])) {
-            $this->connectionManagers[$name]->closeConnections();
+        if (isset($this->connectionManagers[$manager->getName()])) {
+            $this->connectionManagers[$manager->getName()]->closeConnections();
         }
-        if (!$manager->getName()) {
-            $manager->setName($name);
-        }
-        $this->connectionManagers[$name] = $manager;
+
+        $this->connectionManagers[$manager->getName()] = $manager;
     }
 
     /**
@@ -455,9 +452,9 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function setConnection($name, ConnectionInterface $connection): void
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle($name);
         $manager->setConnection($connection);
-        $this->setConnectionManager($name, $manager);
+        $this->setConnectionManager($manager);
     }
 
     /**

@@ -30,8 +30,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
      */
     public function testGetNameReturnsNameSetUsingSetName()
     {
-        $manager = new ConnectionManagerSingle();
-        $manager->setName('foo');
+        $manager = new ConnectionManagerSingle('foo');
         $this->assertEquals('foo', $manager->getName());
     }
 
@@ -64,9 +63,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
      */
     public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
     {
-        $manager = new ConnectionManagerSingle();
-        $manager->setName('foo');
-        $manager->setConfiguration(['dsn' => 'sqlite::memory:']);
+        $manager = new ConnectionManagerSingle('foo');
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertEquals('foo', $con->getName());
     }
