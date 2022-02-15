@@ -545,9 +545,9 @@ class ModelCriteria extends BaseModelCriteria
      * This method returns the previousJoin for this ModelCriteria,
      * by default this is null, but after useQuery this is set the to the join of that use
      *
-     * @return \Propel\Runtime\ActiveQuery\Join the previousJoin for this ModelCriteria
+     * @return \Propel\Runtime\ActiveQuery\Join|null the previousJoin for this ModelCriteria
      */
-    public function getPreviousJoin(): Join
+    public function getPreviousJoin(): ?Join
     {
         return $this->previousJoin;
     }
