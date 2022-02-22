@@ -45,7 +45,8 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
                 $collection[] = $rowArray;
             }
         }
@@ -117,9 +118,9 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @param array $row
      *
-     * @return array
+     * @return array|string|false
      */
-    public function getStructuredArrayFromRow($row): array
+    public function getStructuredArrayFromRow($row)
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {
