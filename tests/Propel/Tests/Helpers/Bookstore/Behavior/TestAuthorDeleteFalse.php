@@ -17,7 +17,7 @@ class TestAuthorDeleteFalse extends TestAuthor
      *
      * @return int|null
      */
-    public function preDelete(?ConnectionInterface $con = null): ?int
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         parent::preDelete($con);
         $this->setFirstName('Pre-Deleted');
