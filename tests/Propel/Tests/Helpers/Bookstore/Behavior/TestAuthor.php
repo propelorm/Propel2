@@ -58,7 +58,7 @@ class TestAuthor extends Author
     /**
      * @return void
      */
-    public function postSave(?ConnectionInterface $con = null): ?int
+    public function postSave(?ConnectionInterface $con = null): void
     {
         parent::postSave($con);
         $this->setAge(115);

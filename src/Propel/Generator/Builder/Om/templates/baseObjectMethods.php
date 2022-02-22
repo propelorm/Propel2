@@ -2,7 +2,7 @@
     /**
      * Returns whether the object has been modified.
      *
-     * @return boolean True if the object has been modified.
+     * @return bool True if the object has been modified.
      */
     public function isModified()
     {
@@ -12,8 +12,8 @@
     /**
      * Has specified column been modified?
      *
-     * @param  string  $col column fully qualified name (TableMap::TYPE_COLNAME), e.g. Book::AUTHOR_ID
-     * @return boolean True if $col has been modified.
+     * @param string $col column fully qualified name (TableMap::TYPE_COLNAME), e.g. Book::AUTHOR_ID
+     * @return bool True if $col has been modified.
      */
     public function isColumnModified($col)
     {
@@ -34,7 +34,7 @@
      * be false, if the object was retrieved from storage or was created
      * and then saved.
      *
-     * @return boolean true, if the object has never been persisted.
+     * @return bool True, if the object has never been persisted.
      */
     public function isNew()
     {
@@ -45,7 +45,7 @@
      * Setter for the isNew attribute.  This method will be called
      * by Propel-generated children and objects.
      *
-     * @param boolean $b the state of the object.
+     * @param bool $b the state of the object.
      */
     public function setNew($b)
     {
@@ -54,7 +54,7 @@
 
     /**
      * Whether this object has been deleted.
-     * @return boolean The deleted state of this object.
+     * @return bool The deleted state of this object.
      */
     public function isDeleted()
     {
@@ -63,7 +63,7 @@
 
     /**
      * Specify whether this object has been deleted.
-     * @param  boolean $b The deleted state of this object.
+     * @param  bool $b The deleted state of this object.
      * @return void
      */
     public function setDeleted($b)
@@ -90,8 +90,8 @@
      * <code>obj</code> is an instance of <code><?php echo $className ?></code>, delegates to
      * <code>equals(<?php echo $className ?>)</code>.  Otherwise, returns <code>false</code>.
      *
-     * @param  mixed   $obj The object to compare to.
-     * @return boolean Whether equal to the object specified.
+     * @param mixed $obj The object to compare to.
+     * @return bool Whether equal to the object specified.
      */
     public function equals($obj)
     {
@@ -124,7 +124,7 @@
      * Checks the existence of a virtual column in this object
      *
      * @param  string  $name The virtual column name
-     * @return boolean
+     * @return bool
      */
     public function hasVirtualColumn($name)
     {
@@ -184,7 +184,7 @@
      * </code>
      *
      * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * @param  bool    $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @param  string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @return string  The exported data
      */

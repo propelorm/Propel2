@@ -348,9 +348,9 @@ public function setRank(\$v)
 /**
  * Wrap the getter for scope value
  *
- * @param boolean \$returnNulls If true and all scope values are null, this will return null instead of a array full with nulls
+ * @param bool \$returnNulls If true and all scope values are null, this will return null instead of a array full with nulls
  *
- * @return    mixed A array or a native type
+ * @return mixed A array or a native type
  */
 public function getScopeValue(\$returnNulls = true)
 {
@@ -432,7 +432,7 @@ public function setScopeValue(\$v)
 /**
  * Check if the object is first in the list, i.e. if it has 1 for rank
  *
- * @return    boolean
+ * @return bool
  */
 public function isFirst()
 {
@@ -455,7 +455,7 @@ public function isFirst()
  *
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    boolean
+ * @return    bool
  */
 public function isLast(ConnectionInterface \$con = null)
 {

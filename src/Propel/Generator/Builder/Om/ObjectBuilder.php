@@ -566,7 +566,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * Whether the lazy-loaded \$$clo value has been loaded from database.
      * This is necessary to avoid repeated lookups if \$$clo column is NULL in the db.
-     * @var boolean
+     * @var bool
      */";
     }
 
@@ -2428,7 +2428,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * " . $col->getDescription() . "
-     * @param  boolean|integer|string{$orNull} \$v The new value
+     * @param  bool|integer|string{$orNull} \$v The new value
      * @return \$this|" . $this->getObjectClassName(true) . " The current object (for fluent API support)
      */";
     }
@@ -2618,7 +2618,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @param array   \$row       The row returned by DataFetcher->fetch().
      * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
-     * @param boolean \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param bool    \$rehydrate Whether this object is being re-hydrated from the database.
      * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
                                   One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
@@ -2990,11 +2990,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param     string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
      *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                    Defaults to TableMap::$defaultKeyType.
-     * @param     boolean \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param     bool \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
         if ($hasFks) {
             $script .= "
-     * @param     boolean \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
+     * @param     bool \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
         }
         $script .= "
      *
@@ -3623,7 +3623,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * This will only work if the object has been saved and has a valid primary key set.
      *
-     * @param      boolean \$deep (optional) Whether to also de-associated any related objects.
+     * @param      bool \$deep (optional) Whether to also de-associated any related objects.
      * @param      ConnectionInterface \$con (optional) The ConnectionInterface connection to use.
      * @return void
      * @throws PropelException - if this object is deleted, unsaved or doesn't have pk match in db
@@ -4012,7 +4012,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Returns true if the primary key for this object is null.
-     * @return boolean
+     * @return bool
      */
     public function isPrimaryKeyNull()
     {";
@@ -4528,7 +4528,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
-     * @param      boolean \$overrideExisting If set to true, the method call initializes
+     * @param      bool \$overrideExisting If set to true, the method call initializes
      *                                        the collection even if it is not empty
      *
      * @return void
@@ -4619,7 +4619,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Returns the number of related $className objects.
      *
      * @param      Criteria \$criteria
-     * @param      boolean \$distinct
+     * @param      bool \$distinct
      * @param      ConnectionInterface \$con
      * @return int             Count of related $className objects.
      * @throws PropelException
@@ -5903,7 +5903,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * to the current object by way of the $crossRefTableName cross-reference table.
      *
      * @param      Criteria \$criteria Optional query object to filter the query
-     * @param      boolean \$distinct Set to true to force count distinct
+     * @param      bool \$distinct Set to true to force count distinct
      * @param      ConnectionInterface \$con Optional connection object
      *
      * @return int the number of related $relatedObjectClassName objects
@@ -6283,7 +6283,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param      ConnectionInterface \$con";
         if ($reloadOnUpdate || $reloadOnInsert) {
             $script .= "
-     * @param      boolean \$skipReload Whether to skip the reload for this object from database.";
+     * @param      bool \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
      * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
@@ -6700,7 +6700,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
-     * @var boolean
+     * @var bool
      */
     protected \$alreadyInSave = false;
 ";
@@ -6992,7 +6992,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param  boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @param  bool \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @return " . $this->getObjectClassName(true) . " Clone of current object.
      * @throws PropelException
      */
@@ -7028,8 +7028,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * objects.
      *
      * @param      object \$copyObj An object of " . $this->getObjectClassName(true) . " (or compatible) type.
-     * @param      boolean \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @param      boolean \$makeNew Whether to reset autoincrement PKs and make the object new.
+     * @param      bool \$deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+     * @param      bool \$makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto(\$copyObj, \$deepCopy = false, \$makeNew = true)
@@ -7194,7 +7194,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * This method is used to reset all php object references (not the actual reference in the database).
      * Necessary for object serialisation.
      *
-     * @param      boolean \$deep Whether to also clear the references on all referrer objects.
+     * @param      bool \$deep Whether to also clear the references on all referrer objects.
      */
     public function clearAllReferences(\$deep = false)
     {

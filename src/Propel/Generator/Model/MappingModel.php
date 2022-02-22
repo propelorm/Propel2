@@ -87,7 +87,7 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
-     * Converts a value (Boolean, string or numeric) into a Boolean value.
+     * Converts a value (Boolean, string or numeric) into a boolean value.
      *
      * This is to support the default value when used with a boolean column.
      *

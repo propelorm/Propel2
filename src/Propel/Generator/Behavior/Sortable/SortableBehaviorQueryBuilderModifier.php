@@ -474,7 +474,7 @@ public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionI
  * @param     mixed               \$order id => rank pairs
  * @param     ConnectionInterface \$con   optional connection
  *
- * @return    boolean true if the reordering took place, false if a database problem prevented it
+ * @return    bool true if the reordering took place, false if a database problem prevented it
  */
 public function reorder(\$order, ConnectionInterface \$con = null)
 {

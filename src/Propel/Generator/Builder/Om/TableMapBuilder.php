@@ -1026,7 +1026,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @param array   \$row ConnectionInterface result row.
      * @param int     \$colnum Column to examine for OM class information (first is 0).
-     * @param boolean \$withPrefix Whether to return the path with the class name
+     * @param bool \$withPrefix Whether to return the path with the class name
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      *
@@ -1096,7 +1096,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * relative to a location on the PHP include_path.
      * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
      *
-     * @param boolean \$withPrefix Whether to return the path with the class name
+     * @param bool \$withPrefix Whether to return the path with the class name
      * @return string path.to.ClassName
      */
     public static function getOMClass(\$withPrefix = true)
@@ -1124,7 +1124,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * This method must be overridden by the stub subclass, because
      * $objectClassName is declared abstract in the schema.
      *
-     * @param boolean \$withPrefix
+     * @param bool \$withPrefix
      */
     public static function getOMClass(\$withPrefix = true)
     {

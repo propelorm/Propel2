@@ -4,7 +4,7 @@
  *
  * @see        getValidationFailures()
  * @param      ValidatorInterface|null $validator A Validator class instance
- * @return     boolean Whether all objects pass validation.
+ * @return     bool Whether all objects pass validation.
  */
 public function validate(ValidatorInterface $validator = null)
 {

@@ -617,7 +617,7 @@ public function isAncestorOf($objectClassName \$child)
 /**
  * Tests if object has an ancestor
  *
- * @return boolean
+ * @return bool
  */
 public function hasParent(): bool
 {
@@ -1066,7 +1066,7 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
 /**
  * Gets the siblings of the given node
  *
- * @param boolean             \$includeNode Whether to include the current node or not
+ * @param bool                \$includeNode Whether to include the current node or not
  * @param Criteria            \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
  *

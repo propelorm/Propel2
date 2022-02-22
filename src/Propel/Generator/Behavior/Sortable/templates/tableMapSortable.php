@@ -8,7 +8,7 @@ const RANK_COL = "<?php echo $tableName ?>.<?php echo $rankColumn ?>";
     <?php if ($multiScope) :?>
 /**
 * If defined, the `SCOPE_COL` contains a json_encoded array with all columns.
-* @var boolean
+* @var bool
 */
 const MULTI_SCOPE_COL = true;
 

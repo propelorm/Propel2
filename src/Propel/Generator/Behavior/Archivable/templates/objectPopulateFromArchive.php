@@ -4,7 +4,7 @@
  *
  * @param      <?php echo $archiveTablePhpName ?> $archive An archived object based on the same class
  <?php if ($usesAutoIncrement): ?>
- * @param      Boolean $populateAutoIncrementPrimaryKeys
+ * @param      bool $populateAutoIncrementPrimaryKeys
  *               If true, autoincrement columns are copied from the archive object.
  *               If false, autoincrement columns are left intact.
  <?php endif; ?>

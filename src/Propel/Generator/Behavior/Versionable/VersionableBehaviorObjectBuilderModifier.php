@@ -654,7 +654,7 @@ public function getLastVersionNumber(ConnectionInterface \$con = null)
  *
  * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
  *
- * @return  Boolean
+ * @return  bool
  */
 public function isLastVersion(ConnectionInterface \$con = null)
 {

@@ -1358,9 +1358,9 @@ ALTER TABLE %s ADD
     }
 
     /**
-     * Returns the Boolean value for the RDBMS.
+     * Returns the boolean value for the RDBMS.
      *
-     * This value should match the Boolean value that is set
+     * This value should match the boolean value that is set
      * when using Propel's PreparedStatement::setBoolean().
      *
      * This function is used to set default column values when building
