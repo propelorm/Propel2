@@ -156,9 +156,9 @@ abstract class AbstractCriterion
     /**
      * Get the column name.
      *
-     * @return string A String with the column name.
+     * @return string|null A String with the column name.
      */
-    public function getColumn(): string
+    public function getColumn(): ?string
     {
         return $this->column;
     }

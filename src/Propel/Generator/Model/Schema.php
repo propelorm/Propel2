@@ -103,9 +103,9 @@ class Schema
     /**
      * Returns the generator configuration
      *
-     * @return \Propel\Generator\Config\GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    public function getGeneratorConfig(): GeneratorConfigInterface
+    public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -179,9 +179,9 @@ class Schema
      * @param string|null $name
      * @param bool $doFinalInitialization
      *
-     * @return \Propel\Generator\Model\Database
+     * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase($name = null, $doFinalInitialization = true): Database
+    public function getDatabase(?string $name = null, bool $doFinalInitialization = true): ?Database
     {
         // this is temporary until we'll have a clean solution
         // for packaging datamodels/requiring schemas

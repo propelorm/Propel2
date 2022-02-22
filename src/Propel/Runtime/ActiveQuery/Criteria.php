@@ -833,9 +833,9 @@ class Criteria
      * any SELECT columns or WHERE columns. This must be explicitly
      * set, of course, in order to be useful.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrimaryTableName(): string
+    public function getPrimaryTableName(): ?string
     {
         return $this->primaryTableName;
     }

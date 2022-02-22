@@ -86,9 +86,9 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return \Propel\Runtime\Map\RelationMap
+     * @return \Propel\Runtime\Map\RelationMap|null
      */
-    public function getRelationMap(): RelationMap
+    public function getRelationMap(): ?RelationMap
     {
         return $this->relationMap;
     }
@@ -110,9 +110,9 @@ class ModelJoin extends Join
     /**
      * Gets the right tableMap for this join
      *
-     * @return \Propel\Runtime\Map\TableMap The table map
+     * @return \Propel\Runtime\Map\TableMap|null The table map
      */
-    public function getTableMap(): TableMap
+    public function getTableMap(): ?TableMap
     {
         if ($this->tableMap === null && $this->relationMap !== null) {
             $this->tableMap = $this->relationMap->getRightTable();

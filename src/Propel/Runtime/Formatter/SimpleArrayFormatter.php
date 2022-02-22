@@ -68,9 +68,9 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|null
+     * @return array|string|null
      */
-    public function formatOne(?DataFetcherInterface $dataFetcher = null): ?array
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
@@ -86,7 +86,8 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
                 $result = $rowArray;
             }
         }

@@ -559,13 +559,23 @@ class LastMessageHandler extends AbstractHandler
 {
     public $latestMessage = '';
 
-    public function handle(array $record)
+    /**
+     * @param array $record
+     *
+     * @return bool
+     */
+    public function handle(array $record): bool
     {
         $this->latestMessage = (string)$record['message'];
 
         return false === $this->bubble;
     }
 
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionWrapper $con
+     *
+     * @return array
+     */
     public static function buildHandledConnection(ConnectionWrapper $con): array
     {
         $con = new ConnectionWrapper($con->getWrappedConnection());

@@ -138,9 +138,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string|null The datasource name associated to this connection
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

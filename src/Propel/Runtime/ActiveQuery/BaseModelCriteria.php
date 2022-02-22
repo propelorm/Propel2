@@ -221,9 +221,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the alias of the main class for this model criteria
      *
-     * @return string The model alias
+     * @return string|null The model alias
      */
-    public function getModelAlias(): string
+    public function getModelAlias(): ?string
     {
         return $this->modelAlias;
     }
@@ -231,9 +231,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Return the string to use in a clause as a model prefix for the main model
      *
-     * @return string The model alias if it exists, the model name if not
+     * @return string|null The model alias if it exists, the model name if not
      */
-    public function getModelAliasOrName(): string
+    public function getModelAliasOrName(): ?string
     {
         return $this->modelAlias ?: $this->modelName;
     }

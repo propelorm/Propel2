@@ -748,9 +748,9 @@ class Database extends ScopedMappingModel
     /**
      * Returns the parent schema
      *
-     * @return \Propel\Generator\Model\Schema
+     * @return \Propel\Generator\Model\Schema|null
      */
-    public function getParentSchema(): Schema
+    public function getParentSchema(): ?Schema
     {
         return $this->parentSchema;
     }
@@ -831,9 +831,9 @@ class Database extends ScopedMappingModel
     /**
      * Returns the table prefix for this database.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTablePrefix(): string
+    public function getTablePrefix(): ?string
     {
         return $this->tablePrefix;
     }

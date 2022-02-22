@@ -254,9 +254,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * If autoPrefix is set. Otherwise get the common name.
      *
-     * @return string
+     * @return string|null
      */
-    private function getStdSeparatedName(): string
+    private function getStdSeparatedName(): ?string
     {
         if ($this->schema && $this->getBuildProperty('generator.schema.autoPrefix')) {
             return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
@@ -1352,9 +1352,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the common name (without schema name), but with table prefix if defined.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCommonName(): string
+    public function getCommonName(): ?string
     {
         return $this->commonName;
     }
@@ -1374,9 +1374,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the unmodified common name (not modified by table prefix).
      *
-     * @return string
+     * @return string|null
      */
-    public function getOriginCommonName(): string
+    public function getOriginCommonName(): ?string
     {
         return $this->originCommonName;
     }
@@ -1548,9 +1548,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the PHP name of an active record object this entry references.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAlias(): string
+    public function getAlias(): ?string
     {
         return $this->alias;
     }
@@ -2175,9 +2175,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the PHP naming method.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPhpNamingMethod(): string
+    public function getPhpNamingMethod(): ?string
     {
         return $this->phpNamingMethod;
     }
@@ -2248,7 +2248,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function isIdentifierQuotingEnabled(): bool
     {
-        return ($this->identifierQuoting !== null || !$this->database) ? $this->identifierQuoting : $this->database->isIdentifierQuotingEnabled();
+        return ($this->identifierQuoting !== null || !$this->database) ? (bool)$this->identifierQuoting : $this->database->isIdentifierQuotingEnabled();
     }
 
     /**

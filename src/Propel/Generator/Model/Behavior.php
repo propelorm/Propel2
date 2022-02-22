@@ -140,9 +140,9 @@ class Behavior extends MappingModel
     /**
      * Returns the name of the Behavior
      *
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -162,9 +162,9 @@ class Behavior extends MappingModel
     /**
      * Returns the table this behavior is applied to
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable(): Table
+    public function getTable(): ?Table
     {
         return $this->table;
     }

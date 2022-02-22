@@ -394,9 +394,9 @@ abstract class DataModelBuilder
     /**
      * Gets the GeneratorConfig object.
      *
-     * @return \Propel\Generator\Config\GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    public function getGeneratorConfig(): GeneratorConfigInterface
+    public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }

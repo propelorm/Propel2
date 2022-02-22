@@ -454,9 +454,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns the foreign table name of the FK.
      *
-     * @return string
+     * @return string|null
      */
-    public function getForeignTableName(): string
+    public function getForeignTableName(): ?string
     {
         $platform = $this->getPlatform();
         if ($this->foreignSchemaName && $platform && $platform->supportsSchemas()) {
@@ -478,9 +478,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns the foreign table name without schema.
      *
-     * @return string
+     * @return string|null
      */
-    public function getForeignTableCommonName(): string
+    public function getForeignTableCommonName(): ?string
     {
         return $this->foreignTableCommonName;
     }
@@ -515,9 +515,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns the foreign schema name of the FK.
      *
-     * @return string
+     * @return string|null
      */
-    public function getForeignSchemaName(): string
+    public function getForeignSchemaName(): ?string
     {
         return $this->foreignSchemaName;
     }

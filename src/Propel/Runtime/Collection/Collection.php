@@ -470,7 +470,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function setModel($model): void
     {
-        if (false !== $pos = strrpos($model, '\\')) {
+        $pos = strrpos($model, '\\');
+        if ($pos !== false) {
             $this->model = substr($model, $pos + 1);
         } else {
             $this->model = $model;

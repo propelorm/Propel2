@@ -398,9 +398,9 @@ class Column extends MappingModel
      * @param string $attribute Local column attribute
      * @param string $parentAttribute Parent (table or database) attribute
      *
-     * @return string
+     * @return string|null
      */
-    private function getMethodVisibility($attribute, $parentAttribute): string
+    private function getMethodVisibility($attribute, $parentAttribute): ?string
     {
         $database = $this->getDatabase();
 
@@ -797,9 +797,9 @@ class Column extends MappingModel
     /**
      * Returns the parent table.
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable(): Table
+    public function getTable(): ?Table
     {
         return $this->parentTable;
     }

@@ -644,9 +644,9 @@ class Join
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRightTableWithAlias(): string
+    public function getRightTableWithAlias(): ?string
     {
         return $this->rightTableAlias ? $this->rightTableName . ' ' . $this->rightTableAlias : $this->rightTableName;
     }
@@ -693,9 +693,9 @@ class Join
     /**
      * Get the custom join condition, if previously set
      *
-     * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
+     * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|null
      */
-    public function getJoinCondition(): AbstractCriterion
+    public function getJoinCondition(): ?AbstractCriterion
     {
         return $this->joinCondition;
     }

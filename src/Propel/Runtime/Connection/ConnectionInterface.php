@@ -29,9 +29,9 @@ interface ConnectionInterface
     public function setName($name): void;
 
     /**
-     * @return string The datasource name associated to this connection.
+     * @return string|null The datasource name associated to this connection.
      */
-    public function getName(): string;
+    public function getName(): ?string;
 
     /**
      * Turns off autocommit mode.

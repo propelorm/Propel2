@@ -182,9 +182,9 @@ class RelationMap
     /**
      * Get the type
      *
-     * @return int the relation type
+     * @return int|null The relation type
      */
-    public function getType(): int
+    public function getType(): ?int
     {
         return $this->type;
     }
@@ -204,9 +204,9 @@ class RelationMap
     /**
      * Get the local table
      *
-     * @return \Propel\Runtime\Map\TableMap The local table for this relationship
+     * @return \Propel\Runtime\Map\TableMap|null The local table for this relationship
      */
-    public function getLocalTable(): TableMap
+    public function getLocalTable(): ?TableMap
     {
         return $this->localTable;
     }
@@ -226,9 +226,9 @@ class RelationMap
     /**
      * Get the foreign table
      *
-     * @return \Propel\Runtime\Map\TableMap The foreign table for this relationship
+     * @return \Propel\Runtime\Map\TableMap|null The foreign table for this relationship
      */
-    public function getForeignTable(): TableMap
+    public function getForeignTable(): ?TableMap
     {
         return $this->foreignTable;
     }
@@ -236,9 +236,9 @@ class RelationMap
     /**
      * Get the left table of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap The left table for this relationship
+     * @return \Propel\Runtime\Map\TableMap|null The left table for this relationship
      */
-    public function getLeftTable(): TableMap
+    public function getLeftTable(): ?TableMap
     {
         return $this->getType() === self::MANY_TO_ONE ? $this->getLocalTable() : $this->getForeignTable();
     }
@@ -246,9 +246,9 @@ class RelationMap
     /**
      * Get the right table of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap The right table for this relationship
+     * @return \Propel\Runtime\Map\TableMap|null The right table for this relationship
      */
-    public function getRightTable(): TableMap
+    public function getRightTable(): ?TableMap
     {
         return $this->getType() === self::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
     }

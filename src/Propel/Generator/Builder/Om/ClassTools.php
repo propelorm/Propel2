@@ -30,13 +30,17 @@ class ClassTools
             return null;
         }
 
-        if (false !== $pos = strrpos($qualifiedName, '.')) {
+        $pos = strrpos($qualifiedName, '.');
+        if ($pos !== false) {
             return substr($qualifiedName, $pos + 1); // start just after '.'
-        } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {
-            return substr($qualifiedName, $pos + 1);
-        } else {
-            return $qualifiedName; // there is no '.' in the qualified name
         }
+
+        $pos = strrpos($qualifiedName, '\\');
+        if ($pos !== false) {
+            return substr($qualifiedName, $pos + 1);
+        }
+
+        return $qualifiedName; // there is no '.' in the qualified name
     }
 
     /**

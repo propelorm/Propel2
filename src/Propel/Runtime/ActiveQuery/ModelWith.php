@@ -285,9 +285,9 @@ class ModelWith
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLeftPhpName(): string
+    public function getLeftPhpName(): ?string
     {
         return $this->leftPhpName;
     }
@@ -303,9 +303,9 @@ class ModelWith
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRightPhpName(): string
+    public function getRightPhpName(): ?string
     {
         return $this->rightPhpName;
     }

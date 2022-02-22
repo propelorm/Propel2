@@ -267,9 +267,9 @@ class TableMap
     /**
      * Get the PHP name of the Table.
      *
-     * @return string A String with the name of the table.
+     * @return string|null A String with the name of the table.
      */
-    public function getPhpName(): string
+    public function getPhpName(): ?string
     {
         return $this->phpName;
     }
@@ -290,9 +290,9 @@ class TableMap
     /**
      * Get the ClassName of the Propel Class belonging to this table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName(): string
+    public function getClassName(): ?string
     {
         return $this->classname;
     }
@@ -327,9 +327,9 @@ class TableMap
     /**
      * Get the Package of the table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage(): string
+    public function getPackage(): ?string
     {
         return $this->package;
     }
