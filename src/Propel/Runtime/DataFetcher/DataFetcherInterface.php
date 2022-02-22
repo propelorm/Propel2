@@ -98,9 +98,9 @@ interface DataFetcherInterface extends Iterator, Countable
      * Returns the data of the next row,
      * based on this->next() && this->current();
      *
-     * @return array|null
+     * @return array|bool|null
      */
-    public function fetch(): ?array;
+    public function fetch();
 
     /**
      * Frees the resultSet.

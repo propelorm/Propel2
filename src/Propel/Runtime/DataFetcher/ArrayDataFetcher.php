@@ -44,7 +44,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * @inheritDoc
+     * @return array|null
      */
     public function fetch(): ?array
     {

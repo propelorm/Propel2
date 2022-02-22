@@ -72,9 +72,9 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @param int|null $style
      *
-     * @return array|null
+     * @return array|bool|null
      */
-    public function fetch($style = null): ?array
+    public function fetch(?int $style = null)
     {
         if ($style === null) {
             $style = $this->style;
