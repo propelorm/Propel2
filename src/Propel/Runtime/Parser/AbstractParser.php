@@ -92,12 +92,12 @@ abstract class AbstractParser
      * @param string $data The file content
      * @param string|null $path Path of the file to create
      *
-     * @return mixed|null|void
+     * @return int|null|void
      */
-    public function dump($data, $path = null)
+    public function dump(string $data, ?string $path = null)
     {
         if ($path !== null) {
-            return file_put_contents($path, $data);
+            return (int)file_put_contents($path, $data);
         }
 
         echo $data;

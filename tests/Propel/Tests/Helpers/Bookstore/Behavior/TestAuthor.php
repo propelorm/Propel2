@@ -53,9 +53,9 @@ class TestAuthor extends Author
     /**
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
      *
-     * @return null|void
+     * @return void
      */
-    public function postUpdate(?ConnectionInterface $con = null): ?int
+    public function postUpdate(?ConnectionInterface $con = null): void
     {
         parent::postUpdate($con);
         $this->setLastName('PostUpdatedLastName');
