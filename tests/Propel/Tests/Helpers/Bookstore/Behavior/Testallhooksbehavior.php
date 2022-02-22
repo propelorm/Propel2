@@ -66,56 +66,111 @@ class TestAllHooksTableModifier
 
 class TestAllHooksObjectBuilderModifier
 {
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectAttributes($builder)
     {
         return 'public $customAttribute = 1;';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preSave($builder)
     {
         return '$this->preSave = 1;$this->preSaveIsAfterSave = isset($affectedRows);$this->preSaveBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function postSave($builder)
     {
         return '$this->postSave = 1;$this->postSaveIsAfterSave = isset($affectedRows);$this->postSaveBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preInsert($builder)
     {
         return '$this->preInsert = 1;$this->preInsertIsAfterSave = isset($affectedRows);$this->preInsertBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function postInsert($builder)
     {
         return '$this->postInsert = 1;$this->postInsertIsAfterSave = isset($affectedRows);$this->postInsertBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preUpdate($builder)
     {
         return '$this->preUpdate = 1;$this->preUpdateIsAfterSave = isset($affectedRows);$this->preUpdateBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function postUpdate($builder)
     {
         return '$this->postUpdate = 1;$this->postUpdateIsAfterSave = isset($affectedRows);$this->postUpdateBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function preDelete($builder)
     {
         return '$this->preDelete = 1;$this->preDeleteIsBeforeDelete = isset(Table3TableMap::$instances[$this->id]);$this->preDeleteBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function postDelete($builder)
     {
         return '$this->postDelete = 1;$this->postDeleteIsBeforeDelete = isset(Table3TableMap::$instances[$this->id]);$this->postDeleteBuilder="' . get_class($builder) . '";';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectMethods($builder)
     {
         return 'public function hello() { return "' . get_class($builder) . '"; }';
     }
 
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
     public function objectCall($builder)
     {
         return 'if ($name == "foo") return "bar";';
@@ -124,7 +179,7 @@ class TestAllHooksObjectBuilderModifier
     /**
      * @return void
      */
-    public function objectFilter(&$string, $builder)
+    public function objectFilter(&$string, $builder): void
     {
         $string .= 'class testObjectFilter { const FOO = "' . get_class($builder) . '"; }';
     }
@@ -145,7 +200,7 @@ class TestAllHooksQueryBuilderModifier
     /**
      * @return void
      */
-    public function queryFilter(&$string, $builder)
+    public function queryFilter(&$string, $builder): void
     {
         $string .= 'class testQueryFilter { const FOO = "' . get_class($builder) . '"; }';
     }

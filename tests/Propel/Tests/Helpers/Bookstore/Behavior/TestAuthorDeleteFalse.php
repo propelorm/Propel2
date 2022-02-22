@@ -12,6 +12,11 @@ use Propel\Runtime\Connection\ConnectionInterface;
 
 class TestAuthorDeleteFalse extends TestAuthor
 {
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return int|null
+     */
     public function preDelete(?ConnectionInterface $con = null): ?int
     {
         parent::preDelete($con);
