@@ -1460,8 +1460,8 @@ class ModelCriteria extends BaseModelCriteria
 
         $ret = $this->findOne($con);
         if (!$ret) {
+            /** @var class-string $class */
             $class = $this->getModelName();
-            /** @var object $obj */
             $obj = new $class();
             foreach ($this->keys() as $key) {
                 $obj->setByName($key, $this->getValue($key), TableMap::TYPE_COLNAME);

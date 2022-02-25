@@ -31,7 +31,7 @@ class SetColumnConverterTest extends TestCase
     {
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $intValue = SetColumnConverter::convertToInt($values, $valueSet);
-        $this->assertEquals($validInteger, $intValue);
+        $this->assertSame($validInteger, $intValue);
     }
 
     /**
@@ -41,7 +41,7 @@ class SetColumnConverterTest extends TestCase
     {
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $intValue = SetColumnConverter::convertToInt('c', $valueSet);
-        $this->assertEquals('4', $intValue);
+        $this->assertSame('4', $intValue);
     }
 
     /**
@@ -51,7 +51,7 @@ class SetColumnConverterTest extends TestCase
     {
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $intValue = SetColumnConverter::convertToInt(null, $valueSet);
-        $this->assertEquals('0', $intValue);
+        $this->assertSame('0', $intValue);
     }
 
     /**
@@ -87,7 +87,7 @@ class SetColumnConverterTest extends TestCase
     {
         $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $arrayValue = SetColumnConverter::convertIntToArray(null, $valueSet);
-        $this->assertEquals([], $arrayValue);
+        $this->assertSame([], $arrayValue);
     }
 
     /**
