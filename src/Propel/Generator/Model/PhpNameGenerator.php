@@ -8,8 +8,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\InvalidArgumentException;
-
 /**
  * A <code>NameGeneratorInterface</code> implementation for PHP-esque names.
  *
@@ -41,8 +39,6 @@ class PhpNameGenerator implements NameGeneratorInterface
      * @param array<string> $inputs List expected to contain two (optional: three) parameters,
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
-     *
-     * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string The generated name.
      */
