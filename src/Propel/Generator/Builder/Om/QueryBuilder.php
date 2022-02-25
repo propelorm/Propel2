@@ -1206,7 +1206,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             }
             \$$variableName = array_search(\$$variableName, \$valueSet);
         } elseif (is_array(\$$variableName)) {
-            \$convertedValues = array();
+            \$convertedValues = [];
             foreach (\$$variableName as \$value) {
                 if (!in_array(\$value, \$valueSet)) {
                     throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$value));

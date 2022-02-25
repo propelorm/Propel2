@@ -451,7 +451,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function unserialize(string $data): void
+    public function unserialize($data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);
@@ -579,7 +579,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelException being thrown.
      *
-     * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param \Propel\Runtime\Parser\AbstractParser|string $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param bool $usePrefix (optional) If true, the returned element keys will be prefixed with the
      * model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
      * Not supported by ArrayCollection, as ArrayFormatter has

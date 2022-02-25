@@ -216,7 +216,7 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
  * Queries to be executed in the save transaction
  * @var        array
  */
-protected \$sortableQueries = array();
+protected \$sortableQueries = [];
 ";
         if ($this->behavior->useScope()) {
             $script .= "
@@ -357,7 +357,7 @@ public function getScopeValue(\$returnNulls = true)
 ";
         if ($this->behavior->hasMultipleScopes()) {
             $script .= "
-    \$result = array();
+    \$result = [];
     \$onlyNulls = true;
 ";
             foreach ($this->behavior->getScopes() as $scopeField) {
@@ -944,7 +944,7 @@ protected function processSortableQueries(\$con)
         \$arguments[] = \$con;
         \$callable(...\$arguments);
     }
-    \$this->sortableQueries = array();
+    \$this->sortableQueries = [];
 }
 ";
     }

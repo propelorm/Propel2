@@ -289,7 +289,7 @@ protected function processNestedSetQueries(ConnectionInterface \$con)
         \$arguments[] = \$con;
         \$callable(...\$arguments);
     }
-    \$this->nestedSetQueries = array();
+    \$this->nestedSetQueries = [];
 }
 ";
     }
@@ -1730,7 +1730,7 @@ public function deleteDescendants(ConnectionInterface \$con = null)
  * Queries to be executed in the save transaction
  * @var        array
  */
-protected \$nestedSetQueries = array();
+protected \$nestedSetQueries = [];
 
 /**
  * Internal cache for children nodes

@@ -524,7 +524,7 @@ public function toVersion(\$versionNumber, ConnectionInterface \$con = null)
  *
  * @return \$this|{$ARclassName} The current object (for fluent API support)
  */
-public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = array())
+public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = [])
 {";
         $script .= "
     \$loadedObjects['{$ARclassName}'][\$version->get{$primaryKeyName}()][\$version->get{$versionColumnName}()] = \$this;";
@@ -748,7 +748,7 @@ public function getAllVersions(ConnectionInterface \$con = null)
  *
  * @return  array A list of differences
  */
-protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \$ignoredColumns = array())
+protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \$ignoredColumns = [])
 {
     \$fromVersionNumber = \$fromVersion['{$this->getColumnPhpName()}'];
     \$toVersionNumber = \$toVersion['{$this->getColumnPhpName()}'];
@@ -768,7 +768,7 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
         }
         $script .= "
     ), \$ignoredColumns);
-    \$diff = array();
+    \$diff = [];
     foreach (\$fromVersion as \$key => \$value) {
         if (in_array(\$key, \$ignoredColumns)) {
             continue;
@@ -819,7 +819,7 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  *
  * @return  array A list of differences
  */
-public function compareVersion(\$versionNumber, \$keys = 'columns', ConnectionInterface \$con = null, \$ignoredColumns = array())
+public function compareVersion(\$versionNumber, \$keys = 'columns', ConnectionInterface \$con = null, \$ignoredColumns = [])
 {
     \$fromVersion = \$this->toArray();
     \$toVersion = \$this->getOneVersion(\$versionNumber, \$con)->toArray();
@@ -855,7 +855,7 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', ConnectionIn
  *
  * @return  array A list of differences
  */
-public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', ConnectionInterface \$con = null, \$ignoredColumns = array())
+public function compareVersions(\$fromVersionNumber, \$toVersionNumber, \$keys = 'columns', ConnectionInterface \$con = null, \$ignoredColumns = [])
 {
     \$fromVersion = \$this->getOneVersion(\$fromVersionNumber, \$con)->toArray();
     \$toVersion = \$this->getOneVersion(\$toVersionNumber, \$con)->toArray();

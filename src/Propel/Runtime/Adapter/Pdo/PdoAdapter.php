@@ -551,7 +551,7 @@ abstract class PdoAdapter
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
-     * $params = array();
+     * $params = [];
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
      * $stmt->execute();
      * </code>

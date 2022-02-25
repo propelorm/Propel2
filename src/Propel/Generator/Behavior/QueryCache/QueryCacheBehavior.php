@@ -44,7 +44,7 @@ class QueryCacheBehavior extends Behavior
 ";
         switch ($this->getParameter('backend')) {
             case 'backend':
-                $script .= "protected static \$cacheBackend = array();
+                $script .= "protected static \$cacheBackend = [];
             ";
 
                 break;
@@ -241,7 +241,7 @@ public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\Data
         \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
-        \$params = array();
+        \$params = [];
         \$sql = \$this->createSelectSql(\$params);
     }
 
@@ -296,7 +296,7 @@ public function doCount(ConnectionInterface \$con = null): \Propel\Runtime\DataF
             || count(\$this->selectQueries) > 0
         ;
 
-        \$params = array();
+        \$params = [];
         if (\$needsComplexCount) {
             if (\$this->needsSelectAliases()) {
                 if (\$this->getHaving()) {

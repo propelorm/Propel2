@@ -760,7 +760,7 @@ class Join
      * <code>
      * $join = new Join();
      * $join->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID');
-     * $params = array();
+     * $params = [];
      * echo $j->getClause($params);
      * // 'LEFT JOIN author ON (book.AUTHOR_ID=author.ID)'
      * </code>

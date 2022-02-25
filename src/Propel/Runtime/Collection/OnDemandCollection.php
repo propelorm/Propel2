@@ -263,7 +263,7 @@ class OnDemandCollection extends Collection
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME): string
+    public function exportTo($parser, bool $usePrefix = true, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME): string
     {
         throw new PropelException('A OnDemandCollection cannot be exported.');
     }

@@ -1216,7 +1216,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     public static function populateObjects(DataFetcherInterface \$dataFetcher)
     {
-        \$results = array();
+        \$results = [];
     ";
         if (!$table->getChildrenColumn()) {
             $script .= "

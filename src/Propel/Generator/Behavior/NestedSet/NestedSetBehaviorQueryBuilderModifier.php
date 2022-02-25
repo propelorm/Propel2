@@ -844,7 +844,7 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ', $s
 static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
 {
     if (Propel::isInstancePoolingEnabled()) {
-        \$keys = array();
+        \$keys = [];
         /** @var \$obj $objectClassName */
         foreach ($tableMapClassName::\$instances as \$obj) {
             if (!\$prune || !\$prune->equals(\$obj)) {

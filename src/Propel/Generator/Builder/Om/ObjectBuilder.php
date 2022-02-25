@@ -1193,7 +1193,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= "
         if (null === \$this->$cloUnserialized) {
-            \$this->$cloUnserialized = array();
+            \$this->$cloUnserialized = [];
         }
         if (!\$this->$cloUnserialized && null !== \$this->$clo) {
             \$$cloUnserialized = substr(\$this->$clo, 2, -2);
@@ -1421,7 +1421,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= "
         if (null === \$this->$cloConverted) {
-            \$this->$cloConverted = array();
+            \$this->$cloConverted = [];
         }
         if (!\$this->$cloConverted && null !== \$this->$clo) {
             \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
@@ -2233,7 +2233,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         // we want to reindex the array, so array_ functions are not the best choice
         $script .= ")
     {
-        \$targetArray = array();
+        \$targetArray = [];
         foreach (\$this->get$cfc(";
         if ($col->isLazyLoad()) {
             $script .= '$con';
@@ -3000,15 +3000,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray(\$keyType = TableMap::$defaultKeyType, \$includeLazyLoadColumns = true, \$alreadyDumpedObjects = array()" . ($hasFks ? ', $includeForeignObjects = false' : '') . ")
+    public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = []" . ($hasFks ? ', bool $includeForeignObjects = false' : '') . ")
     {
-
         if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
             return '*RECURSION*';
         }
         \$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()] = true;
         \$keys = " . $this->getTableMapClassName() . "::getFieldNames(\$keyType);
-        \$result = array(";
+        \$result = [";
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isLazyLoad()) {
                 $script .= "
@@ -3019,7 +3018,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
         }
         $script .= "
-        );";
+        ];";
 
         foreach ($this->getTable()->getColumns() as $num => $col) {
             if ($col->isTemporalType()) {
@@ -3848,7 +3847,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function getPrimaryKey()
     {
-        \$pks = array();";
+        \$pks = [];";
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
             $script .= "
@@ -5120,7 +5119,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
             if (\$this->$scheduledForDeletionVarName !== null) {
                 if (!\$this->{$scheduledForDeletionVarName}->isEmpty()) {
-                    \$pks = array();";
+                    \$pks = [];";
         if ($multipleFks) {
             $script .= "
                     foreach (\$this->{$scheduledForDeletionVarName} as \$combination) {
@@ -6543,7 +6542,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
         $query = 'INSERT INTO ' . $this->quoteIdentifier($table->getName()) . ' (%s) VALUES (%s)';
         $script = "
-        \$modifiedColumns = array();
+        \$modifiedColumns = [];
         \$index = 0;
 ";
 
