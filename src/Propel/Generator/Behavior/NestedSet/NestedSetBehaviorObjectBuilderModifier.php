@@ -131,7 +131,7 @@ class NestedSetBehaviorObjectBuilderModifier
         $queryClassName = $builder->getQueryClassName();
 
         return "if (\$this->isRoot()) {
-    throw new PropelException('Deletion of a root node is disabled for nested sets. Use $queryClassName::deleteTree(" . ($this->behavior->useScope() ? '$scope' : '') . ") instead to delete an entire tree');
+    throw new PropelException('Deletion of a root node is disabled for nested sets. Use `$queryClassName::deleteTree(" . ($this->behavior->useScope() ? '$scope' : '') . ")` instead to delete an entire tree');
 }
 
 if (\$this->isInTree()) {

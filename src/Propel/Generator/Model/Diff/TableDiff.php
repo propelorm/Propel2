@@ -438,7 +438,7 @@ class TableDiff
     public function addAddedPkColumn($columnName, Column $addedPkColumn): void
     {
         if (!$addedPkColumn->isPrimaryKey()) {
-            throw new DiffException(sprintf('Column %s is not a valid primary key column.', $columnName));
+            throw new DiffException(sprintf('Column `%s` is not a valid primary key column.', $columnName));
         }
 
         $this->addedPkColumns[$columnName] = $addedPkColumn;

@@ -249,7 +249,7 @@ class SchemaReader
                     if ($xmlFile[0] !== '/') {
                         $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
-                            throw new SchemaException(sprintf('Unknown include external "%s"', $xmlFile));
+                            throw new SchemaException(sprintf('Unknown include external `%s`', $xmlFile));
                         }
                     }
 

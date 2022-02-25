@@ -27,9 +27,9 @@ class ArrayFormatter extends AbstractFormatter
     protected $alreadyHydratedObjects = [];
 
     /**
-     * @var mixed
+     * @var array
      */
-    protected $emptyVariable;
+    protected $emptyVariable = [];
 
     /**
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher

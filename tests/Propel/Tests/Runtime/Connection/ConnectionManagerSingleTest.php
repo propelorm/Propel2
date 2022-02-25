@@ -55,6 +55,7 @@ class ConnectionManagerSingleTest extends BaseTestCase
     public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
     {
         $manager = new ConnectionManagerSingle('foo');
+        $manager->setConfiguration(['dsn' => 'sqlite::memory:']);
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertEquals('foo', $con->getName());
     }

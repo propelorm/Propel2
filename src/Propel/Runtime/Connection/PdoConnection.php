@@ -54,9 +54,9 @@ class PdoConnection implements ConnectionInterface
     }
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string|null The datasource name associated to this connection
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -101,7 +101,7 @@ class PdoConnection implements ConnectionInterface
         if (is_string($attribute) && strpos($attribute, '::') === false) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
-                throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
+                throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: `%s`', $attribute));
             }
             $attribute = constant($attribute);
         }

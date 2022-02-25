@@ -527,12 +527,16 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get a logger instance
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger($name = 'defaultLogger'): LoggerInterface
+    public function getLogger(?string $name = null): LoggerInterface
     {
+        if ($name === null) {
+            $name = 'defaultLogger';
+        }
+
         if (!isset($this->loggers[$name])) {
             $this->loggers[$name] = $this->buildLogger($name);
         }
@@ -558,7 +562,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Psr\Log\LoggerInterface
      */
-    protected function buildLogger($name = 'defaultLogger'): LoggerInterface
+    protected function buildLogger(string $name = 'defaultLogger'): LoggerInterface
     {
         if (!isset($this->loggerConfigurations[$name])) {
             return $name !== 'defaultLogger' ? $this->getLogger() : new NullLogger();
@@ -595,7 +599,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
-                    'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
+                    'Handler type `%s` not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
                     $configuration['type'],
                 ));
         }

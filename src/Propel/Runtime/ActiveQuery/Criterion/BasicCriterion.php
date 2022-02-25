@@ -100,7 +100,7 @@ class BasicCriterion extends AbstractCriterion
                 $sb .= $field . Criteria::ISNOTNULL;
             } else {
                 // for now throw an exception, because not sure how to interpret this
-                throw new InvalidValueException(sprintf('Could not build SQL for expression: %s %s NULL', $field, $this->comparison));
+                throw new InvalidValueException(sprintf('Could not build SQL for expression: `%s %s NULL`', $field, $this->comparison));
             }
         }
     }

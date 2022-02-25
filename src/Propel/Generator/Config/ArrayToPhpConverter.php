@@ -54,7 +54,7 @@ class ArrayToPhpConverter
                     $conf[] = "\$manager->{$masterConfigurationSetter}(" . var_export($connection, true) . ');';
                 }
 
-                $conf[] = "\$serviceContainer->setConnectionManager(\$manager);";
+                $conf[] = '$serviceContainer->setConnectionManager($manager);';
             }
 
             // set default datasource

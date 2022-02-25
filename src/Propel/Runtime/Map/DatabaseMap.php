@@ -147,7 +147,7 @@ class DatabaseMap
     public function getTable($name): TableMap
     {
         if (!isset($this->tables[$name])) {
-            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table %s in database %s.', $name, $this->getName()));
+            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
         }
 
         return $this->tables[$name];

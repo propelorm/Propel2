@@ -381,7 +381,7 @@ public function getScopeValue(\$returnNulls = true)
     try {
         return SetColumnConverter::convertToInt(\$this->{$this->getColumnGetter('scope_column')}(), {$this->tableMapClassName}::getValueSet({$this->tableMapClassName}::COL_{$columnConstant}));
     } catch (SetColumnConverterException \$e) {
-        throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
+        throw new PropelException(sprintf('Value `%s` is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
     }
             ";
         } else {

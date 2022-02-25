@@ -197,7 +197,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * Gets package name for this table.
      * This is overridden by child classes that have different packages.
      *
-     * @return string
+     * @return string|null
      */
     public function getPackage(): ?string
     {

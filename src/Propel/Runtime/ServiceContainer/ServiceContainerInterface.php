@@ -164,11 +164,11 @@ interface ServiceContainerInterface
     /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger($name = 'defaultLogger'): LoggerInterface;
+    public function getLogger(?string $name = null): LoggerInterface;
 
     /**
      * Initialize the internal database maps array

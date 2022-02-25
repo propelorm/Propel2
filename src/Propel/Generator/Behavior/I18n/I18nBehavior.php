@@ -318,7 +318,7 @@ class I18nBehavior extends Behavior
         foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
             if (!$i18nTable->hasColumn($columnName)) {
                 if (!$table->hasColumn($columnName)) {
-                    throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
+                    throw new EngineException(sprintf('No column named `%s` found in table `%s`', $columnName, $table->getName()));
                 }
 
                 $column = $table->getColumn($columnName);
