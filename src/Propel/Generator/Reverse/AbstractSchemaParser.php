@@ -12,6 +12,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Base class for reverse engineering a database schema.
@@ -66,7 +67,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * The database's platform.
      *
-     * @var \Propel\Generator\Platform\PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface|null
      */
     protected $platform;
 
@@ -241,7 +242,17 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasPlatform(): bool
+    {
+        return $this->platform !== null;
+    }
+
+    /**
      * Returns the database's platform.
+     *
+     * @throws \RuntimeException
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
@@ -251,6 +262,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
             $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
         }
 
-        return $this->platform;
+        $platform = $this->platform;
+        if ($platform === null) {
+            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existance first.');
+        }
+
+        return $platform;
     }
 }

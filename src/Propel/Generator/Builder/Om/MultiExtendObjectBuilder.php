@@ -42,9 +42,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Overrides method to return child package, if specified.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage(): string
+    public function getPackage(): ?string
     {
         return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
@@ -80,9 +80,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classpath to parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClasspath(): string
+    protected function getParentClasspath(): ?string
     {
         if ($this->getChild()->getAncestor()) {
             return $this->getChild()->getAncestor();
@@ -94,9 +94,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classname of parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClassName(): string
+    protected function getParentClassName(): ?string
     {
         return ClassTools::classname($this->getParentClasspath());
     }

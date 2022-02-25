@@ -130,7 +130,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return \PDOStatement|false
      */
-    public function query($statement)
+    public function query(string $statement)
     {
         return $this->pdo->query($statement);
     }

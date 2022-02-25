@@ -511,9 +511,9 @@ class Join
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLeftTableWithAlias(): string
+    public function getLeftTableWithAlias(): ?string
     {
         return $this->leftTableAlias ? $this->leftTableName . ' ' . $this->leftTableAlias : $this->leftTableName;
     }
@@ -657,9 +657,9 @@ class Join
      * The AdapterInterface which might be used to get db specific
      * variations of sql.
      *
-     * @return \Propel\Runtime\Adapter\AdapterInterface value of db.
+     * @return \Propel\Runtime\Adapter\AdapterInterface|null value of db.
      */
-    public function getAdapter(): AdapterInterface
+    public function getAdapter(): ?AdapterInterface
     {
         return $this->db;
     }

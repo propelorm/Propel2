@@ -39,7 +39,10 @@ class AdapterFactory
             $adapterClass = $driver;
         }
         if (class_exists($adapterClass)) {
-            return new $adapterClass();
+            /** @var \Propel\Runtime\Adapter\AdapterInterface $adapter */
+            $adapter = new $adapterClass();
+
+            return $adapter;
         }
 
         throw new InvalidArgumentException(sprintf('Unsupported Propel driver: "%s". Check your configuration file', $driver));

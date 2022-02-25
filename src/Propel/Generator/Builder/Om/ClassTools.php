@@ -72,9 +72,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getBaseClass(Table $table): string
+    public static function getBaseClass(Table $table): ?string
     {
         return $table->getBaseClass();
     }
@@ -84,9 +84,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getInterface(Table $table): string
+    public static function getInterface(Table $table): ?string
     {
         return $table->getInterface();
     }

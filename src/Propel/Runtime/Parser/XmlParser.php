@@ -35,6 +35,7 @@ class XmlParser extends AbstractParser
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
 
+        /** @phpstan-var string */
         return $rootNode->ownerDocument->saveXML();
     }
 
@@ -126,6 +127,7 @@ class XmlParser extends AbstractParser
             } elseif (is_string($value)) {
                 $charset = $charset ?: 'utf-8';
                 if (function_exists('iconv') && strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
+                    /** @var string $value */
                     $value = iconv($charset, 'UTF-8', $value);
                 }
                 $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');

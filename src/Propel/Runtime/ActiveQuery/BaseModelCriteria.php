@@ -153,9 +153,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the name of the class for this model criteria
      *
-     * @return string
+     * @return string|null
      */
-    public function getModelName(): string
+    public function getModelName(): ?string
     {
         return $this->modelName;
     }
@@ -277,9 +277,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * Either the SQL name or an alias.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTableNameInQuery(): string
+    public function getTableNameInQuery(): ?string
     {
         if ($this->useAliasInSQL && $this->modelAlias) {
             return $this->modelAlias;

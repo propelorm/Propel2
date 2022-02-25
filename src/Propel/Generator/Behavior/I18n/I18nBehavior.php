@@ -116,9 +116,9 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getLocaleColumn(): Column
+    public function getLocaleColumn(): ?Column
     {
         return $this->getI18nTable()->getColumn($this->getLocaleColumnName());
     }

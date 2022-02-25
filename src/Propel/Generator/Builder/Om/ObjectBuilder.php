@@ -139,9 +139,9 @@ class ObjectBuilder extends AbstractObjectBuilder
      *
      * @param \Propel\Generator\Model\Column $column
      *
-     * @return string
+     * @return string|null
      */
-    protected function getTemporalFormatter(Column $column): string
+    protected function getTemporalFormatter(Column $column): ?string
     {
         $fmt = null;
         if ($column->getType() === PropelTypes::DATE) {

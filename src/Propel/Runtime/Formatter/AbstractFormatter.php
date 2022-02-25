@@ -131,9 +131,9 @@ abstract class AbstractFormatter
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDbName(): string
+    public function getDbName(): ?string
     {
         return $this->dbName;
     }

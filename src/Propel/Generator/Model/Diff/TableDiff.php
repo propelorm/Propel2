@@ -194,9 +194,9 @@ class TableDiff
     /**
      * Returns the toTable property.
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getToTable(): Table
+    public function getToTable(): ?Table
     {
         return $this->toTable;
     }

@@ -146,9 +146,9 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     }
 
     /**
-     * @return \Propel\Runtime\Connection\ConnectionInterface
+     * @return \Propel\Runtime\Connection\ConnectionInterface|null
      */
-    public function getWrappedConnection(): ConnectionInterface
+    public function getWrappedConnection(): ?ConnectionInterface
     {
         return $this->connection;
     }

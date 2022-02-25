@@ -394,9 +394,9 @@ class Behavior extends MappingModel
      *
      * @param string $name
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnForParameter($name): Column
+    public function getColumnForParameter($name): ?Column
     {
         return $this->table->getColumn($this->getParameter($name));
     }

@@ -148,9 +148,9 @@ class Domain extends MappingModel
     /**
      * Returns the owning database object (if this domain was setup via XML).
      *
-     * @return \Propel\Generator\Model\Database
+     * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase(): Database
+    public function getDatabase(): ?Database
     {
         return $this->database;
     }
@@ -324,7 +324,7 @@ class Domain extends MappingModel
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return array|string|bool|null
+     * @return array|string|int|bool|null
      */
     public function getPhpDefaultValue()
     {

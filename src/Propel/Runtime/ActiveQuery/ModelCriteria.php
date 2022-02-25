@@ -534,7 +534,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @see select()
      *
-     * @return array|string A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
+     * @return array<string>|string|null A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
      */
     public function getSelect()
     {
@@ -894,9 +894,9 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\RuntimeException
      *
-     * @return self The primary criteria object
+     * @return self|null The primary criteria object
      */
-    public function endUse(): self
+    public function endUse(): ?self
     {
         if ($this->isExistsQuery) {
             return $this->getPrimaryCriteria();
@@ -1461,6 +1461,7 @@ class ModelCriteria extends BaseModelCriteria
         $ret = $this->findOne($con);
         if (!$ret) {
             $class = $this->getModelName();
+            /** @var object $obj */
             $obj = new $class();
             foreach ($this->keys() as $key) {
                 $obj->setByName($key, $this->getValue($key), TableMap::TYPE_COLNAME);

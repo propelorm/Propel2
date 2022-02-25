@@ -76,9 +76,9 @@ class ReverseManager extends AbstractManager
     /**
      * Gets the (optional) schema name to use.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchemaName(): string
+    public function getSchemaName(): ?string
     {
         return $this->schemaName;
     }

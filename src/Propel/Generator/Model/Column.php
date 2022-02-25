@@ -421,9 +421,9 @@ class Column extends MappingModel
     /**
      * Returns the database object the current column is in.
      *
-     * @return \Propel\Generator\Model\Database
+     * @return \Propel\Generator\Model\Database|null
      */
-    private function getDatabase(): Database
+    private function getDatabase(): ?Database
     {
         return $this->parentTable->getDatabase();
     }
@@ -469,9 +469,9 @@ class Column extends MappingModel
     /**
      * Returns the column name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -558,9 +558,9 @@ class Column extends MappingModel
      * Returns the name to use in PHP sources. It will set & return
      * a self-generated phpName from its name if its not already set.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPhpName(): string
+    public function getPhpName(): ?string
     {
         if ($this->phpName === null) {
             $this->setPhpName();
@@ -574,9 +574,9 @@ class Column extends MappingModel
      * It will set & return a self-generated phpName from its name
      * if its not already set.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPhpSingularName(): string
+    public function getPhpSingularName(): ?string
     {
         if ($this->phpSingularName === null) {
             $this->setPhpSingularName();
@@ -854,9 +854,9 @@ class Column extends MappingModel
     /**
      * Returns the inheritance list.
      *
-     * @return array<\Propel\Generator\Model\Inheritance>
+     * @return array|null
      */
-    public function getInheritanceList(): array
+    public function getInheritanceList(): ?array
     {
         return $this->inheritanceList;
     }
@@ -864,9 +864,9 @@ class Column extends MappingModel
     /**
      * Returns the inheritance definitions.
      *
-     * @return array<\Propel\Generator\Model\Inheritance>
+     * @return array|null
      */
-    public function getChildren(): array
+    public function getChildren(): ?array
     {
         return $this->inheritanceList;
     }

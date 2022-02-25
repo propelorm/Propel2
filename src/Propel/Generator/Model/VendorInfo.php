@@ -60,9 +60,9 @@ class VendorInfo extends MappingModel
     /**
      * Returns the RDBMS type for this vendor specific information.
      *
-     * @return string
+     * @return string|null
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }

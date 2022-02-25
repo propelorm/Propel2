@@ -38,7 +38,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @see NameGenerator
      *
-     * @param array<(string|null)> $inputs List expected to contain two (optional: three) parameters,
+     * @param array<string> $inputs List expected to contain two (optional: three) parameters,
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
      *
@@ -48,19 +48,14 @@ class PhpNameGenerator implements NameGeneratorInterface
      */
     public function generateName(array $inputs): string
     {
-        $schemaName = $inputs[0];
-        $method = $inputs[1];
+        $schemaName = (string)$inputs[0];
+        $method = (string)$inputs[1];
 
         if (count($inputs) > 2) {
-            $prefix = $inputs[2];
+            $prefix = (string)$inputs[2];
             if ($prefix && substr($schemaName, 0, strlen($prefix)) === $prefix) {
                 $schemaName = substr($schemaName, strlen($prefix));
             }
-        }
-
-        // We really shouldn't be getting null here, but we cannot pass a null value further
-        if ($schemaName === null) {
-            throw new InvalidArgumentException('No schema name available');
         }
 
         switch ($method) {

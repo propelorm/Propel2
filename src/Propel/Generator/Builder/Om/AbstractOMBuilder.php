@@ -642,9 +642,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param \Propel\Generator\Model\ForeignKey $fk The local FK that we need a name for.
      * @param bool $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      *
-     * @return string
+     * @return string|null
      */
-    public function getFKPhpNameAffix(ForeignKey $fk, $plural = false): string
+    public function getFKPhpNameAffix(ForeignKey $fk, $plural = false): ?string
     {
         if ($fk->getPhpName()) {
             if ($plural) {
@@ -923,9 +923,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @param \Propel\Generator\Model\ForeignKey $fk The referrer FK that we need a name for.
      * @param bool $plural Whether the php name should be plural (e.g. initRelatedObjs() vs. addRelatedObj()
      *
-     * @return string
+     * @return string|null
      */
-    public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false): string
+    public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false): ?string
     {
         $pluralizer = $this->getPluralizer();
         if ($fk->getRefPhpName()) {

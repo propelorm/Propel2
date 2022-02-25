@@ -10,6 +10,8 @@ pom.xml
 php-cs-fixer.phar
 
 generated-classes/
+generated-conf/
+generated-sql/
 
 tests/Fixtures/namespaced/build/
 tests/Fixtures/nestedset/build/

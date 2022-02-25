@@ -235,7 +235,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param string|null $name table name
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct();
 
@@ -765,8 +765,10 @@ class Table extends ScopedMappingModel implements IdMethod
             $this->foreignKeys[] = $fk;
             $this->foreignKeysByName[$name] = $fk;
 
-            if (!in_array($fk->getForeignTableName(), $this->foreignTableNames)) {
-                $this->foreignTableNames[] = $fk->getForeignTableName();
+            if (!in_array($fk->getForeignTableName(), $this->foreignTableNames, true)) {
+                /** @var string $foreignTableName */
+                $foreignTableName = $fk->getForeignTableName();
+                $this->foreignTableNames[] = $foreignTableName;
             }
 
             return $fk;

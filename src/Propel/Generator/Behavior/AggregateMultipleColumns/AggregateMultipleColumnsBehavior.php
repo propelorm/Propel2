@@ -322,9 +322,9 @@ class AggregateMultipleColumnsBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    protected function getForeignTable(): Table
+    protected function getForeignTable(): ?Table
     {
         $database = $this->getTable()->getDatabase();
         $foreignTableName = $this->getForeignTableNameFullyQualified();

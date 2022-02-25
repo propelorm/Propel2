@@ -139,7 +139,7 @@ class Database extends ScopedMappingModel
      * @param string|null $name The database's name
      * @param \Propel\Generator\Platform\PlatformInterface|null $platform The database's platform
      */
-    public function __construct($name = null, ?PlatformInterface $platform = null)
+    public function __construct(?string $name = null, ?PlatformInterface $platform = null)
     {
         parent::__construct();
 

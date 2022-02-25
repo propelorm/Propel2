@@ -189,9 +189,9 @@ class Index extends MappingModel
     {
         if ($data instanceof Column) {
             $column = $data;
-            $this->columns[] = $column->getName();
+            $this->columns[] = (string)$column->getName();
             if ($column->getSize()) {
-                $this->columnsSize[$column->getName()] = $column->getSize();
+                $this->columnsSize[$column->getName()] = (int)$column->getSize();
             }
             $this->columnObjects[] = $column;
         } else {

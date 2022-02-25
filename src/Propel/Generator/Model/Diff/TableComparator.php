@@ -59,9 +59,9 @@ class TableComparator
     /**
      * Returns the table the comparator starts from.
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getFromTable(): Table
+    public function getFromTable(): ?Table
     {
         return $this->tableDiff->getFromTable();
     }

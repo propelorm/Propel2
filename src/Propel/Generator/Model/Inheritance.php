@@ -45,9 +45,9 @@ class Inheritance extends MappingModel
     /**
      * Returns a key name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getKey(): string
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -91,9 +91,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the parent column.
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumn(): Column
+    public function getColumn(): ?Column
     {
         return $this->column;
     }
@@ -101,9 +101,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the class name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName(): string
+    public function getClassName(): ?string
     {
         return $this->className;
     }

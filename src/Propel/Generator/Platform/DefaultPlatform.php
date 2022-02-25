@@ -259,9 +259,9 @@ class DefaultPlatform implements PlatformInterface
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public function getSequenceName(Table $table): string
+    public function getSequenceName(Table $table): ?string
     {
         static $longNamesMap = [];
         $result = null;
@@ -278,7 +278,7 @@ class DefaultPlatform implements PlatformInterface
                     $result = substr($table->getName(), 0, $maxIdentifierLength - 4) . '_SEQ';
                 }
             } else {
-                $result = substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
+                $result = (string)substr($idMethodParams[0]->getValue(), 0, $maxIdentifierLength);
             }
         }
 

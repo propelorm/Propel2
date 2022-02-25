@@ -183,7 +183,7 @@ interface ConnectionInterface
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|false
      */
-    public function query($statement);
+    public function query(string $statement);
 
     /**
      * Quotes a string for use in a query.

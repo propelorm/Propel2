@@ -460,9 +460,9 @@ abstract class DataModelBuilder
     /**
      * Convenience method to returns the Platform class for this table (database).
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return \Propel\Generator\Platform\PlatformInterface|null
      */
-    public function getPlatform(): PlatformInterface
+    public function getPlatform(): ?PlatformInterface
     {
         if ($this->platform === null) {
             // try to load the platform from the table
@@ -510,9 +510,9 @@ abstract class DataModelBuilder
     /**
      * Convenience method to returns the database for current table.
      *
-     * @return \Propel\Generator\Model\Database
+     * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase(): Database
+    public function getDatabase(): ?Database
     {
         return $this->getTable()->getDatabase();
     }

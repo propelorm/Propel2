@@ -144,9 +144,9 @@ class ColumnMap
     /**
      * Get the name of the table this column is in.
      *
-     * @return string A String with the table name.
+     * @return string|null A String with the table name.
      */
-    public function getTableName(): string
+    public function getTableName(): ?string
     {
         return $this->table->getName();
     }

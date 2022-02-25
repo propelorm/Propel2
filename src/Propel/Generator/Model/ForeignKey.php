@@ -569,9 +569,9 @@ class ForeignKey extends MappingModel
     /**
      * Returns the name of the schema the foreign key is in.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchemaName(): string
+    public function getSchemaName(): ?string
     {
         return $this->parentTable->getSchema();
     }
@@ -603,8 +603,8 @@ class ForeignKey extends MappingModel
         }
 
         $local = null;
-        $foreign = null;
         if ($ref1 instanceof Column) {
+            /** @var string $local */
             $local = $ref1->getName();
             $this->localColumns[] = $local;
         } else {
@@ -677,9 +677,9 @@ class ForeignKey extends MappingModel
      *
      * @param int $index
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getLocalColumn($index = 0): Column
+    public function getLocalColumn($index = 0): ?Column
     {
         return $this->parentTable->getColumn($this->getLocalColumnName($index));
     }
@@ -800,9 +800,9 @@ class ForeignKey extends MappingModel
      *
      * @param int $index
      *
-     * @return string
+     * @return string|null
      */
-    public function getForeignColumnName($index = 0): string
+    public function getForeignColumnName($index = 0): ?string
     {
         return $this->foreignColumns[$index];
     }
@@ -812,9 +812,9 @@ class ForeignKey extends MappingModel
      *
      * @param int $index
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getForeignColumn($index = 0): Column
+    public function getForeignColumn($index = 0): ?Column
     {
         return $this->getForeignTable()->getColumn($this->getForeignColumnName($index));
     }
