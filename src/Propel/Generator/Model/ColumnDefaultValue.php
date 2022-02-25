@@ -80,15 +80,15 @@ class ColumnDefaultValue
     }
 
     /**
-     * @return string|null The value, as specified in the schema.
+     * @return string|int|null The value, as specified in the schema.
      */
-    public function getValue(): ?string
+    public function getValue()
     {
         return $this->value;
     }
 
     /**
-     * @param string|null $value The value, as specified in the schema.
+     * @param string|int|null $value The value, as specified in the schema.
      *
      * @return void
      */

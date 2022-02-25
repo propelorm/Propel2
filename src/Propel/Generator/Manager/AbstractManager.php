@@ -150,9 +150,9 @@ abstract class AbstractManager
     /**
      * Returns the working directory path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getWorkingDirectory(): string
+    public function getWorkingDirectory(): ?string
     {
         return $this->workingDirectory;
     }

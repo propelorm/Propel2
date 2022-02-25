@@ -1417,9 +1417,9 @@ class Column extends MappingModel
     /**
      * Returns the column scale.
      *
-     * @return int
+     * @return int|null
      */
-    public function getScale(): int
+    public function getScale(): ?int
     {
         return $this->domain->getScale();
     }

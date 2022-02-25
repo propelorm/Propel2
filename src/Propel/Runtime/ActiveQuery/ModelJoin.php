@@ -134,9 +134,9 @@ class ModelJoin extends Join
     }
 
     /**
-     * @return self
+     * @return self|null
      */
-    public function getPreviousJoin(): self
+    public function getPreviousJoin(): ?self
     {
         return $this->previousJoin;
     }

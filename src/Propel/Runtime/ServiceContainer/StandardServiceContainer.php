@@ -450,7 +450,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setConnection($name, ConnectionInterface $connection): void
+    public function setConnection(string $name, ConnectionInterface $connection): void
     {
         $manager = new ConnectionManagerSingle($name);
         $manager->setConnection($connection);

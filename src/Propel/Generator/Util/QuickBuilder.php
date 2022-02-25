@@ -265,7 +265,7 @@ class QuickBuilder
         $adapter->initConnection($con, []);
         $this->buildSQL($con);
         $this->buildClasses($classTargets);
-        $name = $this->getDatabase()->getName();
+        $name = (string)$this->getDatabase()->getName();
         Propel::getServiceContainer()->setAdapter($name, $adapter);
         Propel::getServiceContainer()->setConnection($name, $con);
 

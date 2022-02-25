@@ -261,6 +261,8 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
     public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false): ?int
     {
         " . $this->getClassKeyCondition() . "
+
+        return null;
     }
 ";
     }
@@ -283,6 +285,8 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
     public function preDelete(ConnectionInterface \$con): ?int
     {
         " . $this->getClassKeyCondition() . "
+
+        return null;
     }
 ";
     }

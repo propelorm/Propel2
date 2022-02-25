@@ -265,9 +265,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the TableMap object for this Criteria
      *
-     * @return \Propel\Runtime\Map\TableMap
+     * @return \Propel\Runtime\Map\TableMap|null
      */
-    public function getTableMap(): TableMap
+    public function getTableMap(): ?TableMap
     {
         return $this->tableMap;
     }

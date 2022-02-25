@@ -192,6 +192,8 @@ class ModelCriteriaWithPostDeleteHook extends ModelCriteria
     public function postDelete($affectedRows, ConnectionInterface $con): ?int
     {
         $con->lastAffectedRows = $affectedRows;
+
+        return $affectedRows;
     }
 }
 
@@ -211,17 +213,21 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
     public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false): ?int
     {
         $values['ISBN'] = '1234';
+
+        return null;
     }
 }
 
 class ModelCriteriaWithPostUpdateHook extends ModelCriteria
 {
     /**
-     * @return void
+     * @return int|null
      */
     public function postUpdate($affectedRows, ConnectionInterface $con): ?int
     {
         $con->lastAffectedRows = $affectedRows;
+
+        return $affectedRows;
     }
 }
 
