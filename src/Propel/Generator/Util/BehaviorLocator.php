@@ -56,7 +56,7 @@ class BehaviorLocator
      *
      * @return \Symfony\Component\Finder\SplFileInfo|null The found composer file or null if composer file isn't found
      */
-    private function findComposerFile($fileName): ?SplFileInfo
+    private function findComposerFile(string $fileName): ?SplFileInfo
     {
         if ($this->composerDir !== null) {
             $filePath = $this->composerDir . '/' . $fileName;
@@ -154,7 +154,7 @@ class BehaviorLocator
      *
      * @return string the class name
      */
-    public function getBehavior($name): string
+    public function getBehavior(string $name): string
     {
         if (strpos($name, '\\') !== false) {
             $class = $name;
@@ -184,7 +184,7 @@ class BehaviorLocator
      *
      * @return string The behavior fully qualified class name
      */
-    private function getCoreBehavior($name): string
+    private function getCoreBehavior(string $name): string
     {
         $generator = new PhpNameGenerator();
         $phpName = $generator->generateName([$name, PhpNameGenerator::CONV_METHOD_PHPNAME]);
@@ -230,7 +230,7 @@ class BehaviorLocator
      *
      * @return array|null Behavior data
      */
-    private function loadBehavior($package): ?array
+    private function loadBehavior(array $package): ?array
     {
         if (isset($package['type']) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
             // find propel behavior information

@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
@@ -224,11 +225,11 @@ class ConcreteInheritanceBehavior extends Behavior
     }
 
     /**
-     * @param string $script
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
      *
      * @return string
      */
-    public function postDelete($script): string
+    public function postDelete(ObjectBuilder $builder): string
     {
         if ($this->isCopyData()) {
             return "\$this->getParentOrCreate(\$con)->delete(\$con);
@@ -243,7 +244,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $script = '';
         $this->builder = $builder;
@@ -265,7 +266,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return void
      */
-    protected function addSyncParentToChild(&$script): void
+    protected function addSyncParentToChild(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
@@ -321,7 +322,7 @@ public function syncParentToChild($parentClass \$parent): void
      *
      * @return void
      */
-    protected function addObjectGetParentOrCreate(&$script): void
+    protected function addObjectGetParentOrCreate(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
@@ -361,7 +362,7 @@ public function getParentOrCreate(\$con = null)
      *
      * @return void
      */
-    protected function addObjectGetSyncParent(&$script): void
+    protected function addObjectGetSyncParent(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $pkeys = $parentTable->getPrimaryKey();

@@ -40,7 +40,7 @@ class ModelJoin extends Join
      *
      * @return $this
      */
-    public function setRelationMap(RelationMap $relationMap, $leftTableAlias = null, $relationAlias = null)
+    public function setRelationMap(RelationMap $relationMap, ?string $leftTableAlias = null, ?string $relationAlias = null)
     {
         $leftCols = $relationMap->getLeftColumns();
         $rightCols = $relationMap->getRightColumns();
@@ -154,7 +154,7 @@ class ModelJoin extends Join
      *
      * @return $this
      */
-    public function setRelationAlias($relationAlias)
+    public function setRelationAlias(string $relationAlias)
     {
         $this->setRightTableAlias($relationAlias);
 
@@ -197,7 +197,7 @@ class ModelJoin extends Join
      *
      * @return object The base Object of this join
      */
-    public function getObjectToRelate($startObject): object
+    public function getObjectToRelate(object $startObject): object
     {
         if ($this->isPrimary()) {
             return $startObject;
@@ -211,11 +211,11 @@ class ModelJoin extends Join
     }
 
     /**
-     * @param \Propel\Runtime\ActiveQuery\Join|null $join
+     * @param \Propel\Runtime\ActiveQuery\Join $join
      *
      * @return bool
      */
-    public function equals($join): bool
+    public function equals(Join $join): bool
     {
         /** @phpstan-var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         return parent::equals($join)

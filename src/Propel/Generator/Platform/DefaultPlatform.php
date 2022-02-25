@@ -71,7 +71,7 @@ class DefaultPlatform implements PlatformInterface
      *
      * @return string
      */
-    public function getObjectBuilderClass($type): string
+    public function getObjectBuilderClass(string $type): string
     {
         return '';
     }
@@ -111,7 +111,7 @@ class DefaultPlatform implements PlatformInterface
      *
      * @return void
      */
-    public function setIdentifierQuoting($enabled): void
+    public function setIdentifierQuoting(bool $enabled): void
     {
         $this->identifierQuoting = $enabled;
     }
@@ -220,7 +220,7 @@ class DefaultPlatform implements PlatformInterface
      *
      * @return \Propel\Generator\Model\Domain
      */
-    public function getDomainForType($propelType): Domain
+    public function getDomainForType(string $propelType): Domain
     {
         if (!isset($this->schemaDomainMap[$propelType])) {
             throw new EngineException(sprintf('Cannot map unknown Propel type %s to native database type.', var_export($propelType, true)));
@@ -758,7 +758,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @return string
      */
-    public function getCommentLineDDL($comment): string
+    public function getCommentLineDDL(string $comment): string
     {
         $pattern = "-- %s
 ";
@@ -771,7 +771,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @return string
      */
-    public function getCommentBlockDDL($comment): string
+    public function getCommentBlockDDL(string $comment): string
     {
         $pattern = "
 -----------------------------------------------------------------------
@@ -829,7 +829,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @return string
      */
-    public function getRenameTableDDL($fromTableName, $toTableName): string
+    public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
         $pattern = "
 ALTER TABLE %s RENAME TO %s;
@@ -1130,7 +1130,7 @@ ALTER TABLE %s MODIFY %s;
      *
      * @return string
      */
-    public function getModifyColumnsDDL($columnDiffs): string
+    public function getModifyColumnsDDL(array $columnDiffs): string
     {
         $lines = [];
         $table = null;
@@ -1186,7 +1186,7 @@ ALTER TABLE %s ADD %s;
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns): string
+    public function getAddColumnsDDL(array $columns): string
     {
         $lines = [];
         $table = null;
@@ -1245,7 +1245,7 @@ ALTER TABLE %s ADD
      *
      * @return string
      */
-    public function quote($text): string
+    public function quote(string $text): string
     {
         $con = $this->getConnection();
         if ($con) {
@@ -1265,7 +1265,7 @@ ALTER TABLE %s ADD
      *
      * @return string
      */
-    protected function disconnectedEscapeText($text): string
+    protected function disconnectedEscapeText(string $text): string
     {
         return str_replace("'", "''", $text);
     }
@@ -1278,7 +1278,7 @@ ALTER TABLE %s ADD
      *
      * @return string Quoted identifier.
      */
-    protected function quoteIdentifier($text): string
+    protected function quoteIdentifier(string $text): string
     {
         return $this->isIdentifierQuotingEnabled() ? $this->doQuoting($text) : $text;
     }
@@ -1395,7 +1395,7 @@ ALTER TABLE %s ADD
      *
      * @return string|null
      */
-    public function getPhpArrayString($stringValue): ?string
+    public function getPhpArrayString(string $stringValue): ?string
     {
         $stringValue = trim($stringValue);
         if (!$stringValue) {
@@ -1477,7 +1477,7 @@ ALTER TABLE %s ADD
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            '): string
+    public function getColumnBindingPHP(Column $column, string $identifier, string $columnValueAccessor, string $tab = '            '): string
     {
         $script = '';
         if ($column->getType() === PropelTypes::DATE) {
@@ -1524,8 +1524,13 @@ if (is_resource($columnValueAccessor)) {
      *
      * @return array<string>|string|null
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
-    {
+    public function getIdentifierPhp(
+        string $columnValueMutator,
+        string $connectionVariableName = '$con',
+        string $sequenceName = '',
+        string $tab = '            ',
+        ?string $phpType = null
+    ) {
         return sprintf(
             "
 %s%s = %s%s->lastInsertId(%s);",
@@ -1554,7 +1559,7 @@ if (is_resource($columnValueAccessor)) {
      *
      * @return int
      */
-    public function getDefaultTypeSize($type): int
+    public function getDefaultTypeSize(string $type): int
     {
         $sizes = $this->getDefaultTypeSizes();
 

@@ -47,7 +47,7 @@ abstract class PdoAdapter
      *
      * @return \Propel\Runtime\Connection\PdoConnection
      */
-    public function getConnection($params): PdoConnection
+    public function getConnection(array $params): PdoConnection
     {
         $params = $this->prepareParams($params);
 
@@ -91,7 +91,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function compareRegex($left, $right): string
+    public function compareRegex(string $left, string $right): string
     {
         return sprintf('%s REGEXP %s', $left, $right);
     }
@@ -114,7 +114,7 @@ abstract class PdoAdapter
      *
      * @return array the modified parameters
      */
-    protected function prepareParams($params): array
+    protected function prepareParams(array $params): array
     {
         return $params;
     }
@@ -161,7 +161,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset): void
+    public function setCharset(ConnectionInterface $con, string $charset): void
     {
         $con->exec(sprintf("SET NAMES '%s'", $charset));
     }
@@ -173,7 +173,7 @@ abstract class PdoAdapter
      *
      * @return string The upper case string.
      */
-    public function toUpperCase($in): string
+    public function toUpperCase(string $in): string
     {
         return sprintf('UPPER(%s)', $in);
     }
@@ -185,7 +185,7 @@ abstract class PdoAdapter
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCase($in): string
+    public function ignoreCase(string $in): string
     {
         return sprintf('UPPER(%s)', $in);
     }
@@ -200,7 +200,7 @@ abstract class PdoAdapter
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in): string
+    public function ignoreCaseInOrderBy(string $in): string
     {
         return $this->ignoreCase($in);
     }
@@ -224,7 +224,7 @@ abstract class PdoAdapter
      *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         return '"' . $text . '"';
     }
@@ -239,7 +239,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function quote($text): string
+    public function quote(string $text): string
     {
         $pos = strrpos($text, '.');
         if ($pos !== false) {
@@ -267,7 +267,7 @@ abstract class PdoAdapter
      *
      * @return string The quoted table name
      */
-    public function quoteIdentifierTable($table): string
+    public function quoteIdentifierTable(string $table): string
     {
         return implode(' ', array_map([$this, 'quoteIdentifier'], explode(' ', $table)));
     }
@@ -310,7 +310,7 @@ abstract class PdoAdapter
      *
      * @return mixed
      */
-    public function getId(ConnectionInterface $con, $name = null)
+    public function getId(ConnectionInterface $con, ?string $name = null)
     {
         return $con->lastInsertId($name);
     }
@@ -404,7 +404,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
     }
 
@@ -418,7 +418,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false): string
+    public function createSelectSqlPart(Criteria $criteria, array &$fromClause, bool $aliasAll = false): string
     {
         $selectClause = [];
 
@@ -598,7 +598,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

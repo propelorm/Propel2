@@ -120,7 +120,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns): string
+    public function getAddColumnsDDL(array $columns): string
     {
         $ret = '';
         $pattern = "
@@ -578,7 +578,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return bool
      */
-    public function hasSize($sqlType): bool
+    public function hasSize(string $sqlType): bool
     {
         return !in_array($sqlType, [
             'MEDIUMTEXT',

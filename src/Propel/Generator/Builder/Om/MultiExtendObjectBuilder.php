@@ -108,7 +108,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
@@ -164,7 +164,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
         $child = $this->getChild();
         $col = $child->getColumn();
@@ -192,7 +192,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }

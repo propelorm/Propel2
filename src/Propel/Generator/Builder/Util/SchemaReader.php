@@ -125,7 +125,7 @@ class SchemaReader
      * @param \Propel\Generator\Platform\PlatformInterface|null $defaultPlatform The default database platform for the application.
      * @param string|null $defaultPackage the default PHP package used for the om
      */
-    public function __construct(?PlatformInterface $defaultPlatform = null, $defaultPackage = null)
+    public function __construct(?PlatformInterface $defaultPlatform = null, ?string $defaultPackage = null)
     {
         $this->schema = new Schema($defaultPlatform);
         $this->defaultPackage = $defaultPackage;
@@ -151,7 +151,7 @@ class SchemaReader
      *
      * @return \Propel\Generator\Model\Schema|null
      */
-    public function parseFile($xmlFile): ?Schema
+    public function parseFile(string $xmlFile): ?Schema
     {
         // we don't want infinite recursion
         if ($this->isAlreadyParsed($xmlFile)) {
@@ -172,10 +172,10 @@ class SchemaReader
      *
      * @return \Propel\Generator\Model\Schema|null
      */
-    public function parseString($xmlString, $xmlFile = null): ?Schema
+    public function parseString(string $xmlString, ?string $xmlFile = null): ?Schema
     {
         // we don't want infinite recursion
-        if ($this->isAlreadyParsed($xmlFile)) {
+        if ($xmlFile && $this->isAlreadyParsed($xmlFile)) {
             return null;
         }
 
@@ -215,7 +215,7 @@ class SchemaReader
      *
      * @return void
      */
-    public function startElement($parser, $tagName, $attributes): void
+    public function startElement($parser, string $tagName, array $attributes): void
     {
         $parentTag = $this->peekCurrentSchemaTag();
         if ($parentTag === false) {
@@ -429,7 +429,7 @@ class SchemaReader
      *
      * @return void
      */
-    protected function throwInvalidTagException($tag_name): void
+    protected function throwInvalidTagException(string $tag_name): void
     {
         $this->throwSchemaExceptionWithLocation('Unexpected tag <%s>', $tag_name);
     }
@@ -442,7 +442,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function throwSchemaExceptionWithLocation($format, ...$args): void
+    private function throwSchemaExceptionWithLocation(string $format, ...$args): void
     {
         $format .= ' in %s';
         $args[] = $this->getLocationDescription();
@@ -477,7 +477,7 @@ class SchemaReader
      *
      * @return void
      */
-    public function endElement($parser, $tagName): void
+    public function endElement($parser, string $tagName): void
     {
         if ($tagName === 'index') {
             $this->currTable->addIndex($this->currIndex);
@@ -521,7 +521,7 @@ class SchemaReader
      *
      * @return void
      */
-    protected function pushCurrentSchemaTag($tag): void
+    protected function pushCurrentSchemaTag(string $tag): void
     {
         $keys = array_keys($this->schemasTagsStack);
         $this->schemasTagsStack[end($keys)][] = $tag;
@@ -540,7 +540,7 @@ class SchemaReader
      *
      * @return bool
      */
-    protected function isAlreadyParsed($filePath): bool
+    protected function isAlreadyParsed(string $filePath): bool
     {
         return isset($this->schemasTagsStack[$filePath]);
     }

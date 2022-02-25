@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\Validate;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Exception\ConstraintNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
@@ -34,7 +35,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $array = $this->getParameters();
         if (!$array) {
@@ -85,7 +86,7 @@ class ValidateBehavior extends Behavior
      *
      * @return array The array of parameters associated to given column
      */
-    public function getParametersFromColumnName($columnName = null): array
+    public function getParametersFromColumnName(?string $columnName = null): array
     {
         $array = [];
         if ($columnName !== null) {
@@ -108,7 +109,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function removeParametersFromColumnName($columnName = null): void
+    public function removeParametersFromColumnName(?string $columnName = null): void
     {
         if ($columnName !== null) {
             $newParams = [];

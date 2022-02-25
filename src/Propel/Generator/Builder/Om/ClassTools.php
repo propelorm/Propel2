@@ -54,7 +54,7 @@ class ClassTools
      *
      * @return string The constructed file path.
      */
-    public static function createFilePath($path, $classname = null, $extension = '.php'): string
+    public static function createFilePath(string $path, ?string $classname = null, string $extension = '.php'): string
     {
         if ($classname === null) {
             return $path . $extension;

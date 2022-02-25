@@ -61,7 +61,7 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * @return string
      */
-    abstract protected function getBuildProperty($name): string;
+    abstract protected function getBuildProperty(string $name): string;
 
     /**
      * @return void
@@ -118,11 +118,11 @@ abstract class ScopedMappingModel extends MappingModel
      *
      * A namespace is absolute if it starts with a "\".
      *
-     * @param string $namespace
+     * @param string|null $namespace
      *
      * @return bool
      */
-    public function isAbsoluteNamespace($namespace): bool
+    public function isAbsoluteNamespace(?string $namespace): bool
     {
         return ($namespace && substr($namespace, 0, 1) === '\\');
     }
@@ -156,11 +156,11 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Sets the package name.
      *
-     * @param string $package
+     * @param string|null $package
      *
      * @return void
      */
-    public function setPackage($package): void
+    public function setPackage(?string $package): void
     {
         if ($package === $this->package) {
             return;
@@ -183,11 +183,11 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Sets the schema name.
      *
-     * @param string $schema
+     * @param string|null $schema
      *
      * @return void
      */
-    public function setSchema($schema): void
+    public function setSchema(?string $schema): void
     {
         if ($schema === $this->schema) {
             return;

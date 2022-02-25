@@ -17,7 +17,7 @@ class JsonParseException extends RuntimeException implements ExceptionInterface
      *
      * @param int $error A JSON error constant, as returned by json_last_error()
      */
-    public function __construct($error)
+    public function __construct(int $error)
     {
         $message = 'Error while parsing Json configuration file: ';
 

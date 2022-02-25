@@ -138,7 +138,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function parseTables(&$tableWraps, Database $database, ?Table $filterTable = null): void
+    protected function parseTables(array &$tableWraps, Database $database, ?Table $filterTable = null): void
     {
         $stmt = null;
 
@@ -224,7 +224,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table, $oid): void
+    protected function addColumns(Table $table, int $oid): void
     {
         // Get the columns, types, etc.
         // Based on code from pgAdmin3 (http://www.pgadmin.org/)
@@ -344,7 +344,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return bool
      */
-    protected function isColumnDefaultExpression($default): bool
+    protected function isColumnDefaultExpression(string $default): bool
     {
         $containsFunctionCall = substr($default, 0, 1) !== "'" && strpos($default, '(');
 
@@ -372,7 +372,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table, $oid): void
+    protected function addForeignKeys(Table $table, int $oid): void
     {
         $database = $table->getDatabase();
         $stmt = $this->dbh->prepare("SELECT
@@ -496,7 +496,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table, $oid): void
+    protected function addIndexes(Table $table, int $oid): void
     {
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)
@@ -562,7 +562,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addPrimaryKey(Table $table, $oid): void
+    protected function addPrimaryKey(Table $table, int $oid): void
     {
         $stmt = $this->dbh->prepare("SELECT
             DISTINCT ON(cls.relname)

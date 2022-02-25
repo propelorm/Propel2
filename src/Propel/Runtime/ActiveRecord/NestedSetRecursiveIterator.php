@@ -30,7 +30,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     /**
      * @param object $node
      */
-    public function __construct($node)
+    public function __construct(object $node)
     {
         $this->topNode = $node;
         $this->curNode = $node;

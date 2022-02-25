@@ -34,7 +34,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset): void
+    public function setCharset(ConnectionInterface $con, string $charset): void
     {
     }
 
@@ -46,7 +46,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string
+    public function concatString(string $s1, string $s2): string
     {
         return '(' . $s1 . ' + ' . $s2 . ')';
     }
@@ -60,7 +60,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string
+    public function subString(string $s, int $pos, int $len): string
     {
         return 'SUBSTRING(' . $s . ', ' . $pos . ', ' . $len . ')';
     }
@@ -72,7 +72,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string
+    public function strLength(string $s): string
     {
         return 'LEN(' . $s . ')';
     }
@@ -92,7 +92,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         return '[' . $text . ']';
     }
@@ -104,7 +104,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table): string
+    public function quoteIdentifierTable(string $table): string
     {
         // e.g. 'database.table alias' should be escaped as '[database].[table] [alias]'
         return '[' . strtr($table, ['.' => '].[', ' ' => '] [']) . ']';
@@ -117,7 +117,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null): string
+    public function random(?string $seed = null): string
     {
         return 'RAND(' . ((int)$seed) . ')';
     }
@@ -143,7 +143,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         // make sure offset and limit are numeric
         if (!is_numeric($offset) || !is_numeric($limit)) {
@@ -296,7 +296,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
         $i = 1;
         $paramCols = [];
@@ -341,7 +341,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void
+    public function applyLock(string &$sql, Lock $lock): void
     {
     }
 }

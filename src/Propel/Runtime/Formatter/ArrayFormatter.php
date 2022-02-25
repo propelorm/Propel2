@@ -146,7 +146,7 @@ class ArrayFormatter extends AbstractFormatter
      *
      * @return array
      */
-    public function &getStructuredArrayFromRow($row): array
+    public function &getStructuredArrayFromRow(array $row): array
     {
         $col = 0;
 

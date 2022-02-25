@@ -92,7 +92,7 @@ interface DataFetcherInterface extends Iterator, Countable
      *
      * @return mixed|null
      */
-    public function fetchColumn($index = null);
+    public function fetchColumn(?int $index = null);
 
     /**
      * Returns the data of the next row,

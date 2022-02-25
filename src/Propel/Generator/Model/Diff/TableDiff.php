@@ -224,7 +224,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addAddedColumn($name, Column $column): void
+    public function addAddedColumn(string $name, Column $column): void
     {
         $this->addedColumns[$name] = $column;
     }
@@ -236,7 +236,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeAddedColumn($columnName): void
+    public function removeAddedColumn(string $columnName): void
     {
         unset($this->addedColumns[$columnName]);
     }
@@ -258,7 +258,7 @@ class TableDiff
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getAddedColumn($columnName): ?Column
+    public function getAddedColumn(string $columnName): ?Column
     {
         if (isset($this->addedColumns[$columnName])) {
             return $this->addedColumns[$columnName];
@@ -290,7 +290,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addRemovedColumn($columnName, Column $removedColumn): void
+    public function addRemovedColumn(string $columnName, Column $removedColumn): void
     {
         $this->removedColumns[$columnName] = $removedColumn;
     }
@@ -302,7 +302,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeRemovedColumn($columnName): void
+    public function removeRemovedColumn(string $columnName): void
     {
         unset($this->removedColumns[$columnName]);
     }
@@ -324,7 +324,7 @@ class TableDiff
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getRemovedColumn($columnName): ?Column
+    public function getRemovedColumn(string $columnName): ?Column
     {
         if (isset($this->removedColumns[$columnName])) {
             return $this->removedColumns[$columnName];
@@ -356,7 +356,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addModifiedColumn($columnName, ColumnDiff $modifiedColumn): void
+    public function addModifiedColumn(string $columnName, ColumnDiff $modifiedColumn): void
     {
         $this->modifiedColumns[$columnName] = $modifiedColumn;
     }
@@ -435,7 +435,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addAddedPkColumn($columnName, Column $addedPkColumn): void
+    public function addAddedPkColumn(string $columnName, Column $addedPkColumn): void
     {
         if (!$addedPkColumn->isPrimaryKey()) {
             throw new DiffException(sprintf('Column `%s` is not a valid primary key column.', $columnName));
@@ -451,7 +451,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeAddedPkColumn($columnName): void
+    public function removeAddedPkColumn(string $columnName): void
     {
         unset($this->addedPkColumns[$columnName]);
     }
@@ -489,7 +489,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addRemovedPkColumn($columnName, Column $removedPkColumn): void
+    public function addRemovedPkColumn(string $columnName, Column $removedPkColumn): void
     {
         $this->removedPkColumns[$columnName] = $removedPkColumn;
     }
@@ -501,7 +501,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeRemovedPkColumn($columnName): void
+    public function removeRemovedPkColumn(string $columnName): void
     {
         unset($this->removedPkColumns[$columnName]);
     }
@@ -588,7 +588,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addAddedIndex($indexName, Index $addedIndex): void
+    public function addAddedIndex(string $indexName, Index $addedIndex): void
     {
         $this->addedIndices[$indexName] = $addedIndex;
     }
@@ -626,7 +626,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addRemovedIndex($indexName, Index $removedIndex): void
+    public function addRemovedIndex(string $indexName, Index $removedIndex): void
     {
         $this->removedIndices[$indexName] = $removedIndex;
     }
@@ -668,7 +668,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addModifiedIndex($indexName, Index $fromIndex, Index $toIndex): void
+    public function addModifiedIndex(string $indexName, Index $fromIndex, Index $toIndex): void
     {
         $this->modifiedIndices[$indexName] = [$fromIndex, $toIndex];
     }
@@ -706,7 +706,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addAddedFk($fkName, ForeignKey $addedFk): void
+    public function addAddedFk(string $fkName, ForeignKey $addedFk): void
     {
         $this->addedFks[$fkName] = $addedFk;
     }
@@ -718,7 +718,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeAddedFk($fkName): void
+    public function removeAddedFk(string $fkName): void
     {
         unset($this->addedFks[$fkName]);
     }
@@ -756,7 +756,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addRemovedFk($fkName, ForeignKey $removedFk): void
+    public function addRemovedFk(string $fkName, ForeignKey $removedFk): void
     {
         $this->removedFks[$fkName] = $removedFk;
     }
@@ -768,7 +768,7 @@ class TableDiff
      *
      * @return void
      */
-    public function removeRemovedFk($fkName): void
+    public function removeRemovedFk(string $fkName): void
     {
         unset($this->removedFks[$fkName]);
     }
@@ -810,7 +810,7 @@ class TableDiff
      *
      * @return void
      */
-    public function addModifiedFk($fkName, ForeignKey $fromFk, ForeignKey $toFk): void
+    public function addModifiedFk(string $fkName, ForeignKey $fromFk, ForeignKey $toFk): void
     {
         $this->modifiedFks[$fkName] = [$fromFk, $toFk];
     }

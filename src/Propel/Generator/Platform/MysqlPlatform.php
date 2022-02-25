@@ -91,7 +91,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    public function setTableEngineKeyword($tableEngineKeyword): void
+    public function setTableEngineKeyword(string $tableEngineKeyword): void
     {
         $this->tableEngineKeyword = $tableEngineKeyword;
     }
@@ -113,7 +113,7 @@ class MysqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    public function setDefaultTableEngine($defaultTableEngine): void
+    public function setDefaultTableEngine(string $defaultTableEngine): void
     {
         $this->defaultTableEngine = $defaultTableEngine;
     }
@@ -462,10 +462,10 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             $ddl[] = 'COLLATE ' . $this->quote($colinfo->getParameter('Collate'));
         }
         if ($sqlType === 'TIMESTAMP') {
-            if ($notNullString == '') {
+            if ($notNullString === '') {
                 $notNullString = 'NULL';
             }
-            if ($defaultSetting == '' && $notNullString === 'NOT NULL') {
+            if ($defaultSetting === '' && $notNullString === 'NOT NULL') {
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
             $ddl[] = $notNullString;
@@ -682,7 +682,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      *
      * @return string
      */
-    public function getCommentBlockDDL($comment): string
+    public function getCommentBlockDDL(string $comment): string
     {
         $pattern = "
 -- ---------------------------------------------------------------------
@@ -736,7 +736,7 @@ ALTER TABLE %s DROP FOREIGN KEY %s;
      *
      * @return string
      */
-    public function getRenameTableDDL($fromTableName, $toTableName): string
+    public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
         $pattern = "
 RENAME TABLE %s TO %s;
@@ -823,7 +823,7 @@ ALTER TABLE %s CHANGE %s %s;
      *
      * @return string
      */
-    public function getModifyColumnsDDL($columnDiffs): string
+    public function getModifyColumnsDDL(array $columnDiffs): string
     {
         $ret = '';
         foreach ($columnDiffs as $columnDiff) {
@@ -876,7 +876,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns): string
+    public function getAddColumnsDDL(array $columns): string
     {
         $lines = '';
         foreach ($columns as $column) {
@@ -901,7 +901,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return bool
      */
-    public function hasSize($sqlType): bool
+    public function hasSize(string $sqlType): bool
     {
         return !in_array($sqlType, [
             'MEDIUMTEXT',
@@ -934,7 +934,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return string
      */
-    public function disconnectedEscapeText($text): string
+    public function disconnectedEscapeText(string $text): string
     {
         return addslashes($text);
     }
@@ -963,7 +963,7 @@ ALTER TABLE %s ADD %s %s;
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            '): string
+    public function getColumnBindingPHP(Column $column, string $identifier, string $columnValueAccessor, string $tab = '            '): string
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919

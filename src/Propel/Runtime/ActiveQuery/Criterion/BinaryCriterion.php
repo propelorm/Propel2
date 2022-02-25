@@ -19,11 +19,11 @@ class BinaryCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
-     * @param string $column ignored
-     * @param string $value The condition to be added to the query string
+     * @param \Propel\Runtime\Map\ColumnMap|string $column ignored
+     * @param mixed $value The condition to be added to the query string
      * @param string $comparison One of Criteria::BINARY_NONE, Criteria::BINARY_ALL
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::BINARY_ALL)
+    public function __construct(Criteria $outer, $column, $value, string $comparison = Criteria::BINARY_ALL)
     {
         parent::__construct($outer, $column, $value, $comparison);
     }
@@ -36,7 +36,7 @@ class BinaryCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         if ($this->value !== null) {
             $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];

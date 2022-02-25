@@ -184,7 +184,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnGetter($name): string
+    public function getColumnGetter(string $name): string
     {
         return 'get' . $this->getTable()->getColumn($name)->getPhpName();
     }
@@ -196,7 +196,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnSetter($name): string
+    public function getColumnSetter(string $name): string
     {
         return 'set' . $this->getTable()->getColumn($name)->getPhpName();
     }

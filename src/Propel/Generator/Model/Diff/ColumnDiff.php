@@ -62,7 +62,7 @@ class ColumnDiff
      *
      * @return void
      */
-    public function setChangedProperties($properties): void
+    public function setChangedProperties(array $properties): void
     {
         $this->changedProperties = $properties;
     }

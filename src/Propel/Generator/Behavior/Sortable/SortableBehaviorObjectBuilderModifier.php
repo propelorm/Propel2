@@ -57,7 +57,7 @@ class SortableBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(SortableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -68,7 +68,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -78,7 +78,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function getColumnAttribute($name): string
+    protected function getColumnAttribute(string $name): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -88,7 +88,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string|null
      */
-    protected function getColumnPhpName($name): ?string
+    protected function getColumnPhpName(string $name): ?string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
@@ -114,7 +114,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string The related getter, e.g. 'getRank'
      */
-    protected function getColumnGetter($columnName = 'rank_column'): string
+    protected function getColumnGetter(string $columnName = 'rank_column'): string
     {
         return 'get' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
@@ -126,7 +126,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string The related setter, e.g. 'setRank'
      */
-    protected function getColumnSetter($columnName = 'rank_column'): string
+    protected function getColumnSetter(string $columnName = 'rank_column'): string
     {
         return 'set' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
@@ -136,7 +136,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preSave($builder): string
+    public function preSave(AbstractOMBuilder $builder): string
     {
         return '$this->processSortableQueries($con);';
     }
@@ -146,7 +146,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preInsert($builder): string
+    public function preInsert(AbstractOMBuilder $builder): string
     {
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
@@ -162,7 +162,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preUpdate($builder): string
+    public function preUpdate(AbstractOMBuilder $builder): string
     {
         if ($this->behavior->useScope()) {
             $this->setBuilder($builder);
@@ -193,7 +193,7 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
      *
      * @return string
      */
-    public function preDelete($builder): string
+    public function preDelete(AbstractOMBuilder $builder): string
     {
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
@@ -209,7 +209,7 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
      *
      * @return string
      */
-    public function objectAttributes($builder): string
+    public function objectAttributes(AbstractOMBuilder $builder): string
     {
         $script = "
 /**
@@ -236,7 +236,7 @@ protected \$oldScope;
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(AbstractOMBuilder $builder): string
     {
         $this->setBuilder($builder);
         $script = '';
@@ -274,7 +274,7 @@ protected \$oldScope;
      *
      * @return void
      */
-    public function objectFilter(&$script, $builder): void
+    public function objectFilter(string &$script, AbstractOMBuilder $builder): void
     {
         if ($this->behavior->useScope()) {
             if ($this->behavior->hasMultipleScopes()) {
@@ -309,7 +309,7 @@ protected \$oldScope;
      *
      * @return void
      */
-    protected function addRankAccessors(&$script): void
+    protected function addRankAccessors(string &$script): void
     {
         $script .= "
 /**
@@ -342,7 +342,7 @@ public function setRank(\$v)
      *
      * @return void
      */
-    protected function addScopeAccessors(&$script): void
+    protected function addScopeAccessors(string &$script): void
     {
         $script .= "
 /**
@@ -426,7 +426,7 @@ public function setScopeValue(\$v)
      *
      * @return void
      */
-    protected function addIsFirst(&$script): void
+    protected function addIsFirst(string &$script): void
     {
         $script .= "
 /**
@@ -446,7 +446,7 @@ public function isFirst()
      *
      * @return void
      */
-    protected function addIsLast(&$script): void
+    protected function addIsLast(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -469,7 +469,7 @@ public function isLast(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addGetNext(&$script): void
+    protected function addGetNext(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         // The generateScopePhp() method below contains the following list of variables:
@@ -517,7 +517,7 @@ public function getNext(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addGetPrevious(&$script): void
+    protected function addGetPrevious(string &$script): void
     {
         $useScope = $this->behavior->useScope();
 
@@ -566,7 +566,7 @@ public function getPrevious(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtRank(&$script): void
+    protected function addInsertAtRank(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $queryClassName = $this->queryFullClassName;
@@ -609,7 +609,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtBottom(&$script): void
+    protected function addInsertAtBottom(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -638,7 +638,7 @@ public function insertAtBottom(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtTop(&$script): void
+    protected function addInsertAtTop(string &$script): void
     {
         $script .= "
 /**
@@ -659,7 +659,7 @@ public function insertAtTop()
      *
      * @return void
      */
-    protected function addMoveToRank(&$script): void
+    protected function addMoveToRank(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -711,7 +711,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addSwapWith(&$script): void
+    protected function addSwapWith(string &$script): void
     {
         $script .= "
 /**
@@ -761,7 +761,7 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveUp(&$script): void
+    protected function addMoveUp(string &$script): void
     {
         $script .= "
 /**
@@ -794,7 +794,7 @@ public function moveUp(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveDown(&$script): void
+    protected function addMoveDown(string &$script): void
     {
         $script .= "
 /**
@@ -827,7 +827,7 @@ public function moveDown(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveToTop(&$script): void
+    protected function addMoveToTop(string &$script): void
     {
         $script .= "
 /**
@@ -853,7 +853,7 @@ public function moveToTop(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveToBottom(&$script): void
+    protected function addMoveToBottom(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -887,7 +887,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addRemoveFromList(&$script): void
+    protected function addRemoveFromList(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -932,7 +932,7 @@ public function removeFromList()
      *
      * @return void
      */
-    protected function addProcessSortableQueries(&$script): void
+    protected function addProcessSortableQueries(string &$script): void
     {
         $script .= "
 /**

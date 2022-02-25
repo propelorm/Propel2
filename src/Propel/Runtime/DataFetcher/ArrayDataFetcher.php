@@ -108,7 +108,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function setIndexType($indexType): void
+    public function setIndexType(string $indexType): void
     {
         $this->indexType = $indexType;
     }

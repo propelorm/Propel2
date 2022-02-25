@@ -73,7 +73,7 @@ class TableMapBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -115,7 +115,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
         $table = $this->getTable();
 
@@ -186,7 +186,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addSelectMethods(&$script): void
+    protected function addSelectMethods(string &$script): void
     {
         $this->addAddSelectColumns($script);
         $this->addRemoveSelectColumns($script);
@@ -220,7 +220,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addColumnNameConstants(&$script): void
+    protected function addColumnNameConstants(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             $script .= "
@@ -239,7 +239,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addValueSetColumnConstants(&$script): void
+    protected function addValueSetColumnConstants(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isValueSetType()) {
@@ -262,7 +262,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addValueSetColumnAttributes(&$script): void
+    protected function addValueSetColumnAttributes(string &$script): void
     {
         $script .= "
     /** The enumerated values for this table */
@@ -291,7 +291,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetValueSets(&$script): void
+    protected function addGetValueSets(string &$script): void
     {
         $script .= "
     /**
@@ -312,7 +312,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetValueSet(&$script): void
+    protected function addGetValueSet(string &$script): void
     {
         $script .= "
     /**
@@ -336,7 +336,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    public function addInheritanceColumnConstants(&$script): void
+    public function addInheritanceColumnConstants(string &$script): void
     {
         if (!$col = $this->getTable()->getChildrenColumn()) {
             return;
@@ -375,7 +375,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return string
      */
-    protected function getValueSetConstant($value): string
+    protected function getValueSetConstant(string $value): string
     {
         return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
     }
@@ -387,7 +387,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addAttributes(&$script): void
+    protected function addAttributes(string &$script): void
     {
     }
 
@@ -449,7 +449,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addNormalizedColumnNameMap(&$script): void
+    protected function addNormalizedColumnNameMap(string &$script): void
     {
         $table = $this->getTable();
         $tableColumns = $table->getColumns();
@@ -492,7 +492,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }
@@ -507,7 +507,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addInitialize(&$script): void
+    protected function addInitialize(string &$script): void
     {
         $table = $this->getTable();
         /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
@@ -612,7 +612,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addBuildRelations(&$script): void
+    protected function addBuildRelations(string &$script): void
     {
         $script .= "
     /**
@@ -670,7 +670,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetBehaviors(&$script): void
+    protected function addGetBehaviors(string &$script): void
     {
         $behaviors = $this->getTable()->getBehaviors();
         if (!$behaviors) {
@@ -834,7 +834,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = ''): bool
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
         return parent::hasBehaviorModifier($hookName, 'TableMapBuilderModifier');
     }
@@ -848,7 +848,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        '): void
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
     }
@@ -860,7 +860,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetPrimaryKeyHash(&$script): void
+    protected function addGetPrimaryKeyHash(string &$script): void
     {
         // We have to iterate through all the columns so that we know the offset of the primary
         // key columns.
@@ -919,7 +919,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetPrimaryKeyFromRow(&$script): void
+    protected function addGetPrimaryKeyFromRow(string &$script): void
     {
         $script .= "
     /**
@@ -995,7 +995,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClassMethod(&$script): void
+    protected function addGetOMClassMethod(string &$script): void
     {
         $table = $this->getTable();
         if ($table->getChildrenColumn()) {
@@ -1016,7 +1016,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClassInheritance(&$script): void
+    protected function addGetOMClassInheritance(string &$script): void
     {
         $col = $this->getTable()->getChildrenColumn();
         $script .= "
@@ -1085,7 +1085,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClassNoInheritance(&$script): void
+    protected function addGetOMClassNoInheritance(string &$script): void
     {
         $script .= "
     /**
@@ -1113,7 +1113,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetOMClassNoInheritanceAbstract(&$script): void
+    protected function addGetOMClassNoInheritanceAbstract(string &$script): void
     {
         $objectClassName = $this->getObjectClassName();
 
@@ -1140,7 +1140,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addPopulateObject(&$script): void
+    protected function addPopulateObject(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -1201,7 +1201,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addPopulateObjects(&$script): void
+    protected function addPopulateObjects(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -1268,7 +1268,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addAddSelectColumns(&$script): void
+    protected function addAddSelectColumns(string &$script): void
     {
         $script .= "
     /**
@@ -1316,7 +1316,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addRemoveSelectColumns(&$script): void
+    protected function addRemoveSelectColumns(string &$script): void
     {
         $script .= "
     /**
@@ -1363,7 +1363,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addGetTableMap(&$script): void
+    protected function addGetTableMap(string &$script): void
     {
         $script .= "
     /**
@@ -1387,7 +1387,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addDoDeleteAll(&$script): void
+    protected function addDoDeleteAll(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -1411,7 +1411,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addDoDelete(&$script): void
+    protected function addDoDelete(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -1516,7 +1516,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return void
      */
-    protected function addDoInsert(&$script): void
+    protected function addDoInsert(string &$script): void
     {
         $table = $this->getTable();
         $tableMapClass = $this->getTableMapClass();

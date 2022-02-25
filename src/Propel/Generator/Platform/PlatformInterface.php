@@ -97,7 +97,7 @@ interface PlatformInterface
      *
      * @return \Propel\Generator\Model\Domain The db specific domain.
      */
-    public function getDomainForType($propelType): Domain;
+    public function getDomainForType(string $propelType): Domain;
 
     /**
      * Returns the RDBMS-specific SQL fragment for <code>NULL</code>
@@ -184,7 +184,7 @@ interface PlatformInterface
      *
      * @return string
      */
-    public function quote($text): string;
+    public function quote(string $text): string;
 
     /**
      * Quotes a identifier.
@@ -325,7 +325,7 @@ interface PlatformInterface
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            '): string;
+    public function getColumnBindingPHP(Column $column, string $identifier, string $columnValueAccessor, string $tab = '            '): string;
 
     /**
      * @return bool
@@ -337,5 +337,5 @@ interface PlatformInterface
      *
      * @return void
      */
-    public function setIdentifierQuoting($enabled): void;
+    public function setIdentifierQuoting(bool $enabled): void;
 }

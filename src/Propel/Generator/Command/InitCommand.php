@@ -36,7 +36,7 @@ class InitCommand extends AbstractCommand
     /**
      * @param string|null $name
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct($name);
         $this->defaultSchemaDir = getcwd();
@@ -243,7 +243,7 @@ class InitCommand extends AbstractCommand
      *
      * @return mixed
      */
-    private function initDsn(ConsoleHelper $consoleHelper, $rdbms)
+    private function initDsn(ConsoleHelper $consoleHelper, string $rdbms)
     {
         switch ($rdbms) {
             case 'oracle':
@@ -325,7 +325,7 @@ class InitCommand extends AbstractCommand
      *
      * @return void
      */
-    private function writeFile(OutputInterface $output, $filename, $content): void
+    private function writeFile(OutputInterface $output, string $filename, string $content): void
     {
         $this->getFilesystem()->dumpFile($filename, $content);
 

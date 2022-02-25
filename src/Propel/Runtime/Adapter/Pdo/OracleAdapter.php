@@ -63,7 +63,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string
+    public function concatString(string $s1, string $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
@@ -85,7 +85,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string
+    public function subString(string $s, int $pos, int $len): string
     {
         return "SUBSTR($s, $pos, $len)";
     }
@@ -97,7 +97,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string
+    public function strLength(string $s): string
     {
         return "LENGTH($s)";
     }
@@ -112,7 +112,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         $params = [];
         if ($criteria && $criteria->needsSelectAliases()) {
@@ -150,7 +150,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null): int
+    public function getId(ConnectionInterface $con, ?string $name = null): int
     {
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
@@ -166,7 +166,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null): string
+    public function random(?string $seed = null): string
     {
         return 'dbms_random.value';
     }
@@ -222,7 +222,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         if ($cMap->getType() === PropelTypes::CLOB_EMU) {
             return $stmt->bindParam(':p' . $position, $value, $cMap->getPdoType(), strlen($value));
@@ -246,7 +246,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return array
      */
-    protected function prepareParams($params): array
+    protected function prepareParams(array $params): array
     {
         if (isset($params['dsn'])) {
             $params['dsn'] = str_replace('oracle:', 'oci:', $params['dsn']);
@@ -263,7 +263,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void
+    public function applyLock(string &$sql, Lock $lock): void
     {
         $type = $lock->getType();
 

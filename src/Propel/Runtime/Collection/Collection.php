@@ -72,7 +72,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->data = $data;
     }
@@ -162,7 +162,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function exchangeArray($input): void
+    public function exchangeArray(array $input): void
     {
         $this->data = $input;
     }
@@ -192,7 +192,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function setData($data): void
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -451,7 +451,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function unserialize($data): void
+    public function unserialize(string $data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);
@@ -468,7 +468,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return void
      */
-    public function setModel($model): void
+    public function setModel(string $model): void
     {
         $pos = strrpos($model, '\\');
         if ($pos !== false) {
@@ -560,7 +560,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return mixed The current object, for fluid interface
      */
-    public function importFrom($parser, $data)
+    public function importFrom($parser, string $data)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
@@ -591,7 +591,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return string The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME): string
+    public function exportTo($parser, bool $usePrefix = true, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME): string
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
@@ -615,7 +615,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @return array|string
      */
-    public function __call($name, $params)
+    public function __call(string $name, $params)
     {
         if (strpos($name, 'from') === 0) {
             $format = substr($name, 4);

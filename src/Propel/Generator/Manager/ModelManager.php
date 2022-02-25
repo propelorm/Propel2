@@ -163,7 +163,7 @@ class ModelManager extends AbstractManager
      *
      * @return int
      */
-    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true): int
+    protected function doBuild(AbstractOMBuilder $builder, bool $overwrite = true): int
     {
         $path = $builder->getClassFilePath();
         $file = new SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);

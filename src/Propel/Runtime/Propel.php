@@ -123,7 +123,7 @@ class Propel
      *
      * @return void
      */
-    public static function init($configFile): void
+    public static function init(string $configFile): void
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
@@ -174,7 +174,7 @@ class Propel
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public static function getAdapter($name = null): AdapterInterface
+    public static function getAdapter(?string $name = null): AdapterInterface
     {
         return self::$serviceContainer->getAdapter($name);
     }
@@ -188,7 +188,7 @@ class Propel
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public static function getDatabaseMap($name = null): DatabaseMap
+    public static function getDatabaseMap(?string $name = null): DatabaseMap
     {
         return self::$serviceContainer->getDatabaseMap($name);
     }
@@ -198,7 +198,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public static function getConnectionManager($name): ConnectionManagerInterface
+    public static function getConnectionManager(string $name): ConnectionManagerInterface
     {
         return self::$serviceContainer->getConnectionManager($name);
     }
@@ -227,7 +227,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE): ConnectionInterface
+    public static function getConnection(?string $name = null, string $mode = ServiceContainerInterface::CONNECTION_WRITE): ConnectionInterface
     {
         return self::$serviceContainer->getConnection($name, $mode);
     }
@@ -243,7 +243,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getWriteConnection($name): ConnectionInterface
+    public static function getWriteConnection(string $name): ConnectionInterface
     {
         return self::$serviceContainer->getWriteConnection($name);
     }
@@ -260,7 +260,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getReadConnection($name): ConnectionInterface
+    public static function getReadConnection(string $name): ConnectionInterface
     {
         return self::$serviceContainer->getReadConnection($name);
     }
@@ -295,7 +295,7 @@ class Propel
      *
      * @return void
      */
-    public static function log($message, $level = self::LOG_DEBUG): void
+    public static function log(string $message, int $level = self::LOG_DEBUG): void
     {
         $logger = self::$serviceContainer->getLogger();
 

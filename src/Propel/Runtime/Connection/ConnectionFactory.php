@@ -35,7 +35,7 @@ class ConnectionFactory
     public static function create(
         array $configuration,
         AdapterInterface $adapter,
-        $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS
+        string $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS
     ): ConnectionInterface {
         if (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];

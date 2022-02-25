@@ -58,7 +58,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -88,7 +88,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setForcePrimaryConnection($isForceMasterConnection): void
+    public function setForcePrimaryConnection(bool $isForceMasterConnection): void
     {
         $this->isForcePrimaryConnection = (bool)$isForceMasterConnection;
     }
@@ -108,7 +108,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setWriteConfiguration($configuration): void
+    public function setWriteConfiguration(array $configuration): void
     {
         $this->writeConfiguration = $configuration;
         $this->closeConnections();
@@ -136,7 +136,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setReadConfiguration($configuration): void
+    public function setReadConfiguration(array $configuration): void
     {
         $this->readConfiguration = $configuration;
         $this->closeConnections();

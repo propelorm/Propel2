@@ -8,9 +8,11 @@
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
@@ -36,7 +38,7 @@ class ObjectCollection extends Collection
     /**
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->rebuildIndex();
@@ -47,7 +49,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function exchangeArray($input): void
+    public function exchangeArray(array $input): void
     {
         $this->data = $input;
         $this->rebuildIndex();
@@ -58,7 +60,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function setData($data): void
+    public function setData(array $data): void
     {
         parent::setData($data);
         $this->rebuildIndex();
@@ -73,7 +75,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function save($con = null): void
+    public function save(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
@@ -98,7 +100,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function delete($con = null): void
+    public function delete(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
@@ -121,7 +123,7 @@ class ObjectCollection extends Collection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true): array
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
 
@@ -143,7 +145,7 @@ class ObjectCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr): void
+    public function fromArray(array $arr): void
     {
         $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
@@ -189,11 +191,11 @@ class ObjectCollection extends Collection
      * @return array
      */
     public function toArray(
-        $keyColumn = null,
-        $usePrefix = false,
-        $keyType = TableMap::TYPE_PHPNAME,
-        $includeLazyLoadColumns = true,
-        $alreadyDumpedObjects = []
+        ?string $keyColumn = null,
+        bool $usePrefix = false,
+        string $keyType = TableMap::TYPE_PHPNAME,
+        bool $includeLazyLoadColumns = true,
+        array $alreadyDumpedObjects = []
     ): array {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
@@ -235,7 +237,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false): array
+    public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
         if ($keyColumn === null && $usePrefix === false) {
             return parent::getArrayCopy();
@@ -265,7 +267,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null): array
+    public function toKeyValue(string $keyColumn = 'PrimaryKey', ?string $valueColumn = null): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
@@ -295,7 +297,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function toKeyIndex($keyColumn = 'PrimaryKey'): array
+    public function toKeyIndex(string $keyColumn = 'PrimaryKey'): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . ucfirst($keyColumn);
@@ -323,7 +325,7 @@ class ObjectCollection extends Collection
      *
      * @return array
      */
-    public function getColumnValues($columnName = 'PrimaryKey'): array
+    public function getColumnValues(string $columnName = 'PrimaryKey'): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . ucfirst($columnName);
@@ -347,8 +349,11 @@ class ObjectCollection extends Collection
      *
      * @return self The list of related objects
      */
-    public function populateRelation($relation, $criteria = null, $con = null): self
-    {
+    public function populateRelation(
+        string $relation,
+        ?Criteria $criteria = null,
+        ?ConnectionInterface $con = null
+    ): self {
         if (!Propel::isInstancePoolingEnabled()) {
             throw new RuntimeException(__METHOD__ . ' needs instance pooling to be enabled prior to populating the collection');
         }

@@ -24,7 +24,7 @@ trait InstancePoolTrait
      *
      * @return void
      */
-    public static function addInstanceToPool($object, $key = null): void
+    public static function addInstanceToPool(object $object, ?string $key = null): void
     {
         if (!Propel::isInstancePoolingEnabled()) {
             return;
@@ -83,19 +83,21 @@ trait InstancePoolTrait
     }
 
     /**
-     * @param string $key
+     * @param string|null $key
      *
      * @return object|null
      */
-    public static function getInstanceFromPool($key): ?object
+    public static function getInstanceFromPool(?string $key): ?object
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if (isset(self::$instances[$key])) {
-                return self::$instances[$key];
-            }
+        if ($key === null || !Propel::isInstancePoolingEnabled()) {
+            return null;
         }
 
-        return null;
+        if (!isset(self::$instances[$key])) {
+            return null;
+        }
+
+        return self::$instances[$key];
     }
 
     /**

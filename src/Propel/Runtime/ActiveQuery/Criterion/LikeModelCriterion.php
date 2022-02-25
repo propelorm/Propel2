@@ -29,7 +29,7 @@ class LikeModelCriterion extends BasicModelCriterion
      *
      * @return $this A modified Criterion object.
      */
-    public function setIgnoreCase($b)
+    public function setIgnoreCase(bool $b)
     {
         $this->ignoreStringCase = (bool)$b;
 
@@ -57,7 +57,7 @@ class LikeModelCriterion extends BasicModelCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         // LIKE is case insensitive in mySQL and SQLite, but not in PostGres
         // If the column is case insensitive, use ILIKE / NOT ILIKE instead of LIKE / NOT LIKE

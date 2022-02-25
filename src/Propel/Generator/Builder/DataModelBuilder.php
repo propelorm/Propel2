@@ -264,7 +264,7 @@ abstract class DataModelBuilder
      *
      * @return self
      */
-    public function getNewBuilder(Table $table, $classname): self
+    public function getNewBuilder(Table $table, string $classname): self
     {
         /** @var \Propel\Generator\Builder\DataModelBuilder $builder */
         $builder = new $classname($table);
@@ -414,7 +414,7 @@ abstract class DataModelBuilder
      *
      * @return string|null
      */
-    public function getBuildProperty($name): ?string
+    public function getBuildProperty(string $name): ?string
     {
         if ($this->getGeneratorConfig()) {
             return $this->getGeneratorConfig()->getConfigProperty($name);
@@ -498,7 +498,7 @@ abstract class DataModelBuilder
      *
      * @return string
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         if ($this->getTable()->isIdentifierQuotingEnabled()) {
             return $this->getPlatform()->doQuoting($text);
@@ -524,7 +524,7 @@ abstract class DataModelBuilder
      *
      * @return void
      */
-    protected function warn($msg): void
+    protected function warn(string $msg): void
     {
         $this->warnings[] = $msg;
     }
@@ -548,7 +548,7 @@ abstract class DataModelBuilder
      *
      * @return string
      */
-    public function prefixClassName($identifier): string
+    public function prefixClassName(string $identifier): string
     {
         return $this->getBuildProperty('generator.objectModel.classPrefix') . $identifier;
     }

@@ -112,7 +112,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setMigrationTable($migrationTable): void
+    public function setMigrationTable(string $migrationTable): void
     {
         $this->migrationTable = $migrationTable;
     }
@@ -134,7 +134,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    protected function warn($msg): void
+    protected function warn(string $msg): void
     {
         $this->warnings[] = $msg;
     }
@@ -185,7 +185,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string|null The mapped Propel type.
      */
-    protected function getMappedPropelType($nativeType): ?string
+    protected function getMappedPropelType(string $nativeType): ?string
     {
         if ($this->nativeToPropelTypeMap === null) {
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
@@ -205,7 +205,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string|null The native SQL type that best matches the specified Propel type.
      */
-    protected function getMappedNativeType($propelType): ?string
+    protected function getMappedNativeType(string $propelType): ?string
     {
         if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
@@ -236,7 +236,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return void
      */
-    public function setPlatform($platform): void
+    public function setPlatform(PlatformInterface $platform): void
     {
         $this->platform = $platform;
     }

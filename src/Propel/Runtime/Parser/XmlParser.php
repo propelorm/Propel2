@@ -30,7 +30,7 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function fromArray($array, $rootKey = 'data', $charset = null): string
+    public function fromArray(array $array, string $rootKey = 'data', ?string $charset = null): string
     {
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
@@ -46,7 +46,7 @@ class XmlParser extends AbstractParser
      *
      * @return string
      */
-    public function listFromArray($array, $rootKey = 'data', $charset = null): string
+    public function listFromArray(array $array, ?string $rootKey = 'data', ?string $charset = null): string
     {
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
@@ -61,7 +61,7 @@ class XmlParser extends AbstractParser
      *
      * @return \DOMElement The root DOMNode
      */
-    protected function getRootNode($rootElementName): DOMElement
+    protected function getRootNode(string $rootElementName): DOMElement
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
@@ -81,7 +81,7 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function toXML($array, $rootElementName = 'data', $charset = null): string
+    public function toXML(array $array, string $rootElementName = 'data', ?string $charset = null): string
     {
         return $this->fromArray($array, $rootElementName, $charset);
     }
@@ -95,7 +95,7 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function listToXML($array, $rootElementName = 'data', $charset = null): string
+    public function listToXML(array $array, string $rootElementName = 'data', ?string $charset = null): string
     {
         return $this->listFromArray($array, $rootElementName, $charset);
     }
@@ -107,7 +107,7 @@ class XmlParser extends AbstractParser
      *
      * @return \DOMElement
      */
-    protected function arrayToDOM($array, $rootElement, $charset = null): DOMElement
+    protected function arrayToDOM(array $array, DOMElement $rootElement, ?string $charset = null): DOMElement
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {
@@ -155,7 +155,7 @@ class XmlParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function toArray($data, $rootKey = 'data'): array
+    public function toArray(string $data, string $rootKey = 'data'): array
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
         $doc->loadXML($data);
@@ -172,7 +172,7 @@ class XmlParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function fromXML($data, $rootKey = 'data'): array
+    public function fromXML(string $data, string $rootKey = 'data'): array
     {
         return $this->toArray($data, $rootKey);
     }

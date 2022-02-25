@@ -10,6 +10,7 @@ namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -33,7 +34,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function save($con = null): void
+    public function save(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
@@ -61,7 +62,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function delete($con = null): void
+    public function delete(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
@@ -86,7 +87,7 @@ class ArrayCollection extends Collection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true): array
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
         $tableMapClass = $this->getTableMapClass();
@@ -108,7 +109,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr): void
+    public function fromArray(array $arr): void
     {
         $obj = $this->getWorkerObject();
         foreach ($arr as $element) {
@@ -146,7 +147,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false): array
+    public function toArray(?string $keyColumn = null, bool $usePrefix = false): array
     {
         $ret = [];
         foreach ($this as $key => $element) {
@@ -166,7 +167,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false): array
+    public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
         if ($keyColumn === null && $usePrefix === false) {
             return parent::getArrayCopy();
@@ -188,7 +189,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function toKeyValue($keyColumn, $valueColumn): array
+    public function toKeyValue(string $keyColumn, string $valueColumn): array
     {
         $ret = [];
         foreach ($this as $obj) {

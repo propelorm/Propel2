@@ -51,7 +51,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return int
      */
-    public function setStyle($style): int
+    public function setStyle(int $style): int
     {
         $old_style = $this->style;
         $this->style = $style;
@@ -88,11 +88,11 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @param int|null $style
      * @param object|string|int|null $fetch_argument
-     * @param array|null $ctor_args
+     * @param array $ctor_args
      *
      * @return array
      */
-    public function fetchAll(?int $style = null, $fetch_argument = null, ?array $ctor_args = null): array
+    public function fetchAll(?int $style = null, $fetch_argument = null, array $ctor_args = []): array
     {
         if ($style === null) {
             $style = $this->style;
@@ -215,7 +215,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): void
+    public function bindColumn($column, &$param, ?int $type = null, ?int $maxlen = null, $driverdata = null): void
     {
         if ($this->dataObject) {
             $this->dataObject->bindColumn($column, $param, $type, $maxlen, $driverdata);

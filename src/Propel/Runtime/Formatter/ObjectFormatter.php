@@ -123,7 +123,7 @@ class ObjectFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row): ActiveRecordInterface
+    public function getAllObjectsFromRow(array $row): ActiveRecordInterface
     {
         // main object
         [$obj, $col] = $this->getTableMap()->populateObject($row, 0, $this->getDataFetcher()->getIndexType());

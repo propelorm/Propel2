@@ -35,7 +35,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -82,7 +82,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
     }
 
@@ -93,7 +93,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }
@@ -109,7 +109,7 @@ class $className extends $baseClassName
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = ''): bool
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
          return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }
@@ -123,7 +123,7 @@ class $className extends $baseClassName
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        '): void
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
@@ -135,7 +135,7 @@ class $className extends $baseClassName
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName): ?string
+    public function getBehaviorContent(string $contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }

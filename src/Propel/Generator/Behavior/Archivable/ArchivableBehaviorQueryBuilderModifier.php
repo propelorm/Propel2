@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
  *
@@ -28,7 +30,7 @@ class ArchivableBehaviorQueryBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Archivable\ArchivableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(ArchivableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -39,7 +41,7 @@ class ArchivableBehaviorQueryBuilderModifier
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -49,7 +51,7 @@ class ArchivableBehaviorQueryBuilderModifier
      *
      * @return string
      */
-    public function queryAttributes($builder): string
+    public function queryAttributes(AbstractOMBuilder $builder): string
     {
         $script = '';
         if ($this->behavior->isArchiveOnUpdate()) {
@@ -69,7 +71,7 @@ class ArchivableBehaviorQueryBuilderModifier
      *
      * @return string|null
      */
-    public function preDeleteQuery($builder): ?string
+    public function preDeleteQuery(AbstractOMBuilder $builder): ?string
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return "
@@ -89,7 +91,7 @@ if (\$this->archiveOnDelete) {
      *
      * @return string|null
      */
-    public function postUpdateQuery($builder): ?string
+    public function postUpdateQuery(AbstractOMBuilder $builder): ?string
     {
         if ($this->behavior->isArchiveOnUpdate()) {
             return "
@@ -109,7 +111,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function queryMethods($builder): string
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $script = '';
         $script .= $this->addArchive($builder);
@@ -130,7 +132,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    protected function addArchive($builder): string
+    protected function addArchive(AbstractOMBuilder $builder): string
     {
         return $this->behavior->renderTemplate('queryArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
@@ -143,7 +145,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addSetArchiveOnUpdate($builder): string
+    public function addSetArchiveOnUpdate(AbstractOMBuilder $builder): string
     {
         return $this->behavior->renderTemplate('querySetArchiveOnUpdate');
     }
@@ -153,7 +155,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addUpdateWithoutArchive($builder): string
+    public function addUpdateWithoutArchive(AbstractOMBuilder $builder): string
     {
         return $this->behavior->renderTemplate('queryUpdateWithoutArchive');
     }
@@ -163,7 +165,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addSetArchiveOnDelete($builder): string
+    public function addSetArchiveOnDelete(AbstractOMBuilder $builder): string
     {
         return $this->behavior->renderTemplate('querySetArchiveOnDelete');
     }
@@ -173,7 +175,7 @@ if (\$this->archiveOnUpdate) {
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addDeleteWithoutArchive($builder): string
+    public function addDeleteWithoutArchive(AbstractOMBuilder $builder): string
     {
         return $this->behavior->renderTemplate('queryDeleteWithoutArchive');
     }

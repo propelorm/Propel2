@@ -9,6 +9,7 @@
 namespace Propel\Generator\Behavior\Delegate;
 
 use InvalidArgumentException;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
@@ -108,7 +109,7 @@ class DelegateBehavior extends Behavior
      *
      * @return void
      */
-    protected function relateDelegateToMainTable($delegateTable, $mainTable): void
+    protected function relateDelegateToMainTable(Table $delegateTable, Table $mainTable): void
     {
         $pks = $mainTable->getPrimaryKey();
         foreach ($pks as $column) {
@@ -137,7 +138,7 @@ class DelegateBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Table|null
      */
-    protected function getDelegateTable($delegateTableName): ?Table
+    protected function getDelegateTable(string $delegateTableName): ?Table
     {
         return $this->getTable()->getDatabase()->getTable($delegateTableName);
     }
@@ -147,7 +148,7 @@ class DelegateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectCall($builder): string
+    public function objectCall(ObjectBuilder $builder): string
     {
         $plural = false;
         $script = '';
@@ -186,7 +187,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
      *
      * @return void
      */
-    public function objectFilter(&$script): void
+    public function objectFilter(string &$script): void
     {
         $p = new PhpParser($script, true);
         $text = $p->findMethod('toArray');

@@ -21,7 +21,7 @@ class ArrayToPhpConverter
      *
      * @return string
      */
-    public static function convert($c): string
+    public static function convert(array $c): string
     {
         $conf = [];
         // set datasources

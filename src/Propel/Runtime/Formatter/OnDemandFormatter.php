@@ -103,7 +103,7 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row): ActiveRecordInterface
+    public function getAllObjectsFromRow(array $row): ActiveRecordInterface
     {
         $col = 0;
 

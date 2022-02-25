@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\Timestampable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -74,7 +75,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The related setter, 'setCreatedOn' or 'setUpdatedOn'
      */
-    protected function getColumnSetter($column): string
+    protected function getColumnSetter(string $column): string
     {
         return 'set' . $this->getColumnForParameter($column)->getPhpName();
     }
@@ -85,7 +86,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string
      */
-    protected function getColumnConstant($columnName, $builder): string
+    protected function getColumnConstant(string $columnName, AbstractOMBuilder $builder): string
     {
         return $builder->getColumnConstant($this->getColumnForParameter($columnName));
     }
@@ -97,7 +98,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The code to put at the hook
      */
-    public function preUpdate($builder): string
+    public function preUpdate(AbstractOMBuilder $builder): string
     {
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
@@ -119,7 +120,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The code to put at the hook
      */
-    public function preInsert($builder): string
+    public function preInsert(AbstractOMBuilder $builder): string
     {
         $script = '$time = time();
 $highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();';
@@ -152,7 +153,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(AbstractOMBuilder $builder): string
     {
         if (!$this->withUpdatedAt()) {
             return '';
@@ -178,7 +179,7 @@ public function keepUpdateDateUnchanged()
      *
      * @return string
      */
-    public function queryMethods($builder): string
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $queryClassName = $builder->getQueryClassName();
 

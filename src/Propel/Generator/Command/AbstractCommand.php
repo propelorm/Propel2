@@ -89,7 +89,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array List of schema files
      */
-    protected function getSchemas($directory, $recursive = false): array
+    protected function getSchemas($directory, bool $recursive = false): array
     {
         $finder = new Finder();
         $finder
@@ -124,7 +124,7 @@ abstract class AbstractCommand extends Command
      *
      * @return void
      */
-    protected function createDirectory($directory): void
+    protected function createDirectory(string $directory): void
     {
         $filesystem = $this->getFilesystem();
 
@@ -142,7 +142,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array
      */
-    protected function parseConnection($connection): array
+    protected function parseConnection(string $connection): array
     {
         $pos = strpos($connection, '=');
         $name = substr($connection, 0, $pos);
@@ -174,7 +174,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array
      */
-    protected function connectionToProperties($connection, $section = null): array
+    protected function connectionToProperties(string $connection, ?string $section = null): array
     {
         [$name, $dsn, $infos] = $this->parseConnection($connection);
         $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
@@ -204,7 +204,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputOption($option, $input): bool
+    protected function hasInputOption(string $option, InputInterface $input): bool
     {
         return $input->hasOption($option) && $input->getOption($option) !== null;
     }
@@ -217,7 +217,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputArgument($argument, $input): bool
+    protected function hasInputArgument(string $argument, InputInterface $input): bool
     {
         return $input->hasArgument($argument) && $input->getArgument($argument) !== null;
     }
