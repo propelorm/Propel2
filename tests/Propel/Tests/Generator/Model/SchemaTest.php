@@ -56,7 +56,7 @@ class SchemaTest extends ModelTestCase
             ->expects($this->any())
             ->method('getTable')
             ->with($this->equalTo('books'))
-            ->will($this->returnValue(true));
+            ->will($this->returnValue($booksTable));
 
         $subSchema1 = new Schema($this->getPlatformMock());
         $subSchema1->addDatabase($database1);

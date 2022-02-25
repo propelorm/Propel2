@@ -174,7 +174,7 @@ class RelationMap
      *
      * @return void
      */
-    public function setType($type): void
+    public function setType(int $type): void
     {
         $this->type = $type;
     }

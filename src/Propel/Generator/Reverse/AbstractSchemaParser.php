@@ -163,9 +163,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets the GeneratorConfig option.
      *
-     * @return \Propel\Generator\Config\GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    public function getGeneratorConfig(): GeneratorConfigInterface
+    public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -202,9 +202,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @param string $propelType
      *
-     * @return string The native SQL type that best matches the specified Propel type.
+     * @return string|null The native SQL type that best matches the specified Propel type.
      */
-    protected function getMappedNativeType($propelType): string
+    protected function getMappedNativeType($propelType): ?string
     {
         if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());

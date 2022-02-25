@@ -58,7 +58,7 @@ class ColumnMap
     /**
      * The default value for this column
      *
-     * @var string|null
+     * @var string|bool|null
      */
     protected $defaultValue;
 
@@ -358,7 +358,7 @@ class ColumnMap
     /**
      * Sets the default value for this column.
      *
-     * @param string|null $defaultValue the default value for the column
+     * @param string|bool|null $defaultValue the default value for the column
      *
      * @return void
      */
@@ -370,9 +370,9 @@ class ColumnMap
     /**
      * Gets the default value for this column.
      *
-     * @return string|null
+     * @return string|bool|null
      */
-    public function getDefaultValue(): ?string
+    public function getDefaultValue()
     {
         return $this->defaultValue;
     }

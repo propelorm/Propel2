@@ -22,19 +22,10 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testGetNameReturnsNullByDefault()
-    {
-        $manager = new ConnectionManagerMasterSlave('default');
-        $this->assertNull($manager->getName());
-    }
-
-    /**
-     * @return void
-     */
     public function testGetNameReturnsNameSetUsingSetName()
     {
         $manager = new ConnectionManagerMasterSlave('foo');
-        $this->assertEquals('foo', $manager->getName());
+        $this->assertSame('foo', $manager->getName());
     }
 
     /**

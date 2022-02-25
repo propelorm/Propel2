@@ -862,9 +862,9 @@ public function moveToTop(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return int|null The old object's rank or null if already last
+ * @return \$this|{$this->objectClassName}|null The old object's rank or null if already last
  */
-public function moveToBottom(ConnectionInterface \$con = null): ?int
+public function moveToBottom(ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return null;

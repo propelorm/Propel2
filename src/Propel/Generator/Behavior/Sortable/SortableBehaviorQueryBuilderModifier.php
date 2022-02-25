@@ -598,9 +598,9 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
  * @param     string    \$order  sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
  * @param     ConnectionInterface \$con    optional connection
  *
- * @return    array List of sortable objects
+ * @return    \Propel\Runtime\Collection\ObjectCollection List of sortable objects
  */
-static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null): array
+static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
     static::sortableApplyScopeCriteria(\$c, \$scope);
@@ -624,9 +624,9 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
  * @param     int       \$scope  the scope of the list
  * @param     ConnectionInterface \$con    optional connection
  *
- * @return    array List of sortable objects
+ * @return    int Count.
  */
-static public function countList(\$scope, ConnectionInterface \$con = null): array
+static public function countList(\$scope, ConnectionInterface \$con = null): int
 {
     \$c = new Criteria();
     \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);

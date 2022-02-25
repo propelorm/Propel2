@@ -19,19 +19,10 @@ class ConnectionManagerPrimaryReplicaTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testGetNameReturnsNullByDefault()
-    {
-        $manager = new ConnectionManagerPrimaryReplica('default');
-        $this->assertNull($manager->getName());
-    }
-
-    /**
-     * @return void
-     */
     public function testGetNameReturnsNameSetUsingSetName()
     {
         $manager = new ConnectionManagerPrimaryReplica('foo');
-        $this->assertEquals('foo', $manager->getName());
+        $this->assertSame('foo', $manager->getName());
     }
 
     /**

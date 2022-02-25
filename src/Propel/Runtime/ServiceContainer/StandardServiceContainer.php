@@ -570,7 +570,7 @@ class StandardServiceContainer implements ServiceContainerInterface
             case 'stream':
                 $handler = new StreamHandler(
                     $configuration['path'],
-                    $configuration['level'] ?? null,
+                    $configuration['level'] ?? 500,
                     $configuration['bubble'] ?? true,
                 );
 
