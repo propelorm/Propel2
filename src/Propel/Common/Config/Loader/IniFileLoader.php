@@ -54,7 +54,7 @@ class IniFileLoader extends FileLoader
      *
      * @return array The configuration array
      */
-    public function load($resource, ?string $type = null): array
+    public function load($resource, $type = null): array
     {
         /** @var array<array-key, string|array<array-key, string|array<array-key, string>>>|false $ini */
         $ini = parse_ini_file($this->getPath($resource), true, INI_SCANNER_RAW);

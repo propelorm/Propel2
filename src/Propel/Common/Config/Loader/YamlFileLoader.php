@@ -30,7 +30,7 @@ class YamlFileLoader extends FileLoader
      *
      * @return array
      */
-    public function load($resource, ?string $type = null): array
+    public function load($resource, $type = null): array
     {
         $path = $this->locator->locate($resource);
 

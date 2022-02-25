@@ -25,7 +25,7 @@ class XmlFileLoader extends FileLoader
      *
      * @return array
      */
-    public function load($resource, ?string $type = null): array
+    public function load($resource, $type = null): array
     {
         $content = XmlToArrayConverter::convert($this->getPath($resource));
 
