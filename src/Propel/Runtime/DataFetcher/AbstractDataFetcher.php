@@ -37,7 +37,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
     }
 
     /**
-     * @return \Propel\Runtime\Connection\StatementInterface
+     * @return mixed
      */
     public function getDataObject()
     {

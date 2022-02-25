@@ -80,7 +80,10 @@ class PDODataFetcher extends AbstractDataFetcher
             $style = $this->style;
         }
 
-        return $this->getDataObject()->fetch($style);
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+
+        return $dataObject->fetch($style);
     }
 
     /**
@@ -98,7 +101,10 @@ class PDODataFetcher extends AbstractDataFetcher
             $style = $this->style;
         }
 
-        return $this->getDataObject()->fetchAll($style, $fetch_argument, $ctor_args);
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+
+        return $dataObject->fetchAll($style, $fetch_argument, $ctor_args);
     }
 
     /**
@@ -163,7 +169,9 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function close(): void
     {
-        $this->getDataObject()->closeCursor();
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+        $dataObject->closeCursor();
         $this->setDataObject(null); //so the connection can be garbage collected
         $this->current = null;
         $this->index = -1;

@@ -53,7 +53,7 @@ class JsonFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, ?string $type = null): bool
+    public function supports($resource, $type = null): bool
     {
         return static::checkSupports('json', $resource);
     }
