@@ -83,7 +83,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private array $referrers = [];
 
     private bool $containsForeignPK = false;
-    private ?Column $inheritanceColumn;
+    private ?Column $inheritanceColumn = null;
     private bool $skipSql = false;
     private bool $readOnly = false;
     private bool $isAbstract = false;
