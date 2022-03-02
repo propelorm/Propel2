@@ -92,19 +92,13 @@ class Table extends ScopedMappingModel implements IdMethod
     private ?string $baseClass = null;
     private ?string $baseQueryClass = null;
 
-    /**
-     * @var string[]
-     */
+    /** @var Column[] */
     private array $columnsByName = [];
 
-    /**
-     * @var Column[]
-     */
+    /** @var Column[] */
     private array $columnsByLowercaseName = [];
 
-    /**
-     * @var string[]
-     */
+    /** @var Column[] */
     private array $columnsByPhpName = [];
 
     private bool $needsTransactionInPostgres = false;
