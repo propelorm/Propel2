@@ -98,14 +98,14 @@ class Table extends ScopedMappingModel implements IdMethod
     private array $columnsByName = [];
 
     /**
-     * @var string[]
+     * @var Column[]
      */
-    private $columnsByLowercaseName = [];
+    private array $columnsByLowercaseName = [];
 
     /**
      * @var string[]
      */
-    private $columnsByPhpName = [];
+    private array $columnsByPhpName = [];
 
     private bool $needsTransactionInPostgres = false;
     private bool $heavyIndexing = false;
@@ -1753,9 +1753,9 @@ class Table extends ScopedMappingModel implements IdMethod
      * @param string $name The name of the column (e.g. 'my_column')
      * @param bool $caseInsensitive Whether the check is case insensitive.
      *
-     * @return string|null
+     * @return Column|null
      */
-    public function getColumn($name, $caseInsensitive = false): ?string
+    public function getColumn($name, $caseInsensitive = false): ?Column
     {
         if (!$this->hasColumn($name, $caseInsensitive)) {
             return null;
@@ -1773,9 +1773,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param string $phpName
      *
-     * @return string|null
+     * @return Column|null
      */
-    public function getColumnByPhpName($phpName): ?string
+    public function getColumnByPhpName($phpName): ?Column
     {
         if (isset($this->columnsByPhpName[$phpName])) {
             return $this->columnsByPhpName[$phpName];
