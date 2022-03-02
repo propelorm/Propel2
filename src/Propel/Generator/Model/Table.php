@@ -130,7 +130,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private ?bool $forReferenceOnly = null;
 
     private bool $reloadOnInsert = false;
-    
+
     private bool $reloadOnUpdate = false;
 
     /**
@@ -2161,6 +2161,8 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Checks if identifierQuoting is enabled. Looks up to its database->isIdentifierQuotingEnabled
      * if identifierQuoting is null hence undefined.
+     *
+     * @return bool
      */
     public function isIdentifierQuotingEnabled(): bool
     {
