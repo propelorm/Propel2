@@ -70,7 +70,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
     private string $commonName;
     private string $originCommonName;
-    private string $description;
+    private ?string $description = null;
     private string $phpName;
     private string $idMethod;
     private bool $allowPkInsert = false;
@@ -1171,9 +1171,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the table description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -1195,7 +1195,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
