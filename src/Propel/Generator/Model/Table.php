@@ -71,7 +71,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private string $commonName;
     private string $originCommonName;
     private ?string $description = null;
-    private string $phpName;
+    private ?string $phpName = null;
     private string $idMethod;
     private bool $allowPkInsert = false;
     private ?string $phpNamingMethod = null;
@@ -1205,7 +1205,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return string
      */
-    public function getPhpName()
+    public function getPhpName(): string
     {
         if ($this->phpName === null) {
             $this->phpName = $this->buildPhpName($this->getStdSeparatedName());
@@ -1221,7 +1221,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setPhpName($phpName)
+    public function setPhpName(?string $phpName)
     {
         $this->phpName = $phpName;
     }
