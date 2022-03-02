@@ -13,7 +13,6 @@ namespace Propel\Generator\Model;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
-use Propel\Generator\Model\Database;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Runtime\Exception\RuntimeException;
 
@@ -69,12 +68,19 @@ class Table extends ScopedMappingModel implements IdMethod
     private array $idMethodParameters = [];
 
     private ?string $commonName = null;
+
     private string $originCommonName;
+
     private ?string $description = null;
+
     private ?string $phpName = null;
+
     private string $idMethod;
+
     private bool $allowPkInsert = false;
+
     private ?string $phpNamingMethod = null;
+
     private ?Database $database = null;
 
     /**
@@ -83,29 +89,48 @@ class Table extends ScopedMappingModel implements IdMethod
     private array $referrers = [];
 
     private bool $containsForeignPK = false;
+
     private ?Column $inheritanceColumn = null;
+
     private bool $skipSql = false;
+
     private bool $readOnly = false;
+
     private bool $isAbstract = false;
+
     private ?string $alias = null;
+
     private ?string $interface = null;
+
     private ?string $baseClass = null;
+
     private ?string $baseQueryClass = null;
 
-    /** @var Column[] */
+    /**
+     * @var Column[]
+     */
     private array $columnsByName = [];
 
-    /** @var Column[] */
+    /**
+     * @var Column[]
+     */
     private array $columnsByLowercaseName = [];
 
-    /** @var Column[] */
+    /**
+     * @var Column[]
+     */
     private array $columnsByPhpName = [];
 
     private bool $needsTransactionInPostgres = false;
+
     private bool $heavyIndexing = false;
+
     private bool $identifierQuoting = false;
+
     private ?bool $forReferenceOnly = null;
+
     private bool $reloadOnInsert = false;
+    
     private bool $reloadOnUpdate = false;
 
     /**
