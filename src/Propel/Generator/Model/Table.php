@@ -68,7 +68,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     private array $idMethodParameters = [];
 
-    private string $commonName;
+    private ?string $commonName = null;
     private string $originCommonName;
     private ?string $description = null;
     private ?string $phpName = null;
