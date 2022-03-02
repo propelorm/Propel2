@@ -58,7 +58,7 @@ class ConfigurationManager
         if (!$path) {
             $path = getcwd();
         }
-        if (!isset($extraConf)) {
+        if ($extraConf === null) {
             $extraConf = [];
         }
         $this->config = $this->loadConfig($path, $extraConf);

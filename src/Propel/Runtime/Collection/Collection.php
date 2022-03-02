@@ -507,7 +507,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     {
         $model = $this->getModel();
 
-        if (empty($model)) {
+        if (!$model) {
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 

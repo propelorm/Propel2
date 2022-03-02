@@ -110,7 +110,7 @@ class PropelDateTime extends DateTime
         if ($value instanceof DateTimeInterface) {
             return $value;
         }
-        if (empty($value)) {
+        if (!$value) {
             // '' is seen as NULL for temporal objects
             // because DateTime('') == DateTime('now') -- which is unexpected
             return null;

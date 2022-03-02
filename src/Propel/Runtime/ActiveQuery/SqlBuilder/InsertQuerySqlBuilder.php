@@ -35,7 +35,7 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
     public function build(): PreparedStatementDto
     {
         $qualifiedColumnNames = $this->criteria->keys();
-        if (empty($qualifiedColumnNames)) {
+        if (!$qualifiedColumnNames) {
             throw new PropelException('Database insert attempted without anything specified to insert.');
         }
 

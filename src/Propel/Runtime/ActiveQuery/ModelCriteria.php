@@ -79,6 +79,11 @@ class ModelCriteria extends BaseModelCriteria
     protected $primaryCriteria;
 
     /**
+     * @var string|null
+     */
+    protected $entityNotFoundExceptionClass;
+
+    /**
      * @var bool
      */
     protected $isWithOneToMany = false;
@@ -365,7 +370,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function groupBy($columnName)
     {
-        if (empty($columnName)) {
+        if (!$columnName) {
             throw new PropelException('You must ask for at least one column');
         }
 
@@ -488,7 +493,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function select($columnArray)
     {
-        if (empty($columnArray)) {
+        if (!$columnArray) {
             throw new PropelException('You must ask for at least one column');
         }
 
@@ -1414,7 +1419,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     private function createEntityNotFoundException()
     {
-        if (!isset($this->entityNotFoundExceptionClass)) {
+        if ($this->entityNotFoundExceptionClass === null) {
             throw new PropelException('Please define a entityNotFoundExceptionClass property with the name of your NotFoundException-class in ' . static::class);
         }
 

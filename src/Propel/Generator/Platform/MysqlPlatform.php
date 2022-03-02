@@ -468,9 +468,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             if ($defaultSetting == '' && $notNullString === 'NOT NULL') {
                 $defaultSetting = 'DEFAULT CURRENT_TIMESTAMP';
             }
-            if ($notNullString) {
-                $ddl[] = $notNullString;
-            }
+            $ddl[] = $notNullString;
             if ($defaultSetting) {
                 $ddl[] = $defaultSetting;
             }

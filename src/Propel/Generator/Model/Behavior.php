@@ -472,7 +472,7 @@ class Behavior extends MappingModel
      */
     public function hasAdditionalBuilders()
     {
-        return !empty($this->additionalBuilders);
+        return (bool)$this->additionalBuilders;
     }
 
     /**

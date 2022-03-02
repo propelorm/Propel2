@@ -355,7 +355,7 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->referrers as $foreignKey) {
             $referencedColumns = $foreignKey->getForeignColumnObjects();
             $referencedColumnsHash = $this->getColumnList($referencedColumns);
-            if (empty($referencedColumns) || isset($_indices[$referencedColumnsHash])) {
+            if (!$referencedColumns || isset($_indices[$referencedColumnsHash])) {
                 continue;
             }
 
@@ -377,7 +377,7 @@ class Table extends ScopedMappingModel implements IdMethod
         foreach ($this->foreignKeys as $foreignKey) {
             $localColumns = $foreignKey->getLocalColumnObjects();
             $localColumnsHash = $this->getColumnList($localColumns);
-            if (empty($localColumns) || isset($_indices[$localColumnsHash])) {
+            if (!$localColumns || isset($_indices[$localColumnsHash])) {
                 continue;
             }
 
@@ -1185,7 +1185,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function hasDescription()
     {
-        return !empty($this->description);
+        return (bool)$this->description;
     }
 
     /**

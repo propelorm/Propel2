@@ -49,7 +49,7 @@ class PhpNameGenerator implements NameGeneratorInterface
 
         if (count($inputs) > 2) {
             $prefix = $inputs[2];
-            if (!empty($prefix) && substr($schemaName, 0, strlen($prefix)) === $prefix) {
+            if ($prefix && substr($schemaName, 0, strlen($prefix)) === $prefix) {
                 $schemaName = substr($schemaName, strlen($prefix));
             }
         }

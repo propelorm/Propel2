@@ -722,10 +722,10 @@ class Database extends ScopedMappingModel
             $databaseNamespace = ltrim($databaseNamespace, '\\');
         }
 
-        if (empty($tableNamespace)) {
+        if (!$tableNamespace) {
             return $databaseNamespace;
         }
-        if (!empty($databaseNamespace)) {
+        if ($databaseNamespace) {
             return "$databaseNamespace\\$tableNamespace";
         }
 

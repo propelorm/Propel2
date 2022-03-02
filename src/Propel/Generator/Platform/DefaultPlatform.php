@@ -268,7 +268,7 @@ class DefaultPlatform implements PlatformInterface
         if ($table->getIdMethod() === IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
             $maxIdentifierLength = $this->getMaxColumnNameLength();
-            if (empty($idMethodParams)) {
+            if (!$idMethodParams) {
                 if (strlen($table->getName() . '_SEQ') > $maxIdentifierLength) {
                     if (!isset($longNamesMap[$table->getName()])) {
                         $longNamesMap[$table->getName()] = (string)(count($longNamesMap) + 1);
@@ -1397,7 +1397,7 @@ ALTER TABLE %s ADD
     public function getPhpArrayString($stringValue)
     {
         $stringValue = trim($stringValue);
-        if (empty($stringValue)) {
+        if (!$stringValue) {
             return null;
         }
 

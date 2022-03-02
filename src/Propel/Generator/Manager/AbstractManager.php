@@ -351,7 +351,7 @@ abstract class AbstractManager
 
         $this->log(sprintf('%d tables found in %d schema files.', $totalNbTables, count($dataModelFiles)));
 
-        if (empty($schemas)) {
+        if (!$schemas) {
             throw new BuildException('No schema files were found (matching your schema fileset definition).');
         }
 
@@ -513,7 +513,7 @@ abstract class AbstractManager
         foreach ($lines as $line) {
             $line = trim($line);
 
-            if (empty($line) || in_array($line[0], ['#', ';'])) {
+            if (!$line || in_array($line[0], ['#', ';'], true)) {
                 continue;
             }
 

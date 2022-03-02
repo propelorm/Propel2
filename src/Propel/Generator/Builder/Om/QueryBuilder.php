@@ -183,7 +183,7 @@ class QueryBuilder extends AbstractOMBuilder
             $relationQueryClasses[$this->getNewStubQueryBuilder($refFK->getTable())->getQueryClassName(true)] = true;
         }
 
-        if (!empty($relationQueryClasses)) {
+        if ($relationQueryClasses) {
             $relationQueryClasses = implode('|', array_keys($relationQueryClasses));
             $script .= "
  * @method     $relationQueryClasses endUse() Finalizes a secondary criteria and merges it with its primary Criteria

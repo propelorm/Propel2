@@ -176,7 +176,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             }
         }
 
-        if (empty($selectStatement) || empty($fromStatement)) {
+        if (!$selectStatement || !$fromStatement) {
             throw new MalformedClauseException('MssqlAdapter::applyLimit() could not locate the select statement at the start of the query.');
         }
 
@@ -217,6 +217,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         // setup inner and outer select selects
         $innerSelect = '';
         $outerSelect = '';
+        $firstColumnOrderStatement = null;
         foreach (explode(', ', $selectStatement) as $selCol) {
             $selColArr = explode(' ', $selCol);
             $selColCount = count($selColArr) - 1;
@@ -235,7 +236,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                 }
 
                 // save the first non-aggregate column for use in ROW_NUMBER() if required
-                if (!isset($firstColumnOrderStatement)) {
+                if ($firstColumnOrderStatement === null) {
                     $firstColumnOrderStatement = 'ORDER BY ' . $selColArr[0];
                 }
 
@@ -269,7 +270,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $orderStatement = 'ORDER BY ' . implode(', ', $orders);
         } else {
             // use the first non aggregate column in our select statement if no ORDER BY clause present
-            if (isset($firstColumnOrderStatement)) {
+            if ($firstColumnOrderStatement !== null) {
                 $orderStatement = $firstColumnOrderStatement;
             } else {
                 throw new ColumnNotFoundException('MssqlAdapter::applyLimit() unable to find column to use with ROW_NUMBER()');

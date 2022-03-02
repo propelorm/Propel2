@@ -404,7 +404,7 @@ class ColumnMap
      */
     public function isForeignKey()
     {
-        return !empty($this->relatedTableName);
+        return (bool)$this->relatedTableName;
     }
 
     /**
