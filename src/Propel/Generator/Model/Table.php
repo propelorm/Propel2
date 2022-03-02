@@ -90,7 +90,7 @@ class Table extends ScopedMappingModel implements IdMethod
     private ?string $alias = null;
     private ?string $interface = null;
     private ?string $baseClass = null;
-    private ?string $baseQueryClass;
+    private ?string $baseQueryClass = null;
 
     /**
      * @var string[]
