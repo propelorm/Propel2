@@ -1721,7 +1721,7 @@ class Table extends ScopedMappingModel implements IdMethod
                 if (count($keys) === count($index->getColumns())) {
                     $allAvailable = true;
                     foreach ($keys as $key) {
-                        if (!$index->hasColumn($key instanceof \Propel\Generator\Model\Column ? $key->getName() : $key)) {
+                        if (!$index->hasColumn($key instanceof Column ? $key->getName() : $key)) {
                             $allAvailable = false;
 
                             break;
@@ -1747,7 +1747,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function hasColumn($column, $caseInsensitive = false)
     {
-        if ($column instanceof \Propel\Generator\Model\Column) {
+        if ($column instanceof Column) {
             $column = $column->getName();
         }
 
@@ -1766,7 +1766,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumn($name, $caseInsensitive = false): ?\Propel\Generator\Model\Column
+    public function getColumn($name, $caseInsensitive = false): ?Column
     {
         if (!$this->hasColumn($name, $caseInsensitive)) {
             return null;
@@ -1786,7 +1786,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnByPhpName($phpName): ?\Propel\Generator\Model\Column
+    public function getColumnByPhpName($phpName): ?Column
     {
         if (isset($this->columnsByPhpName[$phpName])) {
             return $this->columnsByPhpName[$phpName];
