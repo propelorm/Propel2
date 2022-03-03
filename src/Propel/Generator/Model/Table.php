@@ -1747,7 +1747,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function hasColumn($column, $caseInsensitive = false)
     {
-        if ($column instanceof Propel\Generator\Model\Column) {
+        if ($column instanceof \Propel\Generator\Model\Column) {
             $column = $column->getName();
         }
 
@@ -1764,9 +1764,9 @@ class Table extends ScopedMappingModel implements IdMethod
      * @param string $name The name of the column (e.g. 'my_column')
      * @param bool $caseInsensitive Whether the check is case insensitive.
      *
-     * @return Propel\Generator\Model\Column|null
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumn($name, $caseInsensitive = false): ?Column
+    public function getColumn($name, $caseInsensitive = false): ?\Propel\Generator\Model\Column
     {
         if (!$this->hasColumn($name, $caseInsensitive)) {
             return null;
@@ -1784,9 +1784,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @param string $phpName
      *
-     * @return Propel\Generator\Model\Column|null
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnByPhpName($phpName): ?Column
+    public function getColumnByPhpName($phpName): ?\Propel\Generator\Model\Column
     {
         if (isset($this->columnsByPhpName[$phpName])) {
             return $this->columnsByPhpName[$phpName];
