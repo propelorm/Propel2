@@ -116,7 +116,14 @@ class Table extends ScopedMappingModel implements IdMethod
 
     private bool $heavyIndexing = false;
 
-    private bool $identifierQuoting = false;
+    /**
+     * It's important that this remains nullable so we can determine the intent.  If it is explicitly
+     * set to false, we'll ignore identifier quoting, otherwise it'll take the value specified at the
+     * database level.
+     *
+     * @var bool|null
+     */
+    private ?bool $identifierQuoting = null;
 
     private ?bool $forReferenceOnly = null;
 
@@ -2158,17 +2165,17 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function isIdentifierQuotingEnabled(): bool
     {
-        return $this->database && $this->database->isIdentifierQuotingEnabled()
-            ? true
-            : $this->identifierQuoting;
+        return $this->identifierQuoting !== null
+            ? $this->identifierQuoting
+            : $this->getDatabase()->isIdentifierQuotingEnabled();
     }
 
     /**
-     * @param bool $identifierQuoting
+     * @param bool|null $identifierQuoting  Setting to null will use the database default
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting)
+    public function setIdentifierQuoting(?bool $identifierQuoting)
     {
         $this->identifierQuoting = $identifierQuoting;
     }
