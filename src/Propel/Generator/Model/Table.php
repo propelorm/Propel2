@@ -2167,7 +2167,7 @@ class Table extends ScopedMappingModel implements IdMethod
     {
         return $this->identifierQuoting !== null
             ? $this->identifierQuoting
-            : $this->getDatabase()->isIdentifierQuotingEnabled();
+            : $this->getDatabase() && $this->getDatabase()->isIdentifierQuotingEnabled();
     }
 
     /**
