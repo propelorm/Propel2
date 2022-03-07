@@ -34,7 +34,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods($builder): string
     {
         $array = $this->getParameters();
         if (!$array) {
@@ -72,7 +72,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string The code to be added to model class
      */
-    public function objectAttributes()
+    public function objectAttributes(): string
     {
         return $this->renderTemplate('objectAttributes');
     }
@@ -85,7 +85,7 @@ class ValidateBehavior extends Behavior
      *
      * @return array The array of parameters associated to given column
      */
-    public function getParametersFromColumnName($columnName = null)
+    public function getParametersFromColumnName($columnName = null): array
     {
         $array = [];
         if ($columnName !== null) {
@@ -108,7 +108,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function removeParametersFromColumnName($columnName = null)
+    public function removeParametersFromColumnName($columnName = null): void
     {
         if ($columnName !== null) {
             $newParams = [];
@@ -131,7 +131,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function addRuleOnPk()
+    public function addRuleOnPk(): void
     {
         if (!count($this->getParameters())) {
             $pk = $this->getTable()->getPrimaryKey();
@@ -156,7 +156,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function mergeParameters(?array $params = null)
+    public function mergeParameters(?array $params = null): void
     {
         if ($params !== null) {
             $parameters = $this->getParameters();
@@ -181,7 +181,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    protected function cleanupParameters()
+    protected function cleanupParameters(): void
     {
         $parser = new Parser();
         $params = $this->getParameters();
@@ -200,7 +200,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function addLoadValidatorMetadataMethod()
+    protected function addLoadValidatorMetadataMethod(): string
     {
         $params = $this->getParameters();
         $constraints = [];
@@ -243,7 +243,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function getClassConstraint(array $properties)
+    protected function getClassConstraint(array $properties): string
     {
         $constraintCandidates = [
             sprintf('Propel\\Runtime\\Validator\\Constraints\\%s', $properties['validator']),
@@ -264,7 +264,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string The code to be added to model class
      */
-    protected function addValidateMethod()
+    protected function addValidateMethod(): string
     {
         $table = $this->getTable();
         $foreignKeys = $table->getForeignKeys();
@@ -300,7 +300,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function addGetValidationFailuresMethod()
+    protected function addGetValidationFailuresMethod(): string
     {
         return $this->renderTemplate('objectGetValidationFailures');
     }

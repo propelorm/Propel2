@@ -89,7 +89,7 @@ class TestableAbstractCommand extends AbstractCommand
         $this->setName('testable-command');
     }
 
-    public function parseConnection($connection)
+    public function parseConnection($connection): array
     {
         return parent::parseConnection($connection);
     }

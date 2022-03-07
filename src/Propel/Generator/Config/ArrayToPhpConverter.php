@@ -17,11 +17,11 @@ class ArrayToPhpConverter
     /**
      * Create a PHP configuration from an array
      *
-     * @param array $c The array configuration
+     * @param array<string, mixed> $c The array configuration
      *
      * @return string
      */
-    public static function convert($c)
+    public static function convert($c): string
     {
         $conf = [];
         // set datasources
@@ -38,10 +38,10 @@ class ArrayToPhpConverter
 
                 // set connection settings
                 if (isset($params['slaves'])) {
-                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();";
+                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave('{$name}');";
                     $conf[] = '$manager->setReadConfiguration(' . var_export($params['slaves'], true) . ');';
                 } elseif (isset($params['dsn'])) {
-                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();";
+                    $conf[] = "\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle('{$name}');";
                 } else {
                     continue;
                 }
@@ -54,8 +54,7 @@ class ArrayToPhpConverter
                     $conf[] = "\$manager->{$masterConfigurationSetter}(" . var_export($connection, true) . ');';
                 }
 
-                $conf[] = "\$manager->setName('{$name}');";
-                $conf[] = "\$serviceContainer->setConnectionManager('{$name}', \$manager);";
+                $conf[] = '$serviceContainer->setConnectionManager($manager);';
             }
 
             // set default datasource

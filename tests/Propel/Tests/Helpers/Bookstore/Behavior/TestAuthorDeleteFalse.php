@@ -12,7 +12,12 @@ use Propel\Runtime\Connection\ConnectionInterface;
 
 class TestAuthorDeleteFalse extends TestAuthor
 {
-    public function preDelete(?ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return int|null
+     */
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         parent::preDelete($con);
         $this->setFirstName('Pre-Deleted');

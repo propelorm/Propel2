@@ -33,7 +33,7 @@ class ArrayToPhpConverterTest extends TestCase
         ];
         $expected = <<<EOF
 \$serviceContainer->setAdapterClass('bookstore', 'mysql');
-\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+\$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle('bookstore');
 \$manager->setConfiguration(array (
   'classname' => 'DebugPDO',
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
@@ -48,8 +48,7 @@ class ArrayToPhpConverterTest extends TestCase
     'ATTR_EMULATE_PREPARES' => true,
   ),
 ));
-\$manager->setName('bookstore');
-\$serviceContainer->setConnectionManager('bookstore', \$manager);
+\$serviceContainer->setConnectionManager(\$manager);
 \$serviceContainer->setDefaultDatasource('bookstore');
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
@@ -74,7 +73,7 @@ EOF;
         ];
         $expected = <<<'EOF'
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
+$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave('bookstore-cms');
 $manager->setReadConfiguration(array (
   0 =>
   array (
@@ -88,8 +87,7 @@ $manager->setReadConfiguration(array (
 $manager->setWriteConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
 ));
-$manager->setName('bookstore-cms');
-$serviceContainer->setConnectionManager('bookstore-cms', $manager);
+$serviceContainer->setConnectionManager($manager);
 $serviceContainer->setDefaultDatasource('bookstore-cms');
 EOF;
         $this->assertEquals($expected, ArrayToPhpConverter::convert($conf));
@@ -225,7 +223,7 @@ EOF;
         ];
         $expected = <<<'EOF'
 $serviceContainer->setAdapterClass('bookstore', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle('bookstore');
 $manager->setConfiguration(array (
   'classname' => '\\Propel\\Runtime\\Connection\\DebugPDO',
   'dsn' => 'mysql:host=127.0.0.1;dbname=test',
@@ -244,10 +242,9 @@ $manager->setConfiguration(array (
     'charset' => 'utf8',
   ),
 ));
-$manager->setName('bookstore');
-$serviceContainer->setConnectionManager('bookstore', $manager);
+$serviceContainer->setConnectionManager($manager);
 $serviceContainer->setAdapterClass('bookstore-cms', 'mysql');
-$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave();
+$manager = new \Propel\Runtime\Connection\ConnectionManagerMasterSlave('bookstore-cms');
 $manager->setReadConfiguration(array (
   0 =>
   array (
@@ -261,8 +258,7 @@ $manager->setReadConfiguration(array (
 $manager->setWriteConfiguration(array (
   'dsn' => 'mysql:host=localhost;dbname=bookstore',
 ));
-$manager->setName('bookstore-cms');
-$serviceContainer->setConnectionManager('bookstore-cms', $manager);
+$serviceContainer->setConnectionManager($manager);
 $serviceContainer->setDefaultDatasource('bookstore');
 $serviceContainer->setLoggerConfiguration('defaultLogger', array (
   'type' => 'stream',

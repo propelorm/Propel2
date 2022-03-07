@@ -13,6 +13,7 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Service class for managing SQL.
@@ -38,7 +39,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setConnections($connections)
+    public function setConnections($connections): void
     {
         $this->connections = $connections;
     }
@@ -48,7 +49,7 @@ class SqlManager extends AbstractManager
      *
      * @return array
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         return $this->connections;
     }
@@ -58,7 +59,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function hasConnection($connection)
+    public function hasConnection($connection): bool
     {
         return isset($this->connections[$connection]);
     }
@@ -66,7 +67,7 @@ class SqlManager extends AbstractManager
     /**
      * @return bool
      */
-    public function isOverwriteSqlMap()
+    public function isOverwriteSqlMap(): bool
     {
         return $this->overwriteSqlMap;
     }
@@ -76,7 +77,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setOverwriteSqlMap($overwriteSqlMap)
+    public function setOverwriteSqlMap($overwriteSqlMap): void
     {
         $this->overwriteSqlMap = (bool)$overwriteSqlMap;
     }
@@ -88,7 +89,7 @@ class SqlManager extends AbstractManager
      *
      * @return array
      */
-    public function getConnection($datasource)
+    public function getConnection($datasource): array
     {
         if (!$this->hasConnection($datasource)) {
             throw new InvalidArgumentException(sprintf('Unknown datasource "%s"', $datasource));
@@ -100,7 +101,7 @@ class SqlManager extends AbstractManager
     /**
      * @return string
      */
-    public function getSqlDbMapFilename()
+    public function getSqlDbMapFilename(): string
     {
         return $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . 'sqldb.map';
     }
@@ -110,7 +111,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function buildSql()
+    public function buildSql(): void
     {
         $sqlDbMapContent = "# Sqlfile -> Database map\n";
         foreach ($this->getDatabases() as $datasource => $database) {
@@ -139,7 +140,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function existSqlMap()
+    public function existSqlMap(): bool
     {
         return file_exists($this->getSqlDbMapFilename());
     }
@@ -149,7 +150,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function insertSql($datasource = null)
+    public function insertSql($datasource = null): bool
     {
         $statementsToInsert = [];
         foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
@@ -185,7 +186,7 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
-            $con->transaction(function () use ($con, $sqls) {
+            $con->transaction(function () use ($con, $sqls): void {
                 foreach ($sqls as $sql) {
                     try {
                         $stmt = $con->prepare($sql);
@@ -211,7 +212,7 @@ class SqlManager extends AbstractManager
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnectionInstance($datasource)
+    protected function getConnectionInstance($datasource): ConnectionInterface
     {
         $buildConnection = $this->getConnection($datasource);
 

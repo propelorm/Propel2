@@ -23,7 +23,7 @@ class SortableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'rank_column' => 'sortable_rank',
@@ -53,7 +53,7 @@ class SortableBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
@@ -121,7 +121,7 @@ class SortableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function useScope()
+    public function useScope(): bool
     {
         return $this->getParameter('use_scope') === 'true';
     }
@@ -132,7 +132,7 @@ class SortableBehavior extends Behavior
      *
      * @return array ($methodSignature, $paramsDoc, $scopeBuilder, $buildScopeVars)
      */
-    public function generateScopePhp()
+    public function generateScopePhp(): array
     {
         $methodSignature = '';
         $paramsDoc = '';
@@ -184,7 +184,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnGetter($name)
+    public function getColumnGetter($name): string
     {
         return 'get' . $this->getTable()->getColumn($name)->getPhpName();
     }
@@ -196,7 +196,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnSetter($name)
+    public function getColumnSetter($name): string
     {
         return 'set' . $this->getTable()->getColumn($name)->getPhpName();
     }
@@ -204,7 +204,7 @@ class SortableBehavior extends Behavior
     /**
      * @inheritDoc
      */
-    public function addParameter(array $parameter)
+    public function addParameter(array $parameter): void
     {
         if ($parameter['name'] === 'scope_column') {
             $this->parameters['scope_column'] .= ($this->parameters['scope_column'] ? ',' : '') . $parameter['value'];
@@ -218,7 +218,7 @@ class SortableBehavior extends Behavior
      *
      * @return array<string>
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->getParameter('scope_column')
             ? explode(',', str_replace(' ', '', trim($this->getParameter('scope_column'))))
@@ -230,7 +230,7 @@ class SortableBehavior extends Behavior
      *
      * @return bool
      */
-    public function hasMultipleScopes()
+    public function hasMultipleScopes(): bool
     {
         return count($this->getScopes()) > 1;
     }

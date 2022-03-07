@@ -26,7 +26,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The upper case string.
      */
-    public function toUpperCase($in);
+    public function toUpperCase($in): string;
 
     /**
      * This method is used to ignore case.
@@ -35,7 +35,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCase($in);
+    public function ignoreCase($in): string;
 
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
@@ -47,7 +47,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
+    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void;
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
@@ -59,7 +59,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null);
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void;
 
     /**
      * Modifies the passed-in SQL to add locking capabilities
@@ -78,7 +78,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string
      */
-    public function random($seed = null);
+    public function random($seed = null): string;
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -90,7 +90,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
+    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false): string;
 
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
@@ -102,7 +102,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria);
+    public function turnSelectColumnsToAliases(Criteria $criteria): Criteria;
 
     /**
      * Binds values in a prepared statement.
@@ -126,7 +126,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap): void;
 
     /**
      * Binds a value to a positioned parameter in a statement,
@@ -140,7 +140,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool;
 
     /**
      * Indicates if the database system can process DELETE statements with

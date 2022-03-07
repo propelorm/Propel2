@@ -186,6 +186,9 @@ class PropelQueryTest extends BookstoreTestBase
 
         $bookQuery->select(['Title'])->find();
 
-        $bookQuery->clear()->find();
+        $bookQuery->clear();
+        $result = $bookQuery->find();
+
+        $this->assertNotNull($result);
     }
 }

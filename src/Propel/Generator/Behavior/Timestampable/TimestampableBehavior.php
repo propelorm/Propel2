@@ -19,7 +19,7 @@ use Propel\Generator\Model\Behavior;
 class TimestampableBehavior extends Behavior
 {
     /**
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'create_column' => 'created_at',
@@ -31,7 +31,7 @@ class TimestampableBehavior extends Behavior
     /**
      * @return bool
      */
-    protected function withUpdatedAt()
+    protected function withUpdatedAt(): bool
     {
         return !$this->booleanValue($this->getParameter('disable_updated_at'));
     }
@@ -39,7 +39,7 @@ class TimestampableBehavior extends Behavior
     /**
      * @return bool
      */
-    protected function withCreatedAt()
+    protected function withCreatedAt(): bool
     {
         return !$this->booleanValue($this->getParameter('disable_created_at'));
     }
@@ -49,7 +49,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
@@ -74,7 +74,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The related setter, 'setCreatedOn' or 'setUpdatedOn'
      */
-    protected function getColumnSetter($column)
+    protected function getColumnSetter($column): string
     {
         return 'set' . $this->getColumnForParameter($column)->getPhpName();
     }
@@ -85,7 +85,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string
      */
-    protected function getColumnConstant($columnName, $builder)
+    protected function getColumnConstant($columnName, $builder): string
     {
         return $builder->getColumnConstant($this->getColumnForParameter($columnName));
     }
@@ -97,7 +97,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The code to put at the hook
      */
-    public function preUpdate($builder)
+    public function preUpdate($builder): string
     {
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
@@ -119,7 +119,7 @@ class TimestampableBehavior extends Behavior
      *
      * @return string The code to put at the hook
      */
-    public function preInsert($builder)
+    public function preInsert($builder): string
     {
         $script = '$time = time();
 $highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();';
@@ -152,7 +152,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods($builder): string
     {
         if (!$this->withUpdatedAt()) {
             return '';
@@ -178,7 +178,7 @@ public function keepUpdateDateUnchanged()
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $queryClassName = $builder->getQueryClassName();
 

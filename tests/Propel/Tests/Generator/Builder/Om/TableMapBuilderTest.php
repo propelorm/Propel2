@@ -27,6 +27,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class TableMapBuilderTest extends BookstoreTestBase
 {
+    /**
+     * @var \Propel\Runtime\Map\DatabaseMap
+     */
     protected $databaseMap;
 
     /**

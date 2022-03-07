@@ -44,7 +44,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * @inheritDoc
+     * @return array|null
      */
     public function fetch(): ?array
     {
@@ -88,7 +88,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return $this->indexType;
     }
@@ -98,7 +98,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      */
     public function count(): int
     {
-        return $this->dataObject === null ? null : count($this->dataObject);
+        return $this->dataObject === null ? 0 : count($this->dataObject);
     }
 
     /**
@@ -108,7 +108,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function setIndexType($indexType)
+    public function setIndexType($indexType): void
     {
         $this->indexType = $indexType;
     }
@@ -116,7 +116,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function close()
+    public function close(): void
     {
         $this->dataObject = null;
     }

@@ -190,7 +190,7 @@ class BazTableMap extends TableMap
     /**
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->setName('baz');
         $this->setPhpName('Baz');

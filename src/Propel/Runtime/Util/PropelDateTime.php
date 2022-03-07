@@ -42,7 +42,7 @@ class PropelDateTime extends DateTime
      *
      * @return bool
      */
-    protected static function isTimestamp($value)
+    protected static function isTimestamp($value): bool
     {
         if (!is_numeric($value)) {
             return false;
@@ -72,7 +72,7 @@ class PropelDateTime extends DateTime
      *
      * @return \DateTime
      */
-    public static function createHighPrecision($time = null)
+    public static function createHighPrecision($time = null): DateTime
     {
         $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
 
@@ -87,7 +87,7 @@ class PropelDateTime extends DateTime
      *
      * @return string
      */
-    public static function getMicrotime()
+    public static function getMicrotime(): string
     {
         $mtime = microtime(true);
 
@@ -149,7 +149,7 @@ class PropelDateTime extends DateTime
      *
      * @return array<string>
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         // We need to use a string without a time zone, due to
         // PHP bug: http://bugs.php.net/bug.php?id=40743

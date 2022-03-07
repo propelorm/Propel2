@@ -47,7 +47,7 @@ class NameFactory
      *
      * @return \Propel\Generator\Model\NameGeneratorInterface
      */
-    protected static function getAlgorithm($name)
+    protected static function getAlgorithm($name): NameGeneratorInterface
     {
         if (!isset(self::$algorithms[$name])) {
             self::$algorithms[$name] = new $name();
@@ -66,7 +66,7 @@ class NameFactory
      *
      * @return string The generated name.
      */
-    public static function generateName($algorithmName, $inputs)
+    public static function generateName($algorithmName, $inputs): string
     {
         $algorithm = self::getAlgorithm($algorithmName);
 

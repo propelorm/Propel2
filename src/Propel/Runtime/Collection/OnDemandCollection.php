@@ -33,7 +33,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
+    public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher): void
     {
         $this->lastIterator = new OnDemandIterator($formatter, $dataFetcher);
     }
@@ -78,7 +78,7 @@ class OnDemandCollection extends Collection
         $keyType = TableMap::TYPE_PHPNAME,
         $includeLazyLoadColumns = true,
         $alreadyDumpedObjects = []
-    ) {
+    ): array {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
@@ -103,7 +103,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr)
+    public function fromArray($arr): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -180,7 +180,7 @@ class OnDemandCollection extends Collection
      * @return string|null
      */
     #[\ReturnTypeWillChange]
-    public function serialize()
+    public function serialize(): ?string
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -193,7 +193,7 @@ class OnDemandCollection extends Collection
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function unserialize($data)
+    public function unserialize($data): void
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -219,7 +219,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -231,7 +231,7 @@ class OnDemandCollection extends Collection
      *
      * @return int
      */
-    public function prepend($value)
+    public function prepend($value): int
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -243,7 +243,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function exchangeArray($input)
+    public function exchangeArray($input): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -253,7 +253,7 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
@@ -263,7 +263,7 @@ class OnDemandCollection extends Collection
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
+    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME): string
     {
         throw new PropelException('A OnDemandCollection cannot be exported.');
     }

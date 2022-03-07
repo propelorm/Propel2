@@ -20,7 +20,7 @@ interface DumperInterface
      *
      * @return string The dumped formatted output (XML, YAML, CSV...)
      */
-    public function dump(Database $database);
+    public function dump(Database $database): string;
 
     /**
      * Dumps a single Schema model into an XML formatted version.
@@ -30,5 +30,5 @@ interface DumperInterface
      *
      * @return string The dumped formatted output (XML, YAML, CSV...)
      */
-    public function dumpSchema(Schema $schema, $doFinalInitialization = true);
+    public function dumpSchema(Schema $schema, bool $doFinalInitialization = true): string;
 }

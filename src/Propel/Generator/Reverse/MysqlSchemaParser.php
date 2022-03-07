@@ -86,7 +86,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$mysqlTypeMap;
     }
@@ -107,7 +107,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         if ($this->getGeneratorConfig() !== null) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];
@@ -143,7 +143,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function parseTables(Database $database, $filterTable = null)
+    protected function parseTables(Database $database, $filterTable = null): void
     {
         $sql = 'SHOW FULL TABLES';
 
@@ -183,7 +183,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW COLUMNS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
@@ -204,7 +204,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return \Propel\Generator\Model\Column
      */
-    public function getColumnFromRow($row, Table $table)
+    public function getColumnFromRow($row, Table $table): Column
     {
         $name = $row['Field'];
         $isNullable = ($row['Null'] === 'YES');
@@ -380,7 +380,7 @@ EOT;
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table)
+    protected function addForeignKeys(Table $table): void
     {
         $database = $table->getDatabase();
 
@@ -478,7 +478,7 @@ EOT;
      *
      * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW INDEX FROM %s', $this->getPlatform()->doQuoting($table->getName())));
@@ -533,7 +533,7 @@ EOT;
      *
      * @return void
      */
-    protected function addPrimaryKey(Table $table)
+    protected function addPrimaryKey(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query(sprintf('SHOW KEYS FROM %s', $this->getPlatform()->doQuoting($table->getName())));
@@ -560,7 +560,7 @@ EOT;
      *
      * @return void
      */
-    protected function addTableVendorInfo(Table $table)
+    protected function addTableVendorInfo(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");

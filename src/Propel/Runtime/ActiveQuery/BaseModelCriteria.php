@@ -13,6 +13,7 @@ use IteratorAggregate;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
+use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Traversable;
 
@@ -84,7 +85,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return array<\Propel\Runtime\ActiveQuery\ModelWith>
      */
-    public function getWith()
+    public function getWith(): array
     {
         return $this->with;
     }
@@ -139,7 +140,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */
-    public function getFormatter()
+    public function getFormatter(): AbstractFormatter
     {
         if ($this->formatter === null) {
             $formatterClass = $this->defaultFormatterClass;
@@ -152,9 +153,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the name of the class for this model criteria
      *
-     * @return string
+     * @return string|null
      */
-    public function getModelName()
+    public function getModelName(): ?string
     {
         return $this->modelName;
     }
@@ -192,7 +193,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * @return string
      */
-    public function getFullyQualifiedModelName()
+    public function getFullyQualifiedModelName(): string
     {
         return '\\' . $this->getModelName();
     }
@@ -220,9 +221,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the alias of the main class for this model criteria
      *
-     * @return string The model alias
+     * @return string|null The model alias
      */
-    public function getModelAlias()
+    public function getModelAlias(): ?string
     {
         return $this->modelAlias;
     }
@@ -230,9 +231,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Return the string to use in a clause as a model prefix for the main model
      *
-     * @return string The model alias if it exists, the model name if not
+     * @return string|null The model alias if it exists, the model name if not
      */
-    public function getModelAliasOrName()
+    public function getModelAliasOrName(): ?string
     {
         return $this->modelAlias ?: $this->modelName;
     }
@@ -242,7 +243,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return string The short model name
      */
-    public function getModelShortName()
+    public function getModelShortName(): string
     {
         return static::getShortName($this->modelName ?: '');
     }
@@ -254,7 +255,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return string The short class name
      */
-    public static function getShortName(string $fullyQualifiedClassName)
+    public static function getShortName(string $fullyQualifiedClassName): string
     {
         $namespaceParts = explode('\\', $fullyQualifiedClassName);
 
@@ -264,9 +265,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the TableMap object for this Criteria
      *
-     * @return \Propel\Runtime\Map\TableMap
+     * @return \Propel\Runtime\Map\TableMap|null
      */
-    public function getTableMap()
+    public function getTableMap(): ?TableMap
     {
         return $this->tableMap;
     }
@@ -276,9 +277,9 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * Either the SQL name or an alias.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTableNameInQuery()
+    public function getTableNameInQuery(): ?string
     {
         if ($this->useAliasInSQL && $this->modelAlias) {
             return $this->modelAlias;

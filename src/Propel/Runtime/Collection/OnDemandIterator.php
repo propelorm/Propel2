@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Collection;
 
 use Iterator;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -66,7 +67,7 @@ class OnDemandIterator implements Iterator
     /**
      * @return void
      */
-    public function closeCursor()
+    public function closeCursor(): void
     {
         $this->dataFetcher->close();
         if ($this->enableInstancePoolingOnFinish) {
@@ -98,7 +99,7 @@ class OnDemandIterator implements Iterator
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): ActiveRecordInterface
     {
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
     }
@@ -111,7 +112,7 @@ class OnDemandIterator implements Iterator
      * @return int
      */
     #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): int
     {
         return $this->currentKey;
     }

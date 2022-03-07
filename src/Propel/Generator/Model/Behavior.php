@@ -52,7 +52,7 @@ class Behavior extends MappingModel
     /**
      * A collection of parameters.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [];
 
@@ -95,7 +95,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
 
@@ -111,7 +111,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -122,7 +122,7 @@ class Behavior extends MappingModel
      *
      * @return bool
      */
-    public function allowMultiple()
+    public function allowMultiple(): bool
     {
         return false;
     }
@@ -132,7 +132,7 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -140,9 +140,9 @@ class Behavior extends MappingModel
     /**
      * Returns the name of the Behavior
      *
-     * @return string
+     * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -154,7 +154,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -162,9 +162,9 @@ class Behavior extends MappingModel
     /**
      * Returns the table this behavior is applied to
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable()
+    public function getTable(): ?Table
     {
         return $this->table;
     }
@@ -176,7 +176,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setDatabase(Database $database)
+    public function setDatabase(Database $database): void
     {
         $this->database = $database;
     }
@@ -187,7 +187,7 @@ class Behavior extends MappingModel
      *
      * @return \Propel\Generator\Model\Database
      */
-    public function getDatabase()
+    public function getDatabase(): Database
     {
         return $this->database;
     }
@@ -202,7 +202,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function addParameter(array $parameter)
+    public function addParameter(array $parameter): void
     {
         $parameter = array_change_key_case($parameter, CASE_LOWER);
         $this->parameters[$parameter['name']] = $parameter['value'];
@@ -217,7 +217,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }
@@ -227,7 +227,7 @@ class Behavior extends MappingModel
      *
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -255,7 +255,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setTableModificationOrder($tableModificationOrder)
+    public function setTableModificationOrder($tableModificationOrder): void
     {
         $this->tableModificationOrder = (int)$tableModificationOrder;
     }
@@ -269,7 +269,7 @@ class Behavior extends MappingModel
      *
      * @return int
      */
-    public function getTableModificationOrder()
+    public function getTableModificationOrder(): int
     {
         return $this->tableModificationOrder;
     }
@@ -283,7 +283,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getTables() as $table) {
             if ($table->hasBehavior($this->getId())) {
@@ -300,7 +300,7 @@ class Behavior extends MappingModel
      *
      * @return array<\Propel\Generator\Model\Table> A collection of Table instance
      */
-    protected function getTables()
+    protected function getTables(): array
     {
         return $this->database->getTables();
     }
@@ -312,7 +312,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
     }
 
@@ -323,7 +323,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setTableModified($modified)
+    public function setTableModified($modified): void
     {
         $this->isTableModified = $modified;
     }
@@ -333,7 +333,7 @@ class Behavior extends MappingModel
      *
      * @return bool
      */
-    public function isTableModified()
+    public function isTableModified(): bool
     {
         return $this->isTableModified;
     }
@@ -351,7 +351,7 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
+    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/'): string
     {
         $filePath = $this->getDirname() . $templateDir . $filename;
         if (!file_exists($filePath)) {
@@ -378,7 +378,7 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    protected function getDirname()
+    protected function getDirname(): string
     {
         if ($this->dirname === null) {
             $r = new ReflectionObject($this);
@@ -394,9 +394,9 @@ class Behavior extends MappingModel
      *
      * @param string $name
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnForParameter($name)
+    public function getColumnForParameter($name): ?Column
     {
         return $this->table->getColumn($this->getParameter($name));
     }
@@ -406,7 +406,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
 
@@ -470,7 +470,7 @@ class Behavior extends MappingModel
      *
      * @return bool
      */
-    public function hasAdditionalBuilders()
+    public function hasAdditionalBuilders(): bool
     {
         return (bool)$this->additionalBuilders;
     }
@@ -480,7 +480,7 @@ class Behavior extends MappingModel
      *
      * @return array
      */
-    public function getAdditionalBuilders()
+    public function getAdditionalBuilders(): array
     {
         return $this->additionalBuilders;
     }

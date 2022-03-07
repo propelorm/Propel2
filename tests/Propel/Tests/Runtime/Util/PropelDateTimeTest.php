@@ -278,7 +278,7 @@ class TestPropelDateTime extends PropelDateTime
      *
      * @return bool
      */
-    public static function isTimestamp($value)
+    public static function isTimestamp($value): bool
     {
         return parent::isTimestamp($value);
     }

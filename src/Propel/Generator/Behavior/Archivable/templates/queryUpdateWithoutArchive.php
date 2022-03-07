@@ -4,11 +4,11 @@
  *
  * @param      array $values Associative array of keys and values to replace
  * @param      ConnectionInterface $con an optional connection object
- * @param      boolean $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), ortherwise it is a series of save() calls on all the found objects
+ * @param      bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), ortherwise it is a series of save() calls on all the found objects
  *
  * @return integer the number of deleted rows
  */
-public function updateWithoutArchive($values, $con = null, $forceIndividualSaves = false)
+public function updateWithoutArchive($values, $con = null, $forceIndividualSaves = false): int
 {
     $this->archiveOnUpdate = false;
 

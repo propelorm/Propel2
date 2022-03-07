@@ -62,7 +62,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
     /**
      * Default parameters value.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
         self::PARAMETER_KEY_FOREIGN_TABLE => null,
@@ -322,9 +322,9 @@ class AggregateMultipleColumnsBehavior extends Behavior
     }
 
     /**
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    protected function getForeignTable(): Table
+    protected function getForeignTable(): ?Table
     {
         $database = $this->getTable()->getDatabase();
         $foreignTableName = $this->getForeignTableNameFullyQualified();

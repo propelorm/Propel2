@@ -64,7 +64,7 @@ class TestCaseFixtures extends TestCase
     /**
      * Combination of $lastBuildDsn and $lastBuildMode, indicating build version of currently active configurations
      *
-     * @var string
+     * @var string|null
      */
     protected static $activeConfigsVersion;
 

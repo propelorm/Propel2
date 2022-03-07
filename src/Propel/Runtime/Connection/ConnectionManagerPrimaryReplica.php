@@ -47,10 +47,18 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     */
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $name The datasource name associated to this connection
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -58,7 +66,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     /**
      * @return string The datasource name associated to this connection
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -68,7 +76,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return bool
      */
-    public function isForcePrimaryConnection()
+    public function isForcePrimaryConnection(): bool
     {
         return $this->isForcePrimaryConnection;
     }
@@ -80,7 +88,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setForcePrimaryConnection($isForceMasterConnection)
+    public function setForcePrimaryConnection($isForceMasterConnection): void
     {
         $this->isForcePrimaryConnection = (bool)$isForceMasterConnection;
     }
@@ -100,7 +108,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setWriteConfiguration($configuration)
+    public function setWriteConfiguration($configuration): void
     {
         $this->writeConfiguration = $configuration;
         $this->closeConnections();
@@ -128,7 +136,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setReadConfiguration($configuration)
+    public function setReadConfiguration($configuration): void
     {
         $this->readConfiguration = $configuration;
         $this->closeConnections();
@@ -143,7 +151,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(?AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
         if ($this->writeConnection === null) {
             $this->writeConnection = ConnectionFactory::create($this->writeConfiguration, $adapter);
@@ -163,7 +171,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(?AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
         if ($this->writeConnection && $this->writeConnection->inTransaction()) {
             return $this->writeConnection;
@@ -190,7 +198,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     /**
      * @return void
      */
-    public function closeConnections()
+    public function closeConnections(): void
     {
         $this->writeConnection = null;
         $this->readConnection = null;

@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Connection;
 
 use PDO;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\DataFetcher\PDODataFetcher;
 use Propel\Runtime\Exception\InvalidArgumentException;
 
@@ -47,15 +48,15 @@ class PdoConnection implements ConnectionInterface
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string|null The datasource name associated to this connection
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -72,7 +73,7 @@ class PdoConnection implements ConnectionInterface
     {
         // Convert option keys from a string to a PDO:: constant
         $pdoOptions = [];
-        if (is_array($options)) {
+        if ($options) {
             foreach ($options as $key => $option) {
                 $index = (is_numeric($key)) ? $key : constant('PDO::' . $key);
                 $pdoOptions[$index] = $option;
@@ -95,12 +96,12 @@ class PdoConnection implements ConnectionInterface
      *
      * @return bool
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
         if (is_string($attribute) && strpos($attribute, '::') === false) {
             $attribute = '\PDO::' . $attribute;
             if (!defined($attribute)) {
-                throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: "%s"', $attribute));
+                throw new InvalidArgumentException(sprintf('Invalid PDO option/attribute name specified: `%s`', $attribute));
             }
             $attribute = constant($attribute);
         }
@@ -111,7 +112,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function getDataFetcher($data)
+    public function getDataFetcher($data): DataFetcherInterface
     {
         return new PDODataFetcher($data);
     }
@@ -119,7 +120,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function getSingleDataFetcher($data)
+    public function getSingleDataFetcher($data): DataFetcherInterface
     {
         return $this->getDataFetcher($data);
     }
@@ -129,7 +130,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return \PDOStatement|false
      */
-    public function query($statement)
+    public function query(string $statement)
     {
         return $this->pdo->query($statement);
     }
@@ -139,7 +140,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return int
      */
-    public function exec($statement)
+    public function exec($statement): int
     {
         return $this->pdo->exec($statement);
     }
@@ -147,7 +148,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritDoc
      */
-    public function inTransaction()
+    public function inTransaction(): bool
     {
         return $this->pdo->inTransaction();
     }
@@ -191,7 +192,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return string
      */
-    public function quote($string, $parameterType = PDO::PARAM_STR)
+    public function quote($string, $parameterType = PDO::PARAM_STR): string
     {
         return $this->pdo->quote($string, $parameterType);
     }
@@ -199,7 +200,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         return $this->pdo->beginTransaction();
     }
@@ -207,7 +208,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         return $this->pdo->commit();
     }
@@ -215,7 +216,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @return bool
      */
-    public function rollBack()
+    public function rollBack(): bool
     {
         return $this->pdo->rollBack();
     }

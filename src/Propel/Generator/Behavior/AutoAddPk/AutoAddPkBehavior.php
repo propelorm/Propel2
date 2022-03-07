@@ -20,7 +20,7 @@ class AutoAddPkBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'name' => 'id',
@@ -34,7 +34,7 @@ class AutoAddPkBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getDatabase()->getTables() as $table) {
             if (!$table->hasPrimaryKey()) {
@@ -49,7 +49,7 @@ class AutoAddPkBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         if (!$table->hasPrimaryKey() && !$table->hasBehavior('concrete_inheritance')) {

@@ -66,7 +66,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function isUnique()
+    public function isUnique(): bool
     {
         return false;
     }
@@ -78,7 +78,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
@@ -89,7 +89,7 @@ class Index extends MappingModel
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $this->doNaming();
 
@@ -103,7 +103,7 @@ class Index extends MappingModel
     /**
      * @return void
      */
-    protected function doNaming()
+    protected function doNaming(): void
     {
         if (!$this->name || $this->autoNaming) {
             $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
@@ -130,7 +130,7 @@ class Index extends MappingModel
     /**
      * @return string
      */
-    public function getFQName()
+    public function getFQName(): string
     {
         $table = $this->getTable();
         if (
@@ -153,7 +153,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -163,7 +163,7 @@ class Index extends MappingModel
      *
      * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable()
+    public function getTable(): ?Table
     {
         return $this->table;
     }
@@ -173,7 +173,7 @@ class Index extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->table->getName();
     }
@@ -185,13 +185,13 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function addColumn($data)
+    public function addColumn($data): void
     {
         if ($data instanceof Column) {
             $column = $data;
-            $this->columns[] = $column->getName();
+            $this->columns[] = (string)$column->getName();
             if ($column->getSize()) {
-                $this->columnsSize[$column->getName()] = $column->getSize();
+                $this->columnsSize[$column->getName()] = (int)$column->getSize();
             }
             $this->columnObjects[] = $column;
         } else {
@@ -210,7 +210,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumn($name)
+    public function hasColumn($name): bool
     {
         return in_array($name, $this->columns);
     }
@@ -222,7 +222,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): void
     {
         $this->columns = [];
         $this->columnsSize = [];
@@ -238,7 +238,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumnSize($name)
+    public function hasColumnSize($name): bool
     {
         return isset($this->columnsSize[$name]);
     }
@@ -251,7 +251,7 @@ class Index extends MappingModel
      *
      * @return int|null
      */
-    public function getColumnSize($name, $caseInsensitive = false)
+    public function getColumnSize($name, $caseInsensitive = false): ?int
     {
         if ($caseInsensitive) {
             foreach ($this->columnsSize as $forName => $size) {
@@ -273,7 +273,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function resetColumnsSize()
+    public function resetColumnsSize(): void
     {
         $this->columnsSize = [];
     }
@@ -288,7 +288,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)
+    public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false): bool
     {
         if (!isset($this->columns[$pos])) {
             return false;
@@ -316,7 +316,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumns()
+    public function hasColumns(): bool
     {
         return count($this->columns) > 0;
     }
@@ -328,7 +328,7 @@ class Index extends MappingModel
      *
      * @return array<string>
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -336,7 +336,7 @@ class Index extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
     }
@@ -344,7 +344,7 @@ class Index extends MappingModel
     /**
      * @return array<\Propel\Generator\Model\Column>
      */
-    public function getColumnObjects()
+    public function getColumnObjects(): array
     {
         return $this->columnObjects;
     }
@@ -354,7 +354,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setColumnObjects($columnObjects)
+    public function setColumnObjects($columnObjects): void
     {
         $this->columnObjects = $columnObjects;
     }

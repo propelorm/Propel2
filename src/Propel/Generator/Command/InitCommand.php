@@ -46,7 +46,7 @@ class InitCommand extends AbstractCommand
     /**
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -181,7 +181,7 @@ class InitCommand extends AbstractCommand
     /**
      * @return string
      */
-    private function detectDefaultPhpDir()
+    private function detectDefaultPhpDir(): string
     {
         if (file_exists(getcwd() . '/src/')) {
             $vendors = Finder::create()->directories()->in(getcwd() . '/src/')->depth(1);
@@ -202,7 +202,7 @@ class InitCommand extends AbstractCommand
      *
      * @return string
      */
-    private function initMysql(ConsoleHelper $consoleHelper)
+    private function initMysql(ConsoleHelper $consoleHelper): string
     {
         $host = $consoleHelper->askQuestion('Please enter your database host', 'localhost');
         $port = $consoleHelper->askQuestion('Please enter your database port', '3306');
@@ -216,7 +216,7 @@ class InitCommand extends AbstractCommand
      *
      * @return string
      */
-    private function initSqlite(ConsoleHelper $consoleHelper)
+    private function initSqlite(ConsoleHelper $consoleHelper): string
     {
         $path = $consoleHelper->askQuestion('Where should the sqlite database be stored?', getcwd() . '/my.app.sq3');
 
@@ -228,7 +228,7 @@ class InitCommand extends AbstractCommand
      *
      * @return string
      */
-    private function initPgsql(ConsoleHelper $consoleHelper)
+    private function initPgsql(ConsoleHelper $consoleHelper): string
     {
         $host = $consoleHelper->askQuestion('Please enter your database host (without port)', 'localhost');
         $port = $consoleHelper->askQuestion('Please enter your database port', '5432');
@@ -267,11 +267,11 @@ class InitCommand extends AbstractCommand
 
     /**
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     * @param array $options
+     * @param array<string, mixed> $options
      *
      * @return void
      */
-    private function generateProject(OutputInterface $output, array $options)
+    private function generateProject(OutputInterface $output, array $options): void
     {
         $schema = new PropelTemplate();
         $schema->setTemplateFile(__DIR__ . '/templates/schema.xml.php');
@@ -298,7 +298,7 @@ class InitCommand extends AbstractCommand
      *
      * @return void
      */
-    private function buildSqlAndModelsAndConvertConfig(?OutputInterface $output = null)
+    private function buildSqlAndModelsAndConvertConfig(?OutputInterface $output = null): void
     {
         $this->getApplication()->setAutoExit(false);
 
@@ -325,7 +325,7 @@ class InitCommand extends AbstractCommand
      *
      * @return void
      */
-    private function writeFile(OutputInterface $output, $filename, $content)
+    private function writeFile(OutputInterface $output, $filename, $content): void
     {
         $this->getFilesystem()->dumpFile($filename, $content);
 
@@ -338,7 +338,7 @@ class InitCommand extends AbstractCommand
      *
      * @return bool
      */
-    private function testConnection(ConsoleHelper $consoleHelper, array $options)
+    private function testConnection(ConsoleHelper $consoleHelper, array $options): bool
     {
         $adapter = AdapterFactory::create($options['rdbms']);
 
@@ -359,7 +359,7 @@ class InitCommand extends AbstractCommand
             $consoleHelper->writeln('');
 
             if ($consoleHelper->getOutput()->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
-                $consoleHelper->writeln($e);
+                $consoleHelper->writeln('Exception: ' . print_r($e, true));
             }
 
             return false;
@@ -372,7 +372,7 @@ class InitCommand extends AbstractCommand
      *
      * @return string
      */
-    private function reverseEngineerSchema(OutputInterface $output, array $options)
+    private function reverseEngineerSchema(OutputInterface $output, array $options): string
     {
         $outputDir = sys_get_temp_dir();
 

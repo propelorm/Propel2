@@ -11,6 +11,7 @@ namespace Propel\Runtime\Connection;
 use IteratorAggregate;
 use PDO;
 use PDOStatement;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Traversable;
 
 /**
@@ -87,7 +88,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function query()
+    public function query(): DataFetcherInterface
     {
         if ($this->connection->useDebug) {
             $callback = [$this->connection->getWrappedConnection(), 'query'];
@@ -114,7 +115,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null)
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null): bool
     {
         $return = $this->statement->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
         if ($this->connection->useDebug) {
@@ -138,7 +139,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR)
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR): bool
     {
         $return = $this->statement->bindValue($parameter, $value, $dataType);
         if ($this->connection->useDebug) {
@@ -166,7 +167,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool Returns TRUE on success or FALSE on failure.
      */
-    public function closeCursor()
+    public function closeCursor(): bool
     {
         return $this->statement->closeCursor();
     }
@@ -188,7 +189,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * by the PDOStatement object. If there is no result set,
      * this method should return 0.
      */
-    public function columnCount()
+    public function columnCount(): int
     {
         return $this->statement->columnCount();
     }
@@ -203,7 +204,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function execute($inputParameters = null)
+    public function execute($inputParameters = null): bool
     {
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString($inputParameters);
@@ -257,7 +258,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return array
      */
-    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, $ctorArgs = [])
+    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, $ctorArgs = []): array
     {
         return $this->statement->fetchAll($fetchStyle);
     }
@@ -271,7 +272,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return string|null A single column in the next row of a result set.
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn($columnIndex = 0): ?string
     {
         $output = $this->statement->fetchColumn($columnIndex);
 
@@ -291,7 +292,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return int The number of rows.
      */
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->statement->rowCount();
     }
@@ -309,7 +310,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @return \Propel\Runtime\Connection\ConnectionWrapper
      */
-    public function getConnection()
+    public function getConnection(): ConnectionWrapper
     {
         return $this->connection;
     }
@@ -317,7 +318,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @return \PDOStatement
      */
-    public function getStatement()
+    public function getStatement(): PDOStatement
     {
         return $this->statement;
     }
@@ -327,7 +328,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return void
      */
-    public function setStatement(PDOStatement $statement)
+    public function setStatement(PDOStatement $statement): void
     {
         $this->statement = $statement;
     }
@@ -335,7 +336,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @return array
      */
-    public function getBoundValues()
+    public function getBoundValues(): array
     {
         return $this->boundValues;
     }
@@ -343,7 +344,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool
     {
         return $this->statement->bindColumn($column, $param, $type, $maxlen, $driverdata);
     }
@@ -359,7 +360,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function errorCode()
+    public function errorCode(): string
     {
         return $this->statement->errorCode();
     }
@@ -367,7 +368,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function errorInfo()
+    public function errorInfo(): array
     {
         return $this->statement->errorInfo();
     }
@@ -375,7 +376,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
         return $this->statement->setAttribute($attribute, $value);
     }
@@ -399,7 +400,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = [])
+    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = []): bool
     {
         switch (func_num_args()) {
             case 1:
@@ -416,7 +417,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function nextRowset()
+    public function nextRowset(): bool
     {
         return $this->statement->nextRowset();
     }

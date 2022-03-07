@@ -20,6 +20,6 @@ echo sprintf("Tests started in temp %s.\n", sys_get_temp_dir());
  * @see https://bugs.php.net/bug.php?id=64760
  * @see https://github.com/sebastianbergmann/phpunit/issues/1052
  */
-ini_set('precision', 14);
-ini_set('serialize_precision', 14);
+ini_set('precision', '14');
+ini_set('serialize_precision', '14');
 setlocale(LC_ALL, 'en_US.utf8'); //fixed issues with hhvm and iconv

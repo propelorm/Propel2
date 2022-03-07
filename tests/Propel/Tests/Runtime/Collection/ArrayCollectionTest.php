@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
@@ -262,7 +263,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
 class TestableArrayCollection extends ArrayCollection
 {
-    public function getWorkerObject()
+    public function getWorkerObject(): ActiveRecordInterface
     {
         return parent::getWorkerObject();
     }

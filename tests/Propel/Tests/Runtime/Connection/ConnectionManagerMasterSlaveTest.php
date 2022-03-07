@@ -22,20 +22,10 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testGetNameReturnsNullByDefault()
-    {
-        $manager = new ConnectionManagerMasterSlave();
-        $this->assertNull($manager->getName());
-    }
-
-    /**
-     * @return void
-     */
     public function testGetNameReturnsNameSetUsingSetName()
     {
-        $manager = new ConnectionManagerMasterSlave();
-        $manager->setName('foo');
-        $this->assertEquals('foo', $manager->getName());
+        $manager = new ConnectionManagerMasterSlave('foo');
+        $this->assertSame('foo', $manager->getName());
     }
 
     /**
@@ -45,7 +35,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $con = $manager->getWriteConnection(new SqliteAdapter());
     }
 
@@ -54,7 +44,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetWriteConnectionBuildsConnectionBasedOnWriteConfiguration()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:']);
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
@@ -67,7 +57,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetWriteConnectionBuildsConnectionNotBasedOnReadConfiguration()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_UPPER]]);
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_LOWER]]]);
         $con = $manager->getWriteConnection(new SqliteAdapter());
@@ -80,8 +70,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetWriteConnectionReturnsAConnectionNamedAfterTheManager()
     {
-        $manager = new ConnectionManagerMasterSlave();
-        $manager->setName('foo');
+        $manager = new ConnectionManagerMasterSlave('foo');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:']);
         $con = $manager->getWriteConnection(new SqliteAdapter());
         $this->assertEquals('foo', $con->getName());
@@ -92,7 +81,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetReadConnectionBuildsConnectionBasedOnReadConfiguration()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:']]);
         $con = $manager->getReadConnection(new SqliteAdapter());
         $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionWrapper', $con);
@@ -105,7 +94,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetReadConnectionBuildsConnectionNotBasedOnWriteConfiguration()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_UPPER]]);
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_LOWER]]]);
         $con = $manager->getReadConnection(new SqliteAdapter());
@@ -118,7 +107,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetReadConnectionReturnsWriteConnectionIfNoReadConnectionIsSet()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:']);
         $writeCon = $manager->getWriteConnection(new SqliteAdapter());
         $readCon = $manager->getReadConnection(new SqliteAdapter());
@@ -130,7 +119,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetReadConnectionBuildsConnectionBasedOnARandomReadConfiguration()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setReadConfiguration([
             ['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_LOWER]],
             ['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_UPPER]],
@@ -146,8 +135,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testGetReadConnectionReturnsAConnectionNamedAfterTheManager()
     {
-        $manager = new ConnectionManagerMasterSlave();
-        $manager->setName('foo');
+        $manager = new ConnectionManagerMasterSlave('foo');
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:']]);
         $con = $manager->getReadConnection(new SqliteAdapter());
         $this->assertEquals('foo', $con->getName());
@@ -158,7 +146,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testIsForceMasterConnectionFalseByDefault()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $this->assertFalse($manager->isForceMasterConnection());
     }
 
@@ -167,7 +155,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testSetForceMasterConnection()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setForceMasterConnection(true);
         $this->assertTrue($manager->isForceMasterConnection());
         $manager->setForceMasterConnection(false);
@@ -179,7 +167,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testForceMasterConnectionForcesMasterConnectionOnRead()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setForceMasterConnection(true);
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_UPPER]]);
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_LOWER]]]);
@@ -196,7 +184,7 @@ class ConnectionManagerMasterSlaveTest extends BaseTestCase
      */
     public function testReadConnectionWhenMasterIsInTransaction()
     {
-        $manager = new ConnectionManagerMasterSlave();
+        $manager = new ConnectionManagerMasterSlave('default');
         $manager->setWriteConfiguration(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_UPPER]]);
         $manager->setReadConfiguration([['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CASE' => PDO::CASE_LOWER]]]);
 

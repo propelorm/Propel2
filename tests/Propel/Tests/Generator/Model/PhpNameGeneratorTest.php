@@ -71,12 +71,12 @@ class PhpNameGeneratorTest extends TestCase
 
 class TestablePhpNameGenerator extends PhpNameGenerator
 {
-    public function phpnameMethod($schemaName)
+    public function phpnameMethod($schemaName): string
     {
         return parent::phpnameMethod($schemaName);
     }
 
-    public function underscoreMethod($schemaName)
+    public function underscoreMethod($schemaName): string
     {
         return parent::underscoreMethod($schemaName);
     }

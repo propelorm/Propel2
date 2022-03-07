@@ -70,7 +70,7 @@ class ExistsCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
     {
         $existsQuery = $this->existsQuery
             ->clearSelectColumns()
@@ -85,7 +85,7 @@ class ExistsCriterion extends AbstractCriterion
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
-    protected function buildJoinCondition($outerQuery, RelationMap $relationMap)
+    protected function buildJoinCondition($outerQuery, RelationMap $relationMap): AbstractCriterion
     {
         $join = new ModelJoin();
         $outerAlias = $outerQuery->getModelAlias();

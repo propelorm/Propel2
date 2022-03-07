@@ -36,7 +36,7 @@ class BinaryCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
     {
         if ($this->value !== null) {
             $params[] = ['table' => $this->realtable, 'column' => $this->column, 'value' => $this->value];

@@ -37,7 +37,7 @@ class InCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
     {
         $bindParams = [];
         $index = count($params); // to avoid counting the number of parameters for each element in the array

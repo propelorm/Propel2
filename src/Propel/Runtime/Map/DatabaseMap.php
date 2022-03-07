@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\TableNotFoundException;
 use Propel\Runtime\Propel;
 
@@ -73,7 +74,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap The newly created TableMap.
      */
-    public function addTable($tableName)
+    public function addTable($tableName): TableMap
     {
         $this->tables[$tableName] = new TableMap($tableName, $this);
 
@@ -87,7 +88,7 @@ class DatabaseMap
      *
      * @return void
      */
-    public function addTableObject(TableMap $table)
+    public function addTableObject(TableMap $table): void
     {
         $table->setDatabaseMap($this);
 
@@ -110,7 +111,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap The TableMap object
      */
-    public function addTableFromMapClass($tableMapClass)
+    public function addTableFromMapClass($tableMapClass): TableMap
     {
         $table = new $tableMapClass();
         $this->addTableObject($table);
@@ -125,7 +126,7 @@ class DatabaseMap
      *
      * @return bool True if the database contains the table.
      */
-    public function hasTable(string $name)
+    public function hasTable(string $name): bool
     {
         if (strpos($name, '.') > 0) {
             $name = substr($name, 0, strpos($name, '.'));
@@ -143,10 +144,10 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap A TableMap
      */
-    public function getTable($name)
+    public function getTable($name): TableMap
     {
         if (!isset($this->tables[$name])) {
-            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table %s in database %s.', $name, $this->getName()));
+            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
         }
 
         return $this->tables[$name];
@@ -157,7 +158,7 @@ class DatabaseMap
      *
      * @return array<\Propel\Runtime\Map\TableMap>
      */
-    public function getTables()
+    public function getTables(): array
     {
         return $this->tables;
     }
@@ -170,7 +171,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A TableMap
      */
-    public function getColumn($qualifiedColumnName)
+    public function getColumn($qualifiedColumnName): ColumnMap
     {
         [$tableName, $columnName] = explode('.', $qualifiedColumnName);
 
@@ -184,7 +185,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap
      */
-    public function getTableByPhpName($phpName)
+    public function getTableByPhpName($phpName): TableMap
     {
         if ($phpName[0] !== '\\') {
             $phpName = '\\' . $phpName;
@@ -224,7 +225,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public function getAbstractAdapter()
+    public function getAbstractAdapter(): AdapterInterface
     {
         return Propel::getServiceContainer()->getAdapter($this->name);
     }

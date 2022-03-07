@@ -45,7 +45,7 @@ class I18nBehaviorQueryBuilderModifier
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $this->builder = $builder;
         $script = '';
@@ -59,7 +59,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addJoinI18n()
+    protected function addJoinI18n(): string
     {
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -74,7 +74,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addJoinWithI18n()
+    protected function addJoinWithI18n(): string
     {
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -88,7 +88,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addUseI18nQuery()
+    protected function addUseI18nQuery(): string
     {
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();

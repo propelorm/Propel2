@@ -27,9 +27,9 @@ class ArrayFormatter extends AbstractFormatter
     protected $alreadyHydratedObjects = [];
 
     /**
-     * @var mixed
+     * @var array
      */
-    protected $emptyVariable;
+    protected $emptyVariable = [];
 
     /**
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
@@ -76,7 +76,7 @@ class ArrayFormatter extends AbstractFormatter
     /**
      * @return string|null
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): ?string
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
@@ -88,7 +88,7 @@ class ArrayFormatter extends AbstractFormatter
      *
      * @return array|null
      */
-    public function formatOne(?DataFetcherInterface $dataFetcher = null)
+    public function formatOne(?DataFetcherInterface $dataFetcher = null): ?array
     {
         $this->checkInit();
         $result = null;
@@ -123,7 +123,7 @@ class ArrayFormatter extends AbstractFormatter
      *
      * @return array The original record turned into an array
      */
-    public function formatRecord(?ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null): array
     {
         return $record ? $record->toArray() : [];
     }
@@ -131,7 +131,7 @@ class ArrayFormatter extends AbstractFormatter
     /**
      * @return bool
      */
-    public function isObjectFormatter()
+    public function isObjectFormatter(): bool
     {
         return false;
     }
@@ -146,7 +146,7 @@ class ArrayFormatter extends AbstractFormatter
      *
      * @return array
      */
-    public function &getStructuredArrayFromRow($row)
+    public function &getStructuredArrayFromRow($row): array
     {
         $col = 0;
 

@@ -25,12 +25,12 @@ class SetColumnConverter
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
-     * @return string|int
+     * @return string Integer value as string.
      */
-    public static function convertToInt($val, array $valueSet)
+    public static function convertToInt($val, array $valueSet): string
     {
         if ($val === null) {
-            return 0;
+            return '0';
         }
         if (!is_array($val)) {
             $val = [$val];

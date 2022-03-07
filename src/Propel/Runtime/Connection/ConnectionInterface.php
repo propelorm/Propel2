@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Connection;
 
 use PDO;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 
 /**
  * Interface for Propel Connection class.
@@ -25,12 +26,12 @@ interface ConnectionInterface
      *
      * @return void
      */
-    public function setName($name);
+    public function setName($name): void;
 
     /**
-     * @return string The datasource name associated to this connection.
+     * @return string|null The datasource name associated to this connection.
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Turns off autocommit mode.
@@ -43,7 +44,7 @@ interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function beginTransaction();
+    public function beginTransaction(): bool;
 
     /**
      * Commits a transaction.
@@ -53,7 +54,7 @@ interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function commit();
+    public function commit(): bool;
 
     /**
      * Rolls back a transaction.
@@ -65,14 +66,14 @@ interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollBack();
+    public function rollBack(): bool;
 
     /**
      * Checks if inside a transaction.
      *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction();
+    public function inTransaction(): bool;
 
     /**
      * Retrieve a database connection attribute.
@@ -93,7 +94,7 @@ interface ConnectionInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value);
+    public function setAttribute($attribute, $value): bool;
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -119,14 +120,14 @@ interface ConnectionInterface
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function getSingleDataFetcher($data);
+    public function getSingleDataFetcher($data): DataFetcherInterface;
 
     /**
      * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function getDataFetcher($data);
+    public function getDataFetcher($data): DataFetcherInterface;
 
     /**
      * Executes the given callable within a transaction.
@@ -150,7 +151,7 @@ interface ConnectionInterface
      *
      * @return int The number of rows that were modified or deleted.
      */
-    public function exec($statement);
+    public function exec($statement): int;
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -182,7 +183,7 @@ interface ConnectionInterface
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|false
      */
-    public function query($statement);
+    public function query(string $statement);
 
     /**
      * Quotes a string for use in a query.
@@ -199,5 +200,5 @@ interface ConnectionInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameterType = PDO::PARAM_STR);
+    public function quote($string, $parameterType = PDO::PARAM_STR): string;
 }

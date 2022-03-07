@@ -36,30 +36,23 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @see NameGenerator
      *
-     * @param array<(string|null)> $inputs List expected to contain two (optional: three) parameters,
+     * @param array<string> $inputs List expected to contain two (optional: three) parameters,
      * element 0 contains name to convert, element 1 contains method for conversion,
      * optional element 2 contains prefix to be striped from name
      *
-     * @return string|null The generated name.
+     * @return string The generated name.
      */
-    public function generateName($inputs): ?string
+    public function generateName(array $inputs): string
     {
-        $schemaName = $inputs[0];
-        $method = $inputs[1];
+        $schemaName = (string)$inputs[0];
+        $method = (string)$inputs[1];
 
         if (count($inputs) > 2) {
-            $prefix = $inputs[2];
+            $prefix = (string)$inputs[2];
             if ($prefix && substr($schemaName, 0, strlen($prefix)) === $prefix) {
                 $schemaName = substr($schemaName, strlen($prefix));
             }
         }
-
-        // We really shouldn't be getting null here, but we cannot pass a null value further
-        if ($schemaName === null) {
-            return null;
-        }
-
-        $phpName = null;
 
         switch ($method) {
             case self::CONV_METHOD_CLEAN:
@@ -99,7 +92,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function underscoreMethod(string $schemaName)
+    protected function underscoreMethod(string $schemaName): string
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
@@ -126,7 +119,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function cleanMethod(string $schemaName)
+    protected function cleanMethod(string $schemaName): string
     {
         $name = '';
         $regexp = '/([a-z0-9]+)/i';
@@ -156,7 +149,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function phpnameMethod(string $schemaName)
+    protected function phpnameMethod(string $schemaName): string
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
@@ -176,7 +169,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string
      */
-    protected function nochangeMethod(string $name)
+    protected function nochangeMethod(string $name): string
     {
         return $name;
     }

@@ -8,7 +8,12 @@
 
 namespace Propel\Generator\Config;
 
+use Propel\Common\Pluralizer\PluralizerInterface;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Reverse\SchemaParserInterface;
+use Propel\Generator\Util\BehaviorLocator;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 interface GeneratorConfigInterface
@@ -22,14 +27,14 @@ interface GeneratorConfigInterface
      *
      * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getConfiguredBuilder(Table $table, $type);
+    public function getConfiguredBuilder(Table $table, string $type): AbstractOMBuilder;
 
     /**
      * Returns a configured Pluralizer class.
      *
      * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    public function getConfiguredPluralizer();
+    public function getConfiguredPluralizer(): PluralizerInterface;
 
     /**
      * Creates and configures a new Platform class.
@@ -42,7 +47,7 @@ interface GeneratorConfigInterface
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
      */
-    public function getConfiguredPlatform(?ConnectionInterface $con = null, $database = null);
+    public function getConfiguredPlatform(?ConnectionInterface $con = null, ?string $database = null): ?PlatformInterface;
 
     /**
      * Creates and configures a new SchemaParser class for a specified platform.
@@ -55,14 +60,14 @@ interface GeneratorConfigInterface
      *
      * @return \Propel\Generator\Reverse\SchemaParserInterface|null
      */
-    public function getConfiguredSchemaParser(?ConnectionInterface $con = null, $database = null);
+    public function getConfiguredSchemaParser(?ConnectionInterface $con = null, ?string $database = null): ?SchemaParserInterface;
 
     /**
      * Returns the behavior locator.
      *
      * @return \Propel\Generator\Util\BehaviorLocator
      */
-    public function getBehaviorLocator();
+    public function getBehaviorLocator(): BehaviorLocator;
 
     /**
      * Return a specific configuration property.
@@ -78,5 +83,5 @@ interface GeneratorConfigInterface
      *
      * @return mixed The configuration property
      */
-    public function getConfigProperty($name);
+    public function getConfigProperty(string $name);
 }

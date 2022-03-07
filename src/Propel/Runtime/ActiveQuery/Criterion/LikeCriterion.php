@@ -54,7 +54,7 @@ class LikeCriterion extends AbstractCriterion
      *
      * @return bool True if case is ignored.
      */
-    public function isIgnoreCase()
+    public function isIgnoreCase(): bool
     {
         return $this->ignoreStringCase;
     }
@@ -67,7 +67,7 @@ class LikeCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
     {
         $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
         $db = $this->getAdapter();

@@ -49,7 +49,7 @@ class SchemaValidator
     /**
      * @return bool true if valid, false otherwise
      */
-    public function validate()
+    public function validate(): bool
     {
         foreach ($this->schema->getDatabases() as $database) {
             $this->validateDatabaseTables($database);
@@ -63,7 +63,7 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateDatabaseTables(Database $database)
+    protected function validateDatabaseTables(Database $database): void
     {
         $phpNames = [];
         $namespaces = [];
@@ -90,7 +90,7 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateTableAttributes(Table $table)
+    protected function validateTableAttributes(Table $table): void
     {
         $reservedTableNames = ['table_name'];
         $tableName = strtolower($table->getName());
@@ -104,7 +104,7 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateTableColumns(Table $table)
+    protected function validateTableColumns(Table $table): void
     {
         if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {
             $this->errors[] = sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $table->getName());
@@ -123,7 +123,7 @@ class SchemaValidator
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

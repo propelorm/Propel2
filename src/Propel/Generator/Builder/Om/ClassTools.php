@@ -30,13 +30,17 @@ class ClassTools
             return null;
         }
 
-        if (false !== $pos = strrpos($qualifiedName, '.')) {
+        $pos = strrpos($qualifiedName, '.');
+        if ($pos !== false) {
             return substr($qualifiedName, $pos + 1); // start just after '.'
-        } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {
-            return substr($qualifiedName, $pos + 1);
-        } else {
-            return $qualifiedName; // there is no '.' in the qualified name
         }
+
+        $pos = strrpos($qualifiedName, '\\');
+        if ($pos !== false) {
+            return substr($qualifiedName, $pos + 1);
+        }
+
+        return $qualifiedName; // there is no '.' in the qualified name
     }
 
     /**
@@ -50,7 +54,7 @@ class ClassTools
      *
      * @return string The constructed file path.
      */
-    public static function createFilePath($path, $classname = null, $extension = '.php')
+    public static function createFilePath($path, $classname = null, $extension = '.php'): string
     {
         if ($classname === null) {
             return $path . $extension;
@@ -68,9 +72,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getBaseClass(Table $table)
+    public static function getBaseClass(Table $table): ?string
     {
         return $table->getBaseClass();
     }
@@ -80,9 +84,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getInterface(Table $table)
+    public static function getInterface(Table $table): ?string
     {
         return $table->getInterface();
     }
@@ -92,7 +96,7 @@ class ClassTools
      *
      * @return array<string>
      */
-    public static function getPhpReservedWords()
+    public static function getPhpReservedWords(): array
     {
         return [
             'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',
@@ -111,7 +115,7 @@ class ClassTools
     /**
      * @return array<string>
      */
-    public static function getPropelReservedMethods()
+    public static function getPropelReservedMethods(): array
     {
         return [
             'isModified', 'isColumnModified', 'isNew', 'isDeleted',

@@ -60,7 +60,7 @@ class XmlDumper implements DumperInterface
      *
      * @return string The dumped XML formatted output
      */
-    public function dump(Database $database)
+    public function dump(Database $database): string
     {
         $this->appendDatabaseNode($database, $this->document);
 
@@ -75,7 +75,7 @@ class XmlDumper implements DumperInterface
      *
      * @return string
      */
-    public function dumpSchema(Schema $schema, $doFinalInitialization = true)
+    public function dumpSchema(Schema $schema, bool $doFinalInitialization = true): string
     {
         $rootNode = $this->document->createElement('app-data');
         $this->document->appendChild($rootNode);
@@ -94,7 +94,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendDatabaseNode(Database $database, DOMNode $parentNode)
+    private function appendDatabaseNode(Database $database, DOMNode $parentNode): void
     {
         /** @var \DOMElement $databaseNode */
         $databaseNode = $parentNode->appendChild($this->document->createElement('database'));
@@ -179,7 +179,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendVendorInformationNode(VendorInfo $vendorInfo, DOMNode $parentNode)
+    private function appendVendorInformationNode(VendorInfo $vendorInfo, DOMNode $parentNode): void
     {
         /** @var \DOMElement $vendorNode */
         $vendorNode = $parentNode->appendChild($this->document->createElement('vendor'));
@@ -201,7 +201,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendTableNode(Table $table, DOMNode $parentNode)
+    private function appendTableNode(Table $table, DOMNode $parentNode): void
     {
         /** @var \DOMElement $tableNode */
         $tableNode = $parentNode->appendChild($this->document->createElement('table'));
@@ -336,7 +336,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendBehaviorNode(Behavior $behavior, DOMNode $parentNode)
+    private function appendBehaviorNode(Behavior $behavior, DOMNode $parentNode): void
     {
         /** @var \DOMElement $behaviorNode */
         $behaviorNode = $parentNode->appendChild($this->document->createElement('behavior'));
@@ -361,7 +361,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendColumnNode(Column $column, DOMNode $parentNode)
+    private function appendColumnNode(Column $column, DOMNode $parentNode): void
     {
         /** @var \DOMElement $columnNode */
         $columnNode = $parentNode->appendChild($this->document->createElement('column'));
@@ -436,7 +436,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendInheritanceNode(Inheritance $inheritance, DOMNode $parentNode)
+    private function appendInheritanceNode(Inheritance $inheritance, DOMNode $parentNode): void
     {
         /** @var \DOMElement $inheritanceNode */
         $inheritanceNode = $parentNode->appendChild($this->document->createElement('inheritance'));
@@ -456,7 +456,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendForeignKeyNode(ForeignKey $foreignKey, DOMNode $parentNode)
+    private function appendForeignKeyNode(ForeignKey $foreignKey, DOMNode $parentNode): void
     {
         /** @var \DOMElement $foreignKeyNode */
         $foreignKeyNode = $parentNode->appendChild($this->document->createElement('foreign-key'));
@@ -507,7 +507,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendIdMethodParameterNode(IdMethodParameter $parameter, DOMNode $parentNode)
+    private function appendIdMethodParameterNode(IdMethodParameter $parameter, DOMNode $parentNode): void
     {
         /** @var \DOMElement $idMethodParameterNode */
         $idMethodParameterNode = $parentNode->appendChild($this->document->createElement('id-method-parameter'));
@@ -525,7 +525,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendIndexNode(Index $index, DOMNode $parentNode)
+    private function appendIndexNode(Index $index, DOMNode $parentNode): void
     {
         $this->appendGenericIndexNode('index', $index, $parentNode);
     }
@@ -538,7 +538,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendUniqueIndexNode(Unique $index, DOMNode $parentNode)
+    private function appendUniqueIndexNode(Unique $index, DOMNode $parentNode): void
     {
         $this->appendGenericIndexNode('unique', $index, $parentNode);
     }
@@ -552,7 +552,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendGenericIndexNode($nodeType, Index $index, DOMNode $parentNode)
+    private function appendGenericIndexNode($nodeType, Index $index, DOMNode $parentNode): void
     {
         /** @var \DOMElement $indexNode */
         $indexNode = $parentNode->appendChild($this->document->createElement($nodeType));

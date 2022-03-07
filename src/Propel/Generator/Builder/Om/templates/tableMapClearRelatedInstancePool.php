@@ -3,7 +3,7 @@
      * Method to invalidate the instance pool of all tables related to <?= $tableName ?>
      * by a foreign key with ON DELETE CASCADE
      */
-    public static function clearRelatedInstancePool()
+    public static function clearRelatedInstancePool(): void
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.

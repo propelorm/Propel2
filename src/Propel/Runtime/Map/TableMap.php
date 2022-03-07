@@ -204,7 +204,7 @@ class TableMap
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
     }
 
@@ -215,7 +215,7 @@ class TableMap
      *
      * @return void
      */
-    public function setDatabaseMap(DatabaseMap $dbMap)
+    public function setDatabaseMap(DatabaseMap $dbMap): void
     {
         $this->dbMap = $dbMap;
     }
@@ -225,7 +225,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\DatabaseMap A DatabaseMap.
      */
-    public function getDatabaseMap()
+    public function getDatabaseMap(): DatabaseMap
     {
         return $this->dbMap;
     }
@@ -237,7 +237,7 @@ class TableMap
      *
      * @return void
      */
-    public function setName(?string $name)
+    public function setName(?string $name): void
     {
         $this->tableName = $name;
     }
@@ -259,7 +259,7 @@ class TableMap
      *
      * @return void
      */
-    public function setPhpName($phpName)
+    public function setPhpName($phpName): void
     {
         $this->phpName = $phpName;
     }
@@ -267,9 +267,9 @@ class TableMap
     /**
      * Get the PHP name of the Table.
      *
-     * @return string A String with the name of the table.
+     * @return string|null A String with the name of the table.
      */
-    public function getPhpName()
+    public function getPhpName(): ?string
     {
         return $this->phpName;
     }
@@ -282,7 +282,7 @@ class TableMap
      *
      * @return void
      */
-    public function setClassName($classname)
+    public function setClassName($classname): void
     {
         $this->classname = $classname;
     }
@@ -290,9 +290,9 @@ class TableMap
     /**
      * Get the ClassName of the Propel Class belonging to this table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName()
+    public function getClassName(): ?string
     {
         return $this->classname;
     }
@@ -302,7 +302,7 @@ class TableMap
      *
      * @return string
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): string
     {
         $collectionClassName = $this->getClassName() . 'Collection';
         if (class_exists($collectionClassName) && is_subclass_of($collectionClassName, Collection::class)) {
@@ -319,7 +319,7 @@ class TableMap
      *
      * @return void
      */
-    public function setPackage($package)
+    public function setPackage($package): void
     {
         $this->package = $package;
     }
@@ -327,9 +327,9 @@ class TableMap
     /**
      * Get the Package of the table.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return $this->package;
     }
@@ -341,7 +341,7 @@ class TableMap
      *
      * @return void
      */
-    public function setUseIdGenerator($bit)
+    public function setUseIdGenerator($bit): void
     {
         $this->useIdGenerator = (bool)$bit;
     }
@@ -351,7 +351,7 @@ class TableMap
      *
      * @return bool
      */
-    public function isUseIdGenerator()
+    public function isUseIdGenerator(): bool
     {
         return $this->useIdGenerator;
     }
@@ -363,7 +363,7 @@ class TableMap
      *
      * @return void
      */
-    public function setSingleTableInheritance($bit)
+    public function setSingleTableInheritance($bit): void
     {
         $this->isSingleTableInheritance = $bit;
     }
@@ -373,7 +373,7 @@ class TableMap
      *
      * @return bool
      */
-    public function isSingleTableInheritance()
+    public function isSingleTableInheritance(): bool
     {
         return $this->isSingleTableInheritance;
     }
@@ -385,7 +385,7 @@ class TableMap
      *
      * @return void
      */
-    public function setPrimaryKeyMethodInfo($pkInfo)
+    public function setPrimaryKeyMethodInfo($pkInfo): void
     {
         $this->pkInfo = $pkInfo;
     }
@@ -425,8 +425,17 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
      */
-    public function addColumn($name, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null, $pk = false, $fkTable = null, $fkColumn = null)
-    {
+    public function addColumn(
+        $name,
+        $phpName,
+        $type,
+        $isNotNull = false,
+        $size = null,
+        $defaultValue = null,
+        $pk = false,
+        $fkTable = null,
+        $fkColumn = null
+    ): ColumnMap {
         $col = new ColumnMap($name, $this);
         $col->setType($type);
         $col->setSize($size);
@@ -458,7 +467,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap The added column map.
      */
-    public function addConfiguredColumn(ColumnMap $cmap)
+    public function addConfiguredColumn(ColumnMap $cmap): ColumnMap
     {
         $this->columns[$cmap->getName()] = $cmap;
 
@@ -473,7 +482,7 @@ class TableMap
      *
      * @return bool True if the table contains the column.
      */
-    public function hasColumn($name, $normalize = true)
+    public function hasColumn($name, $normalize = true): bool
     {
         if ($name instanceof ColumnMap) {
             $name = $name->getName();
@@ -494,7 +503,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A ColumnMap.
      */
-    public function getColumn($name, $normalize = true)
+    public function getColumn($name, $normalize = true): ColumnMap
     {
         if ($normalize) {
             $name = $this->getNormalizedColumnName($name);
@@ -513,7 +522,7 @@ class TableMap
      *
      * @return bool True if the table contains the column.
      */
-    public function hasColumnByPhpName($phpName)
+    public function hasColumnByPhpName($phpName): bool
     {
         return isset($this->columnsByPhpName[$phpName]);
     }
@@ -527,7 +536,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A ColumnMap.
      */
-    public function getColumnByPhpName($phpName)
+    public function getColumnByPhpName($phpName): ColumnMap
     {
         if (!isset($this->columnsByPhpName[$phpName])) {
             throw new ColumnNotFoundException("Cannot fetch ColumnMap for undefined column phpName: $phpName");
@@ -563,7 +572,7 @@ class TableMap
      *
      * @return array<\Propel\Runtime\Map\ColumnMap>
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -580,7 +589,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly added PrimaryKey column.
      */
-    public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null)
+    public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null): ColumnMap
     {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, true, null, null);
     }
@@ -599,8 +608,16 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly added ForeignKey column.
      */
-    public function addForeignKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue = null)
-    {
+    public function addForeignKey(
+        $columnName,
+        $phpName,
+        $type,
+        $fkTable,
+        $fkColumn,
+        $isNotNull = false,
+        $size = 0,
+        $defaultValue = null
+    ): ColumnMap {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, false, $fkTable, $fkColumn);
     }
 
@@ -618,15 +635,23 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly created foreign pkey column.
      */
-    public function addForeignPrimaryKey($columnName, $phpName, $type, $fkTable, $fkColumn, $isNotNull = false, $size = 0, $defaultValue = null)
-    {
+    public function addForeignPrimaryKey(
+        $columnName,
+        $phpName,
+        $type,
+        $fkTable,
+        $fkColumn,
+        $isNotNull = false,
+        $size = 0,
+        $defaultValue = null
+    ): ColumnMap {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, true, $fkTable, $fkColumn);
     }
 
     /**
      * @return bool true if the table is a many to many
      */
-    public function isCrossRef()
+    public function isCrossRef(): bool
     {
         return $this->isCrossRef;
     }
@@ -638,7 +663,7 @@ class TableMap
      *
      * @return void
      */
-    public function setIsCrossRef($isCrossRef)
+    public function setIsCrossRef($isCrossRef): void
     {
         $this->isCrossRef = $isCrossRef;
     }
@@ -648,7 +673,7 @@ class TableMap
      *
      * @return array<\Propel\Runtime\Map\ColumnMap>
      */
-    public function getPrimaryKeys()
+    public function getPrimaryKeys(): array
     {
         return $this->primaryKeys;
     }
@@ -658,7 +683,7 @@ class TableMap
      *
      * @return array<\Propel\Runtime\Map\ColumnMap>
      */
-    public function getForeignKeys()
+    public function getForeignKeys(): array
     {
         return $this->foreignKeys;
     }
@@ -670,7 +695,7 @@ class TableMap
      *
      * @return void
      */
-    public function buildRelations()
+    public function buildRelations(): void
     {
     }
 
@@ -697,7 +722,7 @@ class TableMap
         $onUpdate = null,
         $pluralName = null,
         $polymorphic = false
-    ) {
+    ): RelationMap {
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
         $relation = new RelationMap($name);
@@ -753,7 +778,7 @@ class TableMap
      *
      * @return bool true if the relation exists
      */
-    public function hasRelation($name)
+    public function hasRelation($name): bool
     {
         return array_key_exists($name, $this->getRelations());
     }
@@ -768,7 +793,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\RelationMap The relation object
      */
-    public function getRelation($name)
+    public function getRelation($name): RelationMap
     {
         if (!array_key_exists($name, $this->getRelations())) {
             throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s.', $name));
@@ -783,7 +808,7 @@ class TableMap
      *
      * @return array<\Propel\Runtime\Map\RelationMap> list of RelationMap objects
      */
-    public function getRelations()
+    public function getRelations(): array
     {
         if (!$this->relationsBuilt) {
             $this->buildRelations();
@@ -798,7 +823,7 @@ class TableMap
      *
      * @return array
      */
-    public function getBehaviors()
+    public function getBehaviors(): array
     {
         return [];
     }
@@ -808,7 +833,7 @@ class TableMap
      *
      * @return bool True if the table has a primaryString column.
      */
-    public function hasPrimaryStringColumn()
+    public function hasPrimaryStringColumn(): bool
     {
         return $this->getPrimaryStringColumn() !== null;
     }
@@ -818,7 +843,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap|null
      */
-    public function getPrimaryStringColumn()
+    public function getPrimaryStringColumn(): ?ColumnMap
     {
         foreach ($this->getColumns() as $column) {
             if ($column->isPrimaryString()) {
@@ -856,7 +881,7 @@ class TableMap
     /**
      * @return bool
      */
-    public function isIdentifierQuotingEnabled()
+    public function isIdentifierQuotingEnabled(): bool
     {
         return $this->identifierQuoting;
     }
@@ -866,7 +891,7 @@ class TableMap
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting)
+    public function setIdentifierQuoting($identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }
@@ -876,7 +901,7 @@ class TableMap
      *
      * @return array|null null if not covered by only pk
      */
-    public function extractPrimaryKey(Criteria $criteria)
+    public function extractPrimaryKey(Criteria $criteria): ?array
     {
         $pkCols = $this->getPrimaryKeys();
         if (count($pkCols) !== count($criteria->getMap())) {

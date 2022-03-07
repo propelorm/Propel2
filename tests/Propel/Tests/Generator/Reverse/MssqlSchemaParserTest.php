@@ -62,7 +62,7 @@ class MssqlSchemaParserTest extends TestCase
 
 class TestableMssqlSchemaParser extends MssqlSchemaParser
 {
-    public function cleanDelimitedIdentifiers($identifier)
+    public function cleanDelimitedIdentifiers($identifier): string
     {
         return parent::cleanDelimitedIdentifiers($identifier);
     }

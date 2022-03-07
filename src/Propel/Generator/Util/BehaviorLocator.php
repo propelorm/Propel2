@@ -56,7 +56,7 @@ class BehaviorLocator
      *
      * @return \Symfony\Component\Finder\SplFileInfo|null The found composer file or null if composer file isn't found
      */
-    private function findComposerFile($fileName)
+    private function findComposerFile($fileName): ?SplFileInfo
     {
         if ($this->composerDir !== null) {
             $filePath = $this->composerDir . '/' . $fileName;
@@ -83,7 +83,7 @@ class BehaviorLocator
      *
      * @return \Symfony\Component\Finder\SplFileInfo|null The found composer.lock or null if composer.lock isn't found
      */
-    private function findComposerLock()
+    private function findComposerLock(): ?SplFileInfo
     {
         return $this->findComposerFile('composer.lock');
     }
@@ -93,7 +93,7 @@ class BehaviorLocator
      *
      * @return \Symfony\Component\Finder\SplFileInfo|null the found composer.json or null if composer.json isn't found
      */
-    private function findComposerJson()
+    private function findComposerJson(): ?SplFileInfo
     {
         return $this->findComposerFile('composer.json');
     }
@@ -118,7 +118,7 @@ class BehaviorLocator
      *
      * @return array behaviors
      */
-    public function getBehaviors()
+    public function getBehaviors(): array
     {
         if ($this->behaviors === null) {
             // find behaviors in composer.lock file
@@ -154,7 +154,7 @@ class BehaviorLocator
      *
      * @return string the class name
      */
-    public function getBehavior($name)
+    public function getBehavior($name): string
     {
         if (strpos($name, '\\') !== false) {
             $class = $name;
@@ -184,7 +184,7 @@ class BehaviorLocator
      *
      * @return string The behavior fully qualified class name
      */
-    private function getCoreBehavior($name)
+    private function getCoreBehavior($name): string
     {
         $generator = new PhpNameGenerator();
         $phpName = $generator->generateName([$name, PhpNameGenerator::CONV_METHOD_PHPNAME]);
@@ -230,7 +230,7 @@ class BehaviorLocator
      *
      * @return array|null Behavior data
      */
-    private function loadBehavior($package)
+    private function loadBehavior($package): ?array
     {
         if (isset($package['type']) && $package['type'] == self::BEHAVIOR_PACKAGE_TYPE) {
             // find propel behavior information

@@ -138,7 +138,7 @@ class SchemaReader
      *
      * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         $this->schema->setGeneratorConfig($generatorConfig);
     }
@@ -151,7 +151,7 @@ class SchemaReader
      *
      * @return \Propel\Generator\Model\Schema|null
      */
-    public function parseFile($xmlFile)
+    public function parseFile($xmlFile): ?Schema
     {
         // we don't want infinite recursion
         if ($this->isAlreadyParsed($xmlFile)) {
@@ -172,7 +172,7 @@ class SchemaReader
      *
      * @return \Propel\Generator\Model\Schema|null
      */
-    public function parseString($xmlString, $xmlFile = null)
+    public function parseString($xmlString, $xmlFile = null): ?Schema
     {
         // we don't want infinite recursion
         if ($this->isAlreadyParsed($xmlFile)) {
@@ -215,7 +215,7 @@ class SchemaReader
      *
      * @return void
      */
-    public function startElement($parser, $tagName, $attributes)
+    public function startElement($parser, $tagName, $attributes): void
     {
         $parentTag = $this->peekCurrentSchemaTag();
         if ($parentTag === false) {
@@ -249,7 +249,7 @@ class SchemaReader
                     if ($xmlFile[0] !== '/') {
                         $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
-                            throw new SchemaException(sprintf('Unknown include external "%s"', $xmlFile));
+                            throw new SchemaException(sprintf('Unknown include external `%s`', $xmlFile));
                         }
                     }
 
@@ -429,7 +429,7 @@ class SchemaReader
      *
      * @return void
      */
-    protected function throwInvalidTagException($tag_name)
+    protected function throwInvalidTagException($tag_name): void
     {
         $this->throwSchemaExceptionWithLocation('Unexpected tag <%s>', $tag_name);
     }
@@ -442,7 +442,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function throwSchemaExceptionWithLocation($format, ...$args)
+    private function throwSchemaExceptionWithLocation($format, ...$args): void
     {
         $format .= ' in %s';
         $args[] = $this->getLocationDescription();
@@ -456,7 +456,7 @@ class SchemaReader
      *
      * @return string
      */
-    private function getLocationDescription()
+    private function getLocationDescription(): string
     {
         $location = '';
         if ($this->currentXmlFile !== null) {
@@ -477,7 +477,7 @@ class SchemaReader
      *
      * @return void
      */
-    public function endElement($parser, $tagName)
+    public function endElement($parser, $tagName): void
     {
         if ($tagName === 'index') {
             $this->currTable->addIndex($this->currIndex);
@@ -521,7 +521,7 @@ class SchemaReader
      *
      * @return void
      */
-    protected function pushCurrentSchemaTag($tag)
+    protected function pushCurrentSchemaTag($tag): void
     {
         $keys = array_keys($this->schemasTagsStack);
         $this->schemasTagsStack[end($keys)][] = $tag;
@@ -530,7 +530,7 @@ class SchemaReader
     /**
      * @return bool
      */
-    protected function isExternalSchema()
+    protected function isExternalSchema(): bool
     {
         return count($this->schemasTagsStack) > 1;
     }
@@ -540,7 +540,7 @@ class SchemaReader
      *
      * @return bool
      */
-    protected function isAlreadyParsed($filePath)
+    protected function isAlreadyParsed($filePath): bool
     {
         return isset($this->schemasTagsStack[$filePath]);
     }
@@ -577,7 +577,7 @@ class SchemaReader
      *
      * @return void
      */
-    private function addAttributeToParameterListItem(array $attributes)
+    private function addAttributeToParameterListItem(array $attributes): void
     {
         $name = $this->getExpectedValue($attributes, 'name');
         $value = $this->getExpectedValue($attributes, 'value');

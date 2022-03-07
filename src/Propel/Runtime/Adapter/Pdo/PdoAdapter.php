@@ -47,7 +47,7 @@ abstract class PdoAdapter
      *
      * @return \Propel\Runtime\Connection\PdoConnection
      */
-    public function getConnection($params)
+    public function getConnection($params): PdoConnection
     {
         $params = $this->prepareParams($params);
 
@@ -91,7 +91,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function compareRegex($left, $right)
+    public function compareRegex($left, $right): string
     {
         return sprintf('%s REGEXP %s', $left, $right);
     }
@@ -99,7 +99,7 @@ abstract class PdoAdapter
     /**
      * @return string
      */
-    public function getAdapterId()
+    public function getAdapterId(): string
     {
         $class = str_replace('Adapter', '', static::class);
         $lastSlash = strrpos($class, '\\');
@@ -114,7 +114,7 @@ abstract class PdoAdapter
      *
      * @return array the modified parameters
      */
-    protected function prepareParams($params)
+    protected function prepareParams($params): array
     {
         return $params;
     }
@@ -135,7 +135,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function initConnection(ConnectionInterface $con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings): void
     {
         if (isset($settings['charset'])) {
             $this->setCharset($con, $settings['charset']);
@@ -161,7 +161,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset)
+    public function setCharset(ConnectionInterface $con, $charset): void
     {
         $con->exec(sprintf("SET NAMES '%s'", $charset));
     }
@@ -173,7 +173,7 @@ abstract class PdoAdapter
      *
      * @return string The upper case string.
      */
-    public function toUpperCase($in)
+    public function toUpperCase($in): string
     {
         return sprintf('UPPER(%s)', $in);
     }
@@ -185,7 +185,7 @@ abstract class PdoAdapter
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCase($in)
+    public function ignoreCase($in): string
     {
         return sprintf('UPPER(%s)', $in);
     }
@@ -200,7 +200,7 @@ abstract class PdoAdapter
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in)
+    public function ignoreCaseInOrderBy($in): string
     {
         return $this->ignoreCase($in);
     }
@@ -212,7 +212,7 @@ abstract class PdoAdapter
      *
      * @return string The text delimiter.
      */
-    public function getStringDelimiter()
+    public function getStringDelimiter(): string
     {
         return '\'';
     }
@@ -224,7 +224,7 @@ abstract class PdoAdapter
      *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier($text): string
     {
         return '"' . $text . '"';
     }
@@ -239,7 +239,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function quote($text)
+    public function quote($text): string
     {
         $pos = strrpos($text, '.');
         if ($pos !== false) {
@@ -267,7 +267,7 @@ abstract class PdoAdapter
      *
      * @return string The quoted table name
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierTable($table): string
     {
         return implode(' ', array_map([$this, 'quoteIdentifier'], explode(' ', $table)));
     }
@@ -277,7 +277,7 @@ abstract class PdoAdapter
      *
      * @return int One of AdapterInterface:ID_METHOD_SEQUENCE, AdapterInterface::ID_METHOD_AUTOINCREMENT.
      */
-    protected function getIdMethod()
+    protected function getIdMethod(): int
     {
         return AdapterInterface::ID_METHOD_AUTOINCREMENT;
     }
@@ -287,7 +287,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function isGetIdBeforeInsert()
+    public function isGetIdBeforeInsert(): bool
     {
         return $this->getIdMethod() === AdapterInterface::ID_METHOD_SEQUENCE;
     }
@@ -297,7 +297,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function isGetIdAfterInsert()
+    public function isGetIdAfterInsert(): bool
     {
         return $this->getIdMethod() === AdapterInterface::ID_METHOD_AUTOINCREMENT;
     }
@@ -323,7 +323,7 @@ abstract class PdoAdapter
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap)
+    public function formatTemporalValue($value, ColumnMap $cMap): string
     {
         /** @var \Propel\Runtime\Util\PropelDateTime|null $dt */
         $dt = PropelDateTime::newInstance($value);
@@ -354,7 +354,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s.u';
     }
@@ -364,7 +364,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria)
+    public function getGroupBy(Criteria $criteria): string
     {
         $groupBy = $criteria->getGroupByColumns();
         if ($groupBy) {
@@ -379,7 +379,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function getDateFormatter()
+    public function getDateFormatter(): string
     {
         return 'Y-m-d';
     }
@@ -389,7 +389,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function getTimeFormatter()
+    public function getTimeFormatter(): string
     {
         return 'H:i:s.u';
     }
@@ -404,7 +404,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
+    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
     }
 
@@ -418,7 +418,7 @@ abstract class PdoAdapter
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false)
+    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false): string
     {
         $selectClause = [];
 
@@ -482,7 +482,7 @@ abstract class PdoAdapter
      *
      * @return array<string>
      */
-    public function getPlainSelectedColumns(Criteria $criteria)
+    public function getPlainSelectedColumns(Criteria $criteria): array
     {
         $selected = [];
         foreach ($criteria->getSelectColumns() as $columnName) {
@@ -510,7 +510,7 @@ abstract class PdoAdapter
      *
      * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria)
+    public function turnSelectColumnsToAliases(Criteria $criteria): Criteria
     {
         $selectColumns = $criteria->getSelectColumns();
         // clearSelectColumns also clears the aliases, so get them too
@@ -562,7 +562,7 @@ abstract class PdoAdapter
      *
      * @return void
      */
-    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap)
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap): void
     {
         $position = 0;
         foreach ($params as $param) {
@@ -598,7 +598,7 @@ abstract class PdoAdapter
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
